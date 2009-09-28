@@ -292,7 +292,7 @@ namespace senf {
 #include "INet4Address.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

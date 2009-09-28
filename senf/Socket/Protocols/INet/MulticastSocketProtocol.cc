@@ -372,7 +372,7 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcLeaveSSMSource(INet6Address c
 #undef prefix_
 //#include "MulticastSocketProtocol.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

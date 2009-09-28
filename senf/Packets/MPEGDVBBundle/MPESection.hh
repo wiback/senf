@@ -145,14 +145,13 @@ namespace senf {
     typedef ConcretePacket<MPESectionType> MPESection;
 }
 
-
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "MPESection.cci"
 //#include "MPESection.ct"
 //#include "MPESection.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

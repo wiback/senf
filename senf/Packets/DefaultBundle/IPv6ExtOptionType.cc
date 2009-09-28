@@ -39,7 +39,7 @@ prefix_  senf::PacketInterpreterBase::range senf::IPv6GenericOptionTLVParser::va
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

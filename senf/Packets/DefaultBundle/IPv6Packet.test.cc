@@ -97,7 +97,7 @@ BOOST_AUTO_UNIT_TEST(ipV6Packet_create)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

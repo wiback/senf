@@ -78,6 +78,7 @@ namespace senf {
 //#include "IPv6ExtOptionType.cti"
 #endif
 
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

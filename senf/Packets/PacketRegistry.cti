@@ -133,7 +133,7 @@ senf::detail::PacketRegistryImpl<KeyType>::end()
 ///////////////////////////////PacketRegistry..e///////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

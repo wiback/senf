@@ -403,7 +403,7 @@ namespace senf {
 #include "INet6Address.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

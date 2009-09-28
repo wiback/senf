@@ -269,8 +269,8 @@ namespace senf
 //#include "type_traits.ct"
 //#include "type_traits.cti"
 #endif
-
 
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

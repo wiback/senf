@@ -76,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -115,7 +115,7 @@ namespace senf {
 //#include "NetdeviceController.mpp"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

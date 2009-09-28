@@ -764,7 +764,7 @@ namespace senf {
 #include "Packet.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

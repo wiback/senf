@@ -114,7 +114,7 @@ prefix_ std::string senf::TapSocketProtocol::ifaceName()
 #undef prefix_
 //#include "TunTapSocketHandle.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

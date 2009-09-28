@@ -34,7 +34,6 @@
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
 #include "EthernetPacket.hh"
-#include <senf/Utils/hexdump.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -45,7 +44,6 @@
 BOOST_AUTO_UNIT_TEST(ipv6Extensions_fragment)
 {
     // Just for the fun of it, we test a nice chain: A fragment of a fragmented UDP packet
-
     unsigned char Fragment_packetData[] = {
         // IP header
         0x60, 0x00, 0x00, 0x00,         // IP Version, class, flow label
@@ -229,41 +227,38 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
 {
     std::ostringstream oss (std::ostringstream::out);
     unsigned char HopByHop_packetData[] = {
-        //Ethernet
-        0x33 ,0x33 ,0x00 ,0x00 ,0x00 ,0x16 ,    //destination MAC
-        0x00 ,0x19 ,0xb9 ,0xeb ,0xb2 ,0x26 ,    //source MAC
-        0x86 ,0xdd,                             //type (IPv6)
-        //IPv6
-        0x60, 0x00, 0x00, 0x00, //IP version, class, flow label
-        0x00, 0x24,           //payload length
-        0x00,                 //next header: IPv6 hop-by-hop option (0)
-        0x01,                 //hop limit (1)
-        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Source address (fe80::219:b9ff:feeb:b226)
-        0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26,
-
-        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Destination address ff02::16
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16,
-//         HopByHop option
-        0x3a,   //next Header (ICMPv6)
-        0x00,   //Length (0 = 8Bytes)
-
-//         option Header
-        0x05, //option type
-        0x02, //option Length (= 2 byte)
-        0x00, 0x00, //data (zero data here ...)
-        0x01, 0x00, //padding
-//         ICMPv6
-        0x8f, //type 143
-        0x00, //code 0, should always be 0
-        0x50 ,0xcc , //checksum
-
-//         MLDv2
-        0x00 ,0x00 , //reserved, zero by default
-        0x00 ,0x01 , //nr of McAddressRecords
-        0x04 ,  //recordType
-        0x00 ,  //auxiliarydatalength
-        0x00 ,0x00 ,    // number of sources
-        0xff ,0x02 ,0x00 ,0x00, 0x00 ,0x00 ,0x00 ,0x00 ,    //ipv6McAddress ff02::1:ffeb:b226
+        // Ethernet
+        0x33 ,0x33 ,0x00 ,0x00 ,0x00 ,0x16 , // destination MAC
+        0x00 ,0x19 ,0xb9 ,0xeb ,0xb2 ,0x26 , // source MAC
+        0x86 ,0xdd,                          // type (IPv6)
+        // IPv6
+        0x60, 0x00, 0x00, 0x00, // IP version, class, flow label
+        0x00, 0x24,             // payload length
+        0x00,                   // next header: IPv6 hop-by-hop option (0)
+        0x01,                   // hop limit (1)
+        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // IPv6 Source address 
+        0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26, // (fe80::219:b9ff:feeb:b226)
+        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // IPv6 Destination address 
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, // (ff02::16)
+        // HopByHop option
+        0x3a, // next Header (ICMPv6)
+        0x00, // Length (0 = 8Bytes)
+        // option Header
+        0x05, // option type
+        0x02, // option Length (= 2 byte)
+        0x00, 0x00, // data (zero data here ...)
+        0x01, 0x00, // padding
+        // ICMPv6
+        0x8f, // type 143
+        0x00, // code 0, should always be 0
+        0x50 ,0xcc , // checksum
+        // MLDv2
+        0x00 ,0x00 , // reserved, zero by default
+        0x00 ,0x01 , // nr of McAddressRecords
+        0x04 ,       // recordType
+        0x00 ,       // auxiliarydatalength
+        0x00 ,0x00 , // number of sources
+        0xff ,0x02 ,0x00 ,0x00, 0x00 ,0x00 ,0x00 ,0x00 ,  // ipv6McAddress ff02::1:ffeb:b226
         0x00 ,0x00 ,0x00 ,0x01 ,0xff ,0xeb ,0xb2 ,0x26
     };
     senf::EthernetPacket eth (senf::EthernetPacket::create() );
@@ -359,7 +354,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN) {
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

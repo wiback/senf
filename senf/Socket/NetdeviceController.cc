@@ -214,7 +214,7 @@ prefix_ senf::NetdeviceController::SockFd::ptr senf::NetdeviceController::sockfd
 #undef prefix_
 //#include "NetdeviceController.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

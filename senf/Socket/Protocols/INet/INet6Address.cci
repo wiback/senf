@@ -325,7 +325,7 @@ prefix_ boost::uint8_t senf::detail::low_bits_mask(unsigned bits)
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

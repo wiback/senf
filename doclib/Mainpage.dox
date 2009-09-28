@@ -50,8 +50,8 @@
 
     \section senfutil_overview Building Projects using SENF
 
-    When building projects using senf, SENFSCons has a very simple helper module \ref senfutil to
-    make the building of libraries utilizing senf simpler.
+    When building projects using %senf, SENFSCons has a very simple helper module 
+    \ref senf_senfutil to make the building of libraries utilizing %senf simpler.
 
     \see \ref senf_senfutil
 */
@@ -333,11 +333,11 @@
     $ scons all_tests
     </pre>
 
-    in the \c senf directory. This assumes, that you want to build the library with your default gcc
-    and requires the boost libraries to be available in the system include paths. If this is not the
-    case, you can take a look at <tt>SConfig.template</tt> file. Copy this file to <tt>SConfig</tt>
-    and comment out all the variables you don't want to change (The \e values in the template file
-    are just arbitrary examples).
+    in the \c %senf directory. This assumes, that you want to build the library with your default
+    gcc and requires the boost libraries to be available in the system include paths. If this is 
+    not the case, you can take a look at <tt>SConfig.template</tt> file. Copy this file to
+    <tt>SConfig</tt> and comment out all the variables you don't want to change (The \e values in
+    the template file are just arbitrary examples).
  */
 
 /** \page senf_setup Setting up a new project using SENF

@@ -108,7 +108,7 @@ prefix_ void senf::MPESectionType::finalize(packet p)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

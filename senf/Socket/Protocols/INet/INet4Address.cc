@@ -184,7 +184,7 @@ prefix_ std::istream & senf::operator>>(std::istream & is, INet4Network & addr)
 #undef prefix_
 //#include "INet4Address.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

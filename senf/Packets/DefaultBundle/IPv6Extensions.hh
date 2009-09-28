@@ -30,7 +30,7 @@
 // Custom includes
 #include <senf/Packets/Packets.hh>
 #include <senf/Packets/AuxParser.hh>
-#include <senf/Packets/DefaultBundle/IPv6ExtOptionType.hh>
+#include "IPv6ExtOptionType.hh"
 #include "ListOptionTypeParser.hh"
 #include "IPv6Packet.hh"
 

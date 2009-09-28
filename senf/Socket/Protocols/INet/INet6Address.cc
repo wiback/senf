@@ -144,7 +144,7 @@ prefix_ senf::INet6Network::INet6Network(std::string const & s)
 #undef prefix_
 //#include "INet6Address.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

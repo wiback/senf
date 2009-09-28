@@ -99,7 +99,7 @@ prefix_ std::istream & senf::operator>>(std::istream & is, MACAddress & mac)
 #undef prefix_
 //#include "MACAddress.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -85,7 +85,7 @@ prefix_ Parser senf::IPv6GenericOptionTLVParser::init()
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

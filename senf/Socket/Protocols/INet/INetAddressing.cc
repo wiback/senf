@@ -179,7 +179,7 @@ prefix_ std::istream & senf::operator>>(std::istream & is, INet6SocketAddress & 
 #undef prefix_
 //#include "INetAddressing.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -424,7 +424,7 @@ namespace log {
 #include "Target.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -757,7 +757,7 @@ BOOST_TYPEOF_REGISTER_TYPE(senf::console::SimpleCommandNode)
 #include "Node.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

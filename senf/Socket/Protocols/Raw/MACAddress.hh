@@ -45,7 +45,7 @@ namespace senf {
 
     /** \brief Ethernet MAC address
 
-        The Ethernet MAC is modelled as a fixed-size container/sequence of 6 bytes. A MACAddress can
+        The Ethernet MAC is modeled as a fixed-size container/sequence of 6 bytes. A MACAddress can
         be converted from/to the following representations
 
         <table class="senf">
@@ -146,7 +146,7 @@ namespace senf {
 //#include "MACAddress.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

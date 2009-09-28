@@ -488,7 +488,7 @@ namespace console {
         Accessing a non-existent argument or failing to parse all arguments will raise a
         senf::console::SyntaxErrorException.
 
-        \see \link console_arg_custom Example customer parser \endlink
+        \see \link console_args_custom Example customer parser \endlink
       */
     class CheckedArgumentIteratorWrapper
         : boost::noncopyable,

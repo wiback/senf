@@ -61,8 +61,8 @@ namespace senf {
         ATTENTION!
         Some calls are not supported by real life drivers, known issues:
         
-        Cinergy T² getParameter is not supported
-        Cinergy T² in getEvent fe_status_t will be set but dvb_frontend_parameters will be stay untouched
+        Cinergy Tï¿½ getParameter is not supported
+        Cinergy Tï¿½ in getEvent fe_status_t will be set but dvb_frontend_parameters will be stay untouched
         Cinergy DT XS bitErrorRate is not supported
         
         This dues to the lack of driver implementation. There could be restrictions also for other DVB devices!
@@ -177,7 +177,7 @@ namespace senf {
 //#include "DVBFrontendHandle.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

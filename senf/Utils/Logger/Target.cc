@@ -573,7 +573,7 @@ senf::log::SyslogUDPTarget::RegisterConsole senf::log::SyslogUDPTarget::Register
 #undef prefix_
 //#include "Target.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

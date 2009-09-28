@@ -31,6 +31,7 @@
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
+///////////////////////////////cc.p////////////////////////////////////////
 
 BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
 {
@@ -235,6 +236,9 @@ BOOST_AUTO_UNIT_TEST(ICMPv6Packet_create)
     }
 }
 
+///////////////////////////////cc.e////////////////////////////////////////
+
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -235,7 +235,7 @@ namespace senf {
 #include "PacketRegistry.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

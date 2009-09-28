@@ -58,7 +58,7 @@ BOOST_AUTO_UNIT_TEST(tapSocketHandle)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -41,6 +41,7 @@ namespace senf {
 #include "ListOptionTypeParser.cti"
 #endif
 
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -175,7 +175,7 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

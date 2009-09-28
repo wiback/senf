@@ -267,7 +267,7 @@ prefix_ fe_status_t senf::DVBFrontendSocketProtocol::status()
 #undef prefix_
 //#include "DVBFrontendHandle.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

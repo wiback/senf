@@ -147,7 +147,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
 #undef prefix_
 //#include "BSDSocketProtocol.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
