@@ -82,6 +82,11 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(rateFilter_changeInterval)
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    if (! enabled) {
+        BOOST_WARN_MESSAGE(false, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+    }
+
     module::RateFilter rateFilter ( senf::ClockService::milliseconds(100) );
     debug::PassiveSource source;
     debug::PassiveSink sink;
@@ -106,7 +111,8 @@ BOOST_AUTO_UNIT_TEST(rateFilter_changeInterval)
     senf::ppi::run();
 
     BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(200) );
-    BOOST_CHECK_EQUAL( sink.size(), 4);
+    if (enabled)
+        BOOST_CHECK_EQUAL( sink.size(), 4);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
