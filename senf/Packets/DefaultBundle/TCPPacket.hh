@@ -3,7 +3,7 @@
 // Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//	   Dennis Goslar <dennis.goslar@inf.hochschule-bonn-rhein-sieg.de>
+//     Dennis Goslar <dennis.goslar@inf.hochschule-bonn-rhein-sieg.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,14 +46,14 @@ namespace senf {
     {
 #       include SENF_PARSER()
 
-    	SENF_PARSER_FIELD( source,      			UInt16Parser );
-    	SENF_PARSER_FIELD( destination,     		UInt16Parser );
-    	SENF_PARSER_FIELD( sequencenumber,  		UInt32Parser );
-    	SENF_PARSER_FIELD( acknowledgmentnumber,	UInt32Parser );
+        SENF_PARSER_FIELD( source,                  UInt16Parser );
+        SENF_PARSER_FIELD( destination,             UInt16Parser );
+        SENF_PARSER_FIELD( sequencenumber,          UInt32Parser );
+        SENF_PARSER_FIELD( acknowledgmentnumber,    UInt32Parser );
 
-    	SENF_PARSER_BITFIELD        ( dataoffset, 4, unsigned );
-    	SENF_PARSER_PRIVATE_BITFIELD( reserved,	  6, unsigned );
-    	SENF_PARSER_BITFIELD        ( urgf,       1, bool     );
+        SENF_PARSER_BITFIELD        ( dataoffset, 4, unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD( reserved,   6, unsigned );
+        SENF_PARSER_BITFIELD        ( urgf,       1, bool     );
         SENF_PARSER_BITFIELD        ( ackf,       1, bool     );
         SENF_PARSER_BITFIELD        ( pshf,       1, bool     );
         SENF_PARSER_BITFIELD        ( rstf,       1, bool     );

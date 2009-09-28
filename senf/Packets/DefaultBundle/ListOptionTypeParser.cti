@@ -127,7 +127,7 @@ prefix_ void
 senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
 destruct(container_type & c)
 {
-    //	data_iterator i (AuxPolicy::adjust(parser_type::get(p).i(), parser_type::get(p).state()));
+    //data_iterator i (AuxPolicy::adjust(parser_type::get(p).i(), parser_type::get(p).state()));
     safe_data_iterator i (c.data(), c.i()) ;
     safe_data_iterator e = i + realAux_;
     unsigned int padBytes = 0;

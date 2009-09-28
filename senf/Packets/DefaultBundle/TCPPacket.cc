@@ -3,7 +3,7 @@
 // Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//	   Dennis Goslar <dennis.goslar@inf.hochschule-bonn-rhein-sieg.de>
+//     Dennis Goslar <dennis.goslar@inf.hochschule-bonn-rhein-sieg.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

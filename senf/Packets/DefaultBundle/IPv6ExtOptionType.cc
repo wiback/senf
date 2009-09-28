@@ -20,6 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief IPv6Extension-Options non-inline non-template implementation */
 
 #include "IPv6ExtOptionType.hh"
 // Custom includes
@@ -27,10 +29,15 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_  senf::PacketInterpreterBase::range senf::IPv6GenericOptionTLVParser::value() const {
+prefix_  senf::PacketInterpreterBase::range senf::IPv6GenericOptionTLVParser::value() 
+    const 
+{
     senf::PacketData::iterator begin (boost::next(i(), 2 ));
     return PacketInterpreterBase::range(begin, boost::next( begin, optionLength()) );
 }
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

@@ -29,42 +29,36 @@
 #include <boost/io/ios_state.hpp>
 
 #define prefix_
+///////////////////////////////cc.p//////////////////////////////////////
 
+namespace {
+    #define DUMP_OPTIONAL_FIELD(name, sign, desc)           \
+        if (p->has_##name())                                \
+            os << senf::fieldName(desc) << sign( p->name()) \
+               << std::endl;
+}
 
 prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Radiotap:\n"
-       << senf::fieldName("version") 		       << unsigned( p->version()) << "\n"
-       << senf::fieldName("length") 		       << unsigned( p->length()) << "\n";
-    if (p->has_tsft())
-        os << senf::fieldName("MAC timestamp") 	       << unsigned( p->tsft()) << "\n";
-    // TODO: flags
-    if (p->has_rate())
-        os << senf::fieldName("rate") 		       << unsigned( p->rate()) << "\n";
-    // TODO: channelOptions
-    if (p->has_fhss())
-	os << senf::fieldName("FHSS") 		       << unsigned( p->fhss()) << "\n";
-    if (p->has_dbmAntennaSignal())
-        os << senf::fieldName("antenna signal (dBm)")  << signed( p->dbmAntennaSignal()) << "\n";
-    if (p->has_dbmAntennaNoise())
-        os << senf::fieldName("antenna noise (dBm)")   << signed( p->dbmAntennaNoise()) << "\n";
-    if (p->has_lockQuality())
-        os << senf::fieldName("lock quality") 	       << unsigned( p->lockQuality()) << "\n";
-    if (p->has_txAttenuation())
-        os << senf::fieldName("tx attenuation")        << unsigned( p->txAttenuation()) << "\n";
-    if (p->has_dbTxAttenuation())
-        os << senf::fieldName("tx attenuation (dB)")   << unsigned( p->dbTxAttenuation()) << "\n";
-    if (p->has_dbmTxAttenuation())
-        os << senf::fieldName("tx attenuation (dBm)")  << signed( p->dbmTxAttenuation()) << "\n";
-    if (p->has_antenna())
-        os << senf::fieldName("antenna") 	       << unsigned( p->antenna()) << "\n";
-    if (p->has_dbAntennaSignal())
-        os << senf::fieldName("antenna signal (dB)")   << unsigned( p->dbAntennaSignal()) << "\n";
-    if (p->has_dbAntennaNoise())
-        os << senf::fieldName("antenna noise (dB)")    << unsigned( p->dbAntennaNoise()) << "\n";
+       << senf::fieldName("version") << unsigned( p->version()) << "\n"
+       << senf::fieldName("length")  << unsigned( p->length()) << "\n";
+    // TODO: flags, channelOptions
+    DUMP_OPTIONAL_FIELD( tsft,              unsigned, "MAC timestamp"        );
+    DUMP_OPTIONAL_FIELD( rate,              unsigned, "rate"                 );
+    DUMP_OPTIONAL_FIELD( fhss,              unsigned, "FHSS"                 );
+    DUMP_OPTIONAL_FIELD( dbmAntennaSignal,  signed,   "antenna signal (dBm)" );
+    DUMP_OPTIONAL_FIELD( dbmAntennaNoise,   signed,   "antenna noise (dBm)"  );
+    DUMP_OPTIONAL_FIELD( lockQuality,       unsigned, "lock quality"         );    
+    DUMP_OPTIONAL_FIELD( txAttenuation,     unsigned, "tx attenuation"       );
+    DUMP_OPTIONAL_FIELD( dbTxAttenuation,   unsigned, "tx attenuation (dB)"  );
+    DUMP_OPTIONAL_FIELD( dbmTxAttenuation,  signed,   "tx attenuation (dBm)" );
+    DUMP_OPTIONAL_FIELD( antenna,           unsigned, "antenna"              );
+    DUMP_OPTIONAL_FIELD( dbAntennaSignal,   unsigned, "antenna signal (dB)"  );
+    DUMP_OPTIONAL_FIELD( dbAntennaNoise,    unsigned, "antenna noise (dB)"   );
     if (p->has_headerFcs())
-        os << senf::fieldName("FCS") 		       << unsigned( p->fcs()) << "\n";
+        os << senf::fieldName("FCS")     << unsigned( p->fcs()) << "\n";
 }
 
 prefix_ void senf::RadiotapPacketType::finalize(packet p)
@@ -91,4 +85,16 @@ senf::RadiotapPacketType::nextPacketRange(packet p)
         : optional_range( range(p.data().begin() + h, p.data().end() - t) );
 }
 
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

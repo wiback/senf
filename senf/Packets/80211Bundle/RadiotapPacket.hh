@@ -197,7 +197,6 @@ namespace senf
         SENF_PARSER_SKIP_BITS( 4 );
         SENF_PARSER_BITFIELD_RO ( frameType, 2, unsigned );
         SENF_PARSER_SKIP_BITS( 2 );
-            
     };
 
     /** \brief Radiotap packet

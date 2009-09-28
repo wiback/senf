@@ -224,9 +224,9 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
     BOOST_CHECK_EQUAL( pICMPv6->checksum(), 0x50cc);
 }
 
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)                                                                                                      
+BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
 {
-    std::ostringstream oss (std::ostringstream::out);                                                                                                   
+    std::ostringstream oss (std::ostringstream::out);
     unsigned char HopByHop_packetData[] = {
         //Ethernet
         0x33 ,0x33 ,0x00 ,0x00 ,0x00 ,0x16 ,    //destination MAC

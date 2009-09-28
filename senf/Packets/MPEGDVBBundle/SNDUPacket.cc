@@ -35,12 +35,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-//namespace {
-//    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthVLanPacketType>
-//        registerEthVLanPacket(0x8100);
-//}
-
-
 prefix_ boost::uint32_t senf::SNDUPacketParser::calcCrc()
     const
 {
