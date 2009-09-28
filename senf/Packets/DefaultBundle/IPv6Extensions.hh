@@ -223,7 +223,8 @@ namespace senf {
         \see IPv6ExtensionType_HopByHop \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
     */
-    struct IPv6HopByHopOptionsPacketParser : public PacketParserBase {
+    struct IPv6HopByHopOptionsPacketParser : public PacketParserBase 
+    {
 #       include SENF_PARSER()
       
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );

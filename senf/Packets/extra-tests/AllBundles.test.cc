@@ -23,9 +23,6 @@
 /** \file
     \brief AllBundles unit tests */
 
-//#include "PacketLink.test.hh"
-//#include "PacketLink.test.ih"
-
 // Custom includes
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/IPv6Packet.hh>
