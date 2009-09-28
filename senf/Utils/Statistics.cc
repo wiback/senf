@@ -81,7 +81,7 @@ senf::StatisticsBase::output(unsigned n)
 }
 
 //
-// generate an engineering style notation i
+// generate an engineering style notation 
 //
 char *format_eng( float f)
 {
@@ -287,10 +287,17 @@ prefix_ std::string senf::Statistics::v_path()
 prefix_ void senf::Collector::enter(float min, float avg, float max)
 {
     accAvg_ += avg;
-    if (min < accMin_) accMin_ = min;
-    if (max > accMax_) accMax_ = max;
+    if (avg < accMin_) accMin_ = avg;
+    if (avg > accMax_) accMax_ = avg;
     if (++i_ >= rank_) {
-        StatisticsBase::enter(accMin_, accAvg_ / rank_, accMax_);
+	if( i_ == 1){
+	  // no averaging, report min & max for this period
+          StatisticsBase::enter(min, avg, max);
+	}
+	else{
+	  // averaging, report min(avgs) and max(avgs)
+	  StatisticsBase::enter(accMin_, accAvg_ / rank_, accMax_);
+	} 
         i_ = 0;
         accMin_ = FLT_MAX;
         accAvg_ = 0.0f;
