@@ -52,6 +52,18 @@ senf::make_transform_range(Range & range, Fn const & fn)
         boost::make_transform_iterator(boost::end(range), fn) );
 }
 
+template <class Range, class Iterator>
+prefix_ void senf::copy_range(Range const & range, Iterator const & i)
+{
+    std::copy(boost::begin(range), boost::end(range), i);
+}
+
+template <class Range, class Iterator>
+prefix_ void senf::copy_range(Range & range, Iterator const & i)
+{
+    std::copy(boost::begin(range), boost::end(range), i);
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

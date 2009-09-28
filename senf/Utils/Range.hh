@@ -52,6 +52,12 @@ namespace senf {
                                    typename boost::range_iterator<Range>::type > >
     make_transform_range(Range & range, Fn const & fn);
 
+    template <class Range, class Iterator>
+    void copy_range(Range const & range, Iterator const & i);
+
+    template <class Range, class Iterator>
+    void copy_range(Range & range, Iterator const & i);
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
