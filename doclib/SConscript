@@ -238,7 +238,8 @@ FOOTER = """<hr style="width:0px;border:none;clear:both;margin:0;padding:0" />
 <div id="footer">
   <span>
     <a href="mailto:senf-dev@lists.berlios.de">Contact: senf-dev@lists.berlios.de</a> |
-    Copyright &copy; 2006 Fraunhofer Gesellschaft, SatCom, Stefan Bund
+    &copy; 2006-2009 <a href="http://www.fokus.fraunhofer.de/en/net/index.html">
+    Fraunhofer Institute for Open Communication Systems, Network Research</a>
   </span>
 </div>
 </body></html>"""

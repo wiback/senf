@@ -1,4 +1,4 @@
-// $Id: main.test.cc 1087 2009-01-28 13:27:42Z g0dil $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institute for Open Communication Systems (FOKUS)

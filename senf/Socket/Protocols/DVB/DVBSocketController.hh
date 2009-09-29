@@ -72,17 +72,20 @@ public:
     senf::DVBDemuxPESHandle createDVBDemuxPESHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
 
     void addToConsole(senf::DVBDemuxSectionHandle sh);
-    ///< Adds an DVBDemuxSectionHandle to the console 
-    /**< Allocates the functionality of DVBDemuxSectionProtocol into the folder 
-         of the DVBSocketController. If the protocol is closed, or all handles are 
-         discarded the console support will automatically removed.
-         \param[in] handle of a protocol*/
+                                        ///< Adds an DVBDemuxSectionHandle to the console 
+                                        /**< Allocates the functionality of DVBDemuxSectionProtocol 
+                                             into the folder of the DVBSocketController. If the 
+                                             protocol is closed, or all handles are discarded the 
+                                             console support will automatically removed.
+                                             \param[in] sh handle of a protocol*/
+    
     void addToConsole(senf::DVBDemuxPESHandle sh);
-    ///< Adds an DVBDemuxPESHandle to the console 
-    /**< Allocates the functionality of DVBDemuxPESProtocol into the folder 
-         of the DVBSocketController. If the protocol is closed, or all handles are 
-         discarded the console support will automatically removed.
-         \param[in] handle of a protocol*/
+                                        ///< Adds an DVBDemuxPESHandle to the console 
+                                        /**< Allocates the functionality of DVBDemuxPESProtocol into
+                                             the folder of the DVBSocketController. If the protocol
+                                             is closed, or all handles are discarded the console 
+                                             support will automatically removed.
+                                             \param[in] sh handle of a protocol*/
     
     void tuneToCMD( const std::string & input, const std::string & mode = "async");
                                         ///< Tunes a DVB device given by the type of the DVBFrontendHandle

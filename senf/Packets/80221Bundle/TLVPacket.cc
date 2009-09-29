@@ -37,9 +37,9 @@ prefix_ senf::safe_data_iterator senf::BaseTLVPacketParser::resizeValueField(
         DynamicTLVLengthParser::value_type size) 
 {
     DynamicTLVLengthParser::value_type current_length ( length());
-    length( size);
+    length_() << size;
 
-    safe_data_iterator si (data(), boost::next(i(), 1 + length_bytes() ));
+    safe_data_iterator si (data(), boost::next(i(), 1 + length_().bytes() ));
     if (current_length > size)
         data().erase( si, boost::next(si, current_length-size));
     else
@@ -199,7 +199,7 @@ prefix_ void senf::DynamicTLVLengthParser::resize(size_type size)
 prefix_ senf::PacketInterpreterBase::range senf::GenericTLVPacketParser::value() 
     const
 {
-    senf::PacketData::iterator begin (boost::next(data().begin(), 1 + length_bytes() ));
+    senf::PacketData::iterator begin (boost::next(data().begin(), 1 + length_().bytes() ));
     return PacketInterpreterBase::range(
             begin, boost::next( begin, length()) );
 }
@@ -214,12 +214,6 @@ prefix_ void senf::GenericTLVPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("length")                    << unsigned( p->length()) << "\n"
        << "  value:\n";
     senf::hexdump( p->value().begin(), p->value().end(), os);
-}
-
-
-prefix_ void senf::GenericTLVPacketType::finalize(packet p)
-{
-    p->finalizeLength();
 }
 
 

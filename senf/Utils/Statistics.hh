@@ -378,8 +378,8 @@ namespace senf {
         statslog.route<senf::StatisticsStream>();
         \endcode
 
-        We use a StatisticsLogger to send the log messages to the senf::StatisticsStream log
-        stream. The stream, area an level to send the statistics log messages to may be configured
+        We use a StatisticsLogger to send the %log messages to the senf::StatisticsStream %log
+        stream. The stream, area an level to send the statistics %log messages to may be configured
         using template arguments to StatisticsLogger.
 
         It is also possible to skip sending the output to any target or send one output to several

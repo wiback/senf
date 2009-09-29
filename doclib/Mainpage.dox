@@ -51,7 +51,7 @@
     \section senfutil_overview Building Projects using SENF
 
     When building projects using %senf, SENFSCons has a very simple helper module 
-    \ref senf_senfutil to make the building of libraries utilizing %senf simpler.
+    \ref senf_senfutil "senfutil.py" to make the building of libraries utilizing %senf simpler.
 
     \see \ref senf_senfutil
 */
@@ -227,10 +227,10 @@
 
     The \c senfutil.Doxygen utility autogenerates a \c Doxyfile.
 
-    The utility will search for a SENF documentation in the \c senfdoc and \c senf subdirectories as
-    well as via the senfutil module directory and some other standard locations. If SENF
-    documentation is found, the SENF tagfiles will automatically be added. Links will be resolved to
-    the documentation found.
+    The utility will search for a SENF documentation in the \c senfdoc and \c %senf subdirectories 
+    as well as via the senfutil module directory and some other standard locations. If SENF
+    documentation is found, the SENF tagfiles will automatically be added. Links will be resolved 
+    to the documentation found.
 
     \c senfutil.Doxygen takes some additional optional keyword arguments:
     \li \c doxyheader: Path of an alternative HTML header
@@ -280,7 +280,6 @@
     \li HTML \c tidy (http://tidy.sourceforge.net/)
     \li The \c xsltproc XSLT processor (http://xmlsoft.org/XSLT/xsltproc2.html)
     \li The \c graphviz library (http://www.graphviz.org)
-
 
     The library is only tested with gcc-3.4 and 4.0 on Linux. On other POSIX platforms with a BSD
     Socket API, the library should be usable, possibly with some tweaking (except for the Scheduler,

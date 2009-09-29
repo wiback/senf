@@ -35,6 +35,11 @@ prefix_ senf::DynamicTLVLengthParser::size_type senf::DynamicTLVLengthParser::by
     return 1 + ( length_field()<=128 ? 0 : fixed_length_field());
 }
 
+prefix_ void senf::GenericTLVPacketType::finalize(packet p)
+{
+    p->finalizeLength();
+}
+
 ///////////////////////////////cci.e////////////////////////////////////////
 #undef prefix_
 

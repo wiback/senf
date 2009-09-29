@@ -87,35 +87,35 @@ prefix_ bool senf::MIHFId::operator<(senf::MIHFId const & other)
 prefix_ std::string senf::MIHFId_TLVParser::asString()
     const
 {
-    return std::string( i(1+length_bytes()), i(1+length_bytes()+length()) );
+    return std::string( i(1+length_().bytes()), i(1+length_().bytes()+length()) );
 }
 
 prefix_ senf::MACAddress senf::MIHFId_TLVParser::asMACAddress()
     const
 {
     return MACAddress::from_data( 
-            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+12) ));
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+12) ));
 }
 
 prefix_ senf::INet4Address senf::MIHFId_TLVParser::asINet4Address()
     const
 {
     return INet4Address::from_data( 
-            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+8) ));
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+8) ));
 }
 
 prefix_ senf::INet6Address senf::MIHFId_TLVParser::asINet6Address()
     const
 {
     return INet6Address::from_data( 
-            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+32) ));
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+32) ));
 }
 
 prefix_ senf::EUI64 senf::MIHFId_TLVParser::asEUI64()
     const
 {
     return EUI64::from_data( 
-            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+16) ));
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+16) ));
 }
 
 ///////////////////////////////cci.e////////////////////////////////////////

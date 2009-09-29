@@ -137,11 +137,7 @@ namespace senf {
         };
         
     protected:
-        /// return size of length field
-        size_type length_bytes() const { return length_().bytes(); };
-        /// set length field to given value
-        void length(DynamicTLVLengthParser::value_type &v) { length_() = v; };
-        /// resize the Packet after the length field to given size
+        /// resize the packet after the length field to given size
         senf::safe_data_iterator resizeValueField(DynamicTLVLengthParser::value_type size);
     };
 
