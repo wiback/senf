@@ -96,7 +96,7 @@ std::string format_eng( float f)
         if( n >=3)
             sprintf( buf, " %3.2fe%+03d", f, n);
         else
-            sprintf( buf, "      %3.2f%", f);
+            sprintf( buf, "      %3.2f", f);
     }
     else if (f < 0) {
         int n = 0;
@@ -107,7 +107,7 @@ std::string format_eng( float f)
         if( n >=3)
             sprintf( buf, " %3.2fe%+03d", f, n);
         else
-            sprintf( buf, "      %3.2f%", f);
+            sprintf( buf, "      %3.2f", f);
     }
     else{
         sprintf( buf, "        0.00");
