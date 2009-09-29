@@ -212,5 +212,8 @@ for target in COMMAND_LINE_TARGETS:
         cwd=env.GetLaunchDir()
         home=os.environ['HOME']+'/'
         if cwd.startswith(home) : cwd = cwd[len(home):]
+        args = [ '$SCONSARGS' ]
+        if env.GetLaunchDir() != os.getcwd():
+            args.append('-u')
         env.PhonyTarget(target, [], [ "ssh $HOST scons $SCONSARGS -C $DIR $RTARGET" ],
-                        HOST=host, RTARGET=realtarget, DIR=cwd)
+                        HOST=host, RTARGET=realtarget, DIR=cwd, SCONSARGS=args)
