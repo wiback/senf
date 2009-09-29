@@ -27,6 +27,7 @@
 //#include "Statistics.ih"
 
 // Custom includes
+#include <cmath>
 #include <sstream>
 #include <senf/Utils/Console/Console.hh>
 #include "StatisticsTargets.hh"
@@ -38,11 +39,12 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::StatisticsBase
 
-prefix_ void senf::StatisticsBase::enter(float min, float avg, float max)
+prefix_ void senf::StatisticsBase::enter(float min, float avg, float max, float dev)
 {
     min_ = min;
     avg_ = avg;
     max_ = max;
+    dev_ = dev;
     generateOutput();
     signalChildren();
 }
@@ -120,16 +122,22 @@ std::string format_eng( float f)
 prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os)
     const
 {
-    os << boost::format("%s%-5d%|15t|  %12s  %12s  %12s\n") 
-        % std::string(2*level,' ') % rank() % format_eng(min()) % format_eng(avg()) % format_eng(max());
+    os << boost::format("%s%-5d%|15t|  %12s  %12s+/-%12s  %12s\n") 
+        % std::string(2*level,' ') 
+        % rank() 
+        % format_eng(min()) 
+        % format_eng(avg()) 
+        % format_eng(dev())
+        % format_eng(max());
     {
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
         for (; i != i_end; ++i)
-            os << boost::format("            %3d  %12s  %12s  %12s\n")
+            os << boost::format("            %3d  %12s  %12s+/-%12s  %12s\n")
                 % i->second.n 
                 % format_eng(i->second.min/i->second.n) 
                 % format_eng(i->second.avg/i->second.n)
+                % format_eng(i->second.dev/i->second.n)
                 % format_eng(i->second.max/i->second.n);
     }
     {
@@ -142,14 +150,14 @@ prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os
 
 prefix_ void senf::StatisticsBase::generateOutput()
 {
-    queue_.push_front(QueueEntry(min_, avg_, max_));
+    queue_.push_front(QueueEntry(min_, avg_, max_, dev_));
     while (queue_.size() > maxQueueLen_)
         queue_.pop_back();
 
     OutputMap::iterator i (outputs_.begin());
     OutputMap::iterator const i_end (outputs_.end());
     for (; i != i_end; ++i) {
-        i->second.min = i->second.avg = i->second.max = 0.0f;
+        i->second.min = i->second.avg = i->second.max = i->second.dev = 0.0f;
         Queue::const_iterator j (queue_.begin());
         Queue::const_iterator const j_end (queue_.end());
         unsigned n (0);
@@ -157,8 +165,9 @@ prefix_ void senf::StatisticsBase::generateOutput()
             i->second.min += j->min;
             i->second.avg += j->avg;
             i->second.max += j->max;
+            i->second.dev += j->dev;
         }
-        i->second.signal(i->second.min/n, i->second.avg/n, i->second.max/n);
+        i->second.signal(i->second.min/n, i->second.avg/n, i->second.max/n, i->second.dev/n);
     }
 }
 
@@ -167,7 +176,7 @@ prefix_ void senf::StatisticsBase::signalChildren()
     Children::iterator i (children_.begin());
     Children::iterator const i_end  (children_.end());
     for (; i != i_end; ++i)
-        i->second.enter(min_, avg_, max_);
+        i->second.enter(min_, avg_, max_, dev_);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -188,6 +197,7 @@ prefix_ senf::Statistics::Statistics()
              "    WIN     Size of output average window.\n"
              "    MIN     Last entered minimum value.\n"
              "    AVG     Last entered average value.\n"
+             "    DEV     Standard deviation of average value over the collector rank.\n"
              "    MAX     Last entered maximum value.");
     dir.add("collect", &Statistics::consoleCollect)
         .doc("Add statistics collection groups. The argument gives a sequence of collector\n"
@@ -235,7 +245,7 @@ prefix_ senf::Statistics::Statistics()
 
 prefix_ void senf::Statistics::consoleList(std::ostream & os)
 {
-    os << "RANK        WIN           MIN           AVG           MAX\n";
+    os << "RANK        WIN           MIN           AVG            DEV           MAX\n";
     StatisticsBase::consoleList(0, os);
 }
 
@@ -289,16 +299,22 @@ prefix_ std::string senf::Statistics::v_path()
 ///////////////////////////////////////////////////////////////////////////
 // senf::Collector
 
-prefix_ void senf::Collector::enter(float min, float avg, float max)
+prefix_ void senf::Collector::enter(float min, float avg, float max, float dev)
 {
-    accAvg_ += avg;
+    accSum_ += avg;
+    accSumSq_ += avg*avg + dev*dev;
     if (min < accMin_) accMin_ = min;
     if (max > accMax_) accMax_ = max;
+    std::cerr << "! " << i_ << ' ' << avg << ' ' << dev << ' ' << accSum_ << ' ' << accSumSq_ 
+              << std::endl;
     if (++i_ >= rank_) {
-        StatisticsBase::enter(accMin_, accAvg_ / i_, accMax_);
+        float accAvg (accSum_ / i_);
+        float accDev (std::sqrt(accSumSq_ / i_ - accAvg*accAvg));
+        StatisticsBase::enter(accMin_, accAvg, accMax_, accDev);
         i_ = 0;
         accMin_ = FLT_MAX;
-        accAvg_ = 0.0f;
+        accSum_ = 0.0f;
+        accSumSq_ = 0.0f;
         accMax_ = -FLT_MAX;
     }
 }

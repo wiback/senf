@@ -111,7 +111,7 @@ namespace senf {
             // Function object
             struct Collector
             {
-                void operator()(float min, float avg, float max) 
+                void operator()(float min, float avg, float max, float dev) 
                     { ... }
             };
             \endcode
@@ -153,6 +153,7 @@ namespace senf {
         float min() const;              ///< Last min value entered
         float avg() const;              ///< Last avg value entered
         float max() const;              ///< Last max value entered
+        float dev() const;              ///< Last dev value entered
 
         virtual unsigned rank() const;  ///< Return collectors rank value
                                         /**< \returns number of basic values collected into each new
@@ -227,7 +228,7 @@ namespace senf {
     protected:
         StatisticsBase();
         virtual ~StatisticsBase();
-        void enter(float min, float avg, float max);
+        void enter(float min, float avg, float max, float dev);
 
     private:
         virtual Statistics & v_base() = 0;
@@ -239,15 +240,17 @@ namespace senf {
         float min_;
         float avg_;
         float max_;
+        float dev_;
         Children children_;
         
         struct QueueEntry {
             float min;
             float avg;
             float max;
-            QueueEntry() : min(), avg(), max() {}
-            QueueEntry(float min_, float avg_, float max_)
-                : min(min_), avg(avg_), max(max_) {}
+            float dev;
+            QueueEntry() : min(), avg(), max(), dev() {}
+            QueueEntry(float min_, float avg_, float max_, float dev_)
+                : min(min_), avg(avg_), max(max_), dev(dev_) {}
         };
         typedef std::deque<QueueEntry> Queue;
         Queue queue_;
@@ -282,8 +285,9 @@ namespace senf {
             float min;
             float avg;
             float max;
+            float dev;
 
-            boost::signal<void(float,float,float)> signal;
+            boost::signal<void(float,float,float,float)> signal;
             boost::ptr_vector<TargetBase> targets_;
 
             senf::console::ScopedDirectory<> dir;
@@ -416,7 +420,7 @@ namespace senf {
 
         Statistics();
 
-        void operator()(float min, float avg, float max);
+        void operator()(float min, float avg, float max, float dev=0.0f);
                                         ///< Enter new data
                                         /**< This member must be called whenever a new data value is
                                              available. It is important to call this member \e
@@ -429,9 +433,11 @@ namespace senf {
 
                                              \param[in] min minimal data value since last call
                                              \param[in] avg average data value since last call
-                                             \param[in] max maximal data values since last call */
+                                             \param[in] max maximal data values since last call
+                                             \param[in] dev standard deviation of avg value */
 
-        void operator()(float value);   ///< Same as enter() with \a min == \a avg == \a max
+        void operator()(float value, float dev=0.0f); 
+                                        ///< Same as enter() with \a min == \a avg == \a max
                                         /**< Provided so a Statistics instance can be directly used
                                              as a signal target. */
 
@@ -463,14 +469,15 @@ namespace senf {
         
     private:
         Collector(StatisticsBase * owner, unsigned rank);
-        void enter(float min, float avg, float max);
+        void enter(float min, float avg, float max, float dev);
         Statistics & v_base();
         std::string v_path() const;
 
         unsigned rank_;
         unsigned i_;
         float accMin_;
-        float accAvg_;
+        float accSum_;
+        float accSumSq_;
         float accMax_;
         StatisticsBase * owner_;
 
