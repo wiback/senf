@@ -31,10 +31,18 @@ linklint       Check links of doxygen documentation with 'linklint'
 fixlinks       Fix broken links in doxygen documentation
 all_valgrinds  Run all tests under valgrind/memcheck
 lcov           Generate test coverage output in doc/lcov and lcov.info
+
+You may execute targets on a remote host (if the directory layout is the same)
+by calling
+
+    scons <target>@[<user>@]<host>
 """)
 
 env.Append(
-   ENV                    = { 'PATH' : os.environ.get('PATH'), 'HOME' : os.environ.get('HOME') },
+   ENV                    = { 'PATH' : os.environ.get('PATH'), 
+                              'HOME' : os.environ.get('HOME'),
+                              'SSH_AGENT_PID': os.environ.get('SSH_AGENT_PID'),
+                              'SSH_AUTH_SOCK': os.environ.get('SSH_AUTH_SOCK') },
    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
 
    BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
@@ -92,7 +100,8 @@ env.SetDefault(
     LCOV              = "lcov",
     GENHTML           = "genhtml",
     SCONSBIN          = env.File("#/tools/scons"),
-    SCONS             = "@$SCONSBIN -Q -j$CONCURRENCY_LEVEL",
+    SCONSARGS          = [ '-Q', '-j$CONCURRENCY_LEVEL', 'debug=$debug', 'final=$final' ],
+    SCONS             = "@$SCONSBIN $SCONSARGS",
     CONCURRENCY_LEVEL = env.GetOption('num_jobs') or 1,
     TOPDIR            = env.Dir('#').abspath,
     LIBADDSUFFIX      = '${FLAVOR and "_$FLAVOR" or ""}',
@@ -195,3 +204,13 @@ if env.GetOption('clean') and 'all' in BUILD_TARGETS:
 
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp"):
     Execute(Touch(".prepare-stamp"))
+
+### execute targets on remote hosts
+for target in COMMAND_LINE_TARGETS:
+    if '@' in target:
+        realtarget, host = target.split('@',1)
+        cwd=env.GetLaunchDir()
+        home=os.environ['HOME']+'/'
+        if cwd.startswith(home) : cwd = cwd[len(home):]
+        env.PhonyTarget(target, [], [ "ssh $HOST scons $SCONSARGS -C $DIR $RTARGET" ],
+                        HOST=host, RTARGET=realtarget, DIR=cwd)

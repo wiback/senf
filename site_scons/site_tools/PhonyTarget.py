@@ -1,6 +1,6 @@
 
-def PhonyTarget(env, target, source = None, action = None):
-    return env.AlwaysBuild(env.Alias(target, source, env.Action(action)))
+def PhonyTarget(env, target, source = None, action = None, **kw):
+    return env.AlwaysBuild(env.Alias(target, source, env.Action(action), **kw))
 
 def generate(env):
     env['BUILDERS']['PhonyTarget'] = PhonyTarget
