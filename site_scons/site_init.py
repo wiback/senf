@@ -43,7 +43,7 @@ if os.path.dirname(os.path.dirname(os.path.abspath(SCons.__file__))) != sconseng
     cdir = os.path.normpath(cdir)
     if cdir.startswith('../'):
         SCons.Util.display("scons: WARNING: failed to undo -C option")
-    elif cdir != '.':
+    elif cdir != '.' and not cdir.startswith('/'):
         os.chdir('/'.join(('..' for _ in cdir.split('/'))))
     os.environ['SCONS_LIB_DIR'] = sconsengine
     os.execv(sconsscript, sys.argv)
