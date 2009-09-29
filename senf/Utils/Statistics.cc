@@ -83,26 +83,31 @@ senf::StatisticsBase::output(unsigned n)
 //
 // generate an engineering style notation 
 //
-char *format_eng( float f)
+std::string format_eng( float f)
 {
-    static char buf[16];
+    char buf[16];
     if (f > 0) {
         int n = 0;
         while( f >= 1000.0f) {
-                f /= 1000.f;
+                f /= 1000.0f;
                 n+=3;
         }
 
-        sprintf( buf, " %3.2fe%+03d", f, n);
+        if( n >=3)
+            sprintf( buf, " %3.2fe%+03d", f, n);
+        else
+            sprintf( buf, "      %3.2f%", f);
     }
     else if (f < 0) {
         int n = 0;
         while( f <= -1000.0f) {
-                f *= 1000.f;
+                f *= 1000.0f;
                 n+=3;
         }
-
-        sprintf( buf, "%3.2fe%+03d", f, n);
+        if( n >=3)
+            sprintf( buf, " %3.2fe%+03d", f, n);
+        else
+            sprintf( buf, "      %3.2f%", f);
     }
     else{
         sprintf( buf, "        0.00");
