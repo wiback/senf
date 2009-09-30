@@ -305,8 +305,6 @@ prefix_ void senf::Collector::enter(float min, float avg, float max, float dev)
     accSumSq_ += avg*avg + dev*dev;
     if (min < accMin_) accMin_ = min;
     if (max > accMax_) accMax_ = max;
-//    std::cerr << "! " << i_ << ' ' << avg << ' ' << dev << ' ' << accSum_ << ' ' << accSumSq_ 
-//              << std::endl;
     if (++i_ >= rank_) {
         float accAvg (accSum_ / i_);
         float accDev (std::sqrt(accSumSq_ / i_ - accAvg*accAvg));
