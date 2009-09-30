@@ -272,7 +272,7 @@ prefix_ void senf::Collector::enter(float min, float avg, float max, float dev)
     if (max > accMax_) accMax_ = max;
     if (++i_ >= rank_) {
         float accAvg (accSum_ / i_);
-        float accDev (std::sqrt(accSumSq_ / i_ - accAvg*accAvg));
+        float accDev (std::max(0.0f,std::sqrt(accSumSq_ / i_ - accAvg*accAvg)));
         StatisticsBase::enter(accMin_, accAvg, accMax_, accDev);
         i_ = 0;
         accMin_ = FLT_MAX;
