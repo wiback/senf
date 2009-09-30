@@ -122,7 +122,7 @@ std::string format_eng( float f)
 prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os)
     const
 {
-    os << boost::format("%s%-5d%|15t|  %12s  %12s+/-%12s  %12s\n") 
+    os << boost::format("%s%-5d%|15t|  %12s  %12s   %12s  %12s\n") 
         % std::string(2*level,' ') 
         % rank() 
         % format_eng(min()) 
@@ -133,7 +133,7 @@ prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
         for (; i != i_end; ++i)
-            os << boost::format("            %3d  %12s  %12s+/-%12s  %12s\n")
+            os << boost::format("            %3d  %12s  %12s   %12s  %12s\n")
                 % i->second.n 
                 % format_eng(i->second.min/i->second.n) 
                 % format_eng(i->second.avg/i->second.n)
