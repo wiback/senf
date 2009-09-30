@@ -30,6 +30,7 @@
 #include "LlcSnapPacket.hh"
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
+#include <senf/Utils/Format.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -53,7 +54,7 @@ prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
     os <<     ": \n"
        << senf::fieldName("destination")               << p->destination() << "\n"
        << senf::fieldName("source")                    << p->source() << "\n"
-       << senf::fieldName("type/length")               << senf::prettyNumber(p->type_length().value()) << "\n";
+       << senf::fieldName("type/length")               << senf::format::dumpint(p->type_length().value()) << "\n";
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPacketType(packet p)

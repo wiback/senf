@@ -21,31 +21,30 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DumpFormat non-inline template implementation  */
+    \brief Format inline template implementation */
 
-#include "DumpFormat.ih"
+#include "Format.ih"
 
 // Custom includes
-#include <sstream>
 
-#define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
 template <class T>
 prefix_ std::string 
-senf::prettyNumber(T const & v, typename boost::enable_if<boost::is_signed<T> >::type *)
+senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_signed<T> >::type *)
 { 
-   return detail::prettySignedNumber(v, std::numeric_limits<T>::digits);
+   return detail::dumpintSigned(v, std::numeric_limits<T>::digits);
 }
 
 template <class T>
 prefix_ std::string
-senf::prettyNumber(T const & v, typename boost::enable_if<boost::is_unsigned<T> >::type *)
+senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_unsigned<T> >::type *)
 {
-   return detail::prettyUnsignedNumber(v, std::numeric_limits<T>::digits); 
+   return detail::dumpintUnsigned(v, std::numeric_limits<T>::digits); 
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

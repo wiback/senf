@@ -31,6 +31,7 @@
 #include <iomanip>
 #include <cmath>
 #include <senf/Utils/TypeInfo.hh>
+#include <senf/Utils/Format.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -169,7 +170,7 @@ prefix_ void senf::detail::DumpKey<KeyType,is_integral>::dump(KeyType const & v,
 template <class KeyType>
 prefix_ void senf::detail::DumpKey<KeyType, true>::dump(KeyType const & v, std::ostream & os)
 {
-    os << "  " << senf::prettyNumber(v);
+    os << "  " << senf::format::dumpint(v);
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

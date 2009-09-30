@@ -21,28 +21,20 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DumpFormat.test unit tests */
+    \brief Format inline non-template implementation */
 
-//#include "DumpFormat.test.hh"
-//#include "DumpFormat.test.ih"
+#include "Format.ih"
 
 // Custom includes
-#include "Packets.hh"
 
-#include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+prefix_ senf::format::eng::eng(double v_, double d_)
+    : v (v_), d (d_)
+{}
 
-BOOST_AUTO_UNIT_TEST(dumpFormat)
-{
-    BOOST_CHECK_EQUAL( senf::fieldName("test"), "  test                    : " );
-    BOOST_CHECK_EQUAL( senf::fieldName("xxxxxxxxxxxxxxxxxxxxxxx"), "  xxxxxxxxxxxxxxxxxxxxxxx : " );
-    BOOST_CHECK_EQUAL( senf::fieldName("xxxxxxxxxxxxxxxxxxxxxxxx"), "  xxxxxxxxxxxxxxxxxxxxxxxx : " );
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
 

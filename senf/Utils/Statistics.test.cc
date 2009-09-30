@@ -50,7 +50,6 @@ namespace {
             { return arg.rank(); }
     };
 
-
     struct splitFloats
     {
         typedef boost::char_separator<char> Separator;
@@ -72,8 +71,10 @@ namespace {
         typedef TransformIterator const_iterator;
         
         splitFloats(std::string const & s) : s_ (s), sep_ (" \n"), tok_ (s_, sep_) {}
-        TransformIterator begin() const { return TransformIterator(FilterIterator(tok_.begin())); }
-        TransformIterator end() const { return TransformIterator(FilterIterator(tok_.end())); }
+        TransformIterator begin() const 
+            { return TransformIterator(FilterIterator(tok_.begin(), tok_.end())); }
+        TransformIterator end() const 
+            { return TransformIterator(FilterIterator(tok_.end(), tok_.end())); }
 
         std::string s_;
         Separator sep_;

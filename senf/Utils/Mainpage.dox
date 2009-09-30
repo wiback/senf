@@ -114,6 +114,9 @@ namespace senf {
     by the GNU libc</td></tr>
 
     <tr><td>signalName()</td><td>convert signal number to string representation</td></tr>
+
+    <tr><td>\ref senf_utils_format</td><td>\c iostream formating helpers for extended
+    formats</td></tr>
     </table>
 
 

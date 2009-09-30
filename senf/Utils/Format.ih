@@ -21,22 +21,23 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DumpFormat internal header */
+    \brief Format internal header */
 
-#ifndef IH_SENF_senf_Packets_DumpFormat_
-#define IH_SENF_senf_Packets_DumpFormat_ 1
+#ifndef IH_SENF_senf_Utils_Format_
+#define IH_SENF_senf_Utils_Format_ 1
 
 // Custom includes
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
+namespace format {
 namespace detail {
 
-    std::string prettySignedNumber(long long v, unsigned bits);
-    std::string prettyUnsignedNumber(unsigned long long v, unsigned bits, int sign=0);
+    std::string dumpintSigned(long long v, unsigned bits);
+    std::string dumpintUnsigned(unsigned long long v, unsigned bits, int sign=0);
 
-}}
+}}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif

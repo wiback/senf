@@ -42,13 +42,6 @@ namespace senf {
 
     std::string fieldName(std::string const & s);
     
-    template <class T> 
-    std::string prettyNumber(T const & v, 
-                             typename boost::enable_if<boost::is_signed<T> >::type * = 0);
-
-    template <class T> 
-    std::string prettyNumber(T const & v, 
-                             typename boost::enable_if<boost::is_unsigned<T> >::type * = 0);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -56,7 +49,7 @@ namespace senf {
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_DumpFormat_i_)
 #define HH_SENF_Packets_DumpFormat_i_
 //#include "DumpFormat.cci"
-#include "DumpFormat.ct"
+//#include "DumpFormat.ct"
 //#include "DumpFormat.cti"
 #endif
 

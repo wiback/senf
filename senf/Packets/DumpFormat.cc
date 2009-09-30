@@ -24,7 +24,7 @@
     \brief DumpFormat non-inline non-template implementation */
 
 #include "Packets.hh"
-#include "DumpFormat.ih"
+//#include "DumpFormat.ih"
 
 // Custom includes
 #include <iostream>
@@ -45,36 +45,6 @@ prefix_ std::string senf::fieldName(std::string const & s)
     t[t.size()-2] = ':';
     return t;
 }
-
-prefix_ std::string senf::detail::prettySignedNumber(long long v, unsigned bits)
-{
-    if (v<0) return prettyUnsignedNumber(-v,bits,-1);
-    else     return prettyUnsignedNumber(v,bits,+1);
-}
-
-prefix_ std::string senf::detail::prettyUnsignedNumber(unsigned long long v, unsigned bits,
-                                                       int sign)
-{
-    int bytes ((bits+7)/8);
-    int digs (int(2.4*bytes)+1);
-    std::stringstream ss;
-    ss << (sign ? (sign<0 ? "-" : " ") : "") 
-       << "0x" << std::setw(2*bytes) << std::setfill('0') << std::hex 
-       << 1u*v
-       << " (" << std::setw(digs+(sign ? 1 : 0)) << std::setfill(' ') << std::dec;
-    if (sign)
-        ss << sign*static_cast<long long>(v);
-    else
-        ss << 1u*v;
-    ss << ") (";
-    for (int i (bytes-1); i>=0; --i) {
-        char c ((v>>(8*i))&0xff);
-        ss << ((c>=32 && c<=127) ? c : '.');
-    }
-    ss << ')';
-    return ss.str();
-}
-
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
