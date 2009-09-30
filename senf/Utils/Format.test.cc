@@ -31,6 +31,7 @@
 #include <iomanip>
 #include "Format.hh"
 #include <boost/cstdint.hpp>
+#include "String.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -112,6 +113,23 @@ BOOST_AUTO_UNIT_TEST(formatEng)
         ss << std::showbase << senf::format::eng(12345,67);
         BOOST_CHECK_EQUAL( ss.str(), "12.345+-0.067k" );
     }
+
+    // class member formatting
+    BOOST_CHECK_EQUAL( senf::str(senf::format::eng(12345, 67)
+                                 .setw()
+                                 .setprecision(5)
+                                 .setfill('0')
+                                 .showbase()
+                                 .showpos()
+                                 .internal()),
+                       "+012.35+-000.07k" );
+
+    BOOST_CHECK_EQUAL( senf::str(senf::format::eng(12.345, 67)
+                                 .setw()
+                                 .setprecision(5)
+                                 .showpoint()
+                                 .uppercase()),
+                       "  12.35+-067.00E+00" );
 }
 
 BOOST_AUTO_UNIT_TEST(dumpint)

@@ -92,7 +92,7 @@ prefix_ void senf::StatisticsBase::OutputEntry::consoleList(std::ostream & os)
 // senf::StatisticsBase
 
 prefix_ senf::StatisticsBase::StatisticsBase()
-    : min_ (0.0f), avg_ (0.0f), max_ (0.0f), maxQueueLen_ (0u)
+    : min_ (0.0f), avg_ (0.0f), max_ (0.0f), dev_ (0.0f), maxQueueLen_ (0u)
 {}
 
 prefix_ senf::StatisticsBase::~StatisticsBase()

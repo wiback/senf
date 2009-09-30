@@ -86,22 +86,20 @@ senf::StatisticsBase::output(unsigned n)
 prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os)
     const
 {
-    os << boost::format("%s%-5d%|15t|  %12s  %19.5g  %12s\n") 
-        % std::string(2*level,' ') 
-        % rank() 
-        % boost::io::group(std::setw(1),senf::format::eng(min()))
-        % boost::io::group(std::setw(1),senf::format::eng(avg(),dev()))
-        % boost::io::group(std::setw(1),senf::format::eng(max()));
+    namespace fmt = senf::format;
+
+    os << boost::format("%s%-5d%|15t|  %12.5g  %19.5g  %12.5g\n") 
+        % std::string(2*level,' ') % rank() 
+        % fmt::eng(min()).setw() % fmt::eng(avg(),dev()).setw() % fmt::eng(max()).setw();
     {
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
         for (; i != i_end; ++i)
-            os << boost::format("            %3d  %12s  %19.5g  %12s\n")
+            os << boost::format("            %3d  %12.5g  %19.5g  %12.5g\n")
                 % i->second.n 
-                % boost::io::group(std::setw(1),senf::format::eng(i->second.min/i->second.n))
-                % boost::io::group(std::setw(1),senf::format::eng(i->second.avg/i->second.n,
-                                                                  i->second.dev/i->second.n))
-                % boost::io::group(std::setw(1),senf::format::eng(i->second.max/i->second.n));
+                % fmt::eng(i->second.min).setw() 
+                % fmt::eng(i->second.avg, i->second.dev).setw() 
+                % fmt::eng(i->second.max).setw();
     }
     {
         Children::const_iterator i (children_.begin());
@@ -130,7 +128,11 @@ prefix_ void senf::StatisticsBase::generateOutput()
             i->second.max += j->max;
             i->second.dev += j->dev;
         }
-        i->second.signal(i->second.min/n, i->second.avg/n, i->second.max/n, i->second.dev/n);
+        i->second.min /= n;
+        i->second.avg /= n;
+        i->second.max /= n;
+        i->second.dev /= n;
+        i->second.signal(i->second.min, i->second.avg, i->second.max, i->second.dev);
     }
 }
 
@@ -208,7 +210,7 @@ prefix_ senf::Statistics::Statistics()
 
 prefix_ void senf::Statistics::consoleList(std::ostream & os)
 {
-    os << "RANK        WIN           MIN                  AVG           MAX\n";
+    os << "RANK        WIN       MIN          AVG                   MAX\n";
     StatisticsBase::consoleList(0, os);
 }
 

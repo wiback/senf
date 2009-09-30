@@ -50,20 +50,29 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
     boost::io::ios_base_all_saver ibas (os);
     boost::io::ios_fill_saver ifs (os);
 
+    os.setf(v_.flags_, v_.mask_);
+    if (v_.havePrecision_)
+        os.precision(v_.precision_);
+    if (v_.haveWidth_)
+        os.width(v_.width_);
+    if (v_.haveFill_)
+        os.fill(v_.fill_);
+
     unsigned prec (os.precision());
     if (prec < 4) 
         prec = 4;
     unsigned w (os.width());
     char fill (os.fill());
     unsigned minw (prec+2+((os.flags() & std::ios_base::showbase) ? 1 : 4));
-    std::ios_base::fmtflags align (os.flags() & std::ios_base::adjustfield);
-    if (! std::isnan(v_.d))
+    std::ios_base::fmtflags flags (os.flags());
+    std::ios_base::fmtflags align (flags & std::ios_base::adjustfield);
+    if (! std::isnan(v_.d_))
         minw += prec+3;
     
-    double ref (std::fabs(v_.v));
-    double v (v_.v);
-    double d (0.0);
-    if (! std::isnan(v_.d)) d = std::fabs(v_.d);
+    float ref (std::fabs(v_.v_));
+    float v (v_.v_);
+    float d (0.0);
+    if (! std::isnan(v_.d_)) d = std::fabs(v_.d_);
     int scale (0);
 
     if (d > ref) ref = d;
@@ -82,9 +91,8 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
 
     os << std::dec << std::setprecision(prec-3) << std::fixed;
     if (w > 0) {
-        if ((align == 0 || align == std::ios_base::right || align == std::ios_base::internal) 
-            && w > minw)
-            os << std::setw(prec+2+w-minw);
+        if ((align == 0 || align == std::ios_base::right || align == std::ios_base::internal))
+            os << std::setw(prec+2+(w>minw ? w-minw : 0));
         else 
             os << std::right << std::setfill(' ') << std::setw(prec+2);
     }
@@ -93,19 +101,19 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
     os << v;
 
     os << std::setfill('0') << std::noshowpos;
-    if (! std::isnan(v_.d)) {
+    if (! std::isnan(v_.d_)) {
         os << "+-";
         if (w > 0)
             os << std::setw(prec+1);
         os << d;
     }
 
-    if ((os.flags() & std::ios_base::showbase) && unsigned(std::abs(scale/3)) <= SIScales) {
+    if ((flags & std::ios_base::showbase) && unsigned(std::abs(scale/3)) <= SIScales) {
         if (w > 0 || scale != 0)
             os << SIPrefix[scale/3+SIScales];
     }
-    else if ((os.flags() & std::ios_base::showpoint) || scale != 0)
-        os << ((os.flags() & std::ios_base::uppercase)?'E':'e') 
+    else if ((flags & std::ios_base::showpoint) || scale != 0)
+        os << ((flags & std::ios_base::uppercase)?'E':'e') 
            << std::showpos << std::internal << std::setw(3) << scale;
     else if (w > 0)
         os << "    ";

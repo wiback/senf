@@ -59,47 +59,60 @@ namespace format {
         </pre>
 
         senf::format::eng supports several formating options:
-        \par \c std::setw()
+        \par \c std::\c setw
             If the width is set >0, the output will be padded internally. If the width is set to
             more than the minimal required output width including internal padding, the output is
             padded on the left or right depending on the streams \c ajustfield setting (changed
             with \c std::left, \c std:;right or \c std::interal). If the \c adjustfield is set to \c
             internal, padding is added between the sign and the number.
 
-        \par \c std::\c setprecision()
+        \par \c std::\c setprecision
             The default stream precision is 6. This will schow values with 6 significant digits. The
             count includes the number of digits in front of the decimal point.
 
-        \par \c std::\c showbase
+        \par \c std::\c showbase, \c std::\c noshowbase
             If the \c showbase flag is set, Instead of writing out the scale exponent in numeric
             form, output the corresponding SI prefix.
 
-        \par \c std::\c showpos
+        \par \c std::\c showpos, \c std::\c noshowpos
             If the \c showpos flag is set, positive values will have a '+' sign.
 
-        \par \c std::\c showpoint
+        \par \c std::\c showpoint, \c std::\c noshowpoint
             If the \c showpoint flag is set, the exponent will be output even if it is 0. Otherwise,
             if \c width is set, the exponent will be replaced with 4 blanks.
         
-        \par \c std::\c uppercase
+        \par \c std::\c uppercase, \c std::\c nouppercase
             If the \c uppercase flag is set, the exponent letter will be an uppercase 'E' instead of
             'e'. SI prefixes are \e not uppercased, since some SI prefixes differ only in case.
 
-        \par \c std::\c setfill()
+        \par \c std::\c setfill
             The fill character is honored for the outside padding but \e not for the internal
             padding.
 
+        \par \c std::\c left, \c std::\c internal, \c std::\c right
+            The alignment flags specify the external padding but do not affect the internal
+            padding.
+
+        All these flags may optionally be set by calling members of the senf::format::eng() return
+        value with the same name.
+
         Examples:
         \code
-            os << senf::format::eng(1.23);
-              -> "1.230"
-            os << std::setw(1) << senf::format::eng(1.23);
-              -> "   1.230    "
-            os << std::setw(25) << std::setprecision(5) << std::showpos << std::uppercase 
-               << std::internal << senf::format::eng(12345,67);
-              -> "+       12.35+-000.07E+03"
-            os << std::showbase << senf::format::eng(12345,67);
-              -> "12.345+-0.067k"
+        os << senf::format::eng(1.23);
+          -> "1.230"
+
+        os << std::setw(1) << senf::format::eng(1.23);
+          -> "   1.230    "
+
+        os << std::setw(25) << std::setprecision(5) << std::showpos << std::uppercase 
+           << std::internal << senf::format::eng(12345,67);
+          -> "+       12.35+-000.07E+03"
+
+        os << std::showbase << senf::format::eng(12345,67);
+          -> "12.345+-0.067k"
+
+        senf::str(senf::format::eng(12.345,67).setw().setprecision(5).showpoint().uppercase())
+          -> "  12.35+-67.00E+00"
         \endcode
         
         \param[in] v value
@@ -107,16 +120,46 @@ namespace format {
 
         \ingroup senf_utils_format
      */
-    streamable_type eng(double v, double d=NAN);
+    streamable_type eng(float v, float d=NAN);
 
 #else
 
-    struct eng
+    class eng
     {
-        eng(double v_, double d_ = std::numeric_limits<double>::quiet_NaN());
+    public:
+        eng(float v, float d = std::numeric_limits<float>::quiet_NaN());
 
-        double v;
-        double d;
+        eng const & setw(unsigned w = 1) const;
+        eng const & setprecision(unsigned p) const;
+        eng const & setfill(char c) const;
+
+        eng const & showbase() const;
+        eng const & noshowbase() const;
+        eng const & showpos() const;
+        eng const & noshowpos() const;
+        eng const & showpoint() const;
+        eng const & noshowpoint() const;
+        eng const & uppercase() const;
+        eng const & nouppercase() const;
+        eng const & left() const;
+        eng const & internal() const;
+        eng const & right() const;
+
+    private:
+        float v_;
+        float d_;
+        
+        mutable bool haveWidth_;
+        mutable unsigned width_;
+        mutable bool havePrecision_;
+        mutable unsigned precision_;
+        mutable bool haveFill_;
+        mutable char fill_;
+        mutable std::ios_base::fmtflags mask_;
+        mutable std::ios_base::fmtflags flags_;
+
+        friend std::ostream & operator<<(std::ostream & os, eng const & v);
+
     };
 
     std::ostream & operator<<(std::ostream & os, eng const & v);
