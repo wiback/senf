@@ -26,7 +26,6 @@
 //#include "IPv6ExtOptionType.ih"
 
 // Custom includes
-#include <senf/Utils/hexdump.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -38,7 +37,8 @@ prefix_ void senf::IPv6GenericOptionTLVParser::value(ForwardReadableRange const 
     
     if ( (rangeSize-2) != optionLength() )
         resize(optionLength()+2, rangeSize);
-    std::copy(boost::next(boost::begin(range), 2), boost::next(boost::end(range)), boost::next(i(), 2 + optionLength() ));
+    std::copy(boost::next(boost::begin(range), 2), boost::next(boost::end(range)), 
+            boost::next(i(), 2 + optionLength() ));
     unsigned int val = *(boost::begin(range));
     unsigned int mask = 192u;
     altAction() = (val & mask) >> 6;
@@ -59,7 +59,6 @@ prefix_ void senf::IPv6GenericOptionTLVParser::setPayload(ForwardReadableRange c
     optionLength() = rangeSize;
 }
 
-
 template <class Parser>
 prefix_ Parser senf::IPv6GenericOptionTLVParser::init()
 {  
@@ -73,13 +72,11 @@ prefix_ Parser senf::IPv6GenericOptionTLVParser::init()
     return concreteParser;
 }
 
-
-// template <class Parser>
-// prefix_ Parser& senf::GenericOptTypeTLVParser::get()
-// {
-//     SENF_ASSERT (optionType() == typeCode);
-//     return *(this);
-// }
+template <class Parser>
+prefix_ Parser senf::IPv6GenericOptionTLVParser::as()
+{
+    return Parser(i(), state() );
+}
 
 
 ///////////////////////////////ct.e////////////////////////////////////////

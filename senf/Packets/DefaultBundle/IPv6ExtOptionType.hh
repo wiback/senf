@@ -57,8 +57,8 @@ namespace senf {
         template <class Parser>
         Parser init();
 
-    //     template <class Parser>
-    //     Parser& get();
+        template <class Parser>
+        Parser as();
 
         static const unsigned int typeCode = 7u;
 

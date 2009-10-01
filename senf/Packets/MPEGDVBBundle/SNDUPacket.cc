@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <iomanip>
-#include <senf/Utils/hexdump.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 
@@ -84,12 +83,12 @@ prefix_ void senf::SNDUPacketType::dump(packet p, std::ostream & os)
 {
     os << "SNDUPacket:\n"
        << std::dec
-       << senf::fieldName("d_bit")                     << p->d_bit() << "\n"
-       << senf::fieldName("length")                    << unsigned(p->length()) << "\n"
+       << senf::fieldName("d_bit")  << p->d_bit() << "\n"
+       << senf::fieldName("length") << unsigned(p->length()) << "\n"
        << std::hex
-       << senf::fieldName("type")                      << "0x" << unsigned(p->type()) << "\n"
+       << senf::fieldName("type")   << "0x" << unsigned(p->type()) << "\n"
        << std::dec
-       << senf::fieldName("crc")                       << unsigned(p->crc()) << "\n";
+       << senf::fieldName("crc")    << unsigned(p->crc()) << "\n";
 }
 
 prefix_ senf::PacketParserBase::size_type senf::SNDUPacketType::initSize()
