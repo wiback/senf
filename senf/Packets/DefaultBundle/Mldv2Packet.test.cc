@@ -27,7 +27,6 @@
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
 #include <senf/Packets/DataPacket.hh>
-#include <senf/Utils/String.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -36,16 +35,16 @@
 BOOST_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
 {
     unsigned char data[] = {
-        0x00 ,0x00 ,0x00 ,0x01 ,0x04 ,0x00 ,0x00 ,0x00 ,
-        0xff ,0x15 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,
-        0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x16
+        0x00, 0x00, 0x00, 0x01, 0x04, 0x00, 0x00, 0x00,
+        0xff, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16
     };
 
-
     senf::MLDv2ListenerReport p ( senf::MLDv2ListenerReport::create(data) );
-    BOOST_CHECK_EQUAL(p->reserved(),0x0000 );    
-    senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container mcastAddrRecords (p->mcastAddrRecords());
-    senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container::iterator mcAddrIt (mcastAddrRecords.begin() );
-    BOOST_CHECK_EQUAL(mcAddrIt->recordType(), 0x04);
-    BOOST_CHECK_EQUAL(senf::str(mcAddrIt->mcAddress() ), "ff15::16");
+    BOOST_CHECK_EQUAL(p->reserved(),0x0000 );
+    typedef senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container recContainer_t;
+    recContainer_t mcastAddrRecords (p->mcastAddrRecords());
+    recContainer_t::iterator mcAddrIt (mcastAddrRecords.begin() );
+    BOOST_CHECK_EQUAL( mcAddrIt->recordType(), 0x04);
+    BOOST_CHECK_EQUAL( mcAddrIt->mcAddress().value(), senf::MACAddress(0xff1516));
 }

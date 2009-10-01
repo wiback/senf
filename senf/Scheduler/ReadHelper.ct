@@ -25,7 +25,7 @@
 
 // Custom includes
 #include <errno.h>
-#include <senf/Utils/membind.hh>
+#include <boost/bind.hpp>
 #include <senf/Utils/Exception.hh>
 #include "Scheduler.hh"
 

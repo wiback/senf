@@ -30,7 +30,6 @@
 #include <boost/operators.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_integral.hpp>
-#include <senf/Utils/Exception.hh>
 #include <senf/Utils/Tags.hh>
 #include <senf/Utils/safe_bool.hh>
 #include "PacketInterpreter.hh"

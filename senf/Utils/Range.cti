@@ -64,6 +64,12 @@ prefix_ void senf::copy_range(Range & range, Iterator const & i)
     std::copy(boost::begin(range), boost::end(range), i);
 }
 
+template <class Range>
+prefix_ bool senf::has_one_elt(Range r)
+{
+    return ! r.empty() && boost::next(r.begin()) == r.end();
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

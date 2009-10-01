@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <time.h>
-#include <senf/Utils/Exception.hh>
 #include <senf/Scheduler/ClockService.hh>
 
 //#include "TimeSource.mpp"

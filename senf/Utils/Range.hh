@@ -58,6 +58,8 @@ namespace senf {
     template <class Range, class Iterator>
     void copy_range(Range & range, Iterator const & i);
 
+    template <class Range>
+    bool has_one_elt(Range r);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

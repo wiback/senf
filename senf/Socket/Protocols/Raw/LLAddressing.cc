@@ -34,7 +34,6 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/finder.hpp>
 
-#include <senf/Utils/Exception.hh>
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "LLAddressing.mpp"
