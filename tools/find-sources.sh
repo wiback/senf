@@ -15,8 +15,12 @@ find . \
     -name debian -prune -o \
     -name dist -prune -o \
     -name build -prune -o \
+    -path "*/tools/scons-*" -prune -o \
     -name "*.a" -o \
     -name "*.o" -o \
+    -name "*.os" -o \
+    -name "*.so" -o \
+    \( -type f -a ! -name "*.*" \) -o \
     -name "*~" -o \
     -name "#*#" -o \
     -name "*.pyc" -o \
