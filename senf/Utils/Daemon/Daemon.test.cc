@@ -142,7 +142,7 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
             ::kill(pid, SIGHUP);
     }
 
-    delay(2000);
+    delay(3000);
     BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.log") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.log.1") );
