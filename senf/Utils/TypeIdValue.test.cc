@@ -39,7 +39,8 @@ BOOST_AUTO_UNIT_TEST(typeIdValue)
 {
     // We don't care for the ordering, just that the following compiles
     (void) ( senf::typeIdValue<int>() < senf::typeIdValue<float>() );
-    (void) ( senf::typeIdValue<int>() == senf::typeIdValue<float>() );
+    BOOST_CHECK ( senf::typeIdValue<int>() != senf::typeIdValue<float>() );
+    BOOST_CHECK ( senf::typeIdValue<int>() == senf::typeIdValue<int>() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

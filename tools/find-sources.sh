@@ -20,7 +20,7 @@ find . \
     -name "*.o" -o \
     -name "*.os" -o \
     -name "*.so" -o \
-    \( -type f -a ! -name "*.*" \) -o \
+    \( -type f -a ! -name "*.*" -a -exec sh -c "file --brief {} | grep -q ELF" \; \) -o \
     -name "*~" -o \
     -name "#*#" -o \
     -name "*.pyc" -o \

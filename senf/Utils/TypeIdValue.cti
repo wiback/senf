@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -31,39 +31,27 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Type>
-prefix_ senf::TypeIdValue::TypeIdValue(Type *)
-    : value_(new ValueImpl<Type>())
-{}
-
-template <class Type>
-prefix_ std::type_info const & senf::TypeIdValue::ValueImpl<Type>::id()
+prefix_ senf::TypeIdValue const senf::typeIdValue()
 {
     return typeid(Type);
 }
 
 template <class Type>
-prefix_ senf::TypeIdValue::Value *
-senf::TypeIdValue::ValueImpl<Type>::clone()
+prefix_ senf::TypeIdValue const senf::typeidValue(Type const & ob)
 {
-    return new ValueImpl<Type>();
+    return typeid(ob);
 }
 
-template <class Type>
-prefix_ senf::TypeIdValue const senf::typeIdValue()
-{
-    return TypeIdValue(static_cast<Type*>(0));
-}
-
-///////////////////////////////cti.e///////////////////////////////////////
+/////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

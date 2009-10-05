@@ -54,8 +54,7 @@ namespace senf {
         // no conversion constructors
 
         TypeIdValue();
-        TypeIdValue(TypeIdValue const & other);
-        TypeIdValue const & operator=(TypeIdValue const & other);
+        TypeIdValue(std::type_info const & v);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -64,34 +63,23 @@ namespace senf {
         bool operator<(TypeIdValue const & other) const;
 
         std::string name() const;
+        std::string prettyName() const;
+
         std::type_info const & id() const;
 
     protected:
 
     private:
-        template <class Type> TypeIdValue(Type *);
-
-        struct Value {
-            virtual ~Value();
-            virtual std::type_info const & id() = 0;
-            virtual Value * clone() = 0;
-        };
-
-        template <class Type>
-        struct ValueImpl : public Value {
-            virtual std::type_info const & id();
-            virtual Value * clone();
-        };
-
-        boost::scoped_ptr<Value> value_;
-
-        template <class Type> friend TypeIdValue const typeIdValue();
+        std::type_info const * p_;
     };
 
     TypeIdValue const typeIdValue();
 
     template <class Type>
     TypeIdValue const typeIdValue();
+
+    template <class Type>
+    TypeIdValue const typeidValue(Type const & ob);
 
     std::ostream & operator<<(std::ostream & os, TypeIdValue const & v);
 }

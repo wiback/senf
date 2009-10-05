@@ -27,48 +27,48 @@
 
 // Custom includes
 #include "TypeInfo.hh"
+#include "senfassert.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
 prefix_ senf::TypeIdValue::TypeIdValue()
-    : value_(new ValueImpl<void>())
+    : p_ (&typeid(void))
 {}
 
-prefix_ senf::TypeIdValue::TypeIdValue(TypeIdValue const & other)
-{
-    value_.reset(other.value_->clone());
-}
-
-prefix_ senf::TypeIdValue const &
-senf::TypeIdValue::operator=(TypeIdValue const & other)
-{
-    value_.reset(other.value_->clone());
-    return *this;
-}
+prefix_ senf::TypeIdValue::TypeIdValue(std::type_info const & v)
+    : p_ (&v)
+{}
 
 prefix_ bool senf::TypeIdValue::operator==(TypeIdValue const & other)
     const
 {
-    return value_->id() == other.value_->id();
+    return (*p_) == (*other.p_);
 }
 
 prefix_ bool senf::TypeIdValue::operator<(TypeIdValue const & other)
     const
 {
-    return value_->id().before(other.value_->id());
+    return p_->before(*other.p_);
 }
 
 prefix_ std::string senf::TypeIdValue::name()
     const
 {
-    return std::string(value_->id().name());
+    return p_->name();
+}
+
+prefix_ std::string senf::TypeIdValue::prettyName()
+    const
+{
+    return senf::prettyName(id());
 }
 
 prefix_ std::type_info const & senf::TypeIdValue::id()
     const
 {
-    return value_->id();
+    SENF_ASSERT(p_);
+    return *p_;
 }
 
 prefix_ senf::TypeIdValue const senf::typeIdValue()
@@ -78,7 +78,7 @@ prefix_ senf::TypeIdValue const senf::typeIdValue()
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, TypeIdValue const & v)
 {
-    os << prettyName(v.id());
+    os << v.prettyName();
     return os;
 }
 
