@@ -78,10 +78,6 @@ def SetupForSENF(env, senf_path = []):
         LIBS              = [ 'senf', 'rt', '$BOOSTREGEXLIB',
                               '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
                               '$BOOSTFSLIB' ],
-        BOOSTREGEXLIB     = 'boost_regex',
-        BOOSTIOSTREAMSLIB = 'boost_iostreams',
-        BOOSTSIGNALSLIB   = 'boost_signals',
-        BOOSTFSLIB        = 'boost_filesystem',
         
         CXXFLAGS          = [ '-Wno-long-long', '$CXXFLAGS_' ],
         CXXFLAGS_         = BuildTypeOptions('CXXFLAGS'),
