@@ -49,8 +49,9 @@ env.Append(
    CPPPATH                = [ '$BUILDDIR', '#' ],
    LOCALLIBDIR            = '$BUILDDIR',
    LIBPATH                = [ '$LOCALLIBDIR' ],
-   LIBS                   = [ '$LIBSENF$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB', 
-                              '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ], 
+   LIBS                   = [ '$LIBSENF$LIBADDSUFFIX', '$EXTRA_LIBS' ],
+   EXTRA_LIBS             = [ 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', 
+                              '$BOOSTFSLIB' ], 
    TEST_EXTRA_LIBS        = [  ],
    VALGRINDARGS           = [ '--num-callers=50' ],
 
@@ -115,8 +116,10 @@ senfutil.parseArguments(
     BoolVariable('final', 'Build final (optimized) build', False),
     BoolVariable('debug', 'Link in debug symbols', False),
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
+    BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False)
 )
 
+if env.has_key('only_tests') : env['sparse_tests'] = True
 Export('env')
 
 # Create Doxyfile.local otherwise doxygen will barf on this non-existent file
@@ -134,6 +137,9 @@ SConscriptChdir(0)
 SConscript("debian/SConscript")
 SConscriptChdir(1)
 if os.path.exists('SConscript.local') : SConscript('SConscript.local')
+if env['sparse_tests']:
+    import SparseTestHack
+    SparseTestHack.setup(env)
 if env.subst('$BUILDDIR') == '#':
     SConscript("SConscript")
 else:
@@ -141,6 +147,8 @@ else:
 SConscript("Examples/SConscript")
 SConscript("HowTos/SConscript")
 SConscript("doclib/SConscript")
+if env['sparse_tests']:
+    SparseTestHack.build(env)
 
 ###########################################################################
 # Define build targets

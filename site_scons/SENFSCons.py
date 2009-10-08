@@ -99,9 +99,11 @@ def AllIncludesHH(env, exclude=[]):
                 if f.name not in exclude and not f.name.endswith('.test.hh') ]
     headers.sort(key=lambda x:x.name)
     target = env.File("all_includes.hh")
-    env.Default(env.CreateFile(target, 
-                               env.Value("".join([ '#include <%s>\n' % f.srcnode().get_path(env.Dir('#'))
-                                                   for f in headers ]))))
+    allinch = env.CreateFile(target, 
+                             env.Value("".join([ '#include <%s>\n' % f.srcnode().get_path(env.Dir('#'))
+                                                 for f in headers ])))
+    env.Default(allinch)
+    env.Depends(allinch, headers)
 
 INDEXPAGE="""
 /** \mainpage ${TITLE}
@@ -131,7 +133,6 @@ def IndexPage(env, name, title, text=""):
             INDEXPAGE, globals(), { 'TITLE': title, 'TEXT': text, 'SUBPAGES': SUBPAGES }))
     env.Clean('all',name)
     env.Clean('all_docs',name)
-
 
 ###########################################################################
 # The following functions serve as simple macros for most SConscript files
