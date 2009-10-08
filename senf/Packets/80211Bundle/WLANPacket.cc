@@ -22,15 +22,17 @@
 
 // Definition of non-inline non-template functions
 
-// Custom includes
 #include "WLANPacket.hh"
+//#include "WLANPacket.ih"
+
+// Custom includes
 #include <senf/Packets/Packets.hh>
 #include <boost/io/ios_state.hpp>
 
 #define prefix_
+///////////////////////////////cc.p///////////////////////////////////////
 
 namespace {
-    
     void dumpBase(senf::WLANPacketParser const & p, std::ostream & os)
     {
         os << "  version                 : " << unsigned(p.version()) <<"\n"
@@ -81,32 +83,37 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::destinationAddr
 {
     switch (dsBits()) {
     case 0 :
-    case 2 : return addr1();
-    default: return addr3();
+    case 2 : 
+        return addr1();
+    default: 
+        return addr3();
     }
 }
 
 prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sourceAddress()
     const
 {
-    switch (dsBits())
-    {
+    switch (dsBits()) {
     case 0 :
-    case 1 : return addr2();
+    case 1 :
+        return addr2();
     // TODO wds frames
     // case 3 : return addr4();
-    default: return addr3();
+    default: 
+        return addr3();
     }
 }
 
 prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::bssid()
     const
 {
-    switch (dsBits())
-    {
-    case 0 : return addr3();
-    case 1 : return addr1();
-    default: return addr2();
+    switch (dsBits()) {
+    case 0 :
+        return addr3();
+    case 1 :
+        return addr1();
+    default:
+        return addr2();
     }
 }
 
@@ -131,6 +138,7 @@ prefix_ void senf::WLANPacket_DataFrameType::dump(packet p, std::ostream &os)
         os << senf::fieldName("QOS data")              << p->qosField() << "\n";
 }
 
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 

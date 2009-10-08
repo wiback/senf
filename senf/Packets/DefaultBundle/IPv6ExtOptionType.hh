@@ -37,44 +37,23 @@ namespace senf {
     {
     public:
 #       include SENF_PARSER()
-        SENF_PARSER_BITFIELD (altAction,  2, unsigned);
-        SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
-        SENF_PARSER_BITFIELD (optionType, 5, unsigned);
-        SENF_PARSER_FIELD (optionLength, UInt8Parser);
-        SENF_PARSER_FINALIZE (IPv6OptionTLVParser);
+        SENF_PARSER_FIELD ( type, UInt8Parser );
+        SENF_PARSER_GOTO ( type );
+        SENF_PARSER_BITFIELD ( altAction,  2, unsigned );
+        SENF_PARSER_BITFIELD ( changeFlag, 1, unsigned );
+        SENF_PARSER_BITFIELD ( optionType, 5, unsigned );
+        SENF_PARSER_FIELD (length, UInt8Parser );
+        SENF_PARSER_FINALIZE (IPv6OptionTLVParser );
     };
 
-    
-    struct IPv6GenericOptionTLVParser : public IPv6OptionTLVParser
-    {
-#       include SENF_PARSER()
-        SENF_PARSER_INHERIT ( IPv6OptionTLVParser );
-        SENF_PARSER_SKIP ( optionLength(), 0 );
-        SENF_PARSER_FINALIZE ( IPv6GenericOptionTLVParser );
-
-        senf::PacketInterpreterBase::range value() const;
-
-        template <class Parser>
-        Parser init();
-
-        template <class Parser>
-        Parser as();
-
-        static const unsigned int typeCode = 7u;
-
-        template<class ForwardReadableRange>
-        void value(ForwardReadableRange const &range);
-
-        template<class ForwardReadableRange>
-        void setPayload(ForwardReadableRange const &range);
-    };
+    typedef GenericTLVParserBase<IPv6OptionTLVParser> IPv6GenericOptionTLVParser;
 
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "IPv6ExtOptionType.cci"
-#include "IPv6ExtOptionType.ct"
+//#include "IPv6ExtOptionType.ct"
 //#include "IPv6ExtOptionType.cti"
 #endif
 

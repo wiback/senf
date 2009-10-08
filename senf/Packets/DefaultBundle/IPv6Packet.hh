@@ -152,10 +152,10 @@ namespace senf {
                                                in \ref IpTypes */
     };
 
-    /** \brief IPv6 packet typedef */
+    /** \brief IPv6 packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<IPv6PacketType> IPv6Packet;
-
-    ///@}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -194,7 +194,9 @@ namespace senf {
         
     };
     
-    /** \brief GenericTLV packet typedef */
+    /** \brief GenericTLV packet typedef
+        \ingroup protocolbundle_80221
+     */
     typedef ConcretePacket<GenericTLVPacketType> GenericTLVPacket;
 }
 

@@ -100,7 +100,9 @@ namespace senf {
         static void finalize(packet p);
     };
 
-    /** \brief LLC/SNAP packet typedef */
+    /** \brief LLC/SNAP packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<LlcSnapPacketType> LlcSnapPacket;
 }
 

@@ -195,7 +195,9 @@ namespace senf {
                                                \ref IPv4PacketParser::checksum() "checksum" */
     };
 
-    /** \brief IPv4 packet typedef */
+    /** \brief IPv4 packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<IPv4PacketType> IPv4Packet;
 }
 

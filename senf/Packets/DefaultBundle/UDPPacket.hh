@@ -113,7 +113,9 @@ namespace senf {
                                                "checksum" */
     };
 
-    /** \brief UDP packet typedef */
+    /** \brief UDP packet typedef 
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<UDPPacketType> UDPPacket;
 }
 

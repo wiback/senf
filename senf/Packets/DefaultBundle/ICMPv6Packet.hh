@@ -89,6 +89,9 @@ namespace senf
         }
     };
     
+    /** \brief ICMPv6 packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<ICMPv6PacketType> ICMPv6Packet;
 }
 

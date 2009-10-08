@@ -104,7 +104,9 @@ namespace senf {
             p->nextHeader() << key(p.next(nothrow)); }
     };
 
-    /** \brief IPv6 fragment extension packet typedef */
+    /** \brief IPv6 fragment extension packet typedef 
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<IPv6FragmentPacketType> IPv6FragmentPacket;
 
 // =====================================================================================================
@@ -209,7 +211,9 @@ namespace senf {
             p->nextHeader() << key(p.next(nothrow)); }
     };
     
-    /** \brief IPv6 routing extension packet typedef */
+    /** \brief IPv6 routing extension packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<IPv6RoutingPacketType> IPv6RoutingPacket;
 
     
@@ -283,7 +287,9 @@ namespace senf {
             p->nextHeader() << key(p.next(nothrow)); }
     };
     
-    /** \brief IPv6 routing Hop-By-Hop packet typedef */
+    /** \brief IPv6 routing Hop-By-Hop packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<IPv6HopByHopOptionsPacketType> IPv6HopByHopOptionsPacket;
     
 // =====================================================================================================
@@ -348,7 +354,9 @@ namespace senf {
             p->nextHeader() << key(p.next(nothrow)); }
     };
     
-    /** \brief IPv6 routing Destination Options packet typedef */
+    /** \brief IPv6 routing Destination Options packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<IPv6DestinationOptionsPacketType> IPv6DestinationOptionsPacket;
     
 }

@@ -209,12 +209,12 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
     BOOST_CHECK_EQUAL( listIter->altAction(), 0u);
     BOOST_CHECK_EQUAL( listIter->changeFlag(), 0u);
     BOOST_CHECK_EQUAL( listIter->optionType(), 5u);
-    BOOST_CHECK_EQUAL( listIter->optionLength(), 2u);
+    BOOST_CHECK_EQUAL( listIter->length(), 2u);
     ++listIter;
     BOOST_CHECK_EQUAL( listIter->altAction(), 0u);
     BOOST_CHECK_EQUAL( listIter->changeFlag(), 0u);
     BOOST_CHECK_EQUAL( listIter->optionType(), 2u);
-    BOOST_CHECK_EQUAL( listIter->optionLength(), 0);
+    BOOST_CHECK_EQUAL( listIter->length(), 0);
 
     BOOST_REQUIRE( pHop_extension.next().is<senf::ICMPv6Packet>() );
     senf::ICMPv6Packet pICMPv6  (pHop_extension.next().as<senf::ICMPv6Packet>());
@@ -286,7 +286,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
             opt.changeFlag() = 0u;
             opt.optionType() = 5u;
             unsigned char val[] = {0x00, 0x00};
-            opt.setPayload(val);
+            opt.value(val);
         }
     }
 
@@ -318,7 +318,7 @@ namespace {
         
         SENF_PARSER_INIT() {
             optionType() = typeCode;
-            optionLength() = senf::init_bytes<IPv6ChecksumOptionTLVParser>::value -senf::init_bytes<IPv6OptionTLVParser>::value;
+            length() = senf::init_bytes<IPv6ChecksumOptionTLVParser>::value -senf::init_bytes<IPv6OptionTLVParser>::value;
             slfNetType() = SN_typeCode;     
         }
         SENF_PARSER_FINALIZE ( IPv6ChecksumOptionTLVParser );

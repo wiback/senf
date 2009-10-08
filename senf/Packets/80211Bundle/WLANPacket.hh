@@ -30,6 +30,8 @@
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
 
+///////////////////////////////hh.p////////////////////////////////////////
+
 namespace senf
 {
 
@@ -134,7 +136,7 @@ namespace senf
 
         SENF_PARSER_INHERIT(WLANPacketParser);
 
-        SENF_PARSER_FIELD            ( receiverAddress, MACAddressParser );
+        SENF_PARSER_FIELD   ( receiverAddress, MACAddressParser );
 
         //only RTS frame contains a source address field
         //variant is also needed to set correct subtype value
@@ -267,7 +269,11 @@ namespace senf
     typedef WLANPacket_DataFrameType::packet WLANPacket_DataFrame;
 }
 
-#endif /* HH_SENF_Packets_80211Bundle_WLANPacket_ */
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "WLANPacket.cci"
+//#include "WLANPacket.ct"
+//#include "WLANPacket.cti"
+#endif
 
 
 // Local Variables:

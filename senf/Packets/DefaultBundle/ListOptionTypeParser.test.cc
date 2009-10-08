@@ -89,19 +89,19 @@ BOOST_AUTO_UNIT_TEST(ListOptionTypeParser_container)
         BOOST_CHECK_EQUAL( c.bytes(), 0u ); // padding bytes wont be in here, added/removed automatically in destructor
         BOOST_CHECK( c.begin() == c.end() );
 
-        unsigned char d[]  = {0x65, 0x02, 0x40, 0x34};
-        unsigned char d1[] = {0x03, 0x01, 0x77};
-        unsigned char d2[] = {0x07, 0x01, 0x13};
+        std::vector<unsigned char> d (2, 0xab);
+        std::vector<unsigned char> d1 (1, 0x77);
+        std::vector<unsigned char> d2 (1, 0x13);
 
-        SENF_CHECK_NO_THROW( c.push_back( d ) );
+        SENF_CHECK_NO_THROW( c.push_back( std::make_pair(0x65, d) ));
         BOOST_CHECK_EQUAL( c.bytes(), 4u );
         BOOST_CHECK_EQUAL( c.size(), 1u );
 
-        SENF_CHECK_NO_THROW( c.push_back( d1 ) );
+        SENF_CHECK_NO_THROW( c.push_back( std::make_pair(0x03, d1) ));
         BOOST_CHECK_EQUAL( c.bytes(), 7u );
         BOOST_CHECK_EQUAL( c.size(), 2u );
 
-        SENF_CHECK_NO_THROW( c.push_back( d2 ) );
+        SENF_CHECK_NO_THROW( c.push_back( std::make_pair(0x07, d2) ));
         BOOST_CHECK_EQUAL( c.bytes(), 10u );
         BOOST_CHECK_EQUAL( c.size(), 3u );
 
@@ -109,16 +109,16 @@ BOOST_AUTO_UNIT_TEST(ListOptionTypeParser_container)
         BOOST_CHECK_EQUAL( cIter->altAction(), 1u);
         BOOST_CHECK_EQUAL( cIter->changeFlag(), 1u);
         BOOST_CHECK_EQUAL( cIter->optionType(), 5u);
-        BOOST_CHECK_EQUAL( cIter->optionLength(), 2u);
-        BOOST_CHECK_EQUAL( *(boost::begin(cIter->value()) ), 0x40);
-        BOOST_CHECK_EQUAL( *(boost::next(boost::begin(cIter->value()) )), 0x34);
+        BOOST_CHECK_EQUAL( cIter->length(), 2u);
+        BOOST_CHECK_EQUAL( *(boost::begin(cIter->value()) ), 0xab);
+        BOOST_CHECK_EQUAL( *(boost::next(boost::begin(cIter->value()) )), 0xab);
         cIter++;
         BOOST_CHECK_EQUAL( cIter->optionType(), 3u);
-        BOOST_CHECK_EQUAL( cIter->optionLength(), 1u);
+        BOOST_CHECK_EQUAL( cIter->length(), 1u);
         BOOST_CHECK_EQUAL( *(boost::begin(cIter->value() )), 0x77);
         cIter++;
         BOOST_CHECK_EQUAL( cIter->optionType(), 7u);
-        BOOST_CHECK_EQUAL( cIter->optionLength(), 1u);
+        BOOST_CHECK_EQUAL( cIter->length(), 1u);
         BOOST_CHECK_EQUAL( *(boost::begin(cIter->value())), 0x13);
 
         //deletes first element

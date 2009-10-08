@@ -189,7 +189,9 @@ namespace senf {
         static void finalize(packet p);
     };
 
-    /** \brief Ethernet VLAN tag typedef */
+    /** \brief Ethernet VLAN tag typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<EthVLanPacketType> EthVLanPacket;
 
 }

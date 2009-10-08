@@ -26,8 +26,9 @@
 
 #include "IPv6Extensions.hh"
 //#include "IPv6Extensions.ih"
-#include <senf/Utils/hexdump.hh>
+
 // Custom includes
+#include <senf/Utils/hexdump.hh>
 
 //#include "IPv6Extensions.mpp"
 #define prefix_
@@ -79,7 +80,7 @@ prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & 
         os << senf::fieldName("  AltAction")           << unsigned(optIter->altAction()) << "\n"
            << senf::fieldName("  ChangeFlag")          << unsigned(optIter->changeFlag()) << "\n"
            << senf::fieldName("  Option Type")         << unsigned(optIter->optionType()) << "\n"
-           << senf::fieldName("  OptionLength")        << unsigned(optIter->optionLength()) <<"\n";
+           << senf::fieldName("  length")              << unsigned(optIter->length()) <<"\n";
         senf::hexdump(boost::begin(optIter->value()) , boost::end(optIter->value()), os );
     }
 }
