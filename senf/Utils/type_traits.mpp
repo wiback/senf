@@ -47,35 +47,39 @@
 #define mpp_OtherArgs_(z,n,d) BOOST_PP_COMMA_IF( BOOST_PP_DEC(n) ) typename traits::mpp_Arg(n)
 #define mpp_OtherArgs() BOOST_PP_REPEAT_FROM_TO( 1, BOOST_PP_ITERATION(), mpp_OtherArgs_, _ )
 
+#define mpp_ArgN() BOOST_PP_ITERATION()
+#define mpp_CurArg() mpp_Arg(BOOST_PP_ITERATION())
+
+#define mpp_TrailTplArgs() BOOST_PP_ENUM_TRAILING_PARAMS( BOOST_PP_ITERATION(), class A )
+#define mpp_Args() BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A )
+
 // ////////////////////////////////////////////////////////////////////////
 #if BOOST_PP_ITERATION_FLAGS()==1 // //////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
 
 template <class Traits>
-struct function_traits_remove_arg<Traits, BOOST_PP_ITERATION()>
+struct function_traits_remove_arg<Traits, mpp_ArgN()>
 {
     typedef Traits traits;
     typedef boost::function_traits<typename traits::result_type( mpp_OtherArgs() )> type;
 };
 
-template < class C, class RV
-           BOOST_PP_ENUM_TRAILING_PARAMS( BOOST_PP_ITERATION(), class A ) >
-struct remove_member_pointer<RV (C::*)(BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ))>
+template < class C, class RV mpp_TrailTplArgs()>
+struct remove_member_pointer<RV (C::*)(mpp_Args())>
 {
-    typedef RV type (BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ));
+    typedef RV type (mpp_Args());
 };
 
-template < class C, class RV
-           BOOST_PP_ENUM_TRAILING_PARAMS( BOOST_PP_ITERATION(), class A ) >
-struct member_class<RV (C::*)(BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ))>
+template < class C, class RV mpp_TrailTplArgs() >
+struct member_class<RV (C::*)(mpp_Args())>
 {
     typedef C type;
 };
 
 template <class Traits>
-struct function_traits_arg_type<Traits, BOOST_PP_ITERATION(), true>
+struct function_traits_arg_type<Traits, mpp_ArgN(), true>
 {
-    typedef typename Traits::mpp_Arg(BOOST_PP_ITERATION()) type;
+    typedef typename Traits::mpp_CurArg() type;
 };
 
 // ////////////////////////////////////////////////////////////////////////
@@ -83,11 +87,29 @@ struct function_traits_arg_type<Traits, BOOST_PP_ITERATION(), true>
 // ////////////////////////////////////////////////////////////////////////
 // Undefine local Macros
 
-#undef mpp_OtherArgs_
+#undef mpp_Args
+#undef mpp_TrailTplArgs
+#undef mpp_CurArg
+#undef mpp_ArgN
 #undef mpp_OtherArgs
+#undef mpp_OtherArgs_
 #undef mpp_Arg
 
 // ////////////////////////////////////////////////////////////////////////
+/*
+ (save-excursion (re-search-backward "^// Undefine local Macros")
+ (forward-line 1) (delete-region (point) (progn (search-forward
+ "// ////") (forward-line -1) (point))) (insert "\n") (let ((b (point))
+ (e (progn (insert (save-excursion (re-search-backward 
+ "^// Local Macros") (search-forward "#define") (beginning-of-line)
+ (buffer-substring (point) (progn (search-forward "// ////")
+ (search-backward "#define") (forward-line 1) (point))))) (point))))
+ (reverse-region b e) (shell-command-on-region b e "grep -F '#define'" nil
+ t) (goto-char b) (while (looking-at "#define") (delete-char 7) (insert
+ "#undef") (skip-chars-forward " ") (re-search-forward "[^a-zA-Z0-9_]")
+ (delete-region (1- (point)) (progn (end-of-line) (point))) (forward-line
+ 1))))
+*/
 #endif // /////////////////////////////////////////////////////////////////
 // ///////////////////////////mpp.e////////////////////////////////////////
 

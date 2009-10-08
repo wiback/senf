@@ -243,6 +243,15 @@ namespace senf
         : public boost::remove_cv< typename boost::remove_reference<T>::type >
     {};
 
+    /** \brief Get arity of function T
+
+        \a T may be any function like type: function, pointer to function or (pointer to)
+        member-function.
+
+        \code
+        BOOST_STATIC_ASSERT(( senf::function_arity<void (Class::*)(int)>::value == 1 ));
+        \endcode
+     */
     template < class T >
     struct function_arity
         : public boost::integral_constant<
