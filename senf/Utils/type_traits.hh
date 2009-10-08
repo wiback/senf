@@ -260,6 +260,28 @@ namespace senf
                   typename senf::remove_any_pointer<T>::type>::arity>
     {};
 
+    /** Test object if it is any \c std::pair type
+
+        if \a Pair is any \c std::pair type, this trait will inherit from \c boost::true_type,
+        otherwise it will inherit from \c boost::false_type.
+
+        \code
+        BOOST_STATIC_ASSERT((   senf::is_pair< std::pair<int,void*> >::value ));
+        BOOST_STATIC_ASSERT(( ! senf::is_pair< void () >::value ));
+        \endcode
+     */
+    template <class Pair>
+    struct is_pair
+        : public boost::false_type
+    {};
+
+#ifndef DOXYGEN
+    template <class First, class Second>
+    struct is_pair< std::pair<First,Second> >
+        : public boost::true_type
+    {};
+#endif
+
   ///}
 
 #ifndef DOXYGEN

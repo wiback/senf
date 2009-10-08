@@ -110,6 +110,11 @@ BOOST_AUTO_UNIT_TEST(typeTraits)
     BOOST_STATIC_ASSERT(( senf::function_arity<void (*)(int,int)>::value == 2 ));
     BOOST_STATIC_ASSERT(( senf::function_arity<void (Class::*)()>::value == 0 ));
     BOOST_STATIC_ASSERT(( senf::function_arity<void (Class::*)(int,int)>::value == 2 ));
+
+    BOOST_STATIC_ASSERT(( senf::function_arity<void (Class::*)(int)>::value == 1 ));
+
+    BOOST_STATIC_ASSERT((   senf::is_pair< std::pair<int,void*> >::value ));
+    BOOST_STATIC_ASSERT(( ! senf::is_pair< void () >::value ));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
