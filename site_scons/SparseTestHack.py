@@ -1,4 +1,4 @@
-import SCons.Node, SCons.Node.FS, SCons.Util
+import SCons.Node, SCons.Node.FS, SCons.Util, SCons.Errors
 
 #####################################################################
 # This IS a hack .. but a very useful one: The hack will remove the
@@ -87,10 +87,15 @@ def setup(env):
 def build(env):
     env = env.Clone(LIBS = [ '$EXTRA_LIBS' ])
     if env.has_key("only_tests"):
-        only_tests = [ env.Dir(env.GetLaunchDir()).File(test)
-                       for test in env.Split(env['only_tests']) ]
+        only_tests = {}
+        dir = env.Dir(env.GetLaunchDir())
+        for test in env.Split(env['only_tests']):
+            test = dir.File(test)
+            if not test.name.endswith(".test.cc"):
+                test = test.target_from_source(prefix="", suffix=".test.cc")
+            only_tests[test] = False
     else:
-        only_tests = []
+        only_tests = {}
     for target, tests, kw in env['_UNIT_TEST_LIST']:
         objects = []
         build = False
@@ -98,7 +103,8 @@ def build(env):
             if test.suffix == env['OBJSUFFIX']:
                 objects.append(test)
             else:
-                if not only_tests or test in only_tests:
+                if not only_tests or only_tests.has_key(test):
+                    if only_tests : only_tests[test] = True
                     objects.extend(env.Object(test))
                     build = True
                 elif test.name == 'main.test.cc':
@@ -117,3 +123,8 @@ def build(env):
         objects = [ ob for ob in objects if not sources.get(ob) ]
 
         env.RealBoostUnitTest(target, objects, **kw)
+
+    only_tests = [ k for k,v in only_tests.iteritems() if not v ]
+    if only_tests:
+        raise SCons.Errors.StopError("Unknown unit tests (only_tests): %s." 
+                                     % ", ".join("`%s'" % x for x in only_tests))
