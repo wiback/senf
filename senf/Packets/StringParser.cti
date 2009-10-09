@@ -55,7 +55,7 @@ prefix_ void senf::StringParser<LengthParser>::value(value_type v)
 { 
     validate(bytes());
     resize(bytes(), v.size()+senf::bytes(length())); 
-    parse<UInt16Parser>(0) = v.size(); 
+    length() << v.size(); 
     std::copy(v.begin(), v.end(), i()+senf::bytes(length()));
 }
 

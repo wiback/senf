@@ -45,6 +45,21 @@ namespace senf {
 
     typedef GenericTLVParserBase<WLANInfoElementParser> WLANGenericInfoElementParser;
     
+    struct WLANSSIDInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( WLANInfoElementParser            );
+        // the StringParser includes the length field so we have to go back
+        SENF_PARSER_GOTO     ( length                           );
+        SENF_PARSER_FIELD    ( value, StringParser<UInt8Parser> );
+        SENF_PARSER_FINALIZE ( WLANSSIDInfoElementParser        );
+     
+        SENF_PARSER_INIT() {
+            type() = TYPEID;
+        }        
+        static const type_t::value_type TYPEID = 0x00u;
+    };
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

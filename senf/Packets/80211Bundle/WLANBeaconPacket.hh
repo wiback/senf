@@ -38,12 +38,12 @@ namespace senf {
     {
     #   include SENF_PARSER()
 
-        SENF_PARSER_FIELD( timestamp,      UInt64LSBParser );
-        SENF_PARSER_FIELD( beaconInterval, UInt16LSBParser );
-        SENF_PARSER_SKIP(2,2); //capability flags
+        SENF_PARSER_FIELD( timestamp,      UInt64LSBParser   );
+        SENF_PARSER_FIELD( beaconInterval, UInt16LSBParser   );
+        SENF_PARSER_SKIP ( 2,2); //capability flags
 
-        //SSID element
-//        SENF_PARSER_FIELD()
+        SENF_PARSER_FIELD( ssidIE, WLANSSIDInfoElementParser );
+        WLANSSIDInfoElementParser::value_t ssid() const { return ssidIE().value(); }
         
         SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
         
@@ -60,16 +60,16 @@ namespace senf {
         \ingroup protocolbundle_80211
      */
     struct WLANBeaconPacketType
-        : public senf::PacketTypeBase,
-          public senf::PacketTypeMixin<WLANBeaconPacketType>
+        : public PacketTypeBase,
+          public PacketTypeMixin<WLANBeaconPacketType>
     {
-        typedef senf::PacketTypeMixin<WLANBeaconPacketType> mixin;
-        typedef senf::ConcretePacket<WLANBeaconPacketType> packet;
+        typedef PacketTypeMixin<WLANBeaconPacketType> mixin;
+        typedef ConcretePacket<WLANBeaconPacketType> packet;
         typedef WLANBeaconPacketParser parser;
 
         using mixin::init;
         using mixin::initSize;
-        using senf::PacketTypeBase::nextPacketRange;
+        using PacketTypeBase::nextPacketRange;
 
         static void dump(packet p, std::ostream &os);
     };

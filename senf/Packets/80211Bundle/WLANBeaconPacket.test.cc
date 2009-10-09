@@ -32,7 +32,7 @@
 
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_packet)
+BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
 {
     unsigned char data[] = {
         0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00, //timestamp
@@ -55,7 +55,27 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_packet)
 
     BOOST_CHECK_EQUAL( p->timestamp(), 0x0000009C4CAA303AuLL);
     BOOST_CHECK_EQUAL( p->beaconInterval(), 100u);
+    BOOST_CHECK_EQUAL( p->ssidIE().length(), 5);
+    BOOST_CHECK_EQUAL( p->ssidIE().value().value(), "boxC1");
+    BOOST_CHECK_EQUAL( p->ssid().value(), "boxC1");
+}
 
+BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_create)
+{
+    senf::WLANBeaconPacket p (senf::WLANBeaconPacket::create());
+    p->timestamp() << 0x0000009C4CAA303AuLL;
+    p->beaconInterval() << 100u;
+    p->ssidIE().value() << "boxC1";
+    p.finalizeThis();
+    
+    unsigned char data[] = {
+        0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00, //timestamp
+        0x64, 0x00, //beacon interval
+        0x00, 0x00, //capability information
+        0x00, 0x05, 0x62, 0x6f, 0x78, 0x43, 0x31 //SSID
+    };
+    SENF_CHECK_EQUAL_COLLECTIONS( p.data().begin(), p.data().end(),
+            data, data+sizeof(data) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
