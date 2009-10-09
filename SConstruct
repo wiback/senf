@@ -21,6 +21,7 @@ prepare        Create all target files not part of the repository
 default        Build all default targets (like calling scons with no arguments)
 examples       Build all examples
 all_tests      Build and run unit tests for all modules
+test_changes   Build tests only for files with local changes (queries svn or git)
 all_docs       Build documentation for all modules
 all            Build everything
 install_all    Install SENF into $$PREFIX
@@ -152,7 +153,8 @@ SConscript("Examples/SConscript")
 SConscript("HowTos/SConscript")
 SConscript("doclib/SConscript")
 if env['sparse_tests']:
-    SparseTestHack.build(env, 'test_changes' in COMMAND_LINE_TARGETS)
+    verbose = 'test_changes' in COMMAND_LINE_TARGETS
+    SparseTestHack.build(env, verbose, verbose)
 
 ###########################################################################
 # Define build targets
