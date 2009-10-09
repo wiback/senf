@@ -28,7 +28,6 @@
 #define HH_SENF_Packets_80211Bundle_WLANBeaconPacket_ 1
 
 // Custom includes
-#include <senf/Packets/Packets.hh>
 #include "InformationElements.hh"
 
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -45,8 +44,11 @@ namespace senf {
         SENF_PARSER_FIELD( ssidIE, WLANSSIDInfoElementParser );
         WLANSSIDInfoElementParser::value_t ssid() const { return ssidIE().value(); }
         
-        SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
+        SENF_PARSER_FIELD( supportedRatesIE, WLANSupportedRatesInfoElementParser );
         
+        SENF_PARSER_LIST ( ieList, packetSize(), WLANGenericInfoElementParser );
+        
+        SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
     };
 
  

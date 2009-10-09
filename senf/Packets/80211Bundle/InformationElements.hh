@@ -60,6 +60,37 @@ namespace senf {
         }        
         static const type_t::value_type TYPEID = 0x00u;
     };
+        
+    struct WLANSupportedRatesInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( WLANInfoElementParser               );
+        // we just skip the value here. If somebody needs the information he has to implement 
+        // this strange information element hisself. 
+        SENF_PARSER_SKIP     ( length(), 0                         );
+        SENF_PARSER_FINALIZE ( WLANSupportedRatesInfoElementParser );
+     
+        SENF_PARSER_INIT() {
+            type() = TYPEID;
+        }        
+        static const type_t::value_type TYPEID = 0x01u;
+    };
+        
+    struct WLANPowerConstraintInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( WLANInfoElementParser                );
+        SENF_PARSER_FIELD    ( value,   UInt8Parser                 );
+        SENF_PARSER_FINALIZE ( WLANPowerConstraintInfoElementParser );
+     
+        SENF_PARSER_INIT() {
+            type() = TYPEID;
+            length() = 1;
+        }        
+        static const type_t::value_type TYPEID = 0x20u;
+    };
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
