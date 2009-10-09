@@ -120,7 +120,8 @@ senfutil.parseArguments(
 )
 
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
-    env['only_tests'] = " ".join(x.abspath for x in SparseTestHack.findSCMChanges())
+    import SparseTestHack
+    env['only_tests'] = " ".join(x.abspath for x in SparseTestHack.findSCMChanges(env))
 
 if env.has_key('only_tests') : env['sparse_tests'] = True
 Export('env')

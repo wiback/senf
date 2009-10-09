@@ -1,4 +1,4 @@
-import SCons.Node, SCons.Node.FS, SCons.Util, SCons.Errors
+import SCons.Node, SCons.Node.FS, SCons.Util, SCons.Errors, os
 
 #####################################################################
 # This IS a hack .. but a very useful one: The hack will remove the
@@ -130,7 +130,7 @@ def build(env, accept_unknown_tests=False):
             raise SCons.Errors.StopError("Unknown unit tests (only_tests): %s." 
                                          % ", ".join("`%s'" % x for x in only_tests))
 
-def findSCMChanges():
+def findSCMChanges(env):
 
     def scmchanges(dir):
         if os.popen("cd %s; svnversion" % dir.abspath).read().strip() == "exported":
