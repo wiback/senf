@@ -393,7 +393,8 @@ def generate(env):
    })
 
    env.SetDefault(
-      DOXYGENCOM = 'cd ${SOURCE.dir} && doxygen ${SOURCE.file}'
+      DOXYGEN = "doxygen",
+      DOXYGENCOM = 'cd ${SOURCE.dir} && ${DOXYGEN} ${SOURCE.file}'
    )
 
 def exists(env):

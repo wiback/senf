@@ -258,7 +258,8 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
                                      'tagfiles'   : '$TAGFILES',
                                      'output_dir' : 'doc',
                                      'html_dir'   : 'html',
-                                     'html'       : 'YES' },
+                                     'html'       : 'YES',
+                                     'DOXYGEN'    : '$DOXYGEN' },
                       TAGFILES   = tagfiles, 
                       DOCLIBDIR  = libdir,
                       DOXYGENCOM = "$DOCLIBDIR/doxygen.sh $DOXYOPTS $SOURCE")

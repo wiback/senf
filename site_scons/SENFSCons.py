@@ -46,7 +46,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
                  'LIBDIR'          : env.Dir('#/site_scons/lib').abspath,
                  'output_dir'      : '$OUTPUT_DIRECTORY',
                  'html_dir'        : 'html',
-                 'html'            : 'NO' }
+                 'html'            : 'NO',
+                 'DOXYGEN'         : '$DOXYGEN' }
         denv.update(kw)
         return { 'DOXYENV'         : denv,
                  'MODULE'          : module,

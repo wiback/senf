@@ -264,7 +264,6 @@ env.SetDefault(
 
 env.Append( ENV = {
     'TODAY' : str(datetime.date.today()),
-    'DOXYGEN' : str(env.File(env['DOXYGEN'])),
 })
 
 env.PhonyTarget('linklint', [], [
