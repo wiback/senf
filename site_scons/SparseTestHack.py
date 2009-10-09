@@ -84,7 +84,7 @@ def setup(env):
 # This needs to be called after all build targets have been set
 # up. This is important since the list of object targets needs to be
 # complete.
-def build(env):
+def build(env, accept_unknown_tests=False):
     env = env.Clone(LIBS = [ '$EXTRA_LIBS' ])
     if env.has_key("only_tests"):
         only_tests = {}
@@ -124,7 +124,8 @@ def build(env):
 
         env.RealBoostUnitTest(target, objects, **kw)
 
-    only_tests = [ k for k,v in only_tests.iteritems() if not v ]
-    if only_tests:
-        raise SCons.Errors.StopError("Unknown unit tests (only_tests): %s." 
-                                     % ", ".join("`%s'" % x for x in only_tests))
+    if not accept_unknown_tests:
+        only_tests = [ k for k,v in only_tests.iteritems() if not v ]
+        if only_tests:
+            raise SCons.Errors.StopError("Unknown unit tests (only_tests): %s." 
+                                         % ", ".join("`%s'" % x for x in only_tests))

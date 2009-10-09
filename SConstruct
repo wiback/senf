@@ -119,6 +119,14 @@ senfutil.parseArguments(
     BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False)
 )
 
+if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
+    if os.popen("svnversion").read().strip() == "exported":
+        env['only_tests'] = " ".join(os.popen("git ls-files --modified").read().strip().split("\n"))
+    else:
+        env['only_tests'] = " ".join(l[7:] 
+                                     for l in os.popen("svn status").read().rstrip().split("\n")
+                                     if l[0] == 'M')
+
 if env.has_key('only_tests') : env['sparse_tests'] = True
 Export('env')
 
@@ -148,7 +156,7 @@ SConscript("Examples/SConscript")
 SConscript("HowTos/SConscript")
 SConscript("doclib/SConscript")
 if env['sparse_tests']:
-    SparseTestHack.build(env)
+    SparseTestHack.build(env, 'test_changes' in COMMAND_LINE_TARGETS)
 
 ###########################################################################
 # Define build targets
@@ -164,6 +172,7 @@ env.Install('${INCLUDEINSTALLDIR}', 'boost')
 env.Alias('install_all', env.FindInstalledFiles())
 env.Alias('default', DEFAULT_TARGETS)
 env.Alias('all_tests', env.FindAllBoostUnitTests())
+env.Alias('test_changes', 'all_tests')
 env.Alias('all', [ 'default', 'all_tests', 'examples', 'all_docs' ])
 
 #### prepare
