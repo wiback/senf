@@ -31,13 +31,14 @@
 #endif
 
 // Custom includes
+#include "IntParser.hh"
 
 //#include "StringParser.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
     
-    template <class LengthParser>
+    template <class LengthParser=senf::UInt16Parser>
     class StringParser
         : public PacketParserBase
     {
