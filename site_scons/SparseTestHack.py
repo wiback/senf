@@ -129,3 +129,22 @@ def build(env, accept_unknown_tests=False):
         if only_tests:
             raise SCons.Errors.StopError("Unknown unit tests (only_tests): %s." 
                                          % ", ".join("`%s'" % x for x in only_tests))
+
+def findSCMChanges():
+
+    def scmchanges(dir):
+        if os.popen("cd %s; svnversion" % dir.abspath).read().strip() == "exported":
+            return [ dir.Entry(x)
+                     for x in os.popen("cd %s; git ls-files --modified" 
+                                       % dir.abspath).read().strip().split("\n") ]
+        else:
+            return [ dir.Entry(l[7:])
+                     for l in os.popen("cd %s; svn status" 
+                                       % dir.abspath).read().rstrip().split("\n")
+                     if l[0] == 'M' ]
+
+    changes=scmchanges(env.Dir('#'))
+    for dir in env.Dir('senf/Ext').glob("*"):
+        if isinstance(dir,SCons.Node.FS.Dir):
+            changes.extend(scmchanges(dir))
+    return [ x for x in changes if not isinstance(x,SCons.Node.FS.Dir) ]

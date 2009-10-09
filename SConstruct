@@ -120,12 +120,7 @@ senfutil.parseArguments(
 )
 
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
-    if os.popen("svnversion").read().strip() == "exported":
-        env['only_tests'] = " ".join(os.popen("git ls-files --modified").read().strip().split("\n"))
-    else:
-        env['only_tests'] = " ".join(l[7:] 
-                                     for l in os.popen("svn status").read().rstrip().split("\n")
-                                     if l[0] == 'M')
+    env['only_tests'] = " ".join(x.abspath for x in SparseTestHack.findSCMChanges())
 
 if env.has_key('only_tests') : env['sparse_tests'] = True
 Export('env')
