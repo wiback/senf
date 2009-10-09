@@ -37,16 +37,20 @@
 
 namespace senf {
     
-    struct StringParser
+    template <class LengthParser>
+    class StringParser
         : public PacketParserBase
     {
-
+    public:
         StringParser(data_iterator i, state_type s);
 
         ///////////////////////////////////////////////////////////////////////////
 
+#       include SENF_PARSER()
+        SENF_PARSER_PRIVATE_FIELD ( length, LengthParser );
+        
         typedef std::string value_type;
-        static const size_type init_bytes = 2;
+        static const size_type init_bytes = senf::init_bytes<LengthParser>::value;
         size_type bytes() const;
         
         value_type value() const;
@@ -55,7 +59,8 @@ namespace senf {
         StringParser const & operator=(value_type other);
     };
 
-    std::ostream & operator<<(std::ostream & os, StringParser const & value);
+    template <class LengthParser>
+    std::ostream & operator<<(std::ostream & os, StringParser<LengthParser> const & value);
     
 }
 
@@ -63,9 +68,9 @@ namespace senf {
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_StringParser_i_)
 #define HH_SENF_Packets_StringParser_i_
-#include "StringParser.cci"
+//#include "StringParser.cci"
 //#include "StringParser.ct"
-//#include "StringParser.cti"
+#include "StringParser.cti"
 #endif
 
 

@@ -1,9 +1,10 @@
 // $Id$
 //
-// Copyright (C) 2008
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Christian Niephaus <cni@berlios.de>
+//     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,45 +22,30 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief 802.11 WLANPacket public header */
+    \brief 802.11 WLAN Beacon Packet public header */
 
 #ifndef HH_SENF_Packets_80211Bundle_WLANBeaconPacket_
 #define HH_SENF_Packets_80211Bundle_WLANBeaconPacket_ 1
 
+// Custom includes
 #include <senf/Packets/Packets.hh>
+#include "InformationElements.hh"
 
+///////////////////////////////hh.p////////////////////////////////////////
+namespace senf {
 
-namespace senf
-{
-
-    /** \brief 802.11 Beacon Frame parser
-        (see IEEE 802.11-2007 standard - Chapter 7.2.3.1 Frame formats)
-        <b>Re-ordering of bits due to host byte order</b>
-
-        Frame base class.
-     */
-
-//    struct WLANBeaconPacketParser : public senf::PacketParserBase
-//    {
-//        #include SENF_PARSER();
-//        SENF_PARSER_FIELD( elementId, UInt8Parser);
-//        SENF_PARSER_FIELD( length, UInt8Parser);
-//        
-//    }
-
-
-    struct WLANBeaconPacketParser : public senf::PacketParserBase
+    struct WLANBeaconPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
 
-        SENF_PARSER_FIELD(timestamp, UInt64LSBParser);
-        SENF_PARSER_FIELD(beaconInterval, UInt16LSBParser);
+        SENF_PARSER_FIELD( timestamp,      UInt64LSBParser );
+        SENF_PARSER_FIELD( beaconInterval, UInt16LSBParser );
         SENF_PARSER_SKIP(2,2); //capability flags
 
         //SSID element
 //        SENF_PARSER_FIELD()
         
-        SENF_PARSER_FINALIZE(WLANBeaconPacketParser);
+        SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
         
     };
 
@@ -70,8 +56,6 @@ namespace senf
             \refWLANBeaconPacket
 
         \par Fields:
-            \ref WLANBeaconPacket_MgtFrameParser
-            \image html WLANBeaconPacket.png
 
         \ingroup protocolbundle_80211
      */
@@ -92,10 +76,13 @@ namespace senf
 
     typedef ConcretePacket<WLANBeaconPacketType> WLANBeaconPacket;
 
-
 }
 
-#endif /* HH_SENF_Packets_80211Bundle_WLANBeaconPacket_ */
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "WLANBeaconPacket.cci"
+//#include "WLANBeaconPacket.ct"
+//#include "WLANBeaconPacket.cti"
+#endif
 
 
 // Local Variables:

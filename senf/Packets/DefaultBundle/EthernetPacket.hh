@@ -125,9 +125,12 @@ namespace senf {
         static void finalize(packet p);
     };
 
-    /** \brief Ethernet packet typedef */
+    /** \brief Ethernet packet typedef
+        \ingroup protocolbundle_default
+     */
     typedef ConcretePacket<EthernetPacketType> EthernetPacket;
 
+    
     /** \brief Parse an ethernet VLAN tag
         
         Parser interpreting the ethernet VLAN tag. Fields are

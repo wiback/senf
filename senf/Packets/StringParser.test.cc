@@ -38,6 +38,8 @@
 namespace {
     struct VoidPacket : public senf::PacketTypeBase
     {};
+    
+    typedef senf::StringParser<senf::UInt16Parser> MyStringParser;
 }
 
 BOOST_AUTO_UNIT_TEST(stringParser)
@@ -46,13 +48,13 @@ BOOST_AUTO_UNIT_TEST(stringParser)
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
 
     BOOST_CHECK_EQUAL( p->data().size(), 6u );
-    BOOST_CHECK_EQUAL( senf::StringParser(p->data().begin(), &p->data()).value(), "TEST" );
+    BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()).value(), "TEST" );
 
-    senf::StringParser(p->data().begin(), &p->data()).value("Another Test");
+    MyStringParser(p->data().begin(), &p->data()).value("Another Test");
     BOOST_CHECK_EQUAL( p->data().size(), 14u );
     BOOST_CHECK_EQUAL( p->data()[0], 0u );
     BOOST_CHECK_EQUAL( p->data()[1], 12u );
-    BOOST_CHECK_EQUAL( senf::StringParser(p->data().begin(), &p->data()).value(), "Another Test" );
+    BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()).value(), "Another Test" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

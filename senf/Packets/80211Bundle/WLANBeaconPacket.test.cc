@@ -1,9 +1,10 @@
-// $Id: WLANPacket.test.cc 1317 2009-08-21 14:07:47Z g0dil $
+// $Id$
 //
-// Copyright (C) 2008
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Christian Niephaus <cni@berlios.de>
+//     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,17 +22,16 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief WLANPacket unit tests */
+    \brief 802.11 WLAN Beacon Packet unit tests */
 
 // Custom includes
 #include "WLANBeaconPacket.hh"
-#include <senf/Packets/Packets.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 ///////////////////////////////cc.p////////////////////////////////////////
-/* test parser with a data frame */
+
 BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_packet)
 {
     unsigned char data[] = {
@@ -46,7 +46,7 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_packet)
         0x2c, 0x01, 0x11, 0x30, 0x01, 0x11, 0x34, 0x01, 0x17, 0x38, 0x01,
         0x17, 0x3c, 0x01, 0x17, 0x40, 0x01, 0x17, 0x95, 0x01, 0x1e, 0x99,
         0x01, 0x1e, 0x9d, 0x01, 0x1e, 0xa1, 0x01, 0x1e, 0xa5, 0x01, 0x1e, //Country information
-        0x20, 0x01, 0x00, //power contraint
+        0x20, 0x01, 0x00, //power constraint
         0xdd, 0x18, 0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x88, 0x00, 0x02,
         0xa3, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00, 0x42, 0x43, 0x5e, 0x00,
         0x62, 0x32, 0x2f, 0x00,  //vendor specific
@@ -56,8 +56,10 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_packet)
     BOOST_CHECK_EQUAL( p->timestamp(), 0x0000009C4CAA303AuLL);
     BOOST_CHECK_EQUAL( p->beaconInterval(), 100u);
 
- 
 }
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

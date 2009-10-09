@@ -41,7 +41,7 @@ namespace senf
 
         Frame base class.
      */
-    struct WLANPacketParser : public senf::PacketParserBase
+    struct WLANPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
 
@@ -107,16 +107,16 @@ namespace senf
         \ingroup protocolbundle_80211
      */
     struct WLANPacket_MgtFrameType
-        : public senf::PacketTypeBase,
-          public senf::PacketTypeMixin<WLANPacket_MgtFrameType>
+        : public PacketTypeBase,
+          public PacketTypeMixin<WLANPacket_MgtFrameType>
     {
-        typedef senf::PacketTypeMixin<WLANPacket_MgtFrameType> mixin;
-        typedef senf::ConcretePacket<WLANPacket_MgtFrameType> packet;
+        typedef PacketTypeMixin<WLANPacket_MgtFrameType> mixin;
+        typedef ConcretePacket<WLANPacket_MgtFrameType> packet;
         typedef WLANPacket_MgtFrameParser parser;
 
         using mixin::init;
         using mixin::initSize;
-        using senf::PacketTypeBase::nextPacketRange;
+        using PacketTypeBase::nextPacketRange;
 
         static void dump(packet p, std::ostream &os);
     };
@@ -162,16 +162,16 @@ namespace senf
         \ingroup protocolbundle_80211
      */
     struct WLANPacket_CtrlFrameType
-        : public senf::PacketTypeBase,
-          public senf::PacketTypeMixin<WLANPacket_CtrlFrameType>
+        : public PacketTypeBase,
+          public PacketTypeMixin<WLANPacket_CtrlFrameType>
     {
-        typedef senf::PacketTypeMixin<WLANPacket_CtrlFrameType> mixin;
-        typedef senf::ConcretePacket<WLANPacket_CtrlFrameType> packet;
+        typedef PacketTypeMixin<WLANPacket_CtrlFrameType> mixin;
+        typedef ConcretePacket<WLANPacket_CtrlFrameType> packet;
         typedef WLANPacket_CtrlFrameParser parser;
 
         using mixin::init;
         using mixin::initSize;
-        using senf::PacketTypeBase::nextPacketRange;
+        using PacketTypeBase::nextPacketRange;
 
         static void dump(packet p, std::ostream &os);
     };
@@ -246,11 +246,11 @@ namespace senf
         \ingroup protocolbundle_80211
      */
     struct WLANPacket_DataFrameType
-        : public senf::PacketTypeBase,
-          public senf::PacketTypeMixin<WLANPacket_DataFrameType>
+        : public PacketTypeBase,
+          public PacketTypeMixin<WLANPacket_DataFrameType>
     {
-        typedef senf::PacketTypeMixin<WLANPacket_DataFrameType> mixin;
-        typedef senf::ConcretePacket<WLANPacket_DataFrameType> packet;
+        typedef PacketTypeMixin<WLANPacket_DataFrameType> mixin;
+        typedef ConcretePacket<WLANPacket_DataFrameType> packet;
         typedef WLANPacket_DataFrameParser parser;
 
         using mixin::init;

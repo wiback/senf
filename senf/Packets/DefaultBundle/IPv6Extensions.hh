@@ -175,7 +175,7 @@ namespace senf {
             \ref IPv6RoutingPacket
 
         \par Fields:
-            \ref IPv6PRoutingPacketParser
+            \ref IPv6RoutingPacketParser
         
         \par Associated registries:
             \ref IpTypes

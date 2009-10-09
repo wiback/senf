@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief StringParser inline non-template implementation */
+    \brief StringParser inline template implementation */
 
 //#include "StringParser.ih"
 
@@ -30,43 +30,50 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::StringParser::StringParser(data_iterator i, state_type s)
+template <class LengthParser>
+prefix_ senf::StringParser<LengthParser>::StringParser(data_iterator i, state_type s)
     : PacketParserBase(i, s, init_bytes) 
  {}
 
-prefix_ senf::StringParser::size_type senf::StringParser::bytes()
+template <class LengthParser>
+prefix_ typename senf::StringParser<LengthParser>::size_type senf::StringParser<LengthParser>::bytes()
     const
 { 
-    return parse<UInt16Parser>(0)+2; 
+    return length().value() + senf::bytes(length()); 
 }
 
-prefix_ senf::StringParser::value_type senf::StringParser::value()
+template <class LengthParser>
+prefix_ typename senf::StringParser<LengthParser>::value_type senf::StringParser<LengthParser>::value()
     const
 { 
     validate(bytes()); 
-    return std::string(i()+2, i()+bytes()); 
+    return std::string(i()+senf::bytes(length()), i()+bytes()); 
 }
 
-prefix_ void senf::StringParser::value(value_type v)
+template <class LengthParser>
+prefix_ void senf::StringParser<LengthParser>::value(value_type v)
 { 
     validate(bytes());
-    resize(bytes(), v.size()+2); 
+    resize(bytes(), v.size()+senf::bytes(length())); 
     parse<UInt16Parser>(0) = v.size(); 
-    std::copy(v.begin(), v.end(), i()+2);
+    std::copy(v.begin(), v.end(), i()+senf::bytes(length()));
 }
 
-prefix_ senf::StringParser::operator value_type()
+template <class LengthParser>
+prefix_ senf::StringParser<LengthParser>::operator value_type()
     const
 {
     return value(); 
 }
 
-prefix_ senf::StringParser const & senf::StringParser::operator=(value_type other)
+template <class LengthParser>
+prefix_ typename senf::StringParser<LengthParser> const & senf::StringParser<LengthParser>::operator=(value_type other)
 { 
     value(other); return *this; 
 }
 
-prefix_ std::ostream & senf::operator<<(std::ostream & os, StringParser const & value)
+template <class LengthParser>
+prefix_ std::ostream & senf::operator<<(std::ostream & os, StringParser<LengthParser> const & value)
 {
     os << value.value();
     return os;
