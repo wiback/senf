@@ -35,7 +35,6 @@
 #include <boost/type_traits/has_trivial_destructor.hpp>
 #include <boost/static_assert.hpp>
 #include <senf/Utils/pool_alloc_mixin.hh>
-#include "PacketTypes.hh"
 #include <senf/Utils/singleton.hh>
 
 //#include "PacketImpl.mpp"

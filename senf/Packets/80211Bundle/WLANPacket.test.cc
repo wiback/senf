@@ -25,8 +25,6 @@
 
 // Custom includes
 #include "WLANPacket.hh"
-#include <senf/Packets/Packets.hh>
-#include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -201,6 +199,8 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_create)
     BOOST_CHECK_EQUAL( p->type(), 1u);
     BOOST_CHECK_EQUAL( p->subtype(), 13u);
 }
+
+///////////////////////////////cc.e////////////////////////////////////////
 
 
 // Local Variables:

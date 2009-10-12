@@ -8,6 +8,7 @@ import SENFSCons
 SENFSCons.AutoRules(env, exclude = [ 'bundledump.cc' ], doc_extra_sources = [
     env.Dia2Png("structure.dia"),
     env.Dia2Png("80221Bundle/TLV.dia"),
+    env.Dia2Png("GenericTLV.dia"),
     env.PkgDraw("MPEGDVBBundle/DTCPPacket.hh"),
     env.PkgDraw("DefaultBundle/EthernetPacket.hh",
                 PKGDRAWPACKETS = "EthernetPacketParser"),

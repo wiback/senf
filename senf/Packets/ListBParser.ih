@@ -36,7 +36,7 @@ namespace detail {
 
     /** \brief Internal: ListPolicy defing the ListBParser parser
         \internal
-        \see \ref ListBParser
+        \see \ref ListParser
      */
     template <class ElementParser, class AuxPolicy>
     struct ListBParser_Policy

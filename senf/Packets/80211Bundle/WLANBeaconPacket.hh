@@ -55,7 +55,7 @@ namespace senf {
     /** \brief WLAN Beacon frame packet
 
         \par Packet type (typedef):
-            \refWLANBeaconPacket
+            \ref WLANBeaconPacket
 
         \par Fields:
 

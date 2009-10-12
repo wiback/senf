@@ -57,6 +57,8 @@ prefix_ bool senf::GenericTLVParserBase<Base>::is()
     return this->type().value() == Parser::TYPEID;
 }
 
+#ifndef DOXYGEN
+
 template <class Base>
 template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value(
@@ -84,6 +86,8 @@ prefix_ void senf::GenericTLVParserBase<Base>::value(
     this->type() = val.first;
     value_( val.second); 
 }
+
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

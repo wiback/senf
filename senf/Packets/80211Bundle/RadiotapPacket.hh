@@ -26,10 +26,11 @@
 #ifndef HH_SENF_Packets_80211Bundle_RadiotapPacket_
 #define HH_SENF_Packets_80211Bundle_RadiotapPacket_ 1
 
+// Custom includes
 #include <senf/Packets/Packets.hh>
 
-namespace senf
-{
+///////////////////////////////hh.p////////////////////////////////////////
+namespace senf {
 
     /** \brief Parse Flag field in Radiotap header
 
@@ -232,6 +233,10 @@ namespace senf
     typedef ConcretePacket<RadiotapPacketType> RadiotapPacket;
 }
 
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "RadiotapPacket.cci"
+//#include "RadiotapPacket.ct"
+//#include "RadiotapPacket.cti"
 #endif
 
 

@@ -36,7 +36,7 @@ namespace senf {
 
         /** \brief Internal: ListPolicy defing the ListOptionTypeParser parser
          \internal
-         \see \ref ListOptionTypeParser
+         \see IPv6HopByHopOptionsPacketParser::ListOptionTypeParser
          */
         template <class ElementParser, class AuxPolicy>
         struct ListOptionTypeParser_Policy

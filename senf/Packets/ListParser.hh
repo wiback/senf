@@ -63,7 +63,7 @@ namespace senf {
         packet_usage_fields_collection.
 
         \see 
-            \ref How to access \ref packet_usage_fields_collection
+            How to access \ref packet_usage_fields_collection \n
             SENF_PARSER_LIST() macro used to define list fields \n
             ListParser_Container list container wrapper API \n
             ExampleListPolicy

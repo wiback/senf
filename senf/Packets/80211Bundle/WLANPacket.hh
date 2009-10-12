@@ -98,7 +98,7 @@ namespace senf
     /** \brief WLAN Management frame packet
 
         \par Packet type (typedef):
-            \refWLANPacket_MgtFrame
+            \ref WLANPacket_MgtFrame
 
         \par Fields:
             \ref WLANPacket_MgtFrameParser

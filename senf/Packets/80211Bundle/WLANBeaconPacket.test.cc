@@ -116,7 +116,6 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_create)
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
 
 
 // Local Variables:

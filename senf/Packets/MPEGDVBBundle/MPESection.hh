@@ -141,7 +141,9 @@ namespace senf {
         static PacketParserBase::size_type initHeadSize();
     };
 
-    /** \brief MPESection packet typedef */
+    /** \brief MPESection packet typedef 
+         \ingroup protocolbundle_mpegdvb
+     */
     typedef ConcretePacket<MPESectionType> MPESection;
 }
 

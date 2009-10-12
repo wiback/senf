@@ -20,12 +20,13 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+// Definition of RadiotapPacket non-inline non-template functions
+
+#include "RadiotapPacket.hh"
+//#include "RadiotapPacket.ih"
 
 // Custom includes
-#include "RadiotapPacket.hh"
 #include "WLANPacket.hh"
-#include <senf/Packets/Packets.hh>
 #include <boost/io/ios_state.hpp>
 
 #define prefix_

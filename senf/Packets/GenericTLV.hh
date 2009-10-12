@@ -35,6 +35,98 @@
 
 namespace senf {
  
+    /** \brief Base class for generic TLV parsers
+       
+       This abstract base class can be used to define generic TLV parsers. The following
+       class structure is assumed:
+       \image html GenericTLV.png
+        
+        Your TLVParser base class has to define a \c type and a \c length field:
+        \code
+        struct MyTLVParserBase : public senf::PacketParserBase
+        {
+        #   include SENF_PARSER()
+            SENF_PARSER_FIELD    ( type,   senf::UInt8Parser );
+            SENF_PARSER_FIELD_RO ( length, senf::UInt8Parser );
+            SENF_PARSER_FINALIZE ( MyTLVParserBase           );
+        };
+        \endcode
+       
+        Your concrete TLV parsers will inherit from this base class and have to define a specific
+        value field and a \c TYPEID member:
+        \code
+        struct MyConcreteTLVParser : public MyTLVParserBase
+        {
+        #   include SENF_PARSER()
+            SENF_PARSER_INHERIT  ( MyTLVParserBase             );
+            SENF_PARSER_FIELD    ( myValue, senf::UInt32Parser );
+            SENF_PARSER_FINALIZE ( MyConcreteTLVParser         );
+         
+            SENF_PARSER_INIT() {
+                type() = TYPEID;
+                length_() = 4;
+            }        
+            static const type_t::value_type TYPEID = 0x42;
+        };
+        \endcode
+       
+        With GenericTLVParserBase you can define a generic parser class which provides
+        members to access the value data and and to cast the parser to a concrete tlv
+        parser:   
+        \code
+        struct MyGenericTLVParser : public senf::GenericTLVParserBase<MyTLVParserBase>
+        {
+            typedef senf::GenericTLVParserBase<MyTLVParserBase> base;
+            MyGenericTLVParser(data_iterator i, state_type s) : base(i,s) {}
+            
+            // members for your generic TLV parser...
+        };
+        \endcode
+        
+        If your generic TLV parser just inherits from GenericTLVParserBase and doesn't
+        add any additional functionality you can use a simple \c typedef as well:
+        \code
+        typedef senf::GenericTLVParserBase<MyTLVParserBase> MyGenericTLVParser;
+        \endcode
+        
+        This generiv tlv parser can now be used for example in a list:
+        \code
+        class MyTestPacketParser : public senf::PacketParserBase
+        {
+        #   include SENF_PARSER()
+            SENF_PARSER_FIELD_RO ( list_length, senf::UInt8Parser );
+            SENF_PARSER_LIST     ( tlv_list, list_length, MyGenericTLVParser );
+            SENF_PARSER_FINALIZE ( MyTestPacketParser );
+        };
+        \endcode
+        
+        Now, you can access the TLV parsers in the list in a generic way or you
+        can cast the parsers to some concrete tlv parser:
+        \code
+        MyTestPacket p (...
+        typedef MyTestPacket::Parser::tlv_list_t::container container_t;
+        container_t tlvContainer (p->tlv_list() );
+        optContainer_t::iterator listIter (tlvContainer.begin());
+        
+        // listIter points to a MyGenericTLVParser, so you have generic access:
+        listIter->type() = 0x42;
+        listIter->value( someRangeOfValueData);
+        
+        // cast to an instance of MyConcreteTLVParser:
+        if (listIter->is<MyConcreteTLVParser>()) {
+            MyConcreteTLVParser concreteTLVParser ( listIter->as<MyConcreteTLVParser>());
+            concreteTLVParser.myValue() = 0xabababab;
+        }
+        
+        // add a MyConcreteTLV to the list:
+        MyConcreteTLVParser tlv ( tlvContainer.push_back_space().init<MyConcreteTLVParser>());
+        tlv.myValue() = 0xffff;
+        \endcode  
+
+        \see 
+            IPv6GenericOptionTLVParser, \n
+            WLANGenericInfoElementParser 
+     */
     template <class Base>
     class GenericTLVParserBase : public Base
     {
@@ -56,6 +148,7 @@ namespace senf {
 
         senf::PacketInterpreterBase::range value() const;
         
+#ifndef DOXYGEN
         template<class ForwardReadableRange>
         void value(ForwardReadableRange const & val,
                 typename boost::disable_if<senf::is_pair<ForwardReadableRange> >::type * = 0);
@@ -67,7 +160,14 @@ namespace senf {
         template <class Type, class ForwardReadableRange>
         void value(std::pair<Type, ForwardReadableRange> const & val,
                 typename boost::enable_if<boost::is_convertible<Type, typename Base::type_t::value_type> >::type * = 0);        
-
+#else
+        template<class ForwardReadableRange>
+        void value(ForwardReadableRange const & val);
+        
+        template <class ForwardReadableRange>
+        void value(std::pair<typename Base::type_t::value_type, ForwardReadableRange> const & val);
+#endif   
+        
     private:
         template<class ForwardReadableRange>
         void value_(ForwardReadableRange const &range);
