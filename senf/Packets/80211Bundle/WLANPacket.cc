@@ -26,7 +26,6 @@
 //#include "WLANPacket.ih"
 
 // Custom includes
-#include <senf/Packets/Packets.hh>
 #include <boost/io/ios_state.hpp>
 
 #define prefix_

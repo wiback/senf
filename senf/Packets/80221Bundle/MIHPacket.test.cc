@@ -240,12 +240,12 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
     BOOST_CHECK_EQUAL( mihPayload->tlv_list().size(), 2u);
     MIHPayloadPacketParser::tlv_list_t::container tlv_list_container (mihPayload->tlv_list());
 
-    GenericTLVPacket::Parser tlv1 = *tlv_list_container.begin();
+    MIHGenericTLVPacket::Parser tlv1 = *tlv_list_container.begin();
     BOOST_CHECK_EQUAL( tlv1.type(), 0x42);
     BOOST_CHECK_EQUAL( tlv1.length(), 0x0au);
     BOOST_CHECK_EQUAL( tlv1.value().size(), 0x0a);
 
-    GenericTLVPacket::Parser tlv2 = *boost::next(tlv_list_container.begin());
+    MIHGenericTLVPacket::Parser tlv2 = *boost::next(tlv_list_container.begin());
     BOOST_CHECK_EQUAL( tlv2.type(), 0x43);
     BOOST_CHECK_EQUAL( tlv2.length(), 0x05u);
     BOOST_CHECK_EQUAL( tlv2.value().size(), 0x05);
@@ -264,7 +264,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
 
     unsigned char tlv1_value[] = {
             0x1a, 0x2b, 0x3c, 0x4d, 0x5e };
-    GenericTLVPacket tlv2 = (GenericTLVPacket::create());
+    MIHGenericTLVPacket tlv2 = (MIHGenericTLVPacket::create());
     tlv2->type() = 0x43;
     tlv2->value( tlv1_value);
     tlv2.finalizeThis();
@@ -272,7 +272,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
 
     unsigned char tlv2_value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
-    GenericTLVPacket tlv1 (GenericTLVPacket::create());
+    MIHGenericTLVPacket tlv1 (MIHGenericTLVPacket::create());
     tlv1->type() = 0x42;
     tlv1->value( tlv2_value);
     tlv1.finalizeThis();
@@ -302,7 +302,8 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
             0x1a, 0x2b, 0x3c, 0x4d, 0x5e // value
     };
 
-    BOOST_CHECK(equal( mihPacket.data().begin(), mihPacket.data().end(), data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            mihPacket.data().begin(), mihPacket.data().end() );    
 }
 
 

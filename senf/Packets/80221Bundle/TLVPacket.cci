@@ -30,12 +30,12 @@
 #define prefix_ inline
 ///////////////////////////////cci.p////////////////////////////////////////
 
-prefix_ senf::DynamicTLVLengthParser::size_type senf::DynamicTLVLengthParser::bytes() const 
+prefix_ senf::MIHTLVLengthParser::size_type senf::MIHTLVLengthParser::bytes() const 
 {
     return 1 + ( length_field()<=128 ? 0 : fixed_length_field());
 }
 
-prefix_ void senf::GenericTLVPacketType::finalize(packet p)
+prefix_ void senf::MIHGenericTLVPacketType::finalize(packet p)
 {
     p->finalizeLength();
 }

@@ -124,8 +124,7 @@ namespace senf {
         \endcode  
 
         \see 
-            IPv6GenericOptionTLVParser, \n
-            WLANGenericInfoElementParser 
+            IPv6GenericOptionTLVParser, WLANGenericInfoElementParser, MIHGenericTLVPacketParser 
      */
     template <class Base>
     class GenericTLVParserBase : public Base
@@ -171,6 +170,9 @@ namespace senf {
     private:
         template<class ForwardReadableRange>
         void value_(ForwardReadableRange const &range);
+        
+        Base & self();
+        Base const & self() const;
     };
 }
 

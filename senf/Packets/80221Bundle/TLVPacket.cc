@@ -33,10 +33,10 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::safe_data_iterator senf::BaseTLVPacketParser::resizeValueField(
-        DynamicTLVLengthParser::value_type size) 
+prefix_ senf::safe_data_iterator senf::MIHBaseTLVParser::resizeValueField(
+        MIHTLVLengthParser::value_type size) 
 {
-    DynamicTLVLengthParser::value_type current_length ( length());
+    MIHTLVLengthParser::value_type current_length ( length());
     length_() << size;
 
     safe_data_iterator si (data(), boost::next(i(), 1 + length_().bytes() ));
@@ -48,7 +48,7 @@ prefix_ senf::safe_data_iterator senf::BaseTLVPacketParser::resizeValueField(
 }
 
 
-prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::value() const 
+prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() const 
 {
     switch (bytes() ) {
     case 1:
@@ -62,41 +62,41 @@ prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::v
     case 5:
         return parse<UInt32Parser>( 1 ).value() + (underflow_flag() ? 0 : 128u);
     default:
-        throw(TLVLengthException());
+        throw( MIHTLVLengthException());
     };
 }
 
 
-prefix_ void senf::DynamicTLVLengthParser::value(value_type const & v) 
+prefix_ void senf::MIHTLVLengthParser::value(value_type const & v) 
 {
     switch (bytes() ) {
     case 1:
-        if (v > 128) throw( TLVLengthException());
+        if (v > 128) throw( MIHTLVLengthException());
         length_field() = v;
         return;
     case 2:
-        if (v > UInt8Parser::max_value + 128) throw( TLVLengthException());
+        if (v > UInt8Parser::max_value + 128) throw( MIHTLVLengthException());
         parse<UInt8Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     case 3:
-        if (v > UInt16Parser::max_value + 128) throw( TLVLengthException());
+        if (v > UInt16Parser::max_value + 128) throw( MIHTLVLengthException());
         parse<UInt16Parser>(1) = v - (v>128 ? 128 : 0);
         break;;
     case 4:
-        if (v > UInt24Parser::max_value + 128) throw( TLVLengthException());
+        if (v > UInt24Parser::max_value + 128) throw( MIHTLVLengthException());
         parse<UInt24Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     case 5:
         parse<UInt32Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     default:
-        throw( TLVLengthException());
+        throw( MIHTLVLengthException());
     };
     underflow_flag() = (v <= 128);
 }
 
 
-prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::maxValue()
+prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::maxValue()
     const
 {
     switch (bytes() ) {
@@ -111,26 +111,26 @@ prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::m
     case 5:
         return UInt32Parser::max_value; 
     default:
-        throw( TLVLengthException());
+        throw( MIHTLVLengthException());
     };
 }
 
 
-prefix_ senf::DynamicTLVLengthParser const & senf::DynamicTLVLengthParser::operator= (value_type other) 
+prefix_ senf::MIHTLVLengthParser const & senf::MIHTLVLengthParser::operator= (value_type other) 
 {
     value(other);
     return *this; 
 }
 
 
-prefix_ void senf::DynamicTLVLengthParser::init() const 
+prefix_ void senf::MIHTLVLengthParser::init() const 
 {
     defaultInit();
     extended_length_flag() = false;
 }
 
 
-prefix_ void senf::DynamicTLVLengthParser::finalize()
+prefix_ void senf::MIHTLVLengthParser::finalize()
 {
     value_type v = value();
     size_type b = bytes();
@@ -154,7 +154,7 @@ prefix_ void senf::DynamicTLVLengthParser::finalize()
 }
 
 
-prefix_ void senf::DynamicTLVLengthParser:: maxValue(DynamicTLVLengthParser::value_type v)
+prefix_ void senf::MIHTLVLengthParser:: maxValue(MIHTLVLengthParser::value_type v)
 {
     if (v <= 128)
         return;
@@ -175,11 +175,11 @@ prefix_ void senf::DynamicTLVLengthParser:: maxValue(DynamicTLVLengthParser::val
 }
 
 
-prefix_ void senf::DynamicTLVLengthParser::resize(size_type size)
+prefix_ void senf::MIHTLVLengthParser::resize(size_type size)
 {
     value_type v = value();
     size_type current_size (bytes());
-    SafePacketParserWrapper<DynamicTLVLengthParser> safeThis (*this);
+    SafePacketParserWrapper<MIHTLVLengthParser> safeThis (*this);
     
     if (current_size > size)
         data().erase( i(), boost::next(i(), current_size-size));
@@ -196,19 +196,19 @@ prefix_ void senf::DynamicTLVLengthParser::resize(size_type size)
 }
 
 
-prefix_ senf::PacketInterpreterBase::range senf::GenericTLVPacketParser::value() 
-    const
-{
-    senf::PacketData::iterator begin (boost::next(data().begin(), 1 + length_().bytes() ));
-    return PacketInterpreterBase::range(
-            begin, boost::next( begin, length()) );
-}
+//prefix_ senf::PacketInterpreterBase::range senf::MIHGenericTLVPacketParser::value() 
+//    const
+//{
+//    senf::PacketData::iterator begin (boost::next(data().begin(), 1 + length_().bytes() ));
+//    return PacketInterpreterBase::range(
+//            begin, boost::next( begin, length()) );
+//}
 
 
-prefix_ void senf::GenericTLVPacketType::dump(packet p, std::ostream & os)
+prefix_ void senf::MIHGenericTLVPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
-    os << "GenericTLVPacket:\n"
+    os << "MIH GenericTLV Packet:\n"
        << std::dec
        << senf::fieldName("type")                      << unsigned( p->type()) << "\n"
        << senf::fieldName("length")                    << unsigned( p->length()) << "\n"

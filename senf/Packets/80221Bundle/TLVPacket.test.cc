@@ -56,19 +56,19 @@ namespace {
 }
 
 
-BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_parse_packet_with_simple_length)
 {
     unsigned char data[] = {
         0x01, // type
         0x0A, // first bit not set, length=10
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
     };
-    GenericTLVPacket tlvPacket (GenericTLVPacket::create(data));
+    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create(data));
     CHECK_TLVPacket( tlvPacket, 0x01, 0x0Au );
 }
 
 
-BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_extended_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_parse_packet_with_extended_length)
 {
     unsigned char data[] = {
         0x01, // type
@@ -89,17 +89,17 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_extended_length)
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 
         0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89
     };
-    GenericTLVPacket tlvPacket (GenericTLVPacket::create(data));
+    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create(data));
     CHECK_TLVPacket( tlvPacket, 0x01, 0x8au );
 }
 
 
-BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_create_packet_with_simple_length)
 {
     unsigned char value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
     };
-    GenericTLVPacket tlvPacket (GenericTLVPacket::create());
+    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create());
     tlvPacket->type() = 42u;
     tlvPacket->value( value);
     tlvPacket.finalizeThis();
@@ -115,13 +115,13 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_simple_length)
 }
 
 
-BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_extended_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_create_packet_with_extended_length)
 {
     unsigned char value[255];
     for (unsigned i=0; i<sizeof(value); i++)
         value[i] = i;
-    GenericTLVPacket tlvPacket (GenericTLVPacket::create());
-    tlvPacket->maxLengthValue( DynamicTLVLengthParser::max_value);
+    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create());
+    tlvPacket->maxLengthValue( MIHTLVLengthParser::max_value);
     SENF_CHECK_NO_THROW( tlvPacket->type() = 42u);
     SENF_CHECK_NO_THROW( tlvPacket->value( value));
     SENF_CHECK_NO_THROW( tlvPacket.finalizeThis());
@@ -141,9 +141,9 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_extended_length)
 }
 
 
-BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_invalid_packet)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_create_invalid_packet)
 {
-    GenericTLVPacket tlvPacket (GenericTLVPacket::create());
+    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create());
     tlvPacket->type() = 42u;
     tlvPacket.finalizeThis();
 
@@ -151,7 +151,7 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_invalid_packet)
     for (unsigned i=0; i<sizeof(value); i++)
         value[i] = i;
 
-    BOOST_CHECK_THROW( tlvPacket->value( value), TLVLengthException);
+    BOOST_CHECK_THROW( tlvPacket->value( value), MIHTLVLengthException);
     tlvPacket->maxLengthValue( sizeof(value));
     tlvPacket->value( value);
     tlvPacket.finalizeThis();
@@ -161,10 +161,10 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_invalid_packet)
 
 namespace {
 
-    struct TestMacAddressTLVPacketParser : public BaseTLVPacketParser
+    struct TestMacAddressTLVPacketParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
-        SENF_PARSER_INHERIT ( BaseTLVPacketParser );
+        SENF_PARSER_INHERIT ( MIHBaseTLVParser );
         SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser );
         SENF_PARSER_FINALIZE( TestMacAddressTLVPacketParser );
     };

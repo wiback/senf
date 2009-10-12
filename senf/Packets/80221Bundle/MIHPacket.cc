@@ -27,7 +27,6 @@
 //#include "MIHPacket.ih"
 
 // Custom includes
-#include <senf/Packets/Packets.hh>
 #include <senf/Utils/hexdump.hh>
 #include <boost/io/ios_state.hpp>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>

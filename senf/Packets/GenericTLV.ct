@@ -48,7 +48,7 @@ template <class Base>
 prefix_  senf::PacketInterpreterBase::range senf::GenericTLVParserBase<Base>::value() 
     const 
 {
-    senf::PacketData::iterator begin (boost::next(this->i(), senf::init_bytes<Base>::value ));
+    senf::PacketData::iterator begin ( boost::next(this->i(), senf::bytes( self())) );
     return PacketInterpreterBase::range(begin, boost::next( begin, this->length()) );
 }
 
@@ -57,14 +57,15 @@ template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const &range)
 {
     unsigned int rangeSize = boost::size(range);
+    std::cerr << "GenericTLVParserBase<Base>::value_() rangeSize=" << 
+            unsigned( rangeSize) << " length()=" << unsigned( this->length()) << " bytes(self)=" << 
+            unsigned( senf::bytes(self())) << " bytes()=" << unsigned( senf::bytes(*this)) << std::endl;
     if ( rangeSize != this->length() )
-        resize( bytes(), rangeSize + senf::init_bytes<Base>::value );
+        resize( bytes(), rangeSize + senf::bytes(self()) );
     std::copy( boost::begin(range), boost::end(range), boost::next(
-            this->i(), senf::init_bytes<Base>::value));
+            this->i(), senf::bytes( self())) );
     this->length_() = rangeSize;
 }
-
-
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_

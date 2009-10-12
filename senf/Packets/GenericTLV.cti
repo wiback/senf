@@ -33,7 +33,7 @@
 template <class Base>
 prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserBase<Base>::bytes()
 {
-    return senf::init_bytes<Base>::value + this->length();
+    return senf::bytes(self()) + this->length();
 }
 
 template <class Base>
@@ -55,6 +55,19 @@ template <class Parser>
 prefix_ bool senf::GenericTLVParserBase<Base>::is()
 {
     return this->type().value() == Parser::TYPEID;
+}
+
+template <class Base>
+prefix_ Base & senf::GenericTLVParserBase<Base>::self()
+{
+    return *static_cast<Base *>(this);
+}
+
+template <class Base>
+prefix_ Base const & senf::GenericTLVParserBase<Base>::self()
+    const
+{
+    return *static_cast<Base const *>(this);
 }
 
 #ifndef DOXYGEN

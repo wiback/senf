@@ -112,12 +112,12 @@ namespace senf {
          \note you must call mihfIdPacket.maxLengthValue( 253) *before*
          setting longer MIHF_IDs values.
     */
-    class MIHFId_TLVParser : public BaseTLVPacketParser
+    class MIHFId_TLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( BaseTLVPacketParser );
-        SENF_PARSER_SKIP     ( length(), 0         );
-        SENF_PARSER_FINALIZE ( MIHFId_TLVParser    );
+        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
+        SENF_PARSER_SKIP     ( length(), 0      );
+        SENF_PARSER_FINALIZE ( MIHFId_TLVParser );
         
     public:
         std::string asString() const;
@@ -251,7 +251,7 @@ namespace senf {
     struct MIHPayloadPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_LIST ( tlv_list, packetSize(), GenericTLVPacketParser );
+        SENF_PARSER_LIST ( tlv_list, packetSize(), MIHGenericTLVPacketParser );
         SENF_PARSER_FINALIZE ( MIHPayloadPacketParser );
     };
 
