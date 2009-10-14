@@ -161,6 +161,7 @@
 #include "PacketTypes.hh"
 #include "PacketData.hh"
 #include "ParseHelpers.hh"
+#include "SafeIterator.hh"
 
 //#include "PacketParser.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -290,7 +291,21 @@ namespace senf {
                                              implementation. Re-implement this member in your own
                                              parsers if needed. */
 
+    private:
+        struct ParserProtector {
+            senf::safe_data_iterator safe_i_;
+            mutable PacketParserBase const * parser_;
+            
+            ParserProtector( PacketParserBase const * parser);
+            ParserProtector(ParserProtector const & other_);
+            ~ParserProtector();
+            
+            template <class _>
+            void operator()(_ const &) const {}
+        };
     protected:
+        ParserProtector protect() const;
+        
         PacketParserBase(data_iterator i, state_type s); ///< Standard constructor
                                         /**< This is the constructor used by most parsers. The
                                              parameters are just forwarded from the derived classes
@@ -371,6 +386,7 @@ namespace senf {
         PacketData * data_;
 
         template <class Parser> friend class SafePacketParserWrapper;
+        friend class ParserProtector;
     };
 
     /** \brief Return raw size parsed by the given parser object

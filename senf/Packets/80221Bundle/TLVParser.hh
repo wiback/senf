@@ -21,16 +21,17 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TLVPacket public header */
+    \brief TLVParser public header */
 
-#ifndef HH_SENF_Packets_80221Bundle_TLVPacket_
-#define HH_SENF_Packets_80221Bundle_TLVPacket_ 1
+#ifndef HH_SENF_Packets_80221Bundle_TLVParser_
+#define HH_SENF_Packets_80221Bundle_TLVParser_ 1
 
 // Custom includes
 #include <algorithm>
 #include <senf/Packets/Packets.hh>
+#include "MIHTypes.hh"
 
-//#include "TLVPacket.mpp"
+//#include "TLVParser.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -71,14 +72,15 @@ namespace senf {
         void finalize();
         void maxValue(value_type v);
         value_type maxValue() const;
+        
     private:
-        void resize(size_type size);
+        void resize_(size_type size);
     };  
         
 
-    /** \brief Base class for TLV-Packet-Parsers
+    /** \brief Base class for MIH TLV parsers
      
-         MIHBaseTLVParser is the abstract base class for TLV-Packet-Parsers. It defines the
+         MIHBaseTLVParser is the abstract base class for MIH TLV parsers. It defines the
          \ref type() field as an \ref senf::UInt8Parser and the \ref length() field as a 
          MIHTLVLengthParser. The length field is read-only. 
          
@@ -92,14 +94,6 @@ namespace senf {
              SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser );
              SENF_PARSER_FINALIZE( MacAddressesTLVParser );
          };
-         
-         struct MacAddressesTLVPacketType : public PacketTypeBase {
-            typedef MacAddressesTLVParser parser;
-            ...
-            static void finalize(ConcretePacket<MacAddressesTLVPacketType> p) { 
-                p->finalizeLength();
-            }
-         };
          \endcode
          
          You have to adjust the maximum length value with the \ref maxLengthValue function 
@@ -108,7 +102,7 @@ namespace senf {
          if you don't call \c macAddressesTLVPacket->maxLengthValue( \e some_value) before.
          
          \see MIHTLVLengthParser \n
-           MIHGenericTLVPacketParser \n
+           MIHGenericTLVParser \n
      */
     class MIHBaseTLVParser : public PacketParserBase
     {
@@ -124,7 +118,7 @@ namespace senf {
             \param v maximum value of length field
          */
         void maxLengthValue(MIHTLVLengthParser::value_type v) const {
-            length_().maxValue(v);
+            protect(), length_().maxValue(v);
         }
         
         /** \brief shrink size of length field to minimum
@@ -133,7 +127,7 @@ namespace senf {
             the current length value.
          */
         void finalizeLength() { 
-            length_().finalize(); 
+            protect(), length_().finalize(); 
         };
         
     protected:
@@ -143,62 +137,92 @@ namespace senf {
 
         
     /** \brief Parser for a generic TLV packet
-
-        \see MIHGenericTLVPacketType
      */
-    struct MIHGenericTLVPacketParser 
+    struct MIHGenericTLVParser
         : public GenericTLVParserBase<MIHBaseTLVParser>
     {
         typedef senf::GenericTLVParserBase<MIHBaseTLVParser> base;
-        MIHGenericTLVPacketParser(data_iterator i, state_type s) : base(i,s) {}
+        MIHGenericTLVParser(data_iterator i, state_type s) : base(i,s) {}
 
         void init() const {
             defaultInit();
             maxLengthValue( MIHTLVLengthParser::max_value);
-        }        
-    };
-    
-    /** \brief Generic TLV packet
-
-        \par Packet type (typedef):
-            \ref MIHGenericTLVPacket
-
-        \image html TLV.png
+        }
         
-        \ingroup protocolbundle_80221
-     */
-    struct MIHGenericTLVPacketType
-        : public PacketTypeBase,
-          public PacketTypeMixin<MIHGenericTLVPacketType>
+        using base::init;
+    };
+        
+    /** \brief Parse a MIHF_ID
+
+         the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
+         we could set maxLengthValue in init(), but for the most MIHF_IDs the default
+         maximum length of 127 should be enough.
+         
+         \note you must call mihfIdPacket.maxLengthValue( 253) *before*
+         setting longer MIHF_IDs values.
+    */
+    class MIHFId_TLVParser : public MIHBaseTLVParser
     {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<MIHGenericTLVPacketType> mixin;
-#endif
-        typedef ConcretePacket<MIHGenericTLVPacketType> packet; ///< GenericTLV packet typedef
-        typedef MIHGenericTLVPacketParser parser;               ///< typedef to the parser of GenericTLV packet
-
-        using mixin::nextPacketRange;
-        using mixin::init;
-        using mixin::initSize;
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
+        SENF_PARSER_SKIP     ( length(), 0      );
+        SENF_PARSER_FINALIZE ( MIHFId_TLVParser );
         
-        /** \brief Dump given MIHGenericTLVPacket in readable form to given output stream */
-        static void dump(packet p, std::ostream & os);  
-        static void finalize(packet p);  ///< Finalize packet.
-                                         /**< shrink size of length field to minimum 
-                                              \see MIHBaseTLVParser::finalizeLength() */
+    public:
+        std::string asString() const;
+        void setString(std::string const &id);
+
+        senf::MACAddress asMACAddress() const;
+        void setMACAddress(senf::MACAddress const &mac);
+
+        senf::INet4Address asINet4Address() const;
+        void setINet4Address(senf::INet4Address const &addr);
+
+        senf::INet6Address asINet6Address() const;
+        void setINet6Address(senf::INet6Address const &addr);
+        
+        senf::EUI64 asEUI64() const;
+        void setEUI64(senf::EUI64 const &addr);
+
+        MIHFId valueAs(MIHFId::Type type) const;
+        
+    private:
+        template <class OutputIterator>
+        struct binaryNAIEncoder {
+            binaryNAIEncoder(OutputIterator &i) : i_(i) {}
+            void operator()(const boost::uint8_t &v) const {
+                *i_++ = '\\';
+                *i_++ = v;
+            }
+            OutputIterator &i_;
+        };
+        template <class OutputIterator>
+        static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> > getNAIEncodedOutputIterator(OutputIterator i) {
+            return boost::make_function_output_iterator(binaryNAIEncoder<OutputIterator>(i));
+        }
+
+        struct binaryNAIDecoder {
+            binaryNAIDecoder() : readNextByte_(true) {}
+            bool operator()(const boost::uint8_t &v) {
+                readNextByte_ = readNextByte_ ? false : true;
+                return readNextByte_;
+            }
+            bool readNextByte_;
+        };
+        template <class Iterator>
+        static boost::filter_iterator<binaryNAIDecoder, Iterator> getNAIDecodedIterator(Iterator begin, Iterator end) {
+            return boost::make_filter_iterator<binaryNAIDecoder>(begin, end);
+        }
     };
-    
-    /** \brief GenericTLV packet typedef
-        \ingroup protocolbundle_80221
-     */
-    typedef ConcretePacket<MIHGenericTLVPacketType> MIHGenericTLVPacket;
+
+
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "TLVPacket.cci"
-//#include "TLVPacket.ct"
-//#include "TLVPacket.cti"
+#include "TLVParser.cci"
+//#include "TLVParser.ct"
+//#include "TLVParser.cti"
 #endif
 
 

@@ -21,23 +21,58 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TLVPacket inline non-template implementation */
+    \brief TLVParser inline non-template implementation */
 
-//#include "TLVPacket.ih"
+//#include "TLVParser.ih"
 
 // Custom includes
 
 #define prefix_ inline
 ///////////////////////////////cci.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// MIHTLVLengthParser
+
 prefix_ senf::MIHTLVLengthParser::size_type senf::MIHTLVLengthParser::bytes() const 
 {
     return 1 + ( length_field()<=128 ? 0 : fixed_length_field());
 }
 
-prefix_ void senf::MIHGenericTLVPacketType::finalize(packet p)
+///////////////////////////////////////////////////////////////////////////
+// MIHFId_TLVParser
+
+prefix_ std::string senf::MIHFId_TLVParser::asString()
+    const
 {
-    p->finalizeLength();
+    return std::string( i(1+length_().bytes()), i(1+length_().bytes()+length()) );
+}
+
+prefix_ senf::MACAddress senf::MIHFId_TLVParser::asMACAddress()
+    const
+{
+    return MACAddress::from_data( 
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+12) ));
+}
+
+prefix_ senf::INet4Address senf::MIHFId_TLVParser::asINet4Address()
+    const
+{
+    return INet4Address::from_data( 
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+8) ));
+}
+
+prefix_ senf::INet6Address senf::MIHFId_TLVParser::asINet6Address()
+    const
+{
+    return INet6Address::from_data( 
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+32) ));
+}
+
+prefix_ senf::EUI64 senf::MIHFId_TLVParser::asEUI64()
+    const
+{
+    return EUI64::from_data( 
+            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+16) ));
 }
 
 ///////////////////////////////cci.e////////////////////////////////////////

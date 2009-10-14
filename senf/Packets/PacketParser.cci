@@ -49,7 +49,28 @@ prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::end()
     return data_->end();
 }
 
+prefix_ senf::PacketParserBase::ParserProtector::ParserProtector(PacketParserBase const * p)
+    : safe_i_( *p), parser_(p) 
+{}
+
+prefix_ senf::PacketParserBase::ParserProtector::ParserProtector(ParserProtector const & other_)
+    : safe_i_( *other_.parser_), parser_(other_.parser_) 
+{
+    other_.parser_ = 0;
+}
+
+prefix_ senf::PacketParserBase::ParserProtector::~ParserProtector() 
+{ 
+    if (parser_) const_cast<PacketParserBase *>(parser_)->i_ = safe_i_; 
+}
+
 // protected members
+
+prefix_ senf::PacketParserBase::ParserProtector senf::PacketParserBase::protect()
+    const
+{ 
+    return ParserProtector(this); 
+}
 
 prefix_ bool senf::PacketParserBase::check(size_type size)
     const

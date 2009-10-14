@@ -144,15 +144,27 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketTy
     if (p.data().size() < initSize())
         return no_factory();
     PkReg_Entry const * e (PacketRegistry<MIHMessageRegistry>::lookup( p->messageId(), nothrow ));
-    return e ? e->factory() : MIHPayloadPacket::factory();
+    return e ? e->factory() : MIHGenericPayloadPacket::factory();
 }
 
-prefix_ void senf::MIHPayloadPacketType::dump(packet p, std::ostream &os)
+///////////////////////////////////////////////////////////////////////////
+// MIHGenericPayloadPacketType
+
+prefix_ void senf::MIHGenericPayloadPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Payload (service specific TLVs):\n"
        << "  ToDo!\n";
 }
+
+prefix_ void senf::MIHGenericPayloadPacketType::finalize(packet p)
+{
+    typedef parser::tlv_list_t::container tlvContainer_t;
+    tlvContainer_t tlvs (p->tlv_list() );
+    for (tlvContainer_t::iterator i (tlvs.begin()); i != tlvs.end(); ++i)
+        i->finalizeLength();
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

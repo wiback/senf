@@ -21,13 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TLVPacket unit tests */
+    \brief TLVParser unit tests */
 
-//#include "TLVPacket.test.hh"
-//#include "TLVPacket.test.ih"
+//#include "TLVParser.test.hh"
+//#include "TLVParser.test.ih"
 
 // Custom includes
-#include "TLVPacket.hh"
+#include "TLVParser.hh"
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
@@ -39,38 +39,39 @@
 using namespace senf;
 
 namespace {
-
-#define CHECK_TLVPacket(tlvPacket, ptype, plength)                            \
-{                                                                             \
-    BOOST_CHECK_EQUAL( tlvPacket->type(),         ptype   );                  \
-    BOOST_CHECK_EQUAL( tlvPacket->length(),       plength );                  \
-    BOOST_CHECK_EQUAL( tlvPacket->value().size(), int(plength) );             \
-    std::ostringstream oss (std::ostringstream::out);                         \
-    SENF_CHECK_NO_THROW( tlvPacket.dump( oss));                               \
-    senf::PacketData::iterator dataIterator (tlvPacket->value().begin());     \
-    for (unsigned i=0; i<plength; i++) {                                      \
-        BOOST_CHECK_EQUAL( *dataIterator, i );                                \
-        dataIterator++;                                                       \
-    }                                                                         \
+    struct VoidPacket : public PacketTypeBase
+    {};
+                           
+#define CHECK_TLVParser(tlvParser, ptype, plength)                          \
+{                                                                           \
+    BOOST_CHECK_EQUAL( tlvParser.type(),         ptype   );                 \
+    BOOST_CHECK_EQUAL( tlvParser.length(),       plength );                 \
+    BOOST_CHECK_EQUAL( tlvParser.value().size(), int(plength) );            \
+    senf::PacketData::iterator dataIterator (tlvParser.value().begin());    \
+    for (unsigned i=0; i<plength; i++) {                                    \
+        BOOST_CHECK_EQUAL( *dataIterator, i );                              \
+        dataIterator++;                                                     \
+    }                                                                       \
 }
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_parse_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_simple_length)
 {
-    unsigned char data[] = {
+    PacketInterpreterBase::byte data[] = {
         0x01, // type
         0x0A, // first bit not set, length=10
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
     };
-    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create(data));
-    CHECK_TLVPacket( tlvPacket, 0x01, 0x0Au );
+    PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(data));
+    MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
+    CHECK_TLVParser( tlvParser, 0x01, 0x0Au );
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_parse_packet_with_extended_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_extended_length)
 {
-    unsigned char data[] = {
+    PacketInterpreterBase::byte data[] = {
         0x01, // type
         0x81, // first and last bit set => one byte length following
         0x0A, // length (10 = 138 bytes value follows)
@@ -89,73 +90,76 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_parse_packet_with_extended_length)
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 
         0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89
     };
-    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create(data));
-    CHECK_TLVPacket( tlvPacket, 0x01, 0x8au );
+    PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(data));
+    MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
+    CHECK_TLVParser( tlvParser, 0x01, 0x8au );
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_create_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_simple_length)
 {
-    unsigned char value[] = {
+    PacketInterpreterBase::byte value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
     };
-    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create());
-    tlvPacket->type() = 42u;
-    tlvPacket->value( value);
-    tlvPacket.finalizeThis();
+    PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(2u));
+    MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
+    tlvParser.type() = 42u;
+    tlvParser.value( value);
+    tlvParser.finalizeLength();
 
-    CHECK_TLVPacket( tlvPacket, 42u, 0x0Au );
+    CHECK_TLVParser( tlvParser, 42u, 0x0Au );
 
-    unsigned char data[] = {
+    PacketInterpreterBase::byte data[] = {
         0x2a, // type
         0x0A, // first bit not set, length=10
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
     };
-    BOOST_CHECK( equal( tlvPacket.data().begin(), tlvPacket.data().end(), data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            p->data().begin(), p->data().end() );
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_create_packet_with_extended_length)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
 {
-    unsigned char value[255];
+    PacketInterpreterBase::byte value[255];
     for (unsigned i=0; i<sizeof(value); i++)
         value[i] = i;
-    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create());
-    tlvPacket->maxLengthValue( MIHTLVLengthParser::max_value);
-    SENF_CHECK_NO_THROW( tlvPacket->type() = 42u);
-    SENF_CHECK_NO_THROW( tlvPacket->value( value));
-    SENF_CHECK_NO_THROW( tlvPacket.finalizeThis());
+    PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(2u));
+    MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
+    tlvParser.maxLengthValue( MIHTLVLengthParser::max_value);
+    tlvParser.type() = 42u;
+    tlvParser.value( value);
+    tlvParser.finalizeLength();
 
-    CHECK_TLVPacket( tlvPacket, 42u, sizeof(value) );
+    CHECK_TLVParser( tlvParser, 42u, sizeof(value) );
 
-    unsigned char data[] = {
+    PacketInterpreterBase::byte data[] = {
         0x2a, // type
         0x81, // first and last bit set => one byte length following
         0x7f, // length (127 = 255 bytes value)
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // first bytes of value
     };
-    BOOST_CHECK( equal(
-            tlvPacket.data().begin(),
-            boost::next( tlvPacket.data().begin(), sizeof(data)),
-            data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            p->data().begin(), boost::next( p->data().begin(), sizeof(data)) );
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVPacket_create_invalid_packet)
+BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_invalid)
 {
-    MIHGenericTLVPacket tlvPacket (MIHGenericTLVPacket::create());
-    tlvPacket->type() = 42u;
-    tlvPacket.finalizeThis();
+    PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(2u));
+    MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
+    tlvParser.type() = 42u;
+    tlvParser.finalizeLength();
 
-    unsigned char value[255];
+    PacketInterpreterBase::byte value[255];
     for (unsigned i=0; i<sizeof(value); i++)
         value[i] = i;
 
-    BOOST_CHECK_THROW( tlvPacket->value( value), MIHTLVLengthException);
-    tlvPacket->maxLengthValue( sizeof(value));
-    tlvPacket->value( value);
-    tlvPacket.finalizeThis();
-    CHECK_TLVPacket( tlvPacket, 42u, sizeof(value) );
+    BOOST_CHECK_THROW( tlvParser.value( value), MIHTLVLengthException);
+    tlvParser.maxLengthValue( sizeof(value));
+    tlvParser.value( value);
+    tlvParser.finalizeLength();
+    CHECK_TLVParser( tlvParser, 42u, sizeof(value) );
 }
 
 

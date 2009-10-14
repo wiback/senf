@@ -124,7 +124,7 @@ namespace senf {
         \endcode  
 
         \see 
-            IPv6GenericOptionTLVParser, WLANGenericInfoElementParser, MIHGenericTLVPacketParser 
+            IPv6GenericOptionTLVParser, WLANGenericInfoElementParser, MIHGenericTLVParser 
      */
     template <class Base>
     class GenericTLVParserBase : public Base
@@ -140,10 +140,10 @@ namespace senf {
         Parser init();
         
         template <class Parser>
-        Parser as();
+        Parser as() const;
         
         template <class Parser>
-        bool is();
+        bool is() const;
 
         senf::PacketInterpreterBase::range value() const;
         

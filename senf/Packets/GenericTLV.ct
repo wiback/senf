@@ -56,10 +56,8 @@ template <class Base>
 template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const &range)
 {
-    unsigned int rangeSize = boost::size(range);
-    std::cerr << "GenericTLVParserBase<Base>::value_() rangeSize=" << 
-            unsigned( rangeSize) << " length()=" << unsigned( this->length()) << " bytes(self)=" << 
-            unsigned( senf::bytes(self())) << " bytes()=" << unsigned( senf::bytes(*this)) << std::endl;
+    //typename boost::range_difference<ForwardReadableRange>::type rangeSize ( boost::size(range));
+    unsigned rangeSize ( boost::size(range));
     if ( rangeSize != this->length() )
         resize( bytes(), rangeSize + senf::bytes(self()) );
     std::copy( boost::begin(range), boost::end(range), boost::next(

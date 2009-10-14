@@ -46,6 +46,7 @@ prefix_ void senf::GenericTLVParserBase<Base>::init()
 template <class Base>
 template <class Parser>
 prefix_ Parser senf::GenericTLVParserBase<Base>::as()
+    const
 {
     return Parser(this->i(), this->state() );
 }
@@ -53,6 +54,7 @@ prefix_ Parser senf::GenericTLVParserBase<Base>::as()
 template <class Base>
 template <class Parser>
 prefix_ bool senf::GenericTLVParserBase<Base>::is()
+    const
 {
     return this->type().value() == Parser::TYPEID;
 }

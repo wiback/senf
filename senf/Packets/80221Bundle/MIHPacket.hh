@@ -28,14 +28,7 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
-#include <senf/Socket/Protocols/Raw/MACAddress.hh>
-#include <senf/Socket/Protocols/INet/INet4Address.hh>
-#include <senf/Socket/Protocols/INet/INet6Address.hh>
-#include "TLVPacket.hh"
-#include <boost/function_output_iterator.hpp>
-#include <boost/iterator/filter_iterator.hpp>
-#include <boost/variant.hpp>
-
+#include "TLVParser.hh"
 
 //#include "MIHPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -51,121 +44,7 @@ namespace senf {
         SENF_PACKET_REGISTRY_REGISTER(                                    \
             senf::MIHMessageRegistry, packet::type::MESSAGE_ID, packet )
     
-    class MIHFId 
-        : public boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
-                senf::INet6Address, std::string, senf::EUI64 >,
-          public boost::less_than_comparable<MIHFId>,
-          public boost::equality_comparable<MIHFId>
-    {
-    public:
-        enum Type { Empty, MACAddress, INet4Address, INet6Address, String, EUI64 };
-      
-        MIHFId();                                   ///< Create empty instance.
-        MIHFId(senf::MACAddress const & addr);      ///< Construct id with given MACAddress 
-        MIHFId(senf::INet4Address const & addr);    ///< Construct id with given INet4Address
-        MIHFId(senf::INet6Address const & addr);    ///< Construct id with given INet6Address
-        MIHFId(std::string const & addr);           ///< Construct id with given String
-        MIHFId(senf::EUI64 const & addr);           ///< Construct id with given EUI64
-        
-        Type type() const;
-        bool operator==(MIHFId const & other) const;
-        bool operator<(MIHFId const & other) const; 
-        
-    private:
-        struct GetTypeVisitor : public boost::static_visitor<Type> {
-            Type operator()(boost::blank const &) const { return Empty; }
-            Type operator()(senf::MACAddress const &) const { return MACAddress; }
-            Type operator()(senf::INet4Address const &) const { return INet4Address; }
-            Type operator()(senf::INet6Address const &) const { return INet6Address; }
-            Type operator()(std::string const & ) const { return String; }
-            Type operator()(senf::EUI64 const &) const { return EUI64; }
-        };
-        struct EqualsVisitor : public boost::static_visitor<bool> {
-            template <typename T, typename U>
-            bool operator()(T const &, U const &) const {
-                return false;
-            }
-            template <typename T>
-            bool operator()( const T & lhs, const T & rhs ) const {
-                return lhs == rhs;
-            }
-        };
-        struct LessThanVisitor : public boost::static_visitor<bool> {
-            template <typename T, typename U>
-            bool operator()(T const &, U const &) const {
-                return false;
-            }
-            template <typename T>
-            bool operator()( const T & lhs, const T & rhs ) const {
-                return lhs < rhs;
-            }
-        };
-    };
-    
-    
-    /** \brief Parse a MIHF_ID
-
-         the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
-         we could set maxLengthValue in init(), but for the most MIHF_IDs the default
-         maximum length of 127 should be enough.
-         
-         \note you must call mihfIdPacket.maxLengthValue( 253) *before*
-         setting longer MIHF_IDs values.
-    */
-    class MIHFId_TLVParser : public MIHBaseTLVParser
-    {
-    #   include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_SKIP     ( length(), 0      );
-        SENF_PARSER_FINALIZE ( MIHFId_TLVParser );
-        
-    public:
-        std::string asString() const;
-        void setString(std::string const &id);
-
-        senf::MACAddress asMACAddress() const;
-        void setMACAddress(senf::MACAddress const &mac);
-
-        senf::INet4Address asINet4Address() const;
-        void setINet4Address(senf::INet4Address const &addr);
-
-        senf::INet6Address asINet6Address() const;
-        void setINet6Address(senf::INet6Address const &addr);
-        
-        senf::EUI64 asEUI64() const;
-        void setEUI64(senf::EUI64 const &addr);
-
-        MIHFId valueAs(MIHFId::Type type) const;
-        
-    private:
-        template <class OutputIterator>
-        struct binaryNAIEncoder {
-            binaryNAIEncoder(OutputIterator &i) : i_(i) {}
-            void operator()(const boost::uint8_t &v) const {
-                *i_++ = '\\';
-                *i_++ = v;
-            }
-            OutputIterator &i_;
-        };
-        template <class OutputIterator>
-        static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> > getNAIEncodedOutputIterator(OutputIterator i) {
-            return boost::make_function_output_iterator(binaryNAIEncoder<OutputIterator>(i));
-        }
-
-        struct binaryNAIDecoder {
-            binaryNAIDecoder() : readNextByte_(true) {}
-            bool operator()(const boost::uint8_t &v) {
-                readNextByte_ = readNextByte_ ? false : true;
-                return readNextByte_;
-            }
-            bool readNextByte_;
-        };
-        template <class Iterator>
-        static boost::filter_iterator<binaryNAIDecoder, Iterator> getNAIDecodedIterator(Iterator begin, Iterator end) {
-            return boost::make_filter_iterator<binaryNAIDecoder>(begin, end);
-        }
-    };
- 
+     
     /** \brief Parse a MIH packet
 
         Parser implementing the MIH header. The fields implemented are:
@@ -244,42 +123,47 @@ namespace senf {
         static factory_t nextPacketType(packet p);
     };
 
-    /** \brief MIH packet typedef */
+    /** \brief MIH packet typedef
+        \ingroup protocolbundle_80221
+     */
     typedef ConcretePacket<MIHPacketType> MIHPacket;
 
 
-    struct MIHPayloadPacketParser : public PacketParserBase
+    struct MIHGenericPayloadPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_LIST ( tlv_list, packetSize(), MIHGenericTLVPacketParser );
-        SENF_PARSER_FINALIZE ( MIHPayloadPacketParser );
+        SENF_PARSER_LIST ( tlv_list, packetSize(), MIHGenericTLVParser );
+        SENF_PARSER_FINALIZE ( MIHGenericPayloadPacketParser );
     };
 
-    struct MIHPayloadPacketType
+    struct MIHGenericPayloadPacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<MIHPayloadPacketType>
+          public PacketTypeMixin<MIHGenericPayloadPacketType>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<MIHPayloadPacketType> mixin;
+        typedef PacketTypeMixin<MIHGenericPayloadPacketType> mixin;
 #endif
-        typedef ConcretePacket<MIHPayloadPacketType> packet; ///< MIH Payload packet typedef
-        typedef MIHPayloadPacketParser parser; ///< typedef to the parser of MIH Payload packet
+        typedef ConcretePacket<MIHGenericPayloadPacketType> packet; ///< MIH Payload packet typedef
+        typedef MIHGenericPayloadPacketParser parser; ///< typedef to the parser of MIH Payload packet
 
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
 
-        /** \brief Dump given MIHPayload in readable form to given output stream */
+        /** \brief Dump given MIHGenericPayload in readable form to given output stream */
         static void dump(packet p, std::ostream &os);
+        static void finalize(packet p);
     };
 
-     /** \brief MIH Payload packet typedef */
-    typedef ConcretePacket<MIHPayloadPacketType> MIHPayloadPacket;
+     /** \brief MIH Payload packet typedef
+         \ingroup protocolbundle_80221
+      */
+    typedef ConcretePacket<MIHGenericPayloadPacketType> MIHGenericPayloadPacket;
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "MIHPacket.cci"
+//#include "MIHPacket.cci"
 //#include "MIHPacket.ct"
 //#include "MIHPacket.cti"
 #endif

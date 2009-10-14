@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TLVPacket non-inline non-template implementation */
+    \brief TLVParser non-inline non-template implementation */
 
-#include "TLVPacket.hh"
-//#include "TLVPacket.ih"
+#include "TLVParser.hh"
+//#include "TLVParser.ih"
 
 // Custom includes
 #include <iomanip>
@@ -32,6 +32,9 @@
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// MIHBaseTLVParser
 
 prefix_ senf::safe_data_iterator senf::MIHBaseTLVParser::resizeValueField(
         MIHTLVLengthParser::value_type size) 
@@ -47,6 +50,9 @@ prefix_ senf::safe_data_iterator senf::MIHBaseTLVParser::resizeValueField(
     return si;
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+// MIHTLVLengthParser
 
 prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() const 
 {
@@ -135,22 +141,22 @@ prefix_ void senf::MIHTLVLengthParser::finalize()
     value_type v = value();
     size_type b = bytes();
     if (v <= 128) {
-        if (b != 1) resize(1);
+        if (b != 1) resize_(1);
         return;
     }
     if (v <= UInt8Parser::max_value + 128) {
-        if (b != 2) resize(2);
+        if (b != 2) resize_(2);
         return;
     }
     if (v <= UInt16Parser::max_value + 128) {
-        if (b != 3) resize(3);
+        if (b != 3) resize_(3);
         return;
     }
     if (v <= UInt24Parser::max_value + 128 ) {
-        if (b != 4) resize(4);
+        if (b != 4) resize_(4);
         return;
     }
-    if (b != 5) resize(5);
+    if (b != 5) resize_(5);
 }
 
 
@@ -160,60 +166,32 @@ prefix_ void senf::MIHTLVLengthParser:: maxValue(MIHTLVLengthParser::value_type 
         return;
     size_type b = bytes();
     if (v <= UInt8Parser::max_value + 128) {
-        if (b < 2) resize(2);
+        if (b < 2) resize_(2);
         return;
     }
     if (v <= UInt16Parser::max_value + 128) {
-        if (b < 3) resize(3);
+        if (b < 3) resize_(3);
         return;
     }
     if (v <= UInt24Parser::max_value + 128) {
-        if (b < 4) resize(4);
+        if (b < 4) resize_(4);
         return;
     }
-    if (b < 5) resize(5);
+    if (b < 5) resize_(5);
 }
 
 
-prefix_ void senf::MIHTLVLengthParser::resize(size_type size)
+prefix_ void senf::MIHTLVLengthParser::resize_(size_type size)
 {
     value_type v = value();
-    size_type current_size (bytes());
-    SafePacketParserWrapper<MIHTLVLengthParser> safeThis (*this);
-    
-    if (current_size > size)
-        data().erase( i(), boost::next(i(), current_size-size));
-    else
-        data().insert( i(), size-current_size, 0);
-    
+    resize(bytes(), size);
     if (size > 1) {
-        safeThis->extended_length_flag() = true;
-        safeThis->fixed_length_field() = size - 1;
+        extended_length_flag() = true;
+        fixed_length_field() = size - 1;
     } else {
-        safeThis->extended_length_flag() = false;
+        extended_length_flag() = false;
     }
-    safeThis->value(v);
-}
-
-
-//prefix_ senf::PacketInterpreterBase::range senf::MIHGenericTLVPacketParser::value() 
-//    const
-//{
-//    senf::PacketData::iterator begin (boost::next(data().begin(), 1 + length_().bytes() ));
-//    return PacketInterpreterBase::range(
-//            begin, boost::next( begin, length()) );
-//}
-
-
-prefix_ void senf::MIHGenericTLVPacketType::dump(packet p, std::ostream & os)
-{
-    boost::io::ios_all_saver ias(os);
-    os << "MIH GenericTLV Packet:\n"
-       << std::dec
-       << senf::fieldName("type")                      << unsigned( p->type()) << "\n"
-       << senf::fieldName("length")                    << unsigned( p->length()) << "\n"
-       << "  value:\n";
-    senf::hexdump( p->value().begin(), p->value().end(), os);
+    value(v);
 }
 
 
