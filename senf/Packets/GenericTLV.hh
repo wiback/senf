@@ -27,8 +27,10 @@
 #define HH_SENF_Packets_GenericTLV_ 1
 
 // Custom includes
+#include <boost/ptr_container/ptr_map.hpp>
 #include <senf/Packets/Packets.hh>
 #include <senf/Utils/type_traits.hh>
+#include <senf/Utils/singleton.hh>
 
 //#include "GenericTLV.hh.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -53,7 +55,7 @@ namespace senf {
         \endcode
        
         Your concrete TLV parsers will inherit from this base class and have to define a specific
-        value field and a \c TYPEID member:
+        value field and a \c typeId member:
         \code
         struct MyConcreteTLVParser : public MyTLVParserBase
         {
@@ -63,10 +65,10 @@ namespace senf {
             SENF_PARSER_FINALIZE ( MyConcreteTLVParser         );
          
             SENF_PARSER_INIT() {
-                type() = TYPEID;
+                type() = typeId;
                 length_() = 4;
             }        
-            static const type_t::value_type TYPEID = 0x42;
+            static const type_t::value_type typeId = 0x42;
         };
         \endcode
        
@@ -89,7 +91,7 @@ namespace senf {
         typedef senf::GenericTLVParserBase<MyTLVParserBase> MyGenericTLVParser;
         \endcode
         
-        This generiv tlv parser can now be used for example in a list:
+        This generic tlv parser can now be used for example in a list:
         \code
         class MyTestPacketParser : public senf::PacketParserBase
         {
@@ -147,6 +149,8 @@ namespace senf {
 
         senf::PacketInterpreterBase::range value() const;
         
+        void dump(std::ostream & os) const;
+        
 #ifndef DOXYGEN
         template<class ForwardReadableRange>
         void value(ForwardReadableRange const & val,
@@ -173,6 +177,41 @@ namespace senf {
         
         Base & self();
         Base const & self() const;
+    };
+    
+    
+    namespace detail {
+        template <class BaseParser>
+        struct GenericTLVParserRegistry_EntryBase {
+            virtual void dump(std::ostream & os, GenericTLVParserBase<BaseParser> const & parser) = 0;
+        };
+    
+        template <class BaseParser, class Parser>
+        struct GenericTLVParserRegistry_Entry
+            : GenericTLVParserRegistry_EntryBase<BaseParser>
+        {
+            virtual void dump(std::ostream & os, GenericTLVParserBase<BaseParser> const & parser);
+        };
+    }
+    
+    template <class BaseParser>
+    class GenericTLVParserRegistry
+        : public senf::singleton<GenericTLVParserRegistry<BaseParser> >
+    {
+        typedef boost::ptr_map<
+            typename BaseParser::type_t::value_type, 
+            detail::GenericTLVParserRegistry_EntryBase<BaseParser> > Map;
+        Map map_;
+        
+        GenericTLVParserRegistry() {};
+    public:
+        using senf::singleton<GenericTLVParserRegistry<BaseParser> >::instance;
+        friend class senf::singleton<GenericTLVParserRegistry<BaseParser> >;
+        
+        template <typename Parser>
+        void registerParser();
+        
+        void dump(std::ostream & os, GenericTLVParserBase<BaseParser> const & parser);
     };
 }
 

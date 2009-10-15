@@ -30,6 +30,9 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::GenericTLVParserBase<Base>
+
 template <class Base>
 prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserBase<Base>::bytes()
 {
@@ -56,7 +59,7 @@ template <class Parser>
 prefix_ bool senf::GenericTLVParserBase<Base>::is()
     const
 {
-    return this->type().value() == Parser::TYPEID;
+    return this->type().value() == Parser::typeId;
 }
 
 template <class Base>
@@ -103,6 +106,17 @@ prefix_ void senf::GenericTLVParserBase<Base>::value(
 }
 
 #endif
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail:GenericTLVParserRegistry_Entry<BaseParser, Parser>
+
+template <class BaseParser, class Parser>
+prefix_ void senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::dump(
+        std::ostream & os, GenericTLVParserBase<BaseParser> const & parser)
+{
+    (parser.template as<Parser>()).dump(os);
+}
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

@@ -193,6 +193,14 @@ namespace format {
     template <class T> 
     std::string dumpint(T const & v, 
                         typename boost::enable_if<boost::is_unsigned<T> >::type * = 0);
+    
+    template <class T> 
+    std::string dumpint(T const & v, 
+                        typename boost::enable_if<boost::is_signed<typename T::value_type> >::type * = 0);
+
+    template <class T> 
+    std::string dumpint(T const & v, 
+                        typename boost::enable_if<boost::is_unsigned<typename T::value_type> >::type * = 0);
 
 #endif
 

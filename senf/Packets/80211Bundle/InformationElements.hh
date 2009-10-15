@@ -56,9 +56,9 @@ namespace senf {
         SENF_PARSER_FINALIZE ( WLANSSIDInfoElementParser        );
      
         SENF_PARSER_INIT() {
-            type() = TYPEID;
+            type() = typeId;
         }        
-        static const type_t::value_type TYPEID = 0x00u;
+        static const type_t::value_type typeId = 0x00u;
     };
         
     struct WLANSupportedRatesInfoElementParser
@@ -72,9 +72,9 @@ namespace senf {
         SENF_PARSER_FINALIZE ( WLANSupportedRatesInfoElementParser );
      
         SENF_PARSER_INIT() {
-            type() = TYPEID;
+            type() = typeId;
         }        
-        static const type_t::value_type TYPEID = 0x01u;
+        static const type_t::value_type typeId = 0x01u;
     };
         
     struct WLANPowerConstraintInfoElementParser
@@ -86,10 +86,10 @@ namespace senf {
         SENF_PARSER_FINALIZE ( WLANPowerConstraintInfoElementParser );
      
         SENF_PARSER_INIT() {
-            type() = TYPEID;
+            type() = typeId;
             length() = 1;
         }        
-        static const type_t::value_type TYPEID = 0x20u;
+        static const type_t::value_type typeId = 0x20u;
     };
 }
 

@@ -299,9 +299,6 @@ namespace senf {
             ParserProtector( PacketParserBase const * parser);
             ParserProtector(ParserProtector const & other_);
             ~ParserProtector();
-            
-            template <class _>
-            void operator()(_ const &) const {}
         };
     protected:
         ParserProtector protect() const;

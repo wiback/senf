@@ -71,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     BOOST_CHECK_EQUAL( i->type(), 0x07); //Country information
     ++i;
     //power constraint
-    BOOST_CHECK_EQUAL( i->type(), senf::WLANPowerConstraintInfoElementParser::TYPEID+0);
+    BOOST_CHECK_EQUAL( i->type(), senf::WLANPowerConstraintInfoElementParser::typeId+0);
     BOOST_CHECK( i->is<senf::WLANPowerConstraintInfoElementParser>());
     senf::WLANPowerConstraintInfoElementParser ie ( i->as<senf::WLANPowerConstraintInfoElementParser>());
     BOOST_CHECK_EQUAL( ie.value(), 0x42);

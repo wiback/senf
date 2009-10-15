@@ -44,6 +44,20 @@ senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_unsigned<
    return detail::dumpintUnsigned(v, std::numeric_limits<T>::digits); 
 }
 
+template <class T>
+prefix_ std::string 
+senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_signed<typename T::value_type> >::type *)
+{ 
+   return detail::dumpintSigned(v.value(), std::numeric_limits<typename T::value_type>::digits);
+}
+
+template <class T>
+prefix_ std::string
+senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_unsigned<typename T::value_type> >::type *)
+{
+   return detail::dumpintUnsigned(v.value(), std::numeric_limits<typename T::value_type>::digits); 
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

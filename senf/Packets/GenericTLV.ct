@@ -26,9 +26,16 @@
 //#include "GenericTLV.ih"
 
 // Custom includes
+#include <boost/io/ios_state.hpp>
+#include <senf/Utils/hexdump.hh>
+#include <senf/Utils/TypeInfo.hh>
+#include <senf/Utils/Format.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::GenericTLVParserBase<Base>
 
 template <class Base>
 template <class Parser>
@@ -53,6 +60,18 @@ prefix_  senf::PacketInterpreterBase::range senf::GenericTLVParserBase<Base>::va
 }
 
 template <class Base>
+prefix_  void senf::GenericTLVParserBase<Base>::dump(std::ostream & os)
+    const 
+{
+    boost::io::ios_all_saver ias(os);
+    os << "GenericTLVParser<" << prettyName(typeid(Base)) << ">\n"
+       << "  type:   " << senf::format::dumpint(this->type()) << "\n"
+       << "  length: " << senf::format::dumpint(this->length()) << "\n"
+       << "  value:\n";
+    hexdump(value().begin(), value().end(), os);
+}
+
+template <class Base>
 template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const &range)
 {
@@ -63,6 +82,32 @@ prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const
     std::copy( boost::begin(range), boost::end(range), boost::next(
             this->i(), senf::bytes( self())) );
     this->length_() = rangeSize;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::GenericTLVParserRegistry<BaseParser>
+
+template <class BaseParser>
+template <typename Parser>
+prefix_ void senf::GenericTLVParserRegistry<BaseParser>::registerParser()
+{
+    typename Map::iterator i (map_.find( Parser::typeId ));
+    if (i == map_.end() ) {
+        typename BaseParser::type_t::value_type k (Parser::typeId);
+        map_.insert(k , new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>() );
+    }
+}
+
+template <class BaseParser>
+prefix_ void senf::GenericTLVParserRegistry<BaseParser>::dump(
+        std::ostream & os, GenericTLVParserBase<BaseParser> const & parser)
+{
+    typename Map::iterator i (map_.find( parser.type()));
+    if (i == map_.end())
+        parser.dump(os);
+    else
+        (i->second)->dump(os, parser);
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

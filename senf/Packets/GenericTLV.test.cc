@@ -59,11 +59,20 @@ namespace {
        SENF_PARSER_FINALIZE ( MyConcreteTLVParser         );
     
        SENF_PARSER_INIT() {
-           type() = TYPEID;
+           type() = typeId;
            length_() = 4;
-       }        
-       static const type_t::value_type TYPEID = 0x42;
+       }
+       static type_t::value_type const typeId;
+       
+       void dump(std::ostream & os) const {
+           boost::io::ios_all_saver ias(os);
+           os << "MyConcreteTLVParser\n"
+              << "  type:   " << senf::format::dumpint(type()) << "\n"
+              << "  length: " << senf::format::dumpint(length()) << "\n"
+              << "  value:  " << senf::format::dumpint(myValue()) << "\n";
+       }
    };
+   MyConcreteTLVParser::type_t::value_type const MyConcreteTLVParser::typeId = 0x42;
         
     class MyTestPacketParser
         : public senf::PacketParserBase
@@ -138,6 +147,29 @@ BOOST_AUTO_UNIT_TEST(GenericTLV_packet)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             p.data().begin(), p.data().end() );
+}
+
+
+BOOST_AUTO_UNIT_TEST(GenericTLV_registry)
+{
+    MyTestPacket p ( MyTestPacket::create());
+    MyTestPacket::Parser::tlv_list_t::container tlvContainer (p->tlv_list() );
+    MyConcreteTLVParser conreteTLVParser ( 
+            tlvContainer.push_back_space().init<MyConcreteTLVParser>());
+    conreteTLVParser.myValue() << 0xffff;
+    p.finalizeThis();
+        
+    typedef senf::GenericTLVParserRegistry<MyTLVParserBase> MyTLVParserRegistry;
+    
+    std::stringstream ss;
+    MyTLVParserRegistry::instance().dump(ss, *tlvContainer.begin());
+    BOOST_CHECK_EQUAL( ss.str().substr(0,56), "GenericTLVParser<(anonymous namespace)::MyTLVParserBase>" );
+    
+    MyTLVParserRegistry::instance().registerParser<MyConcreteTLVParser>();
+    ss.str(""); ss.clear();
+    
+    MyTLVParserRegistry::instance().dump(ss, *tlvContainer.begin());
+    BOOST_CHECK_EQUAL( ss.str().substr(0,19), "MyConcreteTLVParser" );
 }
 
 
