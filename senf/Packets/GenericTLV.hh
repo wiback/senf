@@ -183,14 +183,14 @@ namespace senf {
     namespace detail {
         template <class BaseParser>
         struct GenericTLVParserRegistry_EntryBase {
-            virtual void dump(std::ostream & os, GenericTLVParserBase<BaseParser> const & parser) = 0;
+            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) = 0;
         };
     
         template <class BaseParser, class Parser>
         struct GenericTLVParserRegistry_Entry
             : GenericTLVParserRegistry_EntryBase<BaseParser>
         {
-            virtual void dump(std::ostream & os, GenericTLVParserBase<BaseParser> const & parser);
+            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os);
         };
     }
     
@@ -208,13 +208,25 @@ namespace senf {
         using senf::singleton<GenericTLVParserRegistry<BaseParser> >::instance;
         friend class senf::singleton<GenericTLVParserRegistry<BaseParser> >;
         
+        template <class PacketParser>
+        struct RegistrationProxy {
+            RegistrationProxy();
+        };
+
         template <typename Parser>
         void registerParser();
         
-        void dump(std::ostream & os, GenericTLVParserBase<BaseParser> const & parser);
+        void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os);
     };
+        
+#   define SENF_PACKET_TLV_REGISTRY_REGISTER( BaseTLVParser, ConreteTLVParser )     \
+        namespace {                                                                 \
+            senf::GenericTLVParserRegistry<BaseTLVParser>                           \
+                ::RegistrationProxy<ConreteTLVParser>                               \
+                    BOOST_PP_CAT(tlvparserRegistration_, __LINE__);                 \
+        }
+        
 }
-
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "GenericTLV.cci"

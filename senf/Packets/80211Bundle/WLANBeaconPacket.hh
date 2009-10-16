@@ -76,6 +76,9 @@ namespace senf {
         static void dump(packet p, std::ostream &os);
     };
 
+    /** \brief WLAN Beacon frame packet typedef
+        \ingroup protocolbundle_80211
+     */
     typedef ConcretePacket<WLANBeaconPacketType> WLANBeaconPacket;
 
 }

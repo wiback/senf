@@ -78,7 +78,8 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     ++i;
     BOOST_CHECK_EQUAL( i->type(), 0xdd); //vendor specific
     BOOST_CHECK_EQUAL( i->length(), 0x18);
-    BOOST_CHECK_EQUAL( boost::size(i->value()), 0x18);    
+    BOOST_CHECK_EQUAL( boost::size(i->value()), 0x18);
+    
     unsigned char value[] = {
             0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x88, 0x00,
             0x02, 0xa3, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
@@ -86,6 +87,8 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( value, value+sizeof(value),
             boost::begin(i->value()), boost::end(i->value()) );
+    
+    p.dump(std::cout);
 }
 
 BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_create)

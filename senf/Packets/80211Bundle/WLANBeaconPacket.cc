@@ -35,8 +35,16 @@
 prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);    
-    os << "WLAN Beacon:\n"
-       << senf::fieldName("timestamp") << unsigned( p->timestamp()) << "\n";
+    os << "WLAN beacon frame:\n"
+       << senf::fieldName("timestamp")      << unsigned( p->timestamp())      << "\n"
+       << senf::fieldName("beaconInterval") << unsigned( p->beaconInterval()) << "\n";
+    p->ssidIE().dump( os);
+    p->supportedRatesIE().dump( os);
+    os << "  Optional Information Elements:\n";
+    typedef parser::ieList_t::container ieListContainer_t;
+    ieListContainer_t ieListContainer (p->ieList());
+    for (ieListContainer_t::iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
+        (*i).dump( os);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

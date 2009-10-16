@@ -59,6 +59,8 @@ namespace senf {
             type() = typeId;
         }        
         static const type_t::value_type typeId = 0x00u;
+        
+        void dump(std::ostream & os) const;
     };
         
     struct WLANSupportedRatesInfoElementParser
@@ -75,6 +77,8 @@ namespace senf {
             type() = typeId;
         }        
         static const type_t::value_type typeId = 0x01u;
+        
+        void dump(std::ostream & os) const;
     };
         
     struct WLANPowerConstraintInfoElementParser
@@ -90,6 +94,8 @@ namespace senf {
             length() = 1;
         }        
         static const type_t::value_type typeId = 0x20u;
+        
+        void dump(std::ostream & os) const;
     };
 }
 

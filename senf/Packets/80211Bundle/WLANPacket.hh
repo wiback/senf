@@ -121,6 +121,9 @@ namespace senf
         static void dump(packet p, std::ostream &os);
     };
 
+    /** \brief WLAN Management frame packet typedef
+        \ingroup protocolbundle_80211
+     */
     typedef WLANPacket_MgtFrameType::packet WLANPacket_MgtFrame;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -176,6 +179,9 @@ namespace senf
         static void dump(packet p, std::ostream &os);
     };
 
+    /** \brief WLAN Control frame packet typedef
+        \ingroup protocolbundle_80211
+     */
     typedef WLANPacket_CtrlFrameType::packet WLANPacket_CtrlFrame;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -266,6 +272,9 @@ namespace senf
         static void dump(packet p, std::ostream &os);
     };
 
+    /** \brief WLAN Data frame packet typedef
+        \ingroup protocolbundle_80211
+     */
     typedef WLANPacket_DataFrameType::packet WLANPacket_DataFrame;
 }
 

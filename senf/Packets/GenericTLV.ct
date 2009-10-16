@@ -60,18 +60,6 @@ prefix_  senf::PacketInterpreterBase::range senf::GenericTLVParserBase<Base>::va
 }
 
 template <class Base>
-prefix_  void senf::GenericTLVParserBase<Base>::dump(std::ostream & os)
-    const 
-{
-    boost::io::ios_all_saver ias(os);
-    os << "GenericTLVParser<" << prettyName(typeid(Base)) << ">\n"
-       << "  type:   " << senf::format::dumpint(this->type()) << "\n"
-       << "  length: " << senf::format::dumpint(this->length()) << "\n"
-       << "  value:\n";
-    hexdump(value().begin(), value().end(), os);
-}
-
-template <class Base>
 template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const &range)
 {
@@ -92,22 +80,27 @@ template <class BaseParser>
 template <typename Parser>
 prefix_ void senf::GenericTLVParserRegistry<BaseParser>::registerParser()
 {
-    typename Map::iterator i (map_.find( Parser::typeId ));
-    if (i == map_.end() ) {
-        typename BaseParser::type_t::value_type k (Parser::typeId);
-        map_.insert(k , new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>() );
-    }
+    typename BaseParser::type_t::value_type key (Parser::typeId+0);
+    typename Map::iterator i (map_.find( key ));
+    if (i == map_.end() )
+        map_.insert(key, new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>() );
 }
 
 template <class BaseParser>
 prefix_ void senf::GenericTLVParserRegistry<BaseParser>::dump(
-        std::ostream & os, GenericTLVParserBase<BaseParser> const & parser)
+        GenericTLVParserBase<BaseParser> const & parser, std::ostream & os)
 {
     typename Map::iterator i (map_.find( parser.type()));
-    if (i == map_.end())
-        parser.dump(os);
+    if (i == map_.end()) {
+        boost::io::ios_all_saver ias(os);
+        os << "  GenericTLVParser<" << prettyName(typeid(BaseParser)) << ">\n"
+           << "    type:   " << senf::format::dumpint(parser.type()) << "\n"
+           << "    length: " << senf::format::dumpint(parser.length()) << "\n"
+           << "    value:\n";
+        hexdump(parser.value().begin(), parser.value().end(), os);       
+    }
     else
-        (i->second)->dump(os, parser);
+        (i->second)->dump(parser, os);
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2008
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     @AUTHOR@
+//     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 
 // Custom includes
 #include "GenericTLV.hh"
-#include <senf/Utils/hexdump.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -62,17 +61,16 @@ namespace {
            type() = typeId;
            length_() = 4;
        }
-       static type_t::value_type const typeId;
+       static type_t::value_type const typeId = 0x42;
        
        void dump(std::ostream & os) const {
            boost::io::ios_all_saver ias(os);
-           os << "MyConcreteTLVParser\n"
-              << "  type:   " << senf::format::dumpint(type()) << "\n"
-              << "  length: " << senf::format::dumpint(length()) << "\n"
-              << "  value:  " << senf::format::dumpint(myValue()) << "\n";
+           os << "  MyConcreteTLVParser\n"
+              << "    type:   " << senf::format::dumpint(type()) << "\n"
+              << "    length: " << senf::format::dumpint(length()) << "\n"
+              << "    value:  " << senf::format::dumpint(myValue()) << "\n";
        }
    };
-   MyConcreteTLVParser::type_t::value_type const MyConcreteTLVParser::typeId = 0x42;
         
     class MyTestPacketParser
         : public senf::PacketParserBase
@@ -159,17 +157,17 @@ BOOST_AUTO_UNIT_TEST(GenericTLV_registry)
     conreteTLVParser.myValue() << 0xffff;
     p.finalizeThis();
         
-    typedef senf::GenericTLVParserRegistry<MyTLVParserBase> MyTLVParserRegistry;
-    
     std::stringstream ss;
-    MyTLVParserRegistry::instance().dump(ss, *tlvContainer.begin());
-    BOOST_CHECK_EQUAL( ss.str().substr(0,56), "GenericTLVParser<(anonymous namespace)::MyTLVParserBase>" );
+    (*tlvContainer.begin()).dump( ss);
+    BOOST_CHECK_EQUAL( ss.str().substr(0,58), 
+            "  GenericTLVParser<(anonymous namespace)::MyTLVParserBase>" );
     
-    MyTLVParserRegistry::instance().registerParser<MyConcreteTLVParser>();
+    senf::GenericTLVParserRegistry<MyTLVParserBase>::instance()
+            .registerParser<MyConcreteTLVParser>();
     ss.str(""); ss.clear();
     
-    MyTLVParserRegistry::instance().dump(ss, *tlvContainer.begin());
-    BOOST_CHECK_EQUAL( ss.str().substr(0,19), "MyConcreteTLVParser" );
+    (*tlvContainer.begin()).dump( ss);
+    BOOST_CHECK_EQUAL( ss.str().substr(0,21), "  MyConcreteTLVParser" );
 }
 
 

@@ -75,6 +75,13 @@ prefix_ Base const & senf::GenericTLVParserBase<Base>::self()
     return *static_cast<Base const *>(this);
 }
 
+template <class Base>
+prefix_  void senf::GenericTLVParserBase<Base>::dump(std::ostream & os)
+    const 
+{
+    GenericTLVParserRegistry<Base>::instance().dump(*this, os);
+}
+
 #ifndef DOXYGEN
 
 template <class Base>
@@ -113,10 +120,21 @@ prefix_ void senf::GenericTLVParserBase<Base>::value(
 
 template <class BaseParser, class Parser>
 prefix_ void senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::dump(
-        std::ostream & os, GenericTLVParserBase<BaseParser> const & parser)
+        GenericTLVParserBase<BaseParser> const & parser, std::ostream & os)
 {
     (parser.template as<Parser>()).dump(os);
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::GenericTLVParserRegistry<BaseParser>::RegistrationProxy<PacketParser>
+
+template <class BaseParser>
+template <class PacketParser>
+prefix_ senf::GenericTLVParserRegistry<BaseParser>::RegistrationProxy<PacketParser>::RegistrationProxy()
+{
+    GenericTLVParserRegistry<BaseParser>::instance().registerParser<PacketParser>();
+};
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
