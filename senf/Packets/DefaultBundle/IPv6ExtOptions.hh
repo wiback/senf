@@ -23,38 +23,40 @@
 /** \file
     \brief IPv6Extension-Options public header */
 
-#ifndef HH_SENF_Packets_DefaultBundle_IPv6ExtOptionType_HH_
-#define HH_SENF_Packets_DefaultBundle_IPv6ExtOptionType_HH_ 1
+#ifndef HH_SENF_Packets_DefaultBundle_IPv6ExtOptions_HH_
+#define HH_SENF_Packets_DefaultBundle_IPv6ExtOptions_HH_ 1
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
 
-//#include "IPv6ExtOptionType.mpp"
+//#include "IPv6ExtOptions.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
-    class IPv6OptionTLVParser : public PacketParserBase
+    class IPv6OptionParser : public PacketParserBase
     {
     public:
 #       include SENF_PARSER()
-        SENF_PARSER_FIELD ( type, UInt8Parser );
-        SENF_PARSER_GOTO ( type );
+        SENF_PARSER_FIELD    ( type,  UInt8Parser );
+        SENF_PARSER_GOTO     ( type );
         SENF_PARSER_BITFIELD ( altAction,  2, unsigned );
         SENF_PARSER_BITFIELD ( changeFlag, 1, unsigned );
         SENF_PARSER_BITFIELD ( optionType, 5, unsigned );
-        SENF_PARSER_FIELD (length, UInt8Parser );
-        SENF_PARSER_FINALIZE (IPv6OptionTLVParser );
+        SENF_PARSER_FIELD    ( length, UInt8Parser );
+        SENF_PARSER_FINALIZE ( IPv6OptionParser );
+        
+        typedef GenericTLVParserRegistry<IPv6OptionParser> Registry;
     };
 
-    typedef GenericTLVParserBase<IPv6OptionTLVParser> IPv6GenericOptionTLVParser;
+    typedef GenericTLVParserBase<IPv6OptionParser> IPv6GenericOptionParser;
 
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "IPv6ExtOptionType.cci"
-//#include "IPv6ExtOptionType.ct"
-//#include "IPv6ExtOptionType.cti"
+//#include "IPv6ExtOptions.cci"
+//#include "IPv6ExtOptions.ct"
+//#include "IPv6ExtOptions.cti"
 #endif
 
 

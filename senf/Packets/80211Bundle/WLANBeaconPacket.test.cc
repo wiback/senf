@@ -88,7 +88,8 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     SENF_CHECK_EQUAL_COLLECTIONS( value, value+sizeof(value),
             boost::begin(i->value()), boost::end(i->value()) );
     
-    p.dump(std::cout);
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss ));
 }
 
 BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_create)

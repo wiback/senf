@@ -28,8 +28,7 @@
 #define HH_SENF_Packets_DefaultBundle_IPv6Extensions_ 1
 
 // Custom includes
-#include <senf/Packets/Packets.hh>
-#include "IPv6ExtOptionType.hh"
+#include "IPv6ExtOptions.hh"
 #include "ListOptionTypeParser.hh"
 #include "IPv6Packet.hh"
 
@@ -235,7 +234,7 @@ namespace senf {
 
         typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
         typedef detail::ListOptionTypeParser_Policy<
-            IPv6GenericOptionTLVParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
+            IPv6GenericOptionParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
         typedef ListParser<ListOptionTypePolicy> ListOptionTypeParser;
 
         SENF_PARSER_FIELD  ( options, ListOptionTypeParser);

@@ -32,9 +32,9 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANInfoElementParser, senf::WLANSSIDInfoElementParser);
-SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANInfoElementParser, senf::WLANPowerConstraintInfoElementParser);
-SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANInfoElementParser, senf::WLANSupportedRatesInfoElementParser);
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANSSIDInfoElementParser            );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANPowerConstraintInfoElementParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANSupportedRatesInfoElementParser  );
 
 
 prefix_ void senf::WLANPowerConstraintInfoElementParser::dump(std::ostream & os) 

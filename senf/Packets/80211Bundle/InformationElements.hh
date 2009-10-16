@@ -41,6 +41,8 @@ namespace senf {
         SENF_PARSER_FIELD    ( type,   UInt8Parser   );
         SENF_PARSER_FIELD    ( length, UInt8Parser   );
         SENF_PARSER_FINALIZE ( WLANInfoElementParser );
+        
+        typedef GenericTLVParserRegistry<WLANInfoElementParser> Registry;
     };
 
     typedef GenericTLVParserBase<WLANInfoElementParser> WLANGenericInfoElementParser;

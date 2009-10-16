@@ -219,11 +219,10 @@ namespace senf {
         void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os);
     };
         
-#   define SENF_PACKET_TLV_REGISTRY_REGISTER( BaseTLVParser, ConreteTLVParser )     \
-        namespace {                                                                 \
-            senf::GenericTLVParserRegistry<BaseTLVParser>                           \
-                ::RegistrationProxy<ConreteTLVParser>                               \
-                    BOOST_PP_CAT(tlvparserRegistration_, __LINE__);                 \
+#   define SENF_PACKET_TLV_REGISTRY_REGISTER( ConreteTLVParser )                \
+        namespace {                                                             \
+            ConreteTLVParser::Registry::RegistrationProxy<ConreteTLVParser>     \
+                    BOOST_PP_CAT(tlvparserRegistration_, __LINE__);             \
         }
         
 }

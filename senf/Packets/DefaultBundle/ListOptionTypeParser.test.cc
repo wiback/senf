@@ -22,7 +22,7 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
-#include "IPv6ExtOptionType.hh"
+#include "IPv6ExtOptions.hh"
 #include "ListOptionTypeParser.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
@@ -42,7 +42,7 @@ namespace {
         SENF_PARSER_FIELD( size, senf::UInt8Parser );
         typedef senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1u> ListOptionTypeAuxPolicy;
         typedef senf::detail::ListOptionTypeParser_Policy<
-            senf::IPv6GenericOptionTLVParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
+            senf::IPv6GenericOptionParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
         typedef senf::ListParser<ListOptionTypePolicy> ListOptionTypeParser;
         SENF_PARSER_FIELD ( list, ListOptionTypeParser);
 

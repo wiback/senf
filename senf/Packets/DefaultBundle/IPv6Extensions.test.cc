@@ -281,7 +281,8 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
     {
         senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pext->options() );
         {
-            senf::IPv6GenericOptionTLVParser opt ( optC.push_back_space().init<senf::IPv6GenericOptionTLVParser>());
+            senf::IPv6GenericOptionParser opt ( 
+                    optC.push_back_space().init<senf::IPv6GenericOptionParser>());
             opt.altAction() = 0u;
             opt.changeFlag() = 0u;
             opt.optionType() = 5u;
@@ -309,21 +310,22 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
 
 
 namespace {
-    struct IPv6ChecksumOptionTLVParser : public senf::IPv6OptionTLVParser
+    struct IPv6ChecksumOptionParser : public senf::IPv6OptionParser
     {
     #   include SENF_PARSER()
-        SENF_PARSER_INHERIT ( IPv6OptionTLVParser );
-        SENF_PARSER_FIELD ( slfNetType, senf::UInt8Parser  );
-        SENF_PARSER_FIELD ( checksum,   senf::UInt32Parser );
+        SENF_PARSER_INHERIT ( IPv6OptionParser );
+        SENF_PARSER_FIELD ( extendedType, senf::UInt8Parser );
+        SENF_PARSER_FIELD ( checksum,   senf::UInt32Parser  );
+        SENF_PARSER_FINALIZE ( IPv6ChecksumOptionParser     );
         
         SENF_PARSER_INIT() {
-            optionType() = typeCode;
-            length() = senf::init_bytes<IPv6ChecksumOptionTLVParser>::value -senf::init_bytes<IPv6OptionTLVParser>::value;
-            slfNetType() = SN_typeCode;     
+            optionType() = typeId;
+            length() = 5u;
+            extendedType() = extendedTypeId;     
         }
-        SENF_PARSER_FINALIZE ( IPv6ChecksumOptionTLVParser );
-        static const boost::uint8_t typeCode = 0x0d;
-        static const boost::uint8_t SN_typeCode = 0x4d;
+        
+        static const boost::uint8_t typeId = 0x0d;
+        static const boost::uint8_t extendedTypeId = 0x4d;
     };
 }
 
@@ -334,9 +336,8 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
     {
         senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC (p->options() );
         {
-            IPv6ChecksumOptionTLVParser opt ( 
-                    optC.push_back_space().init<IPv6ChecksumOptionTLVParser>());
-            SENF_CHECK_NO_THROW( opt.slfNetType() = 1u) ;
+            IPv6ChecksumOptionParser opt ( 
+                    optC.push_back_space().init<IPv6ChecksumOptionParser>());
             opt.checksum() = 0x01234567u;
         }
     }
@@ -344,8 +345,8 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
     unsigned char data[] = { 
             0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length) 
             0x0d, 0x05,  // option type, length
-            // option value: slfNetType, checksum
-            0x01, 0x01, 0x23, 0x45, 0x67,
+            // option value: extendedType, checksum
+            0x4d, 0x01, 0x23, 0x45, 0x67,
             // padding (PadN option: type, length, 0-padding)
             0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00
     };
@@ -360,7 +361,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
             0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length) 
             0x0d, 0x05,  // option type, length
             // option value: slfNetType, checksum
-            0x01, 0x01, 0x23, 0x45, 0x67,
+            0x4d, 0x01, 0x23, 0x45, 0x67,
             // padding (PadN option: type, length, 0-padding)
             0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00
     };
@@ -373,8 +374,9 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
     optContainer_t::iterator listIter (optC.begin());
     
     BOOST_CHECK_EQUAL( listIter->optionType(), 0x0d);
-    IPv6ChecksumOptionTLVParser opt ( listIter->as<IPv6ChecksumOptionTLVParser>());
-    BOOST_CHECK_EQUAL( opt.slfNetType(), 0x01);
+    BOOST_CHECK( listIter->is<IPv6ChecksumOptionParser>());
+    IPv6ChecksumOptionParser opt ( listIter->as<IPv6ChecksumOptionParser>());
+    BOOST_CHECK_EQUAL( opt.extendedType(), 0x4d);
     BOOST_CHECK_EQUAL( opt.checksum(), 0x01234567);
 }
 
