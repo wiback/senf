@@ -244,6 +244,61 @@ namespace senf {
         
         void dump(std::ostream & os) const;
     };
+    
+    /** \brief Parser for 802.21 Status TLV
+     */
+    struct MIHStatusTLVParser : public MIHBaseTLVParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT ( MIHBaseTLVParser   );
+        SENF_PARSER_FIELD   ( value, UInt8Parser );
+        SENF_PARSER_FINALIZE( MIHStatusTLVParser );
+        SENF_PARSER_INIT() {
+            defaultInit();
+            type() << typeId+0;
+            length_() = 1;
+        }
+        static type_t::value_type const typeId = 3;
+        void dump(std::ostream & os) const; ///< dump string representation to given stream
+        
+        enum StatusCode { 
+            Success, UnspecifiedFailure, Rejected, AuthorizationFailure, NetworkError };
+    };
+    
+    struct MIHRegisterReqCodeTLVParser : public MIHBaseTLVParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
+        SENF_PARSER_FIELD    ( value, UInt8Parser );
+        SENF_PARSER_FINALIZE ( MIHRegisterReqCodeTLVParser );
+            
+        SENF_PARSER_INIT() {
+            defaultInit();
+            type() = typeId+0;
+            length_() = 1;
+        }
+        static type_t::value_type const typeId = 11;  
+        void dump(std::ostream & os) const; ///< dump string representation to given stream
+        
+        enum RequestCode { Registration, ReRegistration };
+    };
+    
+    struct MIHValidTimeIntervalTLVParser : public MIHBaseTLVParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
+        SENF_PARSER_FIELD    ( value, UInt32Parser );
+        SENF_PARSER_FINALIZE ( MIHValidTimeIntervalTLVParser );
+            
+        SENF_PARSER_INIT() {
+            defaultInit();
+            type() = typeId+0;
+            length_() = 4;
+        }
+        static type_t::value_type const typeId = 12;
+        void dump(std::ostream & os) const; ///< dump string representation to given stream
+    };
+
 }
 
 

@@ -152,6 +152,8 @@ prefix_ std::string senf::format::detail::dumpintUnsigned(unsigned long long v, 
     return ss.str();
 }
 
+unsigned int senf::format::IndentHelper::static_level = 0;
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

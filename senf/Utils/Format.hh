@@ -203,6 +203,20 @@ namespace format {
                         typename boost::enable_if<boost::is_unsigned<typename T::value_type> >::type * = 0);
 
 #endif
+    
+    class IndentHelper
+    {
+        static unsigned int static_level;
+
+        unsigned int instance_level;
+    public:
+        IndentHelper () : instance_level(1) { ++static_level; }
+        ~IndentHelper () { static_level -= instance_level; }
+        void increase() { ++static_level; ++instance_level; }
+
+        friend std::ostream & operator<<(std::ostream & os, IndentHelper const & indent);
+    };
+    std::ostream & operator<<(std::ostream & os, IndentHelper const & indent);
 
 }}
 

@@ -150,6 +150,13 @@ prefix_ senf::format::eng const & senf::format::eng::right()
     return *this;
 }
 
+prefix_ std::ostream & senf::format::operator<<(std::ostream & os, senf::format::IndentHelper const & indent)
+{
+    for (unsigned int i = 0; i < indent.static_level; ++i)
+        os << "  ";
+    return os;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

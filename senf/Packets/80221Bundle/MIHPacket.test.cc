@@ -216,7 +216,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
             // MIH header
             0x10, 0x54, 0x00, 0x00, 0x00, 0x15,
             // variable payload length:
-            0x00, 0x2a,
+            0x00, 0x29,
             // source MIHF_ID TLV:
             0x01, 0x0f, // type, length
             0x73, 0x65, 0x6e, 0x66, 0x40, 0x62, 0x65, 0x72, 0x6c,
@@ -229,13 +229,13 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
             0x0a, // first bit not set, length=10
             0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, // value
             // second test tlv
-            0x43, // type
-            0x05, // first bit not set, length=5
-            0x1a, 0x2b, 0x3c, 0x4d, 0x5e // value
+            0x0c, // type
+            0x04, // first bit not set, length=4
+            0x1a, 0x2b, 0x3c, 0x4d // value
     };
 
     MIHPacket mihPacket (MIHPacket::create(data));
-    BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 42u);
+    BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 41u);
 
     BOOST_REQUIRE( mihPacket.next().is<MIHGenericPayloadPacket>() );
     MIHGenericPayloadPacket mihPayload (mihPacket.next().as<MIHGenericPayloadPacket>());
@@ -250,9 +250,9 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
     BOOST_CHECK_EQUAL( tlv1.value().size(), 0x0a);
 
     MIHGenericTLVParser tlv2 = *boost::next(tlvListContainer.begin());
-    BOOST_CHECK_EQUAL( tlv2.type(), 0x43);
-    BOOST_CHECK_EQUAL( tlv2.length(), 0x05u);
-    BOOST_CHECK_EQUAL( tlv2.value().size(), 0x05);
+    BOOST_CHECK_EQUAL( tlv2.type(), 0x0c);
+    BOOST_CHECK_EQUAL( tlv2.length(), 0x04u);
+    BOOST_CHECK_EQUAL( tlv2.value().size(), 0x04);
     
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( mihPayload.dump( oss));
@@ -278,9 +278,9 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
     tlv1.value( tlv1_value);
 
     unsigned char tlv2_value[] = {
-            0x1a, 0x2b, 0x3c, 0x4d, 0x5e };
+            0x1a, 0x2b, 0x3c, 0x4d };
     MIHGenericTLVParser tlv2 ( tlvListContainer.push_back_space());
-    tlv2.type() = 0x43;
+    tlv2.type() = 0x0c;
     tlv2.value( tlv2_value);
 
     mihPacket.finalizeAll();
@@ -289,7 +289,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
             // MIH header
             0x10, 0x54, 0x00, 0x00, 0x00, 0x15,
             // variable payload length:
-            0x00, 0x2a,
+            0x00, 0x29,
             // source MIHF_ID TLV:
             0x01, 0x0f, // type, length
             0x73, 0x65, 0x6e, 0x66, 0x40, 0x62, 0x65, 0x72, 0x6c,
@@ -302,9 +302,9 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
             0x0a, // first bit not set, length=10
             0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, // value
             // second test tlv
-            0x43, // type
-            0x05, // first bit not set, length=5
-            0x1a, 0x2b, 0x3c, 0x4d, 0x5e // value
+            0x0c, // type
+            0x04, // first bit not set, length=4
+            0x1a, 0x2b, 0x3c, 0x4d // value
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             mihPacket.data().begin(), mihPacket.data().end() );    

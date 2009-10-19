@@ -29,12 +29,15 @@
 // Custom includes
 #include <iomanip>
 #include <senf/Utils/hexdump.hh>
+#include <senf/Utils/Format.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHFSrcIdTLVParser );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHFDstIdTLVParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHStatusTLVParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHValidTimeIntervalTLVParser );
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::MIHFIdTLVParser
@@ -42,9 +45,10 @@ SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHFDstIdTLVParser );
 prefix_ void senf::MIHFIdTLVParser::dump(std::ostream & os)
     const
 {
-    os << senf::fieldName("  type")   << unsigned (type())   << "\n"
-       << senf::fieldName("  length") << unsigned (length()) << "\n"
-       << "    value:\n";
+    senf::format::IndentHelper indent;
+    os << indent << "type:   " << unsigned (type()) << std::endl
+       << indent << "length: " << unsigned (length()) << std::endl
+       << indent << "value:\n";
     std::string src_mihfId (asString());
     hexdump(src_mihfId.begin(), src_mihfId.end(), os);
 }
@@ -111,7 +115,8 @@ prefix_ senf::MIHFId senf::MIHFIdTLVParser::valueAs(MIHFId::Type type)
 prefix_ void senf::MIHFSrcIdTLVParser::dump(std::ostream & os)
     const
 {
-    os << "  source MIHF_Id TLV:\n";
+    senf::format::IndentHelper indent;
+    os << indent << "source MIHF_Id TLV:\n";
     MIHFIdTLVParser::dump(os);
 }
 
@@ -121,12 +126,84 @@ prefix_ void senf::MIHFSrcIdTLVParser::dump(std::ostream & os)
 prefix_ void senf::MIHFDstIdTLVParser::dump(std::ostream & os)
     const
 {
-    os << "  destination MIHF_Id TLV:\n";
+    senf::format::IndentHelper indent;
+    os << indent << "destination MIHF_Id TLV:\n";
     MIHFIdTLVParser::dump(os);
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// MIHBaseTLVParser
+// senf::MIHStatusTLVParser
+
+prefix_ void senf::MIHStatusTLVParser::dump(std::ostream & os)
+    const
+{
+    senf::format::IndentHelper indent;
+    os << indent << "Status TLV:" << std::endl;
+    indent.increase();
+    os << indent <<   "type:   " << unsigned( type()) << std::endl
+       << indent <<   "length: " << unsigned( length()) << " byte(s)" << std::endl
+       << indent <<   "value:  " << unsigned( value());
+    switch (value()) {
+    case Success:
+        os << " (Success)" << std::endl;
+        return;
+    case UnspecifiedFailure:  
+        os << " (Unspecified Failure)" << std::endl;
+        return;
+    case Rejected:
+        os << " (Rejected)" << std::endl;
+        return;
+    case AuthorizationFailure:
+        os << " (Authorization Failure)" << std::endl;
+        return;
+    case NetworkError:
+        os << " (Network Error)" << std::endl;
+        return;
+    }
+    os << " (???; invalid value!)" << std::endl;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::MIHRegisterReqCodeTLVParser
+
+prefix_ void senf::MIHRegisterReqCodeTLVParser::dump(std::ostream & os)
+    const
+{
+    senf::format::IndentHelper indent;
+    os << indent << "Register Request Code TLV:" << std::endl;
+    indent.increase();
+    os << indent <<   "type:   " << unsigned( type()) << std::endl
+       << indent <<   "length: " << unsigned( length()) << " byte(s)" << std::endl
+       << indent <<   "value:  " << unsigned( value());
+    switch (value()) {
+    case Registration:
+        os << " (Registration)" << std::endl;
+        return;
+    case ReRegistration:
+        os << " (Re-Registration)" << std::endl;
+        return;
+    }
+    os << " (???; invalid value!)" << std::endl;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::MIHValidTimeIntervalTLVParser
+
+prefix_ void senf::MIHValidTimeIntervalTLVParser::dump(std::ostream & os)
+    const
+{
+    senf::format::IndentHelper indent;
+    os << indent << "Valid Time Interval TLV:" << std::endl;
+    indent.increase();
+    os << indent <<   "type:   " << unsigned( type()) << std::endl
+       << indent <<   "length: " << unsigned( length()) << " byte(s)" << std::endl
+       << indent <<   "value:  " << unsigned( value())
+       << ( value()==0 ? " (infinite)" : " seconds") << std::endl;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::MIHBaseTLVParser
 
 prefix_ senf::safe_data_iterator senf::MIHBaseTLVParser::resizeValueField(
         MIHTLVLengthParser::value_type size) 
