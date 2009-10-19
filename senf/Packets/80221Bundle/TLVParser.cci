@@ -39,36 +39,36 @@ prefix_ senf::MIHTLVLengthParser::size_type senf::MIHTLVLengthParser::bytes() co
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// MIHFId_TLVParser
+// MIHFIdTLVParser
 
-prefix_ std::string senf::MIHFId_TLVParser::asString()
+prefix_ std::string senf::MIHFIdTLVParser::asString()
     const
 {
     return std::string( i(1+length_().bytes()), i(1+length_().bytes()+length()) );
 }
 
-prefix_ senf::MACAddress senf::MIHFId_TLVParser::asMACAddress()
+prefix_ senf::MACAddress senf::MIHFIdTLVParser::asMACAddress()
     const
 {
     return MACAddress::from_data( 
             getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+12) ));
 }
 
-prefix_ senf::INet4Address senf::MIHFId_TLVParser::asINet4Address()
+prefix_ senf::INet4Address senf::MIHFIdTLVParser::asINet4Address()
     const
 {
     return INet4Address::from_data( 
             getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+8) ));
 }
 
-prefix_ senf::INet6Address senf::MIHFId_TLVParser::asINet6Address()
+prefix_ senf::INet6Address senf::MIHFIdTLVParser::asINet6Address()
     const
 {
     return INet6Address::from_data( 
             getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+32) ));
 }
 
-prefix_ senf::EUI64 senf::MIHFId_TLVParser::asEUI64()
+prefix_ senf::EUI64 senf::MIHFIdTLVParser::asEUI64()
     const
 {
     return EUI64::from_data( 

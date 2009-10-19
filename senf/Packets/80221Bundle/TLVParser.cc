@@ -33,6 +33,98 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHFSrcIdTLVParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHFDstIdTLVParser );
+
+///////////////////////////////////////////////////////////////////////////
+// senf::MIHFIdTLVParser
+
+prefix_ void senf::MIHFIdTLVParser::dump(std::ostream & os)
+    const
+{
+    os << senf::fieldName("  type")   << unsigned (type())   << "\n"
+       << senf::fieldName("  length") << unsigned (length()) << "\n"
+       << "    value:\n";
+    std::string src_mihfId (asString());
+    hexdump(src_mihfId.begin(), src_mihfId.end(), os);
+}
+
+prefix_ void senf::MIHFIdTLVParser::setString(std::string const &id)
+{
+    size_type str_size (id.size());
+    // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
+    if (str_size > 253) 
+        throw std::length_error("maximum length of a MIHF_ID is 253 octets");
+    safe_data_iterator si = resizeValueField( str_size);   
+    std::copy( id.begin(), id.end(), si);
+}
+
+prefix_ void senf::MIHFIdTLVParser::setMACAddress(senf::MACAddress const &mac)
+{
+    safe_data_iterator si = resizeValueField(12);
+    std::copy( mac.begin(), mac.end(), getNAIEncodedOutputIterator(si));
+}
+
+prefix_ void senf::MIHFIdTLVParser::setINet4Address(senf::INet4Address const &addr)
+{
+    safe_data_iterator si = resizeValueField(8);
+    std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
+}
+
+prefix_ void senf::MIHFIdTLVParser::setINet6Address(senf::INet6Address const &addr)
+{
+    safe_data_iterator si = resizeValueField(32);
+    std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
+}
+
+prefix_ void senf::MIHFIdTLVParser::setEUI64(senf::EUI64 const &addr)
+{
+    safe_data_iterator si = resizeValueField(16);
+    std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
+}
+
+prefix_ senf::MIHFId senf::MIHFIdTLVParser::valueAs(MIHFId::Type type)
+    const
+{
+    if (length() == 0) return MIHFId();
+    switch (type) {
+    case MIHFId::Empty:
+        return MIHFId();
+    case MIHFId::MACAddress:
+        return MIHFId( asMACAddress());
+    case MIHFId::INet4Address:
+        return MIHFId( asINet4Address());
+    case MIHFId::INet6Address:
+        return MIHFId( asINet6Address());
+    case MIHFId::String:
+        return MIHFId( asINet6Address());
+    case MIHFId::EUI64:
+        return MIHFId( asINet6Address());
+    }
+    return MIHFId();
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::MIHFSrcIdTLVParser
+
+prefix_ void senf::MIHFSrcIdTLVParser::dump(std::ostream & os)
+    const
+{
+    os << "  source MIHF_Id TLV:\n";
+    MIHFIdTLVParser::dump(os);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::MIHFDstIdTLVParser
+
+prefix_ void senf::MIHFDstIdTLVParser::dump(std::ostream & os)
+    const
+{
+    os << "  destination MIHF_Id TLV:\n";
+    MIHFIdTLVParser::dump(os);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // MIHBaseTLVParser
 
@@ -52,7 +144,7 @@ prefix_ senf::safe_data_iterator senf::MIHBaseTLVParser::resizeValueField(
 
 
 ///////////////////////////////////////////////////////////////////////////
-// MIHTLVLengthParser
+// senf::MIHTLVLengthParser
 
 prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() const 
 {
@@ -71,7 +163,6 @@ prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() c
         throw( MIHTLVLengthException());
     };
 }
-
 
 prefix_ void senf::MIHTLVLengthParser::value(value_type const & v) 
 {
@@ -101,7 +192,6 @@ prefix_ void senf::MIHTLVLengthParser::value(value_type const & v)
     underflow_flag() = (v <= 128);
 }
 
-
 prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::maxValue()
     const
 {
@@ -121,20 +211,17 @@ prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::maxValue(
     };
 }
 
-
 prefix_ senf::MIHTLVLengthParser const & senf::MIHTLVLengthParser::operator= (value_type other) 
 {
     value(other);
     return *this; 
 }
 
-
 prefix_ void senf::MIHTLVLengthParser::init() const 
 {
     defaultInit();
     extended_length_flag() = false;
 }
-
 
 prefix_ void senf::MIHTLVLengthParser::finalize()
 {
@@ -159,7 +246,6 @@ prefix_ void senf::MIHTLVLengthParser::finalize()
     if (b != 5) resize_(5);
 }
 
-
 prefix_ void senf::MIHTLVLengthParser:: maxValue(MIHTLVLengthParser::value_type v)
 {
     if (v <= 128)
@@ -179,7 +265,6 @@ prefix_ void senf::MIHTLVLengthParser:: maxValue(MIHTLVLengthParser::value_type 
     }
     if (b < 5) resize_(5);
 }
-
 
 prefix_ void senf::MIHTLVLengthParser::resize_(size_type size)
 {

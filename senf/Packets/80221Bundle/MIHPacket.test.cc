@@ -129,7 +129,8 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_mac)
             0x02, 0x0c,  // type, length
             0x5c, 0x07, 0x5c, 0x08, 0x5c, 0x09, 0x5c, 0x0a, 0x5c, 0x0b, 0x5c, 0x0c  // value (nai-encoded)
     };
-    BOOST_CHECK(equal( mihPacket.data().begin(), mihPacket.data().end(), data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            mihPacket.data().begin(), mihPacket.data().end() );
     BOOST_CHECK_EQUAL(
             mihPacket->src_mihfId().asMACAddress(),
             MACAddress::from_string("01:02:03:04:05:06"));
@@ -159,7 +160,8 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet4)
             0x02, 0x08, // type, length
             0x5c, 0x84, 0x5c, 0x85, 0x5c, 0x86, 0x5c, 0x87  // value (nai-encoded)
     };
-    BOOST_CHECK(equal( mihPacket.data().begin(), mihPacket.data().end(), data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            mihPacket.data().begin(), mihPacket.data().end() );
     BOOST_CHECK_EQUAL(
             mihPacket->src_mihfId().asINet4Address(),
             INet4Address::from_string("128.129.130.131"));
@@ -197,7 +199,8 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet6)
             0x5c, 0x00, 0x5c, 0x00, 0x5c, 0xff, 0x5c, 0xff,
             0x5c, 0x05, 0x5c, 0x06, 0x5c, 0x07, 0x5c, 0x08
     };
-    BOOST_CHECK(equal( mihPacket.data().begin(), mihPacket.data().end(), data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            mihPacket.data().begin(), mihPacket.data().end() );
     BOOST_CHECK_EQUAL(
             mihPacket->src_mihfId().asINet6Address(),
             INet6Address::from_string("::ffff:1.2.3.4"));
@@ -237,19 +240,22 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
     BOOST_REQUIRE( mihPacket.next().is<MIHGenericPayloadPacket>() );
     MIHGenericPayloadPacket mihPayload (mihPacket.next().as<MIHGenericPayloadPacket>());
 
-    BOOST_CHECK_EQUAL( mihPayload->tlv_list().size(), 2u);
-    MIHGenericPayloadPacket::Parser::tlv_list_t::container tlv_list_container (
-            mihPayload->tlv_list());
+    BOOST_CHECK_EQUAL( mihPayload->tlvList().size(), 2u);
+    MIHGenericPayloadPacket::Parser::tlvList_t::container tlvListContainer (
+            mihPayload->tlvList());
 
-    MIHGenericTLVParser tlv1 = *tlv_list_container.begin();
+    MIHGenericTLVParser tlv1 = *tlvListContainer.begin();
     BOOST_CHECK_EQUAL( tlv1.type(), 0x42);
     BOOST_CHECK_EQUAL( tlv1.length(), 0x0au);
     BOOST_CHECK_EQUAL( tlv1.value().size(), 0x0a);
 
-    MIHGenericTLVParser tlv2 = *boost::next(tlv_list_container.begin());
+    MIHGenericTLVParser tlv2 = *boost::next(tlvListContainer.begin());
     BOOST_CHECK_EQUAL( tlv2.type(), 0x43);
     BOOST_CHECK_EQUAL( tlv2.length(), 0x05u);
     BOOST_CHECK_EQUAL( tlv2.value().size(), 0x05);
+    
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( mihPayload.dump( oss));
 }
 
 
@@ -262,18 +268,18 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
     mihPacket->dst_mihfId().setString( "test");
 
     MIHGenericPayloadPacket mihPayload (MIHGenericPayloadPacket::createAfter(mihPacket));
-    MIHGenericPayloadPacket::Parser::tlv_list_t::container tlvContainer (
-            mihPayload->tlv_list() );
+    MIHGenericPayloadPacket::Parser::tlvList_t::container tlvListContainer (
+            mihPayload->tlvList() );
     
     unsigned char tlv1_value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
-    MIHGenericTLVParser tlv1 ( tlvContainer.push_back_space());
+    MIHGenericTLVParser tlv1 ( tlvListContainer.push_back_space());
     tlv1.type() = 0x42;
     tlv1.value( tlv1_value);
 
     unsigned char tlv2_value[] = {
             0x1a, 0x2b, 0x3c, 0x4d, 0x5e };
-    MIHGenericTLVParser tlv2 ( tlvContainer.push_back_space());
+    MIHGenericTLVParser tlv2 ( tlvListContainer.push_back_space());
     tlv2.type() = 0x43;
     tlv2.value( tlv2_value);
 
@@ -300,7 +306,6 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
             0x05, // first bit not set, length=5
             0x1a, 0x2b, 0x3c, 0x4d, 0x5e // value
     };
-
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             mihPacket.data().begin(), mihPacket.data().end() );    
 }

@@ -78,16 +78,15 @@ namespace senf {
         SENF_PARSER_GOTO_OFFSET( 8, 8); // just to limit the offset calculation
         
         // Source MIHF Id
-        SENF_PARSER_FIELD ( src_mihfId, MIHFId_TLVParser );
+        SENF_PARSER_FIELD ( src_mihfId, MIHFSrcIdTLVParser );
         // Destination MIHF Id
-        SENF_PARSER_FIELD ( dst_mihfId, MIHFId_TLVParser );
+        SENF_PARSER_FIELD ( dst_mihfId, MIHFDstIdTLVParser );
 
         SENF_PARSER_FINALIZE ( MIHPacketParser );
 
         SENF_PARSER_INIT() {
+            defaultInit();
             version_() = 1;
-            src_mihfId().type() = 1;
-            dst_mihfId().type() = 2;
         }
 
         friend class MIHPacketType;
@@ -132,7 +131,7 @@ namespace senf {
     struct MIHGenericPayloadPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_LIST ( tlv_list, packetSize(), MIHGenericTLVParser );
+        SENF_PARSER_LIST ( tlvList, packetSize(), MIHGenericTLVParser );
         SENF_PARSER_FINALIZE ( MIHGenericPayloadPacketParser );
     };
 

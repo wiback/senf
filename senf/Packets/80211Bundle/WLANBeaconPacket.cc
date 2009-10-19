@@ -44,7 +44,7 @@ prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream &os)
     typedef parser::ieList_t::container ieListContainer_t;
     ieListContainer_t ieListContainer (p->ieList());
     for (ieListContainer_t::iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
-        (*i).dump( os);
+        i->dump( os);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

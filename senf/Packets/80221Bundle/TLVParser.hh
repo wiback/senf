@@ -127,8 +127,10 @@ namespace senf {
             the current length value.
          */
         void finalizeLength() { 
-            protect(), length_().finalize(); 
+            protect(), length_().finalize();
         };
+    
+    typedef GenericTLVParserRegistry<MIHBaseTLVParser> Registry;
         
     protected:
         /// resize the packet after the length field to given size
@@ -161,12 +163,12 @@ namespace senf {
          \note you must call mihfIdPacket.maxLengthValue( 253) *before*
          setting longer MIHF_IDs values.
     */
-    class MIHFId_TLVParser : public MIHBaseTLVParser
+    class MIHFIdTLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
         SENF_PARSER_SKIP     ( length(), 0      );
-        SENF_PARSER_FINALIZE ( MIHFId_TLVParser );
+        SENF_PARSER_FINALIZE ( MIHFIdTLVParser  );
         
     public:
         std::string asString() const;
@@ -186,6 +188,8 @@ namespace senf {
 
         MIHFId valueAs(MIHFId::Type type) const;
         
+        void dump(std::ostream & os) const;
+
     private:
         template <class OutputIterator>
         struct binaryNAIEncoder {
@@ -215,7 +219,31 @@ namespace senf {
         }
     };
 
-
+    struct MIHFSrcIdTLVParser : public MIHFIdTLVParser
+    {
+        MIHFSrcIdTLVParser(data_iterator i, state_type s) : MIHFIdTLVParser(i,s) {}
+        
+        void init() const {
+            defaultInit();
+            type() << typeId+0;
+        }
+        static type_t::value_type const typeId = 1;
+        
+        void dump(std::ostream & os) const;
+    };
+    
+    struct MIHFDstIdTLVParser : public MIHFIdTLVParser
+    {
+        MIHFDstIdTLVParser(data_iterator i, state_type s) : MIHFIdTLVParser(i,s) {}
+        
+        void init() const {
+            defaultInit();
+            type() << typeId+0;
+        }
+        static type_t::value_type const typeId = 2;
+        
+        void dump(std::ostream & os) const;
+    };
 }
 
 
