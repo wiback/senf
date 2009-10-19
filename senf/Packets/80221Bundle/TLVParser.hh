@@ -130,7 +130,7 @@ namespace senf {
             protect(), length_().finalize();
         };
     
-    typedef GenericTLVParserRegistry<MIHBaseTLVParser> Registry;
+        typedef GenericTLVParserRegistry<MIHBaseTLVParser> Registry;
         
     protected:
         /// resize the packet after the length field to given size

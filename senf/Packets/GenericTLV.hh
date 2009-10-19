@@ -126,7 +126,8 @@ namespace senf {
         \endcode  
 
         \see 
-            IPv6GenericOptionTLVParser, WLANGenericInfoElementParser, MIHGenericTLVParser 
+            IPv6GenericOptionParser, WLANGenericInfoElementParser, MIHGenericTLVParser \n
+            GenericTLVParserRegistry
      */
     template <class Base>
     class GenericTLVParserBase : public Base
@@ -183,17 +184,65 @@ namespace senf {
     namespace detail {
         template <class BaseParser>
         struct GenericTLVParserRegistry_EntryBase {
-            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) = 0;
+            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const = 0;
         };
     
         template <class BaseParser, class Parser>
         struct GenericTLVParserRegistry_Entry
             : GenericTLVParserRegistry_EntryBase<BaseParser>
         {
-            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os);
+            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
         };
     }
     
+    /** \brief TLV parser registration facility
+
+        The %GenericTLVParserRegistry provides a generic facility to globally register concrete
+        TLV parser by the type value. The concrete TLV parser must therefore provide a \c typeId
+        member. See GenericTLVParserBase for details about the assumed class structure.
+        
+        Every registry is identified by the base tlv parser class. Parsers can be registered 
+        statically only: 
+        \code
+        GenericTLVParserRegistry<MyTLVParserBase>::RegistrationProxy<ConcreteTLVParser>
+            registerConcreteTLVParser;
+        \endcode 
+        This global variable declaration will register ConcreteTLVParser. The variable 
+        registerConcreteTLVParser is a dummy. It's only function is to force the call of 
+        it's constructor during global construction time. This static registration only
+        works when the symbol is included into the final binary.
+        
+        To simplify the registration the \ref SENF_PACKET_TLV_REGISTRY_REGISTER macro can be used.
+        The \c ConreteTLVParser must therefore provide a \c Registry typedef pointing to the
+        %GenericTLVParserRegistry; typically you put this typedef to the TLVBaseParser class.
+        \code
+        struct MyTLVParserBase : public senf::PacketParserBase
+        {
+            ...
+            typedef GenericTLVParserRegistry<MyTLVParserBase> Registry;
+        };
+        struct MyConcreteTLVParser : public MyTLVParserBase
+        {
+            ....
+            static const type_t::value_type typeId = 0x42;
+            void dump(std::ostream & os) const;
+        };
+        
+        // register MyConcreteTLVParser to the MyTLVParserBase-Registry with the type id 0x42:
+        SENF_PACKET_TLV_REGISTRY_REGISTER( MyConcreteTLVParser );
+        \endcode
+        
+        The registry provides a dump() member to dump an instance of a generic TLV parser.
+        If the type value of the given TLV parser is registered the generic tlv will be
+        casted to the registered concrete TLV parser and the dump member from this parser
+        will be called. Otherwise the generic TLV parser will be dumped in a generic way
+        (hexdump of the value).
+        
+        \see
+            GenericTLVParserBase for the general TLV class structure \n
+            IPv6OptionParser::Registry, WLANInfoElementParser::Registry,
+            MIHBaseTLVParser::Registry 
+     */
     template <class BaseParser>
     class GenericTLVParserRegistry
         : public senf::singleton<GenericTLVParserRegistry<BaseParser> >
@@ -216,9 +265,17 @@ namespace senf {
         template <typename Parser>
         void registerParser();
         
-        void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os);
+        void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
     };
         
+    /** \brief Statically add an entry to a TLV parser registry
+
+        This macro will declare an anonymous global variable in such a way, that constructing 
+        this variable will register the given tlv parser.
+
+        \hideinitializer
+        \see senf::GenericTLVParserRegistry
+     */
 #   define SENF_PACKET_TLV_REGISTRY_REGISTER( ConreteTLVParser )                \
         namespace {                                                             \
             ConreteTLVParser::Registry::RegistrationProxy<ConreteTLVParser>     \

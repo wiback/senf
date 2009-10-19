@@ -121,6 +121,7 @@ prefix_ void senf::GenericTLVParserBase<Base>::value(
 template <class BaseParser, class Parser>
 prefix_ void senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::dump(
         GenericTLVParserBase<BaseParser> const & parser, std::ostream & os)
+    const
 {
     (parser.template as<Parser>()).dump(os);
 }

@@ -102,7 +102,8 @@ env.SetDefault(
     LCOV              = "lcov",
     GENHTML           = "genhtml",
     SCONSBIN          = env.File("#/tools/scons"),
-    SCONSARGS          = [ '-Q', '-j$CONCURRENCY_LEVEL', 'debug=$debug', 'final=$final' ],
+    SCONSARGS         = [ '-Q', '-j$CONCURRENCY_LEVEL', 'debug=$debug', 'final=$final' ] + \
+        [ '%s=%s' % (k,v) for k,v in ARGUMENTS.iteritems() ],
     SCONS             = "@$SCONSBIN $SCONSARGS",
     CONCURRENCY_LEVEL = env.GetOption('num_jobs') or 1,
     TOPDIR            = env.Dir('#').abspath,
