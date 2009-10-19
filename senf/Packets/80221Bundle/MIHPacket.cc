@@ -85,7 +85,7 @@ prefix_ void senf::MIHGenericPayloadPacketType::dump(packet p, std::ostream &os)
     os << "MIH Payload (service specific TLVs):\n";
     typedef parser::tlvList_t::container tlvListContainer_t;
     tlvListContainer_t tlvListContainer (p->tlvList());
-    for (tlvListContainer_t::iterator i = tlvListContainer.begin(); i != tlvListContainer.end(); ++i)
+    for (tlvListContainer_t::const_iterator i = tlvListContainer.begin(); i != tlvListContainer.end(); ++i)
         i->dump( os);
 }
 

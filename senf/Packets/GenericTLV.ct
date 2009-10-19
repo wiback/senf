@@ -91,7 +91,7 @@ prefix_ void senf::GenericTLVParserRegistry<BaseParser>::dump(
         GenericTLVParserBase<BaseParser> const & parser, std::ostream & os)
     const
 {
-    typename Map::iterator i (map_.find( parser.type()));
+    typename Map::const_iterator i (map_.find( parser.type()));
     if (i == map_.end()) {
         boost::io::ios_all_saver ias(os);
         os << "  GenericTLVParser<" << prettyName(typeid(BaseParser)) << ">\n"
