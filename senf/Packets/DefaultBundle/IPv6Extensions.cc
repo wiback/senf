@@ -75,14 +75,8 @@ prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & 
     os << "  OptionTypes:\n";
     typedef IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
     optContainer_t options (p->options());
-    optContainer_t::iterator optIter(options.begin());
-    for(; optIter != options.end(); ++optIter) {
-        os << senf::fieldName("  AltAction")           << unsigned(optIter->altAction()) << "\n"
-           << senf::fieldName("  ChangeFlag")          << unsigned(optIter->changeFlag()) << "\n"
-           << senf::fieldName("  Option Type")         << unsigned(optIter->optionType()) << "\n"
-           << senf::fieldName("  length")              << unsigned(optIter->length()) <<"\n";
-        senf::hexdump(boost::begin(optIter->value()) , boost::end(optIter->value()), os );
-    }
+    for (optContainer_t::const_iterator i = options.begin(); i != options.end(); ++i)
+        i->dump( os);
 }
 
 prefix_ void senf::IPv6DestinationOptionsPacketType::dump(packet p, std::ostream & os)

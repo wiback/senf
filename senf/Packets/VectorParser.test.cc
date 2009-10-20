@@ -280,9 +280,10 @@ BOOST_AUTO_UNIT_TEST(vectorMacro_create)
             0x07, 0x08,             // vec1[1]
             0x09, 0x0A,             // vec1[2]
             0x0B, 0x0C,             // vec2[0]
-            0x0D, 0x0E };           // vec2[1]
-    
-    BOOST_CHECK( equal( p.data().begin(), p.data().end(), data ));
+            0x0D, 0x0E              // vec2[1]
+    };
+    SENF_CHECK_EQUAL_COLLECTIONS( 
+            data, data+sizeof(data), p.data().begin(), p.data().end() );
 }
 
 namespace {

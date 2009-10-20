@@ -40,6 +40,8 @@ namespace {
         SENF_PARSER_FIELD    ( type,   senf::UInt8Parser );
         SENF_PARSER_FIELD_RO ( length, senf::UInt8Parser );
         SENF_PARSER_FINALIZE ( MyTLVParserBase           );
+        
+        typedef senf::GenericTLVParserRegistry<MyTLVParserBase> Registry;
     };
     
     struct MyGenericTLVParser

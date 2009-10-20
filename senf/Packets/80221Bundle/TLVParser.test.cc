@@ -207,7 +207,8 @@ BOOST_AUTO_UNIT_TEST(TestMacAddressTLVPacket_create)
         0x0c, // length
         0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67  // value
     };
-    BOOST_CHECK( equal( tlvPacket.data().begin(), tlvPacket.data().end(), data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( 
+            data, data+sizeof(data), tlvPacket.data().begin(), tlvPacket.data().end() );
 }
 
 

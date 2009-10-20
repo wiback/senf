@@ -243,19 +243,18 @@ namespace senf {
             IPv6OptionParser::Registry, WLANInfoElementParser::Registry,
             MIHBaseTLVParser::Registry 
      */
-    template <class BaseParser>
+    template <class BaseParser, class Keytype = typename BaseParser::type_t::value_type>
     class GenericTLVParserRegistry
-        : public senf::singleton<GenericTLVParserRegistry<BaseParser> >
+        : public senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >
     {
-        typedef boost::ptr_map<
-            typename BaseParser::type_t::value_type, 
+        typedef boost::ptr_map<Keytype, 
             detail::GenericTLVParserRegistry_EntryBase<BaseParser> > Map;
         Map map_;
         
         GenericTLVParserRegistry() {};
     public:
-        using senf::singleton<GenericTLVParserRegistry<BaseParser> >::instance;
-        friend class senf::singleton<GenericTLVParserRegistry<BaseParser> >;
+        using senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >::instance;
+        friend class senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >;
         
         template <class PacketParser>
         struct RegistrationProxy {
@@ -265,7 +264,11 @@ namespace senf {
         template <typename Parser>
         void registerParser();
         
+        bool isRegistered(GenericTLVParserBase<BaseParser> const & parser) const;
+        bool isRegistered(Keytype const & key) const;
+        
         void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
+        void dump(GenericTLVParserBase<BaseParser> const & parser, Keytype const & key, std::ostream & os) const;
     };
         
     /** \brief Statically add an entry to a TLV parser registry

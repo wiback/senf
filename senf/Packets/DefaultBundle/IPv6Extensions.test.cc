@@ -369,15 +369,20 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
     senf::IPv6HopByHopOptionsPacket p ( senf::IPv6HopByHopOptionsPacket::create(data) );
     BOOST_CHECK_EQUAL( p->nextHeader(), 0x3a);
     
-    typedef senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t; 
-    optContainer_t optC (p->options() );
-    optContainer_t::iterator listIter (optC.begin());
+    {
+        typedef senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
+        optContainer_t optC (p->options() );
+        optContainer_t::iterator listIter (optC.begin());
     
-    BOOST_CHECK_EQUAL( listIter->optionType(), 0x0d);
-    BOOST_CHECK( listIter->is<IPv6ChecksumOptionParser>());
-    IPv6ChecksumOptionParser opt ( listIter->as<IPv6ChecksumOptionParser>());
-    BOOST_CHECK_EQUAL( opt.extendedType(), 0x4d);
-    BOOST_CHECK_EQUAL( opt.checksum(), 0x01234567);
+        BOOST_CHECK_EQUAL( listIter->optionType(), 0x0d);
+        BOOST_CHECK( listIter->is<IPv6ChecksumOptionParser>());
+        IPv6ChecksumOptionParser opt ( listIter->as<IPv6ChecksumOptionParser>());
+        BOOST_CHECK_EQUAL( opt.extendedType(), 0x4d);
+        BOOST_CHECK_EQUAL( opt.checksum(), 0x01234567);
+    }
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

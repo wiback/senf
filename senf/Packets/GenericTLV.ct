@@ -52,6 +52,22 @@ prefix_ Parser senf::GenericTLVParserBase<Base>::init()
 }
 
 template <class Base>
+prefix_  void senf::GenericTLVParserBase<Base>::dump(std::ostream & os)
+    const 
+{
+    if (Base::Registry::instance().isRegistered( *this)) {
+        Base::Registry::instance().dump( *this, os);
+    } else {
+        boost::io::ios_all_saver ias(os);
+        os << "  GenericTLVParser<" << prettyName(typeid(Base)) << ">\n"
+           << "    type:   " << senf::format::dumpint(this->type()) << "\n"
+           << "    length: " << senf::format::dumpint(this->length()) << "\n"
+           << "    value:\n";
+        hexdump(value().begin(), value().end(), os);
+    }
+}
+
+template <class Base>
 prefix_  senf::PacketInterpreterBase::range senf::GenericTLVParserBase<Base>::value() 
     const 
 {
@@ -74,33 +90,35 @@ prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const
 
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::GenericTLVParserRegistry<BaseParser>
+// senf::GenericTLVParserRegistry<BaseParser,Keytype>
 
-template <class BaseParser>
+template <class BaseParser, class Keytype>
 template <typename Parser>
-prefix_ void senf::GenericTLVParserRegistry<BaseParser>::registerParser()
+prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::registerParser()
 {
-    typename BaseParser::type_t::value_type key (Parser::typeId+0);
+    Keytype key (Parser::typeId+0);
     typename Map::iterator i (map_.find( key ));
     if (i == map_.end() )
         map_.insert(key, new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>() );
 }
 
-template <class BaseParser>
-prefix_ void senf::GenericTLVParserRegistry<BaseParser>::dump(
+template <class BaseParser, class Keytype>
+prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
         GenericTLVParserBase<BaseParser> const & parser, std::ostream & os)
     const
 {
     typename Map::const_iterator i (map_.find( parser.type()));
-    if (i == map_.end()) {
-        boost::io::ios_all_saver ias(os);
-        os << "  GenericTLVParser<" << prettyName(typeid(BaseParser)) << ">\n"
-           << "    type:   " << senf::format::dumpint(parser.type()) << "\n"
-           << "    length: " << senf::format::dumpint(parser.length()) << "\n"
-           << "    value:\n";
-        hexdump(parser.value().begin(), parser.value().end(), os);       
-    }
-    else
+    if (i != map_.end())
+        (i->second)->dump(parser, os);
+}
+
+template <class BaseParser, class Keytype>
+prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
+        GenericTLVParserBase<BaseParser> const & parser, Keytype const & key, std::ostream & os)
+    const
+{
+    typename Map::const_iterator i (map_.find( key));
+    if (i != map_.end())
         (i->second)->dump(parser, os);
 }
 
