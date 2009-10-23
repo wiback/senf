@@ -43,11 +43,20 @@ namespace connector = ppi::connector;
 namespace module = ppi::module;
 namespace debug = module::debug;
 
+namespace {
+
+    struct PassiveJoin : public module::PassiveJoin
+    {
+        using module::PassiveJoin::connectors;
+    };
+
+}
+
 BOOST_AUTO_UNIT_TEST(passiveJoin)
 {
     debug::ActiveSource source1;
     debug::ActiveSource source2;
-    module::PassiveJoin join;
+    PassiveJoin join;
     debug::PassiveSink sink;
 
     ppi::connect(source1, join);
@@ -71,6 +80,10 @@ BOOST_AUTO_UNIT_TEST(passiveJoin)
     BOOST_CHECK_EQUAL( sink.size(), 2u );
     sink.input.unthrottle();
     BOOST_CHECK_EQUAL( sink.size(), 4u );
+
+    BOOST_CHECK_EQUAL( join.connectors().size(), 2u);
+    source1.output.disconnect();
+    BOOST_CHECK_EQUAL( join.connectors().size(), 1u);
 }
 
 BOOST_AUTO_UNIT_TEST(priorityJoin)

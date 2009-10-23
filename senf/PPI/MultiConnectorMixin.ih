@@ -51,6 +51,14 @@ namespace detail {
         typedef boost::ptr_map<KeyType, ConnectorType> type; 
     };
 
+    template <class Module, class Connector>
+    class MultiConnectorWrapper
+        : public Connector
+    {
+    private:
+        virtual void v_disconnected() const;
+    };
+
 #ifndef DOXYGEN
 
     template <class ConnectorType>

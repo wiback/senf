@@ -104,7 +104,7 @@ namespace module {
     public:
         connector::PassiveInput<> input;
         connector::ActiveOutput<> defaultOutput;
-        
+
         AnnotationRouter();
 
         struct DuplicateKeyException : public senf::Exception

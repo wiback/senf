@@ -72,7 +72,9 @@ prefix_ senf::ppi::connector::Connector::~Connector()
     if (connected()) {
         Connector & peer (*peer_);
         peer_->peer_ = 0;
-        peer.v_init();
+        if (! peer.initializationScheduled())
+            peer.enqueueInitializable();
+        peer.v_disconnected();
     }
 }
 

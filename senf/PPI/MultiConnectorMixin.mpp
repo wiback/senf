@@ -157,7 +157,7 @@ prefix_ ConnectorType_ &
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
 newConnector(mpp_FnParams())
 {
-    std::auto_ptr<ConnectorType_> conn (new ConnectorType_);
+    std::auto_ptr<ConnectorType_> conn (new detail::MultiConnectorWrapper<Self_,ConnectorType_>);
     KeyType_ key (static_cast<Self_*>(this)->connectorSetup(*conn mpp_CallParamsKomma()));
     return * connectors_.insert(key, conn).first->second;
 }
@@ -171,10 +171,10 @@ prefix_ ConnectorType_ &
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::
 newConnector(mpp_FnParams())
 {
-    connectors_.push_back(new ConnectorType_);
+    connectors_.push_back(new detail::MultiConnectorWrapper<Self_,ConnectorType_>);
     ConnectorType_ & conn (connectors_.back());
     try { static_cast<Self_*>(this)->connectorSetup(conn mpp_CallParamsKomma()); }
-    catch (...) { connectors_.pop_back(); throw; }
+    catch (...) { disconnected(conn); throw; }
     return conn;
 }
 
@@ -187,7 +187,7 @@ prefix_ ConnectorType_ &
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,void>::
 newConnector(mpp_FnParams())
 {
-    std::auto_ptr<ConnectorType_> cp (new ConnectorType_);
+    std::auto_ptr<ConnectorType_> cp (new detail::MultiConnectorWrapper<Self_,ConnectorType_>);
     ConnectorType_ & cref (*cp);
     static_cast<Self_*>(this)->connectorSetup(cp mpp_CallParamsKomma());
     return cref;

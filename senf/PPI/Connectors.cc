@@ -165,6 +165,7 @@ prefix_ void senf::ppi::connector::Connector::disconnect()
     // Cannot disconnected a non-connected connector
     SENF_ASSERT( peer_ &&
                  "senf::ppi::connector::Connector::disconnect(): Not connected" );
+
     Connector & peer (*peer_);
     peer_ = 0;
     peer.peer_ = 0;
@@ -173,12 +174,19 @@ prefix_ void senf::ppi::connector::Connector::disconnect()
         enqueueInitializable();
     if (! peer.initializationScheduled())
         peer.enqueueInitializable();
+
+    v_disconnected();
+    peer.v_disconnected();
 }
 
 prefix_ std::type_info const & senf::ppi::connector::Connector::packetTypeID()
 {
     return typeid(void);
 }
+
+prefix_ void senf::ppi::connector::Connector::v_disconnected()
+    const
+{}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector

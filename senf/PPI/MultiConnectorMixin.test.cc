@@ -50,6 +50,7 @@ namespace {
           public module::MultiConnectorMixin<MyModule, connector::ActiveOutput<>, void, void>
     {
         SENF_PPI_MODULE(MyModule);
+        typedef std::vector< boost::shared_ptr<MyModule::ConnectorType> > Connectors;
     public:
         connector::PassiveInput<> input;
 
@@ -59,11 +60,23 @@ namespace {
             input.onRequest(&MyModule::request);
         }
 
+        Connectors const & connectors() const
+        { return connectors_; }
+
     private:
         void connectorSetup(std::auto_ptr<ConnectorType> c)
         {
             route(input, *c);
             connectors_.push_back(boost::shared_ptr<ConnectorType>(c));
+        }
+
+        void connectorDestroy(ConnectorType const * c)
+        {
+            Connectors::iterator i (
+                std::find_if(connectors_.begin(), connectors_.end(), 
+                             boost::bind(&Connectors::value_type::get,_1) == c));
+            if (i != connectors_.end())
+                connectors_.erase(i);
         }
 
         void request()
@@ -74,7 +87,6 @@ namespace {
                 (**i)(p);
         }
 
-        typedef std::vector< boost::shared_ptr<MyModule::ConnectorType> > Connectors;
         Connectors connectors_;
                 
         friend class module::MultiConnectorMixin<MyModule, connector::ActiveOutput<>, void, void>;
@@ -110,6 +122,10 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
     BOOST_CHECK_EQUAL( sink2.size(), 1u );
     BOOST_CHECK( sink1.pop_front() == p );
     BOOST_CHECK( sink2.pop_front() == p );
+
+    BOOST_CHECK_EQUAL( module.connectors().size(), 2u );
+    sink1.input.disconnect();
+    BOOST_CHECK_EQUAL( module.connectors().size(), 1u );
 }
 
 BOOST_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)

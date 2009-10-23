@@ -187,6 +187,8 @@ namespace connector {
         
     private:
         virtual std::type_info const & packetTypeID();
+        
+        virtual void v_disconnected() const;
 
         void setModule(module::Module & module);
 

@@ -49,6 +49,11 @@ namespace {
 
     std::ostream & operator<<(std::ostream & os, IntAnnotation const & value)
     { os << value.value; return os; }
+
+    struct AnnotationRouter : public senf::ppi::module::AnnotationRouter<IntAnnotation>
+    {
+        using senf::ppi::module::AnnotationRouter<IntAnnotation>::connectors;
+    };
 }
 
 BOOST_AUTO_UNIT_TEST(annotationRouter)
@@ -57,7 +62,7 @@ BOOST_AUTO_UNIT_TEST(annotationRouter)
     senf::ppi::module::debug::PassiveSink sink1;
     senf::ppi::module::debug::PassiveSink sink2;
 
-    senf::ppi::module::AnnotationRouter<IntAnnotation> router;
+    AnnotationRouter router;
     
     senf::ppi::connect(source, router);
     senf::ppi::connect(router, 1, sink1);
@@ -81,6 +86,9 @@ BOOST_AUTO_UNIT_TEST(annotationRouter)
     BOOST_CHECK_EQUAL( sink2.size(), 1u );
     BOOST_CHECK( sink1.front() == p1 );
     BOOST_CHECK( sink2.front() == p2 );
+
+    BOOST_CHECK_EQUAL(router.connectors().size(), 2u);
+    sink1.input.disconnect();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

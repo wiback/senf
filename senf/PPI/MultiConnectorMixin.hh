@@ -116,6 +116,12 @@ namespace module {
                 route(input, output);
                 input.onThrottle(&MyModule::doThrottle);
             }
+        
+            // Optional
+            void connectorDestroy(senf::ppi::connector::ActiveInput const & input)
+            {
+                 //  whatever
+            }
 
             void doThrottle()
             { 
@@ -131,6 +137,7 @@ namespace module {
         \li inheriting from MultiConnectorMixin
         \li defining a function \c connectorSetup
         \li declaring the mixin as a friend
+        \li optionally defining \c connectorDestroy to be notified when connectors are disconnected
 
         The MultiConnectorMixin takes several template arguments
         \li the name of the derived class, \a Self_
@@ -148,10 +155,8 @@ namespace module {
         \code
         container().insert(begin(), container().pop_back().release());
         \endcode
-        which will move the new connector from the end to the beginning. 
-        \warning If you throw an exception from \c connectorSetup(), you must do so \e before moving
-            the new connector around since the mixin will remove the last element from the container
-            on an exception.
+        which will move the new connector from the end to the beginning. If you want to abort adding
+        the new connector, you may throw an exception.
 
         \par "Example:" senf::ppi::module::PriorityJoin
 
@@ -163,7 +168,7 @@ namespace module {
         will this be written to the container only \e after \c connectorSetup() returns.
 
         When the returned key is not unique, the new connector will \e replace the old one. If this
-        is not, what you want, either check for an already existing member and throw an exception in
+        is not what you want, either check for an already existing member and throw an exception in
         \c connectorSetup() or replace the \c boost::ptr_map by a \c boost::ptr_multimap using the
         fourth template argument to MultiConnectorMixin.
 
@@ -204,7 +209,10 @@ namespace module {
         If you need to use a completely different type of container, you can take over the container
         management yourself. To do this, pass \c void as container type and change \c
         connectorSetup() to take an \c std::auto_ptr as argument. \c connectorSetup() must ensure to
-        save this connector in some container or throw an exception
+        save this connector in some container or throw an exception.
+
+        Implementing \c connectorDestroy now is \e mandatory. The signature is changed to take a
+        pointer as argument
         \code
         class MyModule 
             : public senf::ppi::module::Module,
@@ -222,6 +230,15 @@ namespace module {
                    throw SomeErrorException();
                 route(*conn, output);
                 connectors_.insert(connectors_.begin()+p,conn);
+            }
+
+            void connectorDestroy(ConnectorType const * conn)
+            {
+                using boost::lambda::_1;
+                boost::ptr_vector<ConnectorType>::iterator i (
+                    std::find_if(connectors_.begin(),connectors_.end(), &_1==conn))
+                if (i != connectors_.end())
+                    connectors_.erase(i);
             }
 
             boost::ptr_vector<ConnectorType> connectors_;
@@ -245,18 +262,14 @@ namespace module {
 
     protected:
         typedef ContainerType_ ContainerType; ///< Type of connector container
+
         ContainerType_ & connectors();        ///< Get connector container
         ContainerType_ const & connectors() const; ///< Get connectors container (const)
 
+        void connectorDestroy(ConnectorType const &);
+
     private:
-#if 0
-        // For exposition only
-        // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
 
-        tempalte <class A1>
-        ConnectorType_ & newConnector(A1 const & a1);
-
-#endif
 #ifndef DOXYGEN
 
         // Include 'MultiConnectorMixin member declaration' from MultiConnectorMixin.mpp
@@ -269,7 +282,10 @@ namespace module {
 
 #endif
 
+        void disconnected(ConnectorType_ const & c);
+
         friend class detail::MultiConnectorMixinAccess;
+        friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
         
         ContainerType_ connectors_;
     };
@@ -287,30 +303,13 @@ namespace module {
         
     protected:
         typedef ContainerType_ ContainerType;
+
         ContainerType_ & connectors();
+        ContainerType_ const & connectors() const;
+
+        void connectorDestroy(ConnectorType const &);
 
     private:
-
-#if 0
-        // For exposition only
-        // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
-
-        tempalte <class A1>
-        ConnectorType_ & newConnector(A1 const & a1);
-
-        // See above for an additional note regarding the boost::enable_if in the real
-        // implementation
-        
-        template <class Source, class Target, class A1>
-        friend Source::ConnectorType & senf::ppi::connect(Source & source, 
-                                                          Target & target, 
-                                                          A1 const & a1);
-
-        template <class Source, class Target, class A1>
-        friend Target::ConnectorType & senf::ppi::connect(Source & source,
-                                                          Target & target,
-                                                          A1 const & a1);
-#endif
 
         // Include 'MultiConnectorMixin member declaration' from MultiConnectorMixin.mpp
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
@@ -319,15 +318,11 @@ namespace module {
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             1 ))
 #       include BOOST_PP_ITERATE()
-        
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
-            0, \
-            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
-            9 ))
-#       include BOOST_PP_ITERATE()
 
+        void disconnected(ConnectorType_ const & c);
+        
         friend class detail::MultiConnectorMixinAccess;
+        friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
 
         ContainerType_ connectors_;
     };
@@ -342,27 +337,6 @@ namespace module {
 
     private:
 
-#if 0
-        // For exposition only
-        // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
-
-        tempalte <class A1>
-        ConnectorType_ & newConnector(A1 const & a1);
-
-        // See above for an additional note regarding the boost::enable_if in the real
-        // implementation
-        
-        template <class Source, class Target, class A1>
-        friend Source::ConnectorType & senf::ppi::connect(Source & source, 
-                                                          Target & target, 
-                                                          A1 const & a1);
-
-        template <class Source, class Target, class A1>
-        friend Target::ConnectorType & senf::ppi::connect(Source & source,
-                                                          Target & target,
-                                                          A1 const & a1);
-#endif
-
         // Include 'MultiConnectorMixin member declaration' from MultiConnectorMixin.mpp
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
@@ -371,14 +345,10 @@ namespace module {
             1 ))
 #       include BOOST_PP_ITERATE()
 
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
-            0, \
-            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
-            9 ))
-#       include BOOST_PP_ITERATE()
+        void disconnected(ConnectorType_ const & c);
 
         friend class detail::MultiConnectorMixinAccess;
+        friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
     };
 
 #endif
@@ -387,7 +357,7 @@ namespace module {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "MultiConnectorMixin.cci"
-//#include "MultiConnectorMixin.ct"
+#include "MultiConnectorMixin.ct"
 #include "MultiConnectorMixin.cti"
 #endif
 

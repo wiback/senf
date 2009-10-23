@@ -23,12 +23,25 @@
 /** \file
     \brief MultiConnectorMixin inline template implementation */
 
-//#include "MultiConnectorMixin.ih"
+#include "MultiConnectorMixin.ih"
 
 // Custom includes
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::detail::MultiConnectorWrapper<Module,Connector>
+
+template <class Module, class Connector>
+prefix_ void senf::ppi::module::detail::MultiConnectorWrapper<Module, Connector>::v_disconnected()
+    const
+{
+    static_cast<Module&>(this->module()).disconnected(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>
 
 template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
 prefix_ ContainerType_ &
@@ -46,6 +59,15 @@ connectors()
     return connectors_;
 }
 
+template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
+prefix_ void
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
+connectorDestroy(ConnectorType const &)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>
+
 template <class Self_, class ConnectorType_, class ContainerType_>
 prefix_ ContainerType_ &
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::connectors()
@@ -53,54 +75,34 @@ senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>
     return connectors_;
 }
 
-#ifdef DOXYGEN
-
-// Only for exposition
-// Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
-
-template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
-template <class A1>
-prefix_ ConnectorType_ &
-senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
-newConnector(A1 const & a1)
+template <class Self_, class ConnectorType_, class ContainerType_>
+prefix_ ContainerType_ const &
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::connectors()
+    const
 {
-    std::auto_ptr<ConnectorType_> conn (new ConnectorType_);
-    KeyType_ key (static_cast<Self_*>(this)->connectorSetup(*conn, a1));
-    return * connectors_.insert(key, conn).first->second;
+    return connectors_;
 }
 
 template <class Self_, class ConnectorType_, class ContainerType_>
-template <class A1>
-prefix_ ConnectorType_ &
+prefix_ void
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::
-newConnector(A1 const & a1)
+connectorDestroy(ConnectorType const &)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,void>
+
+template <class Self_, class ConnectorType_>
+prefix_ void
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,void>::
+disconnected(ConnectorType_ const & c)
 {
-    connectors_.push_back(new ConnectorType_);
-    ConnectorType_ & conn (connectors_.back());
-    try { static_cast<Self_*>(this)->connectorSetup(conn , a1); }
-    catch (...) { connectors_.pop_back(); throw; }
-    return conn;
+    static_cast<Self_*>(this)->connectorDestroy(&c);
 }
 
-template <class Source, class Target , class A1>
-typename boost::enable_if<
-    boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::ConnectorType>,
-    typename Source::ConnectorType & >::type
-senf::ppi::connect(Source & source, Target & target , A1 const & a1)
-{
-    connect(source.newConnector(a1), target);
-}
+////////////////////////////////////////////////////////////////////////
 
-template <class Source, class Target , class A1>
-typename boost::enable_if<
-    boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::ConnectorType>,
-    typename Target::ConnectorType & >::type
-senf::ppi::connect(Source & source, Target & target , A1 const & a1)
-{
-    connect(source, target.newConnector(a1));
-}
-
-#else
+#ifndef DOXYGEN
 
 // Include 'Implementation' from MultiConnectorMixin.mpp
 #define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
