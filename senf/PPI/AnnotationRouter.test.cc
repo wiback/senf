@@ -94,19 +94,13 @@ BOOST_AUTO_UNIT_TEST(annotationRouter)
 
     sink1.input.disconnect();
     BOOST_CHECK_EQUAL(router.connectors().size(), 1u);
-    
+
+    senf::ppi::connect(router, 1, sink1);
+    senf::ppi::init();
     source.submit(p1);
-    source.submit(p2);
-    BOOST_CHECK_EQUAL( sink1.size(), 1u );
-    BOOST_CHECK_EQUAL( sink2.size(), 2u );
-    
-//    ppi::connect(router, 1, sink1);
-//    ppi::init();
-//    
-//    source.submit(p1);
-//    source.submit(p2);
-//    BOOST_CHECK_EQUAL( sink1.size(), 2u );
-//    BOOST_CHECK_EQUAL( sink2.size(), 3u );
+ 
+    BOOST_CHECK_EQUAL( sink1.size(), 2u );
+    BOOST_CHECK_EQUAL( sink2.size(), 1u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
