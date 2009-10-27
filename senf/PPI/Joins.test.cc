@@ -84,6 +84,9 @@ BOOST_AUTO_UNIT_TEST(passiveJoin)
     BOOST_CHECK_EQUAL( join.connectors().size(), 2u);
     source1.output.disconnect();
     BOOST_CHECK_EQUAL( join.connectors().size(), 1u);
+    ppi::connect(source1, join);
+    ppi::init();
+    BOOST_CHECK_EQUAL( join.connectors().size(), 2u);
 }
 
 BOOST_AUTO_UNIT_TEST(priorityJoin)

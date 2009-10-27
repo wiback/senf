@@ -30,37 +30,49 @@
 #include "ActiveFeeder.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
+#include "CloneSource.hh"
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Utils/membind.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
 namespace debug = senf::ppi::module::debug;
 namespace ppi = senf::ppi;
 namespace module = senf::ppi::module;
+namespace scheduler = senf::scheduler;
+
+namespace {
+    void timeout() {
+        scheduler::terminate();
+    }
+    
+    void run(senf::ClockService::clock_type t) {
+        scheduler::TimerEvent timeoutTimer ("timeoutTimer", &timeout,
+                senf::ClockService::now() + t);
+        ppi::run();
+    }
+}
 
 BOOST_AUTO_UNIT_TEST(activeFeeder)
 {
-    debug::PassiveSource source;
+    senf::PacketData::byte data[] = { 0xab };
+    senf::Packet p (senf::DataPacket::create(data));
+
+    module::CloneSource source (p);
     debug::PassiveSink sink;
     module::ActiveFeeder feeder;
 
-    ppi::connect(source,feeder);
-    ppi::connect(feeder,sink);
+    ppi::connect( source, feeder );
+    ppi::connect( feeder, sink   );
 
-    for (unsigned i (0); i < 500; ++i)
-        source.submit(senf::DataPacket::create());
-
-    senf::ClockService::clock_type start (senf::ClockService::now());
-    ppi::run();
-    std::cerr << "ActiveFeeder: " 
-              << (500*1e9)/(senf::ClockService::now()-start)
+    senf::ClockService::clock_type start (senf::ClockService::now());    
+    run( senf::ClockService::seconds(1));
+    std::cerr << "\nActiveFeeder: " 
+              << (sink.size()*1e9)/(senf::ClockService::now()-start)
               << " packets/s" << std::endl;
-
-    BOOST_CHECK_EQUAL( source.size(), 0u );
-    BOOST_CHECK_EQUAL( sink.size(), 500u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

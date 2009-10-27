@@ -277,7 +277,6 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
 
     senf::IPv6HopByHopOptionsPacket pext (senf::IPv6HopByHopOptionsPacket::createAfter(ip) );
     pext->nextHeader() = 58u;
-    pext->headerLength() = 0u;
     {
         senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pext->options() );
         {

@@ -35,6 +35,10 @@
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+namespace ppi = senf::ppi;
+namespace connector = ppi::connector;
+namespace module = ppi::module;
+namespace debug = module::debug;
 
 namespace {
     struct IntAnnotation {
@@ -50,28 +54,28 @@ namespace {
     std::ostream & operator<<(std::ostream & os, IntAnnotation const & value)
     { os << value.value; return os; }
 
-    struct AnnotationRouter : public senf::ppi::module::AnnotationRouter<IntAnnotation>
+    struct AnnotationRouter : public module::AnnotationRouter<IntAnnotation>
     {
-        using senf::ppi::module::AnnotationRouter<IntAnnotation>::connectors;
+        using module::AnnotationRouter<IntAnnotation>::connectors;
     };
 }
 
 BOOST_AUTO_UNIT_TEST(annotationRouter)
 {
-    senf::ppi::module::debug::ActiveSource source;
-    senf::ppi::module::debug::PassiveSink sink1;
-    senf::ppi::module::debug::PassiveSink sink2;
+    debug::ActiveSource source;
+    debug::PassiveSink sink1;
+    debug::PassiveSink sink2;
 
     AnnotationRouter router;
     
-    senf::ppi::connect(source, router);
-    senf::ppi::connect(router, 1, sink1);
-    senf::ppi::connect(router, 2, sink2);
+    ppi::connect(source, router);
+    ppi::connect(router, 1, sink1);
+    ppi::connect(router, 2, sink2);
     
-    BOOST_CHECK_THROW( senf::ppi::connect(router, 2, sink2), 
-            senf::ppi::module::AnnotationRouter<IntAnnotation>::DuplicateKeyException);
+    BOOST_CHECK_THROW( connect(router, 2, sink2), 
+            module::AnnotationRouter<IntAnnotation>::DuplicateKeyException);
 
-    senf::ppi::init();
+    ppi::init();
 
     senf::Packet p1 (senf::DataPacket::create());
     p1.annotation<IntAnnotation>() = 1;
@@ -86,9 +90,23 @@ BOOST_AUTO_UNIT_TEST(annotationRouter)
     BOOST_CHECK_EQUAL( sink2.size(), 1u );
     BOOST_CHECK( sink1.front() == p1 );
     BOOST_CHECK( sink2.front() == p2 );
-
     BOOST_CHECK_EQUAL(router.connectors().size(), 2u);
+
     sink1.input.disconnect();
+    BOOST_CHECK_EQUAL(router.connectors().size(), 1u);
+    
+    source.submit(p1);
+    source.submit(p2);
+    BOOST_CHECK_EQUAL( sink1.size(), 1u );
+    BOOST_CHECK_EQUAL( sink2.size(), 2u );
+    
+//    ppi::connect(router, 1, sink1);
+//    ppi::init();
+//    
+//    source.submit(p1);
+//    source.submit(p2);
+//    BOOST_CHECK_EQUAL( sink1.size(), 2u );
+//    BOOST_CHECK_EQUAL( sink2.size(), 3u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

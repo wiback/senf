@@ -34,7 +34,6 @@
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
 namespace ppi = senf::ppi;
 namespace connector = ppi::connector;
 namespace module = ppi::module;

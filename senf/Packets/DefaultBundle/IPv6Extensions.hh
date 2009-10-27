@@ -229,8 +229,8 @@ namespace senf {
     {
 #       include SENF_PARSER()
       
-        SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
-        SENF_PARSER_FIELD ( headerLength, UInt8Parser );
+        SENF_PARSER_FIELD    ( nextHeader, UInt8Parser   );
+        SENF_PARSER_FIELD_RO ( headerLength, UInt8Parser );
 
         typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
         typedef detail::ListOptionTypeParser_Policy<
