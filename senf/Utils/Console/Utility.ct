@@ -39,7 +39,7 @@ parse(ParseCommandInfo::TokensRange const & tokens, type & out)
     if (tokens.size() != 1)
         throw senf::console::SyntaxErrorException("parameter syntax error");
     std::string v (tokens.begin()[0].value());
-    unsigned i (v.find(':'));
+    std::string::size_type i (v.find(':'));
     try {
         if (i == std::string::npos)
             out.low = out.high = boost::lexical_cast<T>(v);
