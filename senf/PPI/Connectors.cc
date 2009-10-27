@@ -268,6 +268,13 @@ prefix_ void senf::ppi::connector::ActiveConnector::registerRoute(ForwardingRout
     notifyRoutes_.push_back(&route);
 }
 
+prefix_ void senf::ppi::connector::ActiveConnector::unregisterRoute(ForwardingRoute & route)
+{
+    NotifyRoutes::iterator i (std::find(notifyRoutes_.begin(), notifyRoutes_.end(), &route));
+    if (i != notifyRoutes_.end())
+        notifyRoutes_.erase(i);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::InputConnector
 

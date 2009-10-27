@@ -40,6 +40,9 @@
 
 namespace senf {
 namespace ppi {
+
+    namespace detail { class EventBindingBase; }
+
 namespace module {
 
     /** \namespace senf::ppi::module
@@ -313,6 +316,9 @@ namespace module {
         ModuleManager & moduleManager() const;
         
         void registerConnector(connector::Connector & connector);
+        void unregisterConnector(connector::Connector & connector);
+        void unregisterEvent(EventDescriptor & event);
+
         RouteBase & addRoute(std::auto_ptr<RouteBase> route);
 
         typedef std::vector<connector::Connector *> ConnectorRegistry;
@@ -324,6 +330,8 @@ namespace module {
         template <class Source, class Target>
         friend class detail::RouteHelper;
         friend class senf::ppi::ModuleManager;
+        friend class connector::Connector;
+        friend class senf::ppi::detail::EventBindingBase;
     };
 
     /** \brief Define PPI Module

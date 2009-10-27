@@ -28,6 +28,9 @@
 #include "Connectors.hh"
 #include "EventManager.hh"
 #include "ModuleManager.hh"
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+#include <algorithm>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -62,6 +65,21 @@ prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector &
     }
 }
 
+prefix_ void senf::ppi::module::Module::unregisterConnector(connector::Connector & connector)
+{
+    ConnectorRegistry::iterator i (std::find(connectorRegistry_.begin(), connectorRegistry_.end(),
+                                             &connector));
+    if (i != connectorRegistry_.end())
+        connectorRegistry_.erase(i);
+
+    routes_.erase_if(boost::bind(&RouteBase::hasConnector, _1, boost::cref(connector)));
+}
+
+prefix_ void senf::ppi::module::Module::unregisterEvent(EventDescriptor & event)
+{
+    routes_.erase_if(boost::bind(&RouteBase::hasEvent, _1, boost::cref(event)));
+}
+
 prefix_ senf::ppi::RouteBase &
 senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
 {
@@ -74,6 +92,9 @@ senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
 
 prefix_ senf::ppi::module::Module::~Module()
 {
+    SENF_ASSERT(connectorRegistry_.empty());
+    SENF_ASSERT(routes_.empty());
+
     moduleManager().unregisterModule(*this);
 }
 

@@ -57,10 +57,18 @@ namespace ppi {
                                              class is internal and not documented. */
 #endif
 
+        bool hasConnector(connector::Connector const & conn) const;
+                                        ///< \c true, if route has connector \a conn
+        bool hasEvent(EventDescriptor const & event) const;
+                                        ///< \c true, if route has event \a event
+
     protected:
         RouteBase(module::Module & module);
 
     private:
+        virtual bool v_hasConnector(connector::Connector const & conn) const = 0;
+        virtual bool v_hasEvent(EventDescriptor const & event) const = 0;
+
         module::Module * module_;
     };
 
@@ -100,6 +108,7 @@ namespace ppi {
 
         // Called to register this route with the connectors forwarding information base
         template <class T> void registerRoute(T & ob);
+        template <class T> void unregisterRoute(T & ob);
 
         template <class T> void notifyThrottle(T & ob);
         template <class T> void notifyUnthrottle(T & ob);

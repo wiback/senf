@@ -36,6 +36,18 @@
 prefix_ senf::ppi::RouteBase::~RouteBase()
 {}
 
+prefix_ bool senf::ppi::RouteBase::hasConnector(connector::Connector const & conn)
+    const
+{
+    return v_hasConnector(conn);
+}
+
+prefix_ bool senf::ppi::RouteBase::hasEvent(EventDescriptor const & event)
+    const
+{
+    return v_hasEvent(event);
+}
+
 ////////////////////////////////////////
 // protected members
 

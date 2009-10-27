@@ -26,6 +26,7 @@
 //#include "AnnotationRouter.ih"
 
 // Custom includes
+#include "Connectors.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

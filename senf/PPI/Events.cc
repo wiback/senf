@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "Route.hh"
+#include "EventManager.hh"
 
 //#include "Events.mpp"
 #define prefix_
@@ -35,6 +36,12 @@
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::EventDescriptor
+
+prefix_ senf::ppi::EventDescriptor::~EventDescriptor()
+{
+    if (binding_)
+        binding_->manager().destroyEvent(*this);
+}
 
 prefix_ void senf::ppi::EventDescriptor::notifyUnthrottle()
 {

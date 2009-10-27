@@ -184,6 +184,8 @@ namespace connector {
 
         void trace(Packet const & p, char const * label);
         void throttleTrace(char const * label, char const * type);
+
+        void unregisterConnector();
         
     private:
         virtual std::type_info const & packetTypeID();
@@ -220,6 +222,8 @@ namespace connector {
         : public virtual Connector
     {
     public:
+        ~PassiveConnector();
+
         template <class Handler>
         void onRequest(Handler handler);///< Register I/O event handler
                                         /**< The registered handler will be called, whenever packets
@@ -263,6 +267,7 @@ namespace connector {
 
         // called by ForwardingRoute to register a new route
         void registerRoute(ForwardingRoute & route);
+        void unregisterRoute(ForwardingRoute & route);
 
         typedef ppi::detail::Callback<>::type Callback;
         Callback callback_;
@@ -291,6 +296,8 @@ namespace connector {
     {
         typedef ppi::detail::Callback<>::type Callback;
     public:
+        ~ActiveConnector();
+
         template <class Handler>
         void onThrottle(Handler handler); ///< Register throttle notification handler
                                         /**< The handler register here will be called, whenever a
@@ -333,6 +340,7 @@ namespace connector {
 
         // called by ForwardingRoute to register a new route
         void registerRoute(ForwardingRoute & route);
+        void unregisterRoute(ForwardingRoute & route);
 
         Callback throttleCallback_;
         Callback unthrottleCallback_;

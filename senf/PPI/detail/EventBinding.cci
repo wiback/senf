@@ -32,11 +32,6 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::detail::EventBindingBase
 
-prefix_ senf::ppi::detail::EventBindingBase::~EventBindingBase()
-{
-    descriptor_->enabled(false);
-}
-
 prefix_ senf::ppi::EventManager & senf::ppi::detail::EventBindingBase::manager()
     const
 {
@@ -56,7 +51,9 @@ prefix_ senf::ppi::detail::EventBindingBase::EventBindingBase(EventManager & man
                                                               module::Module & module,
                                                               EventDescriptor & descriptor)
     : manager_(&manager), module_(&module), descriptor_(&descriptor)
-{}
+{
+    descriptor_->binding_ = this;
+}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

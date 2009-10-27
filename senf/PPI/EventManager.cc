@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
 
 //#include "EventManager.mpp"
 #define prefix_
@@ -42,13 +43,20 @@
 prefix_ void senf::ppi::EventManager::destroyModule(module::Module & module)
 {
     using boost::lambda::_1;
+    namespace l = boost::lambda;
 
-    // boost::ptr_vector::erase(f,l) asserts !empty() .. why ??
-    if (!registrations_.empty())
-        registrations_.erase(
-            std::remove_if(registrations_.begin(), registrations_.end(),
-                           ((&_1) ->* & detail::EventBindingBase::module_) == & module),
-            registrations_.end());
+    registrations_.erase_if(l::bind(&detail::EventBindingBase::module_,_1) == &module);
+}
+
+prefix_ void senf::ppi::EventManager::destroyEvent(EventDescriptor & event)
+{
+    using boost::lambda::_1;
+    namespace l = boost::lambda;
+    
+    SENF_ASSERT(
+        std::find_if(registrations_.begin(), registrations_.end(),
+                     l::bind(&detail::EventBindingBase::descriptor_,_1) == &event) 
+        == registrations_.end());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

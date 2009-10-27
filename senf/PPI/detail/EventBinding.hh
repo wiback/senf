@@ -59,6 +59,7 @@ namespace detail {
         EventDescriptor * descriptor_;
 
         friend class senf::ppi::EventManager;
+        friend class senf::ppi::EventDescriptor;
     };
 
     /** \brief Internal: Callback forwarders

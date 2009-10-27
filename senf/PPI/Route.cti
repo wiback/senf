@@ -52,6 +52,12 @@ prefix_ void senf::ppi::ForwardingRoute::registerRoute(T & ob)
 }
 
 template <class T>
+prefix_ void senf::ppi::ForwardingRoute::unregisterRoute(T & ob)
+{
+    ob.unregisterRoute(*this);
+}
+
+template <class T>
 prefix_ void senf::ppi::ForwardingRoute::notifyThrottle(T & ob)
 {
     ob.notifyThrottle();
@@ -89,6 +95,57 @@ BaseRouteImplementation(module::Module & module, Source & source, Target & targe
     : Base(module), source_(&source), target_(&target)
 {}
 
+////////////////////////////////////////
+// private members
+
+template <class Source, class Target, class Base>
+prefix_ bool senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
+v_hasConnector(connector::Connector const & conn)
+    const
+{
+    return isSame(conn, source()) || isSame(conn, target());
+}
+
+template <class Source, class Target, class Base>
+prefix_ bool senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
+v_hasEvent(EventDescriptor const & event)
+    const
+{
+    return isSame(event, source()) || isSame(event, target());
+}
+
+template <class Source, class Target, class Base>
+prefix_ bool senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
+isSame(connector::Connector const & conn, connector::Connector const & other)
+    const
+{
+    return &conn == &other;
+}
+
+template <class Source, class Target, class Base>
+prefix_ bool senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
+isSame(connector::Connector const & conn, EventDescriptor const & other)
+    const
+{
+    return false;
+}
+
+template <class Source, class Target, class Base>
+prefix_ bool senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
+isSame(EventDescriptor const & event, connector::Connector const & other)
+    const
+{
+    return false;
+}
+
+template <class Source, class Target, class Base>
+prefix_ bool senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
+isSame(EventDescriptor const & event, EventDescriptor const & other)
+    const
+{
+    return &event == &other;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::detail::ForwardingRouteImplementation<Source,Target>
 
@@ -103,6 +160,15 @@ ForwardingRouteImplementation(module::Module & module, Source & source, Target &
 {
     registerRoute(source);
     registerRoute(target);
+}
+
+template <class Source, class Target>
+prefix_
+senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+~ForwardingRouteImplementation()
+{
+    unregisterRoute(this->source());
+    unregisterRoute(this->target());
 }
 
 ////////////////////////////////////////

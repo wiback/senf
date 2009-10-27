@@ -26,6 +26,7 @@
 // Custom includes
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/senfassert.hh>
+#include "Module.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -84,6 +85,12 @@ prefix_ bool senf::ppi::connector::Connector::connected()
     return peer_;
 }
 
+prefix_ void senf::ppi::connector::Connector::unregisterConnector()
+{
+    if (module_)
+        module_->unregisterConnector(*this);
+}
+
 ////////////////////////////////////////
 // private members
 
@@ -139,6 +146,13 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyThrottle()
 prefix_ void senf::ppi::connector::PassiveConnector::registerRoute(ForwardingRoute & route)
 {
     routes_.push_back(&route);
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::unregisterRoute(ForwardingRoute & route)
+{
+    Routes::iterator i (std::find(routes_.begin(), routes_.end(), &route));
+    if (i != routes_.end())
+        routes_.erase(i);
 }
 
 // public members 

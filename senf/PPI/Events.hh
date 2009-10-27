@@ -36,6 +36,8 @@
 
 namespace senf {
 namespace ppi {
+
+    namespace detail { class EventBindingBase; }
     
     /** \defgroup event_group Events
 
@@ -85,6 +87,7 @@ namespace ppi {
         void notifyUnthrottle();
 
         void registerRoute(ForwardingRoute & route);
+        void unregisterRoute(ForwardingRoute & route);
 
         bool enabled_;
         bool throttled_;
@@ -92,7 +95,10 @@ namespace ppi {
         typedef std::vector<ForwardingRoute*> Routes;
         Routes routes_;
 
+        detail::EventBindingBase * binding_;
+
         friend class ForwardingRoute;
+        friend class detail::EventBindingBase;
     };
     
     /** \brief Internal: Callback forwarders

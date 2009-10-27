@@ -87,6 +87,7 @@ namespace ppi {
                            Descriptor & descriptor);
 
         void destroyModule(module::Module & module);
+        void destroyEvent(EventDescriptor & event);
 
         typedef boost::ptr_vector<detail::EventBindingBase> EventRegistrations;
         EventRegistrations registrations_;
@@ -97,6 +98,7 @@ namespace ppi {
 
         friend class detail::EventBindingBase;
         friend class module::Module;
+        friend class EventDescriptor;
     };
 
 }}

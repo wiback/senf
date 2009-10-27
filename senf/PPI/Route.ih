@@ -110,6 +110,14 @@ namespace detail {
         BaseRouteImplementation(module::Module & module, Source & source, Target & target);
 
     private:
+        bool v_hasConnector(connector::Connector const & conn) const;
+        bool v_hasEvent(EventDescriptor const & event) const;
+
+        bool isSame(connector::Connector const & conn, connector::Connector const & other) const;
+        bool isSame(connector::Connector const & conn, EventDescriptor const & other) const;
+        bool isSame(EventDescriptor const & event, connector::Connector const & other) const;
+        bool isSame(EventDescriptor const & event, EventDescriptor const & other) const;
+
         Source * source_;
         Target * target_;
     };
@@ -135,6 +143,7 @@ namespace detail {
         
     protected:
         ForwardingRouteImplementation(module::Module & module, Source & source, Target & target);
+        ~ForwardingRouteImplementation();
 
     private:
         // send a throttle/unthrottle notification  only if the second argument is a 'true' type
