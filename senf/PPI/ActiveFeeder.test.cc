@@ -73,6 +73,7 @@ BOOST_AUTO_UNIT_TEST(activeFeeder)
     std::cerr << "\nActiveFeeder: " 
               << (sink.size()*1e9)/(senf::ClockService::now()-start)
               << " packets/s" << std::endl;
+    BOOST_CHECK( sink.size() > 0);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
