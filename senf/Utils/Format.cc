@@ -146,7 +146,7 @@ prefix_ std::string senf::format::detail::dumpintUnsigned(unsigned long long v, 
     ss << ") (";
     for (int i (bytes-1); i>=0; --i) {
         char c ((v>>(8*i))&0xff);
-        ss << ((c>=32 && c<=127) ? c : '.');
+        ss << ((c>=32 && c<=126) ? c : '.');
     }
     ss << ')';
     return ss.str();
