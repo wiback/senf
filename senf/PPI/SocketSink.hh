@@ -241,10 +241,10 @@ namespace module {
         able to handle complete datagrams.
 
         This output module will write data to a FileHandle object using a given \a Writer. This
-        output module is passive. This implies, that the output handle may not block. This also
-        implies, that data will probably get lost if written to fast for the underlying transport
-        mechanism. Either this is desired (like for a UDP socket) or some additional bandwidth
-        shaping needs to be used.
+        output module is passive. This implies, that <em>the output handle may not block</em>. This
+        also implies, that data will probably get lost if written to fast for the underlying
+        transport mechanism. Either this is desired (like for a UDP socket) or some additional
+        bandwidth shaping needs to be used.
 
         The default \a Writer is senf::ppi::ConnectedDgramWriter which will write out the complete packet to
         the file handle.

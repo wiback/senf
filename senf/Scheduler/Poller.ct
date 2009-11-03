@@ -65,14 +65,12 @@ prefix_ typename senf::scheduler::detail::Poller<Value>::range senf::scheduler::
 {
     static epoll_event events[NumEvents];
     int rv (0);
-    for (;;) {
-        rv = epoll_wait(epollFd_, events, NumEvents, timeout_);
-        if (rv == -1) {
-            if (errno == EINTR)
-                continue;
+    rv = epoll_wait(epollFd_, events, NumEvents, timeout_);
+    if (rv == -1) {
+        if (errno == EINTR)
+            rv = 0;
+        else
             SENF_THROW_SYSTEM_EXCEPTION("epoll_wait()");
-        }
-        break;
     }
     return boost::make_iterator_range(
         boost::make_transform_iterator(events, GetPollResult()),
