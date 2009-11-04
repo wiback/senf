@@ -40,23 +40,62 @@ namespace module = ppi::module;
 namespace debug = module::debug;
 
 namespace {
-    // We only test the user-collection case, all other cases are already handled by
-    // existing modules
+
+    // Primitive join
+    class SequenceContainerModule
+        : public module::Module,
+          public module::MultiConnectorMixin<SequenceContainerModule, connector::PassiveInput<> >
+    {
+        SENF_PPI_MODULE(SequenceContainerModule);
+        typedef module::MultiConnectorMixin<SequenceContainerModule, connector::PassiveInput<> > base;
+
+    public:
+        connector::ActiveOutput<> output;
+
+        using base::connectors;
+
+        SequenceContainerModule() : count (0u)
+        {
+            noroute(output);
+        }
+
+        unsigned count;
+
+    private:
+        void connectorSetup(connector::PassiveInput<> & c)
+        {
+            route(c, output);
+            c.onRequest(boost::bind(&SequenceContainerModule::request, this, boost::ref(c)));
+            ++ count;
+        }
+
+        void connectorDestroy(connector::PassiveInput<> const & c)
+        {
+            -- count;
+        }
+
+        void request(connector::PassiveInput<> & c)
+        {
+            output(c());
+        }
+
+        friend class module::MultiConnectorMixin<SequenceContainerModule, connector::PassiveInput<> >;
+    };
 
     // Primitive duplicator
-    class MyModule
+    class UserContainerModule
         : public module::Module,
-          public module::MultiConnectorMixin<MyModule, connector::ActiveOutput<>, void, void>
+          public module::MultiConnectorMixin<UserContainerModule, connector::ActiveOutput<>, void, void>
     {
-        SENF_PPI_MODULE(MyModule);
-        typedef std::vector< boost::shared_ptr<MyModule::ConnectorType> > Connectors;
+        SENF_PPI_MODULE(UserContainerModule);
+        typedef std::vector< boost::shared_ptr<UserContainerModule::ConnectorType> > Connectors;
     public:
         connector::PassiveInput<> input;
 
-        MyModule()
+        UserContainerModule()
         {
             noroute(input); 
-            input.onRequest(&MyModule::request);
+            input.onRequest(&UserContainerModule::request);
         }
 
         Connectors const & connectors() const
@@ -88,7 +127,7 @@ namespace {
 
         Connectors connectors_;
                 
-        friend class module::MultiConnectorMixin<MyModule, connector::ActiveOutput<>, void, void>;
+        friend class module::MultiConnectorMixin<UserContainerModule, connector::ActiveOutput<>, void, void>;
     };
         
     struct IntAnnotation {
@@ -102,10 +141,38 @@ namespace {
     { os << value.value; return os; }
 }
 
+BOOST_AUTO_UNIT_TEST(multiConnectorMixin_sequenceContainer)
+{
+    debug::ActiveSource source1;
+    debug::ActiveSource source2;
+    SequenceContainerModule module;
+    debug::PassiveSink sink;
+
+    ppi::connect(source1, module);
+    ppi::connect(source2, module);
+    ppi::connect(module, sink);
+    ppi::init();
+
+    senf::Packet p (senf::DataPacket::create());
+
+    source1.submit(p);
+    BOOST_CHECK_EQUAL( sink.size(), 1u );
+    BOOST_CHECK( sink.pop_front() == p );
+    source2.submit(p);
+    BOOST_CHECK_EQUAL( sink.size(), 1u );
+    BOOST_CHECK( sink.pop_front() == p );
+
+    BOOST_CHECK_EQUAL( module.connectors().size(), 2u );
+    BOOST_CHECK_EQUAL( module.count, 2u );
+    source1.output.disconnect();
+    BOOST_CHECK_EQUAL( module.connectors().size(), 1u );
+    BOOST_CHECK_EQUAL( module.count, 1u );
+}
+
 BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
 {
     debug::ActiveSource source;
-    MyModule module;
+    UserContainerModule module;
     debug::PassiveSink sink1;
     debug::PassiveSink sink2;
 
@@ -134,7 +201,7 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
     module::PassiveJoin join1;
     module::PassiveJoin join2;
     module::AnnotationRouter<IntAnnotation> router;
-    MyModule module;
+    UserContainerModule module;
     
     ppi::connect(source, join1);
     ppi::connect(join1, router);

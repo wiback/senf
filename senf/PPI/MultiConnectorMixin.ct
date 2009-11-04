@@ -43,8 +43,10 @@ disconnected(ConnectorType_ const & c)
     typename ContainerType::iterator i (
         find_if(connectors_.begin(), connectors_.end(),
                 boost::bind(&ContainerType_::value_type::second,_1) == &c));
-    if (i != connectors_.end())
+    if (i != connectors_.end()) {
+        static_cast<Self_*>(this)->connectorDestroy(c);
         connectors_.erase(i);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -59,8 +61,10 @@ disconnected(ConnectorType_ const & c)
 
     typename ContainerType::iterator i (
         find_if(connectors_.begin(), connectors_.end(), &_1 == &c));
-    if (i != connectors_.end())
+    if (i != connectors_.end()) {
+        static_cast<Self_*>(this)->connectorDestroy(c);
         connectors_.erase(i);
+    }
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
