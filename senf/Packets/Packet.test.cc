@@ -240,6 +240,8 @@ BOOST_AUTO_UNIT_TEST(packet)
     senf::DataPacket::createAfter(packet);
     BOOST_CHECK_THROW( packet.next().next().next().parseNextAs<BarPacket>(),
             senf::InvalidPacketChainException );
+
+    SENF_CHECK_NO_THROW( BarPacket::create(senf::noinit).dump(s));
 }
 
 BOOST_AUTO_UNIT_TEST(concretePacket)

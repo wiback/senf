@@ -74,13 +74,18 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::append(ptr
 
 prefix_ void senf::PacketInterpreterBase::dump(std::ostream & os)
 {
-    if (detail::AnnotationIndexerBase::maxAnnotations > 0) {
-        os << "Annotations:\n";
-        impl().dumpAnnotations(os);
+    try {
+        if (detail::AnnotationIndexerBase::maxAnnotations > 0) {
+            os << "Annotations:\n";
+            impl().dumpAnnotations(os);
+        }
+        v_dump(os);
+        for (ptr i (next()); i; i = i->next())
+            i->v_dump(os);
     }
-    v_dump(os);
-    for (ptr i (next()); i; i = i->next())
-        i->v_dump(os);
+    catch (senf::Exception & e) {
+        os << "[Exception: " << e.message() << "]\n";
+    }
 }
 
 prefix_ void senf::PacketInterpreterBase::finalizeThis()
