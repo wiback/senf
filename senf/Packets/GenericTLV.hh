@@ -193,6 +193,16 @@ namespace senf {
         {
             virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
         };
+        
+        //Helper Functor for STL-compatible predicate (E.g. find_if, for_each ...)
+        template <class BaseParser, class Parser>
+        class Predicate
+        {
+            public:
+                const bool operator() (BaseParser const &p) const{
+                    return p.template is<Parser>();
+                }
+        };
     }
     
     /** \brief TLV parser registration facility
