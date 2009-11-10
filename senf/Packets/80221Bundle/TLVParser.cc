@@ -49,11 +49,11 @@ prefix_ void senf::MIHFIdTLVParser::dump(std::ostream & os)
     os << indent << "type:   " << unsigned (type()) << std::endl
        << indent << "length: " << unsigned (length()) << std::endl
        << indent << "value:\n";
-    std::string src_mihfId (asString());
+    std::string src_mihfId (valueAsString());
     hexdump(src_mihfId.begin(), src_mihfId.end(), os);
 }
 
-prefix_ void senf::MIHFIdTLVParser::setString(std::string const &id)
+prefix_ void senf::MIHFIdTLVParser::value(std::string const & id)
 {
     size_type str_size (id.size());
     // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
@@ -63,28 +63,33 @@ prefix_ void senf::MIHFIdTLVParser::setString(std::string const &id)
     std::copy( id.begin(), id.end(), si);
 }
 
-prefix_ void senf::MIHFIdTLVParser::setMACAddress(senf::MACAddress const &mac)
+prefix_ void senf::MIHFIdTLVParser::value(senf::MACAddress const & addr)
 {
     safe_data_iterator si = resizeValueField(12);
-    std::copy( mac.begin(), mac.end(), getNAIEncodedOutputIterator(si));
+    std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
-prefix_ void senf::MIHFIdTLVParser::setINet4Address(senf::INet4Address const &addr)
+prefix_ void senf::MIHFIdTLVParser::value(senf::INet4Address const & addr)
 {
     safe_data_iterator si = resizeValueField(8);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
-prefix_ void senf::MIHFIdTLVParser::setINet6Address(senf::INet6Address const &addr)
+prefix_ void senf::MIHFIdTLVParser::value(senf::INet6Address const & addr)
 {
     safe_data_iterator si = resizeValueField(32);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
-prefix_ void senf::MIHFIdTLVParser::setEUI64(senf::EUI64 const &addr)
+prefix_ void senf::MIHFIdTLVParser::value(senf::EUI64 const & addr)
 {
     safe_data_iterator si = resizeValueField(16);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
+}
+
+prefix_ void senf::MIHFIdTLVParser::value( MIHFId const & id)
+{
+    boost::apply_visitor( ValueSetterVisitor(*this), id);
 }
 
 prefix_ senf::MIHFId senf::MIHFIdTLVParser::valueAs(MIHFId::Type type)
@@ -95,15 +100,15 @@ prefix_ senf::MIHFId senf::MIHFIdTLVParser::valueAs(MIHFId::Type type)
     case MIHFId::Empty:
         return MIHFId();
     case MIHFId::MACAddress:
-        return MIHFId( asMACAddress());
+        return MIHFId( valueAsMACAddress());
     case MIHFId::INet4Address:
-        return MIHFId( asINet4Address());
+        return MIHFId( valueAsINet4Address());
     case MIHFId::INet6Address:
-        return MIHFId( asINet6Address());
+        return MIHFId( valueAsINet6Address());
     case MIHFId::String:
-        return MIHFId( asINet6Address());
+        return MIHFId( valueAsString());
     case MIHFId::EUI64:
-        return MIHFId( asINet6Address());
+        return MIHFId( valueAsEUI64());
     }
     return MIHFId();
 }

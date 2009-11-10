@@ -73,8 +73,8 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
     // set some fields
     mihPacket->fragmentNr() = 42;
     mihPacket->transactionId() = 21;
-    mihPacket->src_mihfId().setString( "senf@berlios.de");
-    mihPacket->dst_mihfId().setString( "test");
+    mihPacket->src_mihfId().value( "senf@berlios.de");
+    mihPacket->dst_mihfId().value( "test");
     mihPacket.finalizeThis();
 
     unsigned char data[] = {
@@ -88,15 +88,15 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
             0x02, 0x04, 0x74, 0x65, 0x73, 0x74
     };
     BOOST_CHECK(equal( mihPacket.data().begin(), mihPacket.data().end(), data ));
-    BOOST_CHECK_EQUAL( mihPacket->src_mihfId().asString(), "senf@berlios.de");
-    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().asString(), "test");
+    BOOST_CHECK_EQUAL( mihPacket->src_mihfId().valueAsString(), "senf@berlios.de");
+    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().valueAsString(), "test");
 
     // the maximum length of a MIHF_ID is 253 octets
-    BOOST_CHECK_THROW( mihPacket->dst_mihfId().setString( std::string(254, 'x')), std::length_error);
+    BOOST_CHECK_THROW( mihPacket->dst_mihfId().value( std::string(254, 'x')), std::length_error);
 
     // now expand a MIHF_ID
     mihPacket->dst_mihfId().maxLengthValue(253);
-    mihPacket->dst_mihfId().setString( std::string(200, 'x'));
+    mihPacket->dst_mihfId().value( std::string(200, 'x'));
     mihPacket.finalizeThis();
 
     BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 17 + 203));
@@ -111,12 +111,14 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
 
 BOOST_AUTO_UNIT_TEST(MIHPacket_create_mac)
 {
+    MACAddress srcMac ( MACAddress::from_string("01:02:03:04:05:06"));
+    MACAddress dstMac ( MACAddress::from_string("07:08:09:0a:0b:0c"));
     MIHPacket mihPacket (MIHPacket::create());
     // set some fields
     mihPacket->fragmentNr() = 42;
     mihPacket->transactionId() = 21;
-    mihPacket->src_mihfId().setMACAddress( MACAddress::from_string("01:02:03:04:05:06"));
-    mihPacket->dst_mihfId().setMACAddress( MACAddress::from_string("07:08:09:0a:0b:0c"));
+    mihPacket->src_mihfId().value( srcMac);
+    mihPacket->dst_mihfId().value( dstMac);
     mihPacket.finalizeThis();
 
     unsigned char data[] = {
@@ -131,12 +133,10 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_mac)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             mihPacket.data().begin(), mihPacket.data().end() );
-    BOOST_CHECK_EQUAL(
-            mihPacket->src_mihfId().asMACAddress(),
-            MACAddress::from_string("01:02:03:04:05:06"));
-    BOOST_CHECK_EQUAL(
-            mihPacket->dst_mihfId().asMACAddress(),
-            MACAddress::from_string("07:08:09:0a:0b:0c"));
+    BOOST_CHECK_EQUAL( mihPacket->src_mihfId().valueAsMACAddress(), srcMac);
+    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().valueAsMACAddress(), dstMac);
+    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().valueAs( MIHFId::MACAddress), MIHFId(dstMac) );
+    BOOST_CHECK( mihPacket->src_mihfId().valueEquals(srcMac));
 }
 
 
@@ -146,8 +146,8 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet4)
     // set some fields
     mihPacket->fragmentNr() = 42;
     mihPacket->transactionId() = 21;
-    mihPacket->src_mihfId().setINet4Address( INet4Address::from_string("128.129.130.131"));
-    mihPacket->dst_mihfId().setINet4Address( INet4Address::from_string("132.133.134.135"));
+    mihPacket->src_mihfId().value( INet4Address::from_string("128.129.130.131"));
+    mihPacket->dst_mihfId().value( INet4Address::from_string("132.133.134.135"));
     mihPacket.finalizeThis();
 
     unsigned char data[] = {
@@ -163,10 +163,10 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet4)
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             mihPacket.data().begin(), mihPacket.data().end() );
     BOOST_CHECK_EQUAL(
-            mihPacket->src_mihfId().asINet4Address(),
+            mihPacket->src_mihfId().valueAsINet4Address(),
             INet4Address::from_string("128.129.130.131"));
     BOOST_CHECK_EQUAL(
-            mihPacket->dst_mihfId().asINet4Address(),
+            mihPacket->dst_mihfId().valueAsINet4Address(),
             INet4Address::from_string("132.133.134.135"));
 }
 
@@ -177,8 +177,8 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet6)
     // set some fields
     mihPacket->fragmentNr() = 42;
     mihPacket->transactionId() = 21;
-    mihPacket->src_mihfId().setINet6Address( INet6Address::from_string("::ffff:1.2.3.4"));
-    mihPacket->dst_mihfId().setINet6Address( INet6Address::from_string("::ffff:5.6.7.8"));
+    mihPacket->src_mihfId().value( INet6Address::from_string("::ffff:1.2.3.4"));
+    mihPacket->dst_mihfId().value( INet6Address::from_string("::ffff:5.6.7.8"));
     mihPacket.finalizeThis();
 
     unsigned char data[] = {
@@ -202,10 +202,10 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet6)
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             mihPacket.data().begin(), mihPacket.data().end() );
     BOOST_CHECK_EQUAL(
-            mihPacket->src_mihfId().asINet6Address(),
+            mihPacket->src_mihfId().valueAsINet6Address(),
             INet6Address::from_string("::ffff:1.2.3.4"));
     BOOST_CHECK_EQUAL(
-            mihPacket->dst_mihfId().asINet6Address(),
+            mihPacket->dst_mihfId().valueAsINet6Address(),
             INet6Address::from_string("::ffff:5.6.7.8") );
 }
 
@@ -264,8 +264,8 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
     MIHPacket mihPacket (MIHPacket::create());
     mihPacket->fragmentNr() = 42;
     mihPacket->transactionId() = 21;
-    mihPacket->src_mihfId().setString( "senf@berlios.de");
-    mihPacket->dst_mihfId().setString( "test");
+    mihPacket->src_mihfId().value( "senf@berlios.de");
+    mihPacket->dst_mihfId().value( "test");
 
     MIHGenericPayloadPacket mihPayload (MIHGenericPayloadPacket::createAfter(mihPacket));
     MIHGenericPayloadPacket::Parser::tlvList_t::container tlvListContainer (

@@ -171,52 +171,86 @@ namespace senf {
         SENF_PARSER_FINALIZE ( MIHFIdTLVParser  );
         
     public:
-        std::string asString() const;
-        void setString(std::string const &id);
-
-        senf::MACAddress asMACAddress() const;
-        void setMACAddress(senf::MACAddress const &mac);
-
-        senf::INet4Address asINet4Address() const;
-        void setINet4Address(senf::INet4Address const &addr);
-
-        senf::INet6Address asINet6Address() const;
-        void setINet6Address(senf::INet6Address const &addr);
+        ///\name value setters
+        ///@{
+        void value( MIHFId const & id);
         
-        senf::EUI64 asEUI64() const;
-        void setEUI64(senf::EUI64 const &addr);
+        void value( std::string        const & id  );
+        void value( senf::MACAddress   const & addr);
+        void value( senf::INet4Address const & addr);
+        void value( senf::INet6Address const & addr);
+        void value( senf::EUI64        const & addr);    
+        ///@}
 
-        MIHFId valueAs(MIHFId::Type type) const;
+        ///\name value getters
+        ///@{
+        MIHFId valueAs( MIHFId::Type type) const;
+        
+        std::string        valueAsString()       const;
+        senf::MACAddress   valueAsMACAddress()   const;
+        senf::INet4Address valueAsINet4Address() const;
+        senf::INet6Address valueAsINet6Address() const;
+        senf::EUI64        valueAsEUI64()        const;
+        ///@}
+        
+        ///\name value comparisons
+        ///@{
+        bool valueEquals( MIHFId const & id) const;
+        
+        bool valueEquals( std::string        const & id  ) const;
+        bool valueEquals( senf::MACAddress   const & addr) const;
+        bool valueEquals( senf::INet4Address const & addr) const;
+        bool valueEquals( senf::INet6Address const & addr) const;
+        bool valueEquals( senf::EUI64        const & addr) const;
+        ///@}
         
         void dump(std::ostream & os) const;
 
     private:
         template <class OutputIterator>
         struct binaryNAIEncoder {
-            binaryNAIEncoder(OutputIterator &i) : i_(i) {}
-            void operator()(const boost::uint8_t &v) const {
-                *i_++ = '\\';
-                *i_++ = v;
-            }
-            OutputIterator &i_;
+            binaryNAIEncoder(OutputIterator & i);
+            void operator()(boost::uint8_t v);
+            OutputIterator & i_;
         };
+        
         template <class OutputIterator>
-        static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> > getNAIEncodedOutputIterator(OutputIterator i) {
-            return boost::make_function_output_iterator(binaryNAIEncoder<OutputIterator>(i));
-        }
+        static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> > 
+        getNAIEncodedOutputIterator(OutputIterator i);
 
         struct binaryNAIDecoder {
-            binaryNAIDecoder() : readNextByte_(true) {}
-            bool operator()(const boost::uint8_t &v) {
-                readNextByte_ = readNextByte_ ? false : true;
-                return readNextByte_;
-            }
+            binaryNAIDecoder();
+            bool operator()(boost::uint8_t v);
             bool readNextByte_;
         };
+        
         template <class Iterator>
-        static boost::filter_iterator<binaryNAIDecoder, Iterator> getNAIDecodedIterator(Iterator begin, Iterator end) {
-            return boost::make_filter_iterator<binaryNAIDecoder>(begin, end);
-        }
+        static boost::filter_iterator<binaryNAIDecoder, Iterator> 
+        getNAIDecodedIterator(Iterator begin, Iterator end);
+        
+        struct ValueSetterVisitor : public boost::static_visitor<> {
+            MIHFIdTLVParser & parser;
+            ValueSetterVisitor( MIHFIdTLVParser & p) : parser(p) {}
+            void operator()( boost::blank ) const {
+                parser.value( std::string());
+            }
+            template <typename MIHFIdType>
+            void operator()( MIHFIdType const & id ) const {
+                parser.value( id);
+            }
+        };
+        
+        struct ValueEqualsVisitor : public boost::static_visitor<bool> {
+            MIHFIdTLVParser const & parser;
+            ValueEqualsVisitor( MIHFIdTLVParser const & p) : parser(p) {}
+            bool operator()( boost::blank ) const {
+                return parser.length() == 0;
+            }
+            template <typename MIHFIdType>
+            bool operator()( MIHFIdType const & id ) const {
+                return parser.valueEquals( id);
+            }
+        };
     };
 
     struct MIHFSrcIdTLVParser : public MIHFIdTLVParser
@@ -228,7 +262,6 @@ namespace senf {
             type() << typeId+0;
         }
         static type_t::value_type const typeId = 1;
-        
         void dump(std::ostream & os) const;
     };
     
@@ -241,7 +274,6 @@ namespace senf {
             type() << typeId+0;
         }
         static type_t::value_type const typeId = 2;
-        
         void dump(std::ostream & os) const;
     };
     
@@ -253,6 +285,7 @@ namespace senf {
         SENF_PARSER_INHERIT ( MIHBaseTLVParser   );
         SENF_PARSER_FIELD   ( value, UInt8Parser );
         SENF_PARSER_FINALIZE( MIHStatusTLVParser );
+        
         SENF_PARSER_INIT() {
             defaultInit();
             type() << typeId+0;
@@ -305,7 +338,7 @@ namespace senf {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "TLVParser.cci"
 //#include "TLVParser.ct"
-//#include "TLVParser.cti"
+#include "TLVParser.cti"
 #endif
 
 

@@ -39,41 +39,92 @@ prefix_ senf::MIHTLVLengthParser::size_type senf::MIHTLVLengthParser::bytes() co
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// MIHFIdTLVParser::binaryNAIDecoder
+
+prefix_ senf::MIHFIdTLVParser::binaryNAIDecoder::binaryNAIDecoder()
+    : readNextByte_( true)
+{}
+
+prefix_ bool senf::MIHFIdTLVParser::binaryNAIDecoder::operator()(boost::uint8_t v)
+{
+    readNextByte_ = readNextByte_ ? false : true;
+    return readNextByte_;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // MIHFIdTLVParser
 
-prefix_ std::string senf::MIHFIdTLVParser::asString()
+prefix_ std::string senf::MIHFIdTLVParser::valueAsString()
     const
 {
     return std::string( i(1+length_().bytes()), i(1+length_().bytes()+length()) );
 }
 
-prefix_ senf::MACAddress senf::MIHFIdTLVParser::asMACAddress()
+prefix_ senf::MACAddress senf::MIHFIdTLVParser::valueAsMACAddress()
     const
 {
     return MACAddress::from_data( 
             getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+12) ));
 }
 
-prefix_ senf::INet4Address senf::MIHFIdTLVParser::asINet4Address()
+prefix_ senf::INet4Address senf::MIHFIdTLVParser::valueAsINet4Address()
     const
 {
     return INet4Address::from_data( 
             getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+8) ));
 }
 
-prefix_ senf::INet6Address senf::MIHFIdTLVParser::asINet6Address()
+prefix_ senf::INet6Address senf::MIHFIdTLVParser::valueAsINet6Address()
     const
 {
     return INet6Address::from_data( 
             getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+32) ));
 }
 
-prefix_ senf::EUI64 senf::MIHFIdTLVParser::asEUI64()
+prefix_ senf::EUI64 senf::MIHFIdTLVParser::valueAsEUI64()
     const
 {
     return EUI64::from_data( 
             getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+16) ));
 }
+
+prefix_ bool senf::MIHFIdTLVParser::valueEquals( std::string const &id) 
+    const
+{
+    return id == valueAsString();
+}
+
+prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::MACAddress const & addr)
+    const
+{
+    return length()==12 && addr==valueAsMACAddress();
+}
+
+prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::INet4Address const & addr)
+    const
+{
+    return length()==8 && addr==valueAsINet4Address();
+}
+
+prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::INet6Address const & addr)
+    const
+{
+    return length()==32 && addr==valueAsINet6Address();
+}
+
+prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::EUI64 const & addr)
+    const
+{
+    return length()==16 && addr==valueAsEUI64();
+}
+
+prefix_ bool senf::MIHFIdTLVParser::valueEquals( MIHFId const & id)
+    const
+{
+    return boost::apply_visitor( ValueEqualsVisitor(*this), id);
+}
+
+
 
 ///////////////////////////////cci.e////////////////////////////////////////
 #undef prefix_
