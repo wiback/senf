@@ -82,6 +82,8 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
+        static EUI64 const None;        ///< The empty (0) address
+
         // default copy constructor
         // default copy assignment
         // default destructor

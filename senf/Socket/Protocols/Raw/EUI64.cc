@@ -35,6 +35,8 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+senf::EUI64 const senf::EUI64::None;
+
 prefix_ senf::EUI64 senf::EUI64::from_string(std::string const & s)
 {
     EUI64 eui (senf::noinit);

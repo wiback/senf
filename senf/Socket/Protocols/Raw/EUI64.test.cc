@@ -62,6 +62,9 @@ BOOST_AUTO_UNIT_TEST(eui64)
     BOOST_CHECK_THROW( senf::EUI64::from_string("12:20:30:40:50:60:70:80:90"), 
                        senf::AddressSyntaxException );
     
+    BOOST_CHECK_EQUAL( senf::EUI64::None, senf::EUI64(0) );
+    BOOST_CHECK(! senf::EUI64::None );
+    
     {
         std::stringstream ss;
         ss << std::uppercase << eui;
@@ -79,7 +82,6 @@ BOOST_AUTO_UNIT_TEST(eui64)
         ss << "01:02:03:04-05:06:07:108";
         BOOST_CHECK( (ss >> eui).fail() );
     }
-    
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
