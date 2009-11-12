@@ -32,6 +32,7 @@
 #include "Traits.hh"
 
 //#include "STLSupport.mpp"
+#include "STLSupport.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -39,43 +40,68 @@ namespace console {
 
 #ifndef DOXYGEN
 
-    template <class Sequence>
-    struct SequenceArgumentTraits
-    {
-        typedef Sequence type;
-        static bool const singleToken = false;
-
-        static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
-        static std::string description();
-        static std::string str(type const & value);
-    };
-
-    template <class Sequence>
-    struct SequenceReturnValueTraits
-    {
-        typedef Sequence type;
-
-        static void format(type const & value, std::ostream & os);
-    };
-
     template <class T, class Alloc>
     struct ArgumentTraits< std::vector<T,Alloc> >
-        : public SequenceArgumentTraits< std::vector<T,Alloc> >
+        : public detail::CollectionArgumentTraits< std::vector<T,Alloc>, 
+                                                   detail::PushBackFunctor >
     {};
 
     template <class T, class Alloc>
     struct ReturnValueTraits< std::vector<T,Alloc> >
-        : public SequenceReturnValueTraits< std::vector<T,Alloc> >
+        : public detail::CollectionReturnValueTraits< std::vector<T,Alloc> >
     {};
 
     template <class T, class Alloc>
     struct ArgumentTraits< std::list<T,Alloc> >
-        : public SequenceArgumentTraits< std::list<T,Alloc> >
+        : public detail::CollectionArgumentTraits< std::list<T,Alloc>, 
+                                                   detail::PushBackFunctor >
     {};
 
     template <class T, class Alloc>
     struct ReturnValueTraits< std::list<T,Alloc> >
-        : public SequenceReturnValueTraits< std::list<T,Alloc> >
+        : public detail::CollectionReturnValueTraits< std::list<T,Alloc> >
+    {};
+
+    template <class Key, class Compare, class Alloc>
+    struct ArgumentTraits< std::set<Key,Compare,Alloc> >
+        : public detail::CollectionArgumentTraits< std::set<Key,Compare,Alloc>, 
+                                                   detail::InsertFunctor >
+    {};
+
+    template <class Key, class Compare, class Alloc>
+    struct ReturnValueTraits< std::set<Key,Compare,Alloc> >
+        : public detail::CollectionReturnValueTraits< std::set<Key,Compare,Alloc> >
+    {};
+
+    template <class Key, class Compare, class Alloc>
+    struct ArgumentTraits< std::multiset<Key,Compare,Alloc> >
+        : public detail::CollectionArgumentTraits< std::multiset<Key,Compare,Alloc>, 
+                                                   detail::InsertFunctor >
+    {};
+
+    template <class Key, class Compare, class Alloc>
+    struct ReturnValueTraits< std::multiset<Key,Compare,Alloc> >
+        : public detail::CollectionReturnValueTraits< std::multiset<Key,Compare,Alloc> >
+    {};
+
+    template <class Key, class Data, class Compare, class Alloc>
+    struct ArgumentTraits< std::map<Key,Data,Compare,Alloc> >
+        : public detail::MapArgumentTraits< std::map<Key,Data,Compare,Alloc> >
+    {};
+
+    template <class Key, class Data, class Compare, class Alloc>
+    struct ReturnValueTraits< std::map<Key,Data,Compare,Alloc> >
+        : public detail::MapReturnValueTraits< std::map<Key,Data,Compare,Alloc> >
+    {};
+
+    template <class Key, class Data, class Compare, class Alloc>
+    struct ArgumentTraits< std::multimap<Key,Data,Compare,Alloc> >
+        : public detail::MapArgumentTraits< std::multimap<Key,Data,Compare,Alloc> >
+    {};
+
+    template <class Key, class Data, class Compare, class Alloc>
+    struct ReturnValueTraits< std::multimap<Key,Data,Compare,Alloc> >
+        : public detail::MapReturnValueTraits< std::multimap<Key,Data,Compare,Alloc> >
     {};
 
     template <class T1, class T2>
@@ -104,7 +130,7 @@ namespace console {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "STLSupport.cci"
 #include "STLSupport.ct"
-//#include "STLSupport.cti"
+#include "STLSupport.cti"
 #endif
 
 

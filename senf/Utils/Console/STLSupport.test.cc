@@ -42,22 +42,31 @@
 
 namespace {
 
-    int vectorTest(std::vector<int> const & data)
+    template <class Container>
+    struct Summer
     {
-        int sum (0);
-        for (std::vector<int>::const_iterator i (data.begin()); i != data.end(); ++i)
-            sum += *i;
-        return sum;
-    }
+        static int test(Container const & data)
+        {
+            int sum (0);
+            for (typename Container::const_iterator i (data.begin()), i_end (data.end());
+                 i != i_end; ++i)
+                sum += *i;
+            return sum;
+        }
+    };
 
-    int listTest(std::list<int> const & data)
+    std::pair<std::string, int> mapTest(std::map<std::string,int> const & data)
     {
+        std::string keys;
         int sum (0);
-        for (std::list<int>::const_iterator i (data.begin()); i != data.end(); ++i)
-            sum += *i;
-        return sum;
+        for (std::map<std::string,int>::const_iterator i (data.begin()), i_end (data.end());
+             i != i_end; ++i) {
+            keys += i->first;
+            sum += i->second;
+        }
+        return std::make_pair(keys,sum);
     }
-
+                
 }
 
 BOOST_AUTO_UNIT_TEST(vectorSupport)
@@ -68,7 +77,7 @@ BOOST_AUTO_UNIT_TEST(vectorSupport)
     senf::console::root().add("test", dir);
 
     std::vector<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", &vectorTest)
+    dir.add("test", &Summer<std::vector<int> >::test)
         .arg("data", "test data", senf::console::kw::default_value = defv);
     std::stringstream ss;
 
@@ -99,7 +108,7 @@ BOOST_AUTO_UNIT_TEST(listSupport)
     senf::console::root().add("test", dir);
 
     std::list<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", &listTest)
+    dir.add("test", &Summer<std::list<int> >::test)
         .arg("data", "test data", senf::console::kw::default_value = defv);
     std::stringstream ss;
 
@@ -120,6 +129,70 @@ BOOST_AUTO_UNIT_TEST(listSupport)
         "With:\n"
         "    data      test data\n"
         "        default: (7 2)\n" );
+}
+
+BOOST_AUTO_UNIT_TEST(setSupport)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+
+    std::set<int> defv (boost::assign::list_of(7)(2).to_container(defv));
+    dir.add("test", &Summer<std::set<int> >::test)
+        .arg("data", "test data", senf::console::kw::default_value = defv);
+    std::stringstream ss;
+
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test; test/test (); test/test 5; test/test (13); test/test (4 5 8)",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "9\n" "0\n" "5\n" "13\n" "17\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW( 
+        parser.parse("help test/test",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL(
+        ss.str(), 
+        "Usage:\n"
+        "    test [data:set<int>]\n"
+        "\n"
+        "With:\n"
+        "    data      test data\n"
+        "        default: (2 7)\n" );
+}
+
+BOOST_AUTO_UNIT_TEST(mapSupport)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+
+    std::map<std::string, int> defv (
+        boost::assign::map_list_of("foo",7)("bar",2).to_container(defv));
+    dir.add("test", &mapTest)
+        .arg("data", "test data", senf::console::kw::default_value = defv);
+    std::stringstream ss;
+
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test; test/test (); "
+                     "test/test (vier=4 fuenf = 5 acht=8 )",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "(barfoo 9)\n" "( 0)\n" "(achtfuenfvier 17)\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW( 
+        parser.parse("help test/test",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL(
+        ss.str(), 
+        "Usage:\n"
+        "    test [data:map<string,int>]\n"
+        "\n"
+        "With:\n"
+        "    data      test data\n"
+        "        default: (bar=2 foo=7)\n" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
