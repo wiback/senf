@@ -106,7 +106,7 @@ parse(ParseCommandInfo::TokensRange const & tokens, CharT & out)
 template <class CharT>
 prefix_ std::string senf::console::detail::CharArgumentTraits<CharT>::description()
 {
-    return prettyBaseName(typeid(CharT));
+    return std::numeric_limits<CharT>::is_signed ? "byte" : "unsigned byte";
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

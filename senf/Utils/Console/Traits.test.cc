@@ -131,6 +131,13 @@ BOOST_AUTO_UNIT_TEST(boolTraits)
     BOOST_CHECK_EQUAL( ss.str(), "disabled\n" "enabled\n" );
 }
 
+BOOST_AUTO_UNIT_TEST(stringTraits)
+{
+    BOOST_CHECK_EQUAL( 
+        senf::console::ArgumentTraits<std::string>::str("Test\nOf\nA \"String\"\x01\x7f\xa0\xff"),
+        "\"Test\\x0aOf\\x0aA \\\"String\\\"\\x01\\x7f\\xa0\\xff\"" );
+}
+
 BOOST_AUTO_UNIT_TEST(enumSupport)
 {
     senf::console::Executor executor;
