@@ -293,12 +293,12 @@ namespace detail {
 
                 relpath
                     =    (   word                 [ push_back(path_, token_) ]
-                           % ch_p('/') )
-                      >> ( ! ch_p('/')            [ push_back(path_, construct_<Token>()) ] )
+                           % +ch_p('/') )
+                      >> ( ! (+ch_p('/') )        [ push_back(path_, construct_<Token>()) ] )
                     ;
 
                 abspath
-                    =    ch_p('/')                [ push_back(path_, construct_<Token>()) ]
+                    =    (+ch_p('/'))             [ push_back(path_, construct_<Token>()) ]
                       >> ( relpath
                          | eps_p                  [ push_back(path_, construct_<Token>()) ] )
                     ;

@@ -89,7 +89,7 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
     {
         static char text[] = 
             "# Comment\n"
-            "doo / bii / doo arg"
+            "doo / bii / // doo arg"
             "                flab::blub"
             "                123.434>a"
             "                (a,b;c (huhu/{haha}))"
@@ -128,7 +128,7 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
     {
         ss.str("");
         BOOST_CHECK( boost::spirit::parse( 
-                         "ls /foo/bar;", 
+                         "ls //foo/bar;", 
                          grammar.use_parser<Grammar::CommandParser>(), 
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "builtin_ls( None('')/Word('foo')/Word('bar') )\n" );
@@ -164,7 +164,7 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
     {
         ss.str("");
         BOOST_CHECK( boost::spirit::parse( 
-                         "foo/bar/ {", 
+                         "foo/bar// {", 
                          grammar.use_parser<Grammar::CommandParser>(), 
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), 
