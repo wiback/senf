@@ -33,6 +33,21 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+prefix_ std::string senf::console::ArgumentTraits<std::string>::str(std::string const & value)
+{
+    if (! value.empty() && boost::algorithm::all(value, CommandParser::isWordChar))
+        return value;
+    else {
+        std::string rv (value);
+        for (std::string::size_type i (0); i < rv.size(); ++i)
+            if (rv[i] == '"' || rv[i] == '\\')
+                rv.insert(i++,"\\");
+        rv.insert(0,"\"");
+        rv.push_back('"');
+        return rv;
+    }
+}
+
 prefix_ long senf::console::detail::parseEnum(EnumTable const & table,
                                               ParseCommandInfo::TokensRange const & tokens)
 {

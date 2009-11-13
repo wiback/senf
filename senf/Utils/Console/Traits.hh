@@ -140,6 +140,22 @@ namespace console {
     template <class Type>
     void parse(ParseCommandInfo::TokensRange const & tokens, Type & out);
 
+    /** \brief Format value
+
+        This helper will call the correct ArgumentTraits::str function to format \a value
+
+        \see ArgumentTraits
+     */
+    template <class Type>
+    std::string str(Type const & value);
+
+    /** \brief Format return value
+
+        This helper will invoke the correct ReturnValueTraits::format function to write \a value
+        into the \a out stream.
+
+        \see ReturnValueTraits
+     */
     template <class Type>
     void format(Type const & value, std::ostream & os);
 
@@ -163,6 +179,17 @@ namespace console {
         typedef bool type;
 
         static void format(bool value, std::ostream & os);
+    };
+
+    template <>
+    struct ArgumentTraits<std::string>
+    {
+        typedef std::string type;
+        static bool const singleToken = true;
+
+        static void parse(ParseCommandInfo::TokensRange const & tokens, std::string & out);
+        static std::string description();
+        static std::string str(std::string const & value);
     };
 
 #endif

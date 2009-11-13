@@ -73,9 +73,9 @@ template <class T>
 prefix_ void senf::console::ReturnValueTraits< senf::console::ValueRange<T> >::
 format(type const & value, std::ostream & os)
 {
-    os << value.low;
+    os << senf::console::str(value.low);
     if (value.low != value.high)
-        os << ':' << value.high;
+        os << ':' << senf::console::str(value.high);
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

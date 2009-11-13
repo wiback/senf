@@ -170,7 +170,7 @@ BOOST_AUTO_UNIT_TEST(mapSupport)
     senf::console::root().add("test", dir);
 
     std::map<std::string, int> defv (
-        boost::assign::map_list_of("foo",7)("bar",2).to_container(defv));
+        boost::assign::map_list_of("foo bar",7)("bar",2).to_container(defv));
     dir.add("test", &mapTest)
         .arg("data", "test data", senf::console::kw::default_value = defv);
     std::stringstream ss;
@@ -179,7 +179,7 @@ BOOST_AUTO_UNIT_TEST(mapSupport)
         parser.parse("test/test; test/test (); "
                      "test/test (vier=4 fuenf = 5 acht=8 )",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-    BOOST_CHECK_EQUAL( ss.str(), "(barfoo 9)\n" "( 0)\n" "(achtfuenfvier 17)\n" );
+    BOOST_CHECK_EQUAL( ss.str(), "(\"barfoo bar\" 9)\n" "(\"\" 0)\n" "(achtfuenfvier 17)\n" ); // 
 
     ss.str("");
     SENF_CHECK_NO_THROW( 
@@ -192,7 +192,7 @@ BOOST_AUTO_UNIT_TEST(mapSupport)
         "\n"
         "With:\n"
         "    data      test data\n"
-        "        default: (bar=2 foo=7)\n" );
+        "        default: (bar=2 \"foo bar\"=7)\n" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

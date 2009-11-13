@@ -66,6 +66,12 @@ prefix_ void senf::console::parse(ParseCommandInfo::TokensRange const & tokens, 
 }
 
 template <class Type>
+prefix_ std::string senf::console::str(Type const & value)
+{
+    return ArgumentTraits<Type>::str(value);
+}
+
+template <class Type>
 prefix_ void senf::console::format(Type const & value, std::ostream & os)
 {
     ReturnValueTraits<Type>::format(value, os);

@@ -222,7 +222,7 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
             "    checkup   Florgel, dargel and durgel\n"
             "        default: (double) 2.1\n"
             "    text      \n"
-            "        default: (empty)\n"
+            "        default: \"\"\n"
             "\n"
             "Ops fortunate, ops me ut orgia vociferatio contumax per, rudo re loco emitto\n"
             "intolerabiliter ita iugo. Subcribo gravo. Devenio luna fonticulus Castanea\n"

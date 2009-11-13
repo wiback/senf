@@ -87,7 +87,7 @@ senf::console::detail::CollectionReturnValueTraits<Collection>::format(Collectio
     typename type::const_iterator const i_end (value.end());
     if (i != i_end)
         for (;;) {
-            senf::console::format(*i, os);
+            os << senf::console::str(*i);
             if (++i == i_end) 
                 break;
             else
@@ -152,9 +152,9 @@ senf::console::detail::MapReturnValueTraits<Collection>::format(Collection const
     typename type::const_iterator const i_end (value.end());
     if (i != i_end)
         for (;;) {
-            senf::console::format(i->first, os);
-            os << "=";
-            senf::console::format(i->second, os);
+            os << senf::console::str(i->first)
+               << "="
+               << senf::console::str(i->second);
             if (++i == i_end) 
                 break;
             else
@@ -198,11 +198,8 @@ template <class T1, class T2>
 prefix_ void senf::console::ReturnValueTraits< std::pair<T1,T2> >::format(type const & value,
                                                                           std::ostream & os)
 {
-    os << "(";
-    senf::console::format(value.first, os);
-    os << " ";
-    senf::console::format(value.second, os);
-    os << ")";
+    os << "(" << senf::console::str(value.first)
+       << " " << senf::console::str(value.second) << ")";
 }
 
 #endif
