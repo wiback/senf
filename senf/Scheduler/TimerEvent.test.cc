@@ -42,7 +42,7 @@ namespace {
 
     bool is_close(senf::ClockService::clock_type a, senf::ClockService::clock_type b)
     {
-        return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(100);
+        return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(50);
     }
     
     bool called = false;

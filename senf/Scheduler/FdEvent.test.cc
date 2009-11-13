@@ -236,7 +236,7 @@ namespace {
 
     bool is_close(senf::ClockService::clock_type a, senf::ClockService::clock_type b)
     {
-        return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(100);
+        return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(50);
     }
 
     bool called (false);
@@ -248,6 +248,9 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(fileDispatcher)
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+
     senf::scheduler::detail::FileDispatcher::instance().timeout(500);
 
     int fd (open("test.empty.file", O_RDWR|O_CREAT|O_TRUNC, 0600));
@@ -261,7 +264,8 @@ BOOST_AUTO_UNIT_TEST(fileDispatcher)
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         
         BOOST_CHECK( called );
-        BOOST_CHECK_PREDICATE( is_close, (t)(senf::ClockService::now()) );
+        if (enabled)
+            BOOST_CHECK_PREDICATE( is_close, (t)(senf::ClockService::now()) );
     }
     catch (std::exception const & ex) {
         std::cerr << "Exception:\n" << ex.what() << "\n";
@@ -276,8 +280,9 @@ BOOST_AUTO_UNIT_TEST(fileDispatcher)
     SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
 
     BOOST_CHECK( ! called );
-    BOOST_CHECK_PREDICATE( 
-        is_close, (t+senf::ClockService::milliseconds(500))(senf::ClockService::now()) );
+    if (enabled)
+        BOOST_CHECK_PREDICATE( 
+            is_close, (t+senf::ClockService::milliseconds(500))(senf::ClockService::now()) );
 
     unlink("test.empty.file");
     senf::scheduler::detail::FileDispatcher::instance().timeout(-1);

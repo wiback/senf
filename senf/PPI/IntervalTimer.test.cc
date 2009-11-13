@@ -73,13 +73,17 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(intervalTimer)
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+
     TimerTest timer (100,3);
     senf::ClockService::clock_type start (senf::ClockService::now());
     senf::ppi::run();
-    BOOST_CHECK_PREDICATE( is_close_clock,
-                           (senf::ClockService::now())
-                           (start+senf::ClockService::milliseconds(300))
-                           (senf::ClockService::milliseconds(80)) );
+    if (enabled)
+        BOOST_CHECK_PREDICATE( is_close_clock,
+                               (senf::ClockService::now())
+                               (start+senf::ClockService::milliseconds(300))
+                               (senf::ClockService::milliseconds(50)) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

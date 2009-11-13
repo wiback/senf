@@ -222,6 +222,9 @@ namespace {
 
 void schedulerTest()
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+
     int pid = start_server();
     BOOST_REQUIRE (pid);
 
@@ -283,14 +286,17 @@ void schedulerTest()
         event = senf::scheduler::FdEvent::EV_NONE;
         senf::ClockService::clock_type t (senf::ClockService::now());
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
-        BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(200)) );
+        if (enabled)
+            BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(200)) );
         BOOST_CHECK( timeoutCalled );
         BOOST_CHECK( ! timer1.enabled() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
-        BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (senf::scheduler::eventTime()) );
+        if (enabled)
+            BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (senf::scheduler::eventTime()) );
         timeoutCalled = false;
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
-        BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(400)) );
+        if (enabled)
+            BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(400)) );
         BOOST_CHECK( timeoutCalled );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
         BOOST_CHECK( ! timer2.enabled() );
@@ -311,8 +317,10 @@ void schedulerTest()
         ::kill(::getpid(), SIGUSR1);
         delay(200);
         SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
-        BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (t+senf::ClockService::milliseconds(200)) );
-        BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
+        if (enabled) {
+            BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (t+senf::ClockService::milliseconds(200)) );
+            BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
+        }
         SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
     } 
 
@@ -375,6 +383,9 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(blockSignals)
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+
     senf::scheduler::TimerEvent signaler ("sigme", &sigme, senf::ClockService::now());
     senf::scheduler::TimerEvent timer (
         "testWatchdog", &timeout, senf::ClockService::now()+senf::ClockService::milliseconds(400));
@@ -383,10 +394,12 @@ BOOST_AUTO_UNIT_TEST(blockSignals)
     senf::ClockService::clock_type t = senf::ClockService::now();
     SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
 
-    BOOST_CHECK_PREDICATE( is_close, 
-                           (senf::ClockService::now()) 
-                           (t+senf::ClockService::milliseconds(200)) );
-    BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
+    if (enabled) {
+        BOOST_CHECK_PREDICATE( is_close, 
+                               (senf::ClockService::now()) 
+                               (t+senf::ClockService::milliseconds(200)) );
+        BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
+    }
 
     SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
 }

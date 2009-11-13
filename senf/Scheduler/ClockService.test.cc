@@ -56,15 +56,19 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(clockService)
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+
     senf::ClockService::restart(); // So we know, when the signal will be delivered
     
     senf::ClockService::clock_type t1 (senf::ClockService::now());
     delay(200);
     senf::ClockService::clock_type t2 (senf::ClockService::now());
-    BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t1 + senf::ClockService::milliseconds(200)) 
-                           (t2)
-                           (senf::ClockService::milliseconds(100)) );
+    if (enabled)
+        BOOST_CHECK_PREDICATE( is_close_clock,
+                               (t1 + senf::ClockService::milliseconds(200)) 
+                               (t2)
+                               (senf::ClockService::milliseconds(100)) );
 
     t1 = t2;
 
@@ -72,26 +76,29 @@ BOOST_AUTO_UNIT_TEST(clockService)
     delay(1*1000);
 
     t2 = senf::ClockService::now();
-    BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t1 + senf::ClockService::seconds(1))
-                           (t2)
-                           (senf::ClockService::milliseconds(500)) );
+    if (enabled)
+        BOOST_CHECK_PREDICATE( is_close_clock,
+                               (t1 + senf::ClockService::seconds(1))
+                               (t2)
+                               (senf::ClockService::milliseconds(500)) );
 
     t1 = t2;
 
     delay(200);
-    BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t1 + senf::ClockService::milliseconds(200))
-                           (senf::ClockService::now())
-                           (senf::ClockService::milliseconds(100)) );
+    if (enabled)
+        BOOST_CHECK_PREDICATE( is_close_clock,
+                               (t1 + senf::ClockService::milliseconds(200))
+                               (senf::ClockService::now())
+                               (senf::ClockService::milliseconds(100)) );
 
     // The next check validates that the clock service itimer/heartbeat_ is correctly reset after a
     // clock-skew is detected
 
-    BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t1 + senf::ClockService::milliseconds(200))
-                           (senf::ClockService::now()) 
-                           (senf::ClockService::milliseconds(100)) );
+    if (enabled)
+        BOOST_CHECK_PREDICATE( is_close_clock,
+                               (t1 + senf::ClockService::milliseconds(200))
+                               (senf::ClockService::now()) 
+                               (senf::ClockService::milliseconds(100)) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
