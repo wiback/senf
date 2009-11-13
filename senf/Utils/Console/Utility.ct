@@ -27,10 +27,47 @@
 
 // Custom includes
 #include <sstream>
+#include <limits>
 #include <boost/format.hpp>
+#include "Traits.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ArgumentTraits< CharAsString<CharT> >
+
+template <class CharT>
+prefix_ void senf::console::ArgumentTraits< senf::console::CharAsString<CharT> >::
+parse(ParseCommandInfo::TokensRange const & tokens, CharAsString<CharT> & out)
+{
+    std::string v;
+    senf::console::parse(tokens,v);
+    if (v.size() != 1)
+        throw SyntaxErrorException("Invalid size of character constant");
+    out.value = static_cast<CharT>(v[0]);
+}
+
+template <class CharT>
+prefix_ std::string
+senf::console::ArgumentTraits< senf::console::CharAsString<CharT> >::description()
+{
+    return std::numeric_limits<CharT>::is_signed ? "char" : "uchar";
+}
+
+template <class CharT>
+prefix_ std::string senf::console::ArgumentTraits< senf::console::CharAsString<CharT> >::
+str(CharAsString<CharT> value)
+{
+    return senf::console::str(std::string(1,value.value));
+}
+
+template <class CharT>
+prefix_ void senf::console::ReturnValueTraits< senf::console::CharAsString<CharT> >::
+format(CharAsString<CharT> value, std::ostream & os)
+{
+    return senf::console::format(std::string(1,value.value),os);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ArgumentTraits< senf::console::ValueRange<T> >

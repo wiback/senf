@@ -42,12 +42,32 @@
 
 namespace {
 
+    char charTest(char value) { return value; }
+
     enum TestEnum { Foo=1, Bar=2, FooBar=4 };
     SENF_CONSOLE_REGISTER_ENUM( TestEnum, (Foo)(Bar)(FooBar) );
 
     senf::console::FlagCollection<TestEnum> collectionTest(
         senf::console::FlagCollection<TestEnum> flags) { return flags; }
 
+}
+
+BOOST_AUTO_UNIT_TEST(charAsString)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+    std::stringstream ss;
+
+    dir.add("test", boost::function<
+            senf::console::CharAsString<char> (senf::console::CharAsString<char>)>(&charTest));
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test \"\\x01\"",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "\x01\n" );
 }
 
 BOOST_AUTO_UNIT_TEST(flagCollection)

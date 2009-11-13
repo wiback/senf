@@ -36,6 +36,38 @@
 namespace senf {
 namespace console {
 
+    template <class CharT>
+    struct CharAsString
+    {
+        CharAsString();
+        CharAsString(CharT value_);
+        operator CharT () const;
+        CharT value;
+    };    
+
+#ifndef DOXYGEN
+
+    template <class CharT>
+    struct ArgumentTraits< CharAsString<CharT> >
+    {
+        typedef CharAsString<CharT> type;
+        static bool const singleToken = true;
+        
+        static void parse(ParseCommandInfo::TokensRange const & tokens, CharAsString<CharT> & out);
+        static std::string description();
+        static std::string str(CharAsString<CharT> value);
+    };
+
+    template <class CharT>
+    struct ReturnValueTraits< CharAsString<CharT> >
+    {
+        typedef CharAsString<CharT> type;
+        
+        static void format(CharAsString<CharT> value, std::ostream & os);
+    };
+
+#endif
+
     /** \brief Value range
         
         A value range may be represented in the console either by a single value (setting both \a
@@ -147,7 +179,7 @@ namespace console {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Utility.cci"
 #include "Utility.ct"
-//#include "Utility.cti"
+#include "Utility.cti"
 #endif
 
 
