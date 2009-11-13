@@ -32,6 +32,9 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ArgumentTraits< senf::console::ValueRange<T> >
+
 template <class T>
 prefix_ void senf::console::ArgumentTraits< senf::console::ValueRange<T> >::
 parse(ParseCommandInfo::TokensRange const & tokens, type & out)
@@ -69,6 +72,9 @@ str(type const & value)
     return ss.str();
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ReturnValueTraits< senf::console::ValueRange<T> >
+
 template <class T>
 prefix_ void senf::console::ReturnValueTraits< senf::console::ValueRange<T> >::
 format(type const & value, std::ostream & os)
@@ -76,6 +82,57 @@ format(type const & value, std::ostream & os)
     os << senf::console::str(value.low);
     if (value.low != value.high)
         os << ':' << senf::console::str(value.high);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ArgumentTraits< senf::console::FlagCollection<Enum> >
+
+template <class Enum>
+prefix_ void senf::console::ArgumentTraits< senf::console::FlagCollection<Enum> >::
+parse(ParseCommandInfo::TokensRange const & tokens, type & out)
+{
+    CheckedArgumentIteratorWrapper arg (tokens);
+    out.value = 0;
+    while (arg) {
+        Enum v;
+        senf::console::parse( *(arg++), v);
+        out.value |= v;
+    }
+}
+
+template <class Enum>
+prefix_ std::string
+senf::console::ArgumentTraits< senf::console::FlagCollection<Enum> >::description()
+{
+    return ArgumentTraits<Enum>::description();
+}
+
+template <class Enum>
+prefix_ std::string
+senf::console::ArgumentTraits< senf::console::FlagCollection<Enum> >::str(type const & value)
+{
+    std::stringstream ss;
+    senf::console::format(value, ss);
+    return ss.str();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ReturnValueTraits< senf::console::FlagCollection<Enum> >
+
+template <class Enum>
+prefix_ void senf::console::ReturnValueTraits< senf::console::FlagCollection<Enum> >::
+format(type const & value, std::ostream & os)
+{
+    unsigned n (0);
+    std::stringstream ss;
+    unsigned long flag (1);
+    for (unsigned bit (0); bit<sizeof(value.value)*CHAR_BIT; ++bit, flag<<=1) {
+        if (value.value & flag) {
+            if (n++) ss << " ";
+            senf::console::format(static_cast<Enum>(flag), ss);
+        }
+    }
+    os << (n != 1 ? "(" + ss.str() + ")" : ss.str());
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

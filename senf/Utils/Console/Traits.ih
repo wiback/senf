@@ -28,19 +28,47 @@
 
 // Custom includes
 #include <string>
+#include <limits>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/bimap.hpp>
 #include <boost/assign/list_inserter.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/mpl/if.hpp>
 #include <senf/Utils/singleton.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
 namespace console {
+
+    template <class _> struct ArgumentTraits;
+    template <class _> struct ReturnValueTraits;
+
 namespace detail {
+    
+    template <class CharT>
+    struct MatchingShortType
+        : public boost::mpl::if_c<std::numeric_limits<CharT>::is_signed,short,unsigned short>
+    {};
+
+    template <class CharT>
+    struct CharArgumentTraits
+        : public ArgumentTraits<typename MatchingShortType<CharT>::type>
+    {
+        typedef ArgumentTraits<typename MatchingShortType<CharT>::type> base;
+        typedef CharT type;
+        static void parse(ParseCommandInfo::TokensRange const & tokens, CharT & out);
+        static std::string description();
+    };
+
+    template <class CharT>
+    struct CharReturnValueTraits
+        : public ReturnValueTraits<typename MatchingShortType<CharT>::type>
+    {
+        typedef CharT type;
+    };
 
 #ifndef DOXYGEN
     struct StringILess

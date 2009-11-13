@@ -80,9 +80,7 @@ prefix_ void senf::console::format(Type const & value, std::ostream & os)
 template <class Type>
 prefix_ std::string senf::console::ArgumentTraits<Type>::description()
 {
-    std::string type (prettyName(typeid(Type)));
-    std::string::size_type i (type.rfind(':'));
-    return i == std::string::npos ? type : type.substr(i+1);
+    return prettyBaseName(typeid(Type));
 }
 
 template <class Type>
@@ -91,6 +89,24 @@ prefix_ std::string senf::console::ArgumentTraits<Type>::str(Type const & value)
     std::stringstream ss;
     senf::console::format(value, ss);
     return ss.str();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::CharArgumentTraits<CharT>
+
+template <class CharT>
+prefix_ void senf::console::detail::CharArgumentTraits<CharT>::
+parse(ParseCommandInfo::TokensRange const & tokens, CharT & out)
+{
+    typename base::type v;
+    base::parse(tokens,v);
+    out = v;
+}
+
+template <class CharT>
+prefix_ std::string senf::console::detail::CharArgumentTraits<CharT>::description()
+{
+    return prettyBaseName(typeid(CharT));
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

@@ -71,6 +71,77 @@ namespace console {
 
 #endif
 
+    /** \brief Bit-mask flag argument type
+
+        senf::console::FlagCollection supplies a special argument type for use in registering
+        console commands. This argument type is used to represent a bit-mask of single flags. 
+
+        \code
+        // Function taking a flags argument
+        void func(unsigned flags);
+
+        // Enum containing all the possible flag values
+        enum MyFlags { Foo = 1,
+                     Bar = 2,
+                     Baz = 4,
+                     Doo = 8 };
+        SENF_CONSOLE_REGISTER_ENUM(MyFlags, (Foo)(Bar)(Baz)(Boo));
+        
+        // Register the function with a FlagCollection argument type
+        consoleDir.add("func", boost::function<void (FlagCollection<MyFlags>)>(&func));
+        \endcode
+
+        To use the FlagCollection class
+        \li you need a function which takes a bit-mask of flags as argument
+        \li you define and register an enum with all possible flag values
+        \li you register the function with a FlagCollection argument type using \c boost::function
+            for the conversion. This is also possible for return values.
+
+        The nice thing is, that \c boot::function supports compatible argument types and does
+        automatic type conversion. Since a FlagCollection is convertible to and from unsigned long,
+        this conversion will work. 
+
+        After registering this function, you can call it with a collection of flags as argument
+
+        <pre>
+        console:/$ help func
+        Usage:
+            func arg11:MyFlags
+        console:/$ func Foo
+        console:/$ func (Foo Boo)
+        </pre>
+     */
+    template <class Enum>
+    struct FlagCollection
+    {
+        operator unsigned long() const { return value; }
+        FlagCollection() : value (0) {}
+        FlagCollection(unsigned long value_) : value (value_) {}
+        FlagCollection(Enum value_) : value (value_) {}
+        unsigned long value;
+    };
+
+#ifndef DOXYGEN
+
+    template <class Enum>
+    struct ArgumentTraits< FlagCollection<Enum> >
+    {
+        typedef FlagCollection<Enum> type;
+        static bool const singleToken = false;
+        static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
+        static std::string description();
+        static std::string str(type const & value);
+    };
+
+    template <class Enum>
+    struct ReturnValueTraits< FlagCollection<Enum> >
+    {
+        typedef FlagCollection<Enum> type;
+        static void format(type const & value, std::ostream & os);
+    };
+
+#endif
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -45,6 +45,16 @@ prefix_ std::string senf::prettyName(std::type_info const & type)
     return name;
 }
 
+prefix_ std::string senf::prettyBaseName(std::type_info const & type)
+{
+    std::string name (prettyName(type));
+    std::string::size_type e (name.find('<'));
+    if (e == std::string::npos) e = name.size();
+    std::string::size_type b (name.rfind(':', e));
+    if (b == std::string::npos) b = 0; else ++b;
+    return name.substr(b,e-b);
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "TypeInfo.mpp"

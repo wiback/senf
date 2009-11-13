@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "Traits.hh"
+#include "Utility.hh"
 #include "ParsedCommand.hh"
 #include "Executor.hh"
 #include "Parse.hh"
@@ -40,6 +41,12 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
+    char charTest(char value) { return value; }
+    signed char scharTest(signed char value) { return value; }
+    unsigned char ucharTest(unsigned char value) { return value; }
+
+    bool boolTest(bool value) { return value; }
+
     enum TestEnum { Foo=1, Bar=2, FooBar=4 };
     SENF_CONSOLE_REGISTER_ENUM( TestEnum, (Foo)(Bar)(FooBar) );
 
@@ -50,11 +57,37 @@ namespace {
         static MemberEnum test (MemberEnum value) { return value; }
     };
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( TestClass, MemberEnum, (MemberFoo)(MemberBar) );
+}
 
-    bool boolTest(bool value) { return value; }
+BOOST_AUTO_UNIT_TEST(charTraits)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+    std::stringstream ss;
 
-    senf::console::FlagCollection<TestEnum> collectionTest(
-        senf::console::FlagCollection<TestEnum> flags) { return flags; }
+    dir.add("test",&charTest);
+    dir.add("stest",&scharTest);
+    dir.add("utest",&ucharTest);
+
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test 10; test/test 20",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "10\n" "20\n" );
+    ss.str("");
+
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/stest 10; test/stest -20",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "10\n" "-20\n" );
+    ss.str("");
+
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/utest 10; test/utest 20",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "10\n" "20\n" );
+    ss.str("");
 }
 
 BOOST_AUTO_UNIT_TEST(boolTraits)
@@ -160,35 +193,6 @@ BOOST_AUTO_UNIT_TEST(enumSupport)
         parser.parse("test/test foo",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
-}
-
-BOOST_AUTO_UNIT_TEST(flagCollection)
-{
-    senf::console::Executor executor;
-    senf::console::CommandParser parser;
-    senf::console::ScopedDirectory<> dir;
-    senf::console::root().add("test", dir);
-    std::stringstream ss;
-
-    dir.add("test",&collectionTest);
-    
-    ss.str("");
-    SENF_CHECK_NO_THROW(
-        parser.parse("test/test foo",
-                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-    BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
-
-    ss.str("");
-    SENF_CHECK_NO_THROW(
-        parser.parse("test/test (foo bar)",
-                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-    BOOST_CHECK_EQUAL( ss.str(), "(Foo Bar)\n" );
-
-    ss.str("");
-    SENF_CHECK_NO_THROW(
-        parser.parse("test/test ()",
-                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-    BOOST_CHECK_EQUAL( ss.str(), "()\n" );
 }
 
 BOOST_AUTO_UNIT_TEST(singleToken)

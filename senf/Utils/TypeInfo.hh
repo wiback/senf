@@ -37,14 +37,25 @@ namespace senf {
 
     /** \brief Try to return readable type for given type_info
 
-        This function will try to return a demangled type name for the
-        given type_info object. If the demangling fails, the possibly
-        mangled name (type->name()) will be returned.
+        This function will try to return a demangled type name for the given type_info object. If
+        the demangling fails, the possibly mangled name (type->name()) will be returned.
 
         \param[in] type type_info object
         \returns type name, possibly demangled
      */
     std::string prettyName(std::type_info const & type);
+
+    /** \brief Try to return readable type name without namespace or template arguments
+
+        This function will try to return a demangled type name for the given type_info object. If
+        the demangling fails, the possibly mangled name (type->name()) will be returned. The
+        namespace prefix and template arguments will be stripped.
+
+        \param[in] type type_info object
+        \returns type name, possibly demangled and without namespace or template args
+     */
+
+    std::string prettyBaseName(std::type_info const & type);
 
 }
 
