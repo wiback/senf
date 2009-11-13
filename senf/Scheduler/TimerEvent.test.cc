@@ -55,6 +55,9 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(timerDispatcher)
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+
     senf::scheduler::detail::FdManager::instance().timeout(1000);
 
     senf::ClockService::clock_type t (senf::ClockService::now());
@@ -68,7 +71,8 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         senf::ClockService::clock_type t2 (senf::ClockService::now());
         BOOST_CHECK( called );
         BOOST_CHECK( ! timer.enabled() );
-        BOOST_CHECK_PREDICATE( is_close, (t2-t)(senf::ClockService::milliseconds(500)) );
+        if (enabled)
+            BOOST_CHECK_PREDICATE( is_close, (t2-t)(senf::ClockService::milliseconds(500)) );
 
         called=false;
         t = senf::ClockService::now();
@@ -80,7 +84,8 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().prepareRun() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().disable() );
-        BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
+        if (enabled)
+            BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
         BOOST_CHECK( called );
     }
 }
