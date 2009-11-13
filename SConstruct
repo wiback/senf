@@ -17,26 +17,44 @@ senfutil.loadTools(env)
 env.Help("""
 Additional top-level build targets:
 
-prepare        Create all target files not part of the repository
-default        Build all default targets (like calling scons with no arguments)
-examples       Build all examples
-all_tests      Build and run unit tests for all modules
-test_changes   Build tests only for files with local changes (queries svn or git)
-all_docs       Build documentation for all modules
-all            Build everything
-install_all    Install SENF into $$PREFIX
-deb            Build debian source and binary package
-debsrc         Build debian source package
-debbin         Build debian binary package
-linklint       Check links of doxygen documentation with 'linklint'
-fixlinks       Fix broken links in doxygen documentation
-all_valgrinds  Run all tests under valgrind/memcheck
-lcov           Generate test coverage output in doc/lcov and lcov.info
+prepare         Create all target files not part of the repository
+default         Build all default targets (like calling scons with no arguments)
+examples        Build all examples
+all_tests       Build and run unit tests for all modules
+test_changes    Build tests only for files with local changes (queries svn or git)
+all_docs        Build documentation for all modules
+all             Build everything
+install_all     Install SENF into $$PREFIX
+deb             Build debian source and binary package
+debsrc          Build debian source package
+debbin          Build debian binary package
+linklint        Check links of doxygen documentation with 'linklint'
+fixlinks        Fix broken links in doxygen documentation
+all_valgrinds   Run all tests under valgrind/memcheck
+lcov            Generate test coverage output in doc/lcov and lcov.info
 
 You may execute targets on a remote host (if the directory layout is the same)
 by calling
 
     scons <target>@[<user>@]<host>
+
+Some more elaborate unit tests may be enabled by setting appropritate variables 
+in the shell (unix) environment
+
+SENF_TIMING_CRITICAL_TESTS
+                Enables unit tests which depend on timing measurements. These
+                unit tests should only be run on a single core and an otherwise
+                idle system.
+
+SENF_WLAN_TEST_INTERFACE
+                WLAN interface to use for testing. The interface should not be
+                actively in use.
+
+SENF_ETH_TEST_INTERFACE
+                Ethernet interface to use for testing. The interface should not
+                be actively in use.
+
+Some unit tests will only run when executed to 'root'.
 """)
 
 env.Append(
@@ -96,6 +114,9 @@ env.Append(
    LINKFLAGS_normal       = [ '-Wl,-S' ],
    LINKFLAGS_debug        = [ '-g' ],
 )
+
+# Add all UNIX env vars starting with 'SENF' to the execution environment
+env.Append( ENV = dict(((k,v) for k,v in os.environ.iteritems() if k.startswith("SENF"))) )
 
 env.SetDefault(
     LIBSENF           = "senf",
