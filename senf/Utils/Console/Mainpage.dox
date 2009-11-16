@@ -1176,9 +1176,9 @@
     After this setup, \c varChanged will be called, whenever the value has changed.
 
 
-    \section console_args Special argument types
+    \section console_args Special types
 
-    By default, argument types which can be read and written using \c iostreams are automatically
+    By default, types which can be read and written using \c iostreams are automatically
     supported. Other types need to be registered explicitly
 
 
@@ -1271,7 +1271,7 @@
     \endhtmlonly
 
 
-    \subsection console_args_convert Handling special argument types by conversion
+    \subsection console_args_convert Handling argument types by conversion
 
     Sometimes an argument type is best handled by just pretending it to be of some other type. The
     basic idea is, to us \c boost::function to convert the real argument type to some different type
@@ -1291,7 +1291,14 @@
     process. Since the console library now sees the argument and return value of type \c unsigned,
     the values will be parsed correctly as numeric values.
 
-    The same idea can be used to support custom parsing rules. See senf::console::FlagCollection.
+    
+    \subsection console_args_special Special Console types
+
+    The %console library defines some special types to be used as arguments and/or return values.
+    Some of these are wrappers around basic types which provide custom formatting. Those are used
+    via argument type conversion (see previous section).
+
+    \see \ref senf_console_utilities
 
 
     \subsection console_args_custom Extending the library to support additional types

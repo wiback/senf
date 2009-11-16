@@ -33,9 +33,34 @@
 //#include "Utility.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+/** \defgroup senf_console_utilities Special console utility types
+
+    These types are provided by the %console library to support special argument or return value
+    formatting rules.
+ */
+
 namespace senf {
 namespace console {
 
+    /** \brief Parse character value as single-char string
+
+        This helper types is a wrapper around \a CharT which must be a character type. A value of
+        this type will be represented as a single character string, not as numeric value (the
+        default interpretation of char arguments in the console library).
+
+        This wrapper is used via type conversion using \c boost::function to convert the
+        argument/return type \a CharT  to CharAsString<CharT>:
+        \code
+        char foo(char v) { return v; }
+        
+        senf::console::root().add(
+            "foo", boost::function< CharAsString<char> (CharAsString<char>) >(&foo));
+        \endcode
+
+        \tparam CharT character type, one of \c char, \c signed \c char or \c unsigned \c char
+
+        \ingroup senf_console_utilities
+     */
     template <class CharT>
     struct CharAsString
     {
@@ -71,7 +96,9 @@ namespace console {
     /** \brief Value range
         
         A value range may be represented in the console either by a single value (setting both \a
-        low and \a high to the same value) or as a lower and upper bound seperated by a colon
+        low and \a high to the same value) or as a lower and upper bound seperated by a colon.
+
+        \ingroup senf_console_utilities
      */
     template <class T>
     struct ValueRange
@@ -142,6 +169,8 @@ namespace console {
         console:/$ func Foo
         console:/$ func (Foo Boo)
         </pre>
+
+        \ingroup senf_console_utilities
      */
     template <class Enum>
     struct FlagCollection
