@@ -1176,11 +1176,64 @@
     After this setup, \c varChanged will be called, whenever the value has changed.
 
 
-    \section console_args Special types
+    \section console_args Console library supported types
 
-    By default, types which can be read and written using \c iostreams are automatically
-    supported. Other types need to be registered explicitly
+    By default, types which can be read and written using \c iostreams are automatically supported. 
+    This includes all the C++ built-in types as well as user defined streamable types.
 
+    An exception is made for all \c char types: These types are by default parsed as \e numeric
+    values not single-character data. To interpret \c char values as single-char strings, use \ref
+    senf::console::CharAsString.
+
+    \subsection console_args_stl STL container support
+
+    The %console library contains support for the STL container types: \c std::vector, \c
+    std::list, \c std::set, \c std::multiset, \c std::map and \c std::multimap.
+
+    All container types are parsed as parenthesized list of elements. Each element is parsed as
+    defined for the element type:
+
+    \c vector, \c list or \c set of integers
+    <pre>
+    (1 2 3)
+    </pre>
+
+    \c vector, \c list or \c set of strings
+    <pre>
+    ("String 1" "String 2" "String 3")
+    </pre>
+
+    \c vector, \c list or \c set of \c pair<\c int,\c string>
+    <pre>
+    ((1 "String 1") (2 "String 2") (3 "String 3"))
+    </pre>
+
+    Empty collection
+    <pre>
+    ()
+    </pre>
+    
+    Collection's with only one element may skip the parenthesis <em>if and only if</em> the element
+    type does not need additional parenthesis
+
+    A \c vector, \c list or \c set of integer with one element may be written with or without
+    parenthesis
+    <pre>
+    (1) 
+    1
+    </pre>
+
+    \e but a single element \c vector, \c list or \c set of \c pair<\c int,\c string> may \e only be
+    written
+    <pre>
+    ((1 "String 1"))
+    </pre>
+
+    In mapping containers, the key and value are separated by \c =:
+    <pre>
+    (foo=1 bar=2 "foo bar"=3)
+    </pre>
+    
 
     \subsection console_args_bool Boolean arguments and return values
 
