@@ -28,6 +28,7 @@
 // Custom includes
 #include <sstream>
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 #include <senf/Utils/TypeInfo.hh>
 
 #define prefix_ inline
@@ -88,6 +89,24 @@ prefix_ std::string senf::console::ArgumentTraits<Type>::str(Type const & value)
 {
     std::stringstream ss;
     senf::console::format(value, ss);
+    std::string rv (ss.str());
+
+    if (rv.empty() || ! boost::algorithm::all(rv, CommandParser::isWordChar)) {
+        for (std::string::size_type i (0); i < rv.size(); ++i)
+            if (rv[i] == '"' || rv[i] == '\\')
+                rv.insert(i++,"\\");
+            else if (rv[i] < ' ' || rv[i] > 126) {
+                rv.insert(i+1, (boost::format("x%02x") 
+                                % unsigned(static_cast<unsigned char>(rv[i]))).str().c_str());
+                rv[i] = '\\';
+                i += 3;
+            }
+        
+        rv.insert(0,"\"");
+        rv.push_back('"');
+        return rv;
+    }
+
     return ss.str();
 }
 

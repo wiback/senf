@@ -27,34 +27,11 @@
 #include "Traits.ih"
 
 // Custom includes
-#include <boost/format.hpp>
 #include <senf/Utils/senfassert.hh>
 
 //#include "Traits.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-prefix_ std::string senf::console::ArgumentTraits<std::string>::str(std::string const & value)
-{
-    if (! value.empty() && boost::algorithm::all(value, CommandParser::isWordChar))
-        return value;
-    else {
-        std::string rv (value);
-        for (std::string::size_type i (0); i < rv.size(); ++i)
-            if (rv[i] == '"' || rv[i] == '\\')
-                rv.insert(i++,"\\");
-            else if (rv[i] < ' ' || rv[i] > 126) {
-                rv.insert(i+1, (boost::format("x%02x") 
-                                % unsigned(static_cast<unsigned char>(rv[i]))).str().c_str());
-                rv[i] = '\\';
-                i += 3;
-            }
-        
-        rv.insert(0,"\"");
-        rv.push_back('"');
-        return rv;
-    }
-}
 
 prefix_ long senf::console::detail::parseEnum(EnumTable const & table,
                                               ParseCommandInfo::TokensRange const & tokens)

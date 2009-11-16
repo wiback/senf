@@ -70,20 +70,6 @@ prefix_ std::string senf::console::ArgumentTraits<bool>::str(bool value)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::ArgumentTraits<std::string>
-
-prefix_ void senf::console::ArgumentTraits<std::string>::
-parse(ParseCommandInfo::TokensRange const & tokens, std::string & out)
-{
-    senf_console_parse_argument(tokens,out);
-}
-
-prefix_ std::string senf::console::ArgumentTraits<std::string>::description()
-{
-    return "string";
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::console::ReturnValueTraits<bool>
 
 prefix_ void senf::console::ReturnValueTraits<bool>::format(bool value, std::ostream & os)

@@ -238,17 +238,6 @@ namespace console {
         static void format(bool value, std::ostream & os);
     };
 
-    template <>
-    struct ArgumentTraits<std::string>
-    {
-        typedef std::string type;
-        static bool const singleToken = true;
-
-        static void parse(ParseCommandInfo::TokensRange const & tokens, std::string & out);
-        static std::string description();
-        static std::string str(std::string const & value);
-    };
-
     template <> struct ArgumentTraits<char> : public detail::CharArgumentTraits<char> {};
     template <> struct ReturnValueTraits<char> : public detail::CharReturnValueTraits<char> {};
     template <> struct ArgumentTraits<signed char> : public detail::CharArgumentTraits<signed char> {};
