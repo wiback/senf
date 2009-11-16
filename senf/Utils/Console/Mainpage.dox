@@ -1193,22 +1193,22 @@
     All container types are parsed as parenthesized list of elements. Each element is parsed as
     defined for the element type:
 
-    \c vector, \c list or \c set of integers
+    \c vector, \c list or \c set of integers:
     <pre>
     (1 2 3)
     </pre>
 
-    \c vector, \c list or \c set of strings
+    \c vector, \c list or \c set of strings:
     <pre>
     ("String 1" "String 2" "String 3")
     </pre>
 
-    \c vector, \c list or \c set of \c pair<\c int,\c string>
+    \c vector, \c list or \c set of <tt>pair<int,string></tt>:
     <pre>
     ((1 "String 1") (2 "String 2") (3 "String 3"))
     </pre>
 
-    Empty collection
+    Empty collection:
     <pre>
     ()
     </pre>
@@ -1217,14 +1217,14 @@
     type does not need additional parenthesis
 
     A \c vector, \c list or \c set of integer with one element may be written with or without
-    parenthesis
+    parenthesis:
     <pre>
     (1) 
     1
     </pre>
 
-    \e but a single element \c vector, \c list or \c set of \c pair<\c int,\c string> may \e only be
-    written
+    \e but a single element \c vector, \c list or \c set of <tt>pair<int,string></tt> may \e only be
+    written:
     <pre>
     ((1 "String 1"))
     </pre>
@@ -1330,19 +1330,19 @@
     basic idea is, to us \c boost::function to convert the real argument type to some different type
 
     \code
-    unsigned char fun4(unsigned char value)
+    int fun4(int value)
     {
         return value;
     }
     
     senf::console::root()
-        .add("test8", boost::function<unsigned (unsigned)>(&fun4));
+        .add("test8", boost::function<bool (bool)>(&fun4));
     \endcode
     
     Here, the type signature specified via \c boost::function is different from the real type
     signature but is compatible. \c boost::function automatically handles the conversion
-    process. Since the console library now sees the argument and return value of type \c unsigned,
-    the values will be parsed correctly as numeric values.
+    process. Since the console library now sees the argument and return value of type \c bool,
+    the values will be parsed and formatted as boolean values.
 
     
     \subsection console_args_special Special Console types
