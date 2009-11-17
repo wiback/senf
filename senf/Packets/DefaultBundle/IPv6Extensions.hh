@@ -98,8 +98,7 @@ namespace senf {
         /** \brief Dump given IPv6FragmentPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
 
-        static void finalize(packet p) { 
-            p->nextHeader() << key(p.next(nothrow)); }
+        static void finalize(packet p);
     };
 
     /** \brief IPv6 fragment extension packet typedef 
@@ -202,11 +201,11 @@ namespace senf {
         
         static key_t nextPacketKey(packet p) 
             { return p->nextHeader(); }
+        
         /** \brief Dump given IPv6RoutingPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
         
-        static void finalize(packet p) { 
-            p->nextHeader() << key(p.next(nothrow)); }
+        static void finalize(packet p);
     };
     
     /** \brief IPv6 routing extension packet typedef
@@ -275,14 +274,13 @@ namespace senf {
         using mixin::init;
         using mixin::initSize;
         
-        static key_t nextPacketKey(packet p) 
-        { return p->nextHeader(); }
+        static key_t nextPacketKey(packet p) {
+            return p->nextHeader(); }
         
         /** \brief Dump given IPv6HopByHopOptionsPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
         
-        static void finalize(packet p) { 
-            p->nextHeader() << key(p.next(nothrow)); }
+        static void finalize(packet p);
     };
     
     /** \brief IPv6 routing Hop-By-Hop packet typedef

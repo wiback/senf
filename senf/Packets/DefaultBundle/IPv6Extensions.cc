@@ -52,6 +52,16 @@ prefix_ void senf::IPv6FragmentPacketType::dump(packet p, std::ostream & os)
        << "0x" << std::hex << unsigned(p->id()) << "\n";
 }
 
+prefix_ void senf::IPv6FragmentPacketType::finalize(packet p)
+{
+    try {
+        p->nextHeader() << key(p.next());
+    }
+    catch (InvalidPacketChainException & ex) {
+        p->nextHeader() << 59; // No next header
+    }
+}
+
 prefix_ void senf::IPv6RoutingPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 routing extension:\n"
@@ -67,6 +77,16 @@ prefix_ void senf::IPv6RoutingPacketType::dump(packet p, std::ostream & os)
             os << "    " << *i << "\n";
 }
 
+prefix_ void senf::IPv6RoutingPacketType::finalize(packet p)
+{
+    try {
+        p->nextHeader() << key(p.next());
+    }
+    catch (InvalidPacketChainException & ex) {
+        p->nextHeader() << 59; // No next header
+    }
+}
+
 prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
@@ -77,6 +97,16 @@ prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & 
     optContainer_t options (p->options());
     for (optContainer_t::const_iterator i = options.begin(); i != options.end(); ++i)
         i->dump( os);
+}
+
+prefix_ void senf::IPv6HopByHopOptionsPacketType::finalize(packet p)
+{
+    try {
+        p->nextHeader() << key(p.next());
+    }
+    catch (InvalidPacketChainException & ex) {
+        p->nextHeader() << 59; // No next header
+    }
 }
 
 prefix_ void senf::IPv6DestinationOptionsPacketType::dump(packet p, std::ostream & os)
