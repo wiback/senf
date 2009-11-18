@@ -69,6 +69,10 @@ namespace senf {
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
 
+        \attention
+            If socket handle with ConnectedRawV4SocketProtocol is connected via INet4SocketAddress, the port number
+            is interpreted as protocol number for IPv4 layer. Please refer manpage: "man 7 raw".
+
         \see ConnectedRawV6SocketProtocol
         \see RawV4SocketProtocol
         \see RawV6SocketProtocol
@@ -136,6 +140,10 @@ namespace senf {
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
+
+		\attention
+            If socket handle with ConnectedRawV6SocketProtocol is connected via INet6SocketAddress, the port number
+            is interpreted as protocol number for IPv6 layer. Please refer manpage: "man 7 ipv6".
 
         \see ConnectedRawV4SocketProtocol
         \see RawV4SocketProtocol
