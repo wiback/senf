@@ -73,7 +73,7 @@ namespace senf {
 
         \attention
             If socket handle with RawV4SocketProtocol is connected via INet4SocketAddress, the port number
-            is interpreted as protocol number for IP layer. Please refer manpage: "man 7 raw".
+            is interpreted as protocol number for IPv4 layer. Please refer manpage: "man 7 raw".
 
         \see RawV6SocketProtocol
      */
@@ -144,7 +144,7 @@ namespace senf {
 
         \attention
             If socket handle with ConnectedRawV6SocketProtocol is connected via INet6SocketAddress, the port number
-            is interpreted as protocol number for IPv4 layer. Please refer manpage: "man 7 ipv6".
+            is interpreted as protocol number for IPv6 layer. Please refer manpage: "man 7 ipv6".
 
         \see RawV4SocketProtocol
      */
