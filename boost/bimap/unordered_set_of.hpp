@@ -139,6 +139,10 @@ struct unordered_set_of : public ::boost::bimaps::detail::set_type_of_tag
         BOOST_CLASS_REQUIRE ( value_type,
                               boost, AssignableConcept );
 
+#if BOOST_VERSION >= 103800
+        BOOST_CLASS_REQUIRE3( hasher, std::size_t, value_type,
+                              boost, UnaryFunctionConcept );
+#else
 	typedef void (boost::UnaryFunctionConcept <hasher,std::size_t,value_type>::*
 		      funchasherstdsize_tvalue_typeconcept)();
 	template <funchasherstdsize_tvalue_typeconcept Tp1_>
@@ -146,6 +150,7 @@ struct unordered_set_of : public ::boost::bimaps::detail::set_type_of_tag
 	typedef concept_checking_hasherstdsize_tvalue_typeconcept<
 	    BOOST_FPTR boost::UnaryFunctionConcept<hasher,std::size_t,value_type>::constraints>
 	concept_checking_typedef_hasherstdsize_tvalue_typeconcept;
+#endif
 	
         BOOST_CLASS_REQUIRE4( key_equal, bool, value_type, value_type,
                               boost, BinaryFunctionConcept );
