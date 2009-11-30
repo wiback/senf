@@ -44,7 +44,7 @@
     modules.
 
     \see \ref ppi_overview \n
-        <a href="../../../Examples/RateStuffer/doc/html/index.html">PPI Example Application:
+        <a href="../../../../Examples/RateStuffer/doc/html/index.html">PPI Example Application:
         RateStuffer</a> \n
         \ref senf::ppi::module "Modules" \n
         \ref senf::ppi::connector "Connectors and Jacks" \n
