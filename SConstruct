@@ -133,6 +133,11 @@ env.SetDefault(
     FLAVOR            = '',
 )
 
+# ugly hack for ubuntu karmic 
+# ToDo: auto-configure alike support
+if os.path.exists('/usr/lib/libboost_regex-mt.so'):
+    env.Append( BOOST_VARIANT = '-mt' )
+
 # Set variables from command line
 senfutil.parseArguments(
     env,
