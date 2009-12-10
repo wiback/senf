@@ -25,6 +25,7 @@
 
 // Custom includes
 #include "GenericTLV.hh"
+#include <senf/Packets/DefaultBundle/IPv6Extensions.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -64,6 +65,29 @@ namespace {
            length_() = 4;
        }
        static type_t::value_type const typeId = 0x42;
+       
+       void dump(std::ostream & os) const {
+           boost::io::ios_all_saver ias(os);
+           os << "  MyConcreteTLVParser\n"
+              << "    type:   " << senf::format::dumpint(type()) << "\n"
+              << "    length: " << senf::format::dumpint(length()) << "\n"
+              << "    value:  " << senf::format::dumpint(myValue()) << "\n";
+       }
+   };
+   
+   struct MyConcrete2TLVParser
+       : public MyTLVParserBase
+   {
+   #   include SENF_PARSER()
+       SENF_PARSER_INHERIT  ( MyTLVParserBase             );
+       SENF_PARSER_FIELD    ( myValue, senf::UInt32Parser );
+       SENF_PARSER_FINALIZE ( MyConcrete2TLVParser         );
+    
+       SENF_PARSER_INIT() {
+           type() = typeId;
+           length_() = 4;
+       }
+       static type_t::value_type const typeId = 0x47;
        
        void dump(std::ostream & os) const {
            boost::io::ios_all_saver ias(os);
@@ -172,6 +196,27 @@ BOOST_AUTO_UNIT_TEST(GenericTLV_registry)
     BOOST_CHECK_EQUAL( ss.str().substr(0,21), "  MyConcreteTLVParser" );
 }
 
+BOOST_AUTO_UNIT_TEST(GenericTLV_predicate)
+{
+    MyTestPacket p ( MyTestPacket::create() );
+    MyTestPacket::Parser::tlv_list_t::container tlvContainer (p->tlv_list() );
+    MyConcreteTLVParser conreteTLVParser ( 
+            tlvContainer.push_back_space().init<MyConcreteTLVParser>());
+    conreteTLVParser.myValue() << 0xffff;
+    MyConcrete2TLVParser conreteTLVParser2 ( 
+            tlvContainer.push_back_space().init<MyConcrete2TLVParser>());
+    conreteTLVParser2.myValue() << 0xdddd;
+    p.finalizeThis();
+    
+//     typedef senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t; 
+//     optContainer_t optC (p->tlv_list() );
+    
+    MyTestPacket::Parser::tlv_list_t::container testTlvContainer (p->tlv_list() );
+    MyTestPacket::Parser::tlv_list_t::container::iterator it = std::find_if (
+      testTlvContainer.begin(), testTlvContainer.end(), 
+      senf::detail::Predicate< senf::GenericTLVParserBase<MyTLVParserBase>, MyConcreteTLVParser>() );
+    BOOST_CHECK( it->is<MyConcreteTLVParser>()) ;
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
