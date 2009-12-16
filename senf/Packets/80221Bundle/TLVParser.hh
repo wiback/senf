@@ -97,9 +97,9 @@ namespace senf {
          \endcode
          
          You have to adjust the maximum length value with the \ref maxLengthValue function 
-         before the length value is set. The default maximum value is 127. So, in the above
+         before the length value is set. The default maximum value is 128. So, in the above
          example adding more than 21 MACAddresses to the vector will throw a TLVLengthException
-         if you don't call \c macAddressesTLVPacket->maxLengthValue( \e some_value) before.
+         if you don't call \c maxLengthValue( \e some_value) before.
          
          \see MIHTLVLengthParser \n
            MIHGenericTLVParser \n
@@ -126,17 +126,14 @@ namespace senf {
             The size of the length field will be decreased to minimum necessary to hold
             the current length value.
          */
-        void finalizeLength() { 
+        void finalize() { 
             protect(), length_().finalize();
         };
     
         typedef GenericTLVParserRegistry<MIHBaseTLVParser> Registry;
-        
-    protected:
-        /// resize the packet after the length field to given size
-        senf::safe_data_iterator resizeValueField(MIHTLVLengthParser::value_type size);
     };
 
+    
         
     /** \brief Parser for a generic TLV packet
      */
@@ -156,22 +153,26 @@ namespace senf {
         
     /** \brief Parse a MIHF_ID
 
-         the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
-         we could set maxLengthValue in init(), but for the most MIHF_IDs the default
-         maximum length of 127 should be enough.
+         Note that the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
+         We could set maxLengthValue in init(), but for the most MIHF_IDs the default
+         maximum length of 128 should be enough.
          
-         \note you must call mihfIdPacket.maxLengthValue( 253) *before*
-         setting longer MIHF_IDs values.
+         \note you must call maxIdLength( 253) *before* setting MIHF_IDs values longer
+             than 128.
+                  
+         \see MIHFId
     */
     class MIHFIdTLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_SKIP     ( length(), 0      );
+        SENF_PARSER_FIELD_RO ( idLength, MIHTLVLengthParser );
+        SENF_PARSER_LABEL    ( idValue          );
+        SENF_PARSER_SKIP     ( idLength(), 0    );
         SENF_PARSER_FINALIZE ( MIHFIdTLVParser  );
         
     public:
-        ///\name value setters
+        ///\name Value setters
         ///@{
         void value( MIHFId const & id);
         
@@ -182,7 +183,7 @@ namespace senf {
         void value( senf::EUI64        const & addr);    
         ///@}
 
-        ///\name value getters
+        ///\name Value getters
         ///@{
         MIHFId valueAs( MIHFId::Type type) const;
         
@@ -193,7 +194,7 @@ namespace senf {
         senf::EUI64        valueAsEUI64()        const;
         ///@}
         
-        ///\name value comparisons
+        ///\name Value comparisons
         ///@{
         bool valueEquals( MIHFId const & id) const;
         
@@ -205,8 +206,16 @@ namespace senf {
         ///@}
         
         void dump(std::ostream & os) const;
+        void maxIdLength(boost::uint8_t maxLength);
+        void finalize();
 
     private:
+        /// resize the packet after the length field to given size
+        senf::safe_data_iterator resizeValueField(MIHTLVLengthParser::value_type size);
+        
+        data_iterator valueBegin() const;
+        data_iterator valueEnd() const;
+
         template <class OutputIterator>
         struct binaryNAIEncoder {
             binaryNAIEncoder(OutputIterator & i);
@@ -253,6 +262,8 @@ namespace senf {
         };
     };
 
+    /** \brief Parser for 802.21 source MIHF_ID TLV
+     */
     struct MIHFSrcIdTLVParser : public MIHFIdTLVParser
     {
         MIHFSrcIdTLVParser(data_iterator i, state_type s) : MIHFIdTLVParser(i,s) {}
@@ -265,6 +276,8 @@ namespace senf {
         void dump(std::ostream & os) const;
     };
     
+    /** \brief Parser for 802.21 destination MIHF_ID TLV
+     */
     struct MIHFDstIdTLVParser : public MIHFIdTLVParser
     {
         MIHFDstIdTLVParser(data_iterator i, state_type s) : MIHFIdTLVParser(i,s) {}

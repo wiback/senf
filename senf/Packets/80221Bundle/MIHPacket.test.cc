@@ -37,17 +37,6 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(MIHPacket_MIHFId)
-{
-    MIHFId id ( MACAddress::from_string("01:02:03:04:05:06"));
-    BOOST_CHECK_EQUAL( id.type(), MIHFId::MACAddress);
-    BOOST_CHECK_EQUAL( id, MIHFId( MACAddress::from_string("01:02:03:04:05:06")));
-    BOOST_CHECK( id != MIHFId( MACAddress::from_string("01:02:03:04:05:07")));
-    BOOST_CHECK( id != MIHFId( INet4Address::from_string("128.129.130.131")));
-    BOOST_CHECK( id < MIHFId( MACAddress::from_string("01:02:03:04:05:07")));
-    BOOST_CHECK( id < MIHFId( INet4Address::from_string("128.129.130.131")));
-}
-
 BOOST_AUTO_UNIT_TEST(MIHPacket_msgId)
 {
     MIHPacket mihPacket (MIHPacket::create());
@@ -76,34 +65,54 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
     mihPacket->src_mihfId().value( "senf@berlios.de");
     mihPacket->dst_mihfId().value( "test");
     mihPacket.finalizeThis();
-
+    
     unsigned char data[] = {
             // MIH header
-            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x17,
+            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x19,
             // source MIHF_ID TLV:
-            0x01, 0x0f, // type, length
+            0x01, 0x10, // type, length
+            0x0f,  // value-length
             0x73, 0x65, 0x6e, 0x66, 0x40, 0x62, 0x65, 0x72, 0x6c,
             0x69, 0x6f, 0x73, 0x2e, 0x64, 0x65,  // value
             // destination MIHF_ID TLV:
-            0x02, 0x04, 0x74, 0x65, 0x73, 0x74
+            0x02, 0x05, 0x04, 0x74, 0x65, 0x73, 0x74
     };
-    BOOST_CHECK(equal( mihPacket.data().begin(), mihPacket.data().end(), data ));
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            mihPacket.data().begin(), mihPacket.data().end() );
     BOOST_CHECK_EQUAL( mihPacket->src_mihfId().valueAsString(), "senf@berlios.de");
     BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().valueAsString(), "test");
 
     // the maximum length of a MIHF_ID is 253 octets
     BOOST_CHECK_THROW( mihPacket->dst_mihfId().value( std::string(254, 'x')), std::length_error);
-
     // now expand a MIHF_ID
-    mihPacket->dst_mihfId().maxLengthValue(253);
-    mihPacket->dst_mihfId().value( std::string(200, 'x'));
+    // first the tricky one: when setting the maximum id length to 128 the TLV length field
+    // is set to 129 and therefore expanded to 2 bytes; the id-length field is still 1 byte long
+    mihPacket->dst_mihfId().maxIdLength(128);
+    mihPacket->dst_mihfId().value( std::string(128, 'x'));
     mihPacket.finalizeThis();
-
-    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 17 + 203));
-    BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 17 + 203);
-    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().length(), 200u);
-    BOOST_CHECK_EQUAL( senf::bytes(mihPacket->dst_mihfId()), 203u);
-
+    // packet size is now MIH header (8 bytes) + src MIHIFId TLV (18 bytes) + 
+    // dst MIHIFId TLV (1 byte type + 2 byte TLV length + 1 byte id length + 128 id value) 
+    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 18 + 1+2+1+128));  
+    BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 18 + 1+2+1+128);
+    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().length(), 1+128);
+    BOOST_CHECK_EQUAL( senf::bytes(mihPacket->dst_mihfId()), 1+2+1+128);
+    // now we extend the dst id to 129 bytes; than we have 2 bytes tlv length and 2 bytes
+    // id-length field
+    mihPacket->dst_mihfId().maxIdLength(129);
+    mihPacket->dst_mihfId().value( std::string(129, 'x'));
+    mihPacket.finalizeThis();
+    // packet size is now MIH header (8 bytes) + src MIHIFId TLV (18 bytes) + 
+    // dst MIHIFId TLV (1 byte type + 2 byte TLV length + 2 byte id length + 128 id value) 
+    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 18 + 1+2+2+129));  
+    BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 18 + 1+2+2+129);
+    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().length(), 2+129);
+    BOOST_CHECK_EQUAL( senf::bytes(mihPacket->dst_mihfId()), 1+2+2+129);
+    // finally we shrink to dst id field
+    mihPacket->dst_mihfId().value( "test");
+    mihPacket.finalizeThis();
+    SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+            mihPacket.data().begin(), mihPacket.data().end() );
+    
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( mihPacket.dump( oss));
 }
@@ -123,12 +132,14 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_mac)
 
     unsigned char data[] = {
             // MIH header
-            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x1c,
+            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x1e,
             // source MIHF_ID TLV:
-            0x01, 0x0c, // type, length
+            0x01, 0x0d, // type, length
+            0x0c,       // value-length
             0x5c, 0x01, 0x5c, 0x02, 0x5c, 0x03, 0x5c, 0x04, 0x5c, 0x05, 0x5c, 0x06, // value (nai-encoded)
             // destination MIHF_ID TLV:
-            0x02, 0x0c,  // type, length
+            0x02, 0x0d, // type, length
+            0x0c,       // value-length
             0x5c, 0x07, 0x5c, 0x08, 0x5c, 0x09, 0x5c, 0x0a, 0x5c, 0x0b, 0x5c, 0x0c  // value (nai-encoded)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
@@ -152,12 +163,14 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet4)
 
     unsigned char data[] = {
             // MIH header
-            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x14,
+            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x16,
             // source MIHF_ID TLV:
-            0x01, 0x08, // type, length
+            0x01, 0x09, // type, length
+            0x08,       // value-length
             0x5c, 0x80, 0x5c, 0x81, 0x5c, 0x82, 0x5c, 0x83, // value (nai-encoded)
             // destination MIHF_ID TLV:
-            0x02, 0x08, // type, length
+            0x02, 0x09, // type, length
+            0x08,       // value-length
             0x5c, 0x84, 0x5c, 0x85, 0x5c, 0x86, 0x5c, 0x87  // value (nai-encoded)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
@@ -183,16 +196,18 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet6)
 
     unsigned char data[] = {
             // MIH header
-            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x44,
+            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x46,
             // source MIHF_ID TLV:
-            0x01, 0x20, // type, length
+            0x01, 0x21, // type, length
+            0x20,       // value-length
             // value (nai-encoded):
             0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00,
             0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00,
             0x5c, 0x00, 0x5c, 0x00, 0x5c, 0xff, 0x5c, 0xff,
             0x5c, 0x01, 0x5c, 0x02, 0x5c, 0x03, 0x5c, 0x04,
             // destination MIHF_ID TLV:
-            0x02, 0x20, // type, length
+            0x02, 0x21, // type, length
+            0x20,       // value-length
             // value (nai-encoded):
             0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00,
             0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00, 0x5c, 0x00,
@@ -218,11 +233,12 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
             // variable payload length:
             0x00, 0x29,
             // source MIHF_ID TLV:
-            0x01, 0x0f, // type, length
+            0x01, 0x10, // type, length
+            0x0f,  // value-length
             0x73, 0x65, 0x6e, 0x66, 0x40, 0x62, 0x65, 0x72, 0x6c,
-            0x69, 0x6f, 0x73, 0x2e, 0x64, 0x65,  // value ("senf@berlios.de")
+            0x69, 0x6f, 0x73, 0x2e, 0x64, 0x65,  // value
             // destination MIHF_ID TLV:
-            0x02, 0x04, 0x74, 0x65, 0x73, 0x74,  // type, length, value ("test")
+            0x02, 0x05, 0x04, 0x74, 0x65, 0x73, 0x74,
             // MIH Payload (two test tlvs)
             // first test tlv
             0x42, // type
@@ -289,13 +305,14 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
             // MIH header
             0x10, 0x54, 0x00, 0x00, 0x00, 0x15,
             // variable payload length:
-            0x00, 0x29,
+            0x00, 0x2b,
             // source MIHF_ID TLV:
-            0x01, 0x0f, // type, length
+            0x01, 0x10, // type, length
+            0x0f,  // value-length
             0x73, 0x65, 0x6e, 0x66, 0x40, 0x62, 0x65, 0x72, 0x6c,
-            0x69, 0x6f, 0x73, 0x2e, 0x64, 0x65,  // value ("senf@berlios.de")
+            0x69, 0x6f, 0x73, 0x2e, 0x64, 0x65,  // value
             // destination MIHF_ID TLV:
-            0x02, 0x04, 0x74, 0x65, 0x73, 0x74,  // type, length, value ("test")
+            0x02, 0x05, 0x04, 0x74, 0x65, 0x73, 0x74,
             // MIH Payload (two test tlvs)
             // first test tlv
             0x42, // type

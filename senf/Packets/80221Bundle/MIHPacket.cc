@@ -62,8 +62,8 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 
 prefix_ void senf::MIHPacketType::finalize(packet p)
 {
-    p->src_mihfId().finalizeLength();
-    p->dst_mihfId().finalizeLength();
+    p->src_mihfId().finalize();
+    p->dst_mihfId().finalize();
     p->payloadLength_() << p.size() - 8;
     p->messageId() << key(p.next(nothrow));
 }
@@ -94,7 +94,7 @@ prefix_ void senf::MIHGenericPayloadPacketType::finalize(packet p)
     typedef parser::tlvList_t::container tlvContainer_t;
     tlvContainer_t tlvs (p->tlvList() );
     for (tlvContainer_t::iterator i (tlvs.begin()); i != tlvs.end(); ++i)
-        i->finalizeLength();
+        i->finalize();
 }
 
 

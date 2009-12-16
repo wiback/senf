@@ -53,6 +53,37 @@ prefix_ void senf::MIHFIdTLVParser::dump(std::ostream & os)
     hexdump(src_mihfId.begin(), src_mihfId.end(), os);
 }
 
+prefix_ void senf::MIHFIdTLVParser::finalize()
+{
+    protect(), idLength_().finalize();
+    length_() << idLength() + idLength_().bytes();
+    MIHBaseTLVParser::finalize();
+}
+
+prefix_ void senf::MIHFIdTLVParser::maxIdLength(boost::uint8_t maxLength)
+{
+    // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
+    if (maxLength > 253) 
+        throw std::length_error("maximum length of a MIHF_ID is 253 octets");
+    protect(), idLength_().maxValue( maxLength);
+    maxLengthValue( maxLength + senf::bytes(idLength_()));
+}
+
+prefix_ senf::safe_data_iterator senf::MIHFIdTLVParser::resizeValueField(
+        MIHTLVLengthParser::value_type size) 
+{
+    MIHTLVLengthParser::value_type current_length ( idLength());
+    idLength_() << size;
+    length_() << size + idLength_().bytes();
+
+    safe_data_iterator si (data(), valueBegin());
+    if (current_length > size)
+        data().erase( si, boost::next(si, current_length-size));
+    else
+        data().insert( si, size-current_length, 0);
+    return si;
+}
+
 prefix_ void senf::MIHFIdTLVParser::value(std::string const & id)
 {
     size_type str_size (id.size());
@@ -65,25 +96,25 @@ prefix_ void senf::MIHFIdTLVParser::value(std::string const & id)
 
 prefix_ void senf::MIHFIdTLVParser::value(senf::MACAddress const & addr)
 {
-    safe_data_iterator si = resizeValueField(12);
+    safe_data_iterator si = resizeValueField(6*2);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
 prefix_ void senf::MIHFIdTLVParser::value(senf::INet4Address const & addr)
 {
-    safe_data_iterator si = resizeValueField(8);
+    safe_data_iterator si = resizeValueField(4*2);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
 prefix_ void senf::MIHFIdTLVParser::value(senf::INet6Address const & addr)
 {
-    safe_data_iterator si = resizeValueField(32);
+    safe_data_iterator si = resizeValueField(16*2);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
 prefix_ void senf::MIHFIdTLVParser::value(senf::EUI64 const & addr)
 {
-    safe_data_iterator si = resizeValueField(16);
+    safe_data_iterator si = resizeValueField(8*2);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
@@ -206,25 +237,6 @@ prefix_ void senf::MIHValidTimeIntervalTLVParser::dump(std::ostream & os)
        << ( value()==0 ? " (infinite)" : " seconds") << std::endl;
 }
 
-
-///////////////////////////////////////////////////////////////////////////
-// senf::MIHBaseTLVParser
-
-prefix_ senf::safe_data_iterator senf::MIHBaseTLVParser::resizeValueField(
-        MIHTLVLengthParser::value_type size) 
-{
-    MIHTLVLengthParser::value_type current_length ( length());
-    length_() << size;
-
-    safe_data_iterator si (data(), boost::next(i(), 1 + length_().bytes() ));
-    if (current_length > size)
-        data().erase( si, boost::next(si, current_length-size));
-    else
-        data().insert( si, size-current_length, 0);
-    return si;
-}
-
-
 ///////////////////////////////////////////////////////////////////////////
 // senf::MIHTLVLengthParser
 
@@ -328,7 +340,7 @@ prefix_ void senf::MIHTLVLengthParser::finalize()
     if (b != 5) resize_(5);
 }
 
-prefix_ void senf::MIHTLVLengthParser:: maxValue(MIHTLVLengthParser::value_type v)
+prefix_ void senf::MIHTLVLengthParser::maxValue(MIHTLVLengthParser::value_type v)
 {
     if (v <= 128)
         return;

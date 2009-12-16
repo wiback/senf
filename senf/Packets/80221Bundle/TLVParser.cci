@@ -54,38 +54,54 @@ prefix_ bool senf::MIHFIdTLVParser::binaryNAIDecoder::operator()(boost::uint8_t 
 ///////////////////////////////////////////////////////////////////////////
 // MIHFIdTLVParser
 
+prefix_ senf::PacketParserBase::data_iterator senf::MIHFIdTLVParser::valueBegin() 
+    const
+{
+    return i( idValue_offset());
+}
+
+prefix_ senf::PacketParserBase::data_iterator senf::MIHFIdTLVParser::valueEnd()
+    const
+{
+    return i( idValue_offset() + idLength());
+}
+
 prefix_ std::string senf::MIHFIdTLVParser::valueAsString()
     const
 {
-    return std::string( i(1+length_().bytes()), i(1+length_().bytes()+length()) );
+    return std::string( valueBegin(), valueEnd());
 }
 
 prefix_ senf::MACAddress senf::MIHFIdTLVParser::valueAsMACAddress()
     const
 {
-    return MACAddress::from_data( 
-            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+12) ));
+    if (idLength() != 6*2) throw WrapException<std::bad_cast>(std::bad_cast())
+        << "length of MIHF_ID does not match for a MAC address";
+    return MACAddress::from_data( getNAIDecodedIterator( valueBegin(), valueEnd()));
 }
 
 prefix_ senf::INet4Address senf::MIHFIdTLVParser::valueAsINet4Address()
     const
 {
-    return INet4Address::from_data( 
-            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+8) ));
+    if (idLength() != 4*2) throw WrapException<std::bad_cast>(std::bad_cast())
+        << "length of MIHF_ID does not match for a INet4 address";
+    return INet4Address::from_data( getNAIDecodedIterator( valueBegin(), valueEnd()));
 }
 
 prefix_ senf::INet6Address senf::MIHFIdTLVParser::valueAsINet6Address()
     const
 {
-    return INet6Address::from_data( 
-            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+32) ));
+    if (idLength() != 16*2) throw WrapException<std::bad_cast>(std::bad_cast())
+        << "length of MIHF_ID does not match for a INet6 address";
+    return INet6Address::from_data( getNAIDecodedIterator( valueBegin(), valueEnd()));
 }
 
 prefix_ senf::EUI64 senf::MIHFIdTLVParser::valueAsEUI64()
     const
 {
-    return EUI64::from_data( 
-            getNAIDecodedIterator( i(1+length_().bytes()), i(1+length_().bytes()+16) ));
+    if (idLength() != 8*2) throw WrapException<std::bad_cast>(std::bad_cast())
+        << "length of MIHF_ID does not match for a EUI64 address";
+    return EUI64::from_data( getNAIDecodedIterator( valueBegin(), valueEnd()));
 }
 
 prefix_ bool senf::MIHFIdTLVParser::valueEquals( std::string const &id) 
@@ -97,25 +113,25 @@ prefix_ bool senf::MIHFIdTLVParser::valueEquals( std::string const &id)
 prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::MACAddress const & addr)
     const
 {
-    return length()==12 && addr==valueAsMACAddress();
+    return idLength()==12 && addr==valueAsMACAddress();
 }
 
 prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::INet4Address const & addr)
     const
 {
-    return length()==8 && addr==valueAsINet4Address();
+    return idLength()==8 && addr==valueAsINet4Address();
 }
 
 prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::INet6Address const & addr)
     const
 {
-    return length()==32 && addr==valueAsINet6Address();
+    return idLength()==32 && addr==valueAsINet6Address();
 }
 
 prefix_ bool senf::MIHFIdTLVParser::valueEquals( senf::EUI64 const & addr)
     const
 {
-    return length()==16 && addr==valueAsEUI64();
+    return idLength()==16 && addr==valueAsEUI64();
 }
 
 prefix_ bool senf::MIHFIdTLVParser::valueEquals( MIHFId const & id)

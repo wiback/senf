@@ -41,7 +41,8 @@ using namespace senf;
 namespace {
     struct VoidPacket : public PacketTypeBase
     {};
-                           
+}
+
 #define CHECK_TLVParser(tlvParser, ptype, plength)                          \
 {                                                                           \
     BOOST_CHECK_EQUAL( tlvParser.type(),         ptype   );                 \
@@ -52,7 +53,6 @@ namespace {
         BOOST_CHECK_EQUAL( *dataIterator, i );                              \
         dataIterator++;                                                     \
     }                                                                       \
-}
 }
 
 
@@ -106,7 +106,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_simple_length)
     MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
     tlvParser.type() = 42u;
     tlvParser.value( value);
-    tlvParser.finalizeLength();
+    tlvParser.finalize();
 
     CHECK_TLVParser( tlvParser, 42u, 0x0Au );
 
@@ -131,7 +131,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
     tlvParser.maxLengthValue( MIHTLVLengthParser::max_value);
     tlvParser.type() = 42u;
     tlvParser.value( value);
-    tlvParser.finalizeLength();
+    tlvParser.finalize();
 
     CHECK_TLVParser( tlvParser, 42u, sizeof(value) );
 
@@ -152,7 +152,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_invalid)
             senf::PacketInterpreterBase::size_type(2u)));
     MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
     tlvParser.type() = 42u;
-    tlvParser.finalizeLength();
+    tlvParser.finalize();
 
     PacketInterpreterBase::byte value[255];
     for (unsigned i=0; i<sizeof(value); i++)
@@ -161,7 +161,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_invalid)
     BOOST_CHECK_THROW( tlvParser.value( value), MIHTLVLengthException);
     tlvParser.maxLengthValue( sizeof(value));
     tlvParser.value( value);
-    tlvParser.finalizeLength();
+    tlvParser.finalize();
     CHECK_TLVParser( tlvParser, 42u, sizeof(value) );
 }
 
@@ -188,7 +188,7 @@ namespace {
         using mixin::initSize;
 
         static void finalize(ConcretePacket<TestMacAddressTLVPacketType> p) {
-            p->finalizeLength();
+            p->finalize();
         }
     };
     typedef ConcretePacket<TestMacAddressTLVPacketType> TestMacAddressTLVPacket;
