@@ -170,7 +170,15 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
 prefix_ senf::console::GenericNode &
 senf::console::Executor::getNode(ParseCommandInfo const & command)
 {
-    return traverseNode(command.commandPath());
+    try {
+        return traverseNode(command.commandPath());
+    }
+    catch (InvalidPathException & ex) {
+        throw SyntaxErrorException("invalid path") << " '" << ex.path << "'";
+    }
+    catch (InvalidDirectoryException & ex) {
+        throw SyntaxErrorException("invalid directory") << " '" << ex.path << "'";
+    }
 }
 
 prefix_ void senf::console::Executor::exec(std::ostream & output,
