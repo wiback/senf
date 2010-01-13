@@ -141,6 +141,20 @@ prefix_ bool senf::MIHFIdTLVParser::valueEquals( MIHFId const & id)
 }
 
 
+///////////////////////////////////////////////////////////////////////////
+// MIHBaseTLVParser
+
+prefix_ void senf::MIHBaseTLVParser::maxLength(MIHTLVLengthParser::value_type maxl) 
+    const
+{
+    protect(), length_().capacity(maxl);
+}
+
+prefix_ void senf::MIHBaseTLVParser::finalize() 
+{
+    protect(), length_().finalize();
+};
+
 
 ///////////////////////////////cci.e////////////////////////////////////////
 #undef prefix_

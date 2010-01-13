@@ -70,8 +70,8 @@ namespace senf {
         SENF_PARSER_PRIVATE_BITFIELD ( fixed_length_field,   6,  unsigned );
 
         void finalize();
-        void maxValue(value_type v);
-        value_type maxValue() const;
+        void capacity(value_type v);
+        value_type capacity() const;
         
     private:
         void resize_(size_type size);
@@ -96,10 +96,10 @@ namespace senf {
          };
          \endcode
          
-         You have to adjust the maximum length value with the \ref maxLengthValue function 
+         You have to adjust the maximum length value with the \ref maxLength function 
          before the length value is set. The default maximum value is 128. So, in the above
          example adding more than 21 MACAddresses to the vector will throw a TLVLengthException
-         if you don't call \c maxLengthValue( \e some_value) before.
+         if you don't call \c maxLength( \e some_value) before.
          
          \see MIHTLVLengthParser \n
            MIHGenericTLVParser \n
@@ -112,25 +112,22 @@ namespace senf {
         SENF_PARSER_FIELD_RO ( length, MIHTLVLengthParser );
         SENF_PARSER_FINALIZE ( MIHBaseTLVParser           );
         
-        /** \brief set maximum value of length field
-    
-            The size of the length field will be increased if necessary.
-            \param v maximum value of length field
-         */
-        void maxLengthValue(MIHTLVLengthParser::value_type v) const {
-            protect(), length_().maxValue(v);
-        }
-        
-        /** \brief shrink size of length field to minimum
+        /** \brief shrink size of the TLV length field to minimum
     
             The size of the length field will be decreased to minimum necessary to hold
             the current length value.
          */
-        void finalize() { 
-            protect(), length_().finalize();
-        };
+        void finalize();
     
         typedef GenericTLVParserRegistry<MIHBaseTLVParser> Registry;
+        
+    protected:
+        /** \brief set maximum value of TLV length field
+    
+            The size of the length field will be increased if necessary.
+            \param v maximum value of length field
+         */
+        void maxLength(MIHTLVLengthParser::value_type maxl) const;
     };
 
     
@@ -145,16 +142,38 @@ namespace senf {
 
         void init() const {
             defaultInit();
-            maxLengthValue( MIHTLVLengthParser::max_value);
+            maxLength( MIHTLVLengthParser::max_value);
         }
         
         using base::init;
+        using base::maxLength;
     };
+        
+        
+    /** \brief Base class for list TLV parser
+     */ 
+    struct MIHBaseListTLVParser 
+        : public MIHBaseTLVParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
+        SENF_PARSER_FIELD_RO ( listSize, MIHTLVLengthParser );
+        SENF_PARSER_FINALIZE ( MIHBaseListTLVParser );
+
+        void maxListSize(MIHTLVLengthParser::value_type maxl) const;
+    };
+
+    template <class Self>
+    struct MIHListTLVParserMixin
+    {
+        void finalize();            
+    };
+ 
         
     /** \brief Parse a MIHF_ID
 
          Note that the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
-         We could set maxLengthValue in init(), but for the most MIHF_IDs the default
+         We could set maxLength in init(), but for the most MIHF_IDs the default
          maximum length of 128 should be enough.
          
          \note you must call maxIdLength( 253) *before* setting MIHF_IDs values longer
@@ -206,7 +225,7 @@ namespace senf {
         ///@}
         
         void dump(std::ostream & os) const;
-        void maxIdLength(boost::uint8_t maxLength);
+        void maxIdLength(boost::uint8_t maxl) const;
         void finalize();
 
     private:
@@ -350,7 +369,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "TLVParser.cci"
-//#include "TLVParser.ct"
+#include "TLVParser.ct"
 #include "TLVParser.cti"
 #endif
 

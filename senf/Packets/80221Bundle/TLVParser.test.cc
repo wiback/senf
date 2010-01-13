@@ -128,7 +128,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
     PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type(2u)));
     MIHGenericTLVParser tlvParser( p->data().begin(), &p->data());
-    tlvParser.maxLengthValue( MIHTLVLengthParser::max_value);
+    tlvParser.maxLength( MIHTLVLengthParser::max_value);
     tlvParser.type() = 42u;
     tlvParser.value( value);
     tlvParser.finalize();
@@ -159,7 +159,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_invalid)
         value[i] = i;
 
     BOOST_CHECK_THROW( tlvParser.value( value), MIHTLVLengthException);
-    tlvParser.maxLengthValue( sizeof(value));
+    tlvParser.maxLength( sizeof(value));
     tlvParser.value( value);
     tlvParser.finalize();
     CHECK_TLVParser( tlvParser, 42u, sizeof(value) );

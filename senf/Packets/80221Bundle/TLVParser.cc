@@ -40,6 +40,16 @@ SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHStatusTLVParser );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHValidTimeIntervalTLVParser );
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::MIHBaseListTLVParser
+
+prefix_ void senf::MIHBaseListTLVParser::maxListSize(MIHTLVLengthParser::value_type maxl)
+    const
+{
+    protect(), listSize_().capacity( maxl);
+    maxLength( maxl + senf::bytes(listSize_()));
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::MIHFIdTLVParser
 
 prefix_ void senf::MIHFIdTLVParser::dump(std::ostream & os)
@@ -56,17 +66,18 @@ prefix_ void senf::MIHFIdTLVParser::dump(std::ostream & os)
 prefix_ void senf::MIHFIdTLVParser::finalize()
 {
     protect(), idLength_().finalize();
-    length_() << idLength() + idLength_().bytes();
+    length_() << idLength() + senf::bytes(idLength_());
     MIHBaseTLVParser::finalize();
 }
 
-prefix_ void senf::MIHFIdTLVParser::maxIdLength(boost::uint8_t maxLength)
+prefix_ void senf::MIHFIdTLVParser::maxIdLength(boost::uint8_t maxl)
+    const
 {
     // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
-    if (maxLength > 253) 
+    if (maxl > 253) 
         throw std::length_error("maximum length of a MIHF_ID is 253 octets");
-    protect(), idLength_().maxValue( maxLength);
-    maxLengthValue( maxLength + senf::bytes(idLength_()));
+    protect(), idLength_().capacity( maxl);
+    maxLength( maxl + senf::bytes(idLength_()));
 }
 
 prefix_ senf::safe_data_iterator senf::MIHFIdTLVParser::resizeValueField(
@@ -286,7 +297,7 @@ prefix_ void senf::MIHTLVLengthParser::value(value_type const & v)
     underflow_flag() = (v <= 128);
 }
 
-prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::maxValue()
+prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::capacity()
     const
 {
     switch (bytes() ) {
@@ -340,7 +351,7 @@ prefix_ void senf::MIHTLVLengthParser::finalize()
     if (b != 5) resize_(5);
 }
 
-prefix_ void senf::MIHTLVLengthParser::maxValue(MIHTLVLengthParser::value_type v)
+prefix_ void senf::MIHTLVLengthParser::capacity(MIHTLVLengthParser::value_type v)
 {
     if (v <= 128)
         return;
