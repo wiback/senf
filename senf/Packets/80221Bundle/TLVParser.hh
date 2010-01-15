@@ -272,7 +272,7 @@ namespace senf {
             MIHFIdTLVParser const & parser;
             ValueEqualsVisitor( MIHFIdTLVParser const & p) : parser(p) {}
             bool operator()( boost::blank ) const {
-                return parser.length() == 0;
+                return parser.idLength() == 0;
             }
             template <typename MIHFIdType>
             bool operator()( MIHFIdType const & id ) const {
