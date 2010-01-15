@@ -46,6 +46,8 @@ namespace senf {
           public boost::equality_comparable<MIHFId>
     {
     public:
+        static MIHFId const Multicast; ///< The multicast (empty) MIHF Id
+        static MIHFId const None; ///< The multicast (empty) MIHF Id
         enum Type { Empty, MACAddress, INet4Address, INet6Address, String, EUI64 };
       
         MIHFId();                                   ///< Create empty instance.
