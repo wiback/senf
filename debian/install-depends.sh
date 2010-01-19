@@ -12,6 +12,6 @@ aptitude install grep-dctrl
 
 packages="$(grep-dctrl -ns Build-Depends senf <"$base/control" \
 	| tr ',\n\t' '   '  \
-	| sed -e 's/([^)]*)//g' -e 's/ \+/ /g' -e 's/ $//')"
+	| sed -e 's/([^)]*)//g' -e 's/ \+/ /g' -e 's/ \+| \+[^ ]\+//g' -e 's/ $//')"
 
 aptitude install $packages
