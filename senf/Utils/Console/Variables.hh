@@ -47,8 +47,17 @@ namespace console {
 #ifndef DOXYGEN
 
     template <class Variable>
-    VariableAttributor<Variable> senf_console_add_node(
+    typename detail::VariableNodeCreator<Variable>::result_type
+    senf_console_add_node(
         DirectoryNode & node, std::string const & name, Variable & var, int,
+        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
+        typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
+        typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
+
+    template <class Variable>
+    typename detail::VariableNodeCreator<Variable const>::result_type
+    senf_console_add_node(
+        DirectoryNode & node, std::string const & name, Variable const & var, int,
         typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
         typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
         typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
@@ -59,8 +68,17 @@ namespace console {
                           boost::reference_wrapper<Variable> var, int);
 
     template <class Variable, class Owner>
-    VariableAttributor<Variable> senf_console_add_node(
+    typename detail::VariableNodeCreator<Variable>::result_type
+    senf_console_add_node(
         DirectoryNode & node, Owner & owner, std::string const & name, Variable & var, int,
+        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
+        typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
+        typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
+
+    template <class Variable, class Owner>
+    typename detail::VariableNodeCreator<Variable const>::result_type
+    senf_console_add_node(
+        DirectoryNode & node, Owner & owner, std::string const & name, Variable const & var, int,
         typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
         typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
         typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);

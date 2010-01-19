@@ -38,7 +38,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    struct Class {};
+    struct Class;
 }
 
 BOOST_AUTO_UNIT_TEST(typeTraits)
@@ -60,11 +60,35 @@ BOOST_AUTO_UNIT_TEST(typeTraits)
     >::value ));
 
     BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< int (Class::*) >::type, 
-        int 
+        senf::remove_member_pointer< Class (Class::*) >::type, 
+        Class 
     >::value ));
     BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< void (Class::*)(int) >::type, 
+        senf::remove_member_pointer< Class const (Class::*) >::type, 
+        Class const
+    >::value ));
+    BOOST_STATIC_ASSERT(( boost::is_same< 
+        senf::remove_member_pointer< Class (Class::*)(int) >::type, 
+        Class (int)
+    >::value ));
+    BOOST_STATIC_ASSERT(( boost::is_same< 
+        senf::remove_member_pointer< Class const (Class::*)(int) >::type, 
+        Class const (int)
+    >::value ));
+    BOOST_STATIC_ASSERT(( boost::is_same< 
+        senf::remove_member_pointer< void (Class::*)(int) const>::type, 
+        void (int)
+    >::value ));
+    BOOST_STATIC_ASSERT(( boost::is_same< 
+        senf::remove_member_pointer< Class const (Class::*)(int) const>::type, 
+        Class const (int)
+    >::value ));
+    BOOST_STATIC_ASSERT(( boost::is_same< 
+        senf::remove_member_pointer< void (Class::* const)(int)>::type, 
+        void (int)
+    >::value ));
+    BOOST_STATIC_ASSERT(( boost::is_same< 
+        senf::remove_member_pointer< void (Class::* const)(int) const>::type, 
         void (int)
     >::value ));
 
@@ -97,6 +121,7 @@ BOOST_AUTO_UNIT_TEST(typeTraits)
     BOOST_STATIC_ASSERT((   senf::is_any_function< void () >::value ));
     BOOST_STATIC_ASSERT((   senf::is_any_function< void (*)(int) >::value ));
     BOOST_STATIC_ASSERT((   senf::is_any_function< void (Class::*)() >::value ));
+    BOOST_STATIC_ASSERT((   senf::is_any_function< void (Class::*)() const >::value ));
     BOOST_STATIC_ASSERT(( ! senf::is_any_function< int * >::value ));
 
     BOOST_STATIC_ASSERT(( boost::is_same<

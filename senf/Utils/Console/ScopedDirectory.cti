@@ -56,7 +56,7 @@ prefix_ senf::console::ScopedDirectory<Owner>::ScopedDirectory(Owner * owner)
 
 template <class Owner>
 template <class Object>
-prefix_ typename senf::console::OwnerNodeCreateTraits<Owner, Object>::result_type
+prefix_ typename senf::console::OwnerNodeCreateTraits<Owner, Object const>::result_type
 senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object const & ob)
 {
     return OwnerNodeCreateTraits<Owner, Object const>::Creator::create(node(), *owner_, name, ob);

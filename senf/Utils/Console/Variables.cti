@@ -200,7 +200,7 @@ template <class Variable>
 prefix_ senf::console::ConstVariableAttributor<Variable>
 senf::console::detail::VariableNodeCreator<Variable, true>::add(DirectoryNode & node,
                                                                 std::string const & name,
-                                                                Variable & var)
+                                                                Variable const & var)
 {
     typename VariableAttributor<Variable>::QueryOverload & queryOverload ( 
         node.add(name, typename detail::QueryVariable<Variable>::Function(
@@ -212,7 +212,8 @@ senf::console::detail::VariableNodeCreator<Variable, true>::add(DirectoryNode & 
 #ifndef DOXYGEN
 
 template <class Variable>
-prefix_ senf::console::VariableAttributor<Variable> senf::console::
+prefix_ typename senf::console::detail::VariableNodeCreator<Variable>::result_type
+senf::console::
 senf_console_add_node(DirectoryNode & node, std::string const & name, Variable & var, int,
                       typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *,
                       typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type *, 
@@ -222,15 +223,28 @@ senf_console_add_node(DirectoryNode & node, std::string const & name, Variable &
 }
 
 template <class Variable>
+prefix_ typename senf::console::detail::VariableNodeCreator<Variable const>::result_type 
+senf::console::
+senf_console_add_node(DirectoryNode & node, std::string const & name, Variable const & var, int,
+                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *,
+                      typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type *, 
+                      typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type *)
+{
+    return detail::VariableNodeCreator<Variable const>::add(node, name, var);
+}
+
+template <class Variable>
 prefix_ typename senf::console::detail::VariableNodeCreator<Variable>::result_type
-senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                     boost::reference_wrapper<Variable> var, int)
+senf::console::
+senf_console_add_node(DirectoryNode & node, std::string const & name,
+                      boost::reference_wrapper<Variable> var, int)
 {
     return detail::VariableNodeCreator<Variable>::add(node, name, var.get());
 }
 
 template <class Variable, class Owner>
-prefix_ senf::console::VariableAttributor<Variable> senf::console::
+prefix_ typename senf::console::detail::VariableNodeCreator<Variable>::result_type
+senf::console::
 senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                       Variable & var, int,
                       typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *, 
@@ -238,6 +252,18 @@ senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & n
                       typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type *)
 {
     return detail::VariableNodeCreator<Variable>::add(node, name, var);
+}
+
+template <class Variable, class Owner>
+prefix_ typename senf::console::detail::VariableNodeCreator<Variable const>::result_type
+senf::console::
+senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                      Variable const & var, int,
+                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *, 
+                      typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type *, 
+                      typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type *)
+{
+    return detail::VariableNodeCreator<Variable const>::add(node, name, var);
 }
 
 template <class Variable, class Owner>

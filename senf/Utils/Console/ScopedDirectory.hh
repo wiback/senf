@@ -151,8 +151,8 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
 
         template <class Object>
-        typename OwnerNodeCreateTraits<Owner, Object>::result_type add(std::string const & name,
-                                                                       Object const & ob);
+        typename OwnerNodeCreateTraits<Owner, Object const>::result_type add(
+            std::string const & name, Object const & ob);
                                         ///< Create new child node
                                         /**< Adds a new child node to the (proxied)
                                              DirectoryNode. How the node is added is configured
@@ -161,8 +161,8 @@ namespace console {
                                              directory node. */
 
         template <class Object>
-        typename OwnerNodeCreateTraits<Owner, Object>::result_type add(std::string const & name,
-                                                                       Object & ob);
+        typename OwnerNodeCreateTraits<Owner, Object>::result_type add(
+            std::string const & name, Object & ob);
                                         ///< Create new child node
                                         /**< \see add() */
 
