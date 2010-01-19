@@ -137,7 +137,7 @@ def build(env, accept_unknown_tests=False, verbose=False):
 def findSCMChanges(env):
 
     def scmchanges(dir):
-        if os.popen("cd %s; svnversion" % dir.abspath).read().strip() == "exported":
+        if os.popen("cd %s; svnversion" % dir.abspath).read().strip() in ("","exported"):
             return [ dir.Entry(x)
                      for x in os.popen("cd %s; git ls-files --modified" 
                                        % dir.abspath).read().strip().split("\n") ]
