@@ -27,10 +27,8 @@
 //#include "ConfigFile.test.ih"
 
 // Custom includes
-#include "ConfigFile.hh"
+#include "Console.hh"
 #include <fstream>
-#include "ScopedDirectory.hh"
-#include "ParsedCommand.hh"
 #include <boost/filesystem/operations.hpp>
 
 #include <senf/Utils/auto_unit_test.hh>

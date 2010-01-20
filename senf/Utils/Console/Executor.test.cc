@@ -29,7 +29,7 @@
 // Custom includes
 #include <sstream>
 #include <vector>
-#include "Executor.hh"
+#include "Console.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

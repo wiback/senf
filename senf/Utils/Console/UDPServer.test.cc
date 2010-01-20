@@ -27,7 +27,7 @@
 //#include "UDPServer.test.ih"
 
 // Custom includes
-#include "UDPServer.hh"
+#include "Console.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

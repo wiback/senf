@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <sstream>
-#include "Node.hh"
+#include "Console.hh"
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <senf/Utils/auto_unit_test.hh>
@@ -158,7 +158,7 @@ namespace {
 BOOST_AUTO_UNIT_TEST(senfConsoleAddNode)
 {
     senf::console::root().add("fn1", &callback);
-    senf::console::root().add("fn2", Functor());
+    senf::console::root().add("fn2", boost::function<void(std::ostream&,senf::console::ParseCommandInfo const &)>(Functor()));
     
     senf::console::ParseCommandInfo info;
 

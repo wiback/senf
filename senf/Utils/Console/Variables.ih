@@ -87,7 +87,7 @@ namespace detail {
     {
         typedef ConstVariableAttributor<Variable> result_type;
         static ConstVariableAttributor<Variable> add(DirectoryNode & node, std::string const & name,
-                                                     Variable const & var);
+                                                     Variable & var);
     };
 
 #endif

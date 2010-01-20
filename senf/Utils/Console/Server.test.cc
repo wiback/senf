@@ -27,7 +27,7 @@
 //#include "Server.test.ih"
 
 // Custom includes
-#include "Server.hh"
+#include "Console.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

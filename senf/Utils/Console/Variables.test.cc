@@ -100,7 +100,7 @@ namespace {
         senf::console::ScopedDirectory<Test2> dir;
         
         Test2() : dir(this), var_(0)
-            { dir.add("var", var_); }
+            { dir.add("var", boost::ref(var_)); }
         
     private:
         int var_;

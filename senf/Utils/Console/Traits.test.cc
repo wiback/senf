@@ -27,12 +27,7 @@
 //#include "Traits.test.ih"
 
 // Custom includes
-#include "Traits.hh"
-#include "Utility.hh"
-#include "ParsedCommand.hh"
-#include "Executor.hh"
-#include "Parse.hh"
-#include "ScopedDirectory.hh"
+#include "Console.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

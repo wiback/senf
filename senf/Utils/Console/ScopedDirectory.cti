@@ -85,7 +85,8 @@ prefix_ senf::console::SimpleCommandNode & senf::console::
 senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                       void (Owner::*fn)(std::ostream &, ParseCommandInfo const &), int)
 {
-    return node.add(name, boost::bind(fn,boost::ref(owner),_1,_2));
+    return node.add(name, boost::function<void (std::ostream&,ParseCommandInfo const &)>(
+                        boost::bind(fn,boost::ref(owner),_1,_2)));
 }
 
 template <class Owner>

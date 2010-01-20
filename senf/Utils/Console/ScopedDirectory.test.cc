@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <sstream>
-#include "ScopedDirectory.hh"
+#include "Console.hh"
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <senf/Utils/auto_unit_test.hh>
