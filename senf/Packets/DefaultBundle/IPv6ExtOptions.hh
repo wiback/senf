@@ -33,6 +33,18 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
+    /** \brief IPv6 Extension Option parser
+
+        Definition of parser fields in RFC2460 and assignments of <b>type</b> field at <a href="http://www.iana.org/assignments/ipv6-parameters">IANA</a>
+
+        Used in \ref IPv6HopByHopOptionsPacketParser and  \ref IPv6DestinationOptionsPacketParser.
+
+        \see <a href="http://www.iana.org/assignments/ipv6-parameters">IANA IPv6 Parameters</a>\n
+             \ref IPv6GenericOptionParser
+
+        \ingroup protocolbundle_default
+     */
+
     class IPv6OptionParser : public PacketParserBase
     {
     public:

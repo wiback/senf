@@ -114,7 +114,23 @@ prefix_ void senf::IPv6DestinationOptionsPacketType::dump(packet p, std::ostream
     os << "Internet protocol Version 6 Destination Options extension:\n"
        << senf::fieldName("next header")               << unsigned (p->nextHeader()) << "\n"
        << senf::fieldName("header length")             << unsigned (p->headerLength()) << "\n";
+    os << "  OptionTypes:\n";
+    typedef IPv6DestinationOptionsPacket::Parser::options_t::container optContainer_t;
+    optContainer_t options (p->options());
+    for (optContainer_t::const_iterator i = options.begin(); i != options.end(); ++i)
+        i->dump( os);
 }
+
+prefix_ void senf::IPv6DestinationOptionsPacketType::finalize(packet p)
+{
+    try {
+        p->nextHeader() << key(p.next());
+    }
+    catch (InvalidPacketChainException & ex) {
+        p->nextHeader() << 59; // No next header
+    }
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -303,8 +303,14 @@ namespace senf {
     {
 #       include SENF_PARSER()
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
-        SENF_PARSER_FIELD ( headerLength, UInt8Parser );
-        
+        SENF_PARSER_FIELD_RO ( headerLength, UInt8Parser );
+        typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
+        typedef detail::ListOptionTypeParser_Policy<
+            IPv6GenericOptionParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
+        typedef ListParser<ListOptionTypePolicy> ListOptionTypeParser;
+
+        SENF_PARSER_FIELD  ( options, ListOptionTypeParser);
+
         SENF_PARSER_FINALIZE ( IPv6DestinationOptionsPacketParser );
     };
     
@@ -346,8 +352,7 @@ namespace senf {
         /** \brief Dump given IPv6DestinationOptionsPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
         
-        static void finalize(packet p) { 
-            p->nextHeader() << key(p.next(nothrow)); }
+        static void finalize(packet p);
     };
     
     /** \brief IPv6 routing Destination Options packet typedef
