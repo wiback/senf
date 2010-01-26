@@ -30,7 +30,7 @@
 #include <boost/test/test_tools.hpp>
 
 ///////////////////////////////cc.p////////////////////////////////////////
-BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet)
+SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
 {
     /* used madwifi 0.9.4 */
     unsigned char data[] = {
@@ -99,7 +99,7 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)
+SENF_AUTO_UNIT_TEST(RadiotapPacket_create)
 {
     unsigned char data[] = {
             0x00 ,0x00 ,0x1a ,0x00, 0x6f, 0x18, 0x00, 0x00,
@@ -155,7 +155,7 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)
                                    data, data+sizeof(data)/sizeof(data[0]) );
 }
 
-BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
+SENF_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
 {
     /* radiotap packet from ath9k with atheros card*/
     unsigned char data[] = {

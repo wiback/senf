@@ -54,7 +54,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(sInGlEtOn)
+SENF_AUTO_UNIT_TEST(sInGlEtOn)
 {
     BOOST_CHECK_EQUAL( Test::instance().foo(), 1234 );
     BOOST_CHECK( Test::alive() );
@@ -116,7 +116,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(singletonAlive)
+SENF_AUTO_UNIT_TEST(singletonAlive)
 {
     (void) AliveTest1::instance();
     (void) AliveTest2::instance();

@@ -32,7 +32,7 @@
 
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
+SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
 {
     unsigned char data[] = {
         0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00, //timestamp
@@ -92,7 +92,7 @@ BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     SENF_CHECK_NO_THROW( p.dump( oss ));
 }
 
-BOOST_AUTO_UNIT_TEST(WLANBeaconPacket_create)
+SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
 {
     senf::WLANBeaconPacket p (senf::WLANBeaconPacket::create());
     p->timestamp() << 0x0000009C4CAA303AuLL;

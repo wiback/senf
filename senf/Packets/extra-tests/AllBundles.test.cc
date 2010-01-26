@@ -33,7 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(packetLink)
+SENF_AUTO_UNIT_TEST(packetLink)
 {
     // This test shall test, if there is now duplicated packet registration in AllBundles.
     // The test will fail at the start with an assertion error in this case.

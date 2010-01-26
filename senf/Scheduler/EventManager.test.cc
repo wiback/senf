@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(eventManager)
+SENF_AUTO_UNIT_TEST(eventManager)
 {
     senf::scheduler::FdEvent fdEvent ("fdEvent", 0);
     senf::scheduler::TimerEvent timer ("timer", 0);

@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(packetLink)
+SENF_AUTO_UNIT_TEST(packetLink)
 {
     // This test shall test, whether referencing a packet (in this case IPv6Packet) as template
     // argument correctly includes the corresponding object file when linking

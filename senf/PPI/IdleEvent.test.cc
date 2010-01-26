@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(idleEvent)
+SENF_AUTO_UNIT_TEST(idleEvent)
 {
     // Tested by ActiveFeeder.test.cc
 }

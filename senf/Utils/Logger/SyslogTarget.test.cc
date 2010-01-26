@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(syslogTarget)
+SENF_AUTO_UNIT_TEST(syslogTarget)
 {
     senf::log::SyslogTarget syslog;
     

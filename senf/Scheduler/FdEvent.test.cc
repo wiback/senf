@@ -164,7 +164,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(fdDispatcher)
+SENF_AUTO_UNIT_TEST(fdDispatcher)
 {
     senf::scheduler::detail::FdManager::instance().timeout(1000);
 
@@ -246,7 +246,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(fileDispatcher)
+SENF_AUTO_UNIT_TEST(fileDispatcher)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");

@@ -95,7 +95,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
+SENF_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
 {
     try {
         alarm(10);

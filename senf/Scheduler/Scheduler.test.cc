@@ -334,13 +334,13 @@ void schedulerTest()
     BOOST_CHECK (stop_server(pid));
 }
 
-BOOST_AUTO_UNIT_TEST(testSchedulerPollTimers)
+SENF_AUTO_UNIT_TEST(testSchedulerPollTimers)
 {
     BOOST_CHECK( ! senf::scheduler::usingHiresTimers() );
     schedulerTest();
 }
 
-BOOST_AUTO_UNIT_TEST(testSchedulerHiresTimers)
+SENF_AUTO_UNIT_TEST(testSchedulerHiresTimers)
 {
     if (senf::scheduler::haveScalableHiresTimers())
         BOOST_MESSAGE( "Using timerfd() hires timers" );
@@ -353,7 +353,7 @@ BOOST_AUTO_UNIT_TEST(testSchedulerHiresTimers)
     BOOST_CHECK( ! senf::scheduler::usingHiresTimers() );
 }
 
-BOOST_AUTO_UNIT_TEST(testSchedulerPOSIXTimers)
+SENF_AUTO_UNIT_TEST(testSchedulerPOSIXTimers)
 {
     if (senf::scheduler::haveScalableHiresTimers()) {
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().timerSource(
@@ -381,7 +381,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(blockSignals)
+SENF_AUTO_UNIT_TEST(blockSignals)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");

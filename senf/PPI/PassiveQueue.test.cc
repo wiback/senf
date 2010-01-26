@@ -43,7 +43,7 @@ namespace connector = ppi::connector;
 namespace module = ppi::module;
 namespace debug = module::debug;
 
-BOOST_AUTO_UNIT_TEST(passiveQueue)
+SENF_AUTO_UNIT_TEST(passiveQueue)
 {
     debug::ActiveSource source;
     module::PassiveQueue queue;

@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(iteratorTraits)
+SENF_AUTO_UNIT_TEST(iteratorTraits)
 {
     BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<int*>::value, true );
     BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<void>::value, false );

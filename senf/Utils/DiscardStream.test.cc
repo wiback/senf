@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(discardStream)
+SENF_AUTO_UNIT_TEST(discardStream)
 {
     senf::DiscardStream stream;
     SENF_CHECK_NO_THROW( stream << "discard me" );

@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(fileTarget)
+SENF_AUTO_UNIT_TEST(fileTarget)
 {
     std::string filename ("/tmp/senf_fileTarget_test.log");
     senf::log::FileTarget target (filename);

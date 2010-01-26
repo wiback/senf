@@ -45,7 +45,7 @@
 namespace debug = senf::ppi::module::debug;
 namespace ppi = senf::ppi;
 
-BOOST_AUTO_UNIT_TEST(debugModules)
+SENF_AUTO_UNIT_TEST(debugModules)
 {
     {
         debug::ActiveSource source;
@@ -95,7 +95,7 @@ BOOST_AUTO_UNIT_TEST(debugModules)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(activeFeederSource)
+SENF_AUTO_UNIT_TEST(activeFeederSource)
 {
     debug::ActiveFeederSource source;
     debug::PassiveSink sink;
@@ -109,7 +109,7 @@ BOOST_AUTO_UNIT_TEST(activeFeederSource)
     BOOST_CHECK_EQUAL( sink.size(), 1u );
 }
 
-BOOST_AUTO_UNIT_TEST(activeFeederSink)
+SENF_AUTO_UNIT_TEST(activeFeederSink)
 {
     debug::PassiveSource source;
     debug::ActiveFeederSink sink;
@@ -128,7 +128,7 @@ BOOST_AUTO_UNIT_TEST(activeFeederSink)
     BOOST_CHECK( source.empty() );
 }
 
-BOOST_AUTO_UNIT_TEST(logSink)
+SENF_AUTO_UNIT_TEST(logSink)
 {
     senf::log::StringTarget logTarget;
     logTarget.route<senf::log::Debug,senf::log::VERBOSE>();

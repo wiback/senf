@@ -52,7 +52,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(scopedDirectory)
+SENF_AUTO_UNIT_TEST(scopedDirectory)
 {
     {
         TestObject ob;
@@ -71,7 +71,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(scopedDirectoryVoid)
+SENF_AUTO_UNIT_TEST(scopedDirectoryVoid)
 {
     {
         senf::console::ScopedDirectory<> dir;
@@ -94,7 +94,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(scopedDirectoryBase)
+SENF_AUTO_UNIT_TEST(scopedDirectoryBase)
 {
     {
         senf::console::ScopedDirectory<> dir;

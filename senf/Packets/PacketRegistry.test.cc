@@ -61,7 +61,7 @@ namespace {
 SENF_PACKET_REGISTRY_REGISTER(StringTag, "foo", FooPacket);
 SENF_PACKET_REGISTRY_REGISTER(StringTag, "bar", BarPacket);
 
-BOOST_AUTO_UNIT_TEST(packetRegistry_test)
+SENF_AUTO_UNIT_TEST(packetRegistry_test)
 {
     PacketRegistry<BaseTag>::registerPacket<FooPacket>(1u);
     PacketRegistry<BaseTag>::registerPacket<BarPacket>(2u);

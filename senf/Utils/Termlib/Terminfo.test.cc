@@ -48,7 +48,7 @@ namespace std {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(terminfo)
+SENF_AUTO_UNIT_TEST(terminfo)
 {
     senf::term::Terminfo ifo ("vt220");
     senf::term::KeyParser kp (ifo);

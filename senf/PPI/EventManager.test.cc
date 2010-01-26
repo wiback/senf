@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(eventManager)
+SENF_AUTO_UNIT_TEST(eventManager)
 {
     // Tested indirectly by Route.test.cc and Module.test.cc
 }

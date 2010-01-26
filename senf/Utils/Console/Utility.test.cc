@@ -47,7 +47,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(charAsString)
+SENF_AUTO_UNIT_TEST(charAsString)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -65,7 +65,7 @@ BOOST_AUTO_UNIT_TEST(charAsString)
     BOOST_CHECK_EQUAL( ss.str(), "\x01\n" );
 }
 
-BOOST_AUTO_UNIT_TEST(flagCollection)
+SENF_AUTO_UNIT_TEST(flagCollection)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;

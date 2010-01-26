@@ -62,7 +62,7 @@ namespace {
     
 }
 
-BOOST_AUTO_UNIT_TEST(configFile)
+SENF_AUTO_UNIT_TEST(configFile)
 {
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n" 
@@ -96,7 +96,7 @@ BOOST_AUTO_UNIT_TEST(configFile)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(configFileRestrict)
+SENF_AUTO_UNIT_TEST(configFileRestrict)
 {
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n"
@@ -130,7 +130,7 @@ BOOST_AUTO_UNIT_TEST(configFileRestrict)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(configFileSkipGroup)
+SENF_AUTO_UNIT_TEST(configFileSkipGroup)
 {
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n"
@@ -171,7 +171,7 @@ BOOST_AUTO_UNIT_TEST(configFileSkipGroup)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(configRestrictAndLink)
+SENF_AUTO_UNIT_TEST(configRestrictAndLink)
 {
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n"

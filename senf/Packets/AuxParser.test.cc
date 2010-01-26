@@ -37,7 +37,7 @@
 
 // The other aux policies are tested with the corresponding container classes
 
-BOOST_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy)
+SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy)
 {
     unsigned char data[] = { 0x10, 0x11,  0x12, 0x13,  0x14, 0x15,
                              0x20, 0x21,  0x22, 0x23,  0x24, 0x25 };
@@ -74,7 +74,7 @@ BOOST_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
+SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
 {
     unsigned char data[] = { 0x10, 0x11,  0x12, 0x13,  0x14, 0x15,
                              0x20, 0x21,  0x22, 0x23,  0x24, 0x25 };
@@ -119,7 +119,7 @@ BOOST_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(listPacketSizeAuxPolicy)
+SENF_AUTO_UNIT_TEST(listPacketSizeAuxPolicy)
 {
     unsigned char data[] = { 0x10, 0x11,  0x12, 0x13,  0x14, 0x15,
                              0x20, 0x21,  0x22, 0x23,  0x24, 0x25 };

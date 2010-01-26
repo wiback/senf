@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ioEvent)
+SENF_AUTO_UNIT_TEST(ioEvent)
 {
     // Tested in SocketSource.test.cc and SocketSink.test.cc
 }

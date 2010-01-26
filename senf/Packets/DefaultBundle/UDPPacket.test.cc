@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(udpPacket_parse)
+SENF_AUTO_UNIT_TEST(udpPacket_parse)
 {
 
     unsigned char data[] = { 
@@ -55,7 +55,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
+SENF_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
 {
     unsigned char data[] = { 
             0x45, 0x00, 0x00, 0x26, 0x00, 0x00, 0x40, 0x00,
@@ -86,7 +86,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
     BOOST_CHECK( udp->validateChecksum() );
 }
 
-BOOST_AUTO_UNIT_TEST(udpPacket_in_ipv6_parse)
+SENF_AUTO_UNIT_TEST(udpPacket_in_ipv6_parse)
 {
     // captured udp packet generated with mgen send over ipv6
     unsigned char data[] = { 

@@ -62,7 +62,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(configBundle)
+SENF_AUTO_UNIT_TEST(configBundle)
 {
     senf::console::ScopedDirectory<> root;
     senf::console::root().add("root", root);

@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(unDatagramSocketHandle)
+SENF_AUTO_UNIT_TEST(unDatagramSocketHandle)
 {
     std::string testString ("Hallo Welt.");
     std::string socketPath (".socket-UNDatagramSocketHandle.test");

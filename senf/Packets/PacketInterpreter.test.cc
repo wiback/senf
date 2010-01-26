@@ -43,7 +43,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(packetInterpreterBase)
+SENF_AUTO_UNIT_TEST(packetInterpreterBase)
 {
     {
         senf::PacketInterpreter<VoidPacket>::ptr pi2 (senf::PacketInterpreter<VoidPacket>::create());
@@ -103,7 +103,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(packetInterpreter)
+SENF_AUTO_UNIT_TEST(packetInterpreter)
 {
     typedef senf::PacketInterpreterBase::size_type size_type;
     {
@@ -215,7 +215,7 @@ BOOST_AUTO_UNIT_TEST(packetInterpreter)
 // fields() is tested in DefaultBundle/EthernetPacket.test.cc
 // initSize() and initHeadSize() are already tested indirectly above
 
-BOOST_AUTO_UNIT_TEST(packetInterpreter_factory)
+SENF_AUTO_UNIT_TEST(packetInterpreter_factory)
 {
     typedef senf::PacketInterpreterBase::size_type size_type;
 

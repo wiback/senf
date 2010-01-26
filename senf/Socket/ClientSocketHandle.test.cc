@@ -53,7 +53,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(clientSocketHandle)
+SENF_AUTO_UNIT_TEST(clientSocketHandle)
 {
     BOOST_CHECKPOINT("Constructing socket handle");
     MySocketHandle myh;

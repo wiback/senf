@@ -63,7 +63,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(ArrayParser_test)
+SENF_AUTO_UNIT_TEST(ArrayParser_test)
 {
     senf::PacketParserBase::byte data[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));

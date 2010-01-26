@@ -55,7 +55,7 @@ namespace {
             senf::detail::PrefixAuxParserPolicy<senf::UInt16Parser> > > MyListBParser;
 }
 
-BOOST_AUTO_UNIT_TEST(ListBParser)
+SENF_AUTO_UNIT_TEST(ListBParser)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             MyListBParser::init_bytes));
@@ -76,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(ListBParser)
     BOOST_CHECK( ! p.empty() );
 }
 
-BOOST_AUTO_UNIT_TEST(ListBParser_container)
+SENF_AUTO_UNIT_TEST(ListBParser_container)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             MyListBParser::init_bytes));
@@ -173,7 +173,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(listBytesMacro)
+SENF_AUTO_UNIT_TEST(listBytesMacro)
 {
     unsigned char data[] = {    8,                   // size1
                                18,                   // size2
@@ -253,7 +253,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(listBytesParser_packetSize)
+SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
 {
     unsigned char data[] = { 0x01,                   // list()[0].vec().size()
                              0x05, 0x06,             // list()[0].vec()[0]

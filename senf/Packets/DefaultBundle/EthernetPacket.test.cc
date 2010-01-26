@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ethernetPacket_parse)
+SENF_AUTO_UNIT_TEST(ethernetPacket_parse)
 {
     senf::PacketData::byte data[] = {
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
@@ -54,7 +54,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
+SENF_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
 {
     unsigned char data[] = {
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
@@ -76,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
     BOOST_CHECK_EQUAL( *v.next().data().begin(), 0xf0 );
 }
 
-BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
+SENF_AUTO_UNIT_TEST(ethernetPacket_create)
 {
     senf::EthernetPacket eth (senf::EthernetPacket::create());
     eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
@@ -96,7 +96,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
     BOOST_CHECK_EQUAL(vlan->type(), 0x0800u);
 }
 
-BOOST_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
+SENF_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
 {
     senf::EthernetPacket eth (senf::EthernetPacket::create());
     eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");

@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(debugEvent)
+SENF_AUTO_UNIT_TEST(debugEvent)
 {
     // Tested in Module.test.cc
 }

@@ -39,7 +39,7 @@ namespace {
     struct VoidPacket : public senf::PacketTypeBase {};
 }
 
-BOOST_AUTO_UNIT_TEST(safePacketParser)
+SENF_AUTO_UNIT_TEST(safePacketParser)
 {
     senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type(6u)));

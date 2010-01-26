@@ -56,7 +56,7 @@ namespace {
     { os << "formatter"; }
 }
 
-BOOST_AUTO_UNIT_TEST(parsedCommand)
+SENF_AUTO_UNIT_TEST(parsedCommand)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -257,7 +257,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(memberParsedCommand)
+SENF_AUTO_UNIT_TEST(memberParsedCommand)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -287,7 +287,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(directoryReturn)
+SENF_AUTO_UNIT_TEST(directoryReturn)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;

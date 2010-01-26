@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(dumpFormat)
+SENF_AUTO_UNIT_TEST(dumpFormat)
 {
     BOOST_CHECK_EQUAL( senf::fieldName("test"), "  test                    : " );
     BOOST_CHECK_EQUAL( senf::fieldName("xxxxxxxxxxxxxxxxxxxxxxx"), "  xxxxxxxxxxxxxxxxxxxxxxx : " );

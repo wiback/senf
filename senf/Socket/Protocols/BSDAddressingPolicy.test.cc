@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(bsdAddressingPolicy)
+SENF_AUTO_UNIT_TEST(bsdAddressingPolicy)
 {
     typedef senf::ClientSocketHandle<senf::MakeSocketPolicy<
         senf::BSDAddressingPolicy>::policy> BSDHandle;

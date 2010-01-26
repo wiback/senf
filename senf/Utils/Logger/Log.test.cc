@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(logger)
+SENF_AUTO_UNIT_TEST(logger)
 {
     senf::log::StringTarget target;
 

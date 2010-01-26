@@ -37,7 +37,7 @@
 
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(transportPacket_parse)
+SENF_AUTO_UNIT_TEST(transportPacket_parse)
 {
     // TransportStream-Packet containing a ULE encoded IPv6 ping packet,
     // captured with dvbsnoop
@@ -93,7 +93,7 @@ BOOST_AUTO_UNIT_TEST(transportPacket_parse)
 }
 
 
-BOOST_AUTO_UNIT_TEST(transportPacket_create_with_pusi)
+SENF_AUTO_UNIT_TEST(transportPacket_create_with_pusi)
 {
     TransportPacket ts_packet (TransportPacket::create());
     ts_packet->setPUSI(true);

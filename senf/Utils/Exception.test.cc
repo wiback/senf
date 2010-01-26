@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(wrapException)
+SENF_AUTO_UNIT_TEST(wrapException)
 {
     bool bad_cast (false);
 
@@ -71,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(wrapException)
     BOOST_CHECK( bad_cast );
 }
 
-BOOST_AUTO_UNIT_TEST(errnoException)
+SENF_AUTO_UNIT_TEST(errnoException)
 {
     try {
         try {

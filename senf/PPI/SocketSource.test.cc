@@ -68,7 +68,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(socketSource)
+SENF_AUTO_UNIT_TEST(socketSource)
 {
     senf::UDPv4ClientSocketHandle inputSocket;
     inputSocket.bind(senf::INet4SocketAddress(localhost4str(0)));

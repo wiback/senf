@@ -53,7 +53,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(membind)
+SENF_AUTO_UNIT_TEST(membind)
 {
     Test instance;
     boost::function<char const * ()> f1 (senf::membind(&Test::meth1,instance));

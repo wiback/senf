@@ -68,7 +68,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(module)
+SENF_AUTO_UNIT_TEST(module)
 {
     // route and registerEvent are tested in Route.test.cc
 
@@ -111,7 +111,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(delayedInit)
+SENF_AUTO_UNIT_TEST(delayedInit)
 {
     MakeInit maker;
     senf::scheduler::TimerEvent timer ( 

@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(discardSink)
+SENF_AUTO_UNIT_TEST(discardSink)
 {
     // here we really can just validate that everything compiles ...
 

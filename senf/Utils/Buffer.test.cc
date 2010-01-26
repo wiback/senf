@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(buffer)
+SENF_AUTO_UNIT_TEST(buffer)
 {
     int size (128);
 

@@ -50,7 +50,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(ListOptionTypeParser)
+SENF_AUTO_UNIT_TEST(ListOptionTypeParser)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             OptionParser::init_bytes));
@@ -75,7 +75,7 @@ BOOST_AUTO_UNIT_TEST(ListOptionTypeParser)
     BOOST_CHECK_EQUAL( p.list().empty(), false );
 }
 
-BOOST_AUTO_UNIT_TEST(ListOptionTypeParser_container)
+SENF_AUTO_UNIT_TEST(ListOptionTypeParser_container)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             OptionParser::init_bytes));

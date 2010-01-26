@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(throttleBarrier)
+SENF_AUTO_UNIT_TEST(throttleBarrier)
 {
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::ThrottleBarrier barrier;

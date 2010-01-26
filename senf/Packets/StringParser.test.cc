@@ -42,7 +42,7 @@ namespace {
     typedef senf::StringParser<senf::UInt16Parser> MyStringParser;
 }
 
-BOOST_AUTO_UNIT_TEST(stringParser)
+SENF_AUTO_UNIT_TEST(stringParser)
 {
     senf::PacketInterpreterBase::byte data[] = { 0x00, 0x04, 'T', 'E', 'S', 'T' };
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));

@@ -44,7 +44,7 @@ namespace debug = ppi::module::debug;
 // the corresponding connected module since otherwise the connectors cannot be connected anywhere
 // and will be unusable.
 
-BOOST_AUTO_UNIT_TEST(connector)
+SENF_AUTO_UNIT_TEST(connector)
 {
     // It doesn't matter, which type of connectors we use here since they are all based on
     // Connector.
@@ -61,7 +61,7 @@ BOOST_AUTO_UNIT_TEST(connector)
     BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
 }
 
-BOOST_AUTO_UNIT_TEST(passiveConnector)
+SENF_AUTO_UNIT_TEST(passiveConnector)
 {
     debug::ActiveSource source;
     debug::PassiveSink target;
@@ -90,7 +90,7 @@ namespace {
     void handler() { called = true; }
 }
 
-BOOST_AUTO_UNIT_TEST(activeConnector)
+SENF_AUTO_UNIT_TEST(activeConnector)
 {
     debug::ActiveSource source;
     debug::PassiveSink target;
@@ -122,7 +122,7 @@ BOOST_AUTO_UNIT_TEST(activeConnector)
     BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
 }
 
-BOOST_AUTO_UNIT_TEST(inputConnector)
+SENF_AUTO_UNIT_TEST(inputConnector)
 {
     debug::ActiveSource source;
     debug::PassiveSink target;
@@ -142,7 +142,7 @@ BOOST_AUTO_UNIT_TEST(inputConnector)
     BOOST_CHECK( target.input.empty() );
 }
 
-BOOST_AUTO_UNIT_TEST(outputConnector)
+SENF_AUTO_UNIT_TEST(outputConnector)
 {
     debug::ActiveSource source;
     debug::PassiveSink target;
@@ -179,7 +179,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(passiveInput)
+SENF_AUTO_UNIT_TEST(passiveInput)
 {
     debug::ActiveSource source;
     PassiveInputTest target;
@@ -222,7 +222,7 @@ BOOST_AUTO_UNIT_TEST(passiveInput)
     BOOST_CHECK( ! target.input.throttled() );
 }
 
-BOOST_AUTO_UNIT_TEST(passiveOutput)
+SENF_AUTO_UNIT_TEST(passiveOutput)
 {
     debug::PassiveSource source;
     debug::ActiveSink target;
@@ -243,7 +243,7 @@ BOOST_AUTO_UNIT_TEST(passiveOutput)
     // connect() is tested indirectly via ppi::connect
 }
 
-BOOST_AUTO_UNIT_TEST(activeInput)
+SENF_AUTO_UNIT_TEST(activeInput)
 {
     debug::PassiveSource source;
     debug::ActiveSink target;
@@ -268,7 +268,7 @@ BOOST_AUTO_UNIT_TEST(activeInput)
     BOOST_CHECK( target.request() == p );
 }
 
-BOOST_AUTO_UNIT_TEST(activeOutput)
+SENF_AUTO_UNIT_TEST(activeOutput)
 {
     debug::ActiveSource source;
     debug::PassiveSink target;
@@ -362,7 +362,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(typedInput)
+SENF_AUTO_UNIT_TEST(typedInput)
 {
     debug::ActiveSource source;
     TypedPassiveInput<> target;
@@ -374,7 +374,7 @@ BOOST_AUTO_UNIT_TEST(typedInput)
     source.submit(p);
 }
 
-BOOST_AUTO_UNIT_TEST(tyepdOutput)
+SENF_AUTO_UNIT_TEST(tyepdOutput)
 {
     TypedPassiveOutput<> source;
     debug::ActiveSink target;
@@ -385,7 +385,7 @@ BOOST_AUTO_UNIT_TEST(tyepdOutput)
     (void) target.request();
 }
 
-BOOST_AUTO_UNIT_TEST(connectorTest)
+SENF_AUTO_UNIT_TEST(connectorTest)
 {
     {
         TypedPassiveInput<> input;
@@ -421,7 +421,7 @@ BOOST_AUTO_UNIT_TEST(connectorTest)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(delayedConnect)
+SENF_AUTO_UNIT_TEST(delayedConnect)
 {
     {
         debug::PassiveSource source;
@@ -501,7 +501,7 @@ BOOST_AUTO_UNIT_TEST(delayedConnect)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(disconnect)
+SENF_AUTO_UNIT_TEST(disconnect)
 {
     {
         debug::PassiveSource source;

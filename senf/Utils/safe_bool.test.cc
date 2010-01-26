@@ -54,7 +54,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(safeBool)
+SENF_AUTO_UNIT_TEST(safeBool)
 {
     BOOST_CHECK( TestTrue() );
     BOOST_CHECK( ! TestFalse() );

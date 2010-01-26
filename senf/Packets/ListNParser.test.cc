@@ -57,7 +57,7 @@ namespace {
                 senf::UInt16Parser> > > MyListNParser;
 }
 
-BOOST_AUTO_UNIT_TEST(ListNParser_container)
+SENF_AUTO_UNIT_TEST(ListNParser_container)
 {
     VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
     MyListNParser(vp.data().begin(),&vp.data()).init();
@@ -86,7 +86,7 @@ BOOST_AUTO_UNIT_TEST(ListNParser_container)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(ListNParser)
+SENF_AUTO_UNIT_TEST(ListNParser)
 {
     VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
 
@@ -167,7 +167,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(listMacro)
+SENF_AUTO_UNIT_TEST(listMacro)
 {
     unsigned char data[] = { 0x04,                   // size1
                              0x03,                   // size2

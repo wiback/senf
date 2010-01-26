@@ -41,7 +41,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_fragment)
+SENF_AUTO_UNIT_TEST(ipv6Extensions_fragment)
 {
     // Just for the fun of it, we test a nice chain: A fragment of a fragmented UDP packet
     unsigned char Fragment_packetData[] = {
@@ -104,7 +104,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_fragment)
 }
 
 
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_routing)
+SENF_AUTO_UNIT_TEST(ipv6Extensions_routing)
 {
     unsigned char Routing_packetData[] = {
         // IP header
@@ -161,7 +161,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_routing)
 }
 
 
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
+SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
 {
     unsigned char HopByHop_packetData[] = {
         0x60, 0x00, 0x00, 0x00, // IP version, class, flow label
@@ -224,7 +224,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
 }
 
 
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
+SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
 {
     std::ostringstream oss (std::ostringstream::out);
     unsigned char HopByHop_packetData[] = {
@@ -328,7 +328,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
+SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
 {    
     senf::IPv6HopByHopOptionsPacket p ( senf::IPv6HopByHopOptionsPacket::create() );
     p->nextHeader() = 0x3a;
@@ -354,7 +354,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
 }
 
 
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
+SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
 {
     unsigned char data[] = { 
             0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length) 

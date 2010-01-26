@@ -31,7 +31,7 @@
 
 ///////////////////////////////cc.p////////////////////////////////////////
 /* test parser with a data frame */
-BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
+SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
 {
     unsigned char data[] = {
             0x88, 0x01, 0x00, 0x00, 0x00, 0x1a,             //header
@@ -81,7 +81,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
 
 
 /* test parser with creating a data frame*/
-BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
+SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
 {
     senf::WLANPacket_DataFrame p (senf::WLANPacket_DataFrame::create());
 
@@ -91,7 +91,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
 
 
 /* test parser with a beacon frame */
-BOOST_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
+SENF_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
 {
     unsigned char data[] = {
             0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff,
@@ -143,7 +143,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
 
 
 /* test parser with creating a beacon frame*/
-BOOST_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
+SENF_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
 {
     senf::WLANPacket_MgtFrame p (senf::WLANPacket_MgtFrame::create());
 
@@ -162,7 +162,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
 
 
 /* test parser with an ACK frame*/
-BOOST_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
+SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
 {
     unsigned char data[] = {
             0xd4, 0x00, 0x00, 0x00, 
@@ -191,7 +191,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
 }
 
 /* test parser with creating an ACK frame*/
-BOOST_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_create)
+SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_create)
 {
     senf::WLANPacket_CtrlFrame p (senf::WLANPacket_CtrlFrame::create()) ;
     p->receiverAddress() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c");

@@ -77,7 +77,7 @@ namespace
     };
 }
 
-BOOST_AUTO_UNIT_TEST(commandGrammar)
+SENF_AUTO_UNIT_TEST(commandGrammar)
 {
     senf::console::detail::CommandGrammar<TestParseDispatcher>::Context context;
     std::stringstream ss;
@@ -198,7 +198,7 @@ namespace {
     { commands.push_back(i); }
 }
 
-BOOST_AUTO_UNIT_TEST(commandParser)
+SENF_AUTO_UNIT_TEST(commandParser)
 {
     senf::console::CommandParser parser;
 
@@ -288,7 +288,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(checkedArgumentIterator)
+SENF_AUTO_UNIT_TEST(checkedArgumentIterator)
 {
     senf::console::CommandParser parser;
 
@@ -318,7 +318,7 @@ BOOST_AUTO_UNIT_TEST(checkedArgumentIterator)
     commands.clear();
 }
 
-BOOST_AUTO_UNIT_TEST(parseIncremental)
+SENF_AUTO_UNIT_TEST(parseIncremental)
 {
     senf::console::CommandParser parser;
 
@@ -340,7 +340,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(parseExceptions)
+SENF_AUTO_UNIT_TEST(parseExceptions)
 {
     senf::console::CommandParser parser;
     std::string msg;

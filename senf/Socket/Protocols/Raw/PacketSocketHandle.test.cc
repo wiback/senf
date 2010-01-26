@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(packetSocketHandle)
+SENF_AUTO_UNIT_TEST(packetSocketHandle)
 {
     // We have a Problem here .. packet sockets are only allowed for root
     if (getuid() != 0) {

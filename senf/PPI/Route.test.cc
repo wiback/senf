@@ -109,7 +109,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(route)
+SENF_AUTO_UNIT_TEST(route)
 {
     debug::PassiveSource passiveSource;
     debug::ActiveSource activeSource;
@@ -214,7 +214,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(connect_runtime)
+SENF_AUTO_UNIT_TEST(connect_runtime)
 {
     TestSink sink;
     module::ActiveFeeder feeder;

@@ -101,7 +101,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(statistics)
+SENF_AUTO_UNIT_TEST(statistics)
 {
     senf::Statistics stats;
     senf::log::StringTarget statslog;

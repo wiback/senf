@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ipChecksum)
+SENF_AUTO_UNIT_TEST(ipChecksum)
 {
     char data[] = { 0x45, 0x00, 0x00, 0x28, 0x49, 0x44, 0x40, 0x00,
                     0x40, 0x06, 0x00, 0x00, 0x0a, 0xc1, 0x01, 0x06,

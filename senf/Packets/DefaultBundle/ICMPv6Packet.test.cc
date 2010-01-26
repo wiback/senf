@@ -33,7 +33,7 @@
 
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
+SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
 {
     unsigned char dataListenerReport[] = {
             0x8f, 0x00, 0x8d, 0x54, 0x00, 0x00, 0x00, 0x01,
@@ -159,7 +159,7 @@ BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     
 }
 
-BOOST_AUTO_UNIT_TEST(ICMPv6Packet_create)
+SENF_AUTO_UNIT_TEST(ICMPv6Packet_create)
 {
     std::ostringstream oss (std::ostringstream::out);
     

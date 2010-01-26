@@ -58,7 +58,7 @@ bool equal_elements(InputIterator first, InputIterator last, const T& value)
 }
         
 
-BOOST_AUTO_UNIT_TEST(one_section_to_one_transportpacket)
+SENF_AUTO_UNIT_TEST(one_section_to_one_transportpacket)
 {
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::debug::PassiveSink sink;
@@ -90,7 +90,7 @@ BOOST_AUTO_UNIT_TEST(one_section_to_one_transportpacket)
             0xffu));
 }
 
-BOOST_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
+SENF_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
 {
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::debug::PassiveSink sink;
@@ -130,7 +130,7 @@ BOOST_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
             0xffu));
 }
 
-BOOST_AUTO_UNIT_TEST(many_sections_to_many_transportpackets)
+SENF_AUTO_UNIT_TEST(many_sections_to_many_transportpackets)
 {
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::debug::PassiveSink sink;

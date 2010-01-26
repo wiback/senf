@@ -122,7 +122,7 @@ namespace {
 }
 
 
-BOOST_AUTO_UNIT_TEST(GenericTLV_parser)
+SENF_AUTO_UNIT_TEST(GenericTLV_parser)
 {
     BOOST_CHECK_EQUAL( senf::init_bytes<MyGenericTLVParser>::value, 
             senf::init_bytes<MyTLVParserBase>::value) ;
@@ -155,7 +155,7 @@ BOOST_AUTO_UNIT_TEST(GenericTLV_parser)
     BOOST_CHECK_EQUAL( concreteTLVParser.myValue(), 0xabababab );
 }
 
-BOOST_AUTO_UNIT_TEST(GenericTLV_packet)
+SENF_AUTO_UNIT_TEST(GenericTLV_packet)
 {
     MyTestPacket p ( MyTestPacket::create());
     MyTestPacket::Parser::tlv_list_t::container tlvContainer (p->tlv_list() );
@@ -174,7 +174,7 @@ BOOST_AUTO_UNIT_TEST(GenericTLV_packet)
 }
 
 
-BOOST_AUTO_UNIT_TEST(GenericTLV_registry)
+SENF_AUTO_UNIT_TEST(GenericTLV_registry)
 {
     MyTestPacket p ( MyTestPacket::create());
     MyTestPacket::Parser::tlv_list_t::container tlvContainer (p->tlv_list() );
@@ -196,7 +196,7 @@ BOOST_AUTO_UNIT_TEST(GenericTLV_registry)
     BOOST_CHECK_EQUAL( ss.str().substr(0,21), "  MyConcreteTLVParser" );
 }
 
-BOOST_AUTO_UNIT_TEST(GenericTLV_predicate)
+SENF_AUTO_UNIT_TEST(GenericTLV_predicate)
 {
     MyTestPacket p ( MyTestPacket::create() );
     MyTestPacket::Parser::tlv_list_t::container tlvContainer (p->tlv_list() );

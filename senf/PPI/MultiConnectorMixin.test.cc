@@ -141,7 +141,7 @@ namespace {
     { os << value.value; return os; }
 }
 
-BOOST_AUTO_UNIT_TEST(multiConnectorMixin_sequenceContainer)
+SENF_AUTO_UNIT_TEST(multiConnectorMixin_sequenceContainer)
 {
     debug::ActiveSource source1;
     debug::ActiveSource source2;
@@ -169,7 +169,7 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_sequenceContainer)
     BOOST_CHECK_EQUAL( module.count, 1u );
 }
 
-BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
+SENF_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
 {
     debug::ActiveSource source;
     UserContainerModule module;
@@ -194,7 +194,7 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
     BOOST_CHECK_EQUAL( module.connectors().size(), 1u );
 }
 
-BOOST_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
+SENF_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
 {
     debug::ActiveSource source;
     debug::PassiveSink sink;

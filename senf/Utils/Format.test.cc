@@ -39,7 +39,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(formatEng)
+SENF_AUTO_UNIT_TEST(formatEng)
 {
     std::stringstream ss;
 
@@ -132,7 +132,7 @@ BOOST_AUTO_UNIT_TEST(formatEng)
                        "  12.35+-067.00E+00" );
 }
 
-BOOST_AUTO_UNIT_TEST(dumpint)
+SENF_AUTO_UNIT_TEST(dumpint)
 {
     std::stringstream ss;
     

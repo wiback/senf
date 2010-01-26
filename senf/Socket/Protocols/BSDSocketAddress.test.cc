@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(bsdSocketAddress)
+SENF_AUTO_UNIT_TEST(bsdSocketAddress)
 {
     senf::GenericBSDSocketAddress g1;
     senf::GenericBSDSocketAddress g2 (senf::INet4SocketAddress("1.2.3.4:5678"));

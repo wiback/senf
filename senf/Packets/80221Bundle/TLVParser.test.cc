@@ -56,7 +56,7 @@ namespace {
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_simple_length)
+SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_simple_length)
 {
     PacketInterpreterBase::byte data[] = {
         0x01, // type
@@ -69,7 +69,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_simple_length)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_extended_length)
+SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_extended_length)
 {
     PacketInterpreterBase::byte data[] = {
         0x01, // type
@@ -96,7 +96,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_extended_length)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_simple_length)
+SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_simple_length)
 {
     PacketInterpreterBase::byte value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
@@ -120,7 +120,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_simple_length)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
+SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
 {
     PacketInterpreterBase::byte value[255];
     for (unsigned i=0; i<sizeof(value); i++)
@@ -146,7 +146,7 @@ BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHGenericTLVParser_create_invalid)
+SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_invalid)
 {
     PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type(2u)));
@@ -194,7 +194,7 @@ namespace {
     typedef ConcretePacket<TestMacAddressTLVPacketType> TestMacAddressTLVPacket;
 }
 
-BOOST_AUTO_UNIT_TEST(TestMacAddressTLVPacket_create)
+SENF_AUTO_UNIT_TEST(TestMacAddressTLVPacket_create)
 {
     TestMacAddressTLVPacket tlvPacket (TestMacAddressTLVPacket::create());
     tlvPacket->type() = 42;

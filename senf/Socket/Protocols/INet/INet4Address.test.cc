@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(inet4Address)
+SENF_AUTO_UNIT_TEST(inet4Address)
 {
     using senf::INet4Address;
     using senf::AddressSyntaxException;
@@ -91,7 +91,7 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(inet4Network)
+SENF_AUTO_UNIT_TEST(inet4Network)
 {
     senf::INet4Network net (senf::INet4Address::Loopback,8);
     BOOST_CHECK_EQUAL( net.address().address(), 0x7F000000u );

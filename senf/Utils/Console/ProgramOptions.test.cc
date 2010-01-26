@@ -46,7 +46,7 @@ namespace {
     { val2 = true; }
 }
 
-BOOST_AUTO_UNIT_TEST(programOptions)
+SENF_AUTO_UNIT_TEST(programOptions)
 {
     senf::console::ScopedDirectory<> root;
     senf::console::root().add("root", root);

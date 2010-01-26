@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(eui64)
+SENF_AUTO_UNIT_TEST(eui64)
 {
     senf::EUI64 eui;
     BOOST_CHECK( !eui );

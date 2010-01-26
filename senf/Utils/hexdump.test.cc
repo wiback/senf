@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(hExDuMp)
+SENF_AUTO_UNIT_TEST(hExDuMp)
 {
     char data[] = { 0x18, 0x19, 0x20, 0x21, 0x7c, 0x7d, 0x7e, 0x7f };
     std::stringstream s;

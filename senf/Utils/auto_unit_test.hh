@@ -90,9 +90,9 @@
 
     \ingroup unittest
  */
-#define SENF_CHECK_NO_THROW(expr)                                                                 \
-    BOOST_CHECK_NO_THROW(                                                                         \
-        try { expr ; }                                                                            \
+#define SENF_CHECK_NO_THROW(expr)                                                               \
+    BOOST_CHECK_NO_THROW(                                                                       \
+        try { expr ; }                                                                          \
         catch (std::exception & e) { std::cerr << e.what() << std::endl; throw; } )
 
 namespace senf {
@@ -110,11 +110,36 @@ namespace test {
     numeric form (and not as single characters) if the elements are of any char type. Other types
     are not affected.
 
+    \hideinitializer
     \ingroup unittest
  */
-#define SENF_CHECK_EQUAL_COLLECTIONS(a,b,c,d)                                                    \
-    BOOST_CHECK_EQUAL_COLLECTIONS(senf::test::nocharIterator(a), senf::test::nocharIterator(b),  \
-                                  senf::test::nocharIterator(c), senf::test::nocharIterator(d))
+#define SENF_CHECK_EQUAL_COLLECTIONS(left_begin, left_end, right_begin, right_end)              \
+    BOOST_CHECK_EQUAL_COLLECTIONS(                                                              \
+        senf::test::nocharIterator(left_begin), senf::test::nocharIterator(left_end),           \
+        senf::test::nocharIterator(right_begin), senf::test::nocharIterator(right_end))
+
+/** \brief Define new test case
+
+    \ref SENF_AUTO_UNIT_TEST() is like \c BOOST_AUTO_UNIT_TEST(). The only difference is, that
+    if an exception is thrown in the test case \ref SENF_AUTO_UNIT_TEST() will write out the
+    complete what-message of the exception.
+
+    \hideinitializer
+    \ingroup unittest
+ */
+#define SENF_AUTO_UNIT_TEST(name)                                                               \
+    void senf_test_body_##name();                                                               \
+    BOOST_AUTO_UNIT_TEST(name)                                                                  \
+    {                                                                                           \
+        try {                                                                                   \
+            senf_test_body_##name();                                                            \
+        }                                                                                       \
+        catch (std::exception & e) {                                                            \
+            std::cerr << e.what() << std::endl;                                                 \
+            throw;                                                                              \
+        }                                                                                       \
+    }                                                                                           \
+    void senf_test_body_##name()
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "auto_unit_test.cci"

@@ -37,7 +37,7 @@
 
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(GREPacket_packet)
+SENF_AUTO_UNIT_TEST(GREPacket_packet)
 {
     senf::GREPacket p (senf::GREPacket::create());
 

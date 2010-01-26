@@ -53,7 +53,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(timerDispatcher)
+SENF_AUTO_UNIT_TEST(timerDispatcher)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
@@ -158,7 +158,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(timerJitter)
+SENF_AUTO_UNIT_TEST(timerJitter)
 {
     senf::scheduler::watchdogTimeout(0);
     std::cerr << "Epoll timers\n";

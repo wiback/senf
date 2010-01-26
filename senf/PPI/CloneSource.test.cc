@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(cloneSource)
+SENF_AUTO_UNIT_TEST(cloneSource)
 {
     senf::PacketData::byte data[] = { 0xab };
     senf::Packet p (senf::DataPacket::create(data));

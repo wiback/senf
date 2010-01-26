@@ -55,7 +55,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(target)
+SENF_AUTO_UNIT_TEST(target)
 {
     senf::log::StringTarget target;
 

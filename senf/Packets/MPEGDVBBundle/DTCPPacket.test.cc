@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(dtcpPacket)
+SENF_AUTO_UNIT_TEST(dtcpPacket)
 {
     unsigned char data[] = { 
             0x11,                 // versionNumber = 1, command = JOIN

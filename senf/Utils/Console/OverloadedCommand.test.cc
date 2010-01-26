@@ -55,7 +55,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(overladedCommand)
+SENF_AUTO_UNIT_TEST(overladedCommand)
 {
     senf::console::OverloadedCommandNode & cmd (
         senf::console::root()

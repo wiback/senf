@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(areaRegistry)
+SENF_AUTO_UNIT_TEST(areaRegistry)
 {
 #if 0
     // Need to rewrite this test ... 

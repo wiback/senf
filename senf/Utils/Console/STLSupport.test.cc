@@ -65,7 +65,7 @@ namespace {
                 
 }
 
-BOOST_AUTO_UNIT_TEST(vectorSupport)
+SENF_AUTO_UNIT_TEST(vectorSupport)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -96,7 +96,7 @@ BOOST_AUTO_UNIT_TEST(vectorSupport)
         "        default: (7 2)\n" );
 }
 
-BOOST_AUTO_UNIT_TEST(listSupport)
+SENF_AUTO_UNIT_TEST(listSupport)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -127,7 +127,7 @@ BOOST_AUTO_UNIT_TEST(listSupport)
         "        default: (7 2)\n" );
 }
 
-BOOST_AUTO_UNIT_TEST(setSupport)
+SENF_AUTO_UNIT_TEST(setSupport)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -158,7 +158,7 @@ BOOST_AUTO_UNIT_TEST(setSupport)
         "        default: (2 7)\n" );
 }
 
-BOOST_AUTO_UNIT_TEST(mapSupport)
+SENF_AUTO_UNIT_TEST(mapSupport)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;

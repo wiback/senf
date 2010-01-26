@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(macAddress)
+SENF_AUTO_UNIT_TEST(macAddress)
 {
     using senf::MACAddress;
     using senf::AddressSyntaxException;

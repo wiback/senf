@@ -30,7 +30,7 @@
 #include <boost/test/test_tools.hpp>
 
 
-BOOST_AUTO_UNIT_TEST(RTPPacket_packet)
+SENF_AUTO_UNIT_TEST(RTPPacket_packet)
 {
     unsigned char data[] = {0x80 , 0x08 , 0x1b , 0xbb , 0x02 , 0xcb , 0xad , 0x80 , 0x50 , 0x48 , 0xa7, 0x8c };
 

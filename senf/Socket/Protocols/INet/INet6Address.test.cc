@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(inet6Address)
+SENF_AUTO_UNIT_TEST(inet6Address)
 {
     using senf::INet6Address;
     using senf::INet4Address;
@@ -163,7 +163,7 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(inet6Network)
+SENF_AUTO_UNIT_TEST(inet6Network)
 {
     using senf::INet6Address;
     using senf::INet6Network;

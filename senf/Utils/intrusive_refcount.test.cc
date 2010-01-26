@@ -70,7 +70,7 @@ namespace {
     unsigned TesterCustom::refs = 0;
 }
 
-BOOST_AUTO_UNIT_TEST(intrusive_refcount)
+SENF_AUTO_UNIT_TEST(intrusive_refcount)
 {
     BOOST_CHECK_EQUAL(Tester::counter,0u);
 
@@ -94,7 +94,7 @@ BOOST_AUTO_UNIT_TEST(intrusive_refcount)
     BOOST_CHECK_EQUAL(Tester::counter,0u);
 }
 
-BOOST_AUTO_UNIT_TEST(intrusive_refcount_t)
+SENF_AUTO_UNIT_TEST(intrusive_refcount_t)
 {
     BOOST_CHECK_EQUAL(TesterCustom::counter,0u);
     BOOST_CHECK_EQUAL(TesterCustom::refs,0u);

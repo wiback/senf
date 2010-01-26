@@ -32,7 +32,7 @@
 #include <boost/test/test_tools.hpp>
 
 
-BOOST_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
+SENF_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
 {
     unsigned char data[] = {
         0x00, 0x00, 0x00, 0x01, 0x04, 0x00, 0x00, 0x00,

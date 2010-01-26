@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(logConfig)
+SENF_AUTO_UNIT_TEST(logConfig)
 {
     BOOST_CHECK((   senf::log::Enabled< senf::log::Debug, 
                                         senf::log::DefaultArea, 

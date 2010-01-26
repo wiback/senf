@@ -70,7 +70,7 @@ namespace {
     struct C {};
 }
 
-BOOST_AUTO_UNIT_TEST(senfmpl)
+SENF_AUTO_UNIT_TEST(senfmpl)
 {
     BOOST_CHECK( choice<A>::has_int_value );
     BOOST_CHECK( ! choice<A>::has_class_value );
@@ -104,7 +104,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(mplSlot)
+SENF_AUTO_UNIT_TEST(mplSlot)
 {
     BOOST_CHECK_EQUAL( unsigned(Test::total), 8u );
 }

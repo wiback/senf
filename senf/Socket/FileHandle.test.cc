@@ -58,7 +58,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(fileHandle)
+SENF_AUTO_UNIT_TEST(fileHandle)
 {
     try {
         {

@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(streamRegistry)
+SENF_AUTO_UNIT_TEST(streamRegistry)
 {
     char const * streams[] = 
         { "senf::SenfLog", "senf::log::Debug", "senf::log::test::myStream" };

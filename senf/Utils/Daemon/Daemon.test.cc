@@ -119,7 +119,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(testDaemon)
+SENF_AUTO_UNIT_TEST(testDaemon)
 {
     char const * args[] = { "run", 
                             "--console-log=testDaemon.log", 

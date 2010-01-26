@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(multicastSocketProtocol)
+SENF_AUTO_UNIT_TEST(multicastSocketProtocol)
 {
     senf::UDPv4ClientSocketHandle sock;
 

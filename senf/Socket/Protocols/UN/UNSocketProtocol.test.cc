@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(unProtocol)
+SENF_AUTO_UNIT_TEST(unProtocol)
 {
   
     //zZ leer

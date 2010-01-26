@@ -44,7 +44,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(signalDispatcher)
+SENF_AUTO_UNIT_TEST(signalDispatcher)
 {
     senf::scheduler::detail::FdManager::instance().timeout(1000);
     senf::scheduler::SignalEvent sig (SIGUSR1, &handler);

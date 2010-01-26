@@ -69,7 +69,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(thresholdQueueing)
+SENF_AUTO_UNIT_TEST(thresholdQueueing)
 {
     debug::ActiveSource source;
     QueueTester tester;

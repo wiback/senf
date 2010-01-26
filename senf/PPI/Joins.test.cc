@@ -52,7 +52,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(passiveJoin)
+SENF_AUTO_UNIT_TEST(passiveJoin)
 {
     debug::ActiveSource source1;
     debug::ActiveSource source2;
@@ -89,7 +89,7 @@ BOOST_AUTO_UNIT_TEST(passiveJoin)
     BOOST_CHECK_EQUAL( join.connectors().size(), 2u);
 }
 
-BOOST_AUTO_UNIT_TEST(priorityJoin)
+SENF_AUTO_UNIT_TEST(priorityJoin)
 {
     debug::PassiveSource source1;
     debug::PassiveSource source2;

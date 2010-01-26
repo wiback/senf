@@ -95,7 +95,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(fixedParser)
+SENF_AUTO_UNIT_TEST(fixedParser)
 {
     unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x83, 0x84, 0x07, 0x08 };
 
@@ -205,7 +205,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(variableParser)
+SENF_AUTO_UNIT_TEST(variableParser)
 {
     unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x83, 0x84, 0x07, 0x08 };
 

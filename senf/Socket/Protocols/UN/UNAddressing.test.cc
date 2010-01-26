@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(UNSocketAddress)
+SENF_AUTO_UNIT_TEST(UNSocketAddress)
 {
     senf::UNSocketAddress addr;
     BOOST_CHECK( ! addr);

@@ -48,7 +48,7 @@ namespace test {
     enum Blub { A, B, C };
 }
 
-BOOST_AUTO_UNIT_TEST(prettyName)
+SENF_AUTO_UNIT_TEST(prettyName)
 {
     typedef test::Foo< test::Foo<test::Blub, 1>, 10> TestType;
     TestType ob;

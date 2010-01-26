@@ -111,7 +111,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(jacks)
+SENF_AUTO_UNIT_TEST(jacks)
 {
     {
         ActiveGroup group;

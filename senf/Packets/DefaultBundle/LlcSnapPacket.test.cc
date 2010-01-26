@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(llcsnap_parse)
+SENF_AUTO_UNIT_TEST(llcsnap_parse)
 {
     senf::PacketData::byte data[] = {
         0xaa,             // DSAP
@@ -57,7 +57,7 @@ BOOST_AUTO_UNIT_TEST(llcsnap_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
+SENF_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
 {
     senf::LlcSnapPacket llcsnap (senf::LlcSnapPacket::create());
     senf::EthernetPacket eth (senf::EthernetPacket::createAfter(llcsnap));

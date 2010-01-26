@@ -53,7 +53,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(serverSocketHandle)
+SENF_AUTO_UNIT_TEST(serverSocketHandle)
 {
     typedef senf::MakeSocketPolicy<
         senf::test::SomeFramingPolicy,

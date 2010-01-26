@@ -61,7 +61,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(syslogUDPTarget)
+SENF_AUTO_UNIT_TEST(syslogUDPTarget)
 {
     senf::log::SyslogUDPTarget udplog (
         senf::INet4SocketAddress(senf::INet4Address::Loopback, port(0)));

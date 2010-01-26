@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(VariantParser)
+SENF_AUTO_UNIT_TEST(VariantParser)
 {
     typedef senf::ArrayParser<10, senf::UInt8Parser> Array10;
     typedef senf::VariantParser< senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1>,
@@ -117,7 +117,7 @@ namespace VariantParser_test_cc_anon_namespace {
 }
 using namespace VariantParser_test_cc_anon_namespace;
 
-BOOST_AUTO_UNIT_TEST(VariantParserMacro)
+SENF_AUTO_UNIT_TEST(VariantParserMacro)
 {
     senf::DataPacket p (senf::DataPacket::create(senf::init_bytes<TestParser>::value));
     

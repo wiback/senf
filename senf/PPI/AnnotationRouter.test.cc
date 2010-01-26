@@ -60,7 +60,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(annotationRouter)
+SENF_AUTO_UNIT_TEST(annotationRouter)
 {
     debug::ActiveSource source;
     debug::PassiveSink sink1;

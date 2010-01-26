@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(tcpPacket_parse)
+SENF_AUTO_UNIT_TEST(tcpPacket_parse)
 {
 
     unsigned char data[] = {
@@ -66,7 +66,7 @@ BOOST_AUTO_UNIT_TEST(tcpPacket_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(tcpPacket_in_ipv4_parse)
+SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv4_parse)
 {
     unsigned char data[] = {
             //20 Byte IPv4-Header
@@ -100,7 +100,7 @@ BOOST_AUTO_UNIT_TEST(tcpPacket_in_ipv4_parse)
 }
 
 
-BOOST_AUTO_UNIT_TEST(tcpPacket_in_ipv6_parse)
+SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv6_parse)
 {
     unsigned char data[] = {
             // IPv6-Header
@@ -136,7 +136,7 @@ BOOST_AUTO_UNIT_TEST(tcpPacket_in_ipv6_parse)
     BOOST_CHECK( tcp->validateChecksum() );
 }
 
-BOOST_AUTO_UNIT_TEST(tcpPacket_in_ipv6_create)
+SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv6_create)
 {
     unsigned char data[] = {
             // IPv6-Header

@@ -36,14 +36,14 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(stringJoin)
+SENF_AUTO_UNIT_TEST(stringJoin)
 {
     char const * seq[] = { "foo", "bar", "baz" };
     BOOST_CHECK_EQUAL( senf::stringJoin(std::make_pair(seq, seq+sizeof(seq)/sizeof(seq[0])), "::"),
                        "foo::bar::baz" );
 }
 
-BOOST_AUTO_UNIT_TEST(lexicalCast)
+SENF_AUTO_UNIT_TEST(lexicalCast)
 {
     SENF_CHECK_NO_THROW( 
         BOOST_CHECK_EQUAL( 

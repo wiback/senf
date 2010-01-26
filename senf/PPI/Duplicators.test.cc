@@ -43,7 +43,7 @@ namespace connector = ppi::connector;
 namespace module = ppi::module;
 namespace debug = module::debug;
 
-BOOST_AUTO_UNIT_TEST(activeDuplicator)
+SENF_AUTO_UNIT_TEST(activeDuplicator)
 {
     debug::ActiveSource source;
     module::ActiveDuplicator duplicator;

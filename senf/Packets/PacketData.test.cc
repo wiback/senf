@@ -39,7 +39,7 @@ namespace {
     struct VoidPacket : public senf::PacketTypeBase {};
 }
 
-BOOST_AUTO_UNIT_TEST(packetData)
+SENF_AUTO_UNIT_TEST(packetData)
 {
     // We cannot simply allocate a packetData instance .. we must go through PacketInterpreterBase
     // and PacketImpl.
@@ -93,7 +93,7 @@ BOOST_AUTO_UNIT_TEST(packetData)
     BOOST_CHECK( d.empty() );
 }
 
-BOOST_AUTO_UNIT_TEST(safePacketIterator)
+SENF_AUTO_UNIT_TEST(safePacketIterator)
 {
     // We cannot simply allocate a packetData instance .. we must go through PacketInterpreterBase
     // and PacketImpl.

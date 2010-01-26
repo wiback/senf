@@ -79,7 +79,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(udpServer)
+SENF_AUTO_UNIT_TEST(udpServer)
 {
     senf::console::UDPServer server (senf::INet4SocketAddress(localhost4str(0)));
     senf::ConnectedUDPv4ClientSocketHandle socket (senf::INet4SocketAddress(localhost4str(0)));

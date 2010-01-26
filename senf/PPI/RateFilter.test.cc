@@ -44,7 +44,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(rateFilter)
+SENF_AUTO_UNIT_TEST(rateFilter)
 {
     module::RateFilter rateFilter ( senf::ClockService::milliseconds(100) );
     debug::PassiveSource source;
@@ -80,7 +80,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(rateFilter_changeInterval)
+SENF_AUTO_UNIT_TEST(rateFilter_changeInterval)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     if (! enabled) {

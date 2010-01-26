@@ -44,7 +44,7 @@ namespace {
 // only validate PacketInterpreterBase as far as to ensure that a failure of one test is not due to
 // an error in PacketInterpreterbase
 
-BOOST_AUTO_UNIT_TEST(packetImpl_mem)
+SENF_AUTO_UNIT_TEST(packetImpl_mem)
 {
     senf::detail::PacketImpl * p (new senf::detail::PacketImpl());
     BOOST_CHECK_EQUAL(p->refcount(), 0);
@@ -101,7 +101,7 @@ BOOST_AUTO_UNIT_TEST(packetImpl_mem)
 #endif
 }
 
-BOOST_AUTO_UNIT_TEST(packetImpl_data)
+SENF_AUTO_UNIT_TEST(packetImpl_data)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create());
     senf::detail::PacketImpl * p (senf::detail::packet::test::TestDriver::impl(pi));
@@ -147,7 +147,7 @@ BOOST_AUTO_UNIT_TEST(packetImpl_data)
     BOOST_CHECK(pi->data().begin() == p->begin());
 }
 
-BOOST_AUTO_UNIT_TEST(packetImpl_interpreters)
+SENF_AUTO_UNIT_TEST(packetImpl_interpreters)
 {
     senf::detail::PacketImpl * p (new senf::detail::PacketImpl());
     p->add_ref();

@@ -42,7 +42,7 @@ namespace {
     {};
 }
 
-BOOST_AUTO_UNIT_TEST(parseInt_fixedSizes)
+SENF_AUTO_UNIT_TEST(parseInt_fixedSizes)
 {
     PacketInterpreterBase::byte data[] = { 0x8e, 0x2f, 0x57, 0x12, 0xd1 };
     PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(data));
@@ -64,7 +64,7 @@ BOOST_AUTO_UNIT_TEST(parseInt_fixedSizes)
     BOOST_CHECK_EQUAL(UInt32Parser(p->data().begin(),&p->data()).value(), 2385467154u);
 }
 
-BOOST_AUTO_UNIT_TEST(parseInt_bits)
+SENF_AUTO_UNIT_TEST(parseInt_bits)
 {
     //                       0         1         2         3         4
     //                       012345678901234567890123456789012345678901234567
@@ -107,7 +107,7 @@ BOOST_AUTO_UNIT_TEST(parseInt_bits)
     BOOST_CHECK_EQUAL((FlagParser<12>(p->data().begin(),&p->data()).value()), false);
 }
 
-BOOST_AUTO_UNIT_TEST(parseInt_assign)
+SENF_AUTO_UNIT_TEST(parseInt_assign)
 {
     PacketInterpreterBase::byte data[] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
     PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(data));
@@ -149,7 +149,7 @@ BOOST_AUTO_UNIT_TEST(parseInt_assign)
     BOOST_CHECK_EQUAL( (UIntFieldParser<4,34>(p->data().begin(),&p->data()).value()), 0x268ad497u );
 }
 
-BOOST_AUTO_UNIT_TEST(parseInt_operators)
+SENF_AUTO_UNIT_TEST(parseInt_operators)
 {
     PacketInterpreterBase::byte data[] = { 0x63, 0xd7, 0x5a, 0x31, 0xa4, 0x46 };
     PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(data));

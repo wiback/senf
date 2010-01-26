@@ -72,7 +72,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(rateAnalyzer)
+SENF_AUTO_UNIT_TEST(rateAnalyzer)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     if (! enabled) {

@@ -59,7 +59,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(socketHandle)
+SENF_AUTO_UNIT_TEST(socketHandle)
 {
     typedef senf::MakeSocketPolicy<
         senf::test::SomeCommunicationPolicy,

@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(typeIdValue)
+SENF_AUTO_UNIT_TEST(typeIdValue)
 {
     // We don't care for the ordering, just that the following compiles
     (void) ( senf::typeIdValue<int>() < senf::typeIdValue<float>() );

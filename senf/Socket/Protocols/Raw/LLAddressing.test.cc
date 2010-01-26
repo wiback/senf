@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(llAddress)
+SENF_AUTO_UNIT_TEST(llAddress)
 {
     using senf::LLSocketAddress;
     

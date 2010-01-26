@@ -49,7 +49,7 @@ namespace {
     { changed_ = true; }
 }
 
-BOOST_AUTO_UNIT_TEST(variables)
+SENF_AUTO_UNIT_TEST(variables)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -108,7 +108,7 @@ namespace {
   
 }
 
-BOOST_AUTO_UNIT_TEST(memberVariables)
+SENF_AUTO_UNIT_TEST(memberVariables)
 {
     Test2 test2ob;
 }

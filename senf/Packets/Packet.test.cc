@@ -150,7 +150,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(packet)
+SENF_AUTO_UNIT_TEST(packet)
 {
     senf::Packet packet (FooPacket::create());    
     BarPacket::createAfter(packet);
@@ -244,7 +244,7 @@ BOOST_AUTO_UNIT_TEST(packet)
     SENF_CHECK_NO_THROW( BarPacket::create(senf::noinit).dump(s));
 }
 
-BOOST_AUTO_UNIT_TEST(concretePacket)
+SENF_AUTO_UNIT_TEST(concretePacket)
 {
     senf::PacketData::byte data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
 
@@ -285,7 +285,7 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
 }
 
-BOOST_AUTO_UNIT_TEST(packetAssign)
+SENF_AUTO_UNIT_TEST(packetAssign)
 {
     BarPacket bar1 (BarPacket::create());
     BarPacket bar2 (BarPacket::create());
@@ -296,7 +296,7 @@ BOOST_AUTO_UNIT_TEST(packetAssign)
     BOOST_CHECK_EQUAL( bar1->type(), 0x2A2Bu );
 }
 
-BOOST_AUTO_UNIT_TEST(packetAnnotation)
+SENF_AUTO_UNIT_TEST(packetAnnotation)
 {
     senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);

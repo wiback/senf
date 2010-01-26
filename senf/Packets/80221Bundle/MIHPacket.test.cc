@@ -37,7 +37,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(MIHPacket_msgId)
+SENF_AUTO_UNIT_TEST(MIHPacket_msgId)
 {
     MIHPacket mihPacket (MIHPacket::create());
     mihPacket->sid() = 4;
@@ -46,7 +46,7 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_msgId)
     BOOST_CHECK_EQUAL( mihPacket->messageId(), 0x4c2a );        
 }
 
-BOOST_AUTO_UNIT_TEST(MIHPacket_create_eth)
+SENF_AUTO_UNIT_TEST(MIHPacket_create_eth)
 {
     EthernetPacket eth (EthernetPacket::create());
     MIHPacket mihPacket (MIHPacket::createAfter(eth));
@@ -56,7 +56,7 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_eth)
     SENF_CHECK_NO_THROW( eth.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
+SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
 {
     MIHPacket mihPacket (MIHPacket::create());
     // set some fields
@@ -118,7 +118,7 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHPacket_create_mac)
+SENF_AUTO_UNIT_TEST(MIHPacket_create_mac)
 {
     MACAddress srcMac ( MACAddress::from_string("01:02:03:04:05:06"));
     MACAddress dstMac ( MACAddress::from_string("07:08:09:0a:0b:0c"));
@@ -151,7 +151,7 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_mac)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet4)
+SENF_AUTO_UNIT_TEST(MIHPacket_create_inet4)
 {
     MIHPacket mihPacket (MIHPacket::create());
     // set some fields
@@ -184,7 +184,7 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet4)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet6)
+SENF_AUTO_UNIT_TEST(MIHPacket_create_inet6)
 {
     MIHPacket mihPacket (MIHPacket::create());
     // set some fields
@@ -225,7 +225,7 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_inet6)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
+SENF_AUTO_UNIT_TEST(MIHPayload_parse)
 {
     unsigned char data[] = {
             // MIH header
@@ -275,7 +275,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MIHPayload_create)
+SENF_AUTO_UNIT_TEST(MIHPayload_create)
 {
     MIHPacket mihPacket (MIHPacket::create());
     mihPacket->fragmentNr() = 42;

@@ -68,7 +68,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(packetParserBase)
+SENF_AUTO_UNIT_TEST(packetParserBase)
 {
     senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type(6u)));

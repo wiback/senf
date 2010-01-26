@@ -36,7 +36,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(mihfId)
+SENF_AUTO_UNIT_TEST(mihfId)
 {
     MIHFId id ( MACAddress::from_string("01:02:03:04:05:06"));
     BOOST_CHECK_EQUAL( id.type(), MIHFId::MACAddress);

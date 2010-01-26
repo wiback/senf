@@ -68,7 +68,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(passiveSocketSink)
+SENF_AUTO_UNIT_TEST(passiveSocketSink)
 {
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
         senf::INet4SocketAddress(localhost4str(0)));
@@ -88,7 +88,7 @@ BOOST_AUTO_UNIT_TEST(passiveSocketSink)
     BOOST_CHECK_EQUAL( data, input );
 }
 
-BOOST_AUTO_UNIT_TEST(activeSocketSink)
+SENF_AUTO_UNIT_TEST(activeSocketSink)
 {
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
         senf::INet4SocketAddress(localhost4str(0)));

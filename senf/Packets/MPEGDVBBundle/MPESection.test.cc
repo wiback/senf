@@ -40,7 +40,7 @@
 
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(MPESection_parse_chain)
+SENF_AUTO_UNIT_TEST(MPESection_parse_chain)
 {
     // MPE section captured with dvbsnoop
     unsigned char data[] = {
@@ -131,7 +131,7 @@ BOOST_AUTO_UNIT_TEST(MPESection_parse_chain)
 }
 
 
-BOOST_AUTO_UNIT_TEST(MPESection_create)
+SENF_AUTO_UNIT_TEST(MPESection_create)
 {
     senf::MPESection sec (senf::MPESection::create());
     sec->real_time_parameters().delta_t()        = 0x027u;

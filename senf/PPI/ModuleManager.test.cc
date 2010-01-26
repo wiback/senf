@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(moduleManager)
+SENF_AUTO_UNIT_TEST(moduleManager)
 {
     // Tested in Module.test.cc
 }

@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ipV6Packet_parse)
+SENF_AUTO_UNIT_TEST(ipV6Packet_parse)
 {
     unsigned char data[] = { 
             0x60, 0x12, 0x20, 0x30,
@@ -70,7 +70,7 @@ BOOST_AUTO_UNIT_TEST(ipV6Packet_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(ipV6Packet_create)
+SENF_AUTO_UNIT_TEST(ipV6Packet_create)
 {
     senf::IPv6Packet ip (senf::IPv6Packet::create());
 

@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(NetdeviceController) {
+SENF_AUTO_UNIT_TEST(NetdeviceController) {
 
     std::string ifname ("lo");
     senf::NetdeviceController ctrl (ifname);

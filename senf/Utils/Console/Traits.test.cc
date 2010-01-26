@@ -54,7 +54,7 @@ namespace {
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( TestClass, MemberEnum, (MemberFoo)(MemberBar) );
 }
 
-BOOST_AUTO_UNIT_TEST(charTraits)
+SENF_AUTO_UNIT_TEST(charTraits)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -85,7 +85,7 @@ BOOST_AUTO_UNIT_TEST(charTraits)
     ss.str("");
 }
 
-BOOST_AUTO_UNIT_TEST(boolTraits)
+SENF_AUTO_UNIT_TEST(boolTraits)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -126,14 +126,14 @@ BOOST_AUTO_UNIT_TEST(boolTraits)
     BOOST_CHECK_EQUAL( ss.str(), "disabled\n" "enabled\n" );
 }
 
-BOOST_AUTO_UNIT_TEST(stringTraits)
+SENF_AUTO_UNIT_TEST(stringTraits)
 {
     BOOST_CHECK_EQUAL( 
         senf::console::ArgumentTraits<std::string>::str("Test\nOf\nA \"String\"\x01\x7f\xa0\xff"),
         "\"Test\\x0aOf\\x0aA \\\"String\\\"\\x01\\x7f\\xa0\\xff\"" );
 }
 
-BOOST_AUTO_UNIT_TEST(enumSupport)
+SENF_AUTO_UNIT_TEST(enumSupport)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -197,7 +197,7 @@ BOOST_AUTO_UNIT_TEST(enumSupport)
     BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
 }
 
-BOOST_AUTO_UNIT_TEST(singleToken)
+SENF_AUTO_UNIT_TEST(singleToken)
 {
     BOOST_CHECK( senf::console::ArgumentTraits<std::string>::singleToken );
     BOOST_CHECK( senf::console::ArgumentTraits<int>::singleToken );

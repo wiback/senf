@@ -41,7 +41,7 @@ namespace {
     {};
 }
 
-BOOST_AUTO_UNIT_TEST(VectorParser)
+SENF_AUTO_UNIT_TEST(VectorParser)
 {
     unsigned char data[] = { 0x03,                                   // size
                              0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
@@ -116,7 +116,7 @@ BOOST_AUTO_UNIT_TEST(VectorParser)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(VectorParser_wrapper)
+SENF_AUTO_UNIT_TEST(VectorParser_wrapper)
 {
     unsigned char data[] = { 0x03,                                   // size
                              0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
@@ -173,7 +173,7 @@ BOOST_AUTO_UNIT_TEST(VectorParser_wrapper)
     BOOST_CHECK_EQUAL( w.parser().size(), 0u );
 }
 
-BOOST_AUTO_UNIT_TEST(dynamicPolicyVector)
+SENF_AUTO_UNIT_TEST(dynamicPolicyVector)
 {
     unsigned char data[] = { 0x03,                                   // size
                              0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
@@ -237,7 +237,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(vectorMacro_parse)
+SENF_AUTO_UNIT_TEST(vectorMacro_parse)
 {
     unsigned char data[] = { 0x05,                   // size1
                              0x04,                   // size2
@@ -261,7 +261,7 @@ BOOST_AUTO_UNIT_TEST(vectorMacro_parse)
     BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
 }
 
-BOOST_AUTO_UNIT_TEST(vectorMacro_create)
+SENF_AUTO_UNIT_TEST(vectorMacro_create)
 {
     TestVectorPacket p (TestVectorPacket::create());
     p->dummy() = 0x01020304u;
@@ -315,7 +315,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(vectorMacro_inherit)
+SENF_AUTO_UNIT_TEST(vectorMacro_inherit)
 {
     unsigned char data[] = { 0x05,                   // size1
                              0x04,                   // size2
@@ -353,7 +353,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(vectorMacro_packetSize)
+SENF_AUTO_UNIT_TEST(vectorMacro_packetSize)
 {
     unsigned char data[] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
                              0x21, 0x22, 0x23, 0x24, 0x25, 0x26 };

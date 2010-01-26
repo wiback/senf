@@ -49,7 +49,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(monitorModulePassthrough)
+SENF_AUTO_UNIT_TEST(monitorModulePassthrough)
 {
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::debug::PassiveSink sink;
@@ -73,7 +73,7 @@ BOOST_AUTO_UNIT_TEST(monitorModulePassthrough)
     BOOST_CHECK( source );
 }
 
-BOOST_AUTO_UNIT_TEST(monitorModuleNoPassthrough)
+SENF_AUTO_UNIT_TEST(monitorModuleNoPassthrough)
 {
     senf::ppi::module::debug::ActiveSource source;
     PacketCounter counter;
@@ -90,7 +90,7 @@ BOOST_AUTO_UNIT_TEST(monitorModuleNoPassthrough)
     BOOST_CHECK( source );
 }
 
-BOOST_AUTO_UNIT_TEST(monitorModuleDynamicConnect)
+SENF_AUTO_UNIT_TEST(monitorModuleDynamicConnect)
 {
     senf::ppi::module::debug::ActiveSource source;
     PacketCounter counter;

@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(genericNode)
+SENF_AUTO_UNIT_TEST(genericNode)
 {
     senf::console::GenericNode & node (
         senf::console::root().mkdir("dir1").mkdir("dir2").doc("help info"));
@@ -72,7 +72,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(directoryNode)
+SENF_AUTO_UNIT_TEST(directoryNode)
 {
     senf::console::DirectoryNode::ptr p (senf::console::DirectoryNode::create());
 
@@ -136,7 +136,7 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
                                      senf::console::root().children().end()), 1 );
 }
 
-BOOST_AUTO_UNIT_TEST(linkNode)
+SENF_AUTO_UNIT_TEST(linkNode)
 {
     senf::console::root().mkdir("dir1");
     senf::console::root().link("link1", senf::console::root()["dir1"]);
@@ -155,7 +155,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(senfConsoleAddNode)
+SENF_AUTO_UNIT_TEST(senfConsoleAddNode)
 {
     senf::console::root().add("fn1", &callback);
     senf::console::root().add("fn2", boost::function<void(std::ostream&,senf::console::ParseCommandInfo const &)>(Functor()));
@@ -178,7 +178,7 @@ BOOST_AUTO_UNIT_TEST(senfConsoleAddNode)
     senf::console::root().remove("fn2");
 }
 
-BOOST_AUTO_UNIT_TEST(simpleCommandNode)
+SENF_AUTO_UNIT_TEST(simpleCommandNode)
 {
     senf::console::root().add("fn", senf::console::SimpleCommandNode::create(&callback))
         .doc("help text");

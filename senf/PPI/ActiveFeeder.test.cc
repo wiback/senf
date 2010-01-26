@@ -56,7 +56,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(activeFeeder)
+SENF_AUTO_UNIT_TEST(activeFeeder)
 {
     senf::PacketData::byte data[] = { 0xab };
     senf::Packet p (senf::DataPacket::create(data));

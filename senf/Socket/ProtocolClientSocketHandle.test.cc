@@ -44,7 +44,7 @@ namespace {
     };
 }
 
-BOOST_AUTO_UNIT_TEST(protocolClientSocketHandle)
+SENF_AUTO_UNIT_TEST(protocolClientSocketHandle)
 {
     typedef senf::ProtocolClientSocketHandle<MySocketProtocol> MySocketHandle;
 

@@ -109,7 +109,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
+SENF_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
 {
     {
         senf::TCPv4ClientSocketHandle sock;
@@ -180,7 +180,7 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
+SENF_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
 {
     {
         senf::TCPv6ClientSocketHandle sock;
@@ -293,7 +293,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
+SENF_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
 {
     try {
         alarm(10);
@@ -319,7 +319,7 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
+SENF_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
 {
     try {
         alarm(10);

@@ -80,7 +80,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(socketPolicy)
+SENF_AUTO_UNIT_TEST(socketPolicy)
 {
     // Most of these checks are really compile-time checks ...
 

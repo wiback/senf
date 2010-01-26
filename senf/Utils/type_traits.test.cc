@@ -41,7 +41,7 @@ namespace {
     struct Class;
 }
 
-BOOST_AUTO_UNIT_TEST(typeTraits)
+SENF_AUTO_UNIT_TEST(typeTraits)
 {
     typedef boost::function_traits<void (int, double)> traits;
 

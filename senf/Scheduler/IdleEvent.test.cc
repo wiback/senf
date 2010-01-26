@@ -55,7 +55,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(idleEvent)
+SENF_AUTO_UNIT_TEST(idleEvent)
 {
     senf::scheduler::IdleEvent idle ("idle event unit test", &cb);
 

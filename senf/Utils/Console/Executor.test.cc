@@ -47,7 +47,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(executor)
+SENF_AUTO_UNIT_TEST(executor)
 {
     senf::console::root().mkdir("dir1").mkdir("dir3");
     senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
@@ -180,7 +180,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     senf::console::root().remove("dir2");
 }
 
-BOOST_AUTO_UNIT_TEST(executorChroot)
+SENF_AUTO_UNIT_TEST(executorChroot)
 {
     senf::console::root().mkdir("dir1").mkdir("dir3");
     senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
@@ -214,7 +214,7 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(executorPolicy)
+SENF_AUTO_UNIT_TEST(executorPolicy)
 {
     senf::console::root().mkdir("dir1").mkdir("dir3");
     senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
@@ -245,7 +245,7 @@ BOOST_AUTO_UNIT_TEST(executorPolicy)
     senf::console::root().remove("dir2");
 }
 
-BOOST_AUTO_UNIT_TEST(executorAuto)
+SENF_AUTO_UNIT_TEST(executorAuto)
 {
     senf::console::root().mkdir("tdir1").mkdir("dir3");
     senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
