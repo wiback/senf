@@ -25,7 +25,7 @@
 
 // Custom includes
 #include <iostream>
-#include <senf/Console.hh>
+#include <senf/Utils/Console.hh>
 #include <senf/Scheduler/Scheduler.hh>
 
 namespace kw = senf::console::kw;
