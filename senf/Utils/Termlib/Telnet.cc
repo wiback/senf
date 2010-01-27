@@ -173,7 +173,7 @@ prefix_ void senf::term::BaseTelnetProtocol::handleNormalChar(char c)
 
 prefix_ void senf::term::BaseTelnetProtocol::handleCommand(char c)
 {
-    switch (c) {
+    switch (static_cast<unsigned char>(c)) {
     case CMD_SE:
         // Ignore spurious SE commands .. they should only occur while in subnegotiation mode
         charState_ = NORMAL;
@@ -257,7 +257,7 @@ prefix_ void senf::term::BaseTelnetProtocol::handleSBData(char c)
 
 prefix_ void senf::term::BaseTelnetProtocol::handleSBIAC(char c)
 {
-    switch (c) {
+    switch (static_cast<unsigned char>(c)) {
     case CMD_IAC:
         data_.push_back(c);
         charState_ = SB_DATA;
