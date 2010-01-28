@@ -97,6 +97,7 @@ template <typename Parser>
 prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::registerParser()
 {
     Keytype key (Parser::typeId+0);
+    std::cout << "GenericTLVParserRegistry::registerParser " << unsigned(key) << std::endl; 
     typename Map::iterator i (map_.find( key ));
     if (i == map_.end() )
         map_.insert(key, new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>() );
@@ -104,7 +105,7 @@ prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::registerParser(
 
 template <class BaseParser, class Keytype>
 prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
-        GenericTLVParserBase<BaseParser> const & parser, std::ostream & os)
+        GenericTLVParser const & parser, std::ostream & os)
     const
 {
     typename Map::const_iterator i (map_.find( parser.type()));
@@ -114,13 +115,27 @@ prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
 
 template <class BaseParser, class Keytype>
 prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
-        GenericTLVParserBase<BaseParser> const & parser, Keytype const & key, std::ostream & os)
+        GenericTLVParser const & parser, Keytype const & key, std::ostream & os)
     const
 {
     typename Map::const_iterator i (map_.find( key));
     if (i != map_.end())
         (i->second)->dump(parser, os);
 }
+
+template <class BaseParser, class Keytype>
+prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserRegistry<BaseParser,Keytype>::bytes(
+        GenericTLVParser const & parser)
+    const
+{
+    typename Map::const_iterator i (map_.find( parser.type()));
+    if (i != map_.end())
+        return (i->second)->bytes(parser);
+    else
+        throw TLVParserNotRegisteredException();
+}
+
+        
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_

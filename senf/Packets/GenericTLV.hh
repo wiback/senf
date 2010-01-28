@@ -149,7 +149,7 @@ namespace senf {
         bool is() const;
 
         senf::PacketInterpreterBase::range value() const;
-        
+
         void dump(std::ostream & os) const;
         
 #ifndef DOXYGEN
@@ -185,6 +185,7 @@ namespace senf {
         template <class BaseParser>
         struct GenericTLVParserRegistry_EntryBase {
             virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const = 0;
+            virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const = 0;
         };
     
         template <class BaseParser, class Parser>
@@ -192,6 +193,7 @@ namespace senf {
             : GenericTLVParserRegistry_EntryBase<BaseParser>
         {
             virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
+            virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const;
         };
         
         //Helper Functor for STL-compatible predicate (E.g. find_if, for_each ...)
@@ -245,8 +247,7 @@ namespace senf {
         The registry provides a dump() member to dump an instance of a generic TLV parser.
         If the type value of the given TLV parser is registered the generic tlv will be
         casted to the registered concrete TLV parser and the dump member from this parser
-        will be called. Otherwise the generic TLV parser will be dumped in a generic way
-        (hexdump of the value).
+        will be called.
         
         \see
             GenericTLVParserBase for the general TLV class structure \n
@@ -274,12 +275,22 @@ namespace senf {
         template <typename Parser>
         void registerParser();
         
+        typedef GenericTLVParserBase<BaseParser> GenericTLVParser;
+        
         bool isRegistered(GenericTLVParserBase<BaseParser> const & parser) const;
         bool isRegistered(Keytype const & key) const;
         
-        void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
-        void dump(GenericTLVParserBase<BaseParser> const & parser, Keytype const & key, std::ostream & os) const;
+        void dump(GenericTLVParser const & parser, std::ostream & os) const;
+        void dump(GenericTLVParser const & parser, Keytype const & key, std::ostream & os) const;
+        
+        PacketParserBase::size_type bytes(GenericTLVParser const & parser) const;
     };
+        
+    struct TLVParserNotRegisteredException : public senf::Exception
+    { 
+        TLVParserNotRegisteredException() : senf::Exception("tlv parser not registered") {} 
+    };
+
         
     /** \brief Statically add an entry to a TLV parser registry
 

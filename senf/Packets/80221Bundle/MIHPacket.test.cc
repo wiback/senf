@@ -296,7 +296,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_create)
     unsigned char tlv2_value[] = {
             0x1a, 0x2b, 0x3c, 0x4d };
     MIHGenericTLVParser tlv2 ( tlvListContainer.push_back_space());
-    tlv2.type() = 0x0c;
+    tlv2.type() = 0x43;
     tlv2.value( tlv2_value);
 
     mihPacket.finalizeAll();
@@ -319,7 +319,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_create)
             0x0a, // first bit not set, length=10
             0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, // value
             // second test tlv
-            0x0c, // type
+            0x43, // type
             0x04, // first bit not set, length=4
             0x1a, 0x2b, 0x3c, 0x4d // value
     };

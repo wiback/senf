@@ -36,7 +36,10 @@
 template <class Base>
 prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserBase<Base>::bytes()
 {
-    return senf::bytes(self()) + this->length();
+    if (Base::Registry::instance().isRegistered( *this))
+        return Base::Registry::instance().bytes( *this);
+    else
+        return senf::bytes(self()) + this->length();
 }
 
 template <class Base>
@@ -119,12 +122,21 @@ prefix_ void senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::d
     (parser.template as<Parser>()).dump(os);
 }
 
+template <class BaseParser, class Parser>
+prefix_ senf::PacketParserBase::size_type
+senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::bytes(
+        GenericTLVParserBase<BaseParser> const & parser)
+    const
+{
+    return senf::bytes( parser.template as<Parser>());
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::GenericTLVParserRegistry<BaseParser,Keytype>
 
 template <class BaseParser, class Keytype>
 prefix_ bool senf::GenericTLVParserRegistry<BaseParser,Keytype>::isRegistered(
-        GenericTLVParserBase<BaseParser> const & parser)
+        GenericTLVParser const & parser)
     const
 {
     typename Map::const_iterator i (map_.find( parser.type()));

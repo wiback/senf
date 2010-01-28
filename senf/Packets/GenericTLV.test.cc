@@ -176,6 +176,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_packet)
 
 SENF_AUTO_UNIT_TEST(GenericTLV_registry)
 {
+    typedef senf::GenericTLVParserRegistry<MyTLVParserBase> MyTLVParserRegistry;
     MyTestPacket p ( MyTestPacket::create());
     MyTestPacket::Parser::tlv_list_t::container tlvContainer (p->tlv_list() );
     MyConcreteTLVParser conreteTLVParser ( 
@@ -184,15 +185,20 @@ SENF_AUTO_UNIT_TEST(GenericTLV_registry)
     p.finalizeThis();
         
     std::stringstream ss;
-    (*tlvContainer.begin()).dump( ss);
+    tlvContainer.begin()->dump( ss);
     BOOST_CHECK_EQUAL( ss.str().substr(0,58), 
             "  GenericTLVParser<(anonymous namespace)::MyTLVParserBase>" );
+    BOOST_CHECK( ! MyTLVParserRegistry::instance().isRegistered( tlvContainer.begin()->type()));
     
-    senf::GenericTLVParserRegistry<MyTLVParserBase>::instance()
-            .registerParser<MyConcreteTLVParser>();
+    MyTLVParserRegistry::instance().registerParser<MyConcreteTLVParser>();
+    BOOST_CHECK( MyTLVParserRegistry::instance().isRegistered( tlvContainer.begin()->type()));
+    BOOST_CHECK_EQUAL( 
+            MyTLVParserRegistry::instance().bytes( *tlvContainer.begin()),
+            senf::bytes( *tlvContainer.begin()) );
+    
     ss.str(""); ss.clear();
     
-    (*tlvContainer.begin()).dump( ss);
+    tlvContainer.begin()->dump( ss);
     BOOST_CHECK_EQUAL( ss.str().substr(0,21), "  MyConcreteTLVParser" );
 }
 
