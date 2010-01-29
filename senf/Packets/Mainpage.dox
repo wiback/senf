@@ -676,6 +676,10 @@
     struct Timestamp {
         senf::ClockService::clock_t value;
     };
+    
+    std::ostream & operator<<(std::ostream & os, Timestamp const & tstamp) { 
+        os << tstamp.value; return os; 
+    }
 
     senf::EthernetPacket packet (senf::EthernetPacket::create(senf::noinit));
     sock.read(packet.data(), 0u);
@@ -687,16 +691,19 @@
     \code
     if (senf::ClockService::now() - packet.annotation<Timestamp>().value 
             > senf::ClockService::seconds(1)) {
-        // Ouch ... this packet is to old
+        // this packet is to old
         // ...
     }
     \endcode
-
+    
     It is very important to define a specific structure (or class or enum) type for each type of
     annotation. \e Never directly store a fundamental type as an annotation: The name of the type is
     used to look up the annotation, so you can store only one annotation for each built-in type. \c
     typedef does not help since \c typedef does not introduce new type names, it only defines an
     alias.
+
+    The annotation type must support the output \c operator<< for description purposes 
+    (e.g. for the \ref senf::Packet::dump() "Packet::dump()" member). 
 
     Of course, the annotation structure can be arbitrary. However, one very important caveat: If the
     annotation is not a POD type, it needs to inherit from senf::ComplexAnnotation. A type is POD,
