@@ -74,19 +74,6 @@ prefix_ void senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::init(dat
 // senf::detail::ListBParser_Policy<ElementParser,BytesParser>
 
 template <class ElementParser, class AuxPolicy>
-prefix_
-senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
-container_policy(parser_policy const & p)
-    : AuxPolicy (p)
-{
-    data_iterator const e (boost::next(parser_type::get(p).i(),parser_type::get(p).bytes()));
-    data_iterator i (AuxPolicy::adjust(parser_type::get(p).i(), parser_type::get(p).state()));
-    for( n_=0; i!=e; 
-         ++n_, std::advance(i,senf::bytes(ElementParser(i,parser_type::get(p).state())))) ;
-    container_size_ = parser_type::get(p).data().size();
-}
-
-template <class ElementParser, class AuxPolicy>
 prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::size_type
 senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::bytes(data_iterator i,
                                                                                    state_type s)
@@ -157,10 +144,14 @@ update(container_type const & c)
 {
     if (container_size_ == c.data().size())
         return;
+#if 1
     data_iterator i (AuxPolicy::adjust(c.i(), c.state()));
     data_iterator j (i);
     for (size_type n (n_); n; --n, std::advance(j,senf::bytes(ElementParser(j,c.state())))) ;
     aux( std::distance(i,j), c.i(), c.state() );
+#else
+    aux ( aux(c.i(),c.state()) + c.data().size() - container_size_, c.i(), c.state() );
+#endif
     container_size_ = c.data().size();
 }
 
