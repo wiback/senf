@@ -67,7 +67,7 @@ prefix_ void senf::StatisticsBase::OutputEntry::initDir()
 {
     namespace fty = senf::console::factory;
 
-    dir.add("list", fty::BoundCommand(this,&OutputEntry::consoleList)
+    dir.add("list", fty::Command(this,&OutputEntry::consoleList)
             .doc("List all known connected targets. This list might not be complete.") );
 }
 

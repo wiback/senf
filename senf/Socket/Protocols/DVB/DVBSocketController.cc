@@ -431,10 +431,10 @@ prefix_ void senf::DVBSocketController::initConsole()
     dir.doc("DVB Controller " + controllerNr);
     ++controllerNr;
 
-    dir.add("type", fty::BoundCommand(this, &DVBSocketController::getTypeString)
+    dir.add("type", fty::Command(this, &DVBSocketController::getTypeString)
 	    .doc("Shows actual type of card DVB-{T, S, C}") );
 
-    dir.add("info", fty::BoundCommand(this, &DVBSocketController::getTuneInfo)
+    dir.add("info", fty::Command(this, &DVBSocketController::getTuneInfo)
 	    .doc("Returns a string which shows actual tuning status.\n"
 		 "'S' prints signal strength (in hex)\n"
 		 "'s' prints singal to noise ration (in hex)\n"
@@ -446,7 +446,7 @@ prefix_ void senf::DVBSocketController::initConsole()
 		 "and could end in throwing an exception!")
 	    .arg("conf", "Ssbuf", kw::default_value = "Ssbuf") );
 
-    dir.add("tune", fty::BoundCommand(this,&DVBSocketController::tuneToCMD)
+    dir.add("tune", fty::Command(this,&DVBSocketController::tuneToCMD)
 	    .doc("tunes to channel listet in the configfile.")
 	    .arg("channel", "channel to tune")
 	    .arg("mode", "mode 'sync' or 'async'", kw::default_value = "async") );

@@ -58,11 +58,11 @@ prefix_ senf::log::FileTarget::FileTarget(std::string const & filename,
         SENF_THROW_SYSTEM_EXCEPTION("logfile open") << ": " << filename;
     consoleDir()
         .add( "reopen",
-              fty::BoundCommand(this, SENF_MEMFNP(void, FileTarget, reopen, ()))
+              fty::Command(this, SENF_MEMFNP(void, FileTarget, reopen, ()))
               .doc("Reopen logfile") );
     consoleDir()
         .add("reopen", 
-             fty::BoundCommand(this, SENF_MEMFNP(void, FileTarget, reopen, (std::string const &)))
+             fty::Command(this, SENF_MEMFNP(void, FileTarget, reopen, (std::string const &)))
              .arg("filename","new filename")
              .overloadDoc("Reopen logfile under new name") );
     consoleDir()

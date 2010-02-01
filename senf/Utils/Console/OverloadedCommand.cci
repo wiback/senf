@@ -195,14 +195,6 @@ senf::console::SimpleOverloadAttributor::create(DirectoryNode & dir, std::string
     return node;
 }
 
-///////////////////////////////////////////////////////////////////////////
-
-prefix_ senf::console::SimpleOverloadAttributor
-senf::console::factory::Command(SimpleCommandOverload::Function fn)
-{
-    return SimpleOverloadAttributor(fn);
-}
-
 /////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

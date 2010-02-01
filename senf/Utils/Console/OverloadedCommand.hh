@@ -284,11 +284,7 @@ namespace console {
         mutable boost::optional<std::string> shortdoc_;
     };
 
-namespace factory {
-
-    SimpleOverloadAttributor Command(SimpleCommandOverload::Function fn);
-
-}}}
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "OverloadedCommand.cci"

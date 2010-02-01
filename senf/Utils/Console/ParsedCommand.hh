@@ -32,7 +32,7 @@
 
 #include <vector>
 #include <boost/type_traits/function_traits.hpp>
-#include <boost/type_traits/is_member_pointer.hpp>
+#include <boost/type_traits/is_member_function_pointer.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/utility.hpp>
 #include <boost/parameter/keyword.hpp>
@@ -572,6 +572,28 @@ namespace console {
 
 namespace factory {
 
+    template <class Signature>
+    SimpleOverloadAttributor 
+    Command(boost::function<Signature> fn,
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Signature>::is_simple>::type * = 0);
+
+    template <class Function>
+    SimpleOverloadAttributor 
+    Command(Function fn,
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_simple>::type * = 0);
+
+    template <class Owner, class Member>
+    SimpleOverloadAttributor
+    Command(Owner * owner, Member memfn,
+            typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0,
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Member>::is_simple>::type * = 0);
+
+    template <class Owner, class Member>
+    SimpleOverloadAttributor
+    Command(Owner const * owner, Member memfn,
+            typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0,
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Member>::is_simple>::type * = 0);
+
     template <class CastTo, class Signature>
     typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
     Command(boost::function<Signature> fn);
@@ -579,8 +601,9 @@ namespace factory {
     template <class CastTo, class Function>
     typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
     Command(Function fn,
-            typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type * = 0);
-
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type * = 0,
+            typename boost::disable_if<boost::is_member_function_pointer<Function> >::type * = 0);
+    
     template <class Signature>
     typename senf::console::detail::ParsedCommandTraits<Signature>::Attributor
     Command(boost::function<Signature> fn);
@@ -588,23 +611,28 @@ namespace factory {
     template <class Function>
     typename senf::console::detail::ParsedCommandTraits<Function>::Attributor
     Command(Function fn,
-            typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type * = 0);
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type * = 0,
+            typename boost::disable_if<boost::is_member_function_pointer<Function> >::type * = 0);
 
     template <class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
-    BoundCommand(Owner * owner, Member memfn);
+    Command(Owner * owner, Member memfn,
+            typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
 
     template <class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
-    BoundCommand(Owner const * owner, Member memfn);
+    Command(Owner const * owner, Member memfn,
+            typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
+    
+    template <class CastTo, class Owner, class Member>
+    typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
+    Command(Owner * owner, Member memfn,
+            typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
 
     template <class CastTo, class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
-    BoundCommand(Owner * owner, Member memfn);
-
-    template <class CastTo, class Owner, class Member>
-    typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
-    BoundCommand(Owner const * owner, Member memfn);
+    Command(Owner const * owner, Member memfn,
+            typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
 
 
 }}}

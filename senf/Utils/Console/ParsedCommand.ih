@@ -116,6 +116,7 @@ namespace detail {
     {
         static const bool is_callable = false;
         static const bool is_member = false;
+        static const bool is_simple = false;
     };
 
     template <class FunctionP, class Function>
@@ -138,6 +139,7 @@ namespace detail {
 
         static const bool is_callable = true;
         static const bool is_member = boost::is_member_pointer<base_type>::value;
+        static const bool is_simple = false;
         
         typedef typename senf::member_class<base_type>::type class_type;
 
@@ -148,7 +150,9 @@ namespace detail {
     // Disable auto-parsing for ParseCommandInfo arg -> register manually parsed command
     template <class FunctionP>
     struct ParsedCommandTraits_i<FunctionP, void (std::ostream &, ParseCommandInfo const &), true>
-    {};
+    {
+        static const bool is_simple = true;
+    };
 
     template <class FunctionP>
     struct ParsedCommandTraits

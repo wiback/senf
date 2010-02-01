@@ -36,18 +36,18 @@ prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemu
     namespace kw = senf::console::kw;
     namespace fty = senf::console::factory;
 
-    dir.add("buffersize", fty::BoundCommand(this, &DVBSectionProtocolWrapper::setBufferSize)
+    dir.add("buffersize", fty::Command(this, &DVBSectionProtocolWrapper::setBufferSize)
 	    .doc("Set the size of the circular buffer used for filtered data.")
 	    .arg("size", "in byte") );
 
-    dir.add("start", fty::BoundCommand(this,&DVBSectionProtocolWrapper::startFiltering)
+    dir.add("start", fty::Command(this,&DVBSectionProtocolWrapper::startFiltering)
 	    .doc("Starts filtering") );
 
-    dir.add("stop", fty::BoundCommand(this, &DVBSectionProtocolWrapper::setBufferSize)
+    dir.add("stop", fty::Command(this, &DVBSectionProtocolWrapper::setBufferSize)
 	    .doc("Stops filtering") );
 
     dir.add("filter", 
-	    fty::BoundCommand<void (unsigned short int, 
+	    fty::Command<void (unsigned short int, 
 				    unsigned, 
 				    senf::console::FlagCollection<Flags>, 
 				    unsigned, 
@@ -72,7 +72,7 @@ prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemu
 		 kw::default_doc = "0x00")
 	    .doc("Sets parameters for section filter.") );
 
-    dir.add("stop", fty::BoundCommand(this, &DVBSectionProtocolWrapper::setBufferSize)
+    dir.add("stop", fty::Command(this, &DVBSectionProtocolWrapper::setBufferSize)
 	    .doc("Stops filtering") );
 }
 
@@ -84,7 +84,7 @@ prefix_ senf::DVBPESProtocolWrapper::DVBPESProtocolWrapper(senf::DVBDemuxPESHand
     namespace fty = senf::console::factory;
 
     dir.add("filter", 
-	    fty::BoundCommand<void (unsigned short int, 
+	    fty::Command<void (unsigned short int, 
 				    dmx_input_t, 
 				    dmx_output_t, 
 				    dmx_pes_type_t, 
@@ -101,10 +101,10 @@ prefix_ senf::DVBPESProtocolWrapper::DVBPESProtocolWrapper(senf::DVBDemuxPESHand
 		 kw::default_doc = "(IMMEDIATE_START CHECK_CRC)")
 	    .doc("Sets parameters for PES filter.") );
     
-    dir.add("start", fty::BoundCommand(this, &DVBPESProtocolWrapper::startFiltering)
+    dir.add("start", fty::Command(this, &DVBPESProtocolWrapper::startFiltering)
 	    .doc("Starts filtering") );
 
-    dir.add("stop", fty::BoundCommand(this, &DVBPESProtocolWrapper::stopFiltering)
+    dir.add("stop", fty::Command(this, &DVBPESProtocolWrapper::stopFiltering)
 	    .doc("Stops filtering") );
 }
 

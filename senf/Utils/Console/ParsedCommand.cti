@@ -361,9 +361,50 @@ namespace detail {
 
 }}}
 
+///////////////////////////////////////////////////////////////////////////
+
+template <class Signature>
+prefix_ senf::console::SimpleOverloadAttributor 
+senf::console::factory::
+Command(boost::function<Signature> fn,
+        typename boost::enable_if_c<detail::ParsedCommandTraits<Signature>::is_simple>::type *)
+{
+    return SimpleOverloadAttributor(fn);
+}
+
+template <class Function>
+prefix_ senf::console::SimpleOverloadAttributor 
+senf::console::factory::
+Command(Function fn,
+        typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_simple>::type *)
+{
+    return SimpleOverloadAttributor(fn);
+}
+
+template <class Owner, class Member>
+prefix_ senf::console::SimpleOverloadAttributor 
+senf::console::factory::
+Command(Owner * owner, Member memfn,
+        typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *,
+        typename boost::enable_if_c<detail::ParsedCommandTraits<Member>::is_simple>::type *)
+{
+    return SimpleOverloadAttributor(senf::membind(memfn,owner));
+}
+
+template <class Owner, class Member>
+prefix_ senf::console::SimpleOverloadAttributor 
+senf::console::factory::
+Command(Owner const * owner, Member memfn,
+        typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *,
+        typename boost::enable_if_c<detail::ParsedCommandTraits<Member>::is_simple>::type *)
+{
+    return SimpleOverloadAttributor(senf::membind(memfn,owner));
+}
+
 template <class CastTo, class Signature>
 prefix_ typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
-senf::console::factory::Command(boost::function<Signature> fn)
+senf::console::factory::
+Command(boost::function<Signature> fn)
 {
     return detail::addOverloadedCommandNode<CastTo>(fn);
 }
@@ -372,14 +413,16 @@ template <class CastTo, class Function>
 prefix_ typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
 senf::console::factory::
 Command(Function fn,
-        typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type *)
+        typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type *,
+        typename boost::disable_if<boost::is_member_function_pointer<Function> >::type *)
 {
     return detail::addOverloadedCommandNode<CastTo>(fn);
 }
 
 template <class Signature>
 prefix_ typename senf::console::detail::ParsedCommandTraits<Signature>::Attributor
-senf::console::factory::Command(boost::function<Signature> fn)
+senf::console::factory::
+Command(boost::function<Signature> fn)
 {
     return detail::addOverloadedCommandNode<Signature>(fn);
 }
@@ -388,35 +431,44 @@ template <class Function>
 prefix_ typename senf::console::detail::ParsedCommandTraits<Function>::Attributor
 senf::console::factory::
 Command(Function fn,
-        typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type *)
+        typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type *,
+        typename boost::disable_if<boost::is_member_function_pointer<Function> >::type *)
 {
     return detail::addOverloadedCommandNode<Function>(fn);
 }
 
 template <class Owner, class Member>
 prefix_ typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
-senf::console::factory::BoundCommand(Owner * owner, Member memfn)
+senf::console::factory::
+Command(Owner * owner, Member memfn,
+             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *)
 {
     return detail::addOverloadedCommandNode<Member>(senf::membind(memfn,owner));
 }
 
 template <class Owner, class Member>
 prefix_ typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
-senf::console::factory::BoundCommand(Owner const * owner, Member memfn)
+senf::console::factory::
+Command(Owner const * owner, Member memfn,
+             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *)
 {
     return detail::addOverloadedCommandNode<Member>(senf::membind(memfn,owner));
 }
 
 template <class CastTo, class Owner, class Member>
 prefix_ typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
-senf::console::factory::BoundCommand(Owner * owner, Member memfn)
+senf::console::factory::
+Command(Owner * owner, Member memfn,
+             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *)
 {
     return detail::addOverloadedCommandNode<CastTo>(senf::membind(memfn,owner));
 }
 
 template <class CastTo, class Owner, class Member>
 prefix_ typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
-senf::console::factory::BoundCommand(Owner const * owner, Member memfn)
+senf::console::factory::
+Command(Owner const * owner, Member memfn,
+             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *)
 {
     return detail::addOverloadedCommandNode<CastTo>(senf::membind(memfn,owner));
 }

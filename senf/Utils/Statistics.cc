@@ -155,7 +155,7 @@ prefix_ senf::Statistics::Statistics()
 #ifndef SENF_DISABLE_CONSOLE
     namespace fty = senf::console::factory;
 
-    dir.add("list", fty::BoundCommand(this,&Statistics::consoleList)
+    dir.add("list", fty::Command(this,&Statistics::consoleList)
             .doc("List statistics collection intervals and current values.\n"
                  "\n"
                  "Columns:\n"
@@ -166,7 +166,7 @@ prefix_ senf::Statistics::Statistics()
                  "    AVG     Last entered average value.\n"
                  "    DEV     Standard deviation of average value over the collector rank.\n"
                  "    MAX     Last entered maximum value.") );
-    dir.add("collect", fty::BoundCommand(this, &Statistics::consoleCollect)
+    dir.add("collect", fty::Command(this, &Statistics::consoleCollect)
             .doc("Add statistics collection groups. The argument gives a sequence of collector\n"
                  "ranks each building on the preceding collector:\n"
                  "\n"
@@ -181,7 +181,7 @@ prefix_ senf::Statistics::Statistics()
                  "You may call collect multiple times. Any missing collection ranks will be\n"
                  "added.")
             .arg("ranks","chain of collector ranks") );
-    dir.add("output", fty::BoundCommand(this, &Statistics::consoleOutput)
+    dir.add("output", fty::Command(this, &Statistics::consoleOutput)
             .doc("Generate statistics output. This statement will add an additional output\n"
                  "generator. This generator will be attached to the collector specified by\n"
                  "the {rank} parameter. This parameter is a chain of successive rank values\n"
