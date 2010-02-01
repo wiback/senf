@@ -65,8 +65,10 @@ prefix_ senf::StatisticsBase::OutputEntry::OutputEntry(const OutputEntry& other)
 
 prefix_ void senf::StatisticsBase::OutputEntry::initDir()
 {
-    dir.add("list", senf::membind(&OutputEntry::consoleList, this))
-        .doc("List all known connected targets. This list might not be complete.");
+    namespace fty = senf::console::factory;
+
+    dir.add("list", fty::BoundCommand(this,&OutputEntry::consoleList)
+            .doc("List all known connected targets. This list might not be complete.") );
 }
 
 prefix_ senf::StatisticsBase::OutputEntry &

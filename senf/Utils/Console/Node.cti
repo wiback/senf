@@ -31,18 +31,6 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::NodeCreateTraits<Object>::Creator
-
-template <class Object>
-prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
-senf::console::NodeCreateTraits<Object>::Creator::create(DirectoryNode & node,
-                                                         std::string const & name,
-                                                         Object & ob)
-{
-    return senf_console_add_node(node, name, ob, 0);
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::console::DirectoryNode
 
 template <class NodeType>
@@ -55,18 +43,22 @@ prefix_ NodeType & senf::console::DirectoryNode::add(std::string const & name,
     return *node;
 }
 
-template <class Object>
-prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
-senf::console::DirectoryNode::add(std::string const & name, Object const & ob)
+template <class NodeType>
+prefix_ NodeType & senf::console::DirectoryNode::
+add(std::string const & name, NodeType & node,
+    typename boost::enable_if< boost::is_convertible<NodeType &, GenericNode &> >::type *)
 {
-    return NodeCreateTraits<Object const>::Creator::create(*this, name, ob);
+    // This makes objects with implicit conversion operators work (hi, ScopedDirectory ..)
+    add(name, static_cast<GenericNode &>(node).thisptr());
+    return node;
 }
 
-template <class Object>
-prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
-senf::console::DirectoryNode::add(std::string const & name, Object & ob)
+template <class Factory>
+prefix_ typename Factory::result_type senf::console::DirectoryNode::
+add(std::string const & name, Factory const & factory,
+    typename boost::enable_if< boost::is_convertible<Factory const &, detail::NodeFactory const &> >::type *)
 {
-    return NodeCreateTraits<Object>::Creator::create(*this, name, ob);
+    return factory.create(*this, name);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

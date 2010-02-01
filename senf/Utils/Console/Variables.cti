@@ -39,6 +39,13 @@ prefix_ senf::console::detail::QueryVariable<Variable>::QueryVariable(Variable c
 {}
 
 template <class Variable>
+prefix_ typename senf::console::detail::QueryVariable<Variable>::Traits::Overload::ptr
+senf::console::detail::QueryVariable<Variable>::create(Variable const & var)
+{
+    return CreateOverload::create(Function(QueryVariable(var)));
+}
+
+template <class Variable>
 prefix_ Variable const & senf::console::detail::QueryVariable<Variable>::operator()()
     const
 {
@@ -55,6 +62,15 @@ prefix_ senf::console::detail::SetVariable<Variable>::SetVariable(Variable & var
 {}
 
 template <class Variable>
+prefix_ typename senf::console::detail::SetVariable<Variable>::Traits::Overload::ptr
+senf::console::detail::SetVariable<Variable>::create(Variable & var)
+{
+    typename Traits::Overload::ptr overload (CreateOverload::create(Function(SetVariable(var))));
+    overload->arg(0).name = "new_value";
+    return overload;
+}
+
+template <class Variable>
 prefix_ void senf::console::detail::SetVariable<Variable>::operator()(Variable const & value)
     const
 {
@@ -68,188 +84,149 @@ prefix_ void senf::console::detail::SetVariable<Variable>::operator()(Variable c
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::ConstVariableAttributor<Variable>
+// senf::console::ConstVariableFactory<Variable>
 
 template <class Variable>
-prefix_ senf::console::ConstVariableAttributor<Variable>
-senf::console::ConstVariableAttributor<Variable>::doc(std::string const & doc)
+prefix_ senf::console::factory::ConstVariableFactory<Variable>
+senf::console::factory::ConstVariableFactory<Variable>::doc(std::string const & doc)
 {
-    queryOverload_.node().doc(doc);
+    doc_ = doc;
     return *this;
 }
 
 template <class Variable>
-prefix_ senf::console::ConstVariableAttributor<Variable>
-senf::console::ConstVariableAttributor<Variable>::shortdoc(std::string const & doc)
+prefix_ senf::console::factory::ConstVariableFactory<Variable>
+senf::console::factory::ConstVariableFactory<Variable>::shortdoc(std::string const & doc)
 {
-    queryOverload_.node().shortdoc(doc);
+    shortdoc_ = doc;
     return *this;
 }
 
 template <class Variable>
-prefix_ senf::console::ConstVariableAttributor<Variable>
-senf::console::ConstVariableAttributor<Variable>::formatter(Formatter formatter)
+prefix_ senf::console::factory::ConstVariableFactory<Variable>
+senf::console::factory::ConstVariableFactory<Variable>::formatter(Formatter formatter)
 {
-    queryOverload_.formatter(formatter);
+    queryOverload_->formatter(formatter);
     return *this;
 }
-
-template <class Variable>
-prefix_ senf::console::ConstVariableAttributor<Variable>::
-ConstVariableAttributor(QueryOverload & queryOverload)
-    : queryOverload_ (queryOverload)
-{}
 
 template <class Variable>
 prefix_ senf::console::OverloadedCommandNode &
-senf::console::ConstVariableAttributor<Variable>::node()
+senf::console::factory::ConstVariableFactory<Variable>::create(DirectoryNode & dir,
+                                                               std::string const & name)
     const
 {
-    return queryOverload_.node();
+    OverloadedCommandNode & node (OverloadedCommandNode::insertOverload(dir, name, queryOverload_));
+    if (doc_) node.doc(*doc_);
+    if (shortdoc_) node.shortdoc(*shortdoc_);
+    return node;
 }
 
 template <class Variable>
-prefix_ senf::console::ConstVariableAttributor<Variable>::
-operator senf::console::OverloadedCommandNode &()
-    const
-{
-    return node();
-}
+prefix_ senf::console::factory::ConstVariableFactory<Variable>::
+ConstVariableFactory(Variable const & var)
+    : queryOverload_ (detail::QueryVariable<Variable>::create(var))
+{}
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::VariableAttributor<Variable>
+// senf::console::VariableFactory<Variable>
 
 template <class Variable>
-prefix_ senf::console::VariableAttributor<Variable>
-senf::console::VariableAttributor<Variable>::parser(Parser parser)
+prefix_ typename senf::console::factory::VariableFactory<Variable>
+senf::console::factory::VariableFactory<Variable>::parser(Parser parser)
 {
-    setOverload_.template arg<0>().parser = parser;
+    setOverload_->template arg<0>().parser = parser;
     return *this;
 }
 
 template <class Variable>
-prefix_ senf::console::VariableAttributor<Variable>
-senf::console::VariableAttributor<Variable>::typeName(std::string const & name)
+prefix_ typename senf::console::factory::VariableFactory<Variable>
+senf::console::factory::VariableFactory<Variable>::typeName(std::string const & name)
 {
-    setOverload_.arg(0).type = name;
+    setOverload_->arg(0).type = name;
     return *this;
 }
 
 template <class Variable>
-prefix_ typename senf::console::VariableAttributor<Variable>
-senf::console::VariableAttributor<Variable>::onChange(OnChangeHandler handler)
+prefix_ typename senf::console::factory::VariableFactory<Variable>
+senf::console::factory::VariableFactory<Variable>::onChange(OnChangeHandler handler)
 {
-    setOverload_.function( 
+    setOverload_->function( 
         boost::bind(detail::SetVariable<Variable>(var_, handler),_2));
     return *this;
 }
 
 template <class Variable>
-prefix_ typename senf::console::VariableAttributor<Variable>
-senf::console::VariableAttributor<Variable>::doc(std::string const & doc)
+prefix_ typename senf::console::factory::VariableFactory<Variable>
+senf::console::factory::VariableFactory<Variable>::doc(std::string const & doc)
 {
-    ConstVariableAttributor<Variable>::doc(doc);
+    ConstVariableFactory<Variable>::doc(doc);
     return *this;
 }
 
 template <class Variable>
-prefix_ typename senf::console::VariableAttributor<Variable>
-senf::console::VariableAttributor<Variable>::shortdoc(std::string const & doc)
+prefix_ typename senf::console::factory::VariableFactory<Variable>
+senf::console::factory::VariableFactory<Variable>::shortdoc(std::string const & doc)
 {
-    ConstVariableAttributor<Variable>::shortdoc(doc);
+    ConstVariableFactory<Variable>::shortdoc(doc);
     return *this;
 }
 
 template <class Variable>
-prefix_ typename senf::console::VariableAttributor<Variable>
-senf::console::VariableAttributor<Variable>::formatter(Formatter formatter)
+prefix_ typename senf::console::factory::VariableFactory<Variable>
+senf::console::factory::VariableFactory<Variable>::formatter(Formatter formatter)
 {
-    ConstVariableAttributor<Variable>::formatter(formatter);
+    ConstVariableFactory<Variable>::formatter(formatter);
     return *this;
 }
 
 template <class Variable>
-prefix_
-senf::console::VariableAttributor<Variable>::VariableAttributor(QueryOverload & queryOverload,
-                                                                SetOverload & setOverload,
-                                                                Variable & var)
-    : ConstVariableAttributor<Variable> (queryOverload), setOverload_ (setOverload), var_ (var)
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::factory::VariableFactory<Variable>::create(DirectoryNode & dir,
+                                                          std::string const & name)
+    const
+{
+    OverloadedCommandNode & node (ConstVariableFactory<Variable>::create(dir,name));
+    node.add(setOverload_);
+    return node;
+}
+
+template <class Variable>
+prefix_ senf::console::factory::VariableFactory<Variable>::VariableFactory(Variable & var)
+    : ConstVariableFactory<Variable> (var), 
+      setOverload_ (detail::SetVariable<Variable>::create(var)),
+      var_ (var)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
 
-template <class Variable, bool isConst>
-prefix_ senf::console::VariableAttributor<Variable>
-senf::console::detail::VariableNodeCreator<Variable,isConst>::add(DirectoryNode & node,
-                                                                  std::string const & name,
-                                                                  Variable & var)
+template <class Var>
+prefix_ senf::console::factory::VariableFactory<Var>
+senf::console::factory::Variable(Var & var)
 {
-    typename VariableAttributor<Variable>::SetOverload & setOverload ( 
-        node.add(name, typename detail::SetVariable<Variable>::Function(
-                     detail::SetVariable<Variable>(var)))
-            .arg("new_value")
-            .overload() );
-    typename VariableAttributor<Variable>::QueryOverload & queryOverload ( 
-        node.add(name, typename detail::QueryVariable<Variable>::Function(
-                     detail::QueryVariable<Variable>(var))).overload() );
-
-    return VariableAttributor<Variable>(queryOverload, setOverload, var);
+    return VariableFactory<Var>(var);
 }
 
-template <class Variable>
-prefix_ senf::console::ConstVariableAttributor<Variable>
-senf::console::detail::VariableNodeCreator<Variable, true>::add(DirectoryNode & node,
-                                                                std::string const & name,
-                                                                Variable & var)
+template <class Var>
+prefix_ senf::console::factory::VariableFactory<Var>
+senf::console::factory::Variable(boost::reference_wrapper<Var> var)
 {
-    typename VariableAttributor<Variable>::QueryOverload & queryOverload ( 
-        node.add(name, typename detail::QueryVariable<Variable>::Function(
-                     detail::QueryVariable<Variable>(var))).overload() );
-
-    return ConstVariableAttributor<Variable>(queryOverload);
+    return VariableFactory<Var>(var);
 }
 
-#ifndef DOXYGEN
-
-template <class Variable>
-prefix_ senf::console::VariableAttributor<Variable> senf::console::
-senf_console_add_node(DirectoryNode & node, std::string const & name, Variable & var, int,
-                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *,
-                      typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type *, 
-                      typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type *)
+template <class Var>
+prefix_ senf::console::factory::ConstVariableFactory<Var>
+senf::console::factory::Variable(Var const & var)
 {
-    return detail::VariableNodeCreator<Variable>::add(node, name, var);
+    return ConstVariableFactory<Var>(var);
 }
 
-template <class Variable>
-prefix_ typename senf::console::detail::VariableNodeCreator<Variable>::result_type
-senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                     boost::reference_wrapper<Variable> var, int)
+template <class Var>
+prefix_ senf::console::factory::ConstVariableFactory<Var>
+senf::console::factory::Variable(boost::reference_wrapper<Var const> var)
 {
-    return detail::VariableNodeCreator<Variable>::add(node, name, var.get());
+    return ConstVariableFactory<Var>(var);
 }
-
-template <class Variable, class Owner>
-prefix_ senf::console::VariableAttributor<Variable> senf::console::
-senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                      Variable & var, int,
-                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *, 
-                      typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type *, 
-                      typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type *)
-{
-    return detail::VariableNodeCreator<Variable>::add(node, name, var);
-}
-
-template <class Variable, class Owner>
-prefix_ typename senf::console::detail::VariableNodeCreator<Variable>::result_type
-senf::console::senf_console_add_node(DirectoryNode & node, Owner &,
-                                     std::string const & name,
-                                     boost::reference_wrapper<Variable> var, int)
-{
-    return detail::VariableNodeCreator<Variable>::add(node, name, var.get());
-}
-
-#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

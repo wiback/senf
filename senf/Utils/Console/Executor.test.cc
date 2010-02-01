@@ -49,8 +49,10 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(executor)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::root().mkdir("dir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
+    senf::console::root().mkdir("dir2").doc("Helptext").add("test",fty::Command(&testCommand));
 
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -182,8 +184,10 @@ SENF_AUTO_UNIT_TEST(executor)
 
 SENF_AUTO_UNIT_TEST(executorChroot)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::root().mkdir("dir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
+    senf::console::root().mkdir("dir2").doc("Helptext").add("test", fty::Command(&testCommand));
 
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -216,8 +220,10 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(executorPolicy)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::root().mkdir("dir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
+    senf::console::root().mkdir("dir2").doc("Helptext").add("test",fty::Command(&testCommand));
 
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -247,8 +253,10 @@ SENF_AUTO_UNIT_TEST(executorPolicy)
 
 SENF_AUTO_UNIT_TEST(executorAuto)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::root().mkdir("tdir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
+    senf::console::root().mkdir("dir2").doc("Helptext").add("test",fty::Command(&testCommand));
 
     senf::console::Executor executor;
     executor

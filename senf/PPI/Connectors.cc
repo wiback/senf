@@ -120,40 +120,44 @@ namespace {
     ConsoleRegister::ConsoleRegister()
     {
         senf::ppi::ModuleManager::instance().consoleDir()
-            .add("tracing", SENF_FNP(senf::ppi::connector::Connector::TraceState,
-                                     senf::ppi::connector::Connector::tracing, ()))
-            .doc("Log every packet sent or received by any module.\n"
-                 "There are three different tracing levels:\n"
-                 "\n"
-                 "    NO_TRACING      don't output any tracing information\n"
-                 "    TRACE_IDS       trace packet id's but do not show packet contents\n"
-                 "    TRACE_CONTENTS  trace complete packet contents\n"
-                 "\n"
-                 "A log message is generated whenever the packet traverses a connector. The\n"
-                 "TRACE_IDS log message has the following format:\n"
-                 "\n"
-                 "    PPI packet trace: <direction> <packet-id> <packet-type>\n"
-                 "                      on <module-id> <module-type> connector <connector-id>\n"
-                 "    PPI throttling trace: <direction> <throttle-msg>\n"
-                 "                      on <module-id> <module-type> connector <connector-id>\n"
-                 "\n"
-                 "The fields are:\n"
-                 "\n"
-                 "    direction       'IN' for packets/throttle notifications entering the module,\n"
-                 "                    'OUT' for packets/throttle notifications leaving it\n"
-                 "    packet-id       Numeric unique packet id. This value is unique for packets\n"
-                 "                    alive at the same time, packets at different times may (and\n"
-                 "                    will) share id's\n"
-                 "    packet-type     The type of the packet header\n"
-                 "    module-id       Unique module id\n"
-                 "    module-type     Type of the module the packet is sent to/from\n"
-                 "    connector-id    Unique connector id\n"
-                 "    throttle-msg    Type of throttling event\n");
+            .add("tracing", senf::console::factory::Command(
+                     SENF_FNP(senf::ppi::connector::Connector::TraceState,
+                              senf::ppi::connector::Connector::tracing, ()))
+                 .doc("Log every packet sent or received by any module.\n"
+                      "There are three different tracing levels:\n"
+                      "\n"
+                      "    NO_TRACING      don't output any tracing information\n"
+                      "    TRACE_IDS       trace packet id's but do not show packet contents\n"
+                      "    TRACE_CONTENTS  trace complete packet contents\n"
+                      "\n"
+                      "A log message is generated whenever the packet traverses a connector. The\n"
+                      "TRACE_IDS log message has the following format:\n"
+                      "\n"
+                      "    PPI packet trace: <direction> <packet-id> <packet-type>\n"
+                      "                      on <module-id> <module-type> connector <connector-id>\n"
+                      "    PPI throttling trace: <direction> <throttle-msg>\n"
+                      "                      on <module-id> <module-type> connector <connector-id>\n"
+                      "\n"
+                      "The fields are:\n"
+                      "\n"
+                      "    direction       'IN' for packets/throttle notifications entering the module,\n"
+                      "                    'OUT' for packets/throttle notifications leaving it\n"
+                      "    packet-id       Numeric unique packet id. This value is unique for packets\n"
+                      "                    alive at the same time, packets at different times may (and\n"
+                      "                    will) share id's\n"
+                      "    packet-type     The type of the packet header\n"
+                      "    module-id       Unique module id\n"
+                      "    module-type     Type of the module the packet is sent to/from\n"
+                      "    connector-id    Unique connector id\n"
+                      "    throttle-msg    Type of throttling event\n")
+                );
 
         senf::ppi::ModuleManager::instance().consoleDir()
-            .add("tracing", SENF_FNP(void, senf::ppi::connector::Connector::tracing,
-                                     (senf::ppi::connector::Connector::TraceState)))
-            .arg("state", "new tracing state");
+            .add("tracing", senf::console::factory::Command(
+                     SENF_FNP(void, senf::ppi::connector::Connector::tracing,
+                              (senf::ppi::connector::Connector::TraceState)))
+                 .arg("state", "new tracing state")
+                );
     }
 
     ConsoleRegister consoleRegister;

@@ -60,20 +60,23 @@ namespace {
         std::string name_;
         std::ofstream file_;
     };
+   
 }
 
 SENF_AUTO_UNIT_TEST(configBundle)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::ScopedDirectory<> root;
     senf::console::root().add("root", root);
 
     senf::console::ScopedDirectory<> chroot;
     senf::console::root().add("chroot", chroot);
 
-    root.mkdir("dir1").add("fun1", &fun1);
-    root.add("fun2", &fun2);
-    chroot.mkdir("dir1").add("fun1", &fun1);
-    chroot.add("fun2", &fun2);
+    root.mkdir("dir1").add("fun1", fty::Command(&fun1));
+    root.add("fun2", fty::Command(&fun2));
+    chroot.mkdir("dir1").add("fun1", fty::Command(&fun1));
+    chroot.add("fun2", fty::Command(&fun2));
 
     TempFile cfg ("test.cfg");
     cfg << "dir1/fun1 foo; fun2;" << TempFile::close;

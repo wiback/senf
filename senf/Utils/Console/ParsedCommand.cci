@@ -61,70 +61,66 @@ prefix_ void senf::console::ParsedCommandOverloadBase::doc(std::string const & d
 // senf::console::ParsedCommandAttributorBase
 
 prefix_ senf::console::OverloadedCommandNode &
-senf::console::ParsedCommandAttributorBase::node()
+senf::console::ParsedCommandAttributorBase::create(DirectoryNode & dir,
+                                                   std::string const & name)
     const
 {
-    return overload_.node();
-}
-
-prefix_ senf::console::ParsedCommandAttributorBase::operator OverloadedCommandNode &()
-    const
-{
-    return node();
+    OverloadedCommandNode & node (OverloadedCommandNode::insertOverload(dir, name, overload_));
+    if (doc_) node.doc(*doc_);
+    if (shortdoc_) node.shortdoc(*shortdoc_);
+    return node;
 }
 
 prefix_ senf::console::ParsedCommandAttributorBase::
-ParsedCommandAttributorBase(ParsedCommandOverloadBase & overload, unsigned index)
-    : overload_ (overload), index_ (index)
+ParsedCommandAttributorBase(ParsedCommandOverloadBase::ptr overload, unsigned index)
+  : overload_ (overload), index_ (index)
+{}
+
+prefix_ senf::console::ParsedCommandAttributorBase::
+ParsedCommandAttributorBase(ParsedCommandAttributorBase const & other, unsigned index)
+    : overload_ (other.overload_), index_ (index), doc_ (other.doc_), shortdoc_ (other.shortdoc_)
 {}
 
 prefix_ senf::console::ParsedCommandOverloadBase &
 senf::console::ParsedCommandAttributorBase::overload()
     const
 {
-    return overload_;
+    return *overload_;
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::argName(std::string const & name)
-    const
 {
     overload().arg(index_).name = name;
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::argDoc(std::string const & doc)
-    const
 {
     overload().arg(index_).doc = doc;
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::typeName(std::string const & doc)
-    const
 {
     overload().arg(index_).type = doc;
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::defaultDoc(std::string const & doc)
-    const
 {
     overload().arg(index_).defaultDoc = doc;
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::overloadDoc(std::string const & doc)
-    const
 {
     overload().doc(doc);
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::nodeDoc(std::string const & doc)
-    const
 {
-    node().doc(doc);
+    doc_ = doc;
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::shortDoc(std::string const & doc)
-    const
 {
-    node().shortdoc(doc);
+    shortdoc_ = doc;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

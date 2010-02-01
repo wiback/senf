@@ -204,8 +204,6 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/utility.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <boost/typeof/typeof.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #include <boost/any.hpp>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/mpl.hh>
@@ -222,6 +220,8 @@ namespace console {
     class LinkNode;
     class DirectoryNode;
     class CommandNode;
+
+    namespace detail { struct NodeFactory {}; }
 
     /** \brief Get console root node */
     DirectoryNode & root();
@@ -382,31 +382,6 @@ namespace console {
 
     class SimpleCommandNode;
 
-    /** \brief Internal: Node creation helper traits
-
-        This class is used internally to find out the type of node to create for a specific argument
-        type.
-     */
-    template <class Object>
-    struct NodeCreateTraits
-    {
-        typedef BOOST_TYPEOF_TPL( senf_console_add_node(
-                                      * static_cast<DirectoryNode *>(0),
-                                      * static_cast<std::string const *>(0),
-                                      * static_cast<Object *>(0),
-                                      0) ) base_type;
-        typedef typename senf::remove_cvref<base_type>::type value_type;
-
-        typedef typename value_type::node_type NodeType;
-        typedef typename value_type::return_type result_type;
-
-        /// Internal
-        struct Creator {
-            static result_type create(DirectoryNode & node, std::string const & name,
-                                      Object & ob);
-        };
-    };
-
     /** \brief Config/console tree directory node
 
         This node type provides the internal and root nodes of the tree. It allows to add arbitrary
@@ -469,38 +444,17 @@ namespace console {
                                              '-n' is added to the name until the name is unique. If
                                              \a name is empty, it is set to 'unnamed'. */
 
-        template <class Object>
-        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
-                                                           Object const & ob);
+        template <class NodeType>
+        NodeType & add(std::string const & name, NodeType & node,
+                       typename boost::enable_if< boost::is_convertible<NodeType &, GenericNode &> >::type * = 0);
+
+        template <class Factory>
+        typename Factory::result_type add(std::string const & name, Factory const & factory,
+                                          typename boost::enable_if< boost::is_convertible<Factory const &, detail::NodeFactory const &> >::type * = 0);
                                         ///< Generic child node factory
                                         /**< This member is used to create a new child node of the
                                              current directory. The type of node created depends on
-                                             the type of argument passed.
-
-                                             The node type is selected by the NodeCreateTraits
-                                             class. To allow adding a specific node type, you need
-                                             to provide an overload for
-                                             <tt>senf_console_add_node</tt> which must be visible at
-                                             when you register the new node.
-                                             \code
-                                             MyNodeType & senf_console_add_node(
-                                                 DirectoryNode & dir,
-                                                 std::string const & name,
-                                                 MySpecialObject const & ob,
-                                                 int)
-                                             {
-                                                 return dir.add(name, MyNodeType::create(ob));
-                                             }
-                                             \endcode
-                                             (Do not forget the last unnamed 'int' parameter which
-                                             is not used but serves to disambiguate the
-                                             overloads). */
-
-        template <class Object>
-        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
-                                                           Object & ob);
-                                        ///< Generic child node factory
-                                        /**< \see add() */
+                                             the type of argument passed. */
 
         GenericNode::ptr remove(std::string const & name);
                                         ///< Remove node \a name from the tree
@@ -596,12 +550,6 @@ namespace console {
     /// Exception: Unknown node name
     struct UnknownNodeNameException : public senf::Exception
     { UnknownNodeNameException() : senf::Exception("Unknown node name") {}};
-
-#ifndef DOXYGEN
-    template <class Type>
-    struct NodeCreateTraits< boost::shared_ptr<Type> >
-    {};
-#endif
 
     /** \brief Config/console tree command node
 
@@ -735,21 +683,31 @@ namespace console {
 
 #ifndef DOXYGEN
 
-    SimpleCommandNode & senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                              SimpleCommandNode::Function fn, int);
+namespace factory {
+    
+    class SimpleCommand
+        : public detail::NodeFactory
+    {
+    public:
+        typedef SimpleCommandNode node_type;
+        typedef SimpleCommandNode & result_type;
 
-    DirectoryNode & senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                          DirectoryNode & dir, int);
+        explicit SimpleCommand(SimpleCommandNode::Function fn);
+
+        SimpleCommandNode & create(DirectoryNode & dir, std::string const & name) const;
+
+        SimpleCommand const & doc(std::string const & doc) const;
+        SimpleCommand const & shortdoc(std::string const & doc) const;
+
+    private:
+        SimpleCommandNode::ptr node_;
+    };
+
+}
 
 #endif
 
 }}
-
-#include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
-
-BOOST_TYPEOF_REGISTER_TYPE(senf::console::DirectoryNode)
-BOOST_TYPEOF_REGISTER_TYPE(senf::console::SimpleCommandNode)
-
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Node.cci"

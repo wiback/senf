@@ -31,6 +31,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <senf/Utils/intrusive_refcount.hh>
+#include <boost/optional.hpp>
 
 //#include "OverloadedCommand.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -203,6 +204,9 @@ namespace console {
         ptr thisptr();
         cptr thisptr() const;
 
+        static OverloadedCommandNode & insertOverload(DirectoryNode & dir, std::string const & name,
+                                                      CommandOverload::ptr overload);
+
     private:
         OverloadedCommandNode();
 
@@ -259,7 +263,32 @@ namespace console {
         std::string doc_;
     };
 
-}}
+    class SimpleOverloadAttributor
+        : public detail::NodeFactory
+    {
+    public:
+        typedef OverloadedCommandNode node_type;
+        typedef OverloadedCommandNode & result_type;
+
+        explicit SimpleOverloadAttributor(SimpleCommandOverload::Function fn);
+
+        SimpleOverloadAttributor const & doc(std::string const & doc) const;
+        SimpleOverloadAttributor const & shortdoc(std::string const & doc) const;
+        SimpleOverloadAttributor const & overloadDoc(std::string const & doc) const;
+
+        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
+        
+    private:
+        SimpleCommandOverload::ptr overload_;
+        mutable boost::optional<std::string> doc_;
+        mutable boost::optional<std::string> shortdoc_;
+    };
+
+namespace factory {
+
+    SimpleOverloadAttributor Command(SimpleCommandOverload::Function fn);
+
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "OverloadedCommand.cci"

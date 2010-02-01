@@ -64,13 +64,15 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(configFile)
 {
+    namespace fty = senf::console::factory;
+
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n" 
          << TempFile::close;
     
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
-    dir1.add("fun1",&fun1);
+    dir1.add("fun1",fty::Command(&fun1));
 
     {
         senf::console::ConfigFile cfg (cfgf.name());
@@ -98,6 +100,8 @@ SENF_AUTO_UNIT_TEST(configFile)
 
 SENF_AUTO_UNIT_TEST(configFileRestrict)
 {
+    namespace fty = senf::console::factory;
+
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n"
          << "dir2/fun2;\n"
@@ -105,7 +109,7 @@ SENF_AUTO_UNIT_TEST(configFileRestrict)
     
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
-    dir1.add("fun1",&fun1);
+    dir1.add("fun1",fty::Command(&fun1));
     
     {
         var1 = 0;
@@ -119,7 +123,7 @@ SENF_AUTO_UNIT_TEST(configFileRestrict)
 
         senf::console::ScopedDirectory<> dir2;
         senf::console::root().add("dir2", dir2);
-        dir2.add("fun2",&fun2);
+        dir2.add("fun2",fty::Command(&fun2));
 
         var1 = 0;
         var2 = false;
@@ -132,6 +136,8 @@ SENF_AUTO_UNIT_TEST(configFileRestrict)
 
 SENF_AUTO_UNIT_TEST(configFileSkipGroup)
 {
+    namespace fty = senf::console::factory;
+
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n"
          << "dir2 { dir3 { fun2; } fun1 5; }"
@@ -139,13 +145,13 @@ SENF_AUTO_UNIT_TEST(configFileSkipGroup)
     
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
-    dir1.add("fun1",&fun1);
+    dir1.add("fun1",fty::Command(&fun1));
     
     senf::console::ScopedDirectory<> dir2;
     senf::console::root().add("dir2", dir2);
     
-    dir2.mkdir("dir3").add("fun2", &fun2);
-    dir2.add("fun1", &fun1);
+    dir2.mkdir("dir3").add("fun2", fty::Command(&fun2));
+    dir2.add("fun1", fty::Command(&fun1));
 
     {
         var1 = 0;
@@ -173,6 +179,8 @@ SENF_AUTO_UNIT_TEST(configFileSkipGroup)
 
 SENF_AUTO_UNIT_TEST(configRestrictAndLink)
 {
+    namespace fty = senf::console::factory;
+
     TempFile cfgf ("test.cfg");
     cfgf << "dir1/fun1 10;\n"
          << "link1 { dir3 { fun2; } fun1 5; }"
@@ -180,13 +188,13 @@ SENF_AUTO_UNIT_TEST(configRestrictAndLink)
     
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
-    dir1.add("fun1",&fun1);
+    dir1.add("fun1",fty::Command(&fun1));
     
     senf::console::ScopedDirectory<> dir2;
     dir1.add("dir2", dir2);
     
-    dir2.mkdir("dir3").add("fun2", &fun2);
-    dir2.add("fun1", &fun1);
+    dir2.mkdir("dir3").add("fun2", fty::Command(&fun2));
+    dir2.add("fun1", fty::Command(&fun1));
 
     senf::console::ScopedDirectory<> dir4;
     senf::console::root().add("dir4", dir4);

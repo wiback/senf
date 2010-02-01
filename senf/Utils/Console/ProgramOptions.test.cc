@@ -48,12 +48,14 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(programOptions)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::ScopedDirectory<> root;
     senf::console::root().add("root", root);
 
-    root.mkdir("dir1").add("fun1", &fun1);
-    root.add("fun2", &fun2);
-    root.mkdir("name-with-dashes").add("fun-2", &fun2);
+    root.mkdir("dir1").add("fun1", fty::Command(&fun1));
+    root.add("fun2", fty::Command(&fun2));
+    root.mkdir("name-with-dashes").add("fun-2", fty::Command(&fun2));
 
     {
         char const * argv[] = { "", "--dir1-fun1=foo","--fun2" };

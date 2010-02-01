@@ -67,14 +67,17 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(vectorSupport)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
 
     std::vector<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", &Summer<std::vector<int> >::test)
-        .arg("data", "test data", senf::console::kw::default_value = defv);
+    dir.add("test", fty::Command(&Summer<std::vector<int> >::test)
+        .arg("data", "test data", senf::console::kw::default_value = defv)
+        );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(
@@ -98,14 +101,17 @@ SENF_AUTO_UNIT_TEST(vectorSupport)
 
 SENF_AUTO_UNIT_TEST(listSupport)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
 
     std::list<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", &Summer<std::list<int> >::test)
-        .arg("data", "test data", senf::console::kw::default_value = defv);
+    dir.add("test", fty::Command(&Summer<std::list<int> >::test)
+        .arg("data", "test data", senf::console::kw::default_value = defv)
+        );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(
@@ -129,14 +135,17 @@ SENF_AUTO_UNIT_TEST(listSupport)
 
 SENF_AUTO_UNIT_TEST(setSupport)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
 
     std::set<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", &Summer<std::set<int> >::test)
-        .arg("data", "test data", senf::console::kw::default_value = defv);
+    dir.add("test", fty::Command(&Summer<std::set<int> >::test)
+        .arg("data", "test data", senf::console::kw::default_value = defv)
+        );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(
@@ -160,6 +169,8 @@ SENF_AUTO_UNIT_TEST(setSupport)
 
 SENF_AUTO_UNIT_TEST(mapSupport)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
@@ -167,8 +178,9 @@ SENF_AUTO_UNIT_TEST(mapSupport)
 
     std::map<std::string, int> defv (
         boost::assign::map_list_of("foo bar",7)("bar",2).to_container(defv));
-    dir.add("test", &mapTest)
-        .arg("data", "test data", senf::console::kw::default_value = defv);
+    dir.add("test", fty::Command(&mapTest)
+        .arg("data", "test data", senf::console::kw::default_value = defv)
+        );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(

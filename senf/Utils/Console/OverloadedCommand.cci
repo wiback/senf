@@ -153,7 +153,57 @@ prefix_ senf::console::SimpleCommandOverload::SimpleCommandOverload(Function fn)
     : fn_ (fn)
 {}
 
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// senf::console::SimpleOverloadAttributor
+
+prefix_ senf::console::SimpleOverloadAttributor::
+SimpleOverloadAttributor(SimpleCommandOverload::Function fn)
+    : overload_ (SimpleCommandOverload::create(fn))
+{}
+
+prefix_ senf::console::SimpleOverloadAttributor const &
+senf::console::SimpleOverloadAttributor::doc(std::string const & doc)
+    const
+{
+    doc_ = doc;
+    return *this;
+}
+
+prefix_ senf::console::SimpleOverloadAttributor const &
+senf::console::SimpleOverloadAttributor::shortdoc(std::string const & doc)
+    const
+{
+    shortdoc_ = doc;
+    return *this;
+}
+
+prefix_ senf::console::SimpleOverloadAttributor const &
+senf::console::SimpleOverloadAttributor::overloadDoc(std::string const & doc)
+    const
+{
+    overload_->doc(doc);
+    return *this;
+}
+
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::SimpleOverloadAttributor::create(DirectoryNode & dir, std::string const & name)
+    const
+{
+    OverloadedCommandNode & node (OverloadedCommandNode::insertOverload(dir, name, overload_));
+    if (doc_) node.doc(*doc_);
+    if (shortdoc_) node.shortdoc(*shortdoc_);
+    return node;
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+prefix_ senf::console::SimpleOverloadAttributor
+senf::console::factory::Command(SimpleCommandOverload::Function fn)
+{
+    return SimpleOverloadAttributor(fn);
+}
+
+/////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
 

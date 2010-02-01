@@ -35,6 +35,19 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::OverloadedCommandNode
 
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::OverloadedCommandNode::insertOverload(DirectoryNode & dir,
+                                                     std::string const & name,
+                                                     CommandOverload::ptr overload)
+{
+    OverloadedCommandNode & node (
+        dir.hasChild(name)
+        ? dynamic_cast<OverloadedCommandNode &>(dir(name))
+        : dir.add(name, OverloadedCommandNode::create()));
+    node.add(overload);
+    return node;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // So soll die doku aussehen:
 //

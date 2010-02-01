@@ -153,58 +153,60 @@ prefix_ senf::Statistics::Statistics()
 #endif
 {
 #ifndef SENF_DISABLE_CONSOLE
-    dir.add("list", &Statistics::consoleList)
-        .doc("List statistics collection intervals and current values.\n"
-             "\n"
-             "Columns:\n"
-             "    RANK    Number of values collected. Since the statistics collectors form\n"
-             "            a tree, the value is indented according to it's tree location.\n"
-             "    WIN     Size of output average window.\n"
-             "    MIN     Last entered minimum value.\n"
-             "    AVG     Last entered average value.\n"
-             "    DEV     Standard deviation of average value over the collector rank.\n"
-             "    MAX     Last entered maximum value.");
-    dir.add("collect", &Statistics::consoleCollect)
-        .doc("Add statistics collection groups. The argument gives a sequence of collector\n"
-             "ranks each building on the preceding collector:\n"
-             "\n"
-             "    $ collect (10 60 60)\n"
-             "\n"
-             "Will start by collecting every 10 values together to a new value. 60 of such\n"
-             "combined values will be collected together in the next step again followed by\n"
-             "a collection of 60 values. If the statistics is entered with a frequency of\n"
-             "10 values per second, this will provide combined statistics over the second,\n"
-             "minutes and hours ranges.\n"
-             "\n"
-             "You may call collect multiple times. Any missing collection ranks will be\n"
-             "added.")
-        .arg("ranks","chain of collector ranks");
-    dir.add("output", &Statistics::consoleOutput)
-        .doc("Generate statistics output. This statement will add an additional output\n"
-             "generator. This generator will be attached to the collector specified by\n"
-             "the {rank} parameter. This parameter is a chain of successive rank values\n"
-             "which specifies the exact collector to use. If the collector does not\n"
-             "exist, it will be created (this is like automatically calling 'collect'\n"
-             "with {rank} as argument).\n"
-             "\n"
-             "If the output is to be sent somewhere it must be connected to a statistics\n"
-             "target.\n"
-             "\n"
-             "The output may optionally be built using a sliding average over the last\n"
-             "{window} values.\n"
-             "\n"
-             "    $ output ()\n"
-             "\n"
-             "will output the basic statistics value each time a new value is entered.\n"
-             "\n"
-             "    $ output (10 60) 5\n"
-             "\n"
-             "Assuming that new data values are entered 10 times per second, this command\n"
-             "will generate output once every minute. The value will be the average over\n"
-             "the last 5 minutes.")
-        .arg("rank","Rank chain selecting the value to generate output for")
-        .arg("window","Optional size of sliding average window",
-             senf::console::kw::default_value = 1u);
+    namespace fty = senf::console::factory;
+
+    dir.add("list", fty::BoundCommand(this,&Statistics::consoleList)
+            .doc("List statistics collection intervals and current values.\n"
+                 "\n"
+                 "Columns:\n"
+                 "    RANK    Number of values collected. Since the statistics collectors form\n"
+                 "            a tree, the value is indented according to it's tree location.\n"
+                 "    WIN     Size of output average window.\n"
+                 "    MIN     Last entered minimum value.\n"
+                 "    AVG     Last entered average value.\n"
+                 "    DEV     Standard deviation of average value over the collector rank.\n"
+                 "    MAX     Last entered maximum value.") );
+    dir.add("collect", fty::BoundCommand(this, &Statistics::consoleCollect)
+            .doc("Add statistics collection groups. The argument gives a sequence of collector\n"
+                 "ranks each building on the preceding collector:\n"
+                 "\n"
+                 "    $ collect (10 60 60)\n"
+                 "\n"
+                 "Will start by collecting every 10 values together to a new value. 60 of such\n"
+                 "combined values will be collected together in the next step again followed by\n"
+                 "a collection of 60 values. If the statistics is entered with a frequency of\n"
+                 "10 values per second, this will provide combined statistics over the second,\n"
+                 "minutes and hours ranges.\n"
+                 "\n"
+                 "You may call collect multiple times. Any missing collection ranks will be\n"
+                 "added.")
+            .arg("ranks","chain of collector ranks") );
+    dir.add("output", fty::BoundCommand(this, &Statistics::consoleOutput)
+            .doc("Generate statistics output. This statement will add an additional output\n"
+                 "generator. This generator will be attached to the collector specified by\n"
+                 "the {rank} parameter. This parameter is a chain of successive rank values\n"
+                 "which specifies the exact collector to use. If the collector does not\n"
+                 "exist, it will be created (this is like automatically calling 'collect'\n"
+                 "with {rank} as argument).\n"
+                 "\n"
+                 "If the output is to be sent somewhere it must be connected to a statistics\n"
+                 "target.\n"
+                 "\n"
+                 "The output may optionally be built using a sliding average over the last\n"
+                 "{window} values.\n"
+                 "\n"
+                 "    $ output ()\n"
+                 "\n"
+                 "will output the basic statistics value each time a new value is entered.\n"
+                 "\n"
+                 "    $ output (10 60) 5\n"
+                 "\n"
+                 "Assuming that new data values are entered 10 times per second, this command\n"
+                 "will generate output once every minute. The value will be the average over\n"
+                 "the last 5 minutes.")
+            .arg("rank","Rank chain selecting the value to generate output for")
+            .arg("window","Optional size of sliding average window",
+                 senf::console::kw::default_value = 1u) );
 #endif
 }
 

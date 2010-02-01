@@ -51,6 +51,8 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(variables)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
@@ -59,12 +61,13 @@ SENF_AUTO_UNIT_TEST(variables)
     int var (5);
 
     std::stringstream ss;
-    dir.add("var", var)
+    dir.add("var", fty::Variable(var)
         .doc("Current blorg limit")
         .formatter(&testFormatter)
         .parser(&testParser)
         .typeName("number")
-        .onChange(&testCallback);
+        .onChange(&testCallback)
+        );
     parser.parse("test/var; test/var 10; test/var",
                  boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
     BOOST_CHECK_EQUAL( ss.str(), "[5]\n[0]\n" );
@@ -74,22 +77,24 @@ SENF_AUTO_UNIT_TEST(variables)
     dir("var").help(ss);
     BOOST_CHECK_EQUAL(ss.str(), 
                       "Usage:\n"
-                      "    1- var new_value:number\n"
-                      "    2- var\n"
+                      "    1- var\n"
+                      "    2- var new_value:number\n"
                       "\n"
                       "Current blorg limit\n");
 
-    senf::console::CommandNode & refvar (dir.add("refvar", boost::ref(var))
+    senf::console::CommandNode & refvar (dir.add("refvar", fty::Variable(boost::ref(var))
         .doc("Current blorg limit")
         .formatter(&testFormatter)
         .parser(&testParser)
-        .typeName("number"));
+        .typeName("number")
+    ));
 
     (void) refvar;
 
-    dir.add("crefvar", boost::cref(var))
+    dir.add("crefvar", fty::Variable(boost::cref(var))
         .doc("Current blorg limit")
-        .formatter(&testFormatter);
+        .formatter(&testFormatter)
+        );
 }
 
 namespace {
@@ -100,7 +105,7 @@ namespace {
         senf::console::ScopedDirectory<Test2> dir;
         
         Test2() : dir(this), var_(0)
-            { dir.add("var", boost::ref(var_)); }
+            { dir.add("var", senf::console::factory::Variable(boost::ref(var_))); }
         
     private:
         int var_;

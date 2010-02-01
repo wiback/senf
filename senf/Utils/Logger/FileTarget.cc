@@ -52,19 +52,22 @@ prefix_ senf::log::FileTarget::FileTarget(std::string const & filename,
       IOStreamTarget (getNodename(filename, nodename), ofstream_t::member), 
       file_ (filename)
 {
+    namespace fty = senf::console::factory;
+
     if (! ofstream_t::member)
         SENF_THROW_SYSTEM_EXCEPTION("logfile open") << ": " << filename;
-    consoleDir().add( "reopen", senf::membind(
-                          static_cast<void (FileTarget::*)()>(&FileTarget::reopen),
-                          this))
-        .doc("Reopen logfile");
-    consoleDir().add("reopen", senf::membind(
-                         static_cast<void (FileTarget::*)(std::string const &)>(&FileTarget::reopen),
-                         this))
-        .arg("filename","new filename")
-        .overloadDoc("Reopen logfile under new name");
-    consoleDir().add("file", boost::cref(file_))
-        .doc("Show filename log messages are sent to");
+    consoleDir()
+        .add( "reopen",
+              fty::BoundCommand(this, SENF_MEMFNP(void, FileTarget, reopen, ()))
+              .doc("Reopen logfile") );
+    consoleDir()
+        .add("reopen", 
+             fty::BoundCommand(this, SENF_MEMFNP(void, FileTarget, reopen, (std::string const &)))
+             .arg("filename","new filename")
+             .overloadDoc("Reopen logfile under new name") );
+    consoleDir()
+        .add("file", fty::Variable(boost::cref(file_))
+             .doc("Show filename log messages are sent to") );
 }
 
 prefix_ void senf::log::FileTarget::reopen()
@@ -92,24 +95,26 @@ prefix_ std::string const & senf::log::FileTarget::filename()
 prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
 {
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
-    detail::TargetRegistry::instance().consoleDir().add("file-target",&RegisterConsole::create)
-        .arg("filename", "name of logfile")
-        .arg("nodename", "name of node in console. Defaults to the files basename",
-             kw::default_value = "")
-        .doc("Create new file target. Examples:\n"
-             "\n"
-             "Create new file target '/var/log/example.log\n"
-             "    $ file-target \"/var/log/example.log\"\n"
-             "    <Directory '/sys/log/example.log'>\n"
-             "\n"
-             "In a configuration file, create new file target '/var/log/example.log' and set\n"
-             "some parameters (If written on one line, this works at the console too:\n"
-             "    /sys/log/file-target \"/var/log/example.log\" mainlog {\n"
-             "        route (IMPORTANT);             # route all important messages\n"
-             "        timeFormat \"\";               # use non-formatted time format\n"
-             "        showArea false;                # don't show log area\n"
-             "    }\n");
+    detail::TargetRegistry::instance().consoleDir()
+        .add("file-target", fty::Command(&RegisterConsole::create)
+             .arg("filename", "name of logfile")
+             .arg("nodename", "name of node in console. Defaults to the files basename",
+                  kw::default_value = "")
+             .doc("Create new file target. Examples:\n"
+                  "\n"
+                  "Create new file target '/var/log/example.log\n"
+                  "    $ file-target \"/var/log/example.log\"\n"
+                  "    <Directory '/sys/log/example.log'>\n"
+                  "\n"
+                  "In a configuration file, create new file target '/var/log/example.log' and set\n"
+                  "some parameters (If written on one line, this works at the console too:\n"
+                  "    /sys/log/file-target \"/var/log/example.log\" mainlog {\n"
+                  "        route (IMPORTANT);             # route all important messages\n"
+                  "        timeFormat \"\";               # use non-formatted time format\n"
+                  "        showArea false;                # don't show log area\n"
+                  "    }\n") );
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>

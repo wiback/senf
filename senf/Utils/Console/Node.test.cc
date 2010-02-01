@@ -155,10 +155,11 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(senfConsoleAddNode)
+SENF_AUTO_UNIT_TEST(factory)
 {
-    senf::console::root().add("fn1", &callback);
-    senf::console::root().add("fn2", boost::function<void(std::ostream&,senf::console::ParseCommandInfo const &)>(Functor()));
+    namespace fty = senf::console::factory;
+    senf::console::root().add("fn1", fty::SimpleCommand(&callback));
+    senf::console::root().add("fn2", fty::SimpleCommand(Functor()));
     
     senf::console::ParseCommandInfo info;
 

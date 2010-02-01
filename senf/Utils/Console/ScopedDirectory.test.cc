@@ -43,7 +43,7 @@ namespace {
 
         senf::console::ScopedDirectory<Self> dir;
         TestObject() : dir(this) {
-            dir.add("member", &Self::member);
+            dir.add("member", senf::console::factory::Command(senf::membind(&Self::member,this)));
         }
 
         void member(std::ostream & os, senf::console::ParseCommandInfo const &) {
@@ -73,10 +73,12 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(scopedDirectoryVoid)
 {
+    namespace fty = senf::console::factory;
+
     {
         senf::console::ScopedDirectory<> dir;
         senf::console::root().add("dir", dir);
-        dir.add("cb", &callback);
+        dir.add("cb", fty::Command(&callback));
         std::stringstream ss;
         senf::console::ParseCommandInfo info;
         senf::console::root()["dir"]("cb")(ss, info);
@@ -96,11 +98,13 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(scopedDirectoryBase)
 {
+    namespace fty = senf::console::factory;
+
     {
         senf::console::ScopedDirectory<> dir;
         senf::console::root().add("dir", dir);
         dir.mkdir("foo");
-        dir.add("cb", &callback);
+        dir.add("cb", fty::Command(&callback));
         BOOST_CHECK( &dir["foo"] == &dir.get("foo") );
         BOOST_CHECK( &dir("cb") == &dir.get("cb") );
         

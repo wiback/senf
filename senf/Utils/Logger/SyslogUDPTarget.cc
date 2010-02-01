@@ -39,20 +39,21 @@
 prefix_ void senf::log::SyslogUDPTarget::init()
 {
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
     consoleDir().remove("format");
-    consoleDir().add("format", senf::membind(&SyslogUDPTarget::consoleFormat, this))
-        .doc("Show the current log message format.");
-    consoleDir().add("syslog", senf::membind(
-                         static_cast<void (SyslogUDPTarget::*)(bool)>(&SyslogUDPTarget::syslog),
-                         this))
-        .arg("flag","new syslog format state",
-             kw::default_value=true)
-        .doc("Change the syslog format flag. By default, syslog formating is enabled. In this\n"
-             "state, the udp target will send out minimal but valid syslog format messages.\n"
-             "\n"
-             "Disabling syslog format will remove the syslog prefix. Log messages will then be\n"
-             "sent using plain UDP.");
+    consoleDir()
+        .add("format", fty::BoundCommand(this, &SyslogUDPTarget::consoleFormat)
+             .doc("Show the current log message format.") );
+    consoleDir()
+        .add("syslog", fty::BoundCommand(this, SENF_MEMFNP(void, SyslogUDPTarget, syslog, (bool)))
+             .arg("flag","new syslog format state",
+                  kw::default_value=true)
+             .doc("Change the syslog format flag. By default, syslog formating is enabled. In this\n"
+                  "state, the udp target will send out minimal but valid syslog format messages.\n"
+                  "\n"
+                  "Disabling syslog format will remove the syslog prefix. Log messages will then be\n"
+                  "sent using plain UDP.") );
 }
 
 prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::string const & stream,
@@ -108,49 +109,54 @@ namespace log {
 prefix_ senf::log::SyslogUDPTarget::RegisterConsole::RegisterConsole()
 {
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
-    detail::TargetRegistry::instance().consoleDir().add(
-        "udp-target", 
-        static_cast<senf::console::DirectoryNode::ptr (*)(INet4SocketAddress const &, LogFacility)>(
-            &RegisterConsole::create))
-        .arg("address", "target address to send log messages to")
-        .arg("facility", "syslog facility to send messages to. One of\n"
-             "                  AUTHPRIV CRON DAEMON FTP KERN LPR MAIL NEWS SYSLOG USER\n"
-             "                  UUCP LOCAL0 LOCAL1 LOCAL2 LOCAL3 LOCAL4 LOCAL5 LOCAL6 LOCAL7",
-             kw::default_value = USER)
-        .doc("Create new udp target. The {address} can be an IPv4 or IPv6 address. If the port\n"
-             "number is omitted, it defaults to the default syslog port 514. Examples:\n"
-             "\n"
-             "Create new udp target sending messages to the syslog daemon running at localhost\n"
-             "    $ udp-target localhost\n"
-             "    <Directory '/sys/log/udp-127.0.0.1:514'>\n"
-             "\n"
-             "In a configuration file, create new udp target and set some parameters (If\n"
-             "written on one line, this works at the console too:\n"
-             "    /sys/log/udp-target localhost:2345 LOCAL2 {\n"
-             "        route (IMPORTANT);             # route all important messages\n"
-             "        timeFormat \"\";               # use non-formatted time format\n"
-             "        showArea false;                # don't show log area\n"
-             "        syslog false;                  # no syslog format, just plain udp\n"
-             "    }\n");
-    detail::TargetRegistry::instance().consoleDir().add(
-        "udp-target", 
-        static_cast<senf::console::DirectoryNode::ptr (*)(INet4Address const &, LogFacility)>(
-            &RegisterConsole::create))
-        .arg("address")
-        .arg("facility", kw::default_value = USER);
-    detail::TargetRegistry::instance().consoleDir().add(
-        "udp-target", 
-        static_cast<senf::console::DirectoryNode::ptr (*)(INet6SocketAddress const &, LogFacility)>(
-            &RegisterConsole::create))
-        .arg("address")
-        .arg("facility", kw::default_value = USER);
-    detail::TargetRegistry::instance().consoleDir().add(
-        "udp-target", 
-        static_cast<senf::console::DirectoryNode::ptr (*)(INet6Address const &, LogFacility)>(
-            &RegisterConsole::create))
-        .arg("address")
-        .arg("facility", kw::default_value = USER);
+    detail::TargetRegistry::instance().consoleDir()
+        .add("udp-target", 
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4SocketAddress const &, 
+                                                                LogFacility)
+             >(&RegisterConsole::create)
+             .arg("address", "target address to send log messages to")
+             .arg("facility", "syslog facility to send messages to. One of\n"
+                  "                  AUTHPRIV CRON DAEMON FTP KERN LPR MAIL NEWS SYSLOG USER\n"
+                  "                  UUCP LOCAL0 LOCAL1 LOCAL2 LOCAL3 LOCAL4 LOCAL5 LOCAL6 LOCAL7",
+                  kw::default_value = USER)
+             .doc("Create new udp target. The {address} can be an IPv4 or IPv6 address. If the port\n"
+                  "number is omitted, it defaults to the default syslog port 514. Examples:\n"
+                  "\n"
+                  "Create new udp target sending messages to the syslog daemon running at localhost\n"
+                  "    $ udp-target localhost\n"
+                  "    <Directory '/sys/log/udp-127.0.0.1:514'>\n"
+                  "\n"
+                  "In a configuration file, create new udp target and set some parameters (If\n"
+                  "written on one line, this works at the console too:\n"
+                  "    /sys/log/udp-target localhost:2345 LOCAL2 {\n"
+                  "        route (IMPORTANT);             # route all important messages\n"
+                  "        timeFormat \"\";               # use non-formatted time format\n"
+                  "        showArea false;                # don't show log area\n"
+                  "        syslog false;                  # no syslog format, just plain udp\n"
+                  "    }\n") );
+    detail::TargetRegistry::instance().consoleDir()
+        .add("udp-target", 
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4Address const &, 
+                                                                LogFacility)
+             >(&RegisterConsole::create)
+             .arg("address")
+             .arg("facility", kw::default_value = USER) );
+    detail::TargetRegistry::instance().consoleDir()
+        .add("udp-target", 
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6SocketAddress const &, 
+                                                                LogFacility)
+             >(&RegisterConsole::create)
+             .arg("address")
+             .arg("facility", kw::default_value = USER) );
+    detail::TargetRegistry::instance().consoleDir()
+        .add("udp-target", 
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6Address const &, 
+                                                                LogFacility)
+             >(&RegisterConsole::create)
+             .arg("address")
+             .arg("facility", kw::default_value = USER) );
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>

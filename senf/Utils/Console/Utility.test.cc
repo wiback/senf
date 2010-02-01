@@ -49,14 +49,17 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(charAsString)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
     std::stringstream ss;
 
-    dir.add("test", boost::function<
-            senf::console::CharAsString<char> (senf::console::CharAsString<char>)>(&charTest));
+    dir.add("test", 
+            fty::Command<senf::console::CharAsString<char> (senf::console::CharAsString<char>)>(
+                &charTest));
 
     ss.str("");
     SENF_CHECK_NO_THROW(
@@ -67,13 +70,15 @@ SENF_AUTO_UNIT_TEST(charAsString)
 
 SENF_AUTO_UNIT_TEST(flagCollection)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
     std::stringstream ss;
 
-    dir.add("test",&collectionTest);
+    dir.add("test",fty::Command(&collectionTest));
     
     ss.str("");
     SENF_CHECK_NO_THROW(

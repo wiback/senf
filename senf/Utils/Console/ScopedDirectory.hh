@@ -38,32 +38,8 @@
 namespace senf {
 namespace console {
 
-    /** \brief Internal: Node creation helper traits (ScopedDirectory proxy)
-        
-        This class is used like NodeCreateTraits to customize the child node creation. This trait
-        class is used however by the ScopedDirectory proxy.
-     */
-    template <class Owner, class Object>
-    struct OwnerNodeCreateTraits
-    {
-        typedef BOOST_TYPEOF_TPL( senf_console_add_node( 
-                                      * static_cast<DirectoryNode *>(0),
-                                      * static_cast<Owner *>(0),
-                                      * static_cast<std::string const *>(0),
-                                      * static_cast<Object *>(0),
-                                      * static_cast<int *>(0)) ) base_type;
-        typedef typename senf::remove_cvref<base_type>::type value_type;
+    namespace detail { struct OwnedNodeFactory {}; }
 
-        typedef typename value_type::node_type NodeType;
-        typedef typename value_type::return_type result_type;
-
-        /// Internal
-        struct Creator {
-            static result_type create(DirectoryNode & node, Owner & owner, 
-                                     std::string const & name, Object & ob);
-        };
-    };
-    
     /** \brief Internal: Marker base class for all ScopedDirectory proxies
      */
     class ScopedDirectoryBase
@@ -150,21 +126,18 @@ namespace console {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        template <class Object>
-        typename OwnerNodeCreateTraits<Owner, Object const>::result_type add(
-            std::string const & name, Object const & ob);
-                                        ///< Create new child node
-                                        /**< Adds a new child node to the (proxied)
-                                             DirectoryNode. How the node is added is configured
-                                             using the OwnerNodeCreateTraits template. The default
-                                             implementation just forwards the call to the proxied
-                                             directory node. */
-
-        template <class Object>
-        typename OwnerNodeCreateTraits<Owner, Object>::result_type add(
-            std::string const & name, Object & ob);
-                                        ///< Create new child node
-                                        /**< \see add() */
+        template <class NodeType>
+        NodeType & add(std::string const & name, boost::shared_ptr<NodeType> node);
+        template <class NodeType>
+        NodeType & add(std::string const & name, NodeType & node,
+                       typename boost::enable_if< boost::is_convertible<NodeType &, GenericNode &> >::type * = 0);
+        template <class Factory>
+        typename Factory::result_type add(std::string const & name, Factory const & factory,
+                                          typename boost::enable_if< boost::is_convertible<Factory*, detail::OwnedNodeFactory*> >::type * = 0);
+        template <class Factory>
+        typename Factory::result_type add(std::string const & name, Factory const & factory,
+                                          typename boost::enable_if< boost::is_convertible<Factory*, detail::NodeFactory*> >::type * = 0,
+                                          typename boost::disable_if< boost::is_convertible<Factory*, detail::OwnedNodeFactory*> >::type * = 0);
 
     protected:
 
@@ -178,33 +151,16 @@ namespace console {
     class ScopedDirectory<void> : public ScopedDirectoryBase
     {
     public:
-        template <class Object>
-        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
-                                                           Object const & ob);
-
-        template <class Object>
-        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
-                                                           Object & ob);
+        template <class NodeType>
+        NodeType & add(std::string const & name, boost::shared_ptr<NodeType> node);
+        template <class NodeType>
+        NodeType & add(std::string const & name, NodeType & node,
+                       typename boost::enable_if< boost::is_convertible<NodeType &, GenericNode &> >::type * = 0);
+        template <class Factory>
+        typename Factory::result_type add(std::string const & name, Factory const & factory,
+                                          typename boost::enable_if< boost::is_convertible<Factory*, detail::NodeFactory*> >::type * = 0);
     };
 
-    template <class Owner, class Function>
-    SimpleCommandNode & senf_console_add_node(
-        DirectoryNode & node, Owner & owner, std::string const & name,
-        SimpleCommandNode::Function fn, int);
-
-    template <class Owner>
-    SimpleCommandNode & senf_console_add_node(
-        DirectoryNode & node, Owner & owner, std::string const & name,
-        void (Owner::*fn)(std::ostream &, ParseCommandInfo const &), int);
-
-    template <class Owner>
-    DirectoryNode & senf_console_add_node(DirectoryNode & node, Owner & owner, 
-                                          std::string const & name, DirectoryNode & dir, int);
-
-    template <class Node>
-    DirectoryNode & senf_console_add_node(
-        DirectoryNode & dir, std::string const & name, Node const & node, int, 
-        typename boost::enable_if< boost::is_convertible<Node*, ScopedDirectoryBase*> >::type * = 0);
 #endif
 
 }}

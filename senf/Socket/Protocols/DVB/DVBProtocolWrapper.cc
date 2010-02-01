@@ -34,27 +34,46 @@ prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemu
     : protocol(sh.protocol()), dir(this)
 {
     namespace kw = senf::console::kw;
-    dir.add("buffersize", &DVBSectionProtocolWrapper::setBufferSize)
-       .doc("Set the size of the circular buffer used for filtered data.")
-       .arg("size", "in byte");
+    namespace fty = senf::console::factory;
 
-    dir.add("start", &DVBSectionProtocolWrapper::startFiltering)
-       .doc("Starts filtering");
+    dir.add("buffersize", fty::BoundCommand(this, &DVBSectionProtocolWrapper::setBufferSize)
+	    .doc("Set the size of the circular buffer used for filtered data.")
+	    .arg("size", "in byte") );
 
-    dir.add("stop", &DVBSectionProtocolWrapper::setBufferSize)
-       .doc("Stops filtering");
+    dir.add("start", fty::BoundCommand(this,&DVBSectionProtocolWrapper::startFiltering)
+	    .doc("Starts filtering") );
 
-    dir.node().add("filter", boost::function<void (unsigned short int, unsigned, senf::console::FlagCollection<Flags>, unsigned, unsigned, unsigned)>(senf::membind(&DVBSectionProtocolWrapper::setSectionFilter, this)))
-       .arg("pid", "pid to filter")
-       .arg("filter", "filter", kw::default_value = 62, kw::default_doc = "0x3e")
-       .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START, KERNEL_CLIENT", kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC, kw::default_doc = "(IMMEDIATE_START CHECK_CRC)")
-       .arg("mask", "mask", kw::default_value = 0xff, kw::default_doc = "0xff")
-       .arg("mode", "mode", kw::default_value = 0, kw::default_doc = "0x00")
-       .arg("timeout", "timeout", kw::default_value = 0, kw::default_doc = "0x00")
-       .doc("Sets parameters for section filter.");
+    dir.add("stop", fty::BoundCommand(this, &DVBSectionProtocolWrapper::setBufferSize)
+	    .doc("Stops filtering") );
 
-    dir.add("stop", &DVBSectionProtocolWrapper::setBufferSize)
-       .doc("Stops filtering");
+    dir.add("filter", 
+	    fty::BoundCommand<void (unsigned short int, 
+				    unsigned, 
+				    senf::console::FlagCollection<Flags>, 
+				    unsigned, 
+				    unsigned, 
+				    unsigned)
+	    >(this, &DVBSectionProtocolWrapper::setSectionFilter)
+	    .arg("pid", "pid to filter")
+	    .arg("filter", "filter", 
+		 kw::default_value = 62, 
+		 kw::default_doc = "0x3e")
+	    .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START, KERNEL_CLIENT",
+		 kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC,
+		 kw::default_doc = "(IMMEDIATE_START CHECK_CRC)")
+	    .arg("mask", "mask", 
+		 kw::default_value = 0xff, 
+		 kw::default_doc = "0xff")
+	    .arg("mode", "mode", 
+		 kw::default_value = 0, 
+		 kw::default_doc = "0x00")
+	    .arg("timeout", "timeout", 
+		 kw::default_value = 0, 
+		 kw::default_doc = "0x00")
+	    .doc("Sets parameters for section filter.") );
+
+    dir.add("stop", fty::BoundCommand(this, &DVBSectionProtocolWrapper::setBufferSize)
+	    .doc("Stops filtering") );
 }
 
 
@@ -62,20 +81,31 @@ prefix_ senf::DVBPESProtocolWrapper::DVBPESProtocolWrapper(senf::DVBDemuxPESHand
     : protocol(sh.protocol()), dir(this) 
 {
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
-    dir.node().add("filter", boost::function<void ( unsigned short int, dmx_input_t, dmx_output_t, dmx_pes_type_t, senf::console::FlagCollection<Flags>)>(senf::membind(&DVBPESProtocolWrapper::setPESFilter, this)))
-       .arg("pid", "pid to filter")
-       .arg("input", "input-filter: DMX_IN_FRONTEND DMX_IN_DVR ")
-       .arg("output", "output-filter: DMX_OUT_DECODER DMX_OUT_TAP DMX_OUT_TS_TAP ")
-       .arg("pesType", "PES type: DMX_PES_AUDIO[0-3] DMX_PES_VIDEO[0-3] DMX_PES_TELETEXT[0-3], DMX_PES_SUBTITLE[0-3], DMX_PES_PCR[0-3], DMX_PES_OTHER")
-       .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START, KERNEL_CLIENT", kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC, kw::default_doc = "(IMMEDIATE_START CHECK_CRC)")
-       .doc("Sets parameters for PES filter.");
+    dir.add("filter", 
+	    fty::BoundCommand<void (unsigned short int, 
+				    dmx_input_t, 
+				    dmx_output_t, 
+				    dmx_pes_type_t, 
+				    senf::console::FlagCollection<Flags>)
+	    >(this,&DVBPESProtocolWrapper::setPESFilter)
+	    .arg("pid", "pid to filter")
+	    .arg("input", "input-filter: DMX_IN_FRONTEND DMX_IN_DVR ")
+	    .arg("output", "output-filter: DMX_OUT_DECODER DMX_OUT_TAP DMX_OUT_TS_TAP ")
+	    .arg("pesType", "PES type: DMX_PES_AUDIO[0-3] DMX_PES_VIDEO[0-3] "
+		            "DMX_PES_TELETEXT[0-3], DMX_PES_SUBTITLE[0-3], DMX_PES_PCR[0-3], "
+		            "DMX_PES_OTHER")
+	    .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START, KERNEL_CLIENT", 
+		 kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC, 
+		 kw::default_doc = "(IMMEDIATE_START CHECK_CRC)")
+	    .doc("Sets parameters for PES filter.") );
+    
+    dir.add("start", fty::BoundCommand(this, &DVBPESProtocolWrapper::startFiltering)
+	    .doc("Starts filtering") );
 
-    dir.add("start", &DVBPESProtocolWrapper::startFiltering)
-       .doc("Starts filtering");
-
-    dir.add("stop", &DVBPESProtocolWrapper::stopFiltering)
-       .doc("Stops filtering");
+    dir.add("stop", fty::BoundCommand(this, &DVBPESProtocolWrapper::stopFiltering)
+	    .doc("Stops filtering") );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

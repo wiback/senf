@@ -42,63 +42,34 @@ namespace console {
     class ScopedDirectoryBase;
     template <class Variable> class VariableAttributor;
 
-    
-
-#ifndef DOXYGEN
-
-    template <class Variable>
-    VariableAttributor<Variable> senf_console_add_node(
-        DirectoryNode & node, std::string const & name, Variable & var, int,
-        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
-        typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
-        typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
-
-    template <class Variable>
-    typename detail::VariableNodeCreator<Variable>::result_type
-    senf_console_add_node(DirectoryNode & node, std::string const & name, 
-                          boost::reference_wrapper<Variable> var, int);
-
-    template <class Variable, class Owner>
-    VariableAttributor<Variable> senf_console_add_node(
-        DirectoryNode & node, Owner & owner, std::string const & name, Variable & var, int,
-        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
-        typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
-        typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
-
-    template <class Variable, class Owner>
-    typename detail::VariableNodeCreator<Variable>::result_type
-    senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name, 
-                          boost::reference_wrapper<Variable> var, int);
-
-#endif
+namespace factory {
 
     /** \brief Variable command attributes (const)
         
-        \see VariableAttributor
+        \see VariableFactory
      */
     template <class Variable>
-    class ConstVariableAttributor
+    class ConstVariableFactory
+        : public detail::NodeFactory
     {
     public:
         typedef typename detail::QueryVariable<Variable>::Traits::Overload QueryOverload;
         typedef typename QueryOverload::Formatter Formatter;
         typedef OverloadedCommandNode node_type;
-        typedef ConstVariableAttributor return_type;
+        typedef OverloadedCommandNode & result_type;
 
-        ConstVariableAttributor doc(std::string const & doc);
-        ConstVariableAttributor shortdoc(std::string const & doc);
-        ConstVariableAttributor formatter(Formatter formatter);
+        ConstVariableFactory doc(std::string const & doc);
+        ConstVariableFactory shortdoc(std::string const & doc);
+        ConstVariableFactory formatter(Formatter formatter);
 
-        OverloadedCommandNode & node() const; ///< Return the node object
-        operator OverloadedCommandNode & () const; ///< Automatically convert to node object
-
-    protected:
-        explicit ConstVariableAttributor(QueryOverload & queryOverload);
+        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
+        
+        explicit ConstVariableFactory(Variable const & var);
 
     private:
-        QueryOverload & queryOverload_;
-
-        friend class detail::VariableNodeCreator<Variable const>;
+        typename QueryOverload::ptr queryOverload_;
+        boost::optional<std::string> doc_;
+        boost::optional<std::string> shortdoc_;
     };
  
     /** \brief Variable command attributes
@@ -132,65 +103,74 @@ namespace console {
         \ingroup console_commands
      */
     template <class Variable>
-    class VariableAttributor
-        : public ConstVariableAttributor<Variable>
+    class VariableFactory
+        : public ConstVariableFactory<Variable>
     {
     public:
         typedef typename detail::SetVariable<Variable>::Traits::Overload SetOverload;
         typedef typename detail::ArgumentInfo<typename SetOverload::arg1_type>::Parser Parser;
         typedef typename detail::SetVariable<Variable>::OnChangeHandler OnChangeHandler;
-        typedef OverloadedCommandNode node_type;
-        typedef VariableAttributor return_type;
 
-        typedef typename ConstVariableAttributor<Variable>::Formatter Formatter;
-        typedef typename ConstVariableAttributor<Variable>::QueryOverload QueryOverload;
+        typedef typename ConstVariableFactory<Variable>::Formatter Formatter;
+        typedef typename ConstVariableFactory<Variable>::QueryOverload QueryOverload;
 
-        VariableAttributor doc(std::string const & doc); ///< Set documentation of the variable
-        VariableAttributor shortdoc(std::string const & doc); ///< Set short documentation
-        VariableAttributor formatter(Formatter formatter); ///< Set formatter
-        /**< The \a formatter must be a callable with a signature
-             compatible with
-             \code
-                 void formatter(Variable const & value, std::ostream & os);
-             \endcode
-                 The \a formatter takes the return value of the call \a
-                 value and writes it properly formated to \a os. */
-       
-        VariableAttributor parser(Parser parser); ///< Set argument parser
-        /**< The parser is an arbitrary callable object with
-             the signature
-             \code
-                 void parser(senf::console::ParseCommandInfo::TokensRange const & tokens, value_type & out);
-             \endcode
+        VariableFactory doc(std::string const & doc); ///< Set documentation of the variable
+        VariableFactory shortdoc(std::string const & doc); ///< Set short documentation
+        VariableFactory formatter(Formatter formatter); ///< Set formatter
+                                        /**< The \a formatter must be a callable with a signature
+                                             compatible with
+                                             \code
+                                                 void formatter(Variable const & value, std::ostream & os);
+                                             \endcode
+                                                 The \a formatter takes the return value of the call \a
+                                                 value and writes it properly formated to \a os. */
+        VariableFactory parser(Parser parser); ///< Set argument parser
+                                        /**< The parser is an arbitrary callable object with
+                                             the signature
+                                             \code
+                                                 void parser(senf::console::ParseCommandInfo::TokensRange const & tokens, value_type & out);
+                                             \endcode
+                                             
+                                             where \c value_type is the type of the overload
+                                             parameter. The parser must read and parse the complete
+                                             \a tokens range and return the parsed value in \a
+                                             out. If the parser fails, it must raise a
+                                             senf::console::SyntaxErrorException. */
+        VariableFactory typeName(std::string const & name); ///< Set name of the variable type
+        VariableFactory onChange(OnChangeHandler handler); ///< Set change callback
+                                        /**< The \a handler callback is called, whenever the value
+                                             of the variable is changed. The new value has already
+                                             been set, when the callback is called, the old value is
+                                             passed to the callback. The callback must have a
+                                             signature compatible to
+                                             \code
+                                                 void handler(Variable const & oldValue);
+                                             \endcode */
 
-             where \c value_type is the type of the overload
-             parameter. The parser must read and parse the complete
-             \a tokens range and return the parsed value in \a
-             out. If the parser fails, it must raise a
-             senf::console::SyntaxErrorException. */
-        VariableAttributor typeName(std::string const & name); ///< Set name of the variable type
-        VariableAttributor onChange(OnChangeHandler handler); ///< Set change callback
-        /**< The \a handler callback is called, whenever the value
-             of the variable is changed. The new value has already
-             been set, when the callback is called, the old value is
-             passed to the callback. The callback must have a
-             signature compatible to
-             \code
-                 void handler(Variable const & oldValue);
-             \endcode */
- 
+        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
+
+        explicit VariableFactory(Variable & var);
+
     protected:
 
     private:
-        VariableAttributor(QueryOverload & queryOverload, SetOverload & setOverload, 
-                           Variable & var);
-
-        SetOverload & setOverload_;
+        typename SetOverload::ptr setOverload_;
         Variable & var_;
-
-        friend class detail::VariableNodeCreator<Variable>;
     };
-}}
+
+    template <class Var>
+    VariableFactory<Var> Variable(Var & var);
+
+    template <class Var>
+    VariableFactory<Var> Variable(boost::reference_wrapper<Var> var);
+
+    template <class Var>
+    ConstVariableFactory<Var> Variable(Var const & var);
+
+    template <class Var>
+    ConstVariableFactory<Var> Variable(boost::reference_wrapper<Var const> var);
+
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Variables.cci"

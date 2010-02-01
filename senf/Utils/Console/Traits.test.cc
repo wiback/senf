@@ -56,15 +56,17 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(charTraits)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
     std::stringstream ss;
 
-    dir.add("test",&charTest);
-    dir.add("stest",&scharTest);
-    dir.add("utest",&ucharTest);
+    dir.add("test",fty::Command(&charTest));
+    dir.add("stest",fty::Command(&scharTest));
+    dir.add("utest",fty::Command(&ucharTest));
 
     SENF_CHECK_NO_THROW(
         parser.parse("test/test 10; test/test 20",
@@ -87,12 +89,14 @@ SENF_AUTO_UNIT_TEST(charTraits)
 
 SENF_AUTO_UNIT_TEST(boolTraits)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
 
-    dir.add("test", &boolTest);
+    dir.add("test", fty::Command(&boolTest));
 
     std::stringstream ss;
     SENF_CHECK_NO_THROW(
@@ -118,7 +122,7 @@ SENF_AUTO_UNIT_TEST(boolTraits)
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "true\n" "true\n" );
 
-    dir.add("test2", &boolTest).formatter( senf::console::formatEnabledDisabled );
+    dir.add("test2", fty::Command(&boolTest).formatter( senf::console::formatEnabledDisabled ));
     ss.str("");
     SENF_CHECK_NO_THROW(
         parser.parse("test/test2 0; test/test2 -1",
@@ -135,12 +139,14 @@ SENF_AUTO_UNIT_TEST(stringTraits)
 
 SENF_AUTO_UNIT_TEST(enumSupport)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::Executor executor;
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
 
-    dir.add("test",&test);
+    dir.add("test",fty::Command(&test));
     
     std::stringstream ss;
     SENF_CHECK_NO_THROW(
@@ -164,7 +170,7 @@ SENF_AUTO_UNIT_TEST(enumSupport)
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
         senf::console::SyntaxErrorException );
 
-    dir.add("member", &TestClass::test);
+    dir.add("member", fty::Command(&TestClass::test));
 
     ss.str("");
     SENF_CHECK_NO_THROW(

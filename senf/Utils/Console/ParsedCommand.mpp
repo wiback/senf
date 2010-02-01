@@ -356,7 +356,7 @@ struct CreateParsedCommandOverload<Traits, true, BOOST_PP_ITERATION()>
 template <BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), class A ) > 
 next_type arg ( BOOST_PP_ENUM_BINARY_PARAMS( BOOST_PP_ITERATION(), A, const & a ),
                 typename arg_params::match< BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ) >::type
-                    kw = arg_params()) const {
+                    kw = arg_params()) {
     return argInfo( kw(BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a )) );
 }
 

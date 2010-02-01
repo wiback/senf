@@ -79,12 +79,13 @@ prefix_ void RegisterStatisticsLogger::adder(senf::StatisticsBase & stats,
                                              senf::console::DirectoryNode & dir)
 {
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
     
-    dir.add("logger", boost::function<void (std::string const &)>(
-               boost::bind(&consoleCreate, boost::ref(stats), rank, _1)))
-       .arg("prefix","Optional prefix string to add to each log message",
-            kw::default_value = "")
-       .doc("Send log messages to statistics log stream");
+    dir.add("logger", fty::Command<void (std::string const &)>(
+                boost::bind(&consoleCreate, boost::ref(stats), rank, _1))
+            .arg("prefix","Optional prefix string to add to each log message",
+                 kw::default_value = "")
+            .doc("Send log messages to statistics log stream") );
 }
 
 prefix_ void RegisterStatisticsLogger::consoleCreate(senf::StatisticsBase & stats,

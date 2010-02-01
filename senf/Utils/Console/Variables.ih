@@ -48,9 +48,12 @@ namespace detail {
         typedef Variable const & Signature ();
         typedef boost::function<Signature> Function;
         typedef detail::ParsedCommandTraits<Signature> Traits;
+        typedef detail::CreateParsedCommandOverload<Traits> CreateOverload;
         typedef Variable const & result_type;
 
         QueryVariable(Variable const & var);
+
+        static typename Traits::Overload::ptr create(Variable const & var);
 
         Variable const & operator()()  const;
 
@@ -63,31 +66,18 @@ namespace detail {
         typedef void Signature (Variable &);
         typedef boost::function<Signature> Function;
         typedef detail::ParsedCommandTraits<Signature> Traits;
+        typedef detail::CreateParsedCommandOverload<Traits> CreateOverload;
         typedef boost::function<void (Variable const &)> OnChangeHandler;
         typedef void result_type;
         
         SetVariable(Variable & var, OnChangeHandler handler = OnChangeHandler());
+
+        static typename Traits::Overload::ptr create(Variable & var);
         
         void operator()(Variable const & value) const;
 
         Variable & var_;
         OnChangeHandler handler_;
-    };
-
-    template <class Variable, bool isConst=boost::is_const<Variable>::value>
-    struct VariableNodeCreator
-    {
-        typedef VariableAttributor<Variable> result_type;
-        static VariableAttributor<Variable> add(DirectoryNode & node, std::string const & name,
-                                                Variable & var);
-    };
-
-    template <class Variable>
-    struct VariableNodeCreator<Variable, true>
-    {
-        typedef ConstVariableAttributor<Variable> result_type;
-        static ConstVariableAttributor<Variable> add(DirectoryNode & node, std::string const & name,
-                                                     Variable & var);
     };
 
 #endif

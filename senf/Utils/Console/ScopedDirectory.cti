@@ -32,19 +32,6 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::OwnerNodeCreateTraits<Owner,Object>::Creator
-
-template <class Owner, class Object>
-prefix_ typename senf::console::OwnerNodeCreateTraits<Owner,Object>::result_type
-senf::console::OwnerNodeCreateTraits<Owner,Object>::Creator::create(DirectoryNode & node,
-                                                                    Owner & owner,
-                                                                    std::string const & name,
-                                                                    Object & ob)
-{
-    return senf_console_add_node(node, owner, name, ob, 0);
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::console::ScopedDirectory<Owner>
 
 template <class Owner>
@@ -55,73 +42,66 @@ prefix_ senf::console::ScopedDirectory<Owner>::ScopedDirectory(Owner * owner)
 }
 
 template <class Owner>
-template <class Object>
-prefix_ typename senf::console::OwnerNodeCreateTraits<Owner, Object const>::result_type
-senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object const & ob)
+template <class NodeType>
+prefix_ NodeType & senf::console::ScopedDirectory<Owner>::add(std::string const & name,
+                                                              boost::shared_ptr<NodeType> othernode)
 {
-    return OwnerNodeCreateTraits<Owner, Object const>::Creator::create(node(), *owner_, name, ob);
+    return node().add(name, othernode);
 }
 
 template <class Owner>
-template <class Object>
-prefix_ typename senf::console::OwnerNodeCreateTraits<Owner, Object>::result_type
-senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object & ob)
+template <class NodeType>
+prefix_ NodeType & senf::console::ScopedDirectory<Owner>::
+add(std::string const & name, NodeType & othernode,
+    typename boost::enable_if< boost::is_convertible<NodeType &, GenericNode &> >::type *)
 {
-    return OwnerNodeCreateTraits<Owner, Object>::Creator::create(node(), *owner_, name, ob);
-}
-
-#ifndef DOXYGEN
-
-template <class Owner, class Function>
-prefix_ senf::console::SimpleCommandNode & senf::console::
-senf_console_add_node(DirectoryNode & node, Owner & , std::string const & name,
-                      SimpleCommandNode::Function fn, int)
-{
-    return node.add(name,fn);
+    return node().add(name,othernode);
 }
 
 template <class Owner>
-prefix_ senf::console::SimpleCommandNode & senf::console::
-senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                      void (Owner::*fn)(std::ostream &, ParseCommandInfo const &), int)
+template <class Factory>
+prefix_ typename Factory::result_type senf::console::ScopedDirectory<Owner>::
+add(std::string const & name, Factory const & factory,
+    typename boost::enable_if< boost::is_convertible<Factory*, detail::OwnedNodeFactory*> >::type *)
 {
-    return node.add(name, boost::function<void (std::ostream&,ParseCommandInfo const &)>(
-                        boost::bind(fn,boost::ref(owner),_1,_2)));
+    return factory.create(*owner_, name, node());
 }
 
 template <class Owner>
-prefix_ senf::console::DirectoryNode &
-senf::console::senf_console_add_node(DirectoryNode & node, Owner & owner,
-                                     std::string const & name, DirectoryNode & dir, int)
+template <class Factory>
+prefix_ typename Factory::result_type senf::console::ScopedDirectory<Owner>::
+add(std::string const & name, Factory const & factory,
+    typename boost::enable_if< boost::is_convertible<Factory*, detail::NodeFactory*> >::type *,
+    typename boost::disable_if< boost::is_convertible<Factory*, detail::OwnedNodeFactory*> >::type *)
 {
-    return node.add(name, dir.thisptr());
+    return node().add(name, factory);
 }
-
-template <class Node>
-prefix_ senf::console::DirectoryNode & senf::console::
-senf_console_add_node(DirectoryNode & dir, std::string const & name, Node const & node, int,
-                      typename boost::enable_if< boost::is_convertible<Node*, ScopedDirectoryBase*> >::type *)
-{
-    return dir.add(name, node.node().thisptr());
-}
-
-#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ScopedDirectory<void>
 
-template <class Object>
-prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
-senf::console::ScopedDirectory<void>::add(std::string const & name, Object const & ob)
+
+template <class NodeType>
+prefix_ NodeType & senf::console::ScopedDirectory<void>::add(std::string const & name,
+                                                             boost::shared_ptr<NodeType> othernode)
 {
-    return node().add(name, ob);
+    return node().add(name,othernode);
 }
 
-template <class Object>
-prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
-senf::console::ScopedDirectory<void>::add(std::string const & name, Object & ob)
+template <class NodeType>
+prefix_ NodeType & senf::console::ScopedDirectory<void>::
+add(std::string const & name, NodeType & othernode,
+    typename boost::enable_if< boost::is_convertible<NodeType &, GenericNode &> >::type *)
 {
-    return node().add(name, ob);
+    return node().add(name,othernode);
+}
+
+template <class Factory>
+prefix_ typename Factory::result_type senf::console::ScopedDirectory<void>::
+add(std::string const & name, Factory const & factory,
+    typename boost::enable_if< boost::is_convertible<Factory*, detail::NodeFactory*> >::type *)
+{
+    return node().add(name,factory);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

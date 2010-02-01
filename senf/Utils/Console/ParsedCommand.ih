@@ -158,6 +158,41 @@ namespace detail {
 
     struct ParsedCommandAddNodeAccess;
 
+    // What is THIS about ??
+
+    // Ok, here's the dope: parsed commands may optionally have an std::ostream & first argument. If
+    // this argument is given, then the function will be called with the console output stream as
+    // it's first argument.
+    //
+    // This is implemented in the following way: ParsedCommandOverload (the class responsible for
+    // calling the callback) will ALWAYS pass the stream as first argument. If the user callback
+    // expects os as it's first argument, 'ignoreOneArg' will be false and the user supplied
+    // function will be directly passed to ParsedCommandOverload.
+    //
+    // If however, it does NOT take an std::ostream first argument, 'ignoreOneArg' will be true and
+    // the create member will use boost::bind to DROP the first argument.
+    
+    template <class Traits, 
+              bool ignoreOneArg=! Traits::has_ostream_arg, 
+              unsigned arity=Traits::traits::arity>
+    struct CreateParsedCommandOverload
+    {};
+
+    template <class Traits, unsigned arity>
+    struct CreateParsedCommandOverload<Traits, false, arity>
+    {
+        typedef typename Traits::traits traits;
+        
+        template <class Function>
+        static typename senf::console::ParsedCommandOverload<traits>::ptr create(Function fn) 
+            { return senf::console::ParsedCommandOverload<traits>::create(fn); };
+    };
+
+#   define BOOST_PP_ITERATION_PARAMS_1 (4, (0, SENF_CONSOLE_MAX_COMMAND_ARITY,                     \
+                                            SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp), \
+                                            4))
+#   include BOOST_PP_ITERATE()
+
 #endif
 
 }}}

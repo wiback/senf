@@ -425,30 +425,31 @@ prefix_ void senf::DVBSocketController::readEvent(int event)
 
 prefix_ void senf::DVBSocketController::initConsole()
 {
-    // binding functions to console
+    namespace fty = senf::console::factory;
     namespace kw = senf::console::kw;
+
     dir.doc("DVB Controller " + controllerNr);
     ++controllerNr;
 
-    dir.add("type", &DVBSocketController::getTypeString)
-    .doc("Shows actual type of card DVB-{T, S, C}");
+    dir.add("type", fty::BoundCommand(this, &DVBSocketController::getTypeString)
+	    .doc("Shows actual type of card DVB-{T, S, C}") );
 
-    dir.add("info", &DVBSocketController::getTuneInfo)
-    .doc("Returns a string which shows actual tuning status.\n\
-            \"S\" prints signal strength (in hex)\n\
-            \"s\" prints singal to noise ration (in hex)\n\
-            \"b\" prints bit error rate (in hex)\n\
-            \"u\" prints uncorrected blocks (in hex)\n\
-            \"f\" prints readable overal status e.g. \"Has Lock\"\n\n\
-            These characters can be used to form the output. Be aware, some\n\
-            features may not be supported be your current driver implementation\n\
-            and could end in throwing an exception!")
-    .arg("conf", "Ssbuf", kw::default_value = "Ssbuf");
+    dir.add("info", fty::BoundCommand(this, &DVBSocketController::getTuneInfo)
+	    .doc("Returns a string which shows actual tuning status.\n"
+		 "'S' prints signal strength (in hex)\n"
+		 "'s' prints singal to noise ration (in hex)\n"
+		 "'b' prints bit error rate (in hex)\n"
+		 "'u' prints uncorrected blocks (in hex)\n"
+		 "'f' prints readable overal status e.g. 'Has Lock'\n\n"
+		 "These characters can be used to form the output. Be aware, some\n"
+		 "features may not be supported be your current driver implementation\n"
+		 "and could end in throwing an exception!")
+	    .arg("conf", "Ssbuf", kw::default_value = "Ssbuf") );
 
-    dir.add("tune", &DVBSocketController::tuneToCMD)
-        .doc("tunes to channel listet in the configfile.")
-        .arg("channel", "channel to tune")
-        .arg("mode", "mode \"sync\" or \"async\"", kw::default_value = "async");
+    dir.add("tune", fty::BoundCommand(this,&DVBSocketController::tuneToCMD)
+	    .doc("tunes to channel listet in the configfile.")
+	    .arg("channel", "channel to tune")
+	    .arg("mode", "mode 'sync' or 'async'", kw::default_value = "async") );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

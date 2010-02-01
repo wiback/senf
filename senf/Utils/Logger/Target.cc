@@ -56,68 +56,75 @@ namespace detail {
 prefix_ senf::log::Target::Target(std::string const & name)
 {
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
     detail::TargetRegistry::instance().registerTarget(this, name);
-    consoleDir_().add("list", senf::membind(&Target::consoleList, this))
-        .doc("Show routing table\n"
-             "\n"
-             "Columns:\n"
-             "    #       rule index\n"
-             "    STREAM  stream to match, empty to match all streams\n"
-             "    AREA    area to match, empty to match all targets\n"
-             "    LEVEL   match messages with level above this. Log levels in increasing order\n"
-             "            are:\n"
-             "                verbose, notice, message, important, critical, fatal\n"
-             "    ACTION  action to take: accept or reject");
-    consoleDir_().add("route", senf::membind(&Target::consoleRoute, this))
-        .arg("index", "index at which to insert new rule")
-        .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
-             "              and log level. You may specify any combination of these parameterse\n"
-             "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
-             "              to list all valid streams and areas. Valid log levels are:\n"
-             "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
-        .arg("action", "routing action, one of: ACCEPT, REJECT",
-             kw::default_value=ACCEPT)
-        .doc("Add routing entry. Log messages are matched against the routing table beginning\n"
-             "with the first entry. The action of the first matching entry determines the\n"
-             "handling of the message.\n"
-             "\n"
-             "Examples:\n"
-             "\n"
-             "    route ()\n"
-             "        route all messages to this target.\n"
-             "\n"
-             "    route 1 (my::Class)\n"
-             "        route all messages which are in the my::Class area. Insert this route after\n"
-             "        the first route,\n"
-             "\n"
-             "    route (senf::log::Debug VERBOSE) REJECT\n"
-             "    route (VERBOSE)\n"
-             "        route all messages not in the senf::log::Debug stream to the current area.\n"
-             "\n"
-             "The additional optional index argument identifies the position in the routing table\n"
-             "where the new routing entry will be added. Positive numbers count from the\n"
-             "beginning, 0 being the first routing entry. Negative values count from the end.");
-    consoleDir_().add("route", boost::function<void (detail::LogParameters, action_t)>(
-                          boost::bind(&Target::consoleRoute, this, -1, _1, _2)))
-        .arg("parameters")
-        .arg("action", kw::default_value=ACCEPT);
-    consoleDir_().add("unroute",
-                      senf::membind(static_cast<void (Target::*)(int)>(&Target::unroute), this))
-        .arg("index", "index of routing entry to remove")
-        .overloadDoc("Remove routing entry with the given index");
-    consoleDir_().add("unroute", senf::membind(&Target::consoleUnroute, this))
-        .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
-             "              and log level. You may specify any combination of these parameterse\n"
-             "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
-             "              to list all valid streams and areas. Valid log levels are:\n"
-             "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
-        .arg("action", "routing action, one of: ACCEPT, REJECT",
-             kw::default_value=ACCEPT)
-        .overloadDoc("Remove the routing entry matching the specified arguments.");
-    consoleDir_().add("flush", senf::membind(&Target::flush, this))
-        .doc("Remove all routing entries clearing the routing table. This will disable all\n"
-             "logging output on this target.");
+    consoleDir_()
+        .add("list", fty::BoundCommand(this, &Target::consoleList)
+             .doc("Show routing table\n"
+                  "\n"
+                  "Columns:\n"
+                  "    #       rule index\n"
+                  "    STREAM  stream to match, empty to match all streams\n"
+                  "    AREA    area to match, empty to match all targets\n"
+                  "    LEVEL   match messages with level above this. Log levels in increasing order\n"
+                  "            are:\n"
+                  "                verbose, notice, message, important, critical, fatal\n"
+                  "    ACTION  action to take: accept or reject") );
+    consoleDir_()
+        .add("route", fty::BoundCommand(this, &Target::consoleRoute)
+             .arg("index", "index at which to insert new rule")
+             .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
+                  "              and log level. You may specify any combination of these parameterse\n"
+                  "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
+                  "              to list all valid streams and areas. Valid log levels are:\n"
+                  "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
+             .arg("action", "routing action, one of: ACCEPT, REJECT",
+                  kw::default_value=ACCEPT)
+             .doc("Add routing entry. Log messages are matched against the routing table beginning\n"
+                  "with the first entry. The action of the first matching entry determines the\n"
+                  "handling of the message.\n"
+                  "\n"
+                  "Examples:\n"
+                  "\n"
+                  "    route ()\n"
+                  "        route all messages to this target.\n"
+                  "\n"
+                  "    route 1 (my::Class)\n"
+                  "        route all messages which are in the my::Class area. Insert this route after\n"
+                  "        the first route,\n"
+                  "\n"
+                  "    route (senf::log::Debug VERBOSE) REJECT\n"
+                  "    route (VERBOSE)\n"
+                  "        route all messages not in the senf::log::Debug stream to the current area.\n"
+                  "\n"
+                  "The additional optional index argument identifies the position in the routing table\n"
+                  "where the new routing entry will be added. Positive numbers count from the\n"
+                  "beginning, 0 being the first routing entry. Negative values count from the end.") );
+    consoleDir_()
+        .add("route", fty::Command<void (detail::LogParameters, action_t)>(
+                 boost::bind(&Target::consoleRoute, this, -1, _1, _2))
+             .arg("parameters")
+             .arg("action", kw::default_value=ACCEPT) );
+    consoleDir_()
+        .add("unroute",
+             fty::BoundCommand(this, static_cast<void (Target::*)(int)>(&Target::unroute))
+             .arg("index", "index of routing entry to remove")
+             .overloadDoc("Remove routing entry with the given index") );
+    consoleDir_()
+        .add("unroute", fty::BoundCommand(this, &Target::consoleUnroute)
+             .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
+                  "              and log level. You may specify any combination of these parameterse\n"
+                  "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
+                  "              to list all valid streams and areas. Valid log levels are:\n"
+                  "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
+             .arg("action", "routing action, one of: ACCEPT, REJECT",
+                  kw::default_value=ACCEPT)
+             .overloadDoc("Remove the routing entry matching the specified arguments.") );
+    consoleDir_()
+        .add("flush", fty::BoundCommand(this, &Target::flush)
+             .doc("Remove all routing entries clearing the routing table. This will disable all\n"
+                  "logging output on this target.") );
 }
 
 prefix_ senf::log::Target::~Target()
@@ -352,10 +359,12 @@ prefix_ void senf::log::Target::consoleUnroute(detail::LogParameters const & pm,
 
 prefix_ void senf::log::detail::TargetRegistry::dynamicTarget(std::auto_ptr<Target> target)
 {
-    target->consoleDir().add("remove", boost::function<void ()>(
-                                 boost::bind(
-                                     &TargetRegistry::consoleRemoveTarget, this, target.get())))
-        .doc("Remove target.");
+    namespace fty = senf::console::factory;
+
+    target->consoleDir()
+        .add("remove", fty::Command<void ()>(
+                 boost::bind(&TargetRegistry::consoleRemoveTarget, this, target.get()))
+             .doc("Remove target.") );
     dynamicTargets_.insert(target.release());
 }
 
@@ -389,36 +398,41 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
     : fallbackRouting_(true)
 {
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
     console::sysdir().add("log", consoleDir_());
-    consoleDir_().add("areas", senf::membind(&TargetRegistry::consoleAreas, this))
-        .doc("List all areas");
-    consoleDir_().add("streams", senf::membind(&TargetRegistry::consoleStreams, this))
-        .doc("List all streams");
-    consoleDir_().add("message", senf::membind(&TargetRegistry::consoleWrite, this))
-        .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
-             "              and log level. You may specify any combination of these parameterse\n"
-             "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
-             "              to list all valid streams and areas. Valid log levels are:\n"
-             "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL",
-             kw::default_value = LogParameters::defaultParameters())
-        .arg("message", "message to write")
-        .doc("Write log message.\n"
-             "\n"
-             "Examples:\n"
-             "    message \"Test\";\n"
-             "    message (senf::log::DefaultArea NOTICE) \"Test notice\";\n"
-             "    message (FATAL) \"Program on fire\";\n"
-             "    message (VERBOSE senf::log::Debug) \"Debug message\";");
-    consoleDir_().add("self", senf::membind(&TargetRegistry::consoleSelf, this))
-        .doc("Get the log directory of the current network client. Example usage:\n"
-             "\n"
-             "Just get the log config directory\n"
-             "    $ /sys/log/self\n"
-             "    <Directory '/sys/log/client-xxx.xxx.xxx.xxx:xxx'>\n"
-             "\n"
-             "Route all messages to the currently connected client\n"
- "    $ /sys/log/self { route (); }");
+    consoleDir_()
+        .add("areas", fty::BoundCommand(this, &TargetRegistry::consoleAreas)
+             .doc("List all areas") );
+    consoleDir_()
+        .add("streams", fty::BoundCommand(this, &TargetRegistry::consoleStreams)
+             .doc("List all streams") );
+    consoleDir_()
+        .add("message", fty::BoundCommand(this, &TargetRegistry::consoleWrite)
+             .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
+                  "              and log level. You may specify any combination of these parameterse\n"
+                  "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
+                  "              to list all valid streams and areas. Valid log levels are:\n"
+                  "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL",
+                  kw::default_value = LogParameters::defaultParameters())
+             .arg("message", "message to write")
+             .doc("Write log message.\n"
+                  "\n"
+                  "Examples:\n"
+                  "    message \"Test\";\n"
+                  "    message (senf::log::DefaultArea NOTICE) \"Test notice\";\n"
+                  "    message (FATAL) \"Program on fire\";\n"
+                  "    message (VERBOSE senf::log::Debug) \"Debug message\";") );
+    consoleDir_()
+        .add("self", fty::BoundCommand(this, &TargetRegistry::consoleSelf)
+             .doc("Get the log directory of the current network client. Example usage:\n"
+                  "\n"
+                  "Just get the log config directory\n"
+                  "    $ /sys/log/self\n"
+                  "    <Directory '/sys/log/client-xxx.xxx.xxx.xxx:xxx'>\n"
+                  "\n"
+                  "Route all messages to the currently connected client\n"
+                  "    $ /sys/log/self { route () ); }") );
 }
 
 prefix_ senf::log::detail::TargetRegistry::~TargetRegistry()

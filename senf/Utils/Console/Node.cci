@@ -280,6 +280,7 @@ prefix_ senf::console::detail::NodeTraverser::NodeTraverser(DirectoryNode & root
                                                             bool autocomplete)
     : root_ (root), dir_ (dir.thisptr()), autocomplete_ (autocomplete), init_ (false)
 {}
+
 #endif
 
 ///////////////////////////////////////////////////////////////////////////
@@ -367,23 +368,35 @@ prefix_ senf::console::SimpleCommandNode::cptr senf::console::SimpleCommandNode:
     return boost::static_pointer_cast<SimpleCommandNode const>(shared_from_this());
 }
 
-#ifndef DOXYGEN
+///////////////////////////////////////////////////////////////////////////
+// senf::console::factory::SimpleCommand
+
+prefix_ senf::console::factory::SimpleCommand::SimpleCommand(SimpleCommandNode::Function fn)
+    : node_ (SimpleCommandNode::create(fn))
+{}
 
 prefix_ senf::console::SimpleCommandNode &
-senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                     SimpleCommandNode::Function fn, int)
+senf::console::factory::SimpleCommand::create(DirectoryNode & dir, std::string const & name)
+    const
 {
-    return node.add(name, SimpleCommandNode::create(fn));
+    return dir.add(name, node_);
 }
 
-prefix_ senf::console::DirectoryNode &
-senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                     DirectoryNode & dir, int)
+prefix_ senf::console::factory::SimpleCommand const &
+senf::console::factory::SimpleCommand::doc(std::string const & doc)
+    const
 {
-    return node.add(name, dir.thisptr());
+    node_->doc(doc);
+    return *this;
 }
 
-#endif
+prefix_ senf::console::factory::SimpleCommand const &
+senf::console::factory::SimpleCommand::shortdoc(std::string const & doc)
+    const
+{
+    node_->shortdoc(doc);
+    return *this;
+}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

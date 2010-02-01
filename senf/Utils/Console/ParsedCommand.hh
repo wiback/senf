@@ -182,14 +182,15 @@ namespace console {
 
 #ifndef DOXYGEN
 
-#   define BOOST_PP_ITERATION_PARAMS_1 (4, (0, SENF_CONSOLE_MAX_COMMAND_ARITY,                     \
-                                            SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp), \
-                                            1))
+#   define BOOST_PP_ITERATION_PARAMS_1                                  \
+        (4, (0, SENF_CONSOLE_MAX_COMMAND_ARITY,                         \
+             SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp), \
+             1))
 #   include BOOST_PP_ITERATE()
 
 #endif
 
-    /** \brief Generic ParsedCommandOverladBase attributes
+    /** \brief Generic ParsedCommandOverloadBase attributes
 
         Attributes for parsed commands are not set directly on the node. They are set via a special
         attributor temporary returned when adding a parsed command to the tree.
@@ -200,27 +201,33 @@ namespace console {
         \see \ref console_autoparse
      */
     class ParsedCommandAttributorBase
+        : public detail::NodeFactory
     {
     public:
-        OverloadedCommandNode & node() const; ///< Return the node object
-        operator OverloadedCommandNode & () const; ///< Automatically convert to node object
+        typedef OverloadedCommandNode node_type;
+        typedef OverloadedCommandNode & result_type;
+
+        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
 
     protected:
-        ParsedCommandAttributorBase(ParsedCommandOverloadBase & overload, unsigned index);
+        ParsedCommandAttributorBase(ParsedCommandOverloadBase::ptr overload, unsigned index);
+        ParsedCommandAttributorBase(ParsedCommandAttributorBase const & other, unsigned index);
 
-        void argName(std::string const & name) const;
-        void argDoc(std::string const & doc) const;
-        void typeName(std::string const & doc) const;
-        void defaultDoc(std::string const & doc) const;
-
+        void argName(std::string const & name);
+        void argDoc(std::string const & doc);
+        void typeName(std::string const & doc);
+        void defaultDoc(std::string const & doc);
+        
         ParsedCommandOverloadBase & overload() const;
-        void overloadDoc(std::string const & doc) const;
-        void nodeDoc(std::string const & doc) const;
-        void shortDoc(std::string const & doc) const;
+        void overloadDoc(std::string const & doc);
+        void nodeDoc(std::string const & doc);
+        void shortDoc(std::string const & doc);
         
     private:
-        ParsedCommandOverloadBase & overload_;
+        ParsedCommandOverloadBase::ptr overload_;
         unsigned index_;
+        boost::optional<std::string> doc_;
+        boost::optional<std::string> shortdoc_;
     };
 
     /** \brief Non argument dependent ParsedCommandBase attributes 
@@ -241,7 +248,8 @@ namespace console {
         Overload & overload() const;    ///< Get the command overload
 
     protected:
-        ParsedCommandAttributor(Overload & overload, unsigned index);
+        ParsedCommandAttributor(typename Overload::ptr overload, unsigned index);
+        ParsedCommandAttributor(ParsedCommandAttributorBase const & other, unsigned index);
 
     private:
     };
@@ -398,10 +406,10 @@ namespace console {
         : public ParsedCommandAttributor<Overload>
     {
     public:
-        Self doc(std::string const & doc) const; ///< Set documentation for all overloads
-        Self shortdoc(std::string const & doc) const; ///< Set short documentation for all overloads
-        Self overloadDoc(std::string const & doc) const; ///< Set overload specific documentation
-        Self formatter(typename Overload::Formatter formatter) const; 
+        Self doc(std::string const & doc); ///< Set documentation for all overloads
+        Self shortdoc(std::string const & doc); ///< Set short documentation for all overloads
+        Self overloadDoc(std::string const & doc); ///< Set overload specific documentation
+        Self formatter(typename Overload::Formatter formatter); 
                                         ///< Set return value formatter
                                         /**< This member is only available, if the \a ReturnType of
                                              the installed callback is not \c void.
@@ -415,7 +423,8 @@ namespace console {
                                              value and writes it properly formated to \a os. */
 
     protected:
-        ParsedArgumentAttributorBase(Overload & overload, unsigned index);
+        ParsedArgumentAttributorBase(typename Overload::ptr overload, unsigned index);
+        ParsedArgumentAttributorBase(ParsedCommandAttributorBase const & other, unsigned index);
 
     private:
     };
@@ -427,12 +436,13 @@ namespace console {
         : public ParsedCommandAttributor<Overload>
     {
     public:
-        Self doc(std::string const & doc) const; ///< Set documentation for all overloads
-        Self shortdoc(std::string const & doc) const; ///< Set short documentation for all overloads
-        Self overloadDoc(std::string const & doc) const; ///< Set overload specific documentation
+        Self doc(std::string const & doc); ///< Set documentation for all overloads
+        Self shortdoc(std::string const & doc); ///< Set short documentation for all overloads
+        Self overloadDoc(std::string const & doc); ///< Set overload specific documentation
 
     protected:
-        ParsedArgumentAttributorBase(Overload & overload, unsigned index);
+        ParsedArgumentAttributorBase(typename Overload::ptr overload, unsigned index);
+        ParsedArgumentAttributorBase(ParsedCommandAttributorBase const & other, unsigned index);
 
     private:
     };
@@ -449,7 +459,7 @@ namespace console {
 
         \see \ref console_autoparse
      */
-    template < class Overload, unsigned index, bool flag>
+    template <class Overload, unsigned index, bool flag>
     class ParsedArgumentAttributor
         : public ParsedArgumentAttributorBase< Overload, 
                                                 ParsedArgumentAttributor<Overload, index, flag> >
@@ -463,9 +473,6 @@ namespace console {
             kw::type::parser> arg_params;
 
     public:
-        typedef OverloadedCommandNode node_type;
-        typedef ParsedArgumentAttributor return_type;
-
         typedef typename senf::function_traits_arg_type< 
             typename Overload::traits, int(index) >::type arg_type;
         typedef typename senf::remove_cvref< arg_type >::type value_type;
@@ -502,43 +509,37 @@ namespace console {
 #endif
 
     private:
-        explicit ParsedArgumentAttributor(Overload & overload);
+        explicit ParsedArgumentAttributor(typename Overload::ptr overload);
+        explicit ParsedArgumentAttributor(ParsedCommandAttributorBase const & other);
 
         template <class ArgumentPack>
-        next_type argInfo(ArgumentPack const & args) const;
+        next_type argInfo(ArgumentPack const & args);
         template <class Kw, class ArgumentPack>
-        void argInfo(Kw const &, ArgumentPack const &, boost::mpl::false_) 
-            const;
+        void argInfo(Kw const &, ArgumentPack const &, boost::mpl::false_);
 
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::name> const &, 
-                     ArgumentPack const & args, boost::mpl::true_) 
-            const;
+                     ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::description> const &, 
-                     ArgumentPack const & args, boost::mpl::true_) 
-            const;
+                     ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::default_value> const &, 
-                     ArgumentPack const & args, boost::mpl::true_) 
-            const;
+                     ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::type_name> const &, 
-                     ArgumentPack const & args, boost::mpl::true_) 
-            const;
+                     ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::default_doc> const &, 
-                     ArgumentPack const & args, boost::mpl::true_) 
-            const;
+                     ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::parser> const &, 
-                     ArgumentPack const & args, boost::mpl::true_) 
-            const;
+                     ArgumentPack const & args, boost::mpl::true_);
 
         next_type next() const;
 
-        void defaultValue(value_type const & value) const;
-        template <class Fn> void parser(Fn fn) const;
+        void defaultValue(value_type const & value);
+        template <class Fn> void parser(Fn fn);
 
         template <class O, unsigned i, bool f>
         friend class ParsedArgumentAttributor;
@@ -558,7 +559,8 @@ namespace console {
         typedef ParsedArgumentAttributor return_type;
 
     private:
-        explicit ParsedArgumentAttributor(Overload & overload);
+        explicit ParsedArgumentAttributor(typename Overload::ptr overload);
+        explicit ParsedArgumentAttributor(ParsedCommandAttributorBase const & other);
 
         template <class O, unsigned i, bool f>
         friend class ParsedArgumentAttributor;
@@ -566,33 +568,46 @@ namespace console {
         friend class detail::ParsedCommandAddNodeAccess;
     };
 
-    template <class Function>
-    typename detail::ParsedCommandTraits<Function>::Attributor
-    senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int,
-                          typename boost::enable_if_c<
-                              detail::ParsedCommandTraits<Function>::is_callable>::type * = 0);
-
-    template <class Signature>
-    typename detail::ParsedCommandTraits<Signature>::Attributor
-    senf_console_add_node(DirectoryNode & node, std::string const & name, 
-                          boost::function<Signature> fn, int);
-
-    template <class Owner, class Function>
-    typename detail::ParsedCommandTraits<Function>::Attributor
-    senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                          Function fn, int,
-                          typename boost::enable_if_c<
-                              detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
-
 #endif
 
-}}
+namespace factory {
 
-#include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
+    template <class CastTo, class Signature>
+    typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
+    Command(boost::function<Signature> fn);
 
-BOOST_TYPEOF_REGISTER_TEMPLATE(senf::console::ParsedCommandOverload, (class,unsigned))
-BOOST_TYPEOF_REGISTER_TEMPLATE(senf::console::ParsedArgumentAttributor, (class, unsigned, bool))
-BOOST_TYPEOF_REGISTER_TEMPLATE(boost::function_traits, 1)
+    template <class CastTo, class Function>
+    typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
+    Command(Function fn,
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type * = 0);
+
+    template <class Signature>
+    typename senf::console::detail::ParsedCommandTraits<Signature>::Attributor
+    Command(boost::function<Signature> fn);
+
+    template <class Function>
+    typename senf::console::detail::ParsedCommandTraits<Function>::Attributor
+    Command(Function fn,
+            typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type * = 0);
+
+    template <class Owner, class Member>
+    typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
+    BoundCommand(Owner * owner, Member memfn);
+
+    template <class Owner, class Member>
+    typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
+    BoundCommand(Owner const * owner, Member memfn);
+
+    template <class CastTo, class Owner, class Member>
+    typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
+    BoundCommand(Owner * owner, Member memfn);
+
+    template <class CastTo, class Owner, class Member>
+    typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
+    BoundCommand(Owner const * owner, Member memfn);
+
+
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "ParsedCommand.cci"
