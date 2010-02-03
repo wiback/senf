@@ -49,7 +49,7 @@ struct TestObject
     TestObject() 
         : dir(this) 
         {
-            dir.add("vat", fty::Command(this, &TestObject::vat)
+            dir.add("vat", fty::Command(&TestObject::vat, this)
                     .arg("vat", "VAT in %", kw::default_value = 19)
                     .arg("amount", "Amount including VAT")
                     .doc("Returns the amount of {vat}-% VAT included in {amount}") );
