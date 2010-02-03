@@ -6,4 +6,4 @@ import SENFSCons
 ###########################################################################
 
 SENFSCons.AutoRules(env,  exclude=[ 'telnetServer.cc'])
-env.Program('telnetServer', ['telnetServer.cc'])
+env.Alias('examples', env.Program('telnetServer', ['telnetServer.cc']))

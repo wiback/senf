@@ -6,4 +6,4 @@ import SENFSCons
 ###########################################################################
 
 SENFSCons.AutoRules(env,  exclude=['testServer.cc'])
-env.Program('testServer', ['testServer.cc'])
+env.Alias('examples', env.Program('testServer', ['testServer.cc']))
