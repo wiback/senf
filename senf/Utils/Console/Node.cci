@@ -212,18 +212,6 @@ senf::console::DirectoryNode::operator()(std::string const & name)
     return getCommand(name);
 }
 
-prefix_ senf::console::DirectoryNode &
-senf::console::DirectoryNode::mkdir(std::string const & name)
-{
-    return add(name, create());
-}
-
-prefix_ senf::console::DirectoryNode &
-senf::console::DirectoryNode::provideDirectory(std::string const & name)
-{
-    return hasChild(name) ? getDirectory(name) : mkdir(name);
-}
-
 prefix_ senf::console::DirectoryNode::ChildrenRange senf::console::DirectoryNode::children()
     const
 {
@@ -236,11 +224,6 @@ senf::console::DirectoryNode::completions(std::string const & s)
 {
     return boost::make_iterator_range(children_.lower_bound(s),
                                       children_.lower_bound(s + "\xff"));
-}
-
-prefix_ void senf::console::DirectoryNode::link(std::string const & name, GenericNode & target)
-{
-    add(name, LinkNode::create(target));
 }
 
 prefix_ senf::console::DirectoryNode::DirectoryNode()
@@ -369,6 +352,15 @@ prefix_ senf::console::SimpleCommandNode::cptr senf::console::SimpleCommandNode:
 }
 
 ///////////////////////////////////////////////////////////////////////////
+
+prefix_ senf::console::DirectoryNode & senf::console::provideDirectory(DirectoryNode & dir,
+                                                                       std::string const & name)
+{
+    return dir.hasChild(name) ? dir.getDirectory(name) : dir.add(name, factory::Directory());
+}
+
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::factory::SimpleCommand
 
 prefix_ senf::console::factory::SimpleCommand::SimpleCommand(SimpleCommandNode::Function fn)
@@ -396,6 +388,50 @@ senf::console::factory::SimpleCommand::shortdoc(std::string const & doc)
 {
     node_->shortdoc(doc);
     return *this;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::factory::Directory
+
+prefix_ senf::console::factory::Directory::Directory()
+    : node_ (DirectoryNode::create())
+{}
+
+prefix_ senf::console::DirectoryNode &
+senf::console::factory::Directory::create(DirectoryNode & dir, std::string const & name)
+    const
+{
+    return dir.add(name, node_);
+}
+
+prefix_ senf::console::factory::Directory const &
+senf::console::factory::Directory::doc(std::string const & doc)
+    const
+{
+    node_->doc(doc);
+    return *this;
+}
+
+prefix_ senf::console::factory::Directory const &
+senf::console::factory::Directory::shortdoc(std::string const & doc)
+    const
+{
+    node_->shortdoc(doc);
+    return *this;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::factory::Link
+
+prefix_ senf::console::factory::Link::Link(GenericNode & target)
+    : node_ (LinkNode::create(target))
+{}
+
+prefix_ senf::console::LinkNode & senf::console::factory::Link::create(DirectoryNode & dir,
+                                                                       std::string const & name)
+    const
+{
+    return dir.add(name, node_);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -59,8 +59,6 @@ namespace console {
         CommandNode & getCommand(std::string const & name) const;
         CommandNode & operator()(std::string const & name) const;
         GenericNode & get(std::string const & name) const;
-        DirectoryNode & mkdir(std::string const & name);
-        void link(std::string const & name, GenericNode & node);
         DirectoryNode::ChildrenRange children() const;
         DirectoryNode & doc(std::string const & doc);
 

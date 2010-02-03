@@ -29,6 +29,7 @@
 #include <senf/Scheduler/Scheduler.hh>
 
 namespace kw = senf::console::kw;
+namespace fty = senf::console::factory;
 
 void echo(std::ostream & output, senf::console::ParseCommandInfo const & command)
 {
@@ -48,10 +49,10 @@ struct TestObject
     TestObject() 
         : dir(this) 
         {
-            dir.add("vat", &TestObject::vat)
-                .arg("vat", "VAT in %", kw::default_value = 19)
-                .arg("amount", "Amount including VAT")
-                .doc("Returns the amount of {vat}-% VAT included in {amount}");
+            dir.add("vat", fty::Command(this, &TestObject::vat)
+                    .arg("vat", "VAT in %", kw::default_value = 19)
+                    .arg("amount", "Amount including VAT")
+                    .doc("Returns the amount of {vat}-% VAT included in {amount}") );
         }
 
     double vat (int vat, double amount) 
@@ -80,13 +81,13 @@ int main(int, char **)
         .doc("This is the console test application");
 
     senf::console::root()
-        .mkdir("console")
-        .doc("Console settings");
+        .add("console",fty::Directory()
+             .doc("Console settings"));
 
     senf::console::DirectoryNode & serverDir (
         senf::console::root()
-            .mkdir("server")
-            .doc("server commands") );
+        .add("server",fty::Directory()
+             .doc("server commands")));
 
     senf::console::ScopedDirectory<> testDir;
     senf::console::root()
@@ -94,25 +95,25 @@ int main(int, char **)
         .doc("Test functions");
 
     senf::console::root()["console"]
-        .add("showlog", &enableLogging)
-        .doc("Enable display of log messages on the current console");
+        .add("showlog", fty::Command(&enableLogging)
+             .doc("Enable display of log messages on the current console"));
 
-    senf::console::root().link("sl", senf::console::root()["console"]("showlog"));
+    senf::console::root().add("sl", fty::Link(senf::console::root()["console"]("showlog")));
 
     serverDir
-        .add("shutdown", &shutdownServer)
-        .doc("Terminate server application");
+        .add("shutdown", fty::Command(&shutdownServer)
+             .doc("Terminate server application"));
 
     testDir
-        .add("echo", &echo)
-        .doc("Example of a function utilizing manual argument parsing");
+        .add("echo", fty::Command(&echo)
+             .doc("Example of a function utilizing manual argument parsing"));
 
     TestObject test;
     testDir
         .add("extra", test.dir)
         .doc("Example of an instance directory");
 
-    senf::console::root().link("ex", test.dir);
+    senf::console::root().add("ex", fty::Link(test.dir));
 
     senf::console::Server::start( senf::INet4SocketAddress(23232u) )
         .name("testServer");

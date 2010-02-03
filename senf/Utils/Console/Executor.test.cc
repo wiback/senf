@@ -51,8 +51,8 @@ SENF_AUTO_UNIT_TEST(executor)
 {
     namespace fty = senf::console::factory;
 
-    senf::console::root().mkdir("dir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test",fty::Command(&testCommand));
+    senf::console::root().add("dir1",fty::Directory()).add("dir3",fty::Directory());
+    senf::console::root().add("dir2",fty::Directory()).doc("Helptext").add("test",fty::Command(&testCommand));
 
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -186,8 +186,9 @@ SENF_AUTO_UNIT_TEST(executorChroot)
 {
     namespace fty = senf::console::factory;
 
-    senf::console::root().mkdir("dir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test", fty::Command(&testCommand));
+    senf::console::root().add("dir1",fty::Directory()).add("dir3",fty::Directory());
+    senf::console::root().add("dir2",fty::Directory().doc("Helptext"))
+        .add("test", fty::Command(&testCommand));
 
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -222,8 +223,9 @@ SENF_AUTO_UNIT_TEST(executorPolicy)
 {
     namespace fty = senf::console::factory;
 
-    senf::console::root().mkdir("dir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test",fty::Command(&testCommand));
+    senf::console::root().add("dir1",fty::Directory()).add("dir3",fty::Directory());
+    senf::console::root().add("dir2",fty::Directory().doc("Helptext"))
+        .add("test",fty::Command(&testCommand));
 
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -255,8 +257,9 @@ SENF_AUTO_UNIT_TEST(executorAuto)
 {
     namespace fty = senf::console::factory;
 
-    senf::console::root().mkdir("tdir1").mkdir("dir3");
-    senf::console::root().mkdir("dir2").doc("Helptext").add("test",fty::Command(&testCommand));
+    senf::console::root().add("tdir1",fty::Directory()).add("dir3",fty::Directory());
+    senf::console::root().add("dir2",fty::Directory().doc("Helptext"))
+        .add("test",fty::Command(&testCommand));
 
     senf::console::Executor executor;
     executor

@@ -290,7 +290,7 @@ namespace {
         namespace fty = senf::console::factory;
 
         senf::console::DirectoryNode & dir (
-            senf::console::root()["test"].mkdir("dircb"));
+            senf::console::root()["test"].add("dircb", fty::Directory()));
         dir.add("cb1", fty::Command(&cb1));
         return dir.thisptr();
     }

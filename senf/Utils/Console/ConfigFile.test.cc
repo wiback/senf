@@ -150,7 +150,7 @@ SENF_AUTO_UNIT_TEST(configFileSkipGroup)
     senf::console::ScopedDirectory<> dir2;
     senf::console::root().add("dir2", dir2);
     
-    dir2.mkdir("dir3").add("fun2", fty::Command(&fun2));
+    dir2.add("dir3",fty::Directory()).add("fun2", fty::Command(&fun2));
     dir2.add("fun1", fty::Command(&fun1));
 
     {
@@ -193,12 +193,12 @@ SENF_AUTO_UNIT_TEST(configRestrictAndLink)
     senf::console::ScopedDirectory<> dir2;
     dir1.add("dir2", dir2);
     
-    dir2.mkdir("dir3").add("fun2", fty::Command(&fun2));
+    dir2.add("dir3",fty::Directory()).add("fun2", fty::Command(&fun2));
     dir2.add("fun1", fty::Command(&fun1));
 
     senf::console::ScopedDirectory<> dir4;
     senf::console::root().add("dir4", dir4);
-    dir4.link("link1", dir2);
+    dir4.add("link1", fty::Link(dir2));
 
     {
         senf::console::ConfigFile cfg (cfgf.name(), dir4);

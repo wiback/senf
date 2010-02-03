@@ -53,12 +53,13 @@
 
         SomeClass() : dir(this)
         {
+            namespace fty = senf::console::factory;
             // You may document the directory here or later when adding it to the tree
             dir.doc("Manager for something");
 
             // Add a member function (the pointer-to-member is automatically bound to this instance)
-            dir.add("member", &SomeClass::member)
-                .doc("Do the member operation");
+            dir.add("member", fty::Command(this, &SomeClass::member)
+                .doc("Do the member operation"));
         }
 
         void member(std::ostream & os, senf::console::ParseCommandInfo const & command)
@@ -69,6 +70,8 @@
 
     int main(int, char**)
     {
+        namespace fty = senf::console::factory;
+
         // Provide global documentation
         senf::console::root()
             .doc("This is someServer server");
@@ -76,13 +79,13 @@
         // Add a new directory to the root and document it. All the mutators return the node object
         // itself so operations can be chained.
         senf::console::DirectoryNode & mydir ( senf::console::root()
-                .mkdir("myserver")
-                .doc("My server specific directory"));
+                .add("myserver", fty::Directory()
+                     .doc("My server specific directory")));
 
         // Add a command to that directory
-        mydir.add("mycommand", &mycommand)
+        mydir.add("mycommand", fty::Command(&mycommand)
             .doc("mycommand <foo> [<bar>]\n\n"
-                 "If <bar> is given, flurgle the <foo>, otherwise burgle it");
+                 "If <bar> is given, flurgle the <foo>, otherwise burgle it"));
 
         // Create a SomeClass instance and add it's directory.
         SomeClass someClass;
@@ -507,21 +510,12 @@ namespace console {
                                              \throws std::bad_cast if the child \a name is not a
                                                  command node. */
 
-        DirectoryNode & mkdir(std::string const & name);
-                                        ///< Create sub-directory node
-        DirectoryNode & provideDirectory(std::string const & name);
-                                        ///< Return subdirectory, possibly creating it
-
         ChildrenRange children() const; ///< Return iterator range over all children.
                                         /**< The returned range is sorted by child name. */
 
         ChildrenRange completions(std::string const & s) const;
                                         ///< Return iterator range of completions for \a s
                                         /**< The returned range is sorted by child name. */
-
-        void link(std::string const & name, GenericNode & target);
-                                        ///< Create a child node which is a link to target. \a s
-                                        /**< The new link node will be a child of the node for which this member function is called. */
 
         ///\}
         ///////////////////////////////////////////////////////////////////////////
@@ -681,6 +675,8 @@ namespace console {
         std::string shortdoc_;
     };
 
+    DirectoryNode & provideDirectory(DirectoryNode & dir, std::string const & name);
+
 #ifndef DOXYGEN
 
 namespace factory {
@@ -701,6 +697,39 @@ namespace factory {
 
     private:
         SimpleCommandNode::ptr node_;
+    };
+
+    class Directory
+        : public detail::NodeFactory
+    {
+    public:
+        typedef DirectoryNode node_type;
+        typedef DirectoryNode & result_type;
+
+        Directory();
+
+        DirectoryNode & create(DirectoryNode & dir, std::string const & name) const;
+
+        Directory const & doc(std::string const & doc) const;
+        Directory const & shortdoc(std::string const & doc) const;
+
+    private:
+        DirectoryNode::ptr node_;
+    };
+
+    class Link
+        : public detail::NodeFactory
+    {
+    public:
+        typedef LinkNode node_type;
+        typedef LinkNode & result_type;
+
+        explicit Link(GenericNode & target);
+
+        LinkNode & create(DirectoryNode & dir, std::string const & name) const;
+
+    private:
+        LinkNode::ptr node_;
     };
 
 }

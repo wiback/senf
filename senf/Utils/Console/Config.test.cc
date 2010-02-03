@@ -73,9 +73,9 @@ SENF_AUTO_UNIT_TEST(configBundle)
     senf::console::ScopedDirectory<> chroot;
     senf::console::root().add("chroot", chroot);
 
-    root.mkdir("dir1").add("fun1", fty::Command(&fun1));
+    root.add("dir1", fty::Directory()).add("fun1", fty::Command(&fun1));
     root.add("fun2", fty::Command(&fun2));
-    chroot.mkdir("dir1").add("fun1", fty::Command(&fun1));
+    chroot.add("dir1", fty::Directory()).add("fun1", fty::Command(&fun1));
     chroot.add("fun2", fty::Command(&fun2));
 
     TempFile cfg ("test.cfg");

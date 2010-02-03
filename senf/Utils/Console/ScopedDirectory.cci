@@ -92,18 +92,6 @@ senf::console::ScopedDirectoryBase::get(std::string const & name)
     return node().get(name);
 }
 
-prefix_ senf::console::DirectoryNode &
-senf::console::ScopedDirectoryBase::mkdir(std::string const & name)
-{
-    return node().mkdir(name);
-}
-
-prefix_ void senf::console::ScopedDirectoryBase::link(std::string const & name,
-                                                      GenericNode & target)
-{
-    return node().link(name, target);
-}
-
 prefix_ senf::console::DirectoryNode::ChildrenRange
 senf::console::ScopedDirectoryBase::children()
     const

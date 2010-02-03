@@ -103,7 +103,7 @@ SENF_AUTO_UNIT_TEST(scopedDirectoryBase)
     {
         senf::console::ScopedDirectory<> dir;
         senf::console::root().add("dir", dir);
-        dir.mkdir("foo");
+        dir.add("foo",fty::Directory());
         dir.add("cb", fty::Command(&callback));
         BOOST_CHECK( &dir["foo"] == &dir.get("foo") );
         BOOST_CHECK( &dir("cb") == &dir.get("cb") );

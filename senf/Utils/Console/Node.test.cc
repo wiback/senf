@@ -39,8 +39,12 @@
 
 SENF_AUTO_UNIT_TEST(genericNode)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::GenericNode & node (
-        senf::console::root().mkdir("dir1").mkdir("dir2").doc("help info"));
+        senf::console::root()
+        .add("dir1", fty::Directory())
+        .add("dir2", fty::Directory().doc("help info")));
     senf::console::GenericNode::weak_ptr wp (node.thisptr());
 
     BOOST_CHECK_EQUAL( node.name(), "dir2" );
@@ -74,6 +78,8 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(directoryNode)
 {
+    namespace fty = senf::console::factory;
+
     senf::console::DirectoryNode::ptr p (senf::console::DirectoryNode::create());
 
     BOOST_CHECK( & senf::console::root().add("dir1", p) == p.get() );
@@ -88,7 +94,9 @@ SENF_AUTO_UNIT_TEST(directoryNode)
     BOOST_CHECK_THROW( senf::console::root()["fn"], std::bad_cast );
     BOOST_CHECK( &senf::console::root().get("dir1") == p.get() );
     
-    senf::console::root().mkdir("dir2").mkdir("dir3");
+    senf::console::root()
+        .add("dir2", fty::Directory())
+        .add("dir3", fty::Directory());
     char const * const children[] = { "dir1", "dir2", "fn", "sys" };
     BOOST_CHECK_EQUAL_COLLECTIONS( 
         boost::make_transform_iterator(senf::console::root().children().begin(), 
@@ -118,9 +126,9 @@ SENF_AUTO_UNIT_TEST(directoryNode)
     BOOST_CHECK_EQUAL( p->shorthelp(), "short doc" );
 
     ss.str("");
-    senf::console::root()["dir2"].mkdir("dir4");
-    senf::console::root()["dir2"].link("link", *p);
-    senf::console::root()["dir2"]["dir4"].link("link", senf::console::root());
+    senf::console::root()["dir2"].add("dir4", fty::Directory());
+    senf::console::root()["dir2"].add("link", fty::Link(*p));
+    senf::console::root()["dir2"]["dir4"].add("link", fty::Link(senf::console::root()));
     senf::console::dump(ss, senf::console::root()["dir2"]);
     BOOST_CHECK_EQUAL( ss.str(),
                        "dir3/\n"
@@ -138,8 +146,10 @@ SENF_AUTO_UNIT_TEST(directoryNode)
 
 SENF_AUTO_UNIT_TEST(linkNode)
 {
-    senf::console::root().mkdir("dir1");
-    senf::console::root().link("link1", senf::console::root()["dir1"]);
+    namespace fty = senf::console::factory;
+
+    senf::console::root().add("dir1", fty::Directory());
+    senf::console::root().add("link1", fty::Link(senf::console::root()["dir1"]));
 
     BOOST_CHECK( senf::console::root()["dir1"] == senf::console::root()["link1"] );
 
@@ -158,6 +168,7 @@ namespace {
 SENF_AUTO_UNIT_TEST(factory)
 {
     namespace fty = senf::console::factory;
+
     senf::console::root().add("fn1", fty::SimpleCommand(&callback));
     senf::console::root().add("fn2", fty::SimpleCommand(Functor()));
     
