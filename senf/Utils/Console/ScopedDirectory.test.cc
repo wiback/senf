@@ -43,7 +43,7 @@ namespace {
 
         senf::console::ScopedDirectory<Self> dir;
         TestObject() : dir(this) {
-            dir.add("member", senf::console::factory::Command(this, &Self::member));
+            dir.add("member", senf::console::factory::Command(&Self::member, this));
         }
 
         void member(std::ostream & os, senf::console::ParseCommandInfo const &) {

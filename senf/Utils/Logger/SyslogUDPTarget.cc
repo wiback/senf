@@ -43,10 +43,10 @@ prefix_ void senf::log::SyslogUDPTarget::init()
 
     consoleDir().remove("format");
     consoleDir()
-        .add("format", fty::Command(this, &SyslogUDPTarget::consoleFormat)
+        .add("format", fty::Command(&SyslogUDPTarget::consoleFormat, this)
              .doc("Show the current log message format.") );
     consoleDir()
-        .add("syslog", fty::Command(this, SENF_MEMFNP(void, SyslogUDPTarget, syslog, (bool)))
+        .add("syslog", fty::Command(SENF_MEMBINDFNP(void, SyslogUDPTarget, syslog, (bool)))
              .arg("flag","new syslog format state",
                   kw::default_value=true)
              .doc("Change the syslog format flag. By default, syslog formating is enabled. In this\n"

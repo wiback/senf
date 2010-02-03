@@ -584,13 +584,13 @@ namespace factory {
 
     template <class Owner, class Member>
     SimpleOverloadAttributor
-    Command(Owner * owner, Member memfn,
+    Command(Member memfn, Owner * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0,
             typename boost::enable_if_c<detail::ParsedCommandTraits<Member>::is_simple>::type * = 0);
 
     template <class Owner, class Member>
     SimpleOverloadAttributor
-    Command(Owner const * owner, Member memfn,
+    Command(Member memfn, Owner const * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0,
             typename boost::enable_if_c<detail::ParsedCommandTraits<Member>::is_simple>::type * = 0);
 
@@ -616,22 +616,22 @@ namespace factory {
 
     template <class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
-    Command(Owner * owner, Member memfn,
+    Command(Member memfn, Owner * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
 
     template <class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
-    Command(Owner const * owner, Member memfn,
+    Command(Member memfn, Owner const * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
     
     template <class CastTo, class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
-    Command(Owner * owner, Member memfn,
+    Command(Member memfn, Owner * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
 
     template <class CastTo, class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
-    Command(Owner const * owner, Member memfn,
+    Command(Member memfn, Owner const * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
 
 

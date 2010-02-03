@@ -60,7 +60,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
 
     detail::TargetRegistry::instance().registerTarget(this, name);
     consoleDir_()
-        .add("list", fty::Command(this, &Target::consoleList)
+        .add("list", fty::Command(&Target::consoleList, this)
              .doc("Show routing table\n"
                   "\n"
                   "Columns:\n"
@@ -72,7 +72,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
                   "                verbose, notice, message, important, critical, fatal\n"
                   "    ACTION  action to take: accept or reject") );
     consoleDir_()
-        .add("route", fty::Command(this, &Target::consoleRoute)
+        .add("route", fty::Command(&Target::consoleRoute, this)
              .arg("index", "index at which to insert new rule")
              .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
                   "              and log level. You may specify any combination of these parameterse\n"
@@ -108,11 +108,11 @@ prefix_ senf::log::Target::Target(std::string const & name)
              .arg("action", kw::default_value=ACCEPT) );
     consoleDir_()
         .add("unroute",
-             fty::Command(this, static_cast<void (Target::*)(int)>(&Target::unroute))
+             fty::Command(static_cast<void (Target::*)(int)>(&Target::unroute), this)
              .arg("index", "index of routing entry to remove")
              .overloadDoc("Remove routing entry with the given index") );
     consoleDir_()
-        .add("unroute", fty::Command(this, &Target::consoleUnroute)
+        .add("unroute", fty::Command(&Target::consoleUnroute, this)
              .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
                   "              and log level. You may specify any combination of these parameterse\n"
                   "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
@@ -122,7 +122,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
                   kw::default_value=ACCEPT)
              .overloadDoc("Remove the routing entry matching the specified arguments.") );
     consoleDir_()
-        .add("flush", fty::Command(this, &Target::flush)
+        .add("flush", fty::Command(&Target::flush, this)
              .doc("Remove all routing entries clearing the routing table. This will disable all\n"
                   "logging output on this target.") );
 }
@@ -402,13 +402,13 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
 
     console::sysdir().add("log", consoleDir_());
     consoleDir_()
-        .add("areas", fty::Command(this, &TargetRegistry::consoleAreas)
+        .add("areas", fty::Command(&TargetRegistry::consoleAreas, this)
              .doc("List all areas") );
     consoleDir_()
-        .add("streams", fty::Command(this, &TargetRegistry::consoleStreams)
+        .add("streams", fty::Command(&TargetRegistry::consoleStreams, this)
              .doc("List all streams") );
     consoleDir_()
-        .add("message", fty::Command(this, &TargetRegistry::consoleWrite)
+        .add("message", fty::Command(&TargetRegistry::consoleWrite, this)
              .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
                   "              and log level. You may specify any combination of these parameterse\n"
                   "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
@@ -424,7 +424,7 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
                   "    message (FATAL) \"Program on fire\";\n"
                   "    message (VERBOSE senf::log::Debug) \"Debug message\";") );
     consoleDir_()
-        .add("self", fty::Command(this, &TargetRegistry::consoleSelf)
+        .add("self", fty::Command(&TargetRegistry::consoleSelf, this)
              .doc("Get the log directory of the current network client. Example usage:\n"
                   "\n"
                   "Just get the log config directory\n"

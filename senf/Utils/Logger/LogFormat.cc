@@ -54,24 +54,24 @@ prefix_ senf::log::detail::LogFormat::LogFormat(console::ScopedDirectory<> & dir
 
     timeFormat("%Y-%m-%d %H:%M:%S.%f-0000");
 
-    dir.add("showTime", fty::Command(this, &LogFormat::showTime)
+    dir.add("showTime", fty::Command(&LogFormat::showTime, this)
             .arg("flag","whether to display the time in log messages",
                  kw::default_value = true)
             .doc("Set time display in log messages. If time display is enabled, see the 'timeFormat'\n"
                  "command to set the time format.") );
-    dir.add("showStream", fty::Command(this, &LogFormat::showStream)
+    dir.add("showStream", fty::Command(&LogFormat::showStream, this)
             .arg("flag","whether to display the stream in log messages",
                  kw::default_value = true)
             .doc("Set strean display in log messages.") );
-    dir.add("showLevel", fty::Command(this, &LogFormat::showLevel)
+    dir.add("showLevel", fty::Command(&LogFormat::showLevel, this)
             .arg("flag","whether to display the log level in log messages",
                  kw::default_value = true)
             .doc("Set log level display in log messages.") );
-    dir.add("showArea", fty::Command(this, &LogFormat::showArea)
+    dir.add("showArea", fty::Command(&LogFormat::showArea, this)
             .arg("flag","whether to display the area in log messages",
                  kw::default_value = true)
             .doc("Set area display in log messages.") );
-    dir.add("timeFormat", fty::Command(this, &LogFormat::timeFormat)
+    dir.add("timeFormat", fty::Command(&LogFormat::timeFormat, this)
             .arg("format","time format")
             .doc("Set time format. The time format is specified using a format string. This format\n"
                  "string follows the strftime format.\n"
@@ -79,11 +79,11 @@ prefix_ senf::log::detail::LogFormat::LogFormat(console::ScopedDirectory<> & dir
                  "As additional option, the format string may be set to the empty string. In this\n"
                  "case the time will be displayed as 'second.nanosecond' value. IN this case, the\n"
                  "time is displayed relative to the first message after changing the format.") );
-    dir.add("tag", fty::Command(this, &LogFormat::tag)
+    dir.add("tag", fty::Command(&LogFormat::tag, this)
             .arg("tag","log message tag prefix")
             .doc("Every log message is optionally prefixed with a tag value. This value defaults to\n"
                  "the executable name and pid.") );
-    dir.add("format", fty::Command(this, &LogFormat::consoleFormat)
+    dir.add("format", fty::Command(&LogFormat::consoleFormat, this)
             .doc("Show the current log message format.") );
 }
 
