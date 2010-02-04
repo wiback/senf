@@ -107,6 +107,7 @@ SENF_AUTO_UNIT_TEST(scopedDirectoryBase)
         dir.add("cb", fty::Command(&callback));
         BOOST_CHECK( &dir["foo"] == &dir.get("foo") );
         BOOST_CHECK( &dir("cb") == &dir.get("cb") );
+        BOOST_CHECK_EQUAL(dir.name(), "dir");
         
         char const * const children[] = { "cb", "foo" };
         BOOST_CHECK_EQUAL_COLLECTIONS( 

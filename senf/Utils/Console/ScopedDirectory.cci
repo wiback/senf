@@ -105,6 +105,54 @@ senf::console::ScopedDirectoryBase::doc(std::string const & doc)
     return node().doc(doc);
 }
 
+prefix_ std::string const & senf::console::ScopedDirectoryBase::name() 
+    const
+{
+    return node().name();
+}
+
+prefix_ bool senf::console::ScopedDirectoryBase::active()
+    const
+{
+    return node().active();
+}
+
+prefix_ std::string senf::console::ScopedDirectoryBase::path()
+    const
+{
+    return node().path();
+}
+
+prefix_ std::string senf::console::ScopedDirectoryBase::path(DirectoryNode const & root)
+    const
+{
+    return node().path(root);
+}
+
+prefix_ boost::shared_ptr<senf::console::DirectoryNode> 
+senf::console::ScopedDirectoryBase::parent() 
+    const
+{
+    return node().parent();
+}
+
+prefix_ senf::console::GenericNode::ptr senf::console::ScopedDirectoryBase::unlink()
+{
+    return node().unlink();
+}
+
+prefix_ void senf::console::ScopedDirectoryBase::help(std::ostream & output)
+    const
+{
+    node().help( output);
+}
+
+prefix_ std::string senf::console::ScopedDirectoryBase::shorthelp() 
+    const
+{
+    return node().shorthelp();
+}
+        
 prefix_ senf::console::ScopedDirectoryBase::ScopedDirectoryBase()
     : node_ (DirectoryNode::create())
 {}

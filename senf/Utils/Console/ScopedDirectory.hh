@@ -61,6 +61,14 @@ namespace console {
         GenericNode & get(std::string const & name) const;
         DirectoryNode::ChildrenRange children() const;
         DirectoryNode & doc(std::string const & doc);
+        std::string const & name() const;
+        bool active() const;
+        std::string path() const;
+        std::string path(DirectoryNode const & root) const;
+        boost::shared_ptr<DirectoryNode> parent() const;
+        GenericNode::ptr unlink();
+        void help(std::ostream & output) const;
+        std::string shorthelp() const;
 
         ///\}
 
