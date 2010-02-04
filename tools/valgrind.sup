@@ -16,15 +16,41 @@
 }
 
 {
+   dl_main-suppression-1
+   Memcheck:Cond
+   fun:strlen
+   fun:_dl_init_paths
+   ...
+   fun:_dl_start
+}
+{
+   dl_main-suppression-2
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   ...
+   fun:_dl_start
+}
+
+{
+   nss_dl_open-supression-1
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   ...
+   fun:__nss_lookup
+}
+
+{
    inet_ntop-suppression-1
    Memcheck:Cond
    fun:inet_ntop
 }
 
 {
-   if_indextoname-suppression-1
+   siocgifindex-suppression-1
    Memcheck:Param
    ioctl(SIOCGIFINDEX)
+   ...
+   fun:_ZN4senf15LLSocketAddress9interfaceERKSs
 }
 
 {
