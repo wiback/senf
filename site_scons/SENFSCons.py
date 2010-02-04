@@ -179,3 +179,14 @@ def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
     if includes              : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
     if doxyfile              : SENFSCons.Doxygen(env, extra_sources=((doc_extra_sources)) )
     if subscripts            : SConscript(subscripts)
+
+
+def BuildExample(env, sconstruct):
+    dir     = env.File( ((sconstruct)) ).dir
+    example = env.Command( dir.File('.example.phony'), env.Alias('default'),
+                           [ '$SCONS -C $EXAMPLEDIR' ],
+                           CONCURRENCY_LEVEL=1, EXAMPLEDIR=dir )
+    env.Alias('examples', example)
+
+    if env.GetOption('clean') and ('all' in BUILD_TARGETS or 'examples' in BUILD_TARGETS):
+        env.Clone(CONCURRENCY_LEVEL=1, EXAMPLEDIR=dir).Execute([ '$SCONS -C $EXAMPLEDIR -c' ])

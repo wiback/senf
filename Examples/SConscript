@@ -10,14 +10,7 @@ SENFSCons.IndexPage(env, 'Mainpage.dox', title="Examples")
 SENFSCons.Doxygen(env)
 
 for sconstruct in glob.glob("*/SConstruct"):
-    dir=env.File(sconstruct).dir
-    example=env.Command(dir.File('.example.phony'), env.Alias('default'),
-                        [ '$SCONS -C $EXAMPLEDIR' ],
-                        CONCURRENCY_LEVEL=1, EXAMPLEDIR=dir)
-    env.Alias('examples', example)
-    if env.GetOption('clean') and ('all' in BUILD_TARGETS or 'examples' in BUILD_TARGETS):
-        env.Clone(CONCURRENCY_LEVEL=1, EXAMPLEDIR=dir).Execute([ '$SCONS -C $EXAMPLEDIR -c' ])
-                    
+    SENFSCons.BuildExample(env, sconstruct)
 
 for dox in glob.glob("*/Doxyfile"):
     extra_sources = [ eval(line.split(':',1)[1])
