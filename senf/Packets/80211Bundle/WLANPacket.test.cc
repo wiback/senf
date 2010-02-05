@@ -86,7 +86,10 @@ SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
     senf::WLANPacket_DataFrame p (senf::WLANPacket_DataFrame::create());
 
     SENF_CHECK_NO_THROW( p->bssid() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
+    SENF_CHECK_NO_THROW(p->sequenceNumber(4095u));
+    
     BOOST_CHECK_EQUAL( p->type(), 2u );
+    BOOST_CHECK_EQUAL( p->sequenceNumber(), 4095u );
 }
 
 
@@ -156,8 +159,14 @@ SENF_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
     SENF_CHECK_NO_THROW(
             p->bssid() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c")
     );
+    SENF_CHECK_NO_THROW(
+            p->sequenceNumber(555u);
+    );
+    
 
+    std::cout << p->sequenceNumber() << "\n";
     BOOST_CHECK_EQUAL( p->type(), 0u );
+    BOOST_CHECK_EQUAL( p->sequenceNumber(), 555u );
 }
 
 
@@ -196,6 +205,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_create)
     senf::WLANPacket_CtrlFrame p (senf::WLANPacket_CtrlFrame::create()) ;
     p->receiverAddress() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c");
     p->set_ack();
+    
     BOOST_CHECK_EQUAL( p->type(), 1u);
     BOOST_CHECK_EQUAL( p->subtype(), 13u);
 }

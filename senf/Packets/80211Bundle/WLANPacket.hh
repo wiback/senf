@@ -93,6 +93,8 @@ namespace senf
         boost::uint16_t sequenceNumber() const {
             return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
         };
+        
+        void sequenceNumber(boost::uint16_t sn);
     };
 
     /** \brief WLAN Management frame packet
@@ -213,6 +215,8 @@ namespace senf
         boost::uint16_t sequenceNumber() const {
             return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
         };
+        
+        void sequenceNumber(boost::uint16_t sn);
 
         // TODO fourth address field in case of WDS
         // SENF_PARSER_PRIVATE_VARIANT (wds_, dsBits,
