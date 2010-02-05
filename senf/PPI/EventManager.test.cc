@@ -38,6 +38,7 @@
 SENF_AUTO_UNIT_TEST(eventManager)
 {
     // Tested indirectly by Route.test.cc and Module.test.cc
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

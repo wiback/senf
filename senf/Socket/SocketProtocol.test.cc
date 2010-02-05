@@ -44,6 +44,8 @@ SENF_AUTO_UNIT_TEST(socketProtocol)
     // BOOST_CHECK( protocol.body() == 0 );
 
     protocol.policy();
+    
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

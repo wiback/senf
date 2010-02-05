@@ -169,6 +169,7 @@ SENF_AUTO_UNIT_TEST(timerJitter)
     jitterTest();
     senf::scheduler::loresTimers();
     senf::scheduler::watchdogTimeout(1000);
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

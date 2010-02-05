@@ -116,6 +116,7 @@ namespace {
 SENF_AUTO_UNIT_TEST(memberVariables)
 {
     Test2 test2ob;
+    BOOST_CHECK( true );
 }
 
 #ifdef COMPILE_CHECK

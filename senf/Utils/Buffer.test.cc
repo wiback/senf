@@ -42,6 +42,8 @@ SENF_AUTO_UNIT_TEST(buffer)
     // Just check for compile errors, the rest can't be checked
     SENF_SCOPED_BUFFER(char, buf, size);
     (void) buf;
+    
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

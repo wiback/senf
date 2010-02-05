@@ -38,6 +38,7 @@
 SENF_AUTO_UNIT_TEST(ioEvent)
 {
     // Tested in SocketSource.test.cc and SocketSink.test.cc
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

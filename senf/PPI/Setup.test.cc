@@ -38,6 +38,7 @@
 SENF_AUTO_UNIT_TEST(setup)
 {
     // Tested in nearly all other modules ...
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

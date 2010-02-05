@@ -38,6 +38,7 @@
 SENF_AUTO_UNIT_TEST(moduleManager)
 {
     // Tested in Module.test.cc
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

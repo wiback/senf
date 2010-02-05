@@ -42,6 +42,7 @@ SENF_AUTO_UNIT_TEST(syslogTarget)
     syslog.route();
     BOOST_WARN_MESSAGE( false, "Check the system log for the test message" );
     SENF_LOG(("SENF syslog test message"));
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

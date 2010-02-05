@@ -37,6 +37,7 @@
 
 SENF_AUTO_UNIT_TEST(areaRegistry)
 {
+    BOOST_CHECK( true );
 #if 0
     // Need to rewrite this test ... 
     char const * areas[] = { "GlobalTestArea",

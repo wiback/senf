@@ -84,6 +84,8 @@ SENF_AUTO_UNIT_TEST(intervalTimer)
                                (senf::ClockService::now())
                                (start+senf::ClockService::milliseconds(300))
                                (senf::ClockService::milliseconds(50)) );
+    else
+        BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

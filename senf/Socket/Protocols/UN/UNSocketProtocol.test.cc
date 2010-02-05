@@ -37,8 +37,8 @@
 
 SENF_AUTO_UNIT_TEST(unProtocol)
 {
-  
     //zZ leer
+    BOOST_CHECK( true );
 }
 
 

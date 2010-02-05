@@ -44,6 +44,7 @@ SENF_AUTO_UNIT_TEST(tapSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::TunTapSocketHandle as non-root user");
+        BOOST_CHECK( true );
         return;
     }
 

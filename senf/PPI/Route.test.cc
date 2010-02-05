@@ -236,6 +236,8 @@ SENF_AUTO_UNIT_TEST(connect_runtime)
         senf::ClockService::now() + senf::ClockService::milliseconds(500));
     
     senf::ppi::run();
+    
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

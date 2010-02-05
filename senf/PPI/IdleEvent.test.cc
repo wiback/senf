@@ -38,6 +38,7 @@
 SENF_AUTO_UNIT_TEST(idleEvent)
 {
     // Tested by ActiveFeeder.test.cc
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

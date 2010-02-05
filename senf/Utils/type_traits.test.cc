@@ -140,6 +140,8 @@ SENF_AUTO_UNIT_TEST(typeTraits)
 
     BOOST_STATIC_ASSERT((   senf::is_pair< std::pair<int,void*> >::value ));
     BOOST_STATIC_ASSERT(( ! senf::is_pair< void () >::value ));
+    
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

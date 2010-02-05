@@ -119,6 +119,7 @@ SENF_AUTO_UNIT_TEST(transportPacket_create_with_pusi)
     senf::DataPacket payload (senf::DataPacket::createAfter( ts_packet, payload_data));
 
     // TODO: add method for stuffing
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

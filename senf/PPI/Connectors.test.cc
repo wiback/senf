@@ -372,6 +372,8 @@ SENF_AUTO_UNIT_TEST(typedInput)
 
     senf::Packet p (senf::DataPacket::create());
     source.submit(p);
+    
+    BOOST_CHECK( true );
 }
 
 SENF_AUTO_UNIT_TEST(tyepdOutput)
@@ -383,6 +385,8 @@ SENF_AUTO_UNIT_TEST(tyepdOutput)
     ppi::init();
     
     (void) target.request();
+    
+    BOOST_CHECK( true );
 }
 
 SENF_AUTO_UNIT_TEST(connectorTest)

@@ -52,6 +52,8 @@ SENF_AUTO_UNIT_TEST(poolAllocMixin)
     }
 
     BOOST_CHECK_EQUAL( Test::allocCounter(), 0u );
+#else
+    BOOST_CHECK( true );
 #endif
 }
 

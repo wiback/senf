@@ -74,6 +74,7 @@ SENF_AUTO_UNIT_TEST(protocolServerSocketHandle)
     {
         MySocketHandle h("foo.bar.c",1234);
     }
+    BOOST_CHECK( true );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
