@@ -1,7 +1,5 @@
 # -*- python -*-
 
-from __future__ import with_statement
-
 import sys, os.path, fnmatch
 import SENFSCons, senfutil, senfconf
 
