@@ -119,12 +119,13 @@ def NopAction(env, target, source):
 def generate(env):
     env.SetDefault(
         BOOST_VARIANT     = '',
+        _BOOST_VARIANT    = '${BOOST_VARIANT and "-" or None}$BOOST_VARIANT',
 
-        BOOSTTESTLIB      = 'boost_unit_test_framework$BOOST_VARIANT',
-        BOOSTREGEXLIB     = 'boost_regex$BOOST_VARIANT',
-        BOOSTFSLIB        = 'boost_filesystem$BOOST_VARIANT',
-        BOOSTIOSTREAMSLIB = 'boost_iostreams$BOOST_VARIANT',
-        BOOSTSIGNALSLIB   = 'boost_signals$BOOST_VARIANT',
+        BOOSTTESTLIB      = 'boost_unit_test_framework$_BOOST_VARIANT',
+        BOOSTREGEXLIB     = 'boost_regex$_BOOST_VARIANT',
+        BOOSTFSLIB        = 'boost_filesystem$_BOOST_VARIANT',
+        BOOSTIOSTREAMSLIB = 'boost_iostreams$_BOOST_VARIANT',
+        BOOSTSIGNALSLIB   = 'boost_signals$_BOOST_VARIANT',
 
         BOOSTTESTARGS     = [ '--build_info=yes', '--log_level=test_suite' ],
     )

@@ -1,7 +1,10 @@
 # -*- python -*-
 
+from __future__ import with_statement
+
 import sys, os.path, fnmatch
-import SENFSCons, senfutil
+import SENFSCons, senfutil, senfconf
+
 
 ###########################################################################
 # Load utilities and setup libraries and configure build
@@ -65,12 +68,12 @@ env.Append(
    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
 
    BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
-   CPPPATH                = [ '$BUILDDIR', '#' ],
+   CPPPATH                = [ '#', '$BUILDDIR',
+                              '${NEED_BOOST_EXT and "#/boost_ext" or None}' ],
    LOCALLIBDIR            = '$BUILDDIR',
    LIBPATH                = [ '$LOCALLIBDIR' ],
-   LIBS                   = [ '$LIBSENF$LIBADDSUFFIX', '$EXTRA_LIBS' ],
-   EXTRA_LIBS             = [ 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', 
-                              '$BOOSTFSLIB' ], 
+   LIBS                   = [ '$EXTRA_LIBS' ],
+   EXTRA_LIBS             = [ 'rt' ],
    TEST_EXTRA_LIBS        = [  ],
    VALGRINDARGS           = [ '--num-callers=50' ],
 
@@ -122,6 +125,7 @@ env.SetDefault(
     LIBSENF           = "senf",
     LCOV              = "lcov",
     GENHTML           = "genhtml",
+    VALGRIND          = "valgrind",
     SCONSBIN          = env.File("#/tools/scons"),
     SCONSARGS         = [ '-Q', '-j$CONCURRENCY_LEVEL', 'debug=$debug', 'final=$final' ] + \
         [ '%s=%s' % (k,v) for k,v in ARGUMENTS.iteritems() ],
@@ -132,11 +136,6 @@ env.SetDefault(
     OBJADDSUFFIX      = '${LIBADDSUFFIX}',
     FLAVOR            = '',
 )
-
-# ugly hack for ubuntu karmic 
-# ToDo: auto-configure alike support
-if os.path.exists('/usr/lib/libboost_regex-mt.so'):
-    env.Append( BOOST_VARIANT = '-mt' )
 
 # Set variables from command line
 senfutil.parseArguments(
@@ -153,6 +152,42 @@ if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
 
 if env.has_key('only_tests') : env['sparse_tests'] = True
 Export('env')
+
+###########################################################################
+# Configure
+
+# Default configuration (boost stuff)
+senfutil.Configure(env)
+
+@senfconf.Test
+def CheckValgrind(context):
+    context.Message( "Checking for valgrind... " )
+    ret = context.TryAction(['valgrind --version >$TARGET'])
+    context.Result( ret[1].strip() or False )
+    return ret[0]
+
+@senfconf.Test
+def CheckValgrindWildcards(context):
+    context.Message( "Checking whether valgrind supports '...' wildcards in suppressions... " )
+    ret = context.TryAction(['valgrind --suppressions=$SOURCE /bin/true'],
+                            "{\n test_suppression\n Memcheck:Addr4\n ...\n fun:foo\n}\n",
+                            ".sup")
+    context.Result( ret[0] )
+    return ret[0]
+
+conf = env.Configure(clean=False, help=False, custom_tests = senfconf.Tests())
+env.Replace(
+    HAVE_VALGRIND  = conf.CheckValgrind() and conf.CheckValgrindWildcards()
+)
+conf.Finish()
+
+# Only add this here, after all configure checks have run
+
+env.Append(LIBS = '$LIBSENF$LIBADDSUFFIX',
+           EXTRA_LIBS = [ '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', 
+                          '$BOOSTFSLIB' ])
+
+###########################################################################
 
 # Create Doxyfile.local otherwise doxygen will barf on this non-existent file
 # Create it even when cleaning, to silence the doxygen builder warnings
@@ -204,18 +239,20 @@ env.Alias('all', [ 'default', 'all_tests', 'examples', 'all_docs' ])
 env.PhonyTarget('prepare', [], [])
 
 #### valgrind
-for test in env.FindAllBoostUnitTests():
-    stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'), 
-                        [ test[0].dir.File('.test.bin'), 'tools/valgrind.sup' ],
-                        [ """valgrind --tool=memcheck 
-                                      --error-exitcode=99 
-                                      --suppressions=${SOURCES[1]}
-                                      $VALGRINDARGS
-                                          ${SOURCES[0]} $BOOSTTESTARGS;
-                             [ $$? -ne 99 ] || exit 1""".replace("\n"," "),
-                          Touch("$TARGET") ])
-    alias = env.Command(test[0].dir.File('valgrind'), stamp, [ env.NopAction() ])
-    env.Alias('all_valgrinds', alias)
+env.Alias('all_valgrinds')
+if env['HAVE_VALGRIND']:
+    for test in env.FindAllBoostUnitTests():
+        stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'), 
+                            [ test[0].dir.File('.test.bin'), 'tools/valgrind.sup' ],
+                            [ """$VALGRIND --tool=memcheck 
+                                          --error-exitcode=1
+                                          --suppressions=${SOURCES[1]}
+                                          $VALGRINDARGS
+                                              ${SOURCES[0]} --result_code=no $BOOSTTESTARGS
+                              """.replace("\n"," "),
+                              Touch("$TARGET") ])
+        alias = env.Command(test[0].dir.File('valgrind'), stamp, [ env.NopAction() ])
+        env.Alias('all_valgrinds', alias)
 
 ### lcov
 env.PhonyTarget('lcov', [], [

@@ -20,6 +20,8 @@ doc/
 .test.bin
 .test.stamp
 .test-valgrind.stamp
+.sconf_temp/
+config.log
 
 # Local files (files in this directory)
 /SConscript.local

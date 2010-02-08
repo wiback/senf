@@ -1,5 +1,6 @@
 import os.path, glob, site_tools.Yaptu
 from SCons.Script import *
+import senfconf
 
 senfutildir = os.path.dirname(__file__)
 
@@ -66,7 +67,8 @@ Special command line parameters:
 # This looks much more complicated than it is: We do three things here:
 # a) switch between final or debug options
 # b) parse the LOGLEVELS parameter into the correct SENF_LOG_CONF syntax
-# c) check for a local SENF, set options accordingly and update that SENF if needed
+# c) check for a local SENF, set options accordingly
+# d) check, wether the boost extensions are needed
 
 def SetupForSENF(env, senf_path = []):
     global senfutildir
@@ -75,9 +77,7 @@ def SetupForSENF(env, senf_path = []):
     loadTools(env)
 
     env.Append(
-        LIBS              = [ 'senf', 'rt', '$BOOSTREGEXLIB',
-                              '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
-                              '$BOOSTFSLIB' ],
+        LIBS              = [ 'rt' ],
         
         CXXFLAGS          = [ '-Wno-long-long', '$CXXFLAGS_' ],
         CXXFLAGS_         = BuildTypeOptions('CXXFLAGS'),
@@ -156,6 +156,15 @@ def SetupForSENF(env, senf_path = []):
         if not env.GetOption('no_progress'):
             print "\nSENF library not found .. trying build anyway !!\n"
 
+    Configure(env)
+
+    # Only add senf after all configure checks have run
+    env.Append(
+        CPPPATH = '${NEED_BOOST_EXT and "$SENFDIR/boost_ext" or None}',
+        LIBS = [ 'senf', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
+                 '$BOOSTFSLIB' ],
+        )
+
     env.Alias('all', '#')
 
 
@@ -169,10 +178,6 @@ def DefaultOptions(env):
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],
     )
-    # ugly hack for ubuntu karmic 
-    # ToDo: auto-configure alike support
-    if os.path.exists('/usr/lib/libboost_regex-mt.so'):
-        env.Append( BOOST_VARIANT = '-mt' )
 
 
 def Glob(env, exclude=[], subdirs=[]):
@@ -188,6 +193,17 @@ def Glob(env, exclude=[], subdirs=[]):
     sources.sort()
     testSources.sort()
     return (sources, testSources)
+
+
+def Configure(env):
+    conf = env.Configure(clean=False, help=False, custom_tests = senfconf.Tests())
+    env.Replace(
+        BOOST_VERSION  =  conf.CheckBoostVersion(),
+        BOOST_VARIANT  = conf.CheckBoostVariants( '', 'mt' ),
+        NEED_BOOST_EXT = not conf.CheckCXXHeader("boost/bimap.hpp"),
+    )
+    conf.Finish()
+
 
 tagfiles = None
 
