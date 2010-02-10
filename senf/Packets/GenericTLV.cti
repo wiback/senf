@@ -35,6 +35,7 @@
 
 template <class Base>
 prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserBase<Base>::bytes()
+    const
 {
     if (Base::Registry::instance().isRegistered( *this))
         return Base::Registry::instance().bytes( *this);

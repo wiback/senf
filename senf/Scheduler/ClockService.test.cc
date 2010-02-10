@@ -58,6 +58,7 @@ SENF_AUTO_UNIT_TEST(clockService)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+    BOOST_CHECK( true );
 
     senf::ClockService::restart(); // So we know, when the signal will be delivered
     

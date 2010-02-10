@@ -27,7 +27,6 @@
 #define HH_SENF_Utils_senfassert_ 1
 
 // Custom includes
-#include <senf/Utils/senfassert.hh>
 
 //#include "senfassert.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

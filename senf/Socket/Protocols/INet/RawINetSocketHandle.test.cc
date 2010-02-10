@@ -141,6 +141,7 @@ SENF_AUTO_UNIT_TEST(RawV4ClientSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::RawV4SocketHandle as non-root user");
+        BOOST_CHECK( true );
         return;
     }
     try {
@@ -170,6 +171,7 @@ SENF_AUTO_UNIT_TEST(RawV6ClientSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::RawV6SocketHandle as non-root user");
+        BOOST_CHECK( true );
         return;
     }
     try {

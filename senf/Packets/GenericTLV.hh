@@ -136,7 +136,7 @@ namespace senf {
         GenericTLVParserBase(senf::PacketParserBase::data_iterator i, senf::PacketParserBase::state_type s) 
             : Base(i,s) {}
     
-        senf::PacketParserBase::size_type bytes();
+        senf::PacketParserBase::size_type bytes() const;
         void init() const;
 
         template <class Parser>
@@ -284,6 +284,7 @@ namespace senf {
         void dump(GenericTLVParser const & parser, Keytype const & key, std::ostream & os) const;
         
         PacketParserBase::size_type bytes(GenericTLVParser const & parser) const;
+        PacketParserBase::size_type bytes(GenericTLVParser const & parser, Keytype const & key) const;
     };
         
     struct TLVParserNotRegisteredException : public senf::Exception
