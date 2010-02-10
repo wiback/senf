@@ -160,13 +160,12 @@ SENF_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
             p->bssid() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c")
     );
     SENF_CHECK_NO_THROW(
-            p->sequenceNumber(555u);
+            p->sequenceNumber(2);
+            p->sequenceNumber(p->sequenceNumber()+1);
     );
-    
 
-    std::cout << p->sequenceNumber() << "\n";
     BOOST_CHECK_EQUAL( p->type(), 0u );
-    BOOST_CHECK_EQUAL( p->sequenceNumber(), 555u );
+    BOOST_CHECK_EQUAL( p->sequenceNumber(), 3u );
 }
 
 

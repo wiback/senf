@@ -57,8 +57,8 @@ namespace {
 
 prefix_ void senf::WLANPacket_MgtFrameParser::sequenceNumber(boost::uint16_t sn)
 {
-    seqNumber_2() = seqNumber_2() | (sn >> 4 ) ;
-    seqNumber_1() = seqNumber_1() | sn;
+    seqNumber_2() = 0u | (sn >> 4 ) ;
+    seqNumber_1() = 0u | sn;
 }
 
 prefix_ void senf::WLANPacket_MgtFrameType::dump(packet p, std::ostream &os)
@@ -85,8 +85,8 @@ prefix_ void senf::WLANPacket_CtrlFrameType::dump(packet p, std::ostream &os)
 
 prefix_ void senf::WLANPacket_DataFrameParser::sequenceNumber(boost::uint16_t sn)
 {
-    seqNumber_2() = seqNumber_2() | (sn >> 4 ) ;
-    seqNumber_1() = seqNumber_1() | sn;
+    seqNumber_2() = 0u | (sn >> 4 ) ;
+    seqNumber_1() = 0u | sn;
 }
 
 
