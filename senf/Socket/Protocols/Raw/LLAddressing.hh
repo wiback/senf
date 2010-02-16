@@ -30,8 +30,6 @@
 // Custom includes
 #include <sys/socket.h>
 #include <netpacket/packet.h>
-#include <senf/Socket/SocketPolicy.hh>
-#include <senf/Socket/FileHandle.hh>
 #include <senf/Socket/Protocols/BSDAddressingPolicy.hh>
 #include <senf/Socket/Protocols/BSDSocketAddress.hh>
 #include "MACAddress.hh"
@@ -145,7 +143,7 @@ namespace senf {
         or peer() members.
      */
     struct LLAddressingPolicy
-        : public AddressingPolicyBase,
+        : public BSDAddressingPolicy,
           private BSDAddressingPolicyMixin<LLSocketAddress>
     {
         typedef LLSocketAddress Address;

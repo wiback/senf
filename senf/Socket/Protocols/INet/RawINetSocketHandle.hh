@@ -25,7 +25,7 @@
 
 
 // Custom includes
-#include "INetSocketProtocol.hh"
+#include "INetAddressing.hh"
 #include "RawINetSocketProtocol.hh"
 #include "MulticastSocketProtocol.hh"
 #include <senf/Socket/Protocols/BSDSocketProtocol.hh>

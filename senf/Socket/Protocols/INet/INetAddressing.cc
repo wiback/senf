@@ -35,6 +35,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 #include <senf/Utils/senfassert.hh>
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "INetAddressing.mpp"
 #define prefix_

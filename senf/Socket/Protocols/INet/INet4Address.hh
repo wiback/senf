@@ -34,7 +34,6 @@
 #include <boost/operators.hpp>
 #include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Tags.hh>
-#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "INet4Address.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

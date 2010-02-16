@@ -33,6 +33,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <boost/lexical_cast.hpp>
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "INet6Address.mpp"
 #define prefix_

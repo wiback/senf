@@ -33,7 +33,6 @@
 // Custom includes
 #include <senf/Socket/SocketHandle.hh>
 #include <senf/Socket/FileHandle.hh>
-#include <senf/Socket/SocketPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
 #include "BSDSocketAddress.hh"
 

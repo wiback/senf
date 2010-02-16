@@ -31,6 +31,7 @@
 #include <string>
 #include <sstream>
 #include <boost/io/ios_state.hpp>
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 #include "ParseString.hh"
 #include "EUI64.hh"
 

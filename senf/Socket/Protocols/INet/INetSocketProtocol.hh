@@ -35,9 +35,6 @@
 
 // Custom includes
 #include <senf/Socket/SocketProtocol.hh>
-#include "INetAddressing.hh"
-#include <senf/Socket/ClientSocketHandle.hh>
-#include <senf/Socket/CommunicationPolicy.hh>
 
 //#include "INetSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

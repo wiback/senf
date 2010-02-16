@@ -35,7 +35,6 @@
 #include <senf/Socket/CommunicationPolicy.hh>
 #include <senf/Socket/ReadWritePolicy.hh>
 #include <senf/Socket/Protocols/BSDSocketProtocol.hh>
-#include "LLAddressing.hh"
 
 //#include "TunTapSocketHandle.mpp"
 //#include "TunTapSocketHandle.ih"

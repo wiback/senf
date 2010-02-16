@@ -28,11 +28,8 @@
 #define HH_SENF_Socket_ServerSocketHandle_ 1
 
 // Custom includes
-#include <boost/static_assert.hpp>
 #include <boost/call_traits.hpp>
 #include "SocketHandle.hh"
-#include "CommunicationPolicy.hh"
-#include "AddressingPolicy.hh"
 
 //#include "ServerSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

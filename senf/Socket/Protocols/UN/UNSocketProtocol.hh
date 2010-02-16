@@ -28,9 +28,6 @@
 
 // Custom includes
 #include <senf/Socket/SocketProtocol.hh>
-#include "UNAddressing.hh"
-#include <senf/Socket/ClientSocketHandle.hh>
-#include <senf/Socket/CommunicationPolicy.hh>
 
 //#include "UNSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

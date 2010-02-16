@@ -28,7 +28,6 @@
 #define HH_SENF_Socket_Protocols_INet_TCPSocketProtocol_ 1
 
 // Custom includes
-#include <senf/Socket/SocketProtocol.hh>
 #include "INetSocketProtocol.hh"
 
 //#include "TCPSocketProtocol.mpp"

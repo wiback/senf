@@ -31,7 +31,7 @@
 #define HH_SENF_Socket_Protocols_INet_UDPSocketHandle_ 1
 
 // Custom includes
-#include "INetSocketProtocol.hh"
+#include "INetAddressing.hh"
 #include "UDPSocketProtocol.hh"
 #include "MulticastSocketProtocol.hh"
 #include <senf/Socket/Protocols/BSDSocketProtocol.hh>

@@ -24,13 +24,7 @@
 #define HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_
 
 // Custom includes
-#include "INetAddressing.hh"
 #include "INetSocketProtocol.hh"
-#include <senf/Socket/Protocols/BSDSocketProtocol.hh>
-#include <senf/Socket/FramingPolicy.hh>
-#include <senf/Socket/CommunicationPolicy.hh>
-#include <senf/Socket/ReadWritePolicy.hh>
-#include <senf/Socket/ProtocolClientSocketHandle.hh>
 
 namespace senf {
 

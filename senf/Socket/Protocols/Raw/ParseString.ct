@@ -30,6 +30,7 @@
 #include <boost/range.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <senf/Utils/String.hh>
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

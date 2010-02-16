@@ -24,7 +24,7 @@
 #define CONNECTEDHH_SENF_Socket_Protocols_INet_RawINetSocketHandle_
 
 // Custom includes
-#include "INetSocketProtocol.hh"
+#include "INetAddressing.hh"
 #include "RawINetSocketProtocol.hh"
 #include <senf/Socket/Protocols/BSDSocketProtocol.hh>
 #include <senf/Socket/Protocols/DatagramSocketProtocol.hh>
@@ -61,10 +61,12 @@ namespace senf {
         \par Address Type:
             INet4SocketAddress
 
-        ConnectedRawV4SocketProtocol provides an internet protocol raw socket based on IPv4 addressing.
-        This socket will put data written to it onto the IPv4 layer: if you call writeto don't inlude the header!
+        ConnectedRawV4SocketProtocol provides an Internet protocol raw socket based on IPv4 addressing.
+        This socket will put data written to it onto the IPv4 layer: if you call writeto don't include 
+        the header!
         On the other hand `read` will return the packet data including the IP header. 
-        This behaviour is strange and differs from the behaviour of IPv6 RAW sockets and should be changed in the future. 
+        This behaviour is strange and differs from the behaviour of IPv6 RAW sockets and should be 
+        changed in the future. 
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.

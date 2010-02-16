@@ -32,7 +32,6 @@
 #include <sys/socket.h>
 #include <errno.h>
 #include <senf/Utils/Exception.hh>
-#include "ServerSocketHandle.hh"
 
 //#include "CommunicationPolicy.mpp"
 #define prefix_

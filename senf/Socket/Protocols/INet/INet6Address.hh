@@ -36,7 +36,6 @@
 #include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Tags.hh>
 #include "INet4Address.hh"
-#include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
 #include <senf/Socket/Protocols/Raw/EUI64.hh>
 

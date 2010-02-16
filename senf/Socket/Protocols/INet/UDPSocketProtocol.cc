@@ -21,20 +21,15 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TCPSocketProtocol non-inline non-template implementation
+    \brief UDPSocketProtocol non-inline non-template implementation
  */
 
 #include "UDPSocketProtocol.hh"
 //#include "UDPSocketProtocol.ih"
 
 // Custom includes
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
-#include <net/if.h> // for if_nametoindex
-#include <senf/Socket/SocketHandle.hh>
 
 //#include "UDPSocketProtocol.mpp"
 #define prefix_

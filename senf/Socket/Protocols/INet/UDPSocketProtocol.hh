@@ -28,8 +28,6 @@
 #define HH_SENF_Socket_Protocols_INet_UDPSocketProtocol_ 1
 
 // Custom includes
-#include <senf/Socket/SocketProtocol.hh>
-#include "INetAddressing.hh"
 #include "INetSocketProtocol.hh"
 
 //#include "UDPSocketProtocol.mpp"

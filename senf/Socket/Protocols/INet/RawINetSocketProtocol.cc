@@ -24,14 +24,10 @@
 #include "RawINetSocketProtocol.hh"
 
 // Custom includes
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
-#include <net/if.h> // for if_nametoindex
-#include <senf/Socket/SocketHandle.hh>
 
-//#include "UDPSocketProtocol.mpp"
+//#include "RawINetSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
@@ -52,7 +48,7 @@ prefix_ bool senf::RawINetSocketProtocol::eof()
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "UDPSocketProtocol.mpp"
+//#include "RawINetSocketProtocol.mpp"
 
 
 // Local Variables:

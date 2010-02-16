@@ -33,6 +33,7 @@
 // Custom includes
 #include "INetSocketProtocol.hh"
 #include "TCPSocketProtocol.hh"
+#include "INetAddressing.hh"
 #include <senf/Socket/Protocols/BSDSocketProtocol.hh>
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>

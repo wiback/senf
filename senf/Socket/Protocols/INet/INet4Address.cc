@@ -34,6 +34,7 @@
 #if defined(_REENTRANT) && !defined(__GLIBC__)
 #include <boost/thread/mutex.hpp>
 #endif
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "INet4Address.mpp"
 #define prefix_
