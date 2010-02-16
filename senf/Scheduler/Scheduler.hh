@@ -29,7 +29,7 @@
 
 // Custom includes
 #include <boost/utility.hpp>
-#include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Utils/Logger/TimeSource.hh>
 #include "FdEvent.hh"
 #include "TimerEvent.hh"
 #include "SignalEvent.hh"
