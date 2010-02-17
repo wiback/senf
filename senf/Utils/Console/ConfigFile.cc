@@ -27,6 +27,7 @@
 #include "ConfigFile.ih"
 
 // Custom includes
+#include <boost/bind.hpp>
 
 //#include "ConfigFile.mpp"
 #define prefix_

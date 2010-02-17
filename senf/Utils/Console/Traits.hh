@@ -32,7 +32,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <senf/Utils/intrusive_refcount.hh>
 #include "Parse.hh"
-#include "Node.hh"
 
 #include "Traits.ih"
 //#include "Traits.mpp"

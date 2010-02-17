@@ -30,7 +30,7 @@
 #include <boost/utility.hpp>
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <senf/Utils/Logger/SenfLog.hh>
-#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Scheduler/FdEvent.hh>
 #include "Parse.hh"
 #include "Executor.hh"
 

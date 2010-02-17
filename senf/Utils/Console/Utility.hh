@@ -28,7 +28,6 @@
 
 // Custom includes
 #include "Parse.hh"
-#include "Traits.hh"
 
 //#include "Utility.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

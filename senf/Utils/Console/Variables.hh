@@ -30,7 +30,7 @@
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/ref.hpp>
-#include "ParsedCommand.hh"
+#include "Node.hh"
 
 #include "Variables.ih"
 //#include "Variables.mpp"

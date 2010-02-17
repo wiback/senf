@@ -36,7 +36,6 @@
 #include <boost/assign/list_inserter.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/mpl/if.hpp>
-#include <senf/Utils/singleton.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

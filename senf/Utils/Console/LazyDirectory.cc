@@ -27,7 +27,7 @@
 //#include "LazyDirectory.ih"
 
 // Custom includes
-#include "Console.hh"
+#include "ScopedDirectory.hh"
 
 //#include "LazyDirectory.mpp"
 #define prefix_

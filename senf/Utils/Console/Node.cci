@@ -26,7 +26,6 @@
 #include "Node.ih"
 
 // Custom includes
-#include <senf/Utils/senfassert.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

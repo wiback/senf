@@ -26,7 +26,6 @@
 //#include "ScopedDirectory.ih"
 
 // Custom includes
-#include <boost/bind.hpp>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////

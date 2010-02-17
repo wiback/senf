@@ -29,7 +29,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/function.hpp>
 #include <senf/Utils/intrusive_refcount.hh>
-#include "Scheduler.hh"
+#include "FdEvent.hh"
 
 //#include "WriteHelper.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
