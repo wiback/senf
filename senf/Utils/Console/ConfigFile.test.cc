@@ -62,6 +62,16 @@ namespace {
     
 }
 
+#define SENF_CHECK_THROW_SYSTEMEXCEPTION( expr, errorNumber)        \
+    try {                                                           \
+        BOOST_TEST_PASSPOINT();                                     \
+        expr;                                                       \
+        BOOST_ERROR( "senf::SystemException is expected");          \
+    } catch( senf::SystemException const & ex ) {                   \
+        BOOST_CHECK( ex.anyOf( errorNumber));                       \
+    }                                                               \
+        
+
 SENF_AUTO_UNIT_TEST(configFile)
 {
     namespace fty = senf::console::factory;
@@ -93,8 +103,17 @@ SENF_AUTO_UNIT_TEST(configFile)
 
     {
         senf::console::ConfigFile cfg ("i don't exist");
+        SENF_CHECK_THROW_SYSTEMEXCEPTION(
+                cfg.parse(), ENOENT);
         cfg.ignoreMissing();
         SENF_CHECK_NO_THROW( cfg.parse() );
+    }
+    { 
+        if (getuid() != 0 && boost::filesystem::exists("/etc/shadow")) {
+            senf::console::ConfigFile cfg ("/etc/shadow");
+            SENF_CHECK_THROW_SYSTEMEXCEPTION(
+                    cfg.parse(), EACCES);
+        }
     }
 }
 

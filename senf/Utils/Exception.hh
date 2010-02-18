@@ -295,10 +295,8 @@ namespace senf {
         char const * errorString() const; ///< Error string (\c strerror() value)
 
         bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0, 
-                   int c6=0, int c7=0, int c8=0, int c9=0);
+                   int c6=0, int c7=0, int c8=0, int c9=0) const;
                                         ///< \c true, if errorNumber() is one of \a c0 ... \a c9
-
-
 
     private:
         void init(std::string const & descr, int code _SENF_EXC_DEBUG_ARGS_ND);

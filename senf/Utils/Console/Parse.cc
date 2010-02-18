@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <cerrno>
+#include <sys/stat.h>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/spirit/iterator/file_iterator.hpp>
 #include <boost/spirit/iterator/position_iterator.hpp>
@@ -368,8 +369,21 @@ prefix_ void senf::console::CommandParser::parse(std::string const & command, Ca
 
 prefix_ void senf::console::CommandParser::parseFile(std::string const & filename, Callback cb)
 {
+    // file_iterator sets errno to EINVAL and returns error when file size is 0 
+    // so we check the file size before 
+    struct stat statBuf; 
+    if (stat( filename.c_str(), &statBuf) != 0)
+        throw SystemException(errno SENF_EXC_DEBUGINFO);
+    if (statBuf.st_size == 0) return;
     boost::spirit::file_iterator<> i (filename);
-    if (!i) throw SystemException(ENOENT SENF_EXC_DEBUGINFO);
+    if (!i) {
+        if (errno == 0)
+            // hmm.. errno==0 but the file_iterator is false; something is wrong but we
+            // do not know what exactly, so we throw a SystemeException with EINVAL 
+            throw SystemException(EINVAL SENF_EXC_DEBUGINFO);
+        else
+            throw SystemException(errno SENF_EXC_DEBUGINFO);
+    }
     boost::spirit::file_iterator<> const i_end (i.make_end());
     parseLoop(i, i_end, filename, cb);
 }

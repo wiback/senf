@@ -48,7 +48,7 @@ senf::console::detail::ConfigFileSource::ignoreMissing()
 }
 
 prefix_ senf::console::detail::ConfigFileSource::ConfigFileSource(std::string const & filename)
-    : filename_ (filename), ignoreMissing_ (true)
+    : filename_ (filename), ignoreMissing_ (false)
 {}
 #endif 
 

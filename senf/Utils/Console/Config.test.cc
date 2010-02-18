@@ -63,6 +63,20 @@ namespace {
    
 }
 
+SENF_AUTO_UNIT_TEST(configBundle_empty)
+{
+    TempFile cfg ("test.cfg");
+    cfg << TempFile::close;
+    
+    senf::console::ScopedDirectory<> root;
+    root.add("fun2", senf::console::factory::Command(&fun2));
+    
+    senf::console::ConfigBundle bundle(root);
+    bundle.add( senf::console::FileConfig("/tmp/test.cfg"));
+    
+    SENF_CHECK_NO_THROW( bundle.parse() );
+}
+
 SENF_AUTO_UNIT_TEST(configBundle)
 {
     namespace fty = senf::console::factory;
