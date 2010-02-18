@@ -72,7 +72,7 @@ SENF_AUTO_UNIT_TEST(configBundle_empty)
     root.add("fun2", senf::console::factory::Command(&fun2));
     
     senf::console::ConfigBundle bundle(root);
-    bundle.add( senf::console::FileConfig("/tmp/test.cfg"));
+    bundle.add( senf::console::FileConfig(cfg.name()));
     
     SENF_CHECK_NO_THROW( bundle.parse() );
 }
