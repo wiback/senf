@@ -53,10 +53,10 @@ prefix_ void senf::detail::parseHexString(std::string const & value,
                     std::string(boost::begin(*i),boost::end(*i))));
     }
     catch (std::bad_cast &) {
-        throw AddressSyntaxException();
+        throw AddressSyntaxException(value);
     }
     if (i!=i_end || f!=l)
-        throw AddressSyntaxException();
+        throw AddressSyntaxException(value);
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

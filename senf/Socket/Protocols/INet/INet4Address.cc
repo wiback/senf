@@ -55,7 +55,7 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
         return senf::INet4Address::from_inaddr(ina.s_addr);
 
     if  (s.empty())
-        throw AddressSyntaxException();
+        throw AddressSyntaxException() << ": empty string";
 
     int herr (0);
 
@@ -130,11 +130,11 @@ prefix_ senf::INet4Network::INet4Network(std::string const & s)
 {
     std::string::size_type i (s.find('/'));
     if (i == std::string::npos)
-        throw AddressSyntaxException();
+        throw AddressSyntaxException(s);
     try {
         prefix_len_ = boost::lexical_cast<unsigned>(std::string(s,i+1));
     } catch (boost::bad_lexical_cast const &) {
-        throw AddressSyntaxException();
+        throw AddressSyntaxException(s);
     }
     address_ = INet4Address(INet4Address::from_string(std::string(s, 0, i)).address() & mask());
 }

@@ -50,7 +50,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
         return senf::INet6Address::from_data(&ina.s6_addr[0]);
 
     if (s.empty())
-        throw AddressSyntaxException();
+        throw AddressSyntaxException() << ": empty string";
 
     int herr (0);
 
@@ -131,11 +131,11 @@ prefix_ senf::INet6Network::INet6Network(std::string const & s)
     using boost::lambda::_2;
     std::string::size_type i (s.find('/'));
     if (i == std::string::npos)
-        throw AddressSyntaxException();
+        throw AddressSyntaxException(s);
     try {
         prefix_len_ = boost::lexical_cast<unsigned>(std::string(s,i+1));
     } catch (boost::bad_lexical_cast const &) {
-        throw AddressSyntaxException();
+        throw AddressSyntaxException(s);
     }
     address_ = INet6Address::from_string(std::string(s, 0, i));
     detail::apply_mask(prefix_len_, address_.begin(), address_.end(), _1 &= _2);

@@ -52,7 +52,7 @@ prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_string(std::string c
 prefix_ senf::MACAddress senf::MACAddress::from_eui64(senf::EUI64 const & eui)
 {
     if (eui[3] != 0xffu || eui[4] != 0xfeu)
-        throw AddressSyntaxException();
+        throw AddressSyntaxException() << "EUI64 is not MAC compatible: " << eui;
     MACAddress mac (senf::noinit);
     mac[0] = eui[0];
     mac[1] = eui[1];
