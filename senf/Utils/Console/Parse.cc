@@ -373,16 +373,16 @@ prefix_ void senf::console::CommandParser::parseFile(std::string const & filenam
     // so we check the file size before 
     struct stat statBuf; 
     if (stat( filename.c_str(), &statBuf) != 0)
-        throw SystemException(errno SENF_EXC_DEBUGINFO);
+        throw SystemException(filename, errno SENF_EXC_DEBUGINFO);
     if (statBuf.st_size == 0) return;
     boost::spirit::file_iterator<> i (filename);
     if (!i) {
         if (errno == 0)
             // hmm.. errno==0 but the file_iterator is false; something is wrong but we
             // do not know what exactly, so we throw a SystemeException with EINVAL 
-            throw SystemException(EINVAL SENF_EXC_DEBUGINFO);
+            throw SystemException(filename, EINVAL SENF_EXC_DEBUGINFO);
         else
-            throw SystemException(errno SENF_EXC_DEBUGINFO);
+            throw SystemException(filename, errno SENF_EXC_DEBUGINFO);
     }
     boost::spirit::file_iterator<> const i_end (i.make_end());
     parseLoop(i, i_end, filename, cb);

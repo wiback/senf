@@ -62,13 +62,14 @@ namespace {
     
 }
 
-#define SENF_CHECK_THROW_SYSTEMEXCEPTION( expr, errorNumber)        \
+#define SENF_CHECK_THROW_SYSTEMEXCEPTION( expr, errorNumber, msg)   \
     try {                                                           \
         BOOST_TEST_PASSPOINT();                                     \
         expr;                                                       \
         BOOST_ERROR( "senf::SystemException is expected");          \
     } catch( senf::SystemException const & ex ) {                   \
         BOOST_CHECK( ex.anyOf( errorNumber));                       \
+        BOOST_CHECK( ex.message().find(msg) != std::string::npos);  \
     }                                                               \
         
 
@@ -103,16 +104,15 @@ SENF_AUTO_UNIT_TEST(configFile)
 
     {
         senf::console::ConfigFile cfg ("i don't exist");
-        SENF_CHECK_THROW_SYSTEMEXCEPTION(
-                cfg.parse(), ENOENT);
+        SENF_CHECK_THROW_SYSTEMEXCEPTION(cfg.parse(), ENOENT, "i don't exist");
         cfg.ignoreMissing();
         SENF_CHECK_NO_THROW( cfg.parse() );
     }
-    { 
-        if (getuid() != 0 && boost::filesystem::exists("/etc/shadow")) {
-            senf::console::ConfigFile cfg ("/etc/shadow");
-            SENF_CHECK_THROW_SYSTEMEXCEPTION(
-                    cfg.parse(), EACCES);
+    {
+        std::string etc_shaddow ("/etc/shadow");
+        if (getuid() != 0 && boost::filesystem::exists(etc_shaddow)) {
+            senf::console::ConfigFile cfg (etc_shaddow);
+            SENF_CHECK_THROW_SYSTEMEXCEPTION( cfg.parse(), EACCES, etc_shaddow);
         }
     }
 }

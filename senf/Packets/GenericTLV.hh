@@ -201,7 +201,7 @@ namespace senf {
         class Predicate
         {
             public:
-                const bool operator() (BaseParser const &p) const{
+                bool operator() (BaseParser const &p) const {
                     return p.template is<Parser>();
                 }
         };
