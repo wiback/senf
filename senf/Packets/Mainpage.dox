@@ -282,7 +282,8 @@
     checksums etc). Now the packet is ready. We may now send it out using a packet socket
 
     \code
-    senf::PacketSocketHandle sock ("eth0");
+    senf::PacketSocketHandle sock();
+    sock.bind( senf::LLSocketAddress("eth0"));
     sock.write(eth.data());
     \endcode
 
@@ -293,7 +294,8 @@
     from a packet socket handle:
     
     \code
-    senf::PacketSocketHandle sock ("eth0");
+    senf::PacketSocketHandle sock();
+    sock.bind( senf::LLSocketAddress("eth0"));
     senf::EthernetPacket packet (senf::EthernetPacket::create(senf::noinit));
     sock.read(packet.data(),0u);
     \endcode
