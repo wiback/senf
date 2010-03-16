@@ -47,7 +47,7 @@ SENF_AUTO_UNIT_TEST(inet4Address)
 
     INet4Address addr (INet4Address::from_string("127.0.0.1"));
     BOOST_CHECK_EQUAL( addr, INet4Address::Loopback );
-    BOOST_CHECK( addr != INet4Address::Broadcast );
+    SENF_CHECK_NOT_EQUAL( addr, INet4Address::Broadcast );
 
     addr = INet4Address::from_string("localhost");
     BOOST_CHECK_EQUAL( addr, INet4Address::Loopback );
@@ -69,7 +69,7 @@ SENF_AUTO_UNIT_TEST(inet4Address)
     BOOST_CHECK( addr );
     BOOST_CHECK( ! INet4Address() );
     BOOST_CHECK_THROW( INet4Address::from_string(""), AddressSyntaxException );
-    BOOST_CHECK( INet4Address::from_string("www.go6.net") != INet4Address::None );
+    SENF_CHECK_NOT_EQUAL( INet4Address::from_string("www.go6.net"), INet4Address::None );
     BOOST_CHECK_THROW( INet4Address::from_string("invalid.host.fhg.de"), UnknownHostnameException);
 
     {
@@ -104,7 +104,7 @@ SENF_AUTO_UNIT_TEST(inet4Network)
     BOOST_CHECK_EQUAL( net2.address(), senf::INet4Address::from_string("192.0.0.0") );
     BOOST_CHECK_EQUAL( net2.prefix_len(), 16u );
 
-    BOOST_CHECK( net != net2 );
+    SENF_CHECK_NOT_EQUAL( net, net2 );
     BOOST_CHECK( net.match(senf::INet4Address::from_string("127.0.0.1")) );
     BOOST_CHECK( ! net2.match(senf::INet4Address::from_string("127.0.0.1")) );
     BOOST_CHECK( ! net.match(net2) );

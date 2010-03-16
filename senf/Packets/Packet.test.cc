@@ -160,7 +160,7 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( ! packet.next().next(senf::nothrow) );
     BOOST_CHECK( ! packet.prev(senf::nothrow) );
     BOOST_CHECK( packet.next().prev() == packet );
-    BOOST_CHECK( packet.next() != packet );
+    SENF_CHECK_NOT_EQUAL( packet.next(), packet );
     BOOST_CHECK_EQUAL( std::distance(packet.data().begin(), packet.next().data().begin()), 4 );
     BOOST_CHECK_EQUAL( std::distance(packet.data().begin(), packet.data().end()), 12 );
     BOOST_CHECK_EQUAL( std::distance(packet.next().data().begin(), packet.next().data().end()), 8 );
@@ -281,7 +281,7 @@ SENF_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( FooPacket::createBefore(packet,senf::noinit).size(), 10u );
     BOOST_CHECK_EQUAL( packet.size(), 10u );
 
-    BOOST_CHECK( packet.clone() != packet );
+    SENF_CHECK_NOT_EQUAL( packet.clone(), packet );
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
 }
 

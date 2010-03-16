@@ -89,7 +89,7 @@ SENF_AUTO_UNIT_TEST(macAddress)
     char data[] = { 0x01,0x02,0x03,0x04,0x05,0x06 };
     mac2 = MACAddress::from_data(data);
     BOOST_CHECK_EQUAL( senf::str(mac2), "01:02:03:04:05:06" );
-    BOOST_CHECK( mac != mac2 );
+    SENF_CHECK_NOT_EQUAL( mac, mac2 );
     mac2 = mac;
     BOOST_CHECK( mac == mac2 );
     BOOST_CHECK_EQUAL( senf::str(mac2), "a1:b2:c3:d4:e5:f6" );

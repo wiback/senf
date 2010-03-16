@@ -110,7 +110,7 @@ SENF_AUTO_UNIT_TEST(inet6SocketAddress)
         addr = INet6SocketAddress("[12::21]:12345");
         BOOST_CHECK( addr == INet6SocketAddress("[12::21]:12345") );
         BOOST_CHECK_EQUAL( addr, INet6SocketAddress(addr) );
-        BOOST_CHECK( addr != INet6SocketAddress("[12::21%lo]:12345") );
+        SENF_CHECK_NOT_EQUAL( addr, INet6SocketAddress("[12::21%lo]:12345") );
         BOOST_CHECK( addr );
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("12::21") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );

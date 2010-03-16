@@ -46,7 +46,7 @@ SENF_AUTO_UNIT_TEST(bsdSocketAddress)
     BOOST_CHECK_THROW( senf::sockaddr_cast<senf::INet6SocketAddress>(g2), std::bad_cast );
     BOOST_CHECK( g2 );
     BOOST_CHECK( ! g1 );
-    BOOST_CHECK( g1 != g2 );
+    SENF_CHECK_NOT_EQUAL( g1, g2 );
     g1 = g2;
     BOOST_CHECK( g1 == g2 );
 }

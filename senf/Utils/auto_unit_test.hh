@@ -59,8 +59,8 @@
 
 /** \brief Check for compile failure
 
-    COMPILE_FAIL() is used to check, that a certain piece of code will produce a compile time
-    failure.
+    \c COMPILE_FAIL() is used to check, that a certain piece of code will produce a compile 
+    time failure.
 
     \code
     #ifdef COMPILE_CHECK
@@ -85,7 +85,7 @@
 
 /** \brief Show exception information
 
-    \ref SENF_CHECK_NO_THROW() is an extension to \c BOOST_CHECK_NO_THROW() which will write out the
+    \c SENF_CHECK_NO_THROW() is an extension to \c BOOST_CHECK_NO_THROW() which will write out the
     unabridged exception information when an exception is thrown in addition to signaling an error.
 
     \ingroup unittest
@@ -105,8 +105,8 @@ namespace test {
 
 /** \brief Check ranges for equality, writing char's as int's
 
-    \ref SENF_CHECK_EQUAL_COLLECTIONS() is like \c BOOST_CHECK_EQUAL_COLLECTIONS(). The only
-    difference is, that \ref SENF_CHECK_EQUAL_COLLECTIONS() will write out collection values in
+    \c SENF_CHECK_EQUAL_COLLECTIONS() is like \c BOOST_CHECK_EQUAL_COLLECTIONS(). The only
+    difference is, that \c SENF_CHECK_EQUAL_COLLECTIONS() will write out collection values in
     numeric form (and not as single characters) if the elements are of any char type. Other types
     are not affected.
 
@@ -120,8 +120,8 @@ namespace test {
 
 /** \brief Define new test case
 
-    \ref SENF_AUTO_UNIT_TEST() is like \c BOOST_AUTO_UNIT_TEST(). The only difference is, that
-    if an exception is thrown in the test case \ref SENF_AUTO_UNIT_TEST() will write out the
+    \c SENF_AUTO_UNIT_TEST() is like \c BOOST_AUTO_UNIT_TEST(). The only difference is, that
+    if an exception is thrown in the test case \c SENF_AUTO_UNIT_TEST() will write out the
     complete what-message of the exception.
 
     \hideinitializer
@@ -140,6 +140,23 @@ namespace test {
         }                                                                                       \
     }                                                                                           \
     void senf_test_body_##name()
+
+
+#ifdef DOXYGEN
+    /** \brief Check for non-equality
+    
+        \c SENF_CHECK_NOT_EQUAL() is the opposite of \c BOOST_CHECK_EQUAL.
+        \hideinitializer
+        \ingroup unittest
+     */
+    #define SENF_CHECK_NOT_EQUAL( Left, Rigth)
+#else
+#ifdef BOOST_CHECK_NE
+    #define SENF_CHECK_NOT_EQUAL( Left, Right) BOOST_CHECK_NE( Left, Right)
+#else
+    #define SENF_CHECK_NOT_EQUAL( Left, Right) BOOST_CHECK( Left != Right)
+#endif
+#endif
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "auto_unit_test.cci"

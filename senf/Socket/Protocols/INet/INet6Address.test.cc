@@ -62,12 +62,12 @@ SENF_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( addr1[13], 14 );
         BOOST_CHECK_EQUAL( addr1[14], 15 );
         BOOST_CHECK_EQUAL( addr1[15], 0 );
-        BOOST_CHECK( INet6Address::from_string("www.go6.net") != INet6Address::None );
+        SENF_CHECK_NOT_EQUAL( INet6Address::from_string("www.go6.net"), INet6Address::None );
         INet6Address addr2;
         BOOST_CHECK_EQUAL( senf::str(addr2), "::" );
         addr2 = INet6Address::from_string("::1");
-        BOOST_CHECK( addr1 != addr2 );
-        addr1 =INet6Address::from_string("::1");
+        SENF_CHECK_NOT_EQUAL( addr1, addr2 );
+        addr1 = INet6Address::from_string("::1");
         BOOST_CHECK_EQUAL( addr1, addr2 );
         addr1 = INet6Address::None;
         addr2 = INet6Address::from_string("::");
@@ -180,7 +180,7 @@ SENF_AUTO_UNIT_TEST(inet6Network)
     BOOST_CHECK_EQUAL( net2.address(), INet6Address::from_string("2001:db8:1230::") );
     BOOST_CHECK_EQUAL( net2.prefix_len(), 44u );
 
-    BOOST_CHECK( net != net2 );
+    SENF_CHECK_NOT_EQUAL( net, net2 );
     BOOST_CHECK( net.match(INet6Address::from_string("ff14:1234::1")) );
     BOOST_CHECK( ! net2.match(INet6Address::from_string("ff13:1234::1")) );
     BOOST_CHECK( ! net.match(net2) );

@@ -73,14 +73,26 @@ namespace senf {
         std::type_info const * p_;
     };
 
+    /** 
+        \related TypeIdValue
+     */
     TypeIdValue const typeIdValue();
 
+    /** 
+        \related TypeIdValue
+     */
     template <class Type>
     TypeIdValue const typeIdValue();
 
+    /** 
+        \related TypeIdValue
+     */
     template <class Type>
     TypeIdValue const typeidValue(Type const & ob);
 
+    /** 
+        \related TypeIdValue
+     */
     std::ostream & operator<<(std::ostream & os, TypeIdValue const & v);
 }
 
