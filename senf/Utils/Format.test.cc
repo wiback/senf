@@ -149,6 +149,31 @@ SENF_AUTO_UNIT_TEST(dumpint)
 #   undef CheckFormat
 }
 
+namespace {
+    void f1(std::ostream & os) {
+        senf::format::IndentHelper indent;
+        os << indent << "f1\n";
+    }
+    void f2(std::ostream & os) {
+        senf::format::IndentHelper indent;
+        os << indent << "f2_1\n";
+        f1( os);
+        os << indent << "f2_2\n";
+        indent.increase();
+        os << indent << "f2_3\n";
+    }
+}
+SENF_AUTO_UNIT_TEST(indent)
+{
+    std::stringstream ss;
+    f2(ss);
+    BOOST_CHECK_EQUAL( ss.str(), 
+            "  f2_1\n"
+            "    f1\n"
+            "  f2_2\n"
+            "    f2_3\n");
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

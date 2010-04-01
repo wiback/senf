@@ -32,7 +32,6 @@
 #include "Setup.hh"
 #include "CloneSource.hh"
 #include <senf/Scheduler/Scheduler.hh>
-#include <senf/Utils/membind.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -44,14 +43,10 @@ namespace ppi = senf::ppi;
 namespace module = senf::ppi::module;
 namespace scheduler = senf::scheduler;
 
-namespace {
-    void timeout() {
-        scheduler::terminate();
-    }
-    
+namespace {   
     void run(senf::ClockService::clock_type t) {
-        scheduler::TimerEvent timeoutTimer ("timeoutTimer", &timeout,
-                senf::ClockService::now() + t);
+        scheduler::TimerEvent timeout(
+                "test-timeout", &scheduler::terminate, scheduler::now() + t);
         ppi::run();
     }
 }

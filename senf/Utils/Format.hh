@@ -204,18 +204,55 @@ namespace format {
 
 #endif
     
+    /** \brief Helper class to easily achieve indent levels
+       
+        This class helps to achieve indent levels across function calls. Every instance 
+        increases the static indent level. On destruction the level is decreased to the level
+        before the instance.
+        The following example illustrates the use of this class:
+        \code
+            void f1() {
+                senf::format::IndentHelper indent;
+                std::cout << indent << "f1\n";
+            }
+            void f2() {
+                senf::format::IndentHelper indent;
+                std::cout << indent << "f2 begin\n";
+                f1();
+                std::cout << indent << "f2 end\n";
+            }
+            f2()
+        \endcode 
+        Output:
+        <pre>
+            f2 begin
+              f1
+            f2 end
+        </pre>
+        Here <tt>f1()</tt> and <tt>f2()</tt> don't need to know to current indent level, 
+        they just increase the level by instantiating IndentHelper.
+    
+        \ingroup senf_utils_format
+     */
     class IndentHelper
     {
         static unsigned int static_level;
-
         unsigned int instance_level;
     public:
-        IndentHelper () : instance_level(1) { ++static_level; }
-        ~IndentHelper () { static_level -= instance_level; }
-        void increase() { ++static_level; ++instance_level; }
-
-        friend std::ostream & operator<<(std::ostream & os, IndentHelper const & indent);
+        
+        IndentHelper();                 ///< Construct new IndentHelper instance
+                                        /**< The static indent level is increased by one. */
+        ~IndentHelper();                ///< Destruct IndentHelper instance
+                                        /**< The static indent level will be decreased to the
+                                             level before the instance. */
+        void increase();                ///< Increase the indent level
+                                        /**< The indent level of the instance is increases by one. */
+        unsigned int level() const;     ///< return the current indent level
     };
+    
+    /** \brief Output indent to given ostream
+        \related IndentHelper
+     */
     std::ostream & operator<<(std::ostream & os, IndentHelper const & indent);
 
 }}

@@ -30,6 +30,9 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::format::eng
+
 prefix_ senf::format::eng::eng(float v, float d)
     : v_ (v), d_ (d), haveWidth_ (false), width_ (0), havePrecision_ (false), precision_ (0),
       haveFill_ (false), fill_ (' '), mask_ (), flags_ ()
@@ -150,12 +153,43 @@ prefix_ senf::format::eng const & senf::format::eng::right()
     return *this;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::format::IndentHelper
+
+prefix_ senf::format::IndentHelper::IndentHelper()
+    : instance_level(1) 
+{
+    ++static_level; 
+}
+
+prefix_ senf::format::IndentHelper::~IndentHelper()
+{
+    static_level -= instance_level; 
+}
+
+prefix_ void senf::format::IndentHelper::increase()
+{
+    ++static_level; 
+    ++instance_level; 
+}
+
+prefix_ unsigned int senf::format::IndentHelper::level() 
+    const
+{ 
+    return static_level; 
+}
+
 prefix_ std::ostream & senf::format::operator<<(std::ostream & os, senf::format::IndentHelper const & indent)
 {
-    for (unsigned int i = 0; i < indent.static_level; ++i)
+    for (unsigned int i=0, j=indent.level(); i<j; ++i)
         os << "  ";
     return os;
 }
+
+
+
+
+
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
