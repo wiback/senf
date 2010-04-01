@@ -1,9 +1,11 @@
 import os.path, SCons
+import inspect
 
 # SCons is at     #/tools/scons-<v>/engine/SCons/__init__.py
 # site_init is at #/site_scons/site_init.py
 
-sconsbase = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"tools")
+sconsbase = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
+    inspect.currentframe().f_code.co_filename))),"tools")
 sconsbase = os.path.join(
     sconsbase,sorted((f for f in os.listdir(sconsbase) if f.startswith("scons-")))[-1])
 sconsengine = os.path.join(sconsbase, 'engine')
