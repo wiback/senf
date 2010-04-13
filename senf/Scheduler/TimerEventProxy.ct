@@ -1,0 +1,114 @@
+// $Id$
+//
+// Copyright (C) 2010
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Mathias Kretschmer <mtk@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+ \brief TimerEventProxy public header */
+
+#define prefix_ 
+
+template<class T>
+prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy() :
+    timer("timer", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0,
+            false), entrySetById(entrySet.template get<Id> ()),
+            entrySetByTimeout(entrySet.template get<Timeout> ())
+{
+
+}
+
+template<class T>
+prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy( std::string const & name,
+        senf::console::DirectoryNode & node) :
+    timer("timer", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0,
+            false), entrySetById(entrySet.template get<Id> ()),
+            entrySetByTimeout(entrySet.template get<Timeout> ())
+{
+    node.add(name, senf::console::factory::Command(
+            &TimerEventProxy<T>::listTimers, this) .doc("List active Timers"));
+}
+
+template<class T>
+prefix_ void senf::scheduler::TimerEventProxy<T>::timerEvent() {
+
+    senf::ClockService::clock_type actual = senf::ClockService::now();
+    typename EntrySetByTimeout_t::iterator it;
+
+    // execute the timer callbacks first
+
+    it = entrySetByTimeout.begin();
+    while (it != entrySetByTimeout.end() && it->timeout <= actual) {
+        Entry<T> item(*it);
+        // remove due entry from set
+        entrySetByTimeout.erase(it);
+        // call callback
+        item.fkt(actual, item.id);
+
+        it = entrySetByTimeout.begin();
+    }
+
+    if (entrySet.size() > 0) {
+        timer.timeout(entrySetByTimeout.begin()->timeout);
+    }
+}
+
+template<class T>
+prefix_ void senf::scheduler::TimerEventProxy<T>::add(
+        senf::ClockService::clock_type timeout, T const & id, Callback fkt)
+{
+    // insert new entry
+    entrySetByTimeout.insert(Entry<T> (timeout, id, fkt));
+
+    // the scheduler time to the first earliest timeout (ordered index)
+    timer.timeout(entrySetByTimeout.begin()->timeout);
+
+    //  // if map was empty before, hence we need to activate the time event object
+    //  if( entrySetByTimeout.size() >= 1){
+    //      timer.enable();
+    //  }
+}
+
+template<class T>
+prefix_ bool senf::scheduler::TimerEventProxy<T>::del(T const & id)
+{
+    typename EntrySetById_t::iterator it(entrySetById.find(Entry<T> (0, id, NULL)));
+
+    if (it != entrySetById.end()) {
+        entrySetById.erase(it);
+        return true;
+    }
+    return false;
+}
+
+template<class T>
+prefix_ std::vector<std::pair<senf::ClockService::clock_type, T> > senf::scheduler::TimerEventProxy<T>::list()
+{
+    std::vector<std::pair<senf::ClockService::clock_type, T> > tmp;
+
+    typename EntrySetByTimeout_t::iterator it;
+    for (it = entrySetByTimeout.begin(); it != entrySetByTimeout.end(); ++it) {
+        tmp.push_back(std::make_pair<senf::ClockService::clock_type, T>( it->timeout, it->id));
+    }
+
+    return tmp;
+}
+
+#undef prefix_
+
