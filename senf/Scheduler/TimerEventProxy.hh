@@ -39,7 +39,7 @@
 
 #include <senf/Scheduler/ClockService.hh>
 #include <senf/Scheduler/TimerEvent.hh>
-#include <senf/Utils/Console/Node.hh>
+#include <senf/Utils/Console/Console.hh>
 
 namespace senf {
 namespace scheduler {
