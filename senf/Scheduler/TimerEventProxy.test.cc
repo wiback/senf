@@ -21,10 +21,6 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
- \brief TimerEventProxy public header */
-//
-
-/** \file
     \brief TimerEventProxy.test non-inline non-template implementation */
 
 //#include "TimerEventProxy.test.hh"
@@ -33,7 +29,6 @@
 // Custom includes
 #include "TimerEventProxy.hh"
 #include "Scheduler.hh"
-#include <boost/bind.hpp>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -43,24 +38,23 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 namespace {
 
-    int count = 0;
+    int mask = 0;
 
     void handler( senf::ClockService::clock_type time, int const &id)
     {
-        std::cerr << "TimerEventProxy handler count="<<count<<" id="<<id<<"\n";
-        ++count;
+        mask = mask + id;
     }
 
-    void myexit(){
-        std::cerr << "TimerEventProxy terminating\n";
-        senf::scheduler::terminate();
+    void run(senf::ClockService::clock_type t) {
+        senf::scheduler::TimerEvent timeout(
+                "test-timeout", &senf::scheduler::terminate, senf::scheduler::now() + t);
+        senf::scheduler::process();
     }
 
 }
 
 SENF_AUTO_UNIT_TEST(timerEventProxy)
 {
-
 //    // abort on watchdog timeout
 //    senf::scheduler::watchdogAbort( true);
 //    senf::scheduler::watchdogTimeout(5000);
@@ -69,18 +63,15 @@ SENF_AUTO_UNIT_TEST(timerEventProxy)
     {
         senf::scheduler::TimerEventProxy<int> timers;
 
-        SENF_CHECK_NO_THROW( timers.add( t + senf::ClockService::milliseconds(10000), 0 , &handler));
-        SENF_CHECK_NO_THROW( timers.add( t + senf::ClockService::milliseconds(800), 3, &handler));
-        SENF_CHECK_NO_THROW( timers.add( t + senf::ClockService::milliseconds(200), 1, &handler));
-        SENF_CHECK_NO_THROW( timers.del( 3));
-        SENF_CHECK_NO_THROW( timers.add( t + senf::ClockService::milliseconds(700), 2, &handler));
+        timers.add( t + senf::ClockService::milliseconds(10000), 0 , &handler);
+        timers.add( t + senf::ClockService::milliseconds(800), 4, &handler);
+        timers.add( t + senf::ClockService::milliseconds(200), 1, &handler);
+        BOOST_CHECK( timers.remove( 4));
+        timers.add( t + senf::ClockService::milliseconds(700), 2, &handler);
 
-        // set timeout for termination
-        senf::scheduler::TimerEvent te_exit( "myexit", &myexit, t + senf::ClockService::milliseconds( 1000));
+        run( senf::ClockService::milliseconds( 1000));
 
-        SENF_CHECK_NO_THROW( senf::scheduler::process() );
-
-        BOOST_CHECK( count == 2);
+        BOOST_CHECK( mask == 3);
     }
 }
 

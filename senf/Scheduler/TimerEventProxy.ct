@@ -4,6 +4,7 @@
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Mathias Kretschmer <mtk@berlios.de>
+//     Jens Moedeker <jens.moedeker@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,20 +27,18 @@
 #define prefix_ 
 
 template<class T>
-prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy() :
-    timer("timer", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0,
-            false), entrySetById(entrySet.template get<Id> ()),
-            entrySetByTimeout(entrySet.template get<Timeout> ())
-{
-
-}
+prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy() 
+    : timer("TimerEventProxy", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0, false), 
+      entrySetById(entrySet.template get<Id> ()),
+      entrySetByTimeout(entrySet.template get<Timeout> ())
+{ }
 
 template<class T>
 prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy( std::string const & name,
-        senf::console::DirectoryNode & node) :
-    timer("timer", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0,
-            false), entrySetById(entrySet.template get<Id> ()),
-            entrySetByTimeout(entrySet.template get<Timeout> ())
+        senf::console::DirectoryNode & node) 
+    : timer("TimerEventProxy", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0, false),
+      entrySetById(entrySet.template get<Id> ()),
+      entrySetByTimeout(entrySet.template get<Timeout> ())
 {
     node.add(name, senf::console::factory::Command(
             &TimerEventProxy<T>::listTimers, this) .doc("List active Timers"));
@@ -55,11 +54,11 @@ prefix_ void senf::scheduler::TimerEventProxy<T>::timerEvent() {
 
     it = entrySetByTimeout.begin();
     while (it != entrySetByTimeout.end() && it->timeout <= actual) {
-        Entry<T> item(*it);
+        Entry item (*it);
         // remove due entry from set
         entrySetByTimeout.erase(it);
         // call callback
-        item.fkt(actual, item.id);
+        item.cb(actual, item.id);
 
         it = entrySetByTimeout.begin();
     }
@@ -69,42 +68,31 @@ prefix_ void senf::scheduler::TimerEventProxy<T>::timerEvent() {
     }
 }
 
-template<class T>
-prefix_ void senf::scheduler::TimerEventProxy<T>::add(
-        senf::ClockService::clock_type timeout, T const & id, Callback fkt)
+template<class IdType>
+prefix_ void senf::scheduler::TimerEventProxy<IdType>::add(
+        senf::ClockService::clock_type timeout, IdType const & id, Callback cb)
 {
     // insert new entry
-    entrySetByTimeout.insert(Entry<T> (timeout, id, fkt));
+    entrySetByTimeout.insert( Entry(timeout, id, cb));
 
     // the scheduler time to the first earliest timeout (ordered index)
-    timer.timeout(entrySetByTimeout.begin()->timeout);
-
-    //  // if map was empty before, hence we need to activate the time event object
-    //  if( entrySetByTimeout.size() >= 1){
-    //      timer.enable();
-    //  }
+    timer.timeout( entrySetByTimeout.begin()->timeout);
 }
 
-template<class T>
-prefix_ bool senf::scheduler::TimerEventProxy<T>::del(T const & id)
+template<class IdType>
+prefix_ bool senf::scheduler::TimerEventProxy<IdType>::remove(IdType const & id)
 {
-    typename EntrySetById_t::iterator it(entrySetById.find(Entry<T> (0, id, NULL)));
-
-    if (it != entrySetById.end()) {
-        entrySetById.erase(it);
-        return true;
-    }
-    return false;
+    return entrySetById.erase( id) > 0;
 }
 
-template<class T>
-prefix_ std::vector<std::pair<senf::ClockService::clock_type, T> > senf::scheduler::TimerEventProxy<T>::list()
+template<class IdType>
+prefix_ std::vector<std::pair<senf::ClockService::clock_type, IdType> > senf::scheduler::TimerEventProxy<IdType>::list()
 {
-    std::vector<std::pair<senf::ClockService::clock_type, T> > tmp;
+    std::vector<std::pair<senf::ClockService::clock_type, IdType> > tmp;
 
     typename EntrySetByTimeout_t::iterator it;
     for (it = entrySetByTimeout.begin(); it != entrySetByTimeout.end(); ++it) {
-        tmp.push_back(std::make_pair<senf::ClockService::clock_type, T>( it->timeout, it->id));
+        tmp.push_back(std::make_pair<senf::ClockService::clock_type, IdType>( it->timeout, it->id));
     }
 
     return tmp;
