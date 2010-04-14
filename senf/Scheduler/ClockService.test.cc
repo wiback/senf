@@ -56,6 +56,8 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(clockService)
 {
+    BOOST_CHECK( senf::ClockService::abstime(0).is_not_a_date_time());
+    
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
     BOOST_CHECK( true );

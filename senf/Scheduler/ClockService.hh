@@ -46,7 +46,7 @@ namespace senf {
 #endif
 
     // Implementation note: The clock value is represented as a 64bit unsigned integer number of
-    // nanosecods based on the CLOCK_MONOTONIC POSIX clock.
+    // nanoseconds based on the CLOCK_MONOTONIC POSIX clock.
     //
     // To allow conversion between clock value and absolute time, the ClockService samples the
     // absolute current time and the clock value when the conversion is performed. This is done at
@@ -59,7 +59,7 @@ namespace senf {
 
         \implementation The funny mixture of static and non-static members stems from the old
             implementation based on interval timers and gettimeofday(). The current implementation
-            usses POSIX clocks and is much simpler and more precise.
+            uses POSIX clocks and is much simpler and more precise.
       */
     class ClockService
         : singleton<ClockService>
@@ -112,7 +112,7 @@ namespace senf {
                                                  than the clock_type resolution */
 
         static clock_type clock(abstime_type time); ///< Convert absolute time to clock value
-                                        /**< This member converst an absolute time value into the
+                                        /**< This member convert an absolute time value into the
                                              corresponding clock value.
                                              \see abstime */
 
@@ -142,7 +142,7 @@ namespace senf {
         static int64_type in_hours(clock_type v); ///< Convert \a v to hours
         static int64_type in_days(clock_type v); ///< Convert \a v to days
 
-        static void restart(); ///< Force re-syncronisation of abstime and clock
+        static void restart(); ///< Force re-synchronization of abstime and clock
                                         /**< Calling the member should never be necessary since
                                              abstime() / clock() automatically call restart() if
                                              needed */

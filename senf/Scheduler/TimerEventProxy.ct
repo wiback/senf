@@ -22,81 +22,97 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
- \brief TimerEventProxy public header */
+    \brief TimerEventProxy non-inline template implementation */
 
-#define prefix_ 
+// Custom includes
 
-template<class T>
-prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy() 
-    : timer("TimerEventProxy", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0, false), 
-      entrySetById(entrySet.template get<Id> ()),
-      entrySetByTimeout(entrySet.template get<Timeout> ())
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
+
+template<typename IdType>
+prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy() 
+    : entrySetById( entrySet.template get<Id>()),
+      entrySetByTimeout( entrySet.template get<Timeout> ()),
+      timer( "TimerEventProxy", membind(&TimerEventProxy<IdType>::timerEvent, this), 0, false)
 { }
 
-template<class T>
-prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy( std::string const & name,
-        senf::console::DirectoryNode & node) 
-    : timer("TimerEventProxy", senf::membind(&TimerEventProxy<T>::timerEvent, this), 0, false),
-      entrySetById(entrySet.template get<Id> ()),
-      entrySetByTimeout(entrySet.template get<Timeout> ())
+template<typename IdType>
+prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & name, console::DirectoryNode & node) 
+    : entrySetById( entrySet.template get<Id>()),
+      entrySetByTimeout( entrySet.template get<Timeout> ()),
+      timer( "TimerEventProxy", membind(&TimerEventProxy<IdType>::timerEvent, this), 0, false)
 {
-    node.add(name, senf::console::factory::Command(
-            &TimerEventProxy<T>::list, this) .doc("List active Timers"));
+    node.add(name, console::factory::Command(
+            &TimerEventProxy<IdType>::list, this) .doc("List active Timers"));
 }
 
-template<class T>
-prefix_ void senf::scheduler::TimerEventProxy<T>::timerEvent() {
-
-    senf::ClockService::clock_type actual = senf::ClockService::now();
-    typename EntrySetByTimeout_t::iterator it;
-
-    // execute the timer callbacks first
-
-    it = entrySetByTimeout.begin();
+template<typename IdType>
+prefix_ void senf::scheduler::TimerEventProxy<IdType>::timerEvent()
+{
+    ClockService::clock_type actual = ClockService::now();
+    typename EntrySetByTimeout_t::iterator it = entrySetByTimeout.begin();
     while (it != entrySetByTimeout.end() && it->timeout <= actual) {
         Entry item (*it);
         // remove due entry from set
         entrySetByTimeout.erase(it);
         // call callback
         item.cb(actual, item.id);
-
         it = entrySetByTimeout.begin();
     }
-
-    if (entrySet.size() > 0) {
+    if (entrySet.size() > 0)
         timer.timeout(entrySetByTimeout.begin()->timeout);
-    }
 }
 
-template<class IdType>
+template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::add(
-        senf::ClockService::clock_type timeout, IdType const & id, Callback cb)
+        ClockService::clock_type timeout, IdType const & id, Callback cb)
 {
     // insert new entry
     entrySetByTimeout.insert( Entry(timeout, id, cb));
-
     // the scheduler time to the first earliest timeout (ordered index)
     timer.timeout( entrySetByTimeout.begin()->timeout);
 }
 
-template<class IdType>
+template<typename IdType>
 prefix_ bool senf::scheduler::TimerEventProxy<IdType>::remove(IdType const & id)
 {
     return entrySetById.erase( id) > 0;
 }
 
-template<class IdType>
-prefix_ std::vector<std::pair<senf::ClockService::clock_type, IdType> > senf::scheduler::TimerEventProxy<IdType>::list()
+template<typename IdType>
+prefix_ senf::ClockService::clock_type senf::scheduler::TimerEventProxy<IdType>::timeout(IdType const & id)
+    const
 {
-    std::vector<std::pair<senf::ClockService::clock_type, IdType> > tmp;
+    typename EntrySetById_t::const_iterator i ( entrySetById.find( id));
+    return i == entrySetById.end() ? 0 : i->timeout;
+}
 
-    typename EntrySetByTimeout_t::iterator it;
+
+template<typename IdType>
+prefix_ std::vector<std::pair<senf::ClockService::clock_type, IdType> > senf::scheduler::TimerEventProxy<IdType>::list()
+    const
+{
+    std::vector<std::pair<ClockService::clock_type, IdType> > tmp;
+
+    typename EntrySetByTimeout_t::const_iterator it;
     for (it = entrySetByTimeout.begin(); it != entrySetByTimeout.end(); ++it) {
-        tmp.push_back(std::make_pair<senf::ClockService::clock_type, IdType>( it->timeout, it->id));
+        tmp.push_back(std::make_pair<ClockService::clock_type, IdType>( it->timeout, it->id));
     }
-
     return tmp;
 }
 
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:
+
 

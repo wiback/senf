@@ -27,12 +27,7 @@
 #ifndef HH_SENF_Scheduler_TimerEventProxy_
 #define HH_SENF_Scheduler_TimerEventProxy_ 1
 
-#ifdef SENF_DEBUG
-#   define BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
-#   define BOOST_MULTI_INDEX_ENABLE_SAFE_MODE
-#endif
-
-#include <boost/range/iterator_range.hpp>
+// Custom includes
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/member.hpp>
@@ -41,6 +36,7 @@
 #include <senf/Scheduler/TimerEvent.hh>
 #include <senf/Utils/Console/Console.hh>
 
+///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 namespace scheduler {
 
@@ -57,48 +53,44 @@ namespace scheduler {
     class TimerEventProxy 
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-        typedef boost::function<void(senf::ClockService::clock_type, IdType const &)> Callback;
+        typedef boost::function<void(ClockService::clock_type, IdType const &)> Callback;
 
-        TimerEventProxy();
-        ///< Instantiate a TimerEventProxy
-
-        TimerEventProxy(std::string const & name, senf::console::DirectoryNode & node);
-        ///< Instantiate a TimerEventProxy and add the list command to the give DirectoryNode
-
-        void add(senf::ClockService::clock_type timeout, IdType const &id, Callback cb);
-        ///< Add new deadline timer
-        bool remove(IdType const & id);
-        ///< Remove timer by given \a id.
-        std::vector<std::pair<senf::ClockService::clock_type, IdType> > list();
-        ///< Returns a vector of all active timers with timeout and id.
+        TimerEventProxy();              ///< Instantiate a TimerEventProxy
+        TimerEventProxy(std::string const & name, console::DirectoryNode & node);
+                                        /**< \brief Instantiate a TimerEventProxy and add the list
+                                                    command to the give DirectoryNode */
         
+        void add(ClockService::clock_type timeout, IdType const & id, Callback cb);
+                                        ///< Add new deadline timer
+        
+        bool remove(IdType const & id); ///< Remove timer by given \a id.
+        
+        std::vector<std::pair<ClockService::clock_type, IdType> > list() const;
+                                        ///< Returns a vector of all active timers with timeout and id.
+        
+        ClockService::clock_type timeout(IdType const & id) const;
+                                        ///< Returns timeout for given id
+                                        /**< if no timer for this id is registered \a 0 is returned. */ 
     private:
 #ifndef DOXYGEN
         struct Entry {
-            senf::ClockService::clock_type timeout;
+            ClockService::clock_type timeout;
             IdType id;
             Callback cb;
 
-            Entry(senf::ClockService::clock_type _timeout, IdType _id, Callback _cb)
+            Entry(ClockService::clock_type _timeout, IdType _id, Callback _cb)
                 : timeout(_timeout), id(_id), cb(_cb) { }
         };
-
-        senf::scheduler::TimerEvent timer;
-
-        //
-        // data structure to hold active timers
-        //
         struct Timeout {};
         struct Id {};
 #endif
+        // data structure to hold active timers
         typedef boost::multi_index_container<
             Entry,
             boost::multi_index::indexed_by<
                 boost::multi_index::ordered_non_unique<
                     boost::multi_index::tag<Timeout>,
-                    boost::multi_index::member<Entry, senf::ClockService::clock_type, &Entry::timeout> 
+                    boost::multi_index::member<Entry, ClockService::clock_type, &Entry::timeout> 
                 >,
                 boost::multi_index::ordered_unique<
                     boost::multi_index::tag<Id>,
@@ -106,20 +98,33 @@ namespace scheduler {
                 >
             >
         > EntrySet_t;
-
         typedef typename EntrySet_t::template index<Timeout>::type EntrySetByTimeout_t;
         typedef typename EntrySet_t::template index<Id>::type EntrySetById_t;
 
         EntrySet_t entrySet;
         EntrySetById_t & entrySetById;
         EntrySetByTimeout_t & entrySetByTimeout;
+        
+        scheduler::TimerEvent timer;
 
-        // callback for the Scheduler timer event
-        void timerEvent();
+        void timerEvent();  // callback for the Scheduler timer event
     };
-}
-}
 
+}}
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "TimerEventProxy.cci"
 #include "TimerEventProxy.ct"
-
+//#include "TimerEventProxy.cti"
 #endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
