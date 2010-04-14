@@ -41,7 +41,7 @@ prefix_ senf::scheduler::TimerEventProxy<T>::TimerEventProxy( std::string const 
       entrySetByTimeout(entrySet.template get<Timeout> ())
 {
     node.add(name, senf::console::factory::Command(
-            &TimerEventProxy<T>::listTimers, this) .doc("List active Timers"));
+            &TimerEventProxy<T>::list, this) .doc("List active Timers"));
 }
 
 template<class T>
