@@ -171,9 +171,9 @@ def SetupForSENF(env, senf_path = []):
 def DefaultOptions(env):
     env.Append(
         CXXFLAGS         = [ '-Wall', '-Woverloaded-virtual' ],
-        CXXFLAGS_final   = [ '-O2' ],
-        CXXFLAGS_normal  = [ '-O0', '-g' ],
-        CXXFLAGS_debug   = [ '$CXXFLAGS_normal' ],
+        CXXFLAGS_final   = [ '-O3' ],
+        CXXFLAGS_normal  = [ '-O2', '-g' ],
+        CXXFLAGS_debug   = [ '-O0', '-g' ],
 
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],
