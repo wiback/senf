@@ -99,8 +99,8 @@ env.Append(
                               '-pipe', '$CXXFLAGS_' ],
    CXXFLAGS_              = senfutil.BuildTypeOptions('CXXFLAGS'),
    CXXFLAGS_final         = [ '-O3' ],
-   CXXFLAGS_normal        = [ '-O0', '-g' ],
-   CXXFLAGS_debug         = [ '$CXXFLAGS_normal' ],
+   CXXFLAGS_normal        = [ '-O2', '-g' ],
+   CXXFLAGS_debug         = [ '-O0', '-g' ],
 
    CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
    expandLogOption        = senfutil.expandLogOption,
