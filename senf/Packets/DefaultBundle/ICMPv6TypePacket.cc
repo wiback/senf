@@ -31,14 +31,19 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 1,   senf::ICMPv6ErrDestUnreachable );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 2,   senf::ICMPv6ErrTooBig          );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 3,   senf::ICMPv6ErrTimeExceeded    );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 4,   senf::ICMPv6ErrParamProblem    );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 128, senf::ICMPv6EchoRequest        );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 129, senf::ICMPv6EchoReply          );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 130, senf::MLDv2ListenerQuery       );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 143, senf::MLDv2ListenerReport      );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 1,   senf::ICMPv6ErrDestUnreachable       );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 2,   senf::ICMPv6ErrTooBig                );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 3,   senf::ICMPv6ErrTimeExceeded          );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 4,   senf::ICMPv6ErrParamProblem          );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 128, senf::ICMPv6EchoRequest              );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 129, senf::ICMPv6EchoReply                );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 130, senf::MLDv2ListenerQuery             );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 133, senf::NDPRouterSolicitationMessage   );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 134, senf::NDPRouterAdvertisementMessage  );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 135, senf::NDPNeighborSolicitationMessage );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 136, senf::NDPNeighborAdvertisementMessage);
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 137, senf::NDPRedirectMessage             );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 143, senf::MLDv2ListenerReport            );
 }
 
 prefix_ void senf::ICMPv6EchoRequestType::dump(packet p, std::ostream & os)
@@ -120,5 +125,47 @@ prefix_ void senf::MLDv2ListenerReportType::dump(packet p, std::ostream & os)
     }
 }
 
+prefix_ void senf::NDPRouterSolicitationMessageType::dump(packet p, std::ostream & os)
+{
+    os << "ICMPv6 Neighbor Discovery Router Solicitation Message:\n"
+       << senf::fieldName("Reserved(32Bit)")           << unsigned(p->reserved()) << "\n";
+}
+
+prefix_ void senf::NDPRouterAdvertisementMessageType::dump(packet p, std::ostream & os)
+{
+    os << "ICMPv6 Neighbor Discovery Router Advertisement Message:\n"
+       << senf::fieldName("Current Hop Limit")             << unsigned(p->curHopLimit()) << "\n"
+       << senf::fieldName("Managed Address Configuration") << unsigned(p->m()) << "\n"
+       << senf::fieldName("Other Configuration")           << unsigned(p->o()) << "\n"
+       << senf::fieldName("Reserved(6Bit)")                << unsigned(p->reserved()) << "\n"
+       << senf::fieldName("Router Lifetime")               << unsigned(p->routerLifetime()) << "\n"
+       << senf::fieldName("Reachable Time")                << unsigned(p->reachableTime()) << "\n"
+       << senf::fieldName("Retrans Timer")                 << unsigned(p->retransTimer()) << "\n";
+}
+
+prefix_ void senf::NDPNeighborSolicitationMessageType::dump(packet p, std::ostream & os)
+{
+    os << "ICMPv6 Neighbor Discovery Neighbor Solicitation Message:\n"
+       << senf::fieldName("Reserved(32Bit)")          << unsigned(p->reserved()) << "\n"
+       << senf::fieldName("Target Address")           << p->target() << "\n";
+}
+
+prefix_ void senf::NDPNeighborAdvertisementMessageType::dump(packet p, std::ostream & os)
+{
+    os << "ICMPv6 Neighbor Discovery Neighbor Advertisement Message:\n"
+       << senf::fieldName("Router Flag")           << unsigned(p->r()) << "\n"
+       << senf::fieldName("Solicited Flag")        << unsigned(p->s()) << "\n"
+       << senf::fieldName("Override Flag")         << unsigned(p->o()) << "\n"
+       << senf::fieldName("Reserved(29Bit)")       << unsigned(p->reserved()) << "\n"
+       << senf::fieldName("Target Address")        << p->target() << "\n";
+}
+
+prefix_ void senf::NDPRedirectMessageType::dump(packet p, std::ostream & os)
+{
+    os << "ICMPv6 Neighbor Discovery Redirect Message:\n"
+       << senf::fieldName("Reserved(32Bit)")       << unsigned(p->reserved()) << "\n"
+       << senf::fieldName("Target Address")        << p->target() << "\n"
+       << senf::fieldName("Destination Address")   << p->destination() << "\n";
+}
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

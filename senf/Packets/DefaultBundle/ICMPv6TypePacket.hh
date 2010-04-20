@@ -29,6 +29,8 @@
 #include <senf/Packets/Packets.hh>
 #include "IPv6Packet.hh"
 #include "ICMPv6Packet.hh"
+#include "ListOptionTypeParser.hh"
+#include "NDPOptions.hh"
 
 namespace senf {
 
@@ -428,8 +430,231 @@ namespace senf {
         
         static void dump(packet p, std::ostream & os);
     };
-        
     typedef ConcretePacket<MLDv2ListenerReportType> MLDv2ListenerReport;
+
+    //#############################################################
+    //ICMPv6 Router Solicitation (RFC 4861) Message
+    //#############################################################
+    struct NDPRouterSolicitationParser : public PacketParserBase
+    {
+#      include SENF_PARSER()
+        SENF_PARSER_FIELD    ( reserved, UInt32Parser );// set to zero by default
+        SENF_PARSER_LIST     ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE ( NDPRouterSolicitationParser );
+
+        SENF_PARSER_INIT() {
+            reserved() = 0;
+        }
+    };
+
+    /** \brief Router Solicitation Message
+
+        \par Packet type (typedef):
+            \ref NDPRouterSolicitationMessage
+
+        \par Fields:
+            \ref NDPRouterSolicitationParser
+            \image html NDPRouterSolicitationMessage.png
+
+        \ingroup protocolbundle_default
+     */
+    struct NDPRouterSolicitationMessageType
+        : public PacketTypeBase,
+          public PacketTypeMixin<NDPRouterSolicitationMessageType>
+    {
+        typedef PacketTypeMixin<NDPRouterSolicitationMessageType> mixin;
+        typedef ConcretePacket<NDPRouterSolicitationMessageType> packet;
+        typedef NDPRouterSolicitationParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+
+        static void dump(packet p, std::ostream & os);
+    };
+    typedef ConcretePacket<NDPRouterSolicitationMessageType> NDPRouterSolicitationMessage;
+
+    //#############################################################
+    //ICMPv6 Router Advertisement (RFC 4861) Message
+    //#############################################################
+    struct NDPRouterAdvertisementParser : public PacketParserBase
+    {
+#      include SENF_PARSER()
+        SENF_PARSER_FIELD        ( curHopLimit, UInt8Parser );
+        SENF_PARSER_BITFIELD     ( m, 1, bool);
+        SENF_PARSER_BITFIELD     ( o, 1, bool);
+        SENF_PARSER_BITFIELD     ( reserved, 6, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD        ( routerLifetime, UInt16Parser );
+        SENF_PARSER_FIELD        ( reachableTime, UInt32Parser );
+        SENF_PARSER_FIELD        ( retransTimer, UInt32Parser );
+        SENF_PARSER_LIST         ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE     ( NDPRouterAdvertisementParser );
+
+        SENF_PARSER_INIT() {
+            reserved() = 0;
+        }
+    };
+
+    /** \brief Router Advertisement Message
+
+        \par Packet type (typedef):
+            \ref NDPRouterAdvertisementMessage
+
+        \par Fields:
+            \ref NDPRouterAdvertisementParser
+            \imageMessage html NDPRouterAdvertisementMessage.png
+
+        \ingroup protocolbundle_default
+     */
+    struct NDPRouterAdvertisementMessageType
+        : public PacketTypeBase,
+          public PacketTypeMixin<NDPRouterAdvertisementMessageType>
+    {
+        typedef PacketTypeMixin<NDPRouterAdvertisementMessageType> mixin;
+        typedef ConcretePacket<NDPRouterAdvertisementMessageType> packet;
+        typedef NDPRouterAdvertisementParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+
+        static void dump(packet p, std::ostream & os);
+    };
+    typedef ConcretePacket<NDPRouterAdvertisementMessageType> NDPRouterAdvertisementMessage;
+
+    //#############################################################
+    //ICMPv6 Neighbor Solicitation (RFC 4861) Message
+    //#############################################################
+    struct NDPNeighborSolicitationParser : public PacketParserBase
+    {
+#      include SENF_PARSER()
+        SENF_PARSER_BITFIELD  ( reserved, 32, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD     ( target, INet6AddressParser );
+        SENF_PARSER_LIST      ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE  ( NDPNeighborSolicitationParser );
+
+        SENF_PARSER_INIT() {
+            reserved() = 0;
+        }
+    };
+
+    /** \brief Neighbor Solicitation Message
+
+        \par Packet type (typedef):
+            \ref NDPNeighborSolicitationMessage
+
+        \par Fields:
+            \ref NDPNeighborSolicitationParser
+            \imageMessage html NDPNeighborSolicitationMessage.png
+
+        \ingroup protocolbundle_default
+     */
+    struct NDPNeighborSolicitationMessageType
+        : public PacketTypeBase,
+          public PacketTypeMixin<NDPNeighborSolicitationMessageType>
+    {
+        typedef PacketTypeMixin<NDPNeighborSolicitationMessageType> mixin;
+        typedef ConcretePacket<NDPNeighborSolicitationMessageType> packet;
+        typedef NDPNeighborSolicitationParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+
+        static void dump(packet p, std::ostream & os);
+    };
+    typedef ConcretePacket<NDPNeighborSolicitationMessageType> NDPNeighborSolicitationMessage;
+
+    //#############################################################
+    //ICMPv6 Neighbor Advertisement (RFC 4861) Message
+    //#############################################################
+    struct NDPNeighborAdvertisementParser : public PacketParserBase
+    {
+#      include SENF_PARSER()
+        SENF_PARSER_BITFIELD  ( r, 1, bool );
+        SENF_PARSER_BITFIELD  ( s, 1, bool );
+        SENF_PARSER_BITFIELD  ( o, 1, bool );
+        SENF_PARSER_BITFIELD  ( reserved, 29, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD     ( target, INet6AddressParser );
+        SENF_PARSER_LIST      ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE  ( NDPNeighborAdvertisementParser );
+
+        SENF_PARSER_INIT() {
+            reserved() = 0;
+        }
+    };
+
+    /** \brief Neighbor Advertisement Message
+
+        \par Packet type (typedef):
+            \ref NDPNeighborAdvertisementParser
+
+        \par Fields:
+            \ref NDPNeighborAdvertisementParser
+            \imageMessage html NDPNeighborAdvertisementMessage.png
+
+        \ingroup protocolbundle_default
+     */
+    struct NDPNeighborAdvertisementMessageType
+        : public PacketTypeBase,
+          public PacketTypeMixin<NDPNeighborAdvertisementMessageType>
+    {
+        typedef PacketTypeMixin<NDPNeighborAdvertisementMessageType> mixin;
+        typedef ConcretePacket<NDPNeighborAdvertisementMessageType> packet;
+        typedef NDPNeighborAdvertisementParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+
+        static void dump(packet p, std::ostream & os);
+    };
+    typedef ConcretePacket<NDPNeighborAdvertisementMessageType> NDPNeighborAdvertisementMessage;
+
+    //#############################################################
+    //ICMPv6 Redirect (RFC 4861) Message
+    //#############################################################
+    struct  NDPRedirectParser : public PacketParserBase
+    {
+#      include SENF_PARSER()
+        SENF_PARSER_BITFIELD  ( reserved, 32, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD     ( target, INet6AddressParser );
+        SENF_PARSER_FIELD     ( destination, INet6AddressParser );
+        SENF_PARSER_LIST      ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE  ( NDPRedirectParser );
+
+        SENF_PARSER_INIT() {
+            reserved() = 0;
+
+        }
+    };
+
+    /** \brief Redirect Message
+
+        \par Packet type (typedef):
+            \ref NDPRedirectParser
+
+        \par Fields:
+            \ref NDPRedirectParser
+            \imageMessage html NDPRedirectMessage.png
+
+        \ingroup protocolbundle_default
+     */
+    struct NDPRedirectMessageType
+        : public PacketTypeBase,
+          public PacketTypeMixin<NDPRedirectMessageType>
+    {
+        typedef PacketTypeMixin<NDPRedirectMessageType> mixin;
+        typedef ConcretePacket<NDPRedirectMessageType> packet;
+        typedef NDPRedirectParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+
+        static void dump(packet p, std::ostream & os);
+    };
+    typedef ConcretePacket<NDPRedirectMessageType> NDPRedirectMessage;
 }
 
 #endif

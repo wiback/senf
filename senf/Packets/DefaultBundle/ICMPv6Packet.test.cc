@@ -27,6 +27,7 @@
 #include <sstream>
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
+#include "NDPOptions.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -157,6 +158,106 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
 
     SENF_CHECK_NO_THROW( pErrParamProblem.dump( oss));
     
+    unsigned char dataRouterSolicitation[] = {
+        0x85, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x05, 0x01, 0x00, 0x00,
+        0x12, 0x34, 0x56, 0x78
+    };
+
+    senf::ICMPv6Packet pRouterSolicitation ( senf::ICMPv6Packet::create(dataRouterSolicitation) );
+    BOOST_CHECK_EQUAL( pRouterSolicitation->type(),     0x85   );
+    BOOST_CHECK_EQUAL( pRouterSolicitation->code(),     0x00   );
+    BOOST_CHECK_EQUAL( pRouterSolicitation->checksum(), 0x0000 );
+    BOOST_CHECK( pRouterSolicitation.next() );
+    BOOST_CHECK( pRouterSolicitation.next().is<senf::NDPRouterSolicitationMessage>() );
+    BOOST_CHECK_EQUAL( pRouterSolicitation.next().size(), 12u );
+
+    senf::NDPRouterSolicitationMessage pOption(pRouterSolicitation.next().as<senf::NDPRouterSolicitationMessage>());
+    senf::NDPRouterSolicitationMessage::Parser::options_t::container optC(pOption->options() );
+    senf::NDPRouterSolicitationMessage::Parser::options_t::container::iterator listIter (optC.begin());
+    BOOST_CHECK_EQUAL(listIter->type(),5u);
+    BOOST_CHECK_EQUAL(listIter->length(),1u);
+
+    SENF_CHECK_NO_THROW( pRouterSolicitation.dump( oss));
+
+    unsigned char dataRouterAdvertisement[] = {
+        0x86, 0x00, 0x00, 0x00,
+        0xFF, 0x00, 0x23, 0x28,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+    };
+
+    senf::ICMPv6Packet pRouterAdvertisement ( senf::ICMPv6Packet::create(dataRouterAdvertisement) );
+    BOOST_CHECK_EQUAL( pRouterAdvertisement->type(),     0x86   );
+    BOOST_CHECK_EQUAL( pRouterAdvertisement->code(),     0x00   );
+    BOOST_CHECK_EQUAL( pRouterAdvertisement->checksum(), 0x0000 );
+    BOOST_CHECK( pRouterAdvertisement.next() );
+    BOOST_CHECK( pRouterAdvertisement.next().is<senf::NDPRouterAdvertisementMessage>() );
+    BOOST_CHECK_EQUAL( pRouterAdvertisement.next().size(), 12u );
+
+    SENF_CHECK_NO_THROW( pRouterAdvertisement.dump( oss));
+
+    unsigned char dataNeighborSolicitation[] = {
+        0x87, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    };
+
+    senf::ICMPv6Packet pNeighborSolicitation ( senf::ICMPv6Packet::create(dataNeighborSolicitation) );
+    BOOST_CHECK_EQUAL( pNeighborSolicitation->type(),     0x87   );
+    BOOST_CHECK_EQUAL( pNeighborSolicitation->code(),     0x00   );
+    BOOST_CHECK_EQUAL( pNeighborSolicitation->checksum(), 0x0000 );
+    BOOST_CHECK( pNeighborSolicitation.next() );
+    BOOST_CHECK( pNeighborSolicitation.next().is<senf::NDPNeighborSolicitationMessage>() );
+    BOOST_CHECK_EQUAL( pNeighborSolicitation.next().size(), 20u );
+
+    SENF_CHECK_NO_THROW( pNeighborSolicitation.dump( oss));
+
+    unsigned char dataNeighborAdvertisement[] = {
+        0x88, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    };
+
+    senf::ICMPv6Packet pNeighborAdvertisement ( senf::ICMPv6Packet::create(dataNeighborAdvertisement) );
+    BOOST_CHECK_EQUAL( pNeighborAdvertisement->type(),     0x88   );
+    BOOST_CHECK_EQUAL( pNeighborAdvertisement->code(),     0x00   );
+    BOOST_CHECK_EQUAL( pNeighborAdvertisement->checksum(), 0x0000 );
+    BOOST_CHECK( pNeighborAdvertisement.next() );
+    BOOST_CHECK( pNeighborAdvertisement.next().is<senf::NDPNeighborAdvertisementMessage>() );
+    BOOST_CHECK_EQUAL( pNeighborAdvertisement.next().size(), 20u );
+
+    SENF_CHECK_NO_THROW( pNeighborAdvertisement.dump( oss));
+
+    unsigned char dataRedirect[] = {
+        0x89, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00
+    };
+
+    senf::ICMPv6Packet pRedirect ( senf::ICMPv6Packet::create(dataRedirect) );
+    BOOST_CHECK_EQUAL( pRedirect->type(),     0x89   );
+    BOOST_CHECK_EQUAL( pRedirect->code(),     0x00   );
+    BOOST_CHECK_EQUAL( pRedirect->checksum(), 0x0000 );
+    BOOST_CHECK( pRedirect.next() );
+    BOOST_CHECK( pRedirect.next().is<senf::NDPRedirectMessage>() );
+    BOOST_CHECK_EQUAL( pRedirect.next().size(), 36u );
+
+    SENF_CHECK_NO_THROW( pRedirect.dump( oss));
 }
 
 SENF_AUTO_UNIT_TEST(ICMPv6Packet_create)
