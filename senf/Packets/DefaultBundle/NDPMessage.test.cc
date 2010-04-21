@@ -1,4 +1,4 @@
-// $Id: ICMPv6Packet.test.cc 1550 2010-01-26 09:34:24Z tho $
+// $Id$
 //
 // Copyright (C) 2010
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ICMPv6Packet unit tests */
+    \brief NDPMessage unit tests */
 
 // Custom includes
 #include "ICMPv6Packet.hh"

@@ -32,6 +32,7 @@
 #include "ListOptionTypeParser.hh"
 #include "NDPOptions.hh"
 
+///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
     //#############################################################
@@ -657,6 +658,10 @@ namespace senf {
     typedef ConcretePacket<NDPRedirectMessageType> NDPRedirectMessage;
 }
 
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "ICMPv6TypePacket.cci"
+//#include "ICMPv6TypePacket.ct"
+//#include "ICMPv6TypePacket.cti"
 #endif
 
 

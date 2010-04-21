@@ -88,7 +88,7 @@ namespace senf {
         \related TypeIdValue
      */
     template <class Type>
-    TypeIdValue const typeidValue(Type const & ob);
+    TypeIdValue const typeIdValue(Type const & ob);
 
     /** 
         \related TypeIdValue

@@ -1,6 +1,6 @@
-// $Id: ICMPv6TypePacket.cc 1450 2009-09-28 09:39:01Z tho $
+// $Id$
 //
-// Copyright (C) 2008
+// Copyright (C) 2010
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Sauer <ssauer@berlios.de>
@@ -23,9 +23,6 @@
 // Definition of non-inline non-template functions
 
 // Custom includes
-#include <senf/Packets/Packets.hh>
-#include "ICMPv6Packet.hh"
-#include "ICMPv6TypePacket.hh"
 #include "NDPOptions.hh"
 
 #define prefix_

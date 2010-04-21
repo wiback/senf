@@ -94,13 +94,13 @@ namespace module {
 
     namespace detail { class MultiConnectorMixinAccess; }
 
-    /** \brief Multi connector management
+    /** \brief Multi-Connector management
 
         This mixin provides a module with support for a runtime configurable number of input or
         output connectors.
         \code
         class MyModule 
-            : public senf::ppi::module::Modulem,
+            : public senf::ppi::module::Module,
               public senf::ppi::module::MultiConnectorMixin<
                   MyModule, senf::ppi::connector::ActiveInput<> >
         {
@@ -129,7 +129,7 @@ namespace module {
             }
 
             friend class senf::ppi::module::MultiConnectorMixin<
-                MyModule, senf::ppi::connector::ActiveInput<> >
+                MyModule, senf::ppi::connector::ActiveInput<> >;
         }
         \endcode
 
@@ -202,7 +202,7 @@ namespace module {
         \par "Advanced note:" These additional arguments are always passed by const-reference. If
             you need to pass a non-const reference, declare the \c connectorSetup() argument as
             non-const reference and wrap the real argument using \c boost::ref() (The reason for
-            this is known as 'The forwarding problem'
+            this is known as 'The forwarding problem').
 
         \section senf_ppi_multiconnector_advanced Advanced usage: Managing your own container
 

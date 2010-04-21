@@ -1,4 +1,4 @@
-// $Id: ICMPv6TypePacket.hh 1449 2009-09-25 23:03:48Z g0dil $
+// $Id$
 //
 // Copyright (C) 2010
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
@@ -28,9 +28,11 @@
 // Custom includes
 #include <senf/Packets/Packets.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
-#include <senf/Packets/DefaultBundle/ListOptionTypeParser.hh>
+#include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 
+///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
+
     //#############################################################
     //ICMPv6 Neighbor Discovery (RFC 4861) Options
     //#############################################################
@@ -48,7 +50,7 @@ namespace senf {
 
     struct NDPSourceLLAddressTLVParser : public NDPOptionParser
     {
-#      include SENF_PARSER()
+#       include SENF_PARSER()
         SENF_PARSER_INHERIT  ( NDPOptionParser );
         SENF_PARSER_FIELD    ( source, MACAddressParser);
         SENF_PARSER_FINALIZE ( NDPSourceLLAddressTLVParser);
@@ -64,7 +66,7 @@ namespace senf {
 
     struct NDPTargetLLAddressTLVParser : public NDPOptionParser
     {
-#      include SENF_PARSER()
+#       include SENF_PARSER()
         SENF_PARSER_INHERIT  ( NDPOptionParser );
         SENF_PARSER_FIELD    ( target, MACAddressParser );
         SENF_PARSER_FINALIZE ( NDPTargetLLAddressTLVParser );
@@ -80,7 +82,7 @@ namespace senf {
 
     struct NDPPrefixInformationTLVParser : public NDPOptionParser
     {
-#      include SENF_PARSER()
+#       include SENF_PARSER()
         SENF_PARSER_INHERIT          ( NDPOptionParser );
         SENF_PARSER_FIELD            ( prefixLength, UInt8Parser );
         SENF_PARSER_BITFIELD         ( l, 1, bool );
@@ -105,7 +107,7 @@ namespace senf {
 
     struct NDPMTUTLVParser : public NDPOptionParser
     {
-#      include SENF_PARSER()
+#       include SENF_PARSER()
         SENF_PARSER_INHERIT          ( NDPOptionParser );
         SENF_PARSER_PRIVATE_BITFIELD ( reserved, 16, unsigned );
         SENF_PARSER_FIELD            ( mtu, UInt32Parser );
@@ -122,9 +124,13 @@ namespace senf {
     };
 }
 
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "NDPOptions.cci"
+//#include "NDPOptions.ct"
+//#include "NDPOptions.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

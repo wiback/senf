@@ -1,4 +1,4 @@
-// $Id: IPv6ExtOptionType.hh 869 2008-06-09 13:57:27Z pug $
+// $Id$
 //
 // Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)

@@ -1,4 +1,4 @@
-// $Id: ListOptionTypeParser.test.cc 1345 2009-08-26 15:40:55Z pug $
+// $Id$
 //
 // Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
