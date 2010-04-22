@@ -35,7 +35,9 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
-#include <execinfo.h>
+#ifdef SENF_DEBUG
+   #include <execinfo.h>
+#endif
 #include <sstream>
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
