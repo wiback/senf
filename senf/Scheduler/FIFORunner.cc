@@ -257,7 +257,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     write(1, "): ", 3);
     write(1, runningName_.c_str(), runningName_.size());
     write(1, " at\n ", 3);
-
+#ifdef SENF_DEBUG
     unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
     for (unsigned i (0); i < nEntries; ++i) {
         write(1, " 0x", 3);
@@ -267,6 +267,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
             write(1, &(hex[ (v     ) & 0x0f ]), 1);
         }
     }
+#endif
     write(1, "\n", 1);
         
 #ifdef SENF_DEBUG

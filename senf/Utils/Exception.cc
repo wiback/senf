@@ -27,7 +27,9 @@
 //#include "Exception.ih"
 
 // Custom includes
-#include <execinfo.h>
+#ifdef SENF_DEBUG
+   #include <execinfo.h>
+#endif
 #include <sstream>
 #include <senf/config.hh>
 #include "Backtrace.hh"
