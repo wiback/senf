@@ -33,7 +33,9 @@
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/senfassert.hh>
 #include <senf/Utils/ScopeExit.hh>
-#include <execinfo.h>
+#ifdef SENF_DEBUG
+	#include <execinfo.h>
+#endif
 #include <senf/config.hh>
 #include <stdint.h>
 #include <stdio.h>
