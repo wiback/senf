@@ -71,7 +71,7 @@ SENF_AUTO_UNIT_TEST(macAddress)
         str >> mac;
         BOOST_CHECK( ! str.fail() );
     }
-    
+
     BOOST_CHECK_EQUAL(mac, MACAddress::from_string(test));
     BOOST_CHECK( ! mac.local() );
     BOOST_CHECK( mac.multicast() );
@@ -107,12 +107,15 @@ SENF_AUTO_UNIT_TEST(macAddress)
                        AddressSyntaxException );
 
     BOOST_CHECK_EQUAL( MACAddress(0x1a2b3c4d5e6fULL).uint64(), 0x1a2b3c4d5e6fULL);
+
+    BOOST_CHECK_EQUAL( mac, senf::EUI64::from_mac(mac) );
+    BOOST_CHECK_EQUAL( senf::EUI64::from_mac(mac), mac );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

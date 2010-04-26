@@ -137,6 +137,9 @@ namespace senf {
      */
     std::istream & operator>>(std::istream & os, MACAddress & mac);
 
+    bool operator==(MACAddress const & mac, EUI64 const & eui64);
+    bool operator==(EUI64 const & eui64, MACAddress const & mac);
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

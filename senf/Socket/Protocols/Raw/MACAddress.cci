@@ -26,6 +26,7 @@
 // Custom includes
 #include <algorithm>
 #include <boost/lambda/lambda.hpp>
+#include "EUI64.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -80,18 +81,18 @@ prefix_ bool senf::MACAddress::boolean_test()
 prefix_ boost::uint32_t senf::MACAddress::oui()
     const
 {
-    return 
-        (boost::uint32_t((*this)[0])<<16) | 
-        (boost::uint32_t((*this)[1])<<8) | 
+    return
+        (boost::uint32_t((*this)[0])<<16) |
+        (boost::uint32_t((*this)[1])<<8) |
         (*this)[2];
 }
 
 prefix_ boost::uint32_t senf::MACAddress::nic()
     const
 {
-    return 
-        (boost::uint32_t((*this)[3])<<16) | 
-        (boost::uint32_t((*this)[4])<<8) | 
+    return
+        (boost::uint32_t((*this)[3])<<16) |
+        (boost::uint32_t((*this)[4])<<8) |
         (*this)[5];
 }
 
@@ -99,12 +100,12 @@ prefix_ boost::uint64_t senf::MACAddress::eui64()
     const
 {
     return
-        (boost::uint64_t( (*this)[0] ) << 56) | 
-        (boost::uint64_t( (*this)[1] ) << 48) | 
-        (boost::uint64_t( (*this)[2] ) << 40) | 
+        (boost::uint64_t( (*this)[0] ) << 56) |
+        (boost::uint64_t( (*this)[1] ) << 48) |
+        (boost::uint64_t( (*this)[2] ) << 40) |
         (boost::uint64_t( 0xfffe     ) << 24) |
-        (boost::uint64_t( (*this)[3] ) << 16) | 
-        (boost::uint64_t( (*this)[4] ) <<  8) | 
+        (boost::uint64_t( (*this)[3] ) << 16) |
+        (boost::uint64_t( (*this)[4] ) <<  8) |
         (boost::uint64_t( (*this)[5] )      );
 }
 
@@ -112,18 +113,34 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
     const
 {
     return
-        (boost::uint64_t( (*this)[0] ) << 40) | 
-        (boost::uint64_t( (*this)[1] ) << 32) | 
-        (boost::uint64_t( (*this)[2] ) << 24) | 
-        (boost::uint64_t( (*this)[3] ) << 16) | 
-        (boost::uint64_t( (*this)[4] ) <<  8) | 
+        (boost::uint64_t( (*this)[0] ) << 40) |
+        (boost::uint64_t( (*this)[1] ) << 32) |
+        (boost::uint64_t( (*this)[2] ) << 24) |
+        (boost::uint64_t( (*this)[3] ) << 16) |
+        (boost::uint64_t( (*this)[4] ) <<  8) |
         (boost::uint64_t( (*this)[5] )      );
+}
+
+prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
+{
+    return eui64.isMACCompatible()
+        && eui64[0] == mac[0]
+        && eui64[1] == mac[1]
+        && eui64[2] == mac[2]
+        && eui64[5] == mac[3]
+        && eui64[6] == mac[4]
+        && eui64[7] == mac[5];
+}
+
+prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
+{
+    return mac==eui64;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
