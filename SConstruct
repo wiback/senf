@@ -154,24 +154,24 @@ Export('env')
 ###########################################################################
 # Configure
 
-# Default configuration (boost stuff)
-senfutil.Configure(env)
-
 @senfconf.Test
 def CheckValgrind(context):
     context.Message( "Checking for valgrind... " )
-    ret = context.TryAction(['valgrind --version >$TARGET'])
+    ret = context.TryAction(['$VALGRIND --version >$TARGET'])
     context.Result( ret[1].strip() or False )
     return ret[0]
 
 @senfconf.Test
 def CheckValgrindWildcards(context):
     context.Message( "Checking whether valgrind supports '...' wildcards in suppressions... " )
-    ret = context.TryAction(['valgrind --suppressions=$SOURCE /bin/true'],
+    ret = context.TryAction(['$VALGRIND --suppressions=$SOURCE /bin/true'],
                             "{\n test_suppression\n Memcheck:Addr4\n ...\n fun:foo\n}\n",
                             ".sup")
     context.Result( ret[0] )
     return ret[0]
+
+# Default configuration (boost stuff)
+senfutil.Configure(env)
 
 conf = env.Configure(clean=False, help=False, custom_tests = senfconf.Tests())
 env.Replace(
