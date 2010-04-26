@@ -63,7 +63,8 @@ env.Append(
                               'HOME' : os.environ.get('HOME'),
                               'SSH_AGENT_PID': os.environ.get('SSH_AGENT_PID'),
                               'SSH_AUTH_SOCK': os.environ.get('SSH_AUTH_SOCK') },
-   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
+   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*',
+                              '.sconf_temp' ],
 
    BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
    CPPPATH                = [ '#', '$BUILDDIR',
