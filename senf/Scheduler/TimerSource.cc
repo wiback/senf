@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -52,7 +52,7 @@ prefix_ senf::scheduler::detail::POSIXTimerSource::POSIXTimerSource()
         SENF_THROW_SYSTEM_EXCEPTION("pipe()");
     senf::scheduler::detail::FdManager::instance().set(
         timerPipe_[0], detail::FdManager::EV_READ, this);
-    
+
     sigemptyset(&sigSet_);
     sigaddset(&sigSet_, SIGALRM);
     sigprocmask(SIG_BLOCK, &sigSet_, 0);
@@ -126,14 +126,17 @@ prefix_ void senf::scheduler::detail::POSIXTimerSource::sigHandler(int,
     if (siginfo->si_value.sival_ptr == 0)
         return;
     static char data = '\xD0';
-    write(static_cast<POSIXTimerSource*>(siginfo->si_value.sival_ptr)->timerPipe_[1], 
-          &data, sizeof(data));
+    // If the write fails there's not much we can do anyways ...
+    (void) write(static_cast<POSIXTimerSource*>(siginfo->si_value.sival_ptr)->timerPipe_[1],
+                 &data, sizeof(data));
 }
 
 prefix_ void senf::scheduler::detail::POSIXTimerSource::signal(int events)
 {
     char data;
-    read(timerPipe_[0], &data, sizeof(data));
+    // This should never fail since we are reading a single character from a signaled
+    // filedescriptor
+    (void) read(timerPipe_[0], &data, sizeof(data));
     timeoutEnabled_ = false;
 }
 
@@ -249,7 +252,8 @@ prefix_ bool senf::scheduler::detail::TimerFDTimerSource::haveTimerFD()
 prefix_ void senf::scheduler::detail::TimerFDTimerSource::signal(int events)
 {
     uint64_t expirations (0);
-    read(timerfd_, &expirations, sizeof(expirations));
+    // We ignore the return value since we ignore the value read anyways
+    (void) read(timerfd_, &expirations, sizeof(expirations));
 }
 
 prefix_ void senf::scheduler::detail::TimerFDTimerSource::reschedule()
@@ -270,7 +274,7 @@ prefix_ void senf::scheduler::detail::TimerFDTimerSource::reschedule()
 #undef prefix_
 //#include "TimerSource.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

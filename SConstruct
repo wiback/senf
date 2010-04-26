@@ -97,7 +97,7 @@ env.Append(
    INLINE_OPTS_NORMAL     = [ '-finline-limit=5000' ],
    INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
    CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
-                              '-pipe', '$CXXFLAGS_' ],
+                              '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing' ],
    CXXFLAGS_              = senfutil.BuildTypeOptions('CXXFLAGS'),
    CXXFLAGS_final         = [ '-O3' ],
    CXXFLAGS_normal        = [ '-O2', '-g' ],

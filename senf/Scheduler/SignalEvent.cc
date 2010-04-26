@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -59,7 +59,7 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::add(SignalEvent & event)
 {
     SignalSet::iterator i (handlers_.find(event));
     if (i != handlers_.end())
-        throw DuplicateSignalRegistrationException() 
+        throw DuplicateSignalRegistrationException()
             << " for signal " << signalName(event.signal_) << " (" << event.signal_ << ")";
 
     handlers_.insert(event);
@@ -114,9 +114,9 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::sigHandler(int signal, :
 {
     SENF_ASSERT( alive() );
     // The manpage says, si_signo is unused in linux so we set it here
-    siginfo->si_signo = signal; 
+    siginfo->si_signo = signal;
     // We can't do much on error anyway so we ignore errors here
-    write(instance().sigPipe_[1], siginfo, sizeof(*siginfo));
+    (void) write(instance().sigPipe_[1], siginfo, sizeof(*siginfo));
 }
 
 prefix_ void senf::scheduler::SignalEvent::v_run()
@@ -140,7 +140,7 @@ prefix_ std::string senf::scheduler::SignalEvent::v_info()
 #undef prefix_
 //#include "SignalEvent.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

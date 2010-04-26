@@ -79,7 +79,7 @@ def SetupForSENF(env, senf_path = []):
     env.Append(
         LIBS              = [ 'rt' ],
         
-        CXXFLAGS          = [ '-Wno-long-long', '$CXXFLAGS_' ],
+        CXXFLAGS          = [ '-Wno-long-long', '$CXXFLAGS_', '-fno-strict-aliasing' ],
         CXXFLAGS_         = BuildTypeOptions('CXXFLAGS'),
         
         CPPDEFINES        = [ '$expandLogOption', '$CPPDEFINES_' ],

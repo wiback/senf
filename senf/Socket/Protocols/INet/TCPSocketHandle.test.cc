@@ -69,7 +69,7 @@ namespace {
             int n = read(sock,buffer,1024);
             if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
                 break;
-            write(sock,buffer,n);
+            (void) write(sock,buffer,n);
         }
 
         if (shutdown(sock, SHUT_RDWR) < 0) fail("server_v4","shutdown()");
@@ -99,7 +99,7 @@ namespace {
             int n = read(sock,buffer,1024);
             if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
                 break;
-            write(sock,buffer,n);
+            (void) write(sock,buffer,n);
         }
 
         if (shutdown(sock, SHUT_RDWR) < 0) fail("server_v6","shutdown()");
@@ -260,7 +260,7 @@ namespace {
             int n = read(sock,buffer,1024);
             if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
                 break;
-            write(sock,buffer,n);
+            (void) write(sock,buffer,n);
         }
 
         if (shutdown(sock, SHUT_RDWR) < 0) fail("client_v4","shutdown()");
@@ -284,7 +284,7 @@ namespace {
             int n = read(sock,buffer,1024);
             if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
                 break;
-            write(sock,buffer,n);
+            (void) write(sock,buffer,n);
         }
 
         if (shutdown(sock, SHUT_RDWR) < 0) fail("client_v6","shutdown()");

@@ -46,13 +46,13 @@ prefix_ senf::INet4Address senf::INet4Address::from_inaddr(inaddr_type v)
 
 prefix_ senf::INet4Address::inaddr_type & senf::INet4Address::iref()
 {
-    return *reinterpret_cast<inaddr_type *>(&(*this)[0]);
+    return *static_cast<inaddr_type *>(static_cast<void *>((&(*this)[0])));
 }
 
 prefix_ senf::INet4Address::inaddr_type senf::INet4Address::iref()
     const
 {
-    return *reinterpret_cast<inaddr_type const *>(&(*this)[0]);
+    return *static_cast<inaddr_type const *>(static_cast<void const *>(&(*this)[0]));
 }
 
 prefix_ senf::INet4Address::inaddr_type senf::INet4Address::inaddr()

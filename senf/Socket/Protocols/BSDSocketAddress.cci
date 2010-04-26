@@ -187,12 +187,12 @@ senf::GenericBSDSocketAddress::operator=(const GenericBSDSocketAddress& other)
 prefix_ struct sockaddr const * senf::GenericBSDSocketAddress::sockaddr_p()
     const
 {
-    return reinterpret_cast<struct sockaddr const *>(& addr_);
+    return static_cast<struct sockaddr const *>(static_cast<void const *>(& addr_));
 }
 
 prefix_ struct sockaddr * senf::GenericBSDSocketAddress::sockaddr_p()
 {
-    return reinterpret_cast<struct sockaddr *>(& addr_);
+    return static_cast<struct sockaddr *>(static_cast<void *>(& addr_));
 }
 
 /////////////////////////////cci.e///////////////////////////////////////

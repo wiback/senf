@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,7 +45,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
-    : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000), 
+    : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000),
       watchdogAbort_ (false), watchdogCount_(0), hangCount_ (0), yield_ (false)
 {
     struct sigevent ev;
@@ -89,7 +89,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::startWatchdog()
         timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
         timer.it_value.tv_sec = timer.it_interval.tv_sec;
         timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
-        
+
         if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
             SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
 
@@ -153,12 +153,12 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
 
         f = l; ++f;
         l = TaskList::current(normalPriorityEnd_);
-        run(f, l); 
+        run(f, l);
         if (yield_) {
             yield_ = false;
             continue;
         }
-       
+
         f = l; ++f;
         l = tasks_.end();
         run(f, l);
@@ -193,10 +193,10 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
 
     using namespace boost::lambda;
     ScopeExit atExit ((
-                          var(watchdogCount_) = 0, 
+                          var(watchdogCount_) = 0,
                           var(next_) = l
                      ));
-    
+
     while (next_ != end) {
         TaskInfo & task (*next_);
         if (task.runnable_) {
@@ -223,11 +223,11 @@ prefix_ senf::scheduler::detail::FIFORunner::TaskList::iterator
 senf::scheduler::detail::FIFORunner::priorityEnd(TaskInfo::Priority p)
 {
     switch (p) {
-    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_LOW : 
+    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_LOW :
         return tasks_.end();
-    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_NORMAL : 
+    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_NORMAL :
         return TaskList::current(normalPriorityEnd_);
-    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_HIGH : 
+    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_HIGH :
         return TaskList::current(highPriorityEnd_);
     }
     return tasks_.begin();
@@ -250,33 +250,34 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                                 'a', 'b', 'c', 'd', 'e', 'f' };
     static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
-    
-    write(1, "\n\n*** Scheduler task hanging (pid ",34);
+
+    // We don't care if the write commands below fail, we just give our best to inform the user
+    (void) write(1, "\n\n*** Scheduler task hanging (pid ",34);
     static char pid[7];
     ::snprintf(pid, 7, "%6d", ::getpid());
     pid[6] = 0;
-    write(1, pid, 6);
-    write(1, "): ", 3);
-    write(1, runningName_.c_str(), runningName_.size());
-    write(1, " at\n ", 3);
+    (void) write(1, pid, 6);
+    (void) write(1, "): ", 3);
+    (void) write(1, runningName_.c_str(), runningName_.size());
+    (void) write(1, " at\n ", 3);
 #ifdef SENF_DEBUG
     unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
     for (unsigned i (0); i < nEntries; ++i) {
         write(1, " 0x", 3);
         for (unsigned j (sizeof(void*)); j > 0; --j) {
             uintptr_t v ( reinterpret_cast<uintptr_t>(entries[i]) >> (8*(j-1)) );
-            write(1, &(hex[ (v >> 4) & 0x0f ]), 1);
-            write(1, &(hex[ (v     ) & 0x0f ]), 1);
+            (void) write(1, &(hex[ (v >> 4) & 0x0f ]), 1);
+            (void) write(1, &(hex[ (v     ) & 0x0f ]), 1);
         }
     }
 #endif
-    write(1, "\n", 1);
-        
+    (void) write(1, "\n", 1);
+
 #ifdef SENF_DEBUG
-    write(1, "Task was initialized at\n", 24);
-    write(1, runningBacktrace_.c_str(), runningBacktrace_.size());
+    (void) write(1, "Task was initialized at\n", 24);
+    (void) write(1, runningBacktrace_.c_str(), runningBacktrace_.size());
 #endif
-    write(1, "\n", 1);
+    (void) write(1, "\n", 1);
     if (watchdogAbort_)
         assert(false);
 }
@@ -285,7 +286,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
 #undef prefix_
 //#include "FIFORunner.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
