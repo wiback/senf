@@ -193,7 +193,7 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
                 .arg( "text", default_value = "" ) )
             );
 
-        (void) cbNode;
+        senf::IGNORE( cbNode );
 
         SENF_CHECK_NO_THROW(
             parser.parse("test/cb 111 222.4",

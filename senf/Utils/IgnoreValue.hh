@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2010 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,35 +21,36 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Buffer unit tests */
+    \brief IgnoreValue public header */
 
-//#include "Buffer.test.hh"
-//#include "Buffer.test.ih"
+#ifndef HH_SENF_senf_Utils_IgnoreValue_
+#define HH_SENF_senf_Utils_IgnoreValue_ 1
 
 // Custom includes
-#include "Buffer.hh"
-#include "IgnoreValue.hh"
 
-#include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
-#include "senf/Utils/IgnoreValue.hh"
+//#include "IgnoreValue.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+namespace senf {
 
-SENF_AUTO_UNIT_TEST(buffer)
-{
-    int size (128);
+    /** \brief Explicitly ignore a value
 
-    // Just check for compile errors, the rest can't be checked
-    SENF_SCOPED_BUFFER(char, buf, size);
-    senf::IGNORE( buf );
+        To explicitly ingore a value (e.g. the return value of a function), pass that value to
+        senf::IGNORE(). This has the added benefit of silencing \em any warnings about ignored
+        values by g++.
+     */
+    template <class T>
+    void IGNORE(T const &);
+    template <class T>
+    void IGNORE(T const *);
 
-    BOOST_CHECK( true );
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "IgnoreValue.cci"
+//#include "IgnoreValue.ct"
+#include "IgnoreValue.cti"
+#endif
 
 
 // Local Variables:

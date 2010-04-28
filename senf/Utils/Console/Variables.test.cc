@@ -89,7 +89,7 @@ SENF_AUTO_UNIT_TEST(variables)
         .typeName("number")
     ));
 
-    (void) refvar;
+    senf::IGNORE( refvar );
 
     dir.add("crefvar", fty::Variable(boost::cref(var))
         .doc("Current blorg limit")

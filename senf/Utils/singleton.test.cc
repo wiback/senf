@@ -29,6 +29,7 @@
 // Custom includes
 #include <iostream>
 #include "singleton.hh"
+#include "IgnoreValue.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -118,8 +119,8 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(singletonAlive)
 {
-    (void) AliveTest1::instance();
-    (void) AliveTest2::instance();
+    senf::IGNORE( AliveTest1::instance() );
+    senf::IGNORE( AliveTest2::instance() );
 
     BOOST_CHECK( (test1Alive && !test2Alive) || (!test1Alive && test2Alive) );
     BOOST_CHECK( AliveTest1::alive() );

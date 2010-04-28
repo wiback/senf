@@ -36,7 +36,7 @@
 int main(int argc, char const ** argv)
 {
     // Link in logger library ...
-    (void) senf::log::StreamRegistry::instance();
+    senf::IGNORE( senf::log::StreamRegistry::instance() );
     for (int i (1); i<argc; ++i) {
         senf::detail::PacketRegistryImplBase::clear();
         void *handle = dlopen(argv[i], RTLD_NOW | RTLD_GLOBAL);

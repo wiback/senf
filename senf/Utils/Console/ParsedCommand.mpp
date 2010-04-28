@@ -40,6 +40,7 @@
 #include <boost/bind.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/at.hpp>
+#include "senf/Utils/IgnoreValue.hh"
 
 // ///////////////////////////mpp.p////////////////////////////////////////
 #elif BOOST_PP_IS_ITERATING // ////////////////////////////////////////////
@@ -260,7 +261,7 @@ v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
     if ( nArgs > BOOST_PP_ITERATION() )
         throw SyntaxErrorException("invalid number of arguments");
     int nDefaults ( BOOST_PP_ITERATION() - nArgs );
-    (void) nDefaults;
+    senf::IGNORE( nDefaults );
 
     typedef typename boost::range_reverse_iterator<const ParseCommandInfo::ArgumentsRange>::type
         riterator;
@@ -302,7 +303,7 @@ v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
     if ( nArgs > BOOST_PP_ITERATION() )
         throw SyntaxErrorException("invalid number of arguments");
     int nDefaults ( BOOST_PP_ITERATION() - nArgs );
-    (void) nDefaults;
+    senf::IGNORE( nDefaults );
 
     typedef typename boost::range_reverse_iterator<const ParseCommandInfo::ArgumentsRange>::type
         riterator;

@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "TypeIdValue.hh"
+#include "IgnoreValue.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -38,7 +39,7 @@
 SENF_AUTO_UNIT_TEST(typeIdValue)
 {
     // We don't care for the ordering, just that the following compiles
-    (void) ( senf::typeIdValue<int>() < senf::typeIdValue<float>() );
+    senf::IGNORE( senf::typeIdValue<int>() < senf::typeIdValue<float>() );
     BOOST_CHECK ( senf::typeIdValue<int>() != senf::typeIdValue<float>() );
     BOOST_CHECK ( senf::typeIdValue<int>() == senf::typeIdValue<int>() );
 }

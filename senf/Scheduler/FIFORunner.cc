@@ -39,6 +39,7 @@
 #include <senf/config.hh>
 #include <stdint.h>
 #include <stdio.h>
+#include "senf/Utils/IgnoreValue.hh"
 
 //#include "FIFORunner.mpp"
 #define prefix_
@@ -252,32 +253,32 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
 
     // We don't care if the write commands below fail, we just give our best to inform the user
-    (void) write(1, "\n\n*** Scheduler task hanging (pid ",34);
+    senf::IGNORE( write(1, "\n\n*** Scheduler task hanging (pid ",34) );
     static char pid[7];
     ::snprintf(pid, 7, "%6d", ::getpid());
     pid[6] = 0;
-    (void) write(1, pid, 6);
-    (void) write(1, "): ", 3);
-    (void) write(1, runningName_.c_str(), runningName_.size());
-    (void) write(1, " at\n ", 3);
+    senf::IGNORE( write(1, pid, 6) );
+    senf::IGNORE( write(1, "): ", 3) );
+    senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
+    senf::IGNORE( write(1, " at\n ", 3) );
 #ifdef SENF_DEBUG
     unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
     for (unsigned i (0); i < nEntries; ++i) {
-        write(1, " 0x", 3);
+        senf::IGNORE( write(1, " 0x", 3) );
         for (unsigned j (sizeof(void*)); j > 0; --j) {
             uintptr_t v ( reinterpret_cast<uintptr_t>(entries[i]) >> (8*(j-1)) );
-            (void) write(1, &(hex[ (v >> 4) & 0x0f ]), 1);
-            (void) write(1, &(hex[ (v     ) & 0x0f ]), 1);
+            senf::IGNORE( write(1, &(hex[ (v >> 4) & 0x0f ]), 1) );
+            senf::IGNORE( write(1, &(hex[ (v     ) & 0x0f ]), 1) );
         }
     }
 #endif
-    (void) write(1, "\n", 1);
+    senf::IGNORE( write(1, "\n", 1) );
 
 #ifdef SENF_DEBUG
-    (void) write(1, "Task was initialized at\n", 24);
-    (void) write(1, runningBacktrace_.c_str(), runningBacktrace_.size());
+    senf::IGNORE( write(1, "Task was initialized at\n", 24) );
+    senf::IGNORE( write(1, runningBacktrace_.c_str(), runningBacktrace_.size()) );
 #endif
-    (void) write(1, "\n", 1);
+    senf::IGNORE( write(1, "\n", 1) );
     if (watchdogAbort_)
         assert(false);
 }

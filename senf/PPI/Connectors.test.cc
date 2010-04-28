@@ -301,8 +301,8 @@ namespace {
         }
 
         void request() {
-            (void) input();
-            (void) input.read();
+            senf::IGNORE( input() );
+            senf::IGNORE( input.read() );
         }
     };
 
@@ -384,7 +384,7 @@ SENF_AUTO_UNIT_TEST(tyepdOutput)
     ppi::connect(source,target);
     ppi::init();
     
-    (void) target.request();
+    senf::IGNORE( target.request() );
     
     BOOST_CHECK( true );
 }

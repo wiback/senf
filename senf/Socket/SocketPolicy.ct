@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <senf/Utils/Exception.hh>
+#include "senf/Utils/IgnoreValue.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -43,9 +44,9 @@ checkBaseOf(SocketPolicyBase const & other)
     // to the corresponding (static) policy of this class. Throws
     // std::bad_cast on failure
 
-#   define SP_CheckPolicy(x1,x2,SomePolicy)                                                       \
-        (void) dynamic_cast<BOOST_PP_CAT(SomePolicy,_) const &>(                                  \
-            other.BOOST_PP_CAT(the,SomePolicy)());
+#   define SP_CheckPolicy(x1,x2,SomePolicy)                             \
+        senf::IGNORE( dynamic_cast<BOOST_PP_CAT(SomePolicy,_) const &>( \
+                          other.BOOST_PP_CAT(the,SomePolicy)()) );
 
     try {
         BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SENF_SOCKET_POLICIES )

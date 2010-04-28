@@ -35,6 +35,7 @@
 #include <senf/Utils/senfassert.hh>
 #include <senf/Utils/Range.hh>
 #include "Server.hh"
+#include "senf/Utils/IgnoreValue.hh"
 
 //#include "Executor.mpp"
 #define prefix_
@@ -68,7 +69,7 @@ prefix_ std::string senf::console::Executor::cwdPath()
 {
     if (skipping())
         return "";
-    (void) cwd(); // ensure, cwd is live.
+    senf::IGNORE( cwd() ); // ensure, cwd is live.
     return "/" + senf::stringJoin(
         senf::make_transform_range(
             boost::make_iterator_range(boost::next(cwd_.begin()), cwd_.end()),
@@ -82,7 +83,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
     SENF_LOG(( "Executing: " << command ));
 
     if (! skipping())
-        (void) cwd(); // Prune the cwd path of expired entries
+        senf::IGNORE( cwd() ); // Prune the cwd path of expired entries
 
     try {
         switch(command.builtin()) {
@@ -231,7 +232,7 @@ prefix_ void senf::console::Executor::cd(ParseCommandInfo::TokensRange dir)
 {
     if (dir.size() == 1 && *dir.begin() == WordToken("-")) {
         cwd_.swap(oldCwd_);
-        (void) cwd(); // Prune any expired items
+        senf::IGNORE( cwd() ); // Prune any expired items
     }
     else {
         // We need to use a temporary so an error somewhere while traversing the dir does not cause

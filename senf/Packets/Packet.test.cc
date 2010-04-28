@@ -326,7 +326,7 @@ COMPILE_FAIL(invalidAnnotation)
 #   ifdef BOOST_HAS_TYPE_TRAITS_INTRINSICS
 
     senf::Packet packet (FooPacket::create());
-    (void) packet.annotation<InvalidAnnotation>();
+    senf::IGNORE( packet.annotation<InvalidAnnotation>() );
 
 #   else
 #   endif

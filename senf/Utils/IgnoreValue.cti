@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2010 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,34 +21,24 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Buffer unit tests */
+    \brief IgnoreValue inline template implementation */
 
-//#include "Buffer.test.hh"
-//#include "Buffer.test.ih"
+//#include "IgnoreValue.ih"
 
 // Custom includes
-#include "Buffer.hh"
-#include "IgnoreValue.hh"
 
-#include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
-#include "senf/Utils/IgnoreValue.hh"
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+template <class T>
+prefix_ void senf::IGNORE(T const &)
+{}
 
-SENF_AUTO_UNIT_TEST(buffer)
-{
-    int size (128);
+template <class T>
+prefix_ void senf::IGNORE(T const *)
+{}
 
-    // Just check for compile errors, the rest can't be checked
-    SENF_SCOPED_BUFFER(char, buf, size);
-    senf::IGNORE( buf );
-
-    BOOST_CHECK( true );
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

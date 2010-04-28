@@ -40,7 +40,7 @@ prefix_ senf::ppi::module::DiscardSink::DiscardSink()
 
 prefix_ void senf::ppi::module::DiscardSink::request()
 {
-    (void) input();
+    senf::IGNORE( input() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

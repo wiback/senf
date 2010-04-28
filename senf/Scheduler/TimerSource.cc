@@ -31,6 +31,7 @@
 #ifdef HAVE_TIMERFD
 #include <sys/timerfd.h>
 #endif
+#include "senf/Utils/IgnoreValue.hh"
 
 //#include "TimerSource.mpp"
 #define prefix_
@@ -127,8 +128,8 @@ prefix_ void senf::scheduler::detail::POSIXTimerSource::sigHandler(int,
         return;
     static char data = '\xD0';
     // If the write fails there's not much we can do anyways ...
-    (void) write(static_cast<POSIXTimerSource*>(siginfo->si_value.sival_ptr)->timerPipe_[1],
-                 &data, sizeof(data));
+    senf::IGNORE( write(static_cast<POSIXTimerSource*>(siginfo->si_value.sival_ptr)->timerPipe_[1],
+                        &data, sizeof(data)) );
 }
 
 prefix_ void senf::scheduler::detail::POSIXTimerSource::signal(int events)
@@ -136,7 +137,7 @@ prefix_ void senf::scheduler::detail::POSIXTimerSource::signal(int events)
     char data;
     // This should never fail since we are reading a single character from a signaled
     // filedescriptor
-    (void) read(timerPipe_[0], &data, sizeof(data));
+    senf::IGNORE( read(timerPipe_[0], &data, sizeof(data)) );
     timeoutEnabled_ = false;
 }
 
@@ -253,7 +254,7 @@ prefix_ void senf::scheduler::detail::TimerFDTimerSource::signal(int events)
 {
     uint64_t expirations (0);
     // We ignore the return value since we ignore the value read anyways
-    (void) read(timerfd_, &expirations, sizeof(expirations));
+    senf::IGNORE( read(timerfd_, &expirations, sizeof(expirations)) );
 }
 
 prefix_ void senf::scheduler::detail::TimerFDTimerSource::reschedule()

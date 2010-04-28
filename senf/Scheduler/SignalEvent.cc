@@ -29,6 +29,7 @@
 // Custom includes
 #include <senf/Utils/senfassert.hh>
 #include <senf/Utils/signalnames.hh>
+#include "senf/Utils/IgnoreValue.hh"
 
 //#include "SignalEvent.mpp"
 #define prefix_
@@ -116,7 +117,7 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::sigHandler(int signal, :
     // The manpage says, si_signo is unused in linux so we set it here
     siginfo->si_signo = signal;
     // We can't do much on error anyway so we ignore errors here
-    (void) write(instance().sigPipe_[1], siginfo, sizeof(*siginfo));
+    senf::IGNORE( write(instance().sigPipe_[1], siginfo, sizeof(*siginfo)) );
 }
 
 prefix_ void senf::scheduler::SignalEvent::v_run()
