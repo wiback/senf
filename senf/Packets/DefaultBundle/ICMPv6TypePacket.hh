@@ -439,7 +439,7 @@ namespace senf {
     struct NDPRouterSolicitationParser : public PacketParserBase
     {
 #      include SENF_PARSER()
-        SENF_PARSER_FIELD    ( reserved, UInt32Parser );// set to zero by default
+        SENF_PARSER_BITFIELD ( reserved, 32, unsigned );// set to zero by default
         SENF_PARSER_LIST     ( options, packetSize(), senf::NDPGenericOptionParser );
         SENF_PARSER_FINALIZE ( NDPRouterSolicitationParser );
 

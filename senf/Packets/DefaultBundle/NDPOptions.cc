@@ -37,34 +37,34 @@ namespace {
 
 prefix_ void senf::NDPSourceLLAddressTLVParser::dump(std::ostream & os) const
 {
-    os << senf::fieldName("    Source Link-layer Address") << "\n";
-    os << senf::fieldName("      Link-layer Address")      << source() << "\n";
+    os << "Source Link-layer Address Option:" << "\n";
+    os << senf::fieldName("Link-layer Address") << source() << "\n";
 }
 
 prefix_ void senf::NDPTargetLLAddressTLVParser::dump(std::ostream & os) const
 {
-    os << senf::fieldName("    Target Link-layer Address") << "\n";
-    os << senf::fieldName("      Link-layer Address")      << target() << "\n";
+    os << "Target Link-layer Address Option:" << "\n";
+    os << senf::fieldName("Link-layer Address") << target() << "\n";
 }
 
 prefix_ void senf::NDPPrefixInformationTLVParser::dump(std::ostream & os) const
 {
-    os << senf::fieldName("    Prefix Information") << "\n";
-    os << senf::fieldName("      Prefix Length")                         << unsigned(prefixLength()) << "\n";
-    os << senf::fieldName("      On-link Flag")                          << unsigned(l()) << "\n";
-    os << senf::fieldName("      Autonomous Address-configuration Flag") << unsigned(a()) << "\n";
-    os << senf::fieldName("      Reserved(6Bit)")                        << unsigned(reserved1()) << "\n";
-    os << senf::fieldName("      Valid Lifetime")                        << unsigned(validLifetime()) << "\n";
-    os << senf::fieldName("      Preferred Lifetime")                    << unsigned(preferredLifetime()) << "\n";
-    os << senf::fieldName("      Reserved(32Bit)")                       << unsigned(reserved2()) << "\n";
-    os << senf::fieldName("      Prefix")                                << prefix() << "\n";
+    os << "Prefix Information Option:" << "\n";
+    os << senf::fieldName("Prefix Length")                         << unsigned(prefixLength()) << "\n";
+    os << senf::fieldName("On-link Flag")                          << unsigned(l()) << "\n";
+    os << senf::fieldName("Autonomous Address-configuration Flag") << unsigned(a()) << "\n";
+    os << senf::fieldName("Reserved(6Bit)")                        << unsigned(reserved1()) << "\n";
+    os << senf::fieldName("Valid Lifetime")                        << unsigned(validLifetime()) << "\n";
+    os << senf::fieldName("Preferred Lifetime")                    << unsigned(preferredLifetime()) << "\n";
+    os << senf::fieldName("Reserved(32Bit)")                       << unsigned(reserved2()) << "\n";
+    os << senf::fieldName("Prefix")                                << prefix() << "\n";
 
 }
 
 prefix_ void senf::NDPMTUTLVParser::dump(std::ostream & os) const
 {
-    os << senf::fieldName("    MTU Information") << "\n";
-    os << senf::fieldName("      MTU")      << unsigned(mtu()) << "\n";
+    os << "MTU Information Option:" << "\n";
+    os << senf::fieldName("MTU") << unsigned(mtu()) << "\n";
 }
 
 

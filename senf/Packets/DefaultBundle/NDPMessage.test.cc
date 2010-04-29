@@ -34,45 +34,35 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 SENF_AUTO_UNIT_TEST(NDPMessage_create)
 {
-    senf::ICMPv6Packet icmp (senf::ICMPv6Packet::create());
-    icmp->code() = 0;
+    unsigned char data[] = {
+            0x60, 0x00, 0x00, 0x00, 0x00, 0x20, 0x3a, 0xff, //IPv6
+            0x20, 0x01, 0x08, 0x90, 0x06, 0x00, 0xff, 0xff,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x01,
+            0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x01, 0xff, 0x03, 0x00, 0x02,
+            0x87, 0x00, 0xaf, 0x30,                         //ICMPv6
+            0x00, 0x00, 0x00, 0x00, 0x20, 0x01, 0x08, 0x90, //Neighbor Solicitation
+            0x60, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x03, 0x00, 0x02,
+            0x01, 0x01, 0x00, 0x0d,                         //Source Option
+            0x88, 0x70, 0xe4, 0xc0,
+    };
 
-    senf::NDPNeighborAdvertisementMessage nadm (senf::NDPNeighborAdvertisementMessage::createAfter(icmp));
-    nadm->r() = true;
-    nadm->s() = true;
-    nadm->o() = false;
-    nadm->target() = senf::INet6Address::Loopback;
+    senf::IPv6Packet ip (senf::IPv6Packet::create(data));
+    senf::ICMPv6Packet icmp (ip.find<senf::ICMPv6Packet>());
 
-    senf::NDPNeighborAdvertisementMessage::Parser::options_t::container optC(nadm->options());
-    senf::NDPMTUTLVParser opt(
-            optC.push_back_space().init<senf::NDPMTUTLVParser> ());
-    senf::NDPTargetLLAddressTLVParser opt2(
-            optC.push_back_space().init<senf::NDPTargetLLAddressTLVParser> ());
-    opt.mtu() = 1234u;
-    opt2.target() = senf::MACAddress::Broadcast;
-
-    icmp.finalizeAll();
-
-    BOOST_CHECK_EQUAL(icmp->type(), 0x88 );
+    BOOST_CHECK_EQUAL(icmp->type(), 0x87 );
     BOOST_CHECK( icmp.next() );
-    BOOST_CHECK( icmp.next().is<senf::NDPNeighborAdvertisementMessage>() );
-    senf::NDPNeighborAdvertisementMessage rnadm (icmp.next().as<senf::NDPNeighborAdvertisementMessage>());
+    BOOST_CHECK( icmp.next().is<senf::NDPNeighborSolicitationMessage>() );
+    senf::NDPNeighborSolicitationMessage rnadm (icmp.next().as<senf::NDPNeighborSolicitationMessage>());
+    BOOST_CHECK_EQUAL(rnadm.size(),28);
 
-    BOOST_CHECK_EQUAL( rnadm->r(), true  );
-    BOOST_CHECK_EQUAL( rnadm->s(), true  );
-    BOOST_CHECK_EQUAL( rnadm->o(), false );
-
-    senf::NDPNeighborAdvertisementMessage::Parser::options_t::container roptC(rnadm->options() );
-    senf::NDPNeighborAdvertisementMessage::Parser::options_t::container::iterator listIter (roptC.begin());
-    BOOST_CHECK( listIter->is<senf::NDPMTUTLVParser>() );
-    BOOST_CHECK_EQUAL( listIter->type(), 5u );
+    senf::NDPNeighborSolicitationMessage::Parser::options_t::container roptC(rnadm->options() );
+    senf::NDPNeighborSolicitationMessage::Parser::options_t::container::const_iterator listIter (roptC.begin());
+    BOOST_CHECK( listIter->is<senf::NDPSourceLLAddressTLVParser>() );
+    BOOST_CHECK_EQUAL( listIter->type(), 1u );
     BOOST_CHECK_EQUAL( listIter->length(), 1u );
-    senf::NDPMTUTLVParser mtuopt (listIter->as<senf::NDPMTUTLVParser>());
-    BOOST_CHECK_EQUAL( mtuopt.mtu(), 1234u );
-    listIter++;
-    BOOST_CHECK( listIter->is<senf::NDPTargetLLAddressTLVParser>() );
-    BOOST_CHECK_EQUAL( listIter->type(), 2u );
-    BOOST_CHECK_EQUAL( listIter->length(), 1u );
+    senf::NDPSourceLLAddressTLVParser llopt (listIter->as<senf::NDPSourceLLAddressTLVParser>());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
