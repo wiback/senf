@@ -111,6 +111,9 @@ namespace senf {
             virtual ptr createBefore(PacketInterpreterBase::ptr packet) const = 0;
             virtual ptr createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t) const = 0;
 
+            virtual ptr createInsertBefore(PacketInterpreterBase::ptr packet) const = 0;
+            virtual ptr createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t) const = 0;
+
             // Parse next packet in chain
 
             virtual ptr parseNext(ptr packet) const = 0;
@@ -186,6 +189,7 @@ namespace senf {
 
         PacketInterpreterBase(detail::PacketImpl * impl, iterator b, iterator e, Append_t);
         PacketInterpreterBase(detail::PacketImpl * impl, iterator b, iterator e, Prepend_t);
+        PacketInterpreterBase(detail::PacketImpl * impl, iterator b, iterator e, ptr before);
 
         ptr appendClone(detail::PacketImpl * impl, iterator base, iterator new_base);
         ptr appendClone(detail::PacketImpl * impl, range r);
@@ -282,6 +286,9 @@ namespace senf {
         static ptr createBefore(PacketInterpreterBase::ptr packet);
         static ptr createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t);
 
+        static ptr createInsertBefore(PacketInterpreterBase::ptr packet);
+        static ptr createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t);
+
         // Create a clone of the current packet
 
         ptr clone();
@@ -305,9 +312,13 @@ namespace senf {
 
         PacketInterpreter(detail::PacketImpl * impl, iterator b, iterator e, Append_t);
         PacketInterpreter(detail::PacketImpl * impl, iterator b, iterator e, Prepend_t);
+        PacketInterpreter(detail::PacketImpl * impl, iterator b, iterator e,
+                          PacketInterpreterBase::ptr before);
 
         static ptr create(detail::PacketImpl * impl, iterator b, iterator e, Append_t);
         static ptr create(detail::PacketImpl * impl, iterator b, iterator e, Prepend_t);
+        static ptr create(detail::PacketImpl * impl, iterator b, iterator e,
+                          PacketInterpreterBase::ptr before);
 
         // PacketType access
 
@@ -358,6 +369,12 @@ namespace senf {
                 const;
             virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr packet,
                                                             senf::NoInit_t) 
+                const;
+
+            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr packet) 
+                const;
+            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr packet,
+                                                                  senf::NoInit_t)
                 const;
 
             // Parse next packet in chain

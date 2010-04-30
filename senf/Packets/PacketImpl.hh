@@ -174,6 +174,7 @@ namespace detail {
 
         void appendInterpreter    (PacketInterpreterBase * p);
         void prependInterpreter   (PacketInterpreterBase * p);
+        void prependInterpreter   (PacketInterpreterBase * p, PacketInterpreterBase * before);
         void truncateInterpreters (PacketInterpreterBase * p);
         void truncateInterpretersBackwards (PacketInterpreterBase * p);
 

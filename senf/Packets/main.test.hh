@@ -47,6 +47,11 @@ namespace test {
                                                          PacketInterpreterBase::Prepend_t)
             { return PacketInterpreter<T>::create(impl,b,e,PacketInterpreterBase::Prepend); }
 
+        template <class T>
+        static typename PacketInterpreter<T>::ptr create(PacketImpl * impl, iterator b, iterator e,
+                                                         PacketInterpreterBase::ptr before)
+            { return PacketInterpreter<T>::create(impl,b,e,before); }
+
         static PacketImpl * impl(PacketInterpreterBase::ptr p)
             { return &p->impl(); }
     };

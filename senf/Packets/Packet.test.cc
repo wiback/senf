@@ -281,6 +281,21 @@ SENF_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( FooPacket::createBefore(packet,senf::noinit).size(), 10u );
     BOOST_CHECK_EQUAL( packet.size(), 10u );
 
+    BOOST_CHECK_EQUAL( FooPacket::createInsertBefore(packet).size(), 14u );
+    BOOST_CHECK_EQUAL( packet.size(), 10u );
+    BOOST_REQUIRE( packet.prev() );
+    BOOST_CHECK_EQUAL( packet.prev().size(), 14u );
+    BOOST_REQUIRE( packet.prev().prev() );
+    BOOST_CHECK_EQUAL( packet.prev().prev().size(), 14u );
+
+    BOOST_CHECK_EQUAL( FooPacket::createInsertBefore(packet,senf::noinit).size(), 10u );
+    BOOST_CHECK_EQUAL( packet.size(), 10u );
+    BOOST_REQUIRE_NO_THROW( packet.prev().prev().prev() );
+    BOOST_CHECK_THROW( packet.prev().prev().prev().prev(), senf::InvalidPacketChainException );
+    BOOST_CHECK_EQUAL( packet.prev().size(), 10u );
+    BOOST_CHECK_EQUAL( packet.prev().prev().size(), 14u );
+    BOOST_CHECK_EQUAL( packet.prev().prev().prev().size(), 14u );
+
     SENF_CHECK_NOT_EQUAL( packet.clone(), packet );
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
 }

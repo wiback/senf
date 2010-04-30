@@ -76,6 +76,14 @@ prefix_ void senf::detail::PacketImpl::prependInterpreter(PacketInterpreterBase 
     p->assignImpl(this);
 }
 
+prefix_ void senf::detail::PacketImpl::prependInterpreter(PacketInterpreterBase * p,
+                                                          PacketInterpreterBase * before)
+{
+    interpreter_list::iterator i (interpreter_list::current(*before));
+    interpreters_.insert(i, *p);
+    p->assignImpl(this);
+}
+
 // Data container
 
 prefix_ void senf::detail::PacketImpl::clear(PacketData * self)

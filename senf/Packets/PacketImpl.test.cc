@@ -153,25 +153,30 @@ SENF_AUTO_UNIT_TEST(packetImpl_interpreters)
     p->add_ref();
 
     {
-        senf::PacketInterpreterBase::ptr pi2 (
+        senf::PacketInterpreterBase::ptr pi3 (
             senf::detail::packet::test::TestDriver::create<VoidPacket>(
                 p,p->begin(),p->end(),senf::PacketInterpreterBase::Append));
-        senf::PacketInterpreterBase::ptr pi3 (
+        senf::PacketInterpreterBase::ptr pi4 (
             senf::detail::packet::test::TestDriver::create<VoidPacket>(
                 p,p->end(),p->end(),senf::PacketInterpreterBase::Append));
         senf::PacketInterpreterBase::ptr pi1 (
             senf::detail::packet::test::TestDriver::create<VoidPacket>(
                 p,p->begin(),p->end(),senf::PacketInterpreterBase::Prepend));
+        senf::PacketInterpreterBase::ptr pi2 (
+            senf::detail::packet::test::TestDriver::create<VoidPacket>(
+                p,p->begin(),p->end(),pi3));
 
         BOOST_CHECK_EQUAL(p->first(), pi1.get());
         BOOST_CHECK_EQUAL(p->next(p->first()), pi2.get());
         BOOST_CHECK_EQUAL(p->next(p->next(p->first())), pi3.get());
-        BOOST_CHECK( !p->next(p->next(p->next(p->first()))) );
+        BOOST_CHECK_EQUAL(p->next(p->next(p->next(p->first()))), pi4.get());
+        BOOST_CHECK( !p->next(p->next(p->next(p->next(p->first())))) );
 
-        BOOST_CHECK_EQUAL(p->last(), pi3.get());
-        BOOST_CHECK_EQUAL(p->prev(p->last()), pi2.get());
-        BOOST_CHECK_EQUAL(p->prev(p->prev(p->last())), pi1.get());
-        BOOST_CHECK( !p->prev(p->prev(p->prev(p->last()))) );
+        BOOST_CHECK_EQUAL(p->last(), pi4.get());
+        BOOST_CHECK_EQUAL(p->prev(p->last()), pi3.get());
+        BOOST_CHECK_EQUAL(p->prev(p->prev(p->last())), pi2.get());
+        BOOST_CHECK_EQUAL(p->prev(p->prev(p->prev(p->last()))), pi1.get());
+        BOOST_CHECK( !p->prev(p->prev(p->prev(p->prev(p->last())))) );
 
         p->insert(&pi2->data(),p->begin(),10,0x00u);
         BOOST_CHECK_EQUAL(pi1->data().size(), 10u);

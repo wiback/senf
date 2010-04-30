@@ -267,6 +267,20 @@ senf::ConcretePacket<PacketType>::createBefore(Packet const & packet, senf::NoIn
     return ConcretePacket(interpreter::createBefore(packet.ptr(), senf::noinit));
 }
 
+template <class PacketType>
+prefix_ senf::ConcretePacket<PacketType>
+senf::ConcretePacket<PacketType>::createInsertBefore(Packet const & packet)
+{
+    return ConcretePacket(interpreter::createInsertBefore(packet.ptr()));
+}
+
+template <class PacketType>
+prefix_ senf::ConcretePacket<PacketType>
+senf::ConcretePacket<PacketType>::createInsertBefore(Packet const & packet, senf::NoInit_t)
+{
+    return ConcretePacket(interpreter::createInsertBefore(packet.ptr(), senf::noinit));
+}
+
 // Create a clone of the current packet
 
 template <class PacketType>

@@ -116,7 +116,15 @@ prefix_ senf::PacketInterpreterBase::PacketInterpreterBase(detail::PacketImpl * 
     : PacketData(std::distance(impl->begin(),b),
                  std::distance(impl->begin(),e))
 {
-        impl->prependInterpreter(this);
+    impl->prependInterpreter(this);
+}
+
+prefix_ senf::PacketInterpreterBase::PacketInterpreterBase(detail::PacketImpl * impl,
+                                                           iterator b, iterator e, ptr before)
+    : PacketData(std::distance(impl->begin(),b),
+                 std::distance(impl->begin(),e))
+{
+    impl->prependInterpreter(this, before.get());
 }
 
 prefix_ senf::PacketInterpreterBase::ptr

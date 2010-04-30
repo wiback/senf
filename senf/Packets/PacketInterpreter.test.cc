@@ -208,6 +208,13 @@ SENF_AUTO_UNIT_TEST(packetInterpreter)
                 p,senf::noinit));
 
         BOOST_CHECK_EQUAL( p3->data().size(), 10u );
+
+        senf::PacketInterpreter<OtherPacket>::ptr p4
+            (senf::PacketInterpreter<OtherPacket>::createInsertBefore(p));
+
+        BOOST_CHECK_EQUAL( p->data().size(), 10u );
+        BOOST_CHECK_EQUAL( p4->data().size(), 18u );
+        BOOST_CHECK_EQUAL( p3->data().size(), 18u );
     }
 
 }
@@ -275,11 +282,15 @@ SENF_AUTO_UNIT_TEST(packetInterpreter_factory)
         BOOST_CHECK( ! p->prev()->prev() );
         BOOST_CHECK_EQUAL( p->prev()->data().size(), 12u );
 
-        BOOST_CHECK_EQUAL(
-            factory->createBefore(p,senf::noinit)->data().size(), 4u );
+        BOOST_CHECK_EQUAL( factory->createBefore(p,senf::noinit)->data().size(), 4u );
         BOOST_REQUIRE( p->prev() );
         BOOST_CHECK( ! p->prev()->prev() );
         BOOST_CHECK_EQUAL( p->prev()->data().size(), 4u );
+
+        BOOST_CHECK_EQUAL( factory->createInsertBefore(p,senf::noinit)->data().size(), 4u );
+        BOOST_REQUIRE( p->prev() );
+        BOOST_REQUIRE( p->prev()->prev() );
+        BOOST_CHECK( ! p->prev()->prev()->prev() );
     }
 
     {

@@ -147,8 +147,27 @@ senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr pac
 {
     if (packet->prev())
         packet->impl().truncateInterpretersBackwards(packet->prev().get());
-    
+
     return create(&packet->impl(),packet->data().begin(),packet->data().end(),Prepend);
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::ptr packet)
+{
+    ptr pi (createInsertBefore(packet, senf::noinit));
+    pi->data().insert(pi->data().begin(),initHeadSize(),byte(0x00u));
+    pi->data().insert(pi->data().end(),initSize()-initHeadSize(),byte(0x00u));
+    pi->init();
+    return pi;
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::ptr packet,
+                                                        senf::NoInit_t)
+{
+    return create(&packet->impl(),packet->data().begin(),packet->data().end(),packet);
 }
 
 ////////////////////////////////////////
@@ -330,6 +349,24 @@ createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
     const
 {
     return senf::PacketInterpreter<PacketType>::createBefore(packet,senf::noinit);
+}
+
+template <class PacketType>
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::
+createInsertBefore(PacketInterpreterBase::ptr packet)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createInsertBefore(packet);
+}
+
+template <class PacketType>
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::
+createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createInsertBefore(packet,senf::noinit);
 }
 
 // Parse next packet in chain
