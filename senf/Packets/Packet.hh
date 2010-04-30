@@ -296,7 +296,7 @@ namespace senf {
                                              the packet chain after \c this packet with a clone of
                                              \a packet and will replace the raw data of the payload
                                              of \c this with the raw data of \a packet. \c this
-                                             packet will not share any date with \a packet.
+                                             packet will not share any data with \a packet.
                                              \returns Packet handle to the cloned \a packet, placed
                                                  after \c this in the packet/header/interpreter
                                                  chain. */
@@ -519,15 +519,20 @@ namespace senf {
 
         \li The create() family of constructors will create completely new packets.
         \li The createAfter() family of constructors will create new packets (with new data for the
-            packet) \e after a given existing packet.
-        \li The createBefore()  family of constructors will create new packets (again with new data)
-            \e before a given existing packet.
+            packet) \e after a given existing packet <em>thereby destroying and overwriting  any
+            possibly existing packets and data after the given packet</em>.
+        \li The createBefore() family of constructors will create new packets (again with new data)
+            \e before a given existing packet <em>thereby destroying and overwriting any possibly
+            existing packets and data before the given packet</em>.
+        \li The createInsertBefore() family of constructors will create new packets \e before a
+            given packet \e inserting them into the packet chain after any existing packets before
+            the given packet.
 
         Whereas create() will create a completely new packet with it's own chain and data storage,
-        createAfter() and createBefore() extend a packet with additional
+        createAfter(), createBefore() and createInsertBefore() extend a packet with additional
         headers/interpreters. createAfter() will set the payload of the given packet to the new
-        packet whereas createBefore() will create a new packet with the existing packet as it's
-        payload.
+        packet whereas createBefore() and createInsertBefore() will create a new packet with the
+        existing packet as it's payload.
 
         createAfter() differs from Packet::parseNextAs() in that the former creates a new packet \e
         replacing any possibly existing data whereas the latter will interpret the already \e
@@ -679,16 +684,33 @@ namespace senf {
                                              state. It will be prepended as previous
                                              header/interpreter before \a packet in that packets
                                              interpreter chain.
+                                             \warning This constructor will destroy any existing
+                                                 headers before \a packet and replace them with the
+                                                 new header.
                                              \param[in] packet Packet to prepend new packet to. */
         static ConcretePacket createBefore(Packet const & packet, senf::NoInit_t);
                                         ///< Create uninitialized empty packet before \a packet
                                         /**< Creates a completely empty and uninitialized packet. It
                                              will be prepended as previous header/interpreter before
                                              \a packet in that packets interpreter chain.
+                                             \warning This constructor will destroy any existing
+                                                 headers before \a packet and replace them with the
+                                                 new header.
                                              \param[in] packet Packet to prepend new packet to. */
 
         static ConcretePacket createInsertBefore(Packet const & packet);
+                                        ///< Insert default initialized packet before \a packet
+                                        /**< The new packet header will be initialized to it' s
+                                             default empty state. It will be inserted into the
+                                             packet chain before \a packet.
+                                             \param[in] packet Packet before which to insert the new
+                                                 packet */
         static ConcretePacket createInsertBefore(Packet const & packet, senf::NoInit_t);
+                                        ///< Insert uninitialized empty packet before \a packet
+                                        /**< Inserts a completely empty and unitialized packet
+                                             before \a packet into the header/interpreter chain.
+                                             \param[in] packet Packet before which to insert the new
+                                                 packet */
 
         // Create a clone of the current packet
 
