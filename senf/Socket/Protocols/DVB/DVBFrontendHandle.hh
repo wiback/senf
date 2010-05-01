@@ -53,29 +53,29 @@ namespace senf {
         NotReadablePolicy,
         NotWriteablePolicy
 >    ::policy DVBFrontend_Policy; ///< Socket Policy for DVBFrontendSocketProtocol
-        
+
 
     /** \brief SocketProtocol for the dvb frontend device
 
         The DVB frontend device controls the tuner and DVB demodulator hardware.
         ATTENTION!
         Some calls are not supported by real life drivers, known issues:
-        
+
         Cinergy T� getParameter is not supported
         Cinergy T� in getEvent fe_status_t will be set but dvb_frontend_parameters will be stay untouched
         Cinergy DT XS bitErrorRate is not supported
-        
+
         This dues to the lack of driver implementation. There could be restrictions also for other DVB devices!
      */
-    
+
     class DVBFrontendSocketProtocol
         : public ConcreteSocketProtocol<DVBFrontend_Policy, DVBFrontendSocketProtocol>
     {
-    private: 
+    private:
         void tune(const struct dvb_frontend_parameters & frontend) const;
     public:
-        
-        
+
+
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
 
@@ -90,40 +90,40 @@ namespace senf {
         ///@}
 
         void setNonBlock(bool on = true) const;
-       
+
         void tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate) const;
                                                                         ///< Tunes a DVB-S device
                                                                         /**< Tunes a DVB-S device. Needs full configuration */
-        void tuneDVB_T(unsigned int frequency, 
+        void tuneDVB_T(unsigned int frequency,
                 fe_spectral_inversion_t inversion,
-                fe_bandwidth_t bandwidth, 
+                fe_bandwidth_t bandwidth,
                 fe_code_rate_t code_rate_HP, /* high priority stream code rate */
                 fe_code_rate_t code_rate_LP, /* low priority stream code rate */
                 fe_modulation_t constellation, /* modulation type (see above) */
-                fe_transmit_mode_t transmission_mode, 
+                fe_transmit_mode_t transmission_mode,
                 fe_guard_interval_t guard_interval,
                 fe_hierarchy_t hierarchy_information
                 ) const;                                                ///< Tunes a DVB-T device
                                                                         /**< Tunes a DVB-T device. Needs full configuration */
-        void tuneDVB_C(unsigned int frequency, 
+        void tuneDVB_C(unsigned int frequency,
                 fe_spectral_inversion_t inversion,
                 unsigned int symbol_rate,
                 fe_code_rate_t fec_inner,
                 fe_modulation_t modulation
-                ) const;        
+                ) const;
                                                                         ///< Tunes a DVB-C device
                                                                         /**< Tunes a DVB-C device. Needs full configuration */
         dvb_frontend_info getInfo() const;                              ///< Returns information struct.
-                                                                        /**< Returns information struct, which contains information 
+                                                                        /**< Returns information struct, which contains information
                                                                              about the device which is associated with the current frontend.*/
         struct dvb_frontend_parameters getFrontendParam() const;        ///< Returns dvb_frontend_parameters struct.
-                                                                        /**< Returns dvb_frontend_parameters struct, which contains the actual 
+                                                                        /**< Returns dvb_frontend_parameters struct, which contains the actual
                                                                              configuration of the device.*/
         ///\name Abstract Interface Implementation
         ///@{
-        
+
         dvb_frontend_event getEvent() const;
-        
+
 
         unsigned available() const;     ///< Returns always <tt>0</tt>
                                         /**< Returns always <tt>0</tt>, since the DVB frontend
@@ -149,20 +149,20 @@ namespace senf {
                                         /**< Returns the bit error rate for the signal currently
                                              received/demodulated by the front-end. For this method,
                                              read-only access to the device is sufficient. */
-        uint32_t uncorrectedBlocks() const; ///< Returns the number of uncorrected blocks 
-                                            /**< Returns the number of uncorrected blocks 
+        uint32_t uncorrectedBlocks() const; ///< Returns the number of uncorrected blocks
+                                            /**< Returns the number of uncorrected blocks
                                              * detected by the device driver during its lifetime.
-                                             *  For meaningful measurements, the increment in block 
-                                             * count during a specific time interval should be calculated. 
+                                             *  For meaningful measurements, the increment in block
+                                             * count during a specific time interval should be calculated.
                                              * For this command, read-only access to the device is sufficient.
-                                             *  Note that the counter will wrap to zero after its maximum count 
+                                             *  Note that the counter will wrap to zero after its maximum count
                                              * has been reached.*/
-        
+
         fe_status_t status() const;         ///< This ioctl call returns status information about the front-end.
-                                            /**< This ioctl call returns status information about the 
-                                             * front-end. This call only requires read-only access 
+                                            /**< This ioctl call returns status information about the
+                                             * front-end. This call only requires read-only access
                                              * to the device.*/
-               
+
     };
 
     typedef ProtocolClientSocketHandle<DVBFrontendSocketProtocol> DVBFrontendHandle;

@@ -45,7 +45,7 @@ namespace detail {
         range, otherwise a temporary storage area is used.
      */
     template <class Handle, class ForwardWritableRange, bool IsContiguous>
-    struct ReadRange 
+    struct ReadRange
     {
         static typename boost::range_iterator<ForwardWritableRange>::type
         read(Handle & handle, ForwardWritableRange & range);
@@ -83,7 +83,7 @@ namespace detail {
     {
         static typename boost::range_const_iterator<ForwardReadableRange>::type
         write(Handle & handle, ForwardReadableRange & range);
-        
+
         static typename boost::range_const_iterator<ForwardReadableRange>::type
         writeto(Handle & handle, ForwardReadableRange & range,
                 typename Handle::Address const & addr);
@@ -96,7 +96,7 @@ namespace detail {
     {
         static typename boost::range_const_iterator<ForwardReadableRange>::type
         write(Handle & handle, ForwardReadableRange & range);
-        
+
         static typename boost::range_const_iterator<ForwardReadableRange>::type
         writeto(Handle & handle, ForwardReadableRange & range,
                 typename Handle::Address const & addr);

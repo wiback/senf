@@ -44,7 +44,7 @@ prefix_ void senf::ConnectedUNDatagramSocketProtocol::init_client() const
     fd(sock);
 }
 
-prefix_ void senf::ConnectedUNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const 
+prefix_ void senf::ConnectedUNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const
 {
     init_client();
     clientHandle().connect(address);

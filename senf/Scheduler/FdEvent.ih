@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -49,14 +49,14 @@ namespace detail {
         bool operator()(int a, FdEvent const & b) const
         { return a < b.fd_; }
     };
-    
+
     class FdDispatcher
         : public senf::singleton<FdDispatcher>
     {
     public:
         using senf::singleton<FdDispatcher>::instance;
         using senf::singleton<FdDispatcher>::alive;
-        
+
         bool add(FdEvent & event);
         void remove(FdEvent & event);
 

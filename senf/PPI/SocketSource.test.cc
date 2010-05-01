@@ -88,7 +88,7 @@ SENF_AUTO_UNIT_TEST(socketSource)
 
     BOOST_REQUIRE( ! sink.empty() );
     BOOST_CHECK_EQUAL( sink.front().data().size(), data.size() );
-    BOOST_CHECK( std::equal( sink.front().data().begin(), sink.front().data().end(), 
+    BOOST_CHECK( std::equal( sink.front().data().begin(), sink.front().data().end(),
                              data.begin()) );
 }
 

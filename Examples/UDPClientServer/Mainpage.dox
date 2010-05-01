@@ -73,8 +73,8 @@
     \until }
 
     Calling the Schedulers <tt> \link senf::Scheduler::process process()\endlink </tt> method will
-    start the event loop. This call does not return (ok, it does return in special cases if 
-    \c senf::Scheduler::terminate() is called which does not apply here). The Callback Function is 
+    start the event loop. This call does not return (ok, it does return in special cases if
+    \c senf::Scheduler::terminate() is called which does not apply here). The Callback Function is
     the \c readFromClient() Function, which is declared as private here and will be called whenever
     an event on the socket is encountered. The scheduler passes the event ID to the function.
 

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -62,10 +62,10 @@ namespace module {
         {
             senf::MACAddress mac;
 
-            bool operator< (TargetInterface const & other) 
+            bool operator< (TargetInterface const & other)
                 { return mac < other.mac; }
 
-            TargetInterface(senf::MACAddress const & m) 
+            TargetInterface(senf::MACAddress const & m)
                 : mac (m) {}
         };
 
@@ -91,11 +91,11 @@ namespace module {
         \ingroup routing_modules
 
         \todo Call Module::v_init() on every connection change and remove disconnected connections
-        from the container 
+        from the container
      */
     template <class AnnotationType>
-    class AnnotationRouter 
-        : public Module, 
+    class AnnotationRouter
+        : public Module,
           public MultiConnectorMixin< AnnotationRouter<AnnotationType>,
                                         connector::ActiveOutput<>,
                                         AnnotationType >
@@ -108,7 +108,7 @@ namespace module {
         AnnotationRouter();
 
         struct DuplicateKeyException : public senf::Exception
-        { DuplicateKeyException(AnnotationType const & key) 
+        { DuplicateKeyException(AnnotationType const & key)
               : senf::Exception("Duplicate senf::ppi::module::AnnotationRouter routing key ")
                 { append( senf::str(key)); } };
 

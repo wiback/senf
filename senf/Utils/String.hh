@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -33,7 +33,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     /** \brief Join string range with separator into single string
 
         This utility will build string by joining all elements of \a range into a single string

@@ -47,7 +47,7 @@ public:
     RateFilter(senf::ClockService::clock_type interval);
     void interval(senf::ClockService::clock_type interval);
     senf::ClockService::clock_type interval() const;
-    
+
     connector::ActiveInput<> input;
     connector::ActiveOutput<> output;
 

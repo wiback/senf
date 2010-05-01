@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -47,7 +47,7 @@ namespace senf {
     /** \defgroup senf_statistics Statistics
 
         The statistics functionality has two parts:
-        
+
         \li the senf::Statistics class
         \li statistics sources
 
@@ -61,10 +61,10 @@ namespace senf {
 
     class Collector;
     class Statistics;
-    
+
     /** \brief Internal: Generic Statistics collection */
     class StatisticsBase
-    { 
+    {
         typedef std::map<unsigned, Collector> Children;
 
         struct Transform {
@@ -111,7 +111,7 @@ namespace senf {
             // Function object
             struct Collector
             {
-                void operator()(float min, float avg, float max, float dev) 
+                void operator()(float min, float avg, float max, float dev)
                     { ... }
             };
             \endcode
@@ -125,7 +125,7 @@ namespace senf {
             template <class Target> Owner & connect(Target & target,
                                                     std::string label="") const;
                                         ///< Connect externally managed target
-            template <class PTarget> Owner & connect(std::auto_ptr<PTarget> target, 
+            template <class PTarget> Owner & connect(std::auto_ptr<PTarget> target,
                                                      std::string label="") const;
                                         ///< Connect internally managed target
             Owner & noconnect() const;  ///< Don't connect the output
@@ -136,7 +136,7 @@ namespace senf {
         private:
 #endif
             OutputProxy(Owner * owner, OutputEntry * entry);
-            template <class OtherOwner> 
+            template <class OtherOwner>
             OutputProxy(Owner * owner, OutputProxy<OtherOwner> const & other);
 
         private:
@@ -145,7 +145,7 @@ namespace senf {
 
             template <class OtherOwner> friend class OutputProxy;
         };
-            
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Accessing the current value
         ///\{
@@ -169,7 +169,7 @@ namespace senf {
                                         /**< This member will return a reference to the collector
                                              collecting \a rank values.
                                              \param[in] rank Number of values the requested
-                                                 collector collects into each combined value. 
+                                                 collector collects into each combined value.
                                              \throws InvalidRankException if \a rank is not a valid
                                                  registered rank value. */
         CollectorRange collectors();    ///< List all child collectors
@@ -187,7 +187,7 @@ namespace senf {
         Statistics & base();            ///< Get base statistics object
                                         /**< Returns the base statistics object. If this is
                                              a child collector, this will return the outermost
-                                             statistics object, otherwise it will return 
+                                             statistics object, otherwise it will return
                                              \c *this. */
 
         std::string path() const;       ///< Get the path to this collector
@@ -242,7 +242,7 @@ namespace senf {
         float max_;
         float dev_;
         Children children_;
-        
+
         struct QueueEntry {
             float min;
             float avg;
@@ -267,7 +267,7 @@ namespace senf {
             struct Target : public TargetBase
             {
                 boost::scoped_ptr<PTarget> target_;
-                Target(std::auto_ptr<PTarget> target, std::string const & label) 
+                Target(std::auto_ptr<PTarget> target, std::string const & label)
                     : TargetBase (label), target_ (target.release()) {}
                 explicit Target(std::string const & label)
                     : TargetBase (label), target_ (0) {}
@@ -337,7 +337,7 @@ namespace senf {
             .collect(10u)                // seconds
             .collect(60u)                // minutes
             .collect(60u);               // hours
-        
+
         packetStats[10u].collect(100u);  // 100 seconds
 
         rateAnalyzer.startStatistics(senf::ClockService::milliseconds(100u));
@@ -410,7 +410,7 @@ namespace senf {
         \see senf::StatisticsBase::OutputProxy for the output proxy (connect) interface
         \ingroup senf_statistics
      */
-    class Statistics 
+    class Statistics
         : public StatisticsBase, boost::noncopyable
     {
     public:
@@ -436,7 +436,7 @@ namespace senf {
                                              \param[in] max maximal data values since last call
                                              \param[in] dev standard deviation of avg value */
 
-        void operator()(float value, float dev=0.0f); 
+        void operator()(float value, float dev=0.0f);
                                         ///< Same as enter() with \a min == \a avg == \a max
                                         /**< Provided so a Statistics instance can be directly used
                                              as a signal target. */
@@ -463,10 +463,10 @@ namespace senf {
     class Collector : public StatisticsBase
     {
     public:
-        virtual unsigned rank() const;  
+        virtual unsigned rank() const;
 
         StatisticsBase::OutputProxy<Collector> output(unsigned n = 1u);
-        
+
     private:
         Collector(StatisticsBase * owner, unsigned rank);
         void enter(float min, float avg, float max, float dev);

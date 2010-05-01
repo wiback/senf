@@ -33,7 +33,7 @@
 namespace senf {
 namespace log {
 namespace detail {
-    
+
     /// Internal: Log level base class
     struct LevelBase {};
 

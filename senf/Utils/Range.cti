@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -31,7 +31,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Range, class Fn>
-prefix_ boost::iterator_range< 
+prefix_ boost::iterator_range<
         boost::transform_iterator< Fn,
                                    typename boost::range_const_iterator<Range>::type > >
 senf::make_transform_range(Range const & range, Fn const & fn)
@@ -42,7 +42,7 @@ senf::make_transform_range(Range const & range, Fn const & fn)
 }
 
 template <class Range, class Fn>
-prefix_ boost::iterator_range< 
+prefix_ boost::iterator_range<
         boost::transform_iterator< Fn,
                                    typename boost::range_iterator<Range>::type > >
 senf::make_transform_range(Range & range, Fn const & fn)

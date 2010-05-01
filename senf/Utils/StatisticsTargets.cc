@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -57,11 +57,11 @@ namespace {
     {
         RegisterStatisticsLogger();
 
-        static void adder(senf::StatisticsBase & stats, 
+        static void adder(senf::StatisticsBase & stats,
                           unsigned rank,
                           senf::console::DirectoryNode & dir);
 
-        static void consoleCreate(senf::StatisticsBase & stats, 
+        static void consoleCreate(senf::StatisticsBase & stats,
                                   unsigned rank,
                                   std::string const & prefix);
     };
@@ -80,7 +80,7 @@ prefix_ void RegisterStatisticsLogger::adder(senf::StatisticsBase & stats,
 {
     namespace kw = senf::console::kw;
     namespace fty = senf::console::factory;
-    
+
     dir.add("logger", fty::Command<void (std::string const &)>(
                 boost::bind(&consoleCreate, boost::ref(stats), rank, _1))
             .arg("prefix","Optional prefix string to add to each log message",

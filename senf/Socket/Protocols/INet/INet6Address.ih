@@ -70,7 +70,7 @@ namespace detail {
     struct CheckINet6Network_impl4
         : public CheckINet6Network_impl5<a,bits/8,bits%8>
     {};
-    
+
     template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
               unsigned a5, unsigned a6, unsigned a7, unsigned words, unsigned restbits>
     struct CheckINet6Network_impl3
@@ -190,7 +190,7 @@ namespace detail {
     void apply_mask(unsigned bits, ForwardIterator b, ForwardIterator e, Function fn);
 
     template <class ForwardIterator1, class ForwardIterator2, class Function>
-    ForwardIterator1 find_if_mask(unsigned bits, 
+    ForwardIterator1 find_if_mask(unsigned bits,
                                   ForwardIterator1 b1, ForwardIterator1 e1, ForwardIterator2 b2,
                                   Function fn);
 

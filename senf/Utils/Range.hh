@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -34,20 +34,20 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     /** \brief Make a \c boost::iterator_range from \c boost::trasform_iterator
 
         This helper is like \c boost::make_transform_iterator, however for ranges instead of
-        iterators. 
+        iterators.
      */
     template <class Range, class Fn>
-    boost::iterator_range< 
+    boost::iterator_range<
         boost::transform_iterator< Fn,
                                    typename boost::range_const_iterator<Range>::type > >
     make_transform_range(Range const & range, Fn const & fn);
 
     template <class Range, class Fn>
-    boost::iterator_range< 
+    boost::iterator_range<
         boost::transform_iterator< Fn,
                                    typename boost::range_iterator<Range>::type > >
     make_transform_range(Range & range, Fn const & fn);

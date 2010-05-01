@@ -33,7 +33,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     /** \brief Calculate TCP/IP 16bit checksum value
 
         This class allows calculation of the 16bit checksum value as defined in the TCP/IP v4
@@ -68,7 +68,7 @@ namespace senf {
                                         ///< Feed range of bytes
 
         boost::uint16_t sum() const;    ///< Calculate checksum
-    
+
     protected:
 
     private:
@@ -76,7 +76,7 @@ namespace senf {
         bool odd_;
     };
 
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

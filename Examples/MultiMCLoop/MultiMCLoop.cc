@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -52,10 +52,10 @@ public:
     MCReader(unsigned n, std::string const & name, UDPSocket::Address const & group);
 };
 
-prefix_ MCReader::MCReader(unsigned n, std::string const & name_, 
+prefix_ MCReader::MCReader(unsigned n, std::string const & name_,
                            UDPSocket::Address const & group)
     : name (name_), socket (),
-      event (name, senf::membind(&MCReader::handler, this), socket, 
+      event (name, senf::membind(&MCReader::handler, this), socket,
              senf::scheduler::FdEvent::EV_READ)
 {
     socket.protocol().reuseaddr(true);
@@ -81,9 +81,9 @@ class MCWriter
     unsigned count;
 
     void handler();
-    
+
 public:
-    MCWriter(std::string const & name, UDPSocket::Address const & group, 
+    MCWriter(std::string const & name, UDPSocket::Address const & group,
              senf::ClockService::clock_type interval);
 };
 
@@ -117,7 +117,7 @@ public:
 
     struct SystemException : public senf::Exception
     { SystemException() : senf::Exception("IfSetup::SystemException") {} };
-    
+
 };
 
 prefix_ IfSetup::IfSetup(std::string const & iface_)
@@ -159,7 +159,7 @@ int main(int argc, char * argv[])
     try {
         boost::scoped_ptr<IfSetup> setup (
             (argc != 2 || std::string(argv[1]) != "-n") ? new IfSetup("dummy0") : 0);
-        
+
         senf::scheduler::SignalEvent sigint (SIGINT, &sigintHandler);
 
         UDPSocket::Address g1 ("225.1:43434");

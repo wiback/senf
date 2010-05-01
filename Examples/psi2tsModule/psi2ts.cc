@@ -77,9 +77,9 @@ prefix_ void Psi2TsModule::onRequest()
                 0xff
         );
         tsPacket.finalize();
-        
+
         output.write( tsPacket);
-        
+
         advance_max( begin, 184, sec_end);
         advance_max( end,   184, sec_end);
     } while (begin != end);

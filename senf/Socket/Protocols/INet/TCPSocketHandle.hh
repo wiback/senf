@@ -62,7 +62,7 @@ namespace senf {
         \par Socket Handle typedefs:
             \ref TCPv4ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv4ServerSocketHandle
             (ProtocolServerSocketHandle)
-        
+
         \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
             ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer()

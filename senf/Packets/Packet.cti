@@ -232,7 +232,7 @@ senf::ConcretePacket<PacketType>::createAfter(Packet const & packet, size_type s
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet const & packet, size_type size, 
+senf::ConcretePacket<PacketType>::createAfter(Packet const & packet, size_type size,
                                               senf::NoInit_t)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr(), size, senf::noinit));

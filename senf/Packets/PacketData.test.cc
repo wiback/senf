@@ -47,23 +47,23 @@ SENF_AUTO_UNIT_TEST(packetData)
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create());
 
     senf::PacketData & d (pi->data());\
-    
+
     BOOST_CHECK( d.begin() == d.end() );
     BOOST_CHECK_EQUAL( d.size(), 0u );
     BOOST_CHECK( d.empty() );
-    
+
     d.insert(d.begin(), 0xabu);
     BOOST_CHECK_EQUAL( d.size(), 1u );
     BOOST_CHECK_EQUAL( d[0], 0xabu );
     BOOST_CHECK( !d.empty() );
-    
+
     d.insert(d.begin(), 10, 0xcdu );
     BOOST_CHECK_EQUAL( d.size(), 11u );
     BOOST_CHECK_EQUAL( d[0], 0xcdu );
     BOOST_CHECK_EQUAL( d[9], 0xcdu );
     BOOST_CHECK_EQUAL( d[10], 0xabu );
 
-    senf::PacketData::byte data[] = 
+    senf::PacketData::byte data[] =
         { 0xf0u, 0xf1u, 0xf2u, 0xf3u, 0xf4u, 0xf5u, 0xf6u, 0xf7u };
     d.insert(d.begin()+5, data, data+sizeof(data)/sizeof(data[0]));
     BOOST_CHECK_EQUAL( d.size(), 19u );
@@ -74,7 +74,7 @@ SENF_AUTO_UNIT_TEST(packetData)
     d.erase(d.begin());
     BOOST_CHECK_EQUAL( d.size(), 18u );
     BOOST_CHECK_EQUAL( d[4], 0xf0u );
-    
+
     d.erase(d.begin(), d.begin()+11);
     BOOST_CHECK_EQUAL( d.size(), 7u );
     BOOST_CHECK_EQUAL( d[0], 0xf7u );
@@ -111,7 +111,7 @@ SENF_AUTO_UNIT_TEST(safePacketIterator)
     BOOST_CHECK( i == senf::safe_data_iterator(d,d.begin()) );
     BOOST_CHECK( senf::PacketData::iterator(i) == d.begin() );
 
-    senf::PacketData::byte data[] = 
+    senf::PacketData::byte data[] =
         { 0xf0u, 0xf1u, 0xf2u, 0xf3u, 0xf4u, 0xf5u, 0xf6u, 0xf7u };
     d.resize(sizeof(data)/sizeof(data[0]));
     BOOST_CHECK( senf::PacketData::iterator(i) == d.begin() );
@@ -119,7 +119,7 @@ SENF_AUTO_UNIT_TEST(safePacketIterator)
 
     BOOST_CHECK_EQUAL( d.size(), sizeof(data)/sizeof(data[0]) );
     BOOST_CHECK_EQUAL( *(i+sizeof(data)/sizeof(data[0])-1), 0xf7u );
-    BOOST_CHECK_EQUAL( std::distance(i,senf::safe_data_iterator(d,d.end())), 
+    BOOST_CHECK_EQUAL( std::distance(i,senf::safe_data_iterator(d,d.end())),
                        senf::PacketData::difference_type(d.size()) );
     *(++i) = 0x01u;
     BOOST_CHECK_EQUAL( d[1], 0x01u );

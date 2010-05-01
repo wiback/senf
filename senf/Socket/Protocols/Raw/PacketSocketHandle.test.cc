@@ -63,7 +63,7 @@ SENF_AUTO_UNIT_TEST(packetSocketHandle)
 
         SENF_CHECK_NO_THROW( sock.protocol().promisc( "eth0", true) );
         SENF_CHECK_NO_THROW( sock.protocol().promisc( "eth0", false));
-                
+
         SENF_CHECK_NO_THROW( sock.protocol().available() );
         BOOST_CHECK( ! sock.eof() );
     }

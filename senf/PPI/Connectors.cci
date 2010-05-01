@@ -155,7 +155,7 @@ prefix_ void senf::ppi::connector::PassiveConnector::unregisterRoute(ForwardingR
         routes_.erase(i);
 }
 
-// public members 
+// public members
 
 prefix_ bool senf::ppi::connector::PassiveConnector::nativeThrottled()
     const
@@ -263,7 +263,7 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::peek()
     const
 {
     // Cannot peek() head of empty queue
-    SENF_ASSERT( ! queue_.empty() && 
+    SENF_ASSERT( ! queue_.empty() &&
                  "senf::ppi::connector::InputConnector: cannot call peek() on empty queue" );
     return queue_.back();
 }

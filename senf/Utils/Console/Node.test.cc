@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -54,7 +54,7 @@ SENF_AUTO_UNIT_TEST(genericNode)
     std::stringstream ss;
     node.help(ss);
     BOOST_CHECK_EQUAL( ss.str(), "help info\n" );
-    
+
     {
         senf::console::GenericNode::ptr p (senf::console::root()["dir1"].unlink());
         BOOST_CHECK( ! node.active() );
@@ -93,26 +93,26 @@ SENF_AUTO_UNIT_TEST(directoryNode)
     BOOST_CHECK_THROW( senf::console::root()("fn2"), senf::console::UnknownNodeNameException );
     BOOST_CHECK_THROW( senf::console::root()["fn"], std::bad_cast );
     BOOST_CHECK( &senf::console::root().get("dir1") == p.get() );
-    
+
     senf::console::root()
         .add("dir2", fty::Directory())
         .add("dir3", fty::Directory());
     char const * const children[] = { "dir1", "dir2", "fn", "sys" };
-    BOOST_CHECK_EQUAL_COLLECTIONS( 
-        boost::make_transform_iterator(senf::console::root().children().begin(), 
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+        boost::make_transform_iterator(senf::console::root().children().begin(),
                                        select1st<std::string const &>()),
         boost::make_transform_iterator(senf::console::root().children().end(),
                                        select1st<std::string const &>()),
-        children, 
+        children,
         children+sizeof(children)/sizeof(children[0]) );
 
     char const * const completions[] = { "dir1", "dir2" };
     BOOST_CHECK_EQUAL_COLLECTIONS(
-        boost::make_transform_iterator(senf::console::root().completions("dir").begin(), 
+        boost::make_transform_iterator(senf::console::root().completions("dir").begin(),
                                        select1st<std::string const &>()),
         boost::make_transform_iterator(senf::console::root().completions("dir").end(),
                                        select1st<std::string const &>()),
-        completions, 
+        completions,
         completions+sizeof(completions)/sizeof(completions[0]) );
 
     p->doc("test doc\nline 2");
@@ -171,7 +171,7 @@ SENF_AUTO_UNIT_TEST(factory)
 
     senf::console::root().add("fn1", fty::SimpleCommand(&callback));
     senf::console::root().add("fn2", fty::SimpleCommand(Functor()));
-    
+
     senf::console::ParseCommandInfo info;
 
     {
@@ -185,7 +185,7 @@ SENF_AUTO_UNIT_TEST(factory)
         senf::console::root()("fn2")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "functor" );
     }
-    
+
     senf::console::root().remove("fn1");
     senf::console::root().remove("fn2");
 }
@@ -200,7 +200,7 @@ SENF_AUTO_UNIT_TEST(simpleCommandNode)
         senf::console::root()("fn")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "callback" );
     }
-    
+
     {
         std::stringstream ss;
         senf::console::root().get("fn").help(ss);

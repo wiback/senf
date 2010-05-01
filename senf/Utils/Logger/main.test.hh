@@ -46,7 +46,7 @@ SENF_LOG_DEFINE_AREA(GlobalTestArea);
 namespace senf {
 namespace log {
 namespace test {
-    
+
     struct Foo
     {
         SENF_LOG_CLASS_AREA();

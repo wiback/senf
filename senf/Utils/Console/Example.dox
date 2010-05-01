@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -66,7 +66,7 @@
     built-in command at the console.
 
     The next callback accesses the client instance directly to manipulate the logging:
-    
+
     \until }
 
     The senf::console::Client instance can be accessed using the senf::console::Client::get() helper
@@ -74,12 +74,12 @@
     messages to the console instance.
 
     We now define \c main() which initializes the node tree and starts the console server
-    
+
     \until route
-    
+
     Here we just setup more verbose logging and set \c SIGPIPE signals to be ignored. \c SIGPIPE's
     are a pain and really should be disabled.
-    
+
     \until settings
 
     This shows, how to set the top-level documentation and create a new subdirectory.
@@ -90,24 +90,24 @@
     directly. All the add commands return such a node reference of the correct type (this is a lie,
     but it works like this anyways and it's an implementation detail that must not concern you
     here).
-    
+
     Instead of creating a new directory directly and later sotring a reference, it is better to use
     \c senf::console::ScopedDirectory<> like this:
 
     \until functions
-    
+
     This will automatically remove the node from the tree when the \c senf::console::ScopedDirectory
     instance is destroyed. It also protects against the problem of dangling references: When using a
     plain reference, removing the directory from the tree will destroy the node. The reference
     however will still reference the (now nonexistent) directory and any access via the reference
-    will crash the program. 
+    will crash the program.
 
     The next statements add commands to the various directories declared so far
-    
+
     \until Example
 
     We now continue by creating an instance of our test class \c TestObject
-    
+
     \until Example
 
     We add that objects directory to the \c test dir. We now have created a directory structure like

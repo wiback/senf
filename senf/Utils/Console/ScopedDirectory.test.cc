@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -108,16 +108,16 @@ SENF_AUTO_UNIT_TEST(scopedDirectoryBase)
         BOOST_CHECK( &dir["foo"] == &dir.get("foo") );
         BOOST_CHECK( &dir("cb") == &dir.get("cb") );
         BOOST_CHECK_EQUAL(dir.name(), "dir");
-        
+
         char const * const children[] = { "cb", "foo" };
-        BOOST_CHECK_EQUAL_COLLECTIONS( 
+        BOOST_CHECK_EQUAL_COLLECTIONS(
             boost::make_transform_iterator(dir.children().begin(),
                                            select1st<std::string const &>()),
             boost::make_transform_iterator(dir.children().end(),
                                            select1st<std::string const &>()),
-            children, 
+            children,
             children+sizeof(children)/sizeof(children[0]) );
-        
+
         dir.doc("dir");
         std::stringstream ss;
         dir.node().help(ss);

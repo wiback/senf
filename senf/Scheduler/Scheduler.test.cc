@@ -189,7 +189,7 @@ namespace {
     {
         return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(100);
     }
-    
+
     senf::ClockService::clock_type sigtime (0);
 
     void sigusr(siginfo_t const &)
@@ -276,13 +276,13 @@ void schedulerTest()
         buffer[size]=0;
         BOOST_CHECK_EQUAL( buffer, "OK" );
     }
-    
+
     {
-        senf::scheduler::TimerEvent timer1 ("testTimer1", &timeout, 
+        senf::scheduler::TimerEvent timer1 ("testTimer1", &timeout,
                                             senf::ClockService::now()+senf::ClockService::milliseconds(200));
         senf::scheduler::TimerEvent timer2 ("testTimer2", &timeout,
                                             senf::ClockService::now()+senf::ClockService::milliseconds(400));
-                                            
+
         event = senf::scheduler::FdEvent::EV_NONE;
         senf::ClockService::clock_type t (senf::ClockService::now());
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
@@ -316,17 +316,17 @@ void schedulerTest()
         senf::ClockService::clock_type t = senf::ClockService::now();
         ::kill(::getpid(), SIGUSR1);
         delay(200);
-        SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         if (enabled) {
             BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (t+senf::ClockService::milliseconds(200)) );
             BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
         }
-        SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
-    } 
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
+    }
 
     BOOST_CHECK( eventCount >= 8u );
 
- 
+
     ///////////////////////////////////////////////////////////////////////////
 
     close(sock);
@@ -365,7 +365,7 @@ SENF_AUTO_UNIT_TEST(testSchedulerPOSIXTimers)
 }
 
 namespace {
-    
+
     void sigme()
     {
         senf::scheduler::BlockSignals signalBlocker;
@@ -390,18 +390,18 @@ SENF_AUTO_UNIT_TEST(blockSignals)
     senf::scheduler::TimerEvent timer (
         "testWatchdog", &timeout, senf::ClockService::now()+senf::ClockService::milliseconds(400));
     senf::scheduler::SignalEvent sig (SIGUSR1, &sigusr);
-    
+
     senf::ClockService::clock_type t = senf::ClockService::now();
-    SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
+    SENF_CHECK_NO_THROW( senf::scheduler::process() );
 
     if (enabled) {
-        BOOST_CHECK_PREDICATE( is_close, 
-                               (senf::ClockService::now()) 
+        BOOST_CHECK_PREDICATE( is_close,
+                               (senf::ClockService::now())
                                (t+senf::ClockService::milliseconds(200)) );
         BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
     }
 
-    SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
+    SENF_CHECK_NO_THROW( senf::scheduler::process() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -39,13 +39,13 @@ namespace module {
 
     /** \brief Base class providing simple monitor %module support
 
-        A monitor %module is a \ref senf::ppi::module::Module "module" which needs information 
-        about traversing packets but does not really act on the packets. Because of this, it is 
-        \e optional to connect the output: If the output is not connected, the packets will be 
+        A monitor %module is a \ref senf::ppi::module::Module "module" which needs information
+        about traversing packets but does not really act on the packets. Because of this, it is
+        \e optional to connect the output: If the output is not connected, the packets will be
         silently dropped.
 
         This allows to add monitor modules either into an existing chain or add them using an
-        ActiveDuplicator. 
+        ActiveDuplicator.
 
         To write a monitor %module, derive from senf::ppi::module::MonitorModule instead of
         senf::ppi::module and implement v_handlePacket():
@@ -89,7 +89,7 @@ namespace module {
         void throttle();
         void unthrottle();
     };
-        
+
 
 }}}
 

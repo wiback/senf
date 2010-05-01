@@ -48,7 +48,7 @@ namespace log {
 
 namespace detail {
 
-    SENF_CONSOLE_REGISTER_ENUM_MEMBER( TargetRegistry, Level, 
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER( TargetRegistry, Level,
                                        (VERBOSE)(NOTICE)(MESSAGE)(IMPORTANT)(CRITICAL)(FATAL) );
 
 }}}
@@ -329,15 +329,15 @@ namespace {
 
 prefix_ void senf::log::Target::consoleList(std::ostream & os)
 {
-    static char const * levels[] = { 
+    static char const * levels[] = {
         "verbose", "verbose", "notice", "message", "important", "critical", "fatal", "disabled" };
 
     boost::format fmt ("%2d %-29s %-29s %-9s %-6s\n");
     os << fmt % "#" % "STREAM" % "AREA" % "LEVEL" % "ACTION";
     unsigned n (0);
     for (iterator i (begin()); i != end(); ++i, ++n)
-        os << fmt 
-            % n 
+        os << fmt
+            % n
             % formatLabel(i->stream())
             % formatLabel(i->area())
             % levels[i->level()]
@@ -470,7 +470,7 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode>
 senf::log::detail::TargetRegistry::consoleSelf(std::ostream & os)
 {
     return senf::console::Client::get(os).consoleDir().node().thisptr();
-}                                            
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::LogParameters
@@ -514,7 +514,7 @@ prefix_ std::ostream & senf::log::operator<<(std::ostream & os, senf::log::Targe
 
 namespace {
 
-    char const * levelNames[] = { 
+    char const * levelNames[] = {
         "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
 
     void parseParamToken(std::string const & value, senf::log::detail::LogParameters & out)
@@ -536,7 +536,7 @@ namespace {
             out.area = a;
             return;
         }
-        
+
         char const ** i (
             std::find(levelNames+1, levelNames+sizeof(levelNames)/sizeof(levelNames[0])-1, value));
         if (i == levelNames+sizeof(levelNames)/sizeof(levelNames[0])-1)
@@ -569,7 +569,7 @@ senf_console_parse_argument(console::ParseCommandInfo::TokensRange const & token
                             LogParameters & out)
 {
     out.clear();
-    
+
     for (console::ParseCommandInfo::TokensRange::iterator i (tokens.begin());
          i != tokens.end(); ++i)
         parseParamToken(i->value(), out);

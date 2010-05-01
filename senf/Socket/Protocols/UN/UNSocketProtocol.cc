@@ -53,18 +53,18 @@ prefix_ bool senf::UNSocketProtocol::eof()
     return false;
 }
 
-prefix_ void senf::UNSocketProtocol::close() 
+prefix_ void senf::UNSocketProtocol::close()
 {
     check_and_unlink();
-  
+
     SocketProtocol::close();
 }
 
-prefix_ void senf::UNSocketProtocol::terminate() 
+prefix_ void senf::UNSocketProtocol::terminate()
     const
 {
     check_and_unlink();
-    
+
     SocketProtocol::terminate();
 }
 
@@ -80,7 +80,7 @@ prefix_ void senf::UNSocketProtocol::check_and_unlink()
         SENF_LOG(("UNSocketProtocol::check_and_unlink() failed; [" << e.errorString() << "]."));
     }
 }
-    
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "UNSocketProtocol.mpp"

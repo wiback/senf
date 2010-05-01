@@ -32,7 +32,7 @@
 
 
 namespace senf {
-    
+
     struct RTPPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
@@ -46,26 +46,26 @@ namespace senf {
         SENF_PARSER_FIELD     ( timeStamp,      UInt32Parser );   //signals sampling time of 1st byte of payload; initialised; used to calculate Jitter between segments
         SENF_PARSER_FIELD     ( synSourceId,    UInt32Parser );   //Synchronisation source identifier; identifier of RFTP stream source (random number) in case of conferencing identifier of mixer
         SENF_PARSER_VECTOR    (csrcOpt, csrcCount, UInt32Parser );
-        
+
         bool valid() const {return version() == 2;}
         SENF_PARSER_FINALIZE(RTPPacketParser);
     };
-    
-    struct RTPPacketType 
+
+    struct RTPPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<RTPPacketType>
     {
         typedef PacketTypeMixin<RTPPacketType> mixin;
         typedef ConcretePacket<RTPPacketType> packet;
         typedef RTPPacketParser parser;
-    
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-    
+
         static void dump(packet p, std::ostream &os);
     };
-    
+
     typedef RTPPacketType::packet RTPPacket;
 
 }

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     template <class LengthParser=senf::UInt16Parser>
     class StringParser
         : public PacketParserBase
@@ -49,11 +49,11 @@ namespace senf {
 
 #       include SENF_PARSER()
         SENF_PARSER_PRIVATE_FIELD ( length, LengthParser );
-        
+
         typedef std::string value_type;
         static const size_type init_bytes = senf::init_bytes<LengthParser>::value;
         size_type bytes() const;
-        
+
         value_type value() const;
         void value(value_type v);
         operator value_type() const;
@@ -62,7 +62,7 @@ namespace senf {
 
     template <class LengthParser>
     std::ostream & operator<<(std::ostream & os, StringParser<LengthParser> const & value);
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

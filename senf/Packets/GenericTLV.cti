@@ -86,8 +86,8 @@ template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value(
         ForwardReadableRange const & val,
         typename boost::disable_if<senf::is_pair<ForwardReadableRange> >::type *)
-{ 
-    value_( val); 
+{
+    value_( val);
 }
 
 template <class Base>
@@ -95,8 +95,8 @@ template <class First, class Second>
 prefix_ void senf::GenericTLVParserBase<Base>::value(
         std::pair<First, Second> const & val,
         typename boost::disable_if<boost::is_convertible<First, typename Base::type_t::value_type> >::type *)
-{ 
-    value_( val); 
+{
+    value_( val);
 }
 
 template <class Base>
@@ -104,9 +104,9 @@ template <class Type, class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value(
         std::pair<Type, ForwardReadableRange> const & val,
         typename boost::enable_if<boost::is_convertible<Type, typename Base::type_t::value_type> >::type *)
-{ 
+{
     this->type() = val.first;
-    value_( val.second); 
+    value_( val.second);
 }
 
 #endif

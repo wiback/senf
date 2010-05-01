@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,7 +45,7 @@ namespace detail {
         : public senf::singleton<StatisticsLoggerRegistry>
     {
     public:
-        typedef void (*AddFn)(senf::StatisticsBase &, unsigned, 
+        typedef void (*AddFn)(senf::StatisticsBase &, unsigned,
                               senf::console::DirectoryNode &);
 
         using senf::singleton<StatisticsLoggerRegistry>::instance;
@@ -66,7 +66,7 @@ namespace detail {
     {
         StatisticsLogger(std::string const & label_);
         void operator()(float min, float avg, float max, float dev);
-        
+
         std::string label;
     };
 

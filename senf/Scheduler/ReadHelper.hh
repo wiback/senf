@@ -129,7 +129,7 @@ namespace senf {
     private:
         struct InternalPredicate;
 
-        ReadHelper(Handle handle, std::string::size_type maxSize,  
+        ReadHelper(Handle handle, std::string::size_type maxSize,
                    InternalPredicate * predicate, Callback cb);
 
         static void dispatchProcess(ptr helper, Handle handle, int event);

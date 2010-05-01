@@ -62,7 +62,7 @@
     use <a href="http://www.boost.org/libs/format/doc/format.html">Boost.Format</a>:
 
     \code
-    try { 
+    try {
         // ...
     }
     catch (senf::ExceptionMixin & e) {
@@ -96,7 +96,7 @@
         SENF_WRAP_EXC(std::bad_cast)
         SENF_WRAP_EXC(somelib::FooException)
     }
-    \endcode 
+    \endcode
     The re-thrown exception can then be caught as <tt>std::bad_cast</tt> or as senf::ExceptionMixin
     as needed. It is safe, to wrap an exception twice (the macro will detect this case).
     \code
@@ -147,7 +147,7 @@ namespace senf {
                                         /**< Adds \a text to the description text. */
 
     protected:
-        explicit ExceptionMixin(std::string const & description = ""); 
+        explicit ExceptionMixin(std::string const & description = "");
                                         ///< Initialize exception with string
                                         /**< \a description is the initial error description
                                              string. This should probably be a string constant
@@ -181,12 +181,12 @@ namespace senf {
         virtual char const * what() const throw();
                                         ///< get exception description and backtrace if available
                                         /**< get description of the exception (message()) and backtrace
-                                             information if SENF is compiled with \c SENF_DEBUG */ 
+                                             information if SENF is compiled with \c SENF_DEBUG */
 
     protected:
         explicit Exception(std::string const & description = "");
     };
-    
+
     /** \brief Wrapper for standard non-senf exceptions
 
         This class wraps an exception of type \a BaseException and adds functionality from
@@ -229,7 +229,7 @@ namespace senf {
                                              exception description string. This operator allows to
                                              use Exception instances like streams. The conversion is
                                              performed using <code>boost::lexical_cast</code> and is
-                                             therefor identical to a streaming operation. 
+                                             therefor identical to a streaming operation.
                                              \see \ref exception */
 
 
@@ -250,7 +250,7 @@ namespace senf {
 
         \code
         // Standard usage: Take \c errno from environment
-        throw senf::SystemException("::open()") 
+        throw senf::SystemException("::open()")
             << " while opening configuration file: " << filename;
 
         // You may however explicitly specify the errno value
@@ -294,13 +294,13 @@ namespace senf {
         int errorNumber() const;        ///< Error code (\c errno number)
         char const * errorString() const; ///< Error string (\c strerror() value)
 
-        bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0, 
+        bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0,
                    int c6=0, int c7=0, int c8=0, int c9=0) const;
                                         ///< \c true, if errorNumber() is one of \a c0 ... \a c9
 
     private:
         void init(std::string const & descr, int code _SENF_EXC_DEBUG_ARGS_ND);
-        
+
         int code_;
     };
 
@@ -330,4 +330,4 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
- 
+

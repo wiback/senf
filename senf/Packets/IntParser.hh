@@ -59,7 +59,7 @@ namespace senf {
         \li <tt>p = v</tt>: Assigns the value to the packet field.
         \li <tt>p.value(v)</tt>: same as above.
         \li <tt>p.value()</tt>: Returns the fields value as an integer number.
-        \li Use of p like an integer in most contexts: <tt>p += v</tt>, <tt>p *= v</tt>, <tt>v = p +
+        \li Use of p like an integer in most contexts: <tt>p += v</tt>, <tt>p *= v</tt>, <tt>v = p
             1</tt> and so on. You will only need to use the explicit \c value() member in rare
             circumstances when the automatic conversion is ambiguous or in some template contexts.
 

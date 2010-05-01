@@ -42,8 +42,8 @@ namespace senf {
     /** \brief Unix domain socket address
 
         UNSocketAddress wraps the standard sockaddr_un datatype. It provides simple accessor methods
-        to access the path. 
-        
+        to access the path.
+
         \implementation This implementation is based on sockaddr_un.
 
         \ingroup addr_group
@@ -53,8 +53,8 @@ namespace senf {
     {
     public:
         static short const addressFamily = AF_UNIX;
-        
-        UNSocketAddress(); 
+
+        UNSocketAddress();
 
         explicit UNSocketAddress(std::string const & path);
                                         ///< Construct an address constant from given path

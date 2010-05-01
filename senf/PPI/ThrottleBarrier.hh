@@ -51,7 +51,7 @@ namespace module {
     {
         SENF_PPI_MODULE(ThrottleBarrier);
     public:
-        
+
         connector::PassiveInput<> input;
         connector::ActiveOutput<> output;
 

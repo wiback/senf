@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -36,7 +36,7 @@ template <class Value>
 prefix_ bool senf::scheduler::detail::Poller<Value>::set(int fd, int events, Value * data)
 {
     struct epoll_event ev = { events, { data } };
-    if (epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev) != -1) 
+    if (epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev) != -1)
         return true;
     if (errno == EEXIST)
         if (epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev) != -1)

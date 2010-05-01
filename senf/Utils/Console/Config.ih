@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -40,7 +40,7 @@ namespace console {
 namespace detail {
 
     /** \brief Internal: Executor wrapper implementing restricted execution
-        
+
         A RestrictedExecutor will only process commands which a re children of a given node. It does
         \e not follow any links.
      */
@@ -61,12 +61,12 @@ namespace detail {
 
         void execute(std::ostream & output, ParseCommandInfo const & command);
                                         ///< Execute command
-                                        /**< Output will be written to \a output. 
+                                        /**< Output will be written to \a output.
                                              Same as operator()(). */
 
         void operator()(std::ostream & output, ParseCommandInfo const & command);
                                         ///< Execute command
-                                        /**< Output will be written to \a output. 
+                                        /**< Output will be written to \a output.
                                              Same as execute(). */
 
         GenericNode & getNode(ParseCommandInfo const & command);
@@ -102,7 +102,7 @@ namespace detail {
     };
 
     /** \brief Internal: Set restricted node of a RestrictedExecutor
-        
+
         A RestrictGuard will set the node to which to restrict. It will automatically reset the node
         in it's destructor.
      */

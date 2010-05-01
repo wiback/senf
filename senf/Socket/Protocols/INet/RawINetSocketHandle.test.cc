@@ -90,12 +90,12 @@ namespace {
         sin.sin_family = AF_INET;
         sin.sin_port = htons(0);
         sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-        
+
         int sockrec = socket(PF_INET,SOCK_RAW,47);
         if (sockrec<0) fail("server_v4","socket(rec)");
         int socksend = socket(PF_INET,SOCK_RAW,48);
         if (socksend<0) fail("server_v4","socket(send)");
-        
+
         char buffer[1024];
         while (1) {
             int n = read(sockrec,buffer,1024);
@@ -115,7 +115,7 @@ namespace {
         ::memset(&sin,0,sizeof(sin));
         sin.sin6_family = AF_INET6;
         sin.sin6_port = htons(0);
-        inet_pton(AF_INET6, "::1", &sin.sin6_addr);        
+        inet_pton(AF_INET6, "::1", &sin.sin6_addr);
         int sockrec6 = socket(PF_INET6,SOCK_RAW,47);
         if (sockrec6<0) fail("server_v6","socket(rec)");
         int socksend6 = socket(PF_INET6,SOCK_RAW,48);
@@ -156,7 +156,7 @@ SENF_AUTO_UNIT_TEST(RawV4ClientSocketHandle)
         SENF_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:0"), test) );
         senf::RawV4ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
         std::string in = sockrec.read();
-        BOOST_CHECK_EQUAL(in.substr(20), test); 
+        BOOST_CHECK_EQUAL(in.substr(20), test);
         SENF_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:0"),"QUIT"));
         //sock.close();
         //sockrec.close();
@@ -187,7 +187,7 @@ SENF_AUTO_UNIT_TEST(RawV6ClientSocketHandle)
         SENF_CHECK_NO_THROW( sock.writeto(senf::INet6SocketAddress("[::1]:0"), test) );
         senf::RawV6ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
         std::string in = sockrec.read();
-        BOOST_CHECK_EQUAL(in, test); 
+        BOOST_CHECK_EQUAL(in, test);
         SENF_CHECK_NO_THROW( sock.writeto(senf::INet6SocketAddress("[::1]:0"),"QUIT"));
         alarm(0);
     } catch (...) {

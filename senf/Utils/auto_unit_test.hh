@@ -59,7 +59,7 @@
 
 /** \brief Check for compile failure
 
-    \c COMPILE_FAIL() is used to check, that a certain piece of code will produce a compile 
+    \c COMPILE_FAIL() is used to check, that a certain piece of code will produce a compile
     time failure.
 
     \code
@@ -70,7 +70,7 @@
         // fails to compile ....
         int x = "foo";
     }
-    
+
     COMPILE_FAIL(bar)
     { ... }
 
@@ -78,7 +78,7 @@
     \endcode
 
     This check is performed by the extended unit-test builder in \c senfscons.
-    
+
     \ingroup unittest
  */
 #define COMPILE_FAIL(n) void n()
@@ -144,7 +144,7 @@ namespace test {
 
 #ifdef DOXYGEN
     /** \brief Check for non-equality
-    
+
         \c SENF_CHECK_NOT_EQUAL() is the opposite of \c BOOST_CHECK_EQUAL.
         \hideinitializer
         \ingroup unittest

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -41,7 +41,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
+
     struct GetRange
     {
         typedef senf::Collector const & first_argument_type;
@@ -56,7 +56,7 @@ namespace {
         typedef boost::tokenizer<Separator> Tokenizer;
         struct Pred {
             bool operator()(std::string const & s) const
-                { try { boost::lexical_cast<double>(s); return true; } 
+                { try { boost::lexical_cast<double>(s); return true; }
                     catch (std::bad_cast &) { return false; } }
         };
         typedef boost::filter_iterator<Pred,Tokenizer::iterator> FilterIterator;
@@ -69,11 +69,11 @@ namespace {
 
         typedef TransformIterator iterator;
         typedef TransformIterator const_iterator;
-        
+
         splitFloats(std::string const & s) : s_ (s), sep_ (" \n"), tok_ (s_, sep_) {}
-        TransformIterator begin() const 
+        TransformIterator begin() const
             { return TransformIterator(FilterIterator(tok_.begin(), tok_.end())); }
-        TransformIterator end() const 
+        TransformIterator end() const
             { return TransformIterator(FilterIterator(tok_.end(), tok_.end())); }
 
         std::string s_;
@@ -126,24 +126,24 @@ SENF_AUTO_UNIT_TEST(statistics)
                 senf::StatisticsLogger("level3"));
 
     unsigned children1[] = { 4u };
-    BOOST_CHECK_EQUAL_COLLECTIONS( 
+    BOOST_CHECK_EQUAL_COLLECTIONS(
         boost::make_transform_iterator(stats.collectors().begin(), GetRange()),
         boost::make_transform_iterator(stats.collectors().end(), GetRange()),
         children1, children1 + sizeof(children1)/sizeof(children1[0]) );
 
     unsigned children2[] = { 3u };
-    BOOST_CHECK_EQUAL_COLLECTIONS( 
+    BOOST_CHECK_EQUAL_COLLECTIONS(
         boost::make_transform_iterator(stats[4].collectors().begin(), GetRange()),
         boost::make_transform_iterator(stats[4].collectors().end(), GetRange()),
         children2, children2 + sizeof(children2)/sizeof(children2[0]) );
 
     unsigned children3[] = { 2u };
-    BOOST_CHECK_EQUAL_COLLECTIONS( 
+    BOOST_CHECK_EQUAL_COLLECTIONS(
         boost::make_transform_iterator(stats[4][3].collectors().begin(), GetRange()),
         boost::make_transform_iterator(stats[4][3].collectors().end(), GetRange()),
         children3, children3 + sizeof(children3)/sizeof(children3[0]) );
 
-    float values[][3] = { 
+    float values[][3] = {
         { -1.0f,  2.3f,  2.5f }, {  0.3f,  2.4f,  3.8f }, { -1.1f, -0.3f,  0.0f },
         { -0.3f,  3.2f,  3.3f }, {  1.0f,  1.1f,  1.1f }, {  0.5f,  0.5f,  0.5f },
         {  0.0f,  0.0f,  0.0f }, { -2.0f, -1.8f, -1.0f }, {  0.0f,  2.3f,  2.4f },

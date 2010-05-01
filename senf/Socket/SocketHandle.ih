@@ -63,7 +63,7 @@ namespace senf {
                                         ///< Value assigment
                                         /**< This operator will assign the string from any
                                              arbitrary type. It will use boost::lexical_cast to
-                                             convert the argument to its string representation. 
+                                             convert the argument to its string representation.
 
                                              If the string is non-empty, an additional separating
                                              comma is added to the string. */
@@ -157,8 +157,8 @@ namespace senf {
     };
 
     template <class SProtocol>
-    class ProtocolSocketBody 
-        : public SocketBody, 
+    class ProtocolSocketBody
+        : public SocketBody,
           private SProtocol,
           public senf::pool_alloc_mixin< ProtocolSocketBody<SProtocol> >
     {
@@ -174,7 +174,7 @@ namespace senf {
                                         /**< \param isServer \c true, if this socket is a server
                                              socket, false otherwise
                                              \param fd socket file descriptor */
-        
+
     private:
         virtual SocketProtocol const & v_protocol() const;
         virtual std::string v_protocolName() const;

@@ -30,14 +30,14 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template<typename IdType>
-prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy() 
+prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy()
     : entrySetById( entrySet.template get<Id>()),
       entrySetByTimeout( entrySet.template get<Timeout> ()),
       timer( "TimerEventProxy", membind(&TimerEventProxy<IdType>::timerEvent, this), 0, false)
 { }
 
 template<typename IdType>
-prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & name, console::DirectoryNode & node) 
+prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & name, console::DirectoryNode & node)
     : entrySetById( entrySet.template get<Id>()),
       entrySetByTimeout( entrySet.template get<Timeout> ()),
       timer( "TimerEventProxy", membind(&TimerEventProxy<IdType>::timerEvent, this), 0, false)

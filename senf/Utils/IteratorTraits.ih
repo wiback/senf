@@ -44,7 +44,7 @@ namespace senf {
     {};
 
     template <class CharT, class Traits, class Alloc>
-    struct contiguous_storage_iterator< 
+    struct contiguous_storage_iterator<
         ::__gnu_cxx::__normal_iterator<CharT*, std::basic_string<CharT, Traits, Alloc> > >
         : public boost::true_type
     {};

@@ -25,14 +25,14 @@ namespace senf {
 /** \mainpage The SENF Socket Library
 
     The Socket library provides a high level and object oriented abstraction based on the BSD socket
-    API (but not limited to it). 
-    
+    API (but not limited to it).
+
     \autotoc
-    
+
     \section socket_intro Introduction
     \seechapter \ref structure \n
     \seechapter \ref usage
-    
+
     The socket library abstraction is based on several concepts:
 
     \li The basic visible interface is a \link handle_group handle object\endlink
@@ -54,7 +54,7 @@ namespace senf {
     symbol). However, more generic kinds of handles can be defined for more generic functionality.
 
 
-    
+
     \section socket_policy The Policy interface
     \seechapter \ref policy_group
 
@@ -62,10 +62,10 @@ namespace senf {
     provides. This offers highly efficient access to the most important socket functions (like
     reading and writing). The policy interface however is a \e static, non-polymorphic interface.
 
-    
+
     \section socket_protocol The Protocol interface
     \seechapter \ref protocol_group
-    
+
 
     The protocol interface provides further protocol dependent and (possibly) polymorphic access to
     further socket funcitonality. On the other hand, this type of interface is not as flexible,
@@ -73,7 +73,7 @@ namespace senf {
 
     \section socket_addr Auxilliary Addressing classes
     \seechapter \ref addr_group
-    
+
     To supplement the socket library, there are a multitude of addressing classes. These come in two
     basic groups:
     \li Protocol specific addresses (e.g. INet4Address, MACAddress)
@@ -81,8 +81,8 @@ namespace senf {
 
     Whereas the protocol specific addresses are custom value types which represent their
     corresponding low-level address, the socket addresses are based on the corresponding \c sockaddr
-    structures. 
-    
+    structures.
+
     \section socket_further Going further
     \seechapter \ref extend \n
     \seechapter \ref implementation
@@ -122,7 +122,7 @@ namespace senf {
     reducing the policy interface to a minimal sensible subset of the complete API.
 
     \section over_policy The Policy Interface
-    
+
     The policy of a Socket consists of several parts, called <em>policy axis</em>. Each axis
     corresponds to one specific interface aspect of the Socket. The exact meaning of the policy axis
     are defined elsewhere (see \ref policy_group). The Protocol will always provide a complete set
@@ -138,7 +138,7 @@ namespace senf {
     defined match those defined in that Socket's protocol. Using such a generic handle decouples the
     implementation parts using this handle from the other socket aspects (e.g. you may define a
     generic socket handle for TCP based communication leaving the addressingPolicy undefined which
-    makes your code independent of the type of addressing, IPv4 or IPv6). 
+    makes your code independent of the type of addressing, IPv4 or IPv6).
 
     This can be described as generalized compile-time polymorphism: A base class reference to some
     derived class will only give access to a reduced interface (the base class interface) of a
@@ -201,7 +201,7 @@ namespace senf {
     To make your code more flexible, you should not pass around your socket in this form. Most of
     your code will be using only a small subset of the ProtocolClientSocketHandle or
     ProtocolServerSocketHandle API.
-    
+
     If instead of using the fully specified handle type you use a more incomplete type, you allow
     your code to be used with all sockets which fulfill the minimal requirements of your code. These
     types are based on the ClientSocketHandle and ServerSocketHandle templates which implement the

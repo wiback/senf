@@ -104,7 +104,7 @@ SENF_AUTO_UNIT_TEST(intrusive_refcount_t)
     BOOST_CHECK_EQUAL(p->refcount(),1u);
     BOOST_CHECK_EQUAL(p->is_shared(),false);
     BOOST_CHECK_EQUAL(TesterCustom::refs,1u);
-    
+
 
     {
         TesterCustom::ptr pp (p);

@@ -26,7 +26,7 @@
 #ifndef HH_SENF_Socket_Protocols_DVB_DVBDemuxSocketProtocol_
 #define HH_SENF_Socket_Protocols_DVB_DVBDemuxSocketProtocol_ 1
 
-#include <linux/dvb/dmx.h> 
+#include <linux/dvb/dmx.h>
 
 // Custom includes
 #include <senf/Socket/SocketProtocol.hh>
@@ -45,7 +45,7 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        void setBufferSize(unsigned long size) const; 
+        void setBufferSize(unsigned long size) const;
                                 ///< set the size of the circular buffer used for filtered data.
                                 /**< The default size is two maximum sized sections, i.e. if this
                                      function is not called a buffer size of 2 * 4096 bytes will
@@ -53,10 +53,10 @@ namespace senf {
                                      \param[in] size Size of circular buffer. */
         void startFiltering() const;
         void stopFiltering() const;
-        
+
         ///\name Abstract Interface Implementation
         ///@{
-        
+
         bool eof() const;
 
         ///@}

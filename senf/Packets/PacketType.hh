@@ -49,7 +49,7 @@ namespace senf {
         {
             typedef senf::ConcretePacket<SomePacketType> packet;
             typedef SomePacketParser parser;
-            
+
             static size_type initSize()
             {
                 // This value can in most cases be taken from the parser
@@ -109,7 +109,7 @@ namespace senf {
     struct PacketTypeBase
     {
         typedef Packet packet;
-        
+
         typedef senf::detail::packet::iterator iterator;
         typedef senf::detail::packet::const_iterator const_iterator;
         typedef senf::detail::packet::size_type size_type;
@@ -127,7 +127,7 @@ namespace senf {
         typedef VoidPacketParser parser;
                                         ///< Parser to parser packet fields
                                         /**< This typedef has to be set to the parser of the packet
-                                             
+
                                              The default is a VoidPacketParser which does not parse
                                              any field. */
 
@@ -142,8 +142,8 @@ namespace senf {
                                         /**< This function gives the index within a newly created,
                                              empty packet where a sub-packet is to be placed.
 
-                                             The default implementation returns initSize(). 
-                                             
+                                             The default implementation returns initSize().
+
                                              \implementation Ok, it does not really return
                                                  initSize(), it returns size_type(-1) which is
                                                  interpreted to mean initSize(). It can't return
@@ -160,14 +160,14 @@ namespace senf {
 
                                              The default implementation does nothing. */
 
-        
+
 
         static optional_range nextPacketRange(packet p);
                                         ///< Get next packet placement
                                         /**< nextPacketRange returns the iterator range where the
                                              next packet (header) is placed within the current
                                              packet.
-                                            
+
                                              The default implementation always returns
                                              <tt>no_range()</tt>.
 
@@ -184,7 +184,7 @@ namespace senf {
                                         ///< Get type of next packet
                                         /**< nextPacketType retrieves the type of the next packet
                                              returning a factory to create that packet.
-                                             
+
                                              The default implementation always returns
                                              <tt>no_factory()</tt>.
 
@@ -200,8 +200,8 @@ namespace senf {
                                         /**< finalize() will be called to complete a packet after it
                                              has been modified. This function must calculate any
                                              checksums, set size fields from the interpreter chain
-                                             etc. 
-                                             
+                                             etc.
+
                                              The default implementation does nothing. */
 
         static void dump(packet p, std::ostream & os);
@@ -217,25 +217,25 @@ namespace senf {
     /** \brief Mixin to provide standard implementations for nextPacketRange and nextPacketType
 
         This mixin class simplifies the definition of simple packets:
-        
+
         \li The packets consist of three sections: The header, the payload and an optional trailer.
         \li If the packet has a trailer, both the header and the trailer must have a fixed size.
 
         This mixin provides the nextPacketRange() member as well as initSize() and init(). If you
         additionally provide the optional \a Registry argument, PacketTypeMixin provides a simple
-        implementation of nextPacketType(). 
+        implementation of nextPacketType().
 
         When using the PacketTypeMixin, the implementation of a packet is simplified to:
         \code
         // Here 'SomeRegistryTag' is optional
-        struct SimplePacketType 
+        struct SimplePacketType
             : public senf::PacketTypeBase,
               public senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag>
         {
             typedef senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag> mixin;
             typedef senf::ConcretePacket<SimplePacketType> packet;
             typedef SomePacketParser parser;
-        
+
             using mixin::nextPacketRange;
             using mixin::nextPacketType;  // Only if the optional 'Registry' argument is provided
             using mixin::initSize;
@@ -251,7 +251,7 @@ namespace senf {
 
             static void finalize(packet p)
             {
-                // Set the type field by querying the type of the next packet. This is an 
+                // Set the type field by querying the type of the next packet. This is an
                 // optional assignment: If the key is not found, the value returned by 'key'
                 // is an empty optional and the assignment will be skipped.
                 p->typeField << key(p.next(senf::nothrow));
@@ -278,16 +278,16 @@ namespace senf {
         Most of the members are optional, which reduces the minimal implementation of a packet to:
 
         \code
-        struct SimplePacketType 
+        struct SimplePacketType
             : public senf::PacketTypeBase,
               public senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag>
         {
             typedef senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag> mixin;
             typedef senf::ConcretePacket<SimplePacketType> packet;
             typedef SomePacketParser parser;
-        
+
             using mixin::nextPacketRange;
-            using mixin::nextPacketType;            
+            using mixin::nextPacketType;
             using mixin::initSize;
             using mixin::init;
 
@@ -319,8 +319,8 @@ namespace senf {
                                              next packet from information stored in the current
                                              packets header, the key() member will look up the type
                                              of packet \a p in the registry and return it's
-                                             key. 
-                                             
+                                             key.
+
                                              If either \a p is an in - valid() packet or the packet
                                              type is not found in the registry, the returned
                                              optional value will be empty. */
@@ -337,7 +337,7 @@ namespace senf {
         static PacketInterpreterBase::factory_t      nextPacketType  (Packet const & p);
         static PacketInterpreterBase::size_type      initSize        ();
         static void                                  init            (Packet const & p);
-        
+
         ///@}
     };
 

@@ -53,7 +53,7 @@ SENF_AUTO_UNIT_TEST(debugModules)
 
         ppi::connect(source, sink);
         ppi::init();
-    
+
         senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };
         senf::Packet p (senf::DataPacket::create(data));
 
@@ -64,7 +64,7 @@ SENF_AUTO_UNIT_TEST(debugModules)
         BOOST_CHECK( ! sink.input.throttled() );
         BOOST_CHECK_EQUAL( sink.size(), 1u );
         BOOST_CHECK( ! sink.empty() );
-        BOOST_CHECK_EQUAL( 
+        BOOST_CHECK_EQUAL(
             debug::PassiveSink::size_type(std::distance(sink.begin(),sink.end())),
             sink.size() );
         BOOST_CHECK( *sink.begin() == p );
@@ -87,7 +87,7 @@ SENF_AUTO_UNIT_TEST(debugModules)
         senf::Packet p (senf::DataPacket::create(data));
 
         source.submit(p);
-        
+
         BOOST_CHECK_EQUAL( source.size(), 1u );
         BOOST_CHECK_EQUAL( sink.request(), p );
         BOOST_CHECK_EQUAL( source.size(), 0u );
@@ -140,7 +140,7 @@ SENF_AUTO_UNIT_TEST(logSink)
     senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };
     source.submit( senf::DataPacket::create(data) );
     senf::ppi::run();
-    
+
     BOOST_CHECK( ! logTarget.str().empty() );
 }
 

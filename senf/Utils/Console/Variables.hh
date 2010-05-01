@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,7 +45,7 @@ namespace console {
 namespace factory {
 
     /** \brief Variable command attributes (const)
-        
+
         \see VariableFactory
      */
     template <class Variable>
@@ -63,7 +63,7 @@ namespace factory {
         ConstVariableFactory formatter(Formatter formatter);
 
         OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
-        
+
         explicit ConstVariableFactory(Variable const & var);
 
     private:
@@ -71,7 +71,7 @@ namespace factory {
         boost::optional<std::string> doc_;
         boost::optional<std::string> shortdoc_;
     };
- 
+
     /** \brief Variable command attributes
 
         Variable commands allow to register any arbitrary variable as a command node. The variable
@@ -91,7 +91,7 @@ namespace factory {
 
         Since a variable command is added as a combination of two ordinary overloads, it is possible
         to register additional overloads with the same name before or after registering the
-        variable. 
+        variable.
 
         It is also possible, to register a variable read-only. To achieve this, just wrap it with \c
         boost::cref(). Such a variable cannot be changed only queried. Therefore, it does not have
@@ -130,7 +130,7 @@ namespace factory {
                                              \code
                                                  void parser(senf::console::ParseCommandInfo::TokensRange const & tokens, value_type & out);
                                              \endcode
-                                             
+
                                              where \c value_type is the type of the overload
                                              parameter. The parser must read and parse the complete
                                              \a tokens range and return the parsed value in \a

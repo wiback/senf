@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -89,7 +89,7 @@ SENF_AUTO_UNIT_TEST(programOptions)
         BOOST_CHECK_EQUAL( val1, "" );
         BOOST_CHECK_EQUAL( val2, true );
     }
-    
+
     {
         char const * argv[] = { "", "-ab" };
         senf::console::ProgramOptions opts(sizeof(argv)/sizeof(argv[0]), argv, root);

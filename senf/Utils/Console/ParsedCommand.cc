@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -53,7 +53,7 @@ prefix_ void senf::console::ParsedCommandOverloadBase::v_argumentDoc(unsigned in
 {
     BOOST_ASSERT( index < parameters_.size() );
     detail::ArgumentInfoBase & arg (*parameters_[index]);
-    doc.name = arg.name.empty() 
+    doc.name = arg.name.empty()
         ? (boost::format("arg%d%d") % overloadIndex() % (index+1)).str()
         : arg.name;
     doc.type = arg.type;

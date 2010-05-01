@@ -121,7 +121,7 @@ namespace senf {
         \par Socket Handle typedefs:
         \ref UDPv6ClientSocketHandle (ProtocolClientSocketHandle)
 
-        \par Policy Interface: 
+        \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
             ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local()
 

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -41,7 +41,7 @@ namespace senf {
     class MACAddress;
 
     /** \brief EUI-64 data type
-        
+
         An EUI-64 is a 64 bit (8 octet) id. The id is represented as an 8 byte sequence in network
         byte order. An EUI64 can be converted from/to several other representations
 

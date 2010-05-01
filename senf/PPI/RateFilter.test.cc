@@ -49,19 +49,19 @@ SENF_AUTO_UNIT_TEST(rateFilter)
     module::RateFilter rateFilter ( senf::ClockService::milliseconds(100) );
     debug::PassiveSource source;
     debug::PassiveSink sink;
-    
+
     ppi::connect(source, rateFilter);
     ppi::connect(rateFilter, sink);
-    
+
     std::string data ("TEST");
     senf::Packet p (senf::DataPacket::create(data));
     for (int i=0; i<10; i++)
-        source.submit(p); 
-    
+        source.submit(p);
+
     senf::scheduler::TimerEvent timer (
         "rateFilter test timer", &timeout,
         senf::ClockService::now() + senf::ClockService::milliseconds(250));
-    
+
     senf::ppi::run();
 
     BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(100) );
@@ -90,24 +90,24 @@ SENF_AUTO_UNIT_TEST(rateFilter_changeInterval)
     module::RateFilter rateFilter ( senf::ClockService::milliseconds(100) );
     debug::PassiveSource source;
     debug::PassiveSink sink;
-    
+
     ppi::connect(source, rateFilter);
     ppi::connect(rateFilter, sink);
-    
+
     std::string data ("TEST");
     senf::Packet p (senf::DataPacket::create(data));
     for (int i=0; i<10; i++)
-        source.submit(p); 
-    
+        source.submit(p);
+
     senf::scheduler::TimerEvent timeoutTimer (
         "rateFilter test timer", &timeout,
         senf::ClockService::now() + senf::ClockService::milliseconds(675));
-    
+
     RateFilter_IntervalChanger intervalChanger (rateFilter);
-    senf::scheduler::TimerEvent timer ( "RateFilter_IntervalChanger timer", 
+    senf::scheduler::TimerEvent timer ( "RateFilter_IntervalChanger timer",
         senf::membind(&RateFilter_IntervalChanger::changeInterval, intervalChanger),
         senf::ClockService::now() + senf::ClockService::milliseconds(250));
-    
+
     senf::ppi::run();
 
     BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(200) );

@@ -54,7 +54,7 @@ namespace detail {
     struct Callback
     {
         typedef boost::function<void (Arg)> type;
-        
+
         template <class Owner, class FnClass>
         static type make(void (FnClass::* memfn )(), Owner & owner);
         template <class Owner, class FnClass, class FnArg>
@@ -71,7 +71,7 @@ namespace detail {
     struct Callback<void>
     {
         typedef boost::function<void ()> type;
-        
+
         template <class Owner, class FnClass>
         static type make(void (FnClass::* memfn )(), Owner & owner);
         template <class Owner>

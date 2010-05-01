@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -82,13 +82,13 @@ struct function_traits_arg_type<Traits, mpp_ArgN(), true>
     typedef typename Traits::mpp_CurArg() type;
 };
 
-template <class C, class T mpp_TrailTplArgs() > 
+template <class C, class T mpp_TrailTplArgs() >
 struct remove_member_pointer <T (C::*)( mpp_Args() ) const>
 {
     typedef T type (mpp_Args());
 };
 
-template <class C, class T mpp_TrailTplArgs() > 
+template <class C, class T mpp_TrailTplArgs() >
 struct remove_member_pointer <T (C::* const)( mpp_Args() ) const>
 {
     typedef T type (mpp_Args());
@@ -112,7 +112,7 @@ struct remove_member_pointer <T (C::* const)( mpp_Args() ) const>
  (save-excursion (re-search-backward "^// Undefine local Macros")
  (forward-line 1) (delete-region (point) (progn (search-forward
  "// ////") (forward-line -1) (point))) (insert "\n") (let ((b (point))
- (e (progn (insert (save-excursion (re-search-backward 
+ (e (progn (insert (save-excursion (re-search-backward
  "^// Local Macros") (search-forward "#define") (beginning-of-line)
  (buffer-substring (point) (progn (search-forward "// ////")
  (search-backward "#define") (forward-line 1) (point))))) (point))))

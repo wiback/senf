@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -24,7 +24,7 @@
     \brief parameter public header */
 
 /** \defgroup boost_parameter Boost.Parameter utilities
-   
+
     Here we define some utilities for the <a
     href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
     library.
@@ -47,7 +47,7 @@ namespace senf {
     ///\{
 
     /** \brief Test \a ArgumentPack, whether the \a TagType argument was supplied
-        
+
         This check will test, whether the argument identified by the \a TagType keyword tag type was
         specified in the \a ArgumentPack. This inherits from \c boost::mpl::true_ or \c
         boost::mpl::false_ accordingly.
@@ -57,7 +57,7 @@ namespace senf {
      */
     template <class ArgumentPack, class TagType>
     struct has_parameter
-        : public boost::mpl::not_< 
+        : public boost::mpl::not_<
               boost::is_same< typename boost::parameter::binding< ArgumentPack, TagType, void>::type,
                                                                   void > >::type
     {};

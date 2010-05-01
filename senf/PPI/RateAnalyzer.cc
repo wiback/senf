@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -41,7 +41,7 @@ prefix_ senf::ppi::module::RateAnalyzer::RateAnalyzer()
 prefix_ void senf::ppi::module::RateAnalyzer::startStatistics(senf::ClockService::clock_type interval)
 {
     timer_.interval(interval);
-    factor_ = double(senf::ClockService::in_nanoseconds(interval)) / 
+    factor_ = double(senf::ClockService::in_nanoseconds(interval)) /
         double(senf::ClockService::in_nanoseconds(
                    senf::ClockService::seconds(1)));
 }

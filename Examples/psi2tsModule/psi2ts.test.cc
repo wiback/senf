@@ -48,7 +48,7 @@ void check_transportpacket_header(senf::TransportPacket tsPacket, bool pusi, uns
     BOOST_CHECK_EQUAL( tsPacket->continuity_counter(),        counter                                );
     if (pusi)
         BOOST_CHECK_EQUAL( tsPacket->pointer_field(),         0x0u                                   );
-        
+
 }
 
 template<class InputIterator, class T>
@@ -56,7 +56,7 @@ bool equal_elements(InputIterator first, InputIterator last, const T& value)
 {
     return std::find_if( first, last, boost::lambda::_1 != value) == last;
 }
-        
+
 
 SENF_AUTO_UNIT_TEST(one_section_to_one_transportpacket)
 {
@@ -64,28 +64,28 @@ SENF_AUTO_UNIT_TEST(one_section_to_one_transportpacket)
     senf::ppi::module::debug::PassiveSink sink;
     unsigned PID = 42;
     Psi2TsModule psi2ts (PID);
-    
+
     senf::ppi::connect( source, psi2ts);
     senf::ppi::connect( psi2ts, sink);
     senf::ppi::init();
-    
+
     std::string sec_data ( "psi2ts_test: one_section_to_one_transportpacket");
     senf::Packet sec_packet (senf::DataPacket::create(sec_data));
     sec_packet.finalize();
-    
+
     source.submit(sec_packet);
     BOOST_CHECK_EQUAL( sink.size(), 1u);
 
     senf::TransportPacket ts_packet = sink.pop_front().as<senf::TransportPacket>();
     check_transportpacket_header( ts_packet, true, PID, 1);
     senf::PacketData & ts_payload_data = ts_packet.next().data();
-    BOOST_CHECK_EQUAL_COLLECTIONS( 
-            ts_payload_data.begin(), 
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+            ts_payload_data.begin(),
             boost::next( ts_payload_data.begin(), sec_data.size()),
             sec_data.begin(),
             sec_data.end());
     BOOST_CHECK( equal_elements(
-            boost::next( ts_payload_data.begin(), ts_payload_data.size()), 
+            boost::next( ts_payload_data.begin(), ts_payload_data.size()),
             ts_payload_data.end(),
             0xffu));
 }
@@ -96,17 +96,17 @@ SENF_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
     senf::ppi::module::debug::PassiveSink sink;
     unsigned PID = 42;
     Psi2TsModule psi2ts (PID);
-    
+
     senf::ppi::connect( source, psi2ts);
     senf::ppi::connect( psi2ts, sink);
     senf::ppi::init();
-    
+
     std::string sec_data ( 183, 0x42);
     std::string sec_data2 ( "psi2ts_test: one_section_to_two_transportpackets");
     sec_data.append( sec_data2);
     senf::Packet sec_packet (senf::DataPacket::create(sec_data));
     sec_packet.finalize();
-    
+
     source.submit( sec_packet);
     BOOST_CHECK_EQUAL( sink.size(), 2u);
 
@@ -115,17 +115,17 @@ SENF_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
     senf::PacketData & ts_payload_data1 = ts_packet.next().data();
 
     BOOST_CHECK( equal_elements( ts_payload_data1.begin(), ts_payload_data1.end(), 0x42));
-    
+
     ts_packet = sink.pop_front().as<senf::TransportPacket>();
     check_transportpacket_header( ts_packet, false, PID, 2);
     senf::PacketData & ts_payload_data2 = ts_packet.next().data();
-    BOOST_CHECK_EQUAL_COLLECTIONS( 
-            ts_payload_data2.begin(), 
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+            ts_payload_data2.begin(),
             boost::next( ts_payload_data2.begin(), sec_data2.size()),
             sec_data2.begin(),
             sec_data2.end());
     BOOST_CHECK( equal_elements(
-            boost::next( ts_payload_data2.begin(), sec_data2.size()), 
+            boost::next( ts_payload_data2.begin(), sec_data2.size()),
             ts_payload_data2.end(),
             0xffu));
 }
@@ -136,15 +136,15 @@ SENF_AUTO_UNIT_TEST(many_sections_to_many_transportpackets)
     senf::ppi::module::debug::PassiveSink sink;
     unsigned PID = 42;
     Psi2TsModule psi2ts (PID);
-    
+
     senf::ppi::connect( source, psi2ts);
     senf::ppi::connect( psi2ts, sink);
     senf::ppi::init();
-    
+
     std::string sec_data ( "many_sections_to_many_transportpackets");
     senf::Packet sec_packet (senf::DataPacket::create(sec_data));
     sec_packet.finalize();
-    
+
     unsigned NUMBER_OF_SECTIONS = 42u;
     for (unsigned i=1; i<=NUMBER_OF_SECTIONS; i++) {
         source.submit( sec_packet);
@@ -153,7 +153,7 @@ SENF_AUTO_UNIT_TEST(many_sections_to_many_transportpackets)
 
     for (unsigned i=1; i<=NUMBER_OF_SECTIONS; i++) {
         senf::TransportPacket ts_packet = sink.pop_front().as<senf::TransportPacket>();
-        check_transportpacket_header( ts_packet, true, PID, i%16);    
+        check_transportpacket_header( ts_packet, true, PID, i%16);
     }
 }
 

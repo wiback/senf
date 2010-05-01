@@ -53,7 +53,7 @@ prefix_ std::string senf::hexdumpQuote(Iterator i, Iterator i_end)
 #undef prefix_
 //#include "hexdump.mpp"
 
- 
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

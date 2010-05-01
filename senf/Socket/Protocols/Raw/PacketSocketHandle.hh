@@ -122,7 +122,7 @@ namespace senf {
                                         ///< Disable reception of a multicast group
                                         /**< \see \ref mcAdd() */
 
-        void promisc(std::string const & interface, bool mode) const;  
+        void promisc(std::string const & interface, bool mode) const;
                                         ///< enable/disable promiscuous mode
 
         ///@}

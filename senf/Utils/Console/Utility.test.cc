@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -57,7 +57,7 @@ SENF_AUTO_UNIT_TEST(charAsString)
     senf::console::root().add("test", dir);
     std::stringstream ss;
 
-    dir.add("test", 
+    dir.add("test",
             fty::Command<senf::console::CharAsString<char> (senf::console::CharAsString<char>)>(
                 &charTest));
 
@@ -79,7 +79,7 @@ SENF_AUTO_UNIT_TEST(flagCollection)
     std::stringstream ss;
 
     dir.add("test",fty::Command(&collectionTest));
-    
+
     ss.str("");
     SENF_CHECK_NO_THROW(
         parser.parse("test/test foo",

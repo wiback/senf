@@ -53,7 +53,7 @@
         is met (e.g. number of chars read or a specific character sequence is found in the input).
     \li senf::WriteHelper writes data to an arbitrary file descriptor until all provided data has
         been written.
-    
+
     \section scheduler_i Implementation
     \seechapter \ref scheduler_implementation
 
@@ -75,7 +75,7 @@
 
     \li There is a dispatcher for each event type. This dispatcher manages the event specific
         registration and unregistration. The dispatcher is owns the event (and task) objects.
-    
+
     \li Every registered event is represented by an event specific event class instance.
 
     \li The Dispatcher ultimately registeres with the senf::scheduler::detail::FdManager. Since the
@@ -93,7 +93,7 @@
 
 
     \section scheduler_i_dispatchers Dispatchers
-    
+
     There is a dispatcher for each event type
 
     \li senf::scheduler::detail::FdDispatcher manages poll-able file descriptors. This does \e not
@@ -110,7 +110,7 @@
     manage the events. This makes the Scheduler itself be completely devoid of dynamic memory
     allocations.
 
-    
+
     \section scheduler_i_mainloop The main loop
 
     The application mainloop senf::scheduler::process() is constructed by calling the correct

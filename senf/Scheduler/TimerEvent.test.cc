@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -44,7 +44,7 @@ namespace {
     {
         return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(50);
     }
-    
+
     bool called = false;
     void handler()
     {
@@ -62,7 +62,7 @@ SENF_AUTO_UNIT_TEST(timerDispatcher)
 
     senf::ClockService::clock_type t (senf::ClockService::now());
     {
-        senf::scheduler::TimerEvent timer ("testTimer", &handler, 
+        senf::scheduler::TimerEvent timer ("testTimer", &handler,
                                            t + senf::ClockService::milliseconds(500));
         SENF_CHECK_NO_THROW( timer.disable() );
         SENF_CHECK_NO_THROW( timer.enable() );
@@ -143,7 +143,7 @@ namespace {
                 "jitterTest::tm2", boost::bind(&jitterCb, boost::ref(tm2)), randomDelay());
         senf::scheduler::TimerEvent tm3 (
                 "jitterTest::tm3", boost::bind(&jitterCb, boost::ref(tm3)), randomDelay());
-        
+
         // enabled "Idle"-Event will degrade scheduling delay
         //senf::scheduler::TimerEvent idle (
         //        "jitterTest::idle", boost::bind(&idleCb, boost::ref(idle)), senf::scheduler::now());

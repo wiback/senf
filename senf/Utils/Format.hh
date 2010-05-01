@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -80,7 +80,7 @@ namespace format {
         \par \c std::\c showpoint, \c std::\c noshowpoint
             If the \c showpoint flag is set, the exponent will be output even if it is 0. Otherwise,
             if \c width is set, the exponent will be replaced with 4 blanks.
-        
+
         \par \c std::\c uppercase, \c std::\c nouppercase
             If the \c uppercase flag is set, the exponent letter will be an uppercase 'E' instead of
             'e'. SI prefixes are \e not uppercased, since some SI prefixes differ only in case.
@@ -104,7 +104,7 @@ namespace format {
         os << std::setw(1) << senf::format::eng(1.23);
           -> "   1.230    "
 
-        os << std::setw(25) << std::setprecision(5) << std::showpos << std::uppercase 
+        os << std::setw(25) << std::setprecision(5) << std::showpos << std::uppercase
            << std::internal << senf::format::eng(12345,67);
           -> "+       12.35+-000.07E+03"
 
@@ -114,7 +114,7 @@ namespace format {
         senf::str(senf::format::eng(12.345,67).setw().setprecision(5).showpoint().uppercase())
           -> "  12.35+-67.00E+00"
         \endcode
-        
+
         \param[in] v value
         \param[in] d optional delta
 
@@ -148,7 +148,7 @@ namespace format {
     private:
         float v_;
         float d_;
-        
+
         mutable bool haveWidth_;
         mutable unsigned width_;
         mutable bool havePrecision_;
@@ -184,29 +184,29 @@ namespace format {
     template <class T>
     streamable_type dumpint(T const & v);
 
-#else 
+#else
 
-    template <class T> 
-    std::string dumpint(T const & v, 
+    template <class T>
+    std::string dumpint(T const & v,
                         typename boost::enable_if<boost::is_signed<T> >::type * = 0);
 
-    template <class T> 
-    std::string dumpint(T const & v, 
+    template <class T>
+    std::string dumpint(T const & v,
                         typename boost::enable_if<boost::is_unsigned<T> >::type * = 0);
-    
-    template <class T> 
-    std::string dumpint(T const & v, 
+
+    template <class T>
+    std::string dumpint(T const & v,
                         typename boost::enable_if<boost::is_signed<typename T::value_type> >::type * = 0);
 
-    template <class T> 
-    std::string dumpint(T const & v, 
+    template <class T>
+    std::string dumpint(T const & v,
                         typename boost::enable_if<boost::is_unsigned<typename T::value_type> >::type * = 0);
 
 #endif
-    
+
     /** \brief Helper class to easily achieve indent levels
-       
-        This class helps to achieve indent levels across function calls. Every instance 
+
+        This class helps to achieve indent levels across function calls. Every instance
         increases the static indent level. On destruction the level is decreased to the level
         before the instance.
         The following example illustrates the use of this class:
@@ -222,16 +222,16 @@ namespace format {
                 std::cout << indent << "f2 end\n";
             }
             f2()
-        \endcode 
+        \endcode
         Output:
         <pre>
             f2 begin
               f1
             f2 end
         </pre>
-        Here <tt>f1()</tt> and <tt>f2()</tt> don't need to know to current indent level, 
+        Here <tt>f1()</tt> and <tt>f2()</tt> don't need to know to current indent level,
         they just increase the level by instantiating IndentHelper.
-    
+
         \ingroup senf_utils_format
      */
     class IndentHelper
@@ -239,7 +239,7 @@ namespace format {
         static unsigned int static_level;
         unsigned int instance_level;
     public:
-        
+
         IndentHelper();                 ///< Construct new IndentHelper instance
                                         /**< The static indent level is increased by one. */
         ~IndentHelper();                ///< Destruct IndentHelper instance
@@ -249,7 +249,7 @@ namespace format {
                                         /**< The indent level of the instance is increases by one. */
         unsigned int level() const;     ///< return the current indent level
     };
-    
+
     /** \brief Output indent to given ostream
         \related IndentHelper
      */

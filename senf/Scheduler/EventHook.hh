@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -92,7 +92,7 @@ namespace scheduler {
                                                  informational)
                                              \param[in] cb Callback to call
                                              \param[in] initiallyEnabled if set \c false, do not
-                                                 enable callback automatically. 
+                                                 enable callback automatically.
                                              \param[in] priority event priority, defaults to
                                                  POST */
         ~EventHook();

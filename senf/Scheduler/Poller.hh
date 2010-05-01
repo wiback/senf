@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -62,16 +62,16 @@ namespace detail {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-        
+
         typedef Value value_type;
         typedef boost::transform_iterator<GetPollResult, epoll_event*> iterator;
         typedef boost::iterator_range<iterator> range;
 
-        enum Events { 
+        enum Events {
             EV_READ = EPOLLIN, EV_PRIO = EPOLLPRI, EV_WRITE = EPOLLOUT,
-            EV_HUP = EPOLLHUP, EV_ERR = EPOLLERR 
+            EV_HUP = EPOLLHUP, EV_ERR = EPOLLERR
         };
-        
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -90,7 +90,7 @@ namespace detail {
         range wait();                   ///< Wait for one event
                                         /**< \returns a range of iterators which iterate over the
                                              data values registered with the event */
-        
+
         void timeout(int t);            ///< Set event timeout to \a t milliseconds
         int timeout() const;            ///< Current event timeout
 

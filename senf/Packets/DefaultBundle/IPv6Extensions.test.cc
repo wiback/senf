@@ -73,9 +73,9 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_fragment)
     BOOST_CHECK_EQUAL( pFragment_packet->version(), 6u );
     BOOST_CHECK_EQUAL( pFragment_packet->length(), 20u );
     BOOST_CHECK_EQUAL( pFragment_packet->nextHeader(), 44u );
-    BOOST_CHECK_EQUAL( pFragment_packet->source().value(), 
+    BOOST_CHECK_EQUAL( pFragment_packet->source().value(),
             senf::INet6Address::from_string("2001::1") );
-    BOOST_CHECK_EQUAL( pFragment_packet->destination().value(), 
+    BOOST_CHECK_EQUAL( pFragment_packet->destination().value(),
             senf::INet6Address::from_string("2001::2") );
 
     std::ostringstream oss (std::ostringstream::out);
@@ -108,11 +108,11 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_routing)
 {
     unsigned char Routing_packetData[] = {
         // IP header
-        0x60, 0x30, 0x00, 0x00, 
+        0x60, 0x30, 0x00, 0x00,
         0x00, 0x10,             // payload Length
         0x2b,                   // next Header   (43 = Routing Header)
         0xff,                   // Hop Limit
-        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x02, 0x01, 0x02, 0xff, 0xfe, 0x00, 0x02, 0x00, // Src Addr
         0x35, 0x55, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
         0x77, 0x77, 0x77, 0x77, 0x88, 0x88, 0x88, 0x88, // Dest. Addr
@@ -128,17 +128,17 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_routing)
         0xa3, 0xd3,             // checksum (incorrect in wireshark capture file, should be 0xa3c4)
         0x00, 0x00, 0x00, 0x00
     };
-    
+
     senf::IPv6Packet pRouting_packet (senf::IPv6Packet::create(Routing_packetData));
 
     BOOST_CHECK_EQUAL( pRouting_packet->version(), 6u );
     BOOST_CHECK_EQUAL( pRouting_packet->length(), 16u );
     BOOST_CHECK_EQUAL( pRouting_packet->nextHeader(), 43u );
-    BOOST_CHECK_EQUAL( pRouting_packet->source().value(), 
+    BOOST_CHECK_EQUAL( pRouting_packet->source().value(),
             senf::INet6Address::from_string("fe80::201:2ff:fe00:200") );
-    BOOST_CHECK_EQUAL( pRouting_packet->destination().value(), 
+    BOOST_CHECK_EQUAL( pRouting_packet->destination().value(),
             senf::INet6Address::from_string("3555:5555:6666:6666:7777:7777:8888:8888"));
-    
+
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( pRouting_packet.dump( oss));
 
@@ -150,7 +150,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_routing)
     BOOST_CHECK_EQUAL( pRouting_extension->headerLength(), 0x00 );
     BOOST_CHECK_EQUAL( pRouting_extension->routingType(), 0x00 );
     BOOST_CHECK_EQUAL( pRouting_extension->segmentsLeft(), 0x00);
-    
+
     BOOST_CHECK_EQUAL( pRouting_extension->reserved(), 0u);
 
     BOOST_REQUIRE( pRouting_extension.next().is<senf::ICMPv6Packet>() );
@@ -168,9 +168,9 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
         0x00, 0x24,             // payload length
         0x00,                   // next header: IPv6 hop-by-hop option (0)
         0x01,                   // hop limit (1)
-        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26, // IPv6 Source address
-        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     
+        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, // IPv6 Destination address ff02::16
         // HopByHop option
         0x3a, // next Header (ICMPv6)
@@ -191,7 +191,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
     BOOST_CHECK_EQUAL( pHop_packet->version(), 6u );
     BOOST_CHECK_EQUAL( pHop_packet->length(), 36u );
     BOOST_CHECK_EQUAL( pHop_packet->nextHeader(), 0u );
-    BOOST_CHECK_EQUAL( pHop_packet->source().value(), 
+    BOOST_CHECK_EQUAL( pHop_packet->source().value(),
             senf::INet6Address::from_string("fe80::219:b9ff:feeb:b226") );
     BOOST_CHECK_EQUAL( pHop_packet->destination().value(), senf::INet6Address::from_string("ff02::16") );
 
@@ -237,9 +237,9 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
         0x00, 0x24,             // payload length
         0x00,                   // next header: IPv6 hop-by-hop option (0)
         0x01,                   // hop limit (1)
-        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // IPv6 Source address 
+        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // IPv6 Source address
         0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26, // (fe80::219:b9ff:feeb:b226)
-        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // IPv6 Destination address 
+        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // IPv6 Destination address
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, // (ff02::16)
         // HopByHop option
         0x3a, // next Header (ICMPv6)
@@ -280,7 +280,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
     {
         senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pext->options() );
         {
-            senf::IPv6GenericOptionParser opt ( 
+            senf::IPv6GenericOptionParser opt (
                     optC.push_back_space().init<senf::IPv6GenericOptionParser>());
             opt.altAction() = 0u;
             opt.changeFlag() = 0u;
@@ -316,33 +316,33 @@ namespace {
         SENF_PARSER_FIELD ( extendedType, senf::UInt8Parser );
         SENF_PARSER_FIELD ( checksum,   senf::UInt32Parser  );
         SENF_PARSER_FINALIZE ( IPv6ChecksumOptionParser     );
-        
+
         SENF_PARSER_INIT() {
             optionType() = typeId;
             length() = 5u;
-            extendedType() = extendedTypeId;     
+            extendedType() = extendedTypeId;
         }
-        
+
         static const boost::uint8_t typeId = 0x0d;
         static const boost::uint8_t extendedTypeId = 0x4d;
     };
 }
 
 SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
-{    
+{
     senf::IPv6HopByHopOptionsPacket p ( senf::IPv6HopByHopOptionsPacket::create() );
     p->nextHeader() = 0x3a;
     {
         senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC (p->options() );
         {
-            IPv6ChecksumOptionParser opt ( 
+            IPv6ChecksumOptionParser opt (
                     optC.push_back_space().init<IPv6ChecksumOptionParser>());
             opt.checksum() = 0x01234567u;
         }
     }
 
-    unsigned char data[] = { 
-            0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length) 
+    unsigned char data[] = {
+            0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length)
             0x0d, 0x05,  // option type, length
             // option value: extendedType, checksum
             0x4d, 0x01, 0x23, 0x45, 0x67,
@@ -350,29 +350,29 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
             0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
-                                 p.data().begin(), p.data().end() );    
+                                 p.data().begin(), p.data().end() );
 }
 
 
 SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
 {
-    unsigned char data[] = { 
-            0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length) 
+    unsigned char data[] = {
+            0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length)
             0x0d, 0x05,  // option type, length
             // option value: slfNetType, checksum
             0x4d, 0x01, 0x23, 0x45, 0x67,
             // padding (PadN option: type, length, 0-padding)
             0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    
+
     senf::IPv6HopByHopOptionsPacket p ( senf::IPv6HopByHopOptionsPacket::create(data) );
     BOOST_CHECK_EQUAL( p->nextHeader(), 0x3a);
-    
+
     {
         typedef senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
         optContainer_t optC (p->options() );
         optContainer_t::iterator listIter (optC.begin());
-    
+
         BOOST_CHECK_EQUAL( listIter->optionType(), 0x0d);
         BOOST_CHECK( listIter->is<IPv6ChecksumOptionParser>());
         IPv6ChecksumOptionParser opt ( listIter->as<IPv6ChecksumOptionParser>());

@@ -85,8 +85,8 @@ namespace senf {
                                         /**< Opens the tun/tap socket and create a new tap interface
                                              Use \ref ifaceName() to get the actual name of the newly
                                              created interface.
-             
-                                             The new interface is down and has to be set up separately. 
+
+                                             The new interface is down and has to be set up separately.
                                              After closing the socket, the tap interface and all
                                              corresponding routes will be deleted automatically. */
                                         /**< \note This member is implicitly called from the
@@ -98,12 +98,12 @@ namespace senf {
                                              with the given name. Note that the created interface can
                                              have a different name as specified. Use \ref ifaceName()
                                              to get the actual name.
-                                             
-                                             The new interface is down and has to be set up separately. 
+
+                                             The new interface is down and has to be set up separately.
                                              After closing the socket, the tap interface and all
-                                             corresponding routes will be deleted automatically. 
+                                             corresponding routes will be deleted automatically.
                                              \param[in] interface_name name of the new tap interface.
-                                             \param[in] NO_PI if set to \c false each packet has a 
+                                             \param[in] NO_PI if set to \c false each packet has a
                                                  additional 4 bytes header (flags, proto) */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
@@ -117,7 +117,7 @@ namespace senf {
         unsigned available() const;
         bool eof() const;               ///< returns always false.
         unsigned int ifaceIndex() const;///< returns the index of the correspondent tap interface
-        std::string ifaceName() const;  ///< returns the actual name of the correspondent tap interface  
+        std::string ifaceName() const;  ///< returns the actual name of the correspondent tap interface
 
     private:
         mutable unsigned int ifaceIndex_;

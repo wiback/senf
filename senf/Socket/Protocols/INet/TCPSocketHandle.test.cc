@@ -114,7 +114,7 @@ SENF_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
     {
         senf::TCPv4ClientSocketHandle sock;
 
-        BOOST_CHECK_THROW( sock.connect(senf::INet4SocketAddress(localhost4str(0))), 
+        BOOST_CHECK_THROW( sock.connect(senf::INet4SocketAddress(localhost4str(0))),
                            senf::SystemException );
     }
 
@@ -185,7 +185,7 @@ SENF_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
     {
         senf::TCPv6ClientSocketHandle sock;
 
-        BOOST_CHECK_THROW( sock.connect(senf::INet6SocketAddress(localhost6str(0))), 
+        BOOST_CHECK_THROW( sock.connect(senf::INet6SocketAddress(localhost6str(0))),
                            senf::SystemException );
     }
 

@@ -74,14 +74,14 @@ prefix_ void senf::MIHFIdTLVParser::maxIdLength(boost::uint8_t maxl)
     const
 {
     // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
-    if (maxl > 253) 
+    if (maxl > 253)
         throw std::length_error("maximum length of a MIHF_ID is 253 octets");
     protect(), idLength_().capacity( maxl);
     maxLength( maxl + senf::bytes(idLength_()));
 }
 
 prefix_ senf::safe_data_iterator senf::MIHFIdTLVParser::resizeValueField(
-        MIHTLVLengthParser::value_type size) 
+        MIHTLVLengthParser::value_type size)
 {
     MIHTLVLengthParser::value_type current_length ( idLength());
     idLength_() << size;
@@ -99,9 +99,9 @@ prefix_ void senf::MIHFIdTLVParser::value(std::string const & id)
 {
     size_type str_size (id.size());
     // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
-    if (str_size > 253) 
+    if (str_size > 253)
         throw std::length_error("maximum length of a MIHF_ID is 253 octets");
-    safe_data_iterator si = resizeValueField( str_size);   
+    safe_data_iterator si = resizeValueField( str_size);
     std::copy( id.begin(), id.end(), si);
 }
 
@@ -194,7 +194,7 @@ prefix_ void senf::MIHStatusTLVParser::dump(std::ostream & os)
     case Success:
         os << " (Success)" << std::endl;
         return;
-    case UnspecifiedFailure:  
+    case UnspecifiedFailure:
         os << " (Unspecified Failure)" << std::endl;
         return;
     case Rejected:
@@ -251,7 +251,7 @@ prefix_ void senf::MIHValidTimeIntervalTLVParser::dump(std::ostream & os)
 ///////////////////////////////////////////////////////////////////////////
 // senf::MIHTLVLengthParser
 
-prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() const 
+prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() const
 {
     switch (bytes() ) {
     case 1:
@@ -269,7 +269,7 @@ prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() c
     };
 }
 
-prefix_ void senf::MIHTLVLengthParser::value(value_type const & v) 
+prefix_ void senf::MIHTLVLengthParser::value(value_type const & v)
 {
     switch (bytes() ) {
     case 1:
@@ -310,19 +310,19 @@ prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::capacity(
     case 4:
         return UInt24Parser::max_value + 128;
     case 5:
-        return UInt32Parser::max_value; 
+        return UInt32Parser::max_value;
     default:
         throw( MIHTLVLengthException());
     };
 }
 
-prefix_ senf::MIHTLVLengthParser const & senf::MIHTLVLengthParser::operator= (value_type other) 
+prefix_ senf::MIHTLVLengthParser const & senf::MIHTLVLengthParser::operator= (value_type other)
 {
     value(other);
-    return *this; 
+    return *this;
 }
 
-prefix_ void senf::MIHTLVLengthParser::init() const 
+prefix_ void senf::MIHTLVLengthParser::init() const
 {
     defaultInit();
     extended_length_flag() = false;

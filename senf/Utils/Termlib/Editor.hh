@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -102,7 +102,7 @@ namespace term {
 
         void write(char ch);
         void write(std::string const & s);
-        
+
         AbstractTerminal * terminal_;
         Terminfo tifo_;
         KeyParser keyParser_;
@@ -113,7 +113,7 @@ namespace term {
         unsigned displayHeight_;
         unsigned line_;
     };
-    
+
     /** \brief Single line interactive text editor
 
         LineEditor implements a single-line input widget on an arbitrary AbstractTerminal.
@@ -125,7 +125,7 @@ namespace term {
         \li The LineEditor supports an arbitrary auxiliary display area below the input line
         \li The LineEditor has hide() / show() support to allow editing to be temporarily
             interrupted.
-        
+
         The LineEditor will query the user for an input line. When the user accepts a line,
         LineEditor will call a user callback function. After the callback has been called, the
         editor is disabled. To accept a new input line, call show().
@@ -154,7 +154,7 @@ namespace term {
 
         See the senf::term::bindings namespace for a list of all default provided key binding
         functions.
-        
+
 
         \section editor_complete Completion suppoprt
 
@@ -163,7 +163,7 @@ namespace term {
         bindings::complete():
 
         \code
-        void myCompleter(senf::term::LineEditor & editor, unsigned & b, unsigned & e, 
+        void myCompleter(senf::term::LineEditor & editor, unsigned & b, unsigned & e,
                          std::string & prefix, std::vector<std::string> & completions)
         {
             // Get text to complete
@@ -174,7 +174,7 @@ namespace term {
         }
 
         senf::term::LineEditor editor (...);
-        editor.defineKey(senf::term::KeyParser::TAB, 
+        editor.defineKey(senf::term::KeyParser::TAB,
                          boost::bind(&senf::term::bindings::complete, _1, &myCompleter));
         \endcode
 
@@ -184,16 +184,16 @@ namespace term {
         The completion protocol is as follows: When completion is desired, the completer function is
         called. \a b and \a e are set to 0 and <tt>editor.point()</tt> respectively. \a prefix and
         \a completions are empty.
-        
+
         \li the completer may restrict the to-be-completed string to any subrange by changing \a b
             and \a e accordingly.
         \li If there is an initial substring which applies to \e all completions but should not be
             listed in the list of completions, assign this value to \a prefix.
-        \li Add all possible completions to the \a completions vector not including the \a prefix. 
+        \li Add all possible completions to the \a completions vector not including the \a prefix.
         \li The completion result is taken from the size of the \a completions vector \e only: If
             this vector is empty, completion failed (even if \a prefix is set), a single entry in \a
             completions (even if it is the empty string) signals a unique completion.
-        
+
 
         \section editor_auxarea The aux display area
 
@@ -228,7 +228,7 @@ namespace term {
                                         /**< \param[in] terminal abstract terminal interface
                                              \param[in] cb callback to call for complete input
                                                  line */
-        
+
         ///////////////////////////////////////////////////////////////////////////
 
         ///\name Overall edit control
@@ -304,7 +304,7 @@ namespace term {
         void unsetKey(keycode_t key);   ///< Remove all bindings for \a key
 
         ///\}
-        
+
     private:
         virtual bool cb_init();
         virtual void cb_windowSizeChanged();
@@ -349,14 +349,14 @@ namespace bindings {
     void nextHistory         (LineEditor & editor); ///< Move to next history entry
     void clearScreen         (LineEditor & editor); ///< Clear screen and redisplay editor
 
-    typedef boost::function<void (LineEditor &, unsigned & b, unsigned & e, 
+    typedef boost::function<void (LineEditor &, unsigned & b, unsigned & e,
                                   std::string & prefix, std::vector<std::string> &)> Completer;
     void complete            (LineEditor & editor, Completer completer);
                                         ///< Complete text at cursor
                                         /**< This function calls \a completer to find the list of
                                              possible completions for the text between \a b and \a e
                                              (as passed to the completer). The completer must add
-                                             all possible completions to the \a completions vector. 
+                                             all possible completions to the \a completions vector.
 
                                              \see \ref editor_complete */
 

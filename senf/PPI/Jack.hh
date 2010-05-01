@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,7 +45,7 @@ namespace connector {
         : private boost::noncopyable, private ppi::detail::DisableStandardConnect
     {};
 
-    /** \brief Jack referencing an ActiveInput 
+    /** \brief Jack referencing an ActiveInput
         \see \ref ppi_jacks */
     class GenericActiveInputJack
         : public Jack
@@ -95,7 +95,7 @@ namespace connector {
     private:
         GenericPassiveInput * input_;
     };
-    
+
     /** \brief Jack referencing a PassiveOutput
         \see \ref ppi_jacks */
     class GenericPassiveOutputJack
@@ -122,13 +122,13 @@ namespace connector {
     public:
         explicit ActiveInputJack(ActiveInput<PacketType> & input);
         explicit ActiveInputJack(ActiveInput<> & input);
-        
+
         explicit ActiveInputJack(ActiveInputJack & input);
         explicit ActiveInputJack(ActiveInputJack<> & input);
 
         void reset(ActiveInput<PacketType> & input);
         void reset(ActiveInput<> & input);
-        
+
         void reset(ActiveInputJack & input);
         void reset(ActiveInputJack<> & input);
     };
@@ -274,19 +274,19 @@ namespace connector {
     void connect(T & source, connector::GenericPassiveInputJack & target,
                  typename boost::disable_if< boost::is_base_of<connector::Jack, T> >::type * = 0);
 
-    void connect(connector::GenericActiveOutputJack & source, 
+    void connect(connector::GenericActiveOutputJack & source,
                  connector::GenericPassiveInputJack & target);
-    void connect(connector::GenericPassiveOutputJack & source, 
+    void connect(connector::GenericPassiveOutputJack & source,
                  connector::GenericActiveInputJack & target);
 
-    void connect(connector::GenericActiveOutputJack & source, 
+    void connect(connector::GenericActiveOutputJack & source,
                  connector::GenericPassiveInput & target);
-    void connect(connector::GenericPassiveOutputJack & source, 
+    void connect(connector::GenericPassiveOutputJack & source,
                  connector::GenericActiveInput & target);
 
-    void connect(connector::GenericActiveOutput & source, 
+    void connect(connector::GenericActiveOutput & source,
                  connector::GenericPassiveInputJack & target);
-    void connect(connector::GenericPassiveOutput & source, 
+    void connect(connector::GenericPassiveOutput & source,
                  connector::GenericActiveInputJack & target);
 
 #endif

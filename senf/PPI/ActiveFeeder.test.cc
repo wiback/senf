@@ -43,7 +43,7 @@ namespace ppi = senf::ppi;
 namespace module = senf::ppi::module;
 namespace scheduler = senf::scheduler;
 
-namespace {   
+namespace {
     void run(senf::ClockService::clock_type t) {
         scheduler::TimerEvent timeout(
                 "test-timeout", &scheduler::terminate, scheduler::now() + t);
@@ -63,9 +63,9 @@ SENF_AUTO_UNIT_TEST(activeFeeder)
     ppi::connect( source, feeder );
     ppi::connect( feeder, sink   );
 
-    senf::ClockService::clock_type start (senf::ClockService::now());    
+    senf::ClockService::clock_type start (senf::ClockService::now());
     run( senf::ClockService::seconds(1));
-    std::cerr << "\nActiveFeeder: " 
+    std::cerr << "\nActiveFeeder: "
               << (sink.size()*1e9)/(senf::ClockService::now()-start)
               << " packets/s" << std::endl;
     BOOST_CHECK( sink.size() > 0);

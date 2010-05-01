@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,9 +45,9 @@
     configuration file
     \code
     # My someserver configuration file
-    
+
     /server/port 1234;
-    
+
     /logger/targets {
         console {
             accept senf::log::Debug IMPORTANT;
@@ -83,7 +83,7 @@
 
     These are characters, which have a special meaning. Some are used internally, others are just
     returned as punctuation tokens
-    
+
     <table class="senf">
         <tr><td>#</td><td>Comments are marked with '#' and continue to the end of the line</td></tr>
         <tr><td>/</td><td>path component separator</td></tr>
@@ -116,7 +116,7 @@
     "\"foo\nbar\""
     "\x04test"
     </pre>
-    
+
     A <b>hex-string literal</b> is used to represent binary data. It looks like a string which has
     only hexadecimal bytes or whitespace as contents (comments and newlines are Ok when not read
     from the interactive console)
@@ -139,7 +139,7 @@
     </pre>
 
     \subsection console_statements Statements
-    
+
     There are several types of statements:
     \li The bulk of all statements are \e path statements
     \li There are some \e built-in statements which are mostly useful at the interactive console
@@ -159,7 +159,7 @@
     is completely up to the command.
 
     A <b>built-in</b> statement is one of
-    
+
     <table class="senf">
     <tr><td>\c cd \e path</td><td>Change current directory</td></tr>
     <tr><td>\c ls [ \e path ]</td><td>List contents of \e path or current directory</td></tr>
@@ -213,14 +213,14 @@ namespace console {
     /** \brief Single argument token
 
         All command arguments are split into tokens by the parser. Each token is returned as an
-        Token instance. 
+        Token instance.
 
         \ingroup console_parser
       */
     class Token
     {
     public:
-        enum TokenType { 
+        enum TokenType {
             None                = 0,
             PathSeparator       = 0x0001, // '/'
             ArgumentGroupOpen   = 0x0002, // '('
@@ -235,30 +235,30 @@ namespace console {
         };
 
         enum TokenGroup {
-            ArgumentGrouper     = ArgumentGroupOpen 
+            ArgumentGrouper     = ArgumentGroupOpen
                                 | ArgumentGroupClose,
 
-            DirectoryGrouper    = DirectoryGroupOpen 
+            DirectoryGrouper    = DirectoryGroupOpen
                                 | DirectoryGroupClose,
 
-            Punctuation         = DirectoryGroupOpen 
-                                | DirectoryGroupClose 
-                                | PathSeparator 
-                                | CommandTerminator 
+            Punctuation         = DirectoryGroupOpen
+                                | DirectoryGroupClose
+                                | PathSeparator
+                                | CommandTerminator
                                 | OtherPunctuation,
 
-            String              = BasicString 
+            String              = BasicString
                                 | HexString,
 
-            SimpleArgument      = Word 
-                                | BasicString 
+            SimpleArgument      = Word
+                                | BasicString
                                 | HexString
         };
-        
+
         Token();                        ///< Create empty token
-        Token(TokenType type, std::string token); 
+        Token(TokenType type, std::string token);
                                         ///< Create token with given type and value
-        Token(TokenType type, std::string token, detail::FilePositionWithIndex const & pos); 
+        Token(TokenType type, std::string token, detail::FilePositionWithIndex const & pos);
                                         ///< Create token with given type and value
 
 
@@ -338,7 +338,7 @@ namespace console {
         Every command parsed is returned in a ParseCommandInfo instance. This information is purely
         taken from the parser, no semantic information is attached at this point, the config/console
         node tree is not involved in any way. ParseCommandInfo consist of
-        
+
         \li the type of command: built-in or normal command represented by a possibly relative path
             into the command tree.
         \li the command
@@ -352,7 +352,7 @@ namespace console {
         typedef std::vector<std::string> CommandPath;
 
     public:
-        class ArgumentIterator; 
+        class ArgumentIterator;
 
         typedef CommandPath::const_iterator path_iterator;
         typedef Tokens::const_iterator token_iterator;
@@ -363,12 +363,12 @@ namespace console {
         typedef boost::iterator_range<argument_iterator> ArgumentsRange;
         typedef boost::iterator_range<token_iterator> TokensRange;
 
-        enum BuiltinCommand { NoBuiltin, 
-                              BuiltinCD, 
-                              BuiltinLS, 
+        enum BuiltinCommand { NoBuiltin,
+                              BuiltinCD,
+                              BuiltinLS,
                               BuiltinLL,
                               BuiltinLR,
-                              BuiltinPUSHD, 
+                              BuiltinPUSHD,
                               BuiltinPOPD,
                               BuiltinEXIT,
                               BuiltinHELP };
@@ -395,7 +395,7 @@ namespace console {
         void clear();                   ///< Clear all data members
         bool empty();                   ///< \c true, if the data is empty
 
-        void builtin(BuiltinCommand builtin); ///< Assign builtin command 
+        void builtin(BuiltinCommand builtin); ///< Assign builtin command
         void command(std::vector<Token> & commandPath); ///< Assign non-builtin command
 
         void addToken(Token const & token); ///< Add argument token
@@ -425,7 +425,7 @@ namespace console {
         This iterator is a bidirectional iterator \e not a random access iterator.
      */
     class ParseCommandInfo::ArgumentIterator
-        : public boost::iterator_facade< ParseCommandInfo::ArgumentIterator, 
+        : public boost::iterator_facade< ParseCommandInfo::ArgumentIterator,
                                          ParseCommandInfo::TokensRange,
                                          boost::bidirectional_traversal_tag,
                                          ParseCommandInfo::TokensRange >
@@ -455,11 +455,11 @@ namespace console {
         of SyntaxErrorException. This is important, so command overloading works.
      */
     struct SyntaxErrorException : public senf::Exception
-    { explicit SyntaxErrorException(std::string const & msg = "syntax error") 
+    { explicit SyntaxErrorException(std::string const & msg = "syntax error")
           : senf::Exception(msg) {} };
 
     /** \brief Wrapper checking argument iterator access for validity
-        
+
         CheckedArgumentIteratorWrapper is a wrapper around a range of arguments parsed using the
         ParseCommandInfo::ArgumentIterator. It is used to parse arguments either in a command
         (registered with manual argument parsing) or when defining a custom parser.
@@ -468,7 +468,7 @@ namespace console {
         {
             std:;string arg1;
             unsigned arg2 (0);
-            
+
             {
                 senf::console::CheckedArgumentIteratorWrapper arg (command.arguments());
                 senf::console::parse( *(arg++), arg1 );
@@ -483,7 +483,7 @@ namespace console {
         \li You increment the iterator \e past all arguments you parse. The iterator must point to
             the end of the range when parsing is complete.
         \li The iterator wrapper is destroyed after parsing but before executing the command itself
-            begins. 
+            begins.
 
         Accessing a non-existent argument or failing to parse all arguments will raise a
         senf::console::SyntaxErrorException.
@@ -510,7 +510,7 @@ namespace console {
             std::string const & msg = "invalid number of arguments");
                                         ///< Make wrapper from ArgumentsRange
                                         /**< This constructs a wrapper from a
-                                             ParseCommandInfo::ArgumentsRange. 
+                                             ParseCommandInfo::ArgumentsRange.
                                              \param[in] range Range of arguments to parse
                                              \param[in] msg Error message */
         explicit CheckedArgumentIteratorWrapper(
@@ -533,7 +533,7 @@ namespace console {
                                              SyntaxErrorException, if not all arguments are parsed
                                              and when no other exception is in progress. */
 
-        operator ParseCommandInfo::ArgumentIterator(); 
+        operator ParseCommandInfo::ArgumentIterator();
                                         ///< Use wrapper as ParseCommandInfo::ArgumentIterator
 
         bool boolean_test() const;      ///< \c true, if more arguments are available
@@ -548,7 +548,7 @@ namespace console {
                                         ///< Compare wrapper against ArgumentIterator
         bool operator!=(ParseCommandInfo::ArgumentIterator const & other) const;
                                         ///< Compare wrapper against ArgumentIterator
-        
+
         using IteratorFacade::operator++;
         ParseCommandInfo::ArgumentIterator operator++(int);
 
@@ -624,8 +624,8 @@ namespace console {
                                         /**< An incremental parse will parse all complete statements
                                              in \a commands. parseIncremental() will return the
                                              number of characters successfully parsed from \a
-                                             commands. 
-                                             
+                                             commands.
+
                                              \note The incremental parser \e requires all statements
                                                  to be terminated explicitly. This means, that the
                                                  last ';' is \e not optional in this case. */

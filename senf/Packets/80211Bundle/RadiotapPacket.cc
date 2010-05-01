@@ -51,7 +51,7 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
     DUMP_OPTIONAL_FIELD( fhss,              unsigned, "FHSS"                 );
     DUMP_OPTIONAL_FIELD( dbmAntennaSignal,  signed,   "antenna signal (dBm)" );
     DUMP_OPTIONAL_FIELD( dbmAntennaNoise,   signed,   "antenna noise (dBm)"  );
-    DUMP_OPTIONAL_FIELD( lockQuality,       unsigned, "lock quality"         );    
+    DUMP_OPTIONAL_FIELD( lockQuality,       unsigned, "lock quality"         );
     DUMP_OPTIONAL_FIELD( txAttenuation,     unsigned, "tx attenuation"       );
     DUMP_OPTIONAL_FIELD( dbTxAttenuation,   unsigned, "tx attenuation (dB)"  );
     DUMP_OPTIONAL_FIELD( dbmTxAttenuation,  signed,   "tx attenuation (dBm)" );
@@ -81,8 +81,8 @@ senf::RadiotapPacketType::nextPacketRange(packet p)
 {
     size_type h (senf::bytes(p.parser()));
     size_type t (p->flagsPresent() && p->flags().fcsAtEnd() ? 4 : 0);
-    return p.size() < h+t 
-        ? no_range() 
+    return p.size() < h+t
+        ? no_range()
         : optional_range( range(p.data().begin() + h, p.data().end() - t) );
 }
 

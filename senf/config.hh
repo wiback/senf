@@ -19,17 +19,17 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
 /** \file
     \brief config public header */
- 
+
 #ifndef HH_config_
 #define HH_config_ 1
- 
+
 // Custom includes
 #include <boost/cstdint.hpp>
 #include <limits.h>
- 
+
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -66,7 +66,7 @@ namespace config {
 #
 #     // Add other compilers here ...
 #
-#     // dynamic arrays are part of C99. Which is NOT part of C++ 
+#     // dynamic arrays are part of C99. Which is NOT part of C++
 #     // but lets try nonetheless ...
 #     elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #         define SENF_BUFFER_USE_LOCALS 1
@@ -90,10 +90,10 @@ namespace config {
 #     define SENF_DEBUG_BACKTRACE_NUMCALLERS 64
 # endif
 #
-# ifndef SENF_CONSOLE_MAX_COMMAND_ARITY 
+# ifndef SENF_CONSOLE_MAX_COMMAND_ARITY
 #     define SENF_CONSOLE_MAX_COMMAND_ARITY 6
 # endif
-# 
+#
 # ifndef PHOENIX_LIMIT
 #     define PHOENIX_LIMIT 6
 # endif
@@ -101,10 +101,10 @@ namespace config {
 # if __GLIBC__>=2 && __GLIBC_MINOR__>=8
 #     define HAVE_TIMERFD 1
 # endif
- 
+
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
- 
+
 
 // Local Variables:
 // mode: c++
@@ -115,4 +115,4 @@ namespace config {
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u all_tests"
 // End:
- 
+

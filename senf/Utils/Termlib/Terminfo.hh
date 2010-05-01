@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -56,11 +56,11 @@ namespace term {
      */
 
     /** \brief Terminfo database entry
-        
+
         This class reads a single terminfo database entry and allows to access the terminfo
-        properties. 
-        
-        \ingroup terminfo_group 
+        properties.
+
+        \ingroup terminfo_group
      */
     class Terminfo
     {
@@ -90,11 +90,11 @@ namespace term {
                 CpiChangesRes, LpiChangesRes, BackspacesWithBs, CrtNoScrolling,
                 NoCorrectlyWorkingCr, GnuHasMetaKey, LinefeedIsNewline, HasHardwareTabs,
                 ReturnDoesClrEol };
-            
+
             /** \brief Boolean property names
                 \hideinitializer */
             static char const * const BooleanNames[];
-            
+
             /** \brief Numeric terminfo properties */
             enum Numeric {
                 Columns, InitTabs, Lines, LinesOfMemory, MagicCookieGlitch, PaddingBaudRate,
@@ -185,11 +185,11 @@ namespace term {
         typedef char const* string_t;   ///< String terminfo property type
 
         ///////////////////////////////////////////////////////////////////////////
-        
+
         Terminfo();
         explicit Terminfo(std::string const & term); ///< Load terminfo entry \a term
         void load(std::string const & term); ///< Load terminfo entry \a term
-        
+
         bool getFlag(properties::Boolean p) const; ///< Get boolean property value
         number_t getNumber(properties::Numeric p) const; ///< Get numeric property value
         string_t getString(properties::String p) const; ///< Get string property value
@@ -199,7 +199,7 @@ namespace term {
         bool hasProperty(properties::String p ) const; ///< \c true, if string property \a p exists
 
         std::string formatString(properties::String p,
-                                 number_t arg1=NoValue, number_t arg2=NoValue, 
+                                 number_t arg1=NoValue, number_t arg2=NoValue,
                                  number_t arg3=NoValue, number_t arg4=NoValue,
                                  number_t arg5=NoValue, number_t arg6=NoValue,
                                  number_t arg7=NoValue, number_t arg8=NoValue,
@@ -239,8 +239,8 @@ namespace term {
 
         All keys are returned as keyboard code's. Values 0 to 255 represent ordinary ASCII
         characters, larger values are special keys taken from the KeyCode \c enum
-        
-        \ingroup terminfo_group 
+
+        \ingroup terminfo_group
      */
     class KeyParser
     {
@@ -311,7 +311,7 @@ namespace term {
 
         Keytable table_;
     };
-        
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -77,7 +77,7 @@ namespace senf {
                                              the network (e.g. via ICMP). */
 
         unsigned rcvbuf() const;        ///< Check receive buffer size
-                                        /**< \returns size of receive buffer in bytes 
+                                        /**< \returns size of receive buffer in bytes
                                              \internal Linux doubles the buffer size internally when
                                                  changing it to cater for additional space needed by
                                                  the linux kernel. This call will therefore return
@@ -86,14 +86,14 @@ namespace senf {
                                         /**< \param[in] size new receive buffer size */
 
         unsigned sndbuf() const;        ///< Check send buffer size
-                                        /**< \returns size of send buffer in bytes 
+                                        /**< \returns size of send buffer in bytes
                                              \internal Linux doubles the buffer size internally when
                                                  changing it to cater for additional space needed by
                                                  the linux kernel. This call will therefore return
                                                  only half the value reported by the kernel. */
         void sndbuf(unsigned size) const; ///< Change size of send buffer
                                         /**< \param[in] size new send buffer size */
-        
+
      };
 
     /** \brief Protocol facet providing basic connection oriented BSD socket functions

@@ -62,11 +62,11 @@ SENF_AUTO_UNIT_TEST(fileTarget)
     BOOST_CHECK_EQUAL( std::string(buffer), message);
 
     SENF_CHECK_NO_THROW( boost::filesystem::remove(filename) );
-    
+
     target.reopen();
     BOOST_REQUIRE( boost::filesystem::exists(filename));
     SENF_CHECK_NO_THROW( boost::filesystem::remove(filename) );
-    
+
     filename = std::string("/tmp/senf_fileTarget_test2.log");
     target.reopen( filename);
     BOOST_REQUIRE( boost::filesystem::exists(filename));

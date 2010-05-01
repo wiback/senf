@@ -138,8 +138,8 @@ namespace detail {
     };
 
     template <class ElementParser, class AuxPolicy, class Transform>
-    struct ListParserPolicy<ElementParser, AuxPolicy, 
-                            senf::detail::auxtag::transform<Transform, 
+    struct ListParserPolicy<ElementParser, AuxPolicy,
+                            senf::detail::auxtag::transform<Transform,
                                                             senf::detail::auxtag::bytes> >
     {
         typedef ListBParser_Policy< ElementParser,

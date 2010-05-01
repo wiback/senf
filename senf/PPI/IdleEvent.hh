@@ -39,7 +39,7 @@ namespace ppi {
 
         An IdleEvent is signaled continually and repeatedly while enabled. It will consume 100% of
         available CPU resources. The resource usage is controlled by adequate event throttling.
-        
+
         \ingroup event_group
      */
     class IdleEvent
@@ -55,7 +55,7 @@ namespace ppi {
         virtual void v_disable();
 
         void cb();
-        
+
         scheduler::TimerEvent timer_;
     };
 

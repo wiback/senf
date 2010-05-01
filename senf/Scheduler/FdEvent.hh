@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -61,13 +61,13 @@ namespace scheduler {
         The callback will be called with one additional argument. This argument is the event mask of
         type int. This mask will tell, which of the registered events are signaled. There are some
         additional flags which can be set when calling the handler callback:
-        
+
         \li \c EV_HUP: The other end has closed the connection
         \li \c EV_ERR: Transport error
 
         Only a single handler may be registered for any combination of file descriptor and event
         otherwise a DuplicateEventRegistrationException is thrown.
-        
+
         The file descriptor is specified using an arbitrary handle type which supports the \c
         retrieve_filehandle() protocol: There must be a global function \c retrieve_filehandle
         callable with the handle type. This function must return the file descriptor associated with
@@ -84,21 +84,21 @@ namespace scheduler {
           public detail::FdSetBase,
           public detail::FdManager::Event
     {
-    public: 
+    public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::function<void (int)> Callback;
 
-        enum Events { 
+        enum Events {
             EV_NONE = 0                             ///< No event
           , EV_READ = detail::FdManager::EV_READ    ///< fd readable (or EOF)
           , EV_PRIO = detail::FdManager::EV_PRIO    ///< OOB data available for read
           , EV_WRITE = detail::FdManager::EV_WRITE  ///< fd writable
           , EV_HUP = detail::FdManager::EV_HUP      ///< remote end closed connection
           , EV_ERR = detail::FdManager::EV_ERR      ///< transport error
-          , EV_ALL = (detail::FdManager::EV_READ 
-                      | detail::FdManager::EV_WRITE 
+          , EV_ALL = (detail::FdManager::EV_READ
+                      | detail::FdManager::EV_WRITE
                       | detail::FdManager::EV_PRIO) ///< register all events (read, prio and write)
         };
 
@@ -132,7 +132,7 @@ namespace scheduler {
                                                  explicitly be set to \c 0 if the value cannot be
                                                  initialized. */
         ~FdEvent();
-        
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
@@ -145,7 +145,7 @@ namespace scheduler {
         FdEvent & addEvents(int events); ///< Add additional events to event mask
         FdEvent & removeEvents(int events); ///< Remove events from event mask
         int events();                   ///< Current event mask
-        
+
         template <class Handle>
         FdEvent & handle(Handle const & handle); ///< Change event file handle
 

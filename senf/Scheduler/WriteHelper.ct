@@ -35,8 +35,8 @@
 template <class Handle>
 prefix_ senf::WriteHelper<Handle>::WriteHelper(Handle handle, std::string const & data,
                                                       Callback callback)
-    : handle_(handle), 
-      fde_("WriteHelper", boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2), 
+    : handle_(handle),
+      fde_("WriteHelper", boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2),
            handle, scheduler::FdEvent::EV_WRITE),
       data_(data), callback_(callback), offset_(data_.begin()), errno_(0)
 {}

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -105,7 +105,7 @@ senf::console::ScopedDirectoryBase::doc(std::string const & doc)
     return node().doc(doc);
 }
 
-prefix_ std::string const & senf::console::ScopedDirectoryBase::name() 
+prefix_ std::string const & senf::console::ScopedDirectoryBase::name()
     const
 {
     return node().name();
@@ -129,8 +129,8 @@ prefix_ std::string senf::console::ScopedDirectoryBase::path(DirectoryNode const
     return node().path(root);
 }
 
-prefix_ boost::shared_ptr<senf::console::DirectoryNode> 
-senf::console::ScopedDirectoryBase::parent() 
+prefix_ boost::shared_ptr<senf::console::DirectoryNode>
+senf::console::ScopedDirectoryBase::parent()
     const
 {
     return node().parent();
@@ -147,12 +147,12 @@ prefix_ void senf::console::ScopedDirectoryBase::help(std::ostream & output)
     node().help( output);
 }
 
-prefix_ std::string senf::console::ScopedDirectoryBase::shorthelp() 
+prefix_ std::string senf::console::ScopedDirectoryBase::shorthelp()
     const
 {
     return node().shorthelp();
 }
-        
+
 prefix_ senf::console::ScopedDirectoryBase::ScopedDirectoryBase()
     : node_ (DirectoryNode::create())
 {}

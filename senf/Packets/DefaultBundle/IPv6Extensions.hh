@@ -38,7 +38,7 @@
 namespace senf {
 
     /** \brief Parse in IPv6 fragment extension header
-        
+
         Parser implementing the IPv6 fragment extension. The fields implemented are:
         \image html IPv6FragmentPacket.png
 
@@ -66,10 +66,10 @@ namespace senf {
 
         \par Fields:
             \ref IPv6FragmentPacketParser
-        
+
         \par Associated registries:
             \ref IpTypes
-        
+
         \par Finalize action:
             Set \a nextHeader from type of next packet if found in \ref IpTypes
 
@@ -92,16 +92,16 @@ namespace senf {
         using mixin::initSize;
         using mixin::init;
 
-        static key_t nextPacketKey(packet p) 
+        static key_t nextPacketKey(packet p)
             { return p->nextHeader(); }
-        
+
         /** \brief Dump given IPv6FragmentPacket in readable form to given output stream */
-        static void dump(packet p, std::ostream & os); 
+        static void dump(packet p, std::ostream & os);
 
         static void finalize(packet p);
     };
 
-    /** \brief IPv6 fragment extension packet typedef 
+    /** \brief IPv6 fragment extension packet typedef
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6FragmentPacketType> IPv6FragmentPacket;
@@ -128,11 +128,11 @@ namespace senf {
         |                            Reserved                           |
         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         |                                                               |
-        +                                                               +
+        +
         |                                                               |
-        +                           Address[1]                          +
+        +                           Address[1]
         |                                                               |
-        +                                                               +
+        +
         |                                                               |
         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         .                               .                               .
@@ -140,32 +140,32 @@ namespace senf {
         .                               .                               .
         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         |                                                               |
-        +                                                               +
+        +
         |                                                               |
-        +                           Address[n]                          +
+        +                           Address[n]
         |                                                               |
-        +                                                               +
+        +
         |                                                               |
         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         */
 #       include SENF_PARSER()
-        
+
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser      );
         SENF_PARSER_FIELD ( headerLength, UInt8Parser    );
         SENF_PARSER_FIELD ( routingType, UInt8Parser     ); //set to Zero for minimal implementation
         SENF_PARSER_FIELD_RO ( segmentsLeft, UInt8Parser );
         SENF_PARSER_FIELD ( reserved, UInt32Parser       ); //set to zero by RFC
         SENF_PARSER_VECTOR ( hopAddresses, segmentsLeft, INet6AddressParser );
-        
+
         SENF_PARSER_FINALIZE ( IPv6RoutingPacketParser );
-        
+
         //provisionary, since only type 0 is implemented
-        SENF_PARSER_INIT() { 
+        SENF_PARSER_INIT() {
             routingType() = 0u;
-            reserved() = 0u; 
+            reserved() = 0u;
         }
     };
-    
+
     /** \brief IPv6 routing extension
 
         \par Packet type (typedef):
@@ -173,10 +173,10 @@ namespace senf {
 
         \par Fields:
             \ref IPv6RoutingPacketParser
-        
+
         \par Associated registries:
             \ref IpTypes
-        
+
         \par Finalize action:
             Set \a nextHeader from type of next packet if found in \ref IpTypes
 
@@ -193,29 +193,29 @@ namespace senf {
         typedef ConcretePacket<IPv6RoutingPacketType> packet;
         /** \brief typedef to the parser of IPv6 routing extension packet */
         typedef IPv6RoutingPacketParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::init;
         using mixin::initSize;
-        
-        static key_t nextPacketKey(packet p) 
+
+        static key_t nextPacketKey(packet p)
             { return p->nextHeader(); }
-        
+
         /** \brief Dump given IPv6RoutingPacket in readable form to given output stream */
-        static void dump(packet p, std::ostream & os); 
-        
+        static void dump(packet p, std::ostream & os);
+
         static void finalize(packet p);
     };
-    
+
     /** \brief IPv6 routing extension packet typedef
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6RoutingPacketType> IPv6RoutingPacket;
 
-    
+
 // =====================================================================================================
-    
+
     /** \brief Parse in IPv6 Hop-By-Hop extension header
 
         Parser implementing the IPv6 routing Header extension. The fields implemented are:
@@ -224,10 +224,10 @@ namespace senf {
         \see IPv6ExtensionType_HopByHop \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
     */
-    struct IPv6HopByHopOptionsPacketParser : public PacketParserBase 
+    struct IPv6HopByHopOptionsPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
-      
+
         SENF_PARSER_FIELD    ( nextHeader, UInt8Parser   );
         SENF_PARSER_FIELD_RO ( headerLength, UInt8Parser );
 
@@ -240,7 +240,7 @@ namespace senf {
 
         SENF_PARSER_FINALIZE ( IPv6HopByHopOptionsPacketParser );
     };
-    
+
     /** \brief IPv6 Hop-By-Hop extension
 
         \par Packet type (typedef):
@@ -248,10 +248,10 @@ namespace senf {
 
         \par Fields:
             \ref IPv6HopByHopOptionsPacketParser
-        
+
         \par Associated registries:
             \ref IpTypes
-        
+
         \par Finalize action:
             Set \a nextHeader from type of next packet if found in \ref IpTypes
 
@@ -268,38 +268,38 @@ namespace senf {
         typedef ConcretePacket<IPv6HopByHopOptionsPacketType> packet;
         /** \brief typedef to the parser of IPv6 Hop-By-Hop extension packet */
         typedef IPv6HopByHopOptionsPacketParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::init;
         using mixin::initSize;
-        
+
         static key_t nextPacketKey(packet p) {
             return p->nextHeader(); }
-        
+
         /** \brief Dump given IPv6HopByHopOptionsPacket in readable form to given output stream */
-        static void dump(packet p, std::ostream & os); 
-        
+        static void dump(packet p, std::ostream & os);
+
         static void finalize(packet p);
     };
-    
+
     /** \brief IPv6 routing Hop-By-Hop packet typedef
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6HopByHopOptionsPacketType> IPv6HopByHopOptionsPacket;
-    
+
 // =====================================================================================================
-    
+
     /** \brief Parse in IPv6 Destination Options extension header
 
-        Parser implementing the IPv6 Destination Options Header extension. 
+        Parser implementing the IPv6 Destination Options Header extension.
         The fields implemented are:
         \image html IPv6DestinationOptionsPacket.png
 
         \see IPv6ExtensionType_Destination \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
-     */    
-    struct IPv6DestinationOptionsPacketParser : public PacketParserBase 
+     */
+    struct IPv6DestinationOptionsPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
@@ -313,7 +313,7 @@ namespace senf {
 
         SENF_PARSER_FINALIZE ( IPv6DestinationOptionsPacketParser );
     };
-    
+
     /** \brief IPv6 Destination Options extension
 
         \par Packet type (typedef):
@@ -321,10 +321,10 @@ namespace senf {
 
         \par Fields:
             \ref IPv6DestinationOptionsPacketParser
-        
+
         \par Associated registries:
             \ref IpTypes
-        
+
         \par Finalize action:
             Set \a nextHeader from type of next packet if found in \ref IpTypes
 
@@ -341,25 +341,25 @@ namespace senf {
         typedef ConcretePacket<IPv6DestinationOptionsPacketType> packet;
         /** \brief typedef to the parser of IPv6 Destination Options extension packet */
         typedef IPv6DestinationOptionsPacketParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::init;
         using mixin::initSize;
-        
-        static key_t nextPacketKey(packet p) 
+
+        static key_t nextPacketKey(packet p)
         { return p->nextHeader(); }
         /** \brief Dump given IPv6DestinationOptionsPacket in readable form to given output stream */
-        static void dump(packet p, std::ostream & os); 
-        
+        static void dump(packet p, std::ostream & os);
+
         static void finalize(packet p);
     };
-    
+
     /** \brief IPv6 routing Destination Options packet typedef
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6DestinationOptionsPacketType> IPv6DestinationOptionsPacket;
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

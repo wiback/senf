@@ -37,7 +37,7 @@ prefix_ senf::MIHFIdTLVParser::binaryNAIEncoder<OutputIterator>::binaryNAIEncode
 {}
 
 template <class OutputIterator>
-prefix_ void senf::MIHFIdTLVParser::binaryNAIEncoder<OutputIterator>::operator()(boost::uint8_t v) 
+prefix_ void senf::MIHFIdTLVParser::binaryNAIEncoder<OutputIterator>::operator()(boost::uint8_t v)
 {
     *i_++ = '\\';
     *i_++ = v;
@@ -47,20 +47,20 @@ prefix_ void senf::MIHFIdTLVParser::binaryNAIEncoder<OutputIterator>::operator()
 // senf::MIHFIdTLVParser
 
 template <class OutputIterator>
-prefix_ boost::function_output_iterator<senf::MIHFIdTLVParser::binaryNAIEncoder<OutputIterator> > 
-senf::MIHFIdTLVParser::getNAIEncodedOutputIterator(OutputIterator i) 
+prefix_ boost::function_output_iterator<senf::MIHFIdTLVParser::binaryNAIEncoder<OutputIterator> >
+senf::MIHFIdTLVParser::getNAIEncodedOutputIterator(OutputIterator i)
 {
     return boost::make_function_output_iterator(binaryNAIEncoder<OutputIterator>(i));
 }
 
 template <class Iterator>
-prefix_ boost::filter_iterator<senf::MIHFIdTLVParser::binaryNAIDecoder, Iterator> 
-senf::MIHFIdTLVParser::getNAIDecodedIterator(Iterator begin, Iterator end) 
+prefix_ boost::filter_iterator<senf::MIHFIdTLVParser::binaryNAIDecoder, Iterator>
+senf::MIHFIdTLVParser::getNAIDecodedIterator(Iterator begin, Iterator end)
 {
     return boost::make_filter_iterator<binaryNAIDecoder>(begin, end);
 }
 
-            
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

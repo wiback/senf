@@ -74,8 +74,8 @@ prefix_ senf::PacketParserBase::size_type senf::bytes(Parser p)
 
 #ifndef DOXYGEN
 template <class Parser, class Value>
-prefix_ typename boost::enable_if_c < 
-        boost::is_base_of<senf::PacketParserBase, Parser>::value 
+prefix_ typename boost::enable_if_c <
+        boost::is_base_of<senf::PacketParserBase, Parser>::value
             && ! boost::is_base_of<senf::PacketParserBase, Value>::value,
         Parser >::type senf::operator<<(Parser target, Value const & value)
 {
@@ -90,8 +90,8 @@ prefix_ Parser senf::operator<<(Parser target, Value const & value)
 
 #ifndef DOXYGEN
 template <class Parser, class Value>
-prefix_ typename boost::enable_if_c < 
-        boost::is_base_of<senf::PacketParserBase, Parser>::value 
+prefix_ typename boost::enable_if_c <
+        boost::is_base_of<senf::PacketParserBase, Parser>::value
             && ! boost::is_base_of<senf::PacketParserBase, Value>::value,
         Parser >::type senf::operator<<(Parser target, boost::optional<Value> const & value)
 {

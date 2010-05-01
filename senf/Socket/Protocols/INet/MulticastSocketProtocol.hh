@@ -38,13 +38,13 @@ namespace senf {
 
     ///\addtogroup protocol_facets_group
     ///\{
-   
+
     /** \brief Generic addressing type independent multicast protocol facet
 
         \todo implement complete new multicast API from RFC3678 (as far as supported by linux)
         \bug mcLeaveSSMSource fails with EADDRNOTAVAIL
      */
-    class MulticastSocketProtocol 
+    class MulticastSocketProtocol
         : public virtual SocketProtocol
     {
     public:
@@ -63,7 +63,7 @@ namespace senf {
         unsigned mcTTL() const;         ///< Return current multicast TTL
         void mcTTL(unsigned value) const; ///< Set multicast TTL
 
-        bool mcLoop() const;            ///< Return current multicast loopback state. 
+        bool mcLoop() const;            ///< Return current multicast loopback state.
         void mcLoop(bool value) const;  ///< Set multicast loopback state
                                         /**< If set to false via \c mcLoop(value) multicast messages
                                              will not be looped back to local sockets. Default value
@@ -72,7 +72,7 @@ namespace senf {
         void mcIface(std::string const & iface = std::string()) const;
                                         ///< Set multicast send interface of the socket
                                         /**< \param[in] iface name of interface to send multicast
-                                             data from 
+                                             data from
 
                                              Under current linux versions this option is broken at
                                              best. Don't use. */
@@ -95,7 +95,7 @@ namespace senf {
                                         /**< This member will add \a mcAddr to the list of multicast
                                              groups received. The group is joined on the interface
                                              with the given local address.
-                                             \deprecated Use \link mcAddMembership(INet4Address const & mcAddr, std::string const & iface) const mcAddMembership( \a mcAddr , \a iface )\endlink 
+                                             \deprecated Use \link mcAddMembership(INet4Address const & mcAddr, std::string const & iface) const mcAddMembership( \a mcAddr , \a iface )\endlink
                                                  for compatibility with the IPv6 API.
                                              \param[in] mcAddr address of group to join
                                              \param[in] localAddr address of interface to join on */
@@ -113,18 +113,18 @@ namespace senf {
                                              multicast groups received. The group is left from the
                                              default interface.
                                              \param[in] mcAddr address of group to leave */
-        void mcDropMembership(INet4Address const & mcAddr, INet4Address const & localAddr) 
+        void mcDropMembership(INet4Address const & mcAddr, INet4Address const & localAddr)
             const;
                                         ///< leave multicast group on a specific interface
                                         /**< This member will remove \a mcAddr from the list of
                                              multicast groups received. The group is left from the
                                              interface with the given local address.
-                                             \deprecated Use \link mcDropMembership(INet4Address const & mcAddr, std::string const & iface) const mcDropMembership( \a mcAddr , \a iface )\endlink 
+                                             \deprecated Use \link mcDropMembership(INet4Address const & mcAddr, std::string const & iface) const mcDropMembership( \a mcAddr , \a iface )\endlink
                                                  for compatibility with the IPv6 API.
                                              \param[in] mcAddr address of group to leave
                                              \param[in] localAddr address of interface to leave
                                                  from */
-        void mcDropMembership(INet4Address const & mcAddr, std::string const & iface) 
+        void mcDropMembership(INet4Address const & mcAddr, std::string const & iface)
             const;
                                         ///< leave multicast group on a specific interface
                                         /**< This member will remove \a mcAddr from the list of
@@ -133,7 +133,7 @@ namespace senf {
                                              \param[in] mcAddr address of group to leave
                                              \param[in] iface interface name */
 
-        void mcJoinSSMSource(INet4Address const & group, INet4Address const & source, 
+        void mcJoinSSMSource(INet4Address const & group, INet4Address const & source,
                              std::string const & iface) const;
                                         ///< join SSM multicast group
                                         /**< This call will join the multicast group \a group for
@@ -191,7 +191,7 @@ namespace senf {
                                              \param[in] mcAddr address of group to leave
                                              \param[in] iface interface name */
 
-        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source, 
+        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source,
                              std::string const & iface) const;
                                         ///< join SSM multicast group
                                         /**< This call will join the multicast group \a group for
@@ -202,7 +202,7 @@ namespace senf {
                                                  group on
                                              \param[in] iface interface to join the group on. If set
                                                  to the empty string, use the default interface. */
-        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source, 
+        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source,
                              int ifacei = 0) const;
                                         ///< join SSM multicast group
                                         /**< This call will join the multicast group \a group for

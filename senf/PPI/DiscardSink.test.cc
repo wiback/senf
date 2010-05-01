@@ -51,7 +51,7 @@ SENF_AUTO_UNIT_TEST(discardSink)
 
     source.submit(p);
     source.submit(p);
-    
+
     BOOST_CHECK( true );
 }
 

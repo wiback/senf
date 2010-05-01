@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -40,11 +40,11 @@ namespace console {
 namespace detail {
 
     /** \brief Internal: Client reader switching between LineEditorClientReader or DumbClientReader
-        
+
         This ClientReader implementation will try to initialize a LineEditorClientReader. If the
         setup fails, a DumbClientReader is initialized instead. LineEditor support may fail to be
         initialized if
-        
+
         \li The telnet client does not support necessary functionality
         \li or the terminal type of the client is missing some functionality.
      */
@@ -67,14 +67,14 @@ namespace detail {
 
     /** \brief Internal: ClientReader using senf::term::LineEditor for interactive input
 
-        This ClientReader implementation uses a senf::term::LineEditor for interactive input. 
+        This ClientReader implementation uses a senf::term::LineEditor for interactive input.
      */
     class LineEditorClientReader
         : public ClientReader, public term::TelnetTerminal
     {
     public:
         explicit LineEditorClientReader(Client & client, LineEditorSwitcher & switcher);
-        
+
     private:
         // TelnetTerminal API implementation
         virtual void v_setupFailed();
@@ -89,7 +89,7 @@ namespace detail {
         // Editor callbacks
         void executeLine(std::string const & text);
         void deleteCharOrExit(term::LineEditor & editor);
-        void completePath(term::LineEditor & editor, unsigned & b, unsigned & e, 
+        void completePath(term::LineEditor & editor, unsigned & b, unsigned & e,
                           std::string & prefix, std::vector<std::string> & completions);
 
         term::LineEditor editor_;

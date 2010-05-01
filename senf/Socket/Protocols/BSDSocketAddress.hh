@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -40,7 +40,7 @@
 namespace senf {
 
     /** \brief Socket addressing, BSD style
-        
+
         BSDSocketAddress is the base class of all BSD \c sockaddr based addressing classes. The \c
         sockaddr addressing interface is split into several parts
 
@@ -66,7 +66,7 @@ namespace senf {
             }
         }
         \endcode
-        
+
         All these classes provide a generic \c sockaddr API to interface with legacy \c sockaddr
         based code (e.g. the BSD socket API). In this base-class, this interface is read-only, the
         derived classes however provide a read-write interface.
@@ -153,7 +153,7 @@ namespace senf {
     /** \brief Output generic socket address
 
         This stream operator will output a generic BSDSocketAddress in a family depending format.
-        
+
         \related BSDSocketAddress
      */
     std::ostream & operator<<(std::ostream & os, BSDSocketAddress const & addr);
@@ -162,7 +162,7 @@ namespace senf {
 
         While BSDSocketAddress provides read-only generic \c sockaddr access,
         GenericBSDSocketAddress allows to store (write) arbitrary socket addresses. (It is
-        internally based on \c sockaddr_storage). 
+        internally based on \c sockaddr_storage).
 
         To access the stored address, use sockaddr_cast to cast the GenericBSDSocketAddress to the
         correct family specific address class.
@@ -183,7 +183,7 @@ namespace senf {
 
         GenericBSDSocketAddress(const GenericBSDSocketAddress& other);
         GenericBSDSocketAddress& operator=(const GenericBSDSocketAddress& other);
-        
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
         ///\name Generic sockaddr interface

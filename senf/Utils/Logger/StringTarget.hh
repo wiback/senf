@@ -35,14 +35,14 @@
 
 namespace senf {
 namespace log {
-  
+
     /** \brief Store %log messages in a string buffer
 
-        This target is mostly useful for debug purposes. 
+        This target is mostly useful for debug purposes.
 
         \ingroup targets
       */
-    class StringTarget 
+    class StringTarget
         : private boost::base_from_member<std::stringstream>,
           public IOStreamTarget
     {
@@ -69,7 +69,7 @@ namespace log {
 
     };
 
-}}        
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "StringTarget.cci"

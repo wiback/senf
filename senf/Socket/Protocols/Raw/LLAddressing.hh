@@ -60,7 +60,7 @@ namespace senf {
 
         /** \brief Valid pkttype() values
 
-            These are the possible values returned by pkttype() 
+            These are the possible values returned by pkttype()
          */
         enum PktType { Undefined = 0
                      , Host      = PACKET_HOST      /**< Packet destined for this host */
@@ -70,7 +70,7 @@ namespace senf {
                      , OtherHost = PACKET_OTHERHOST /**< Packet sent to another host (promisc) */
                      , Outgoing  = PACKET_OUTGOING  /**< Packet sent out from this host */
         };
-        
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{

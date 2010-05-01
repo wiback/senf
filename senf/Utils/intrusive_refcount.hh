@@ -60,10 +60,10 @@ namespace senf {
 
     private:
         refcount_t refcount_;
-        
+
         template <class S> void intrusive_ptr_add_ref();
         template <class S> void intrusive_ptr_release();
-        
+
         template <class S>
         friend void senf::intrusive_ptr_add_ref(intrusive_refcount_t<S> const * p);
         template <class S>
@@ -78,7 +78,7 @@ namespace senf {
         publicly from intrusive_refcount_t.
 
         \code
-        class SomeClass 
+        class SomeClass
             : public intrusive_refcount_t<SomeClass>
         {
             // ...
@@ -95,7 +95,7 @@ namespace senf {
             {
                 // Call intrusive_base::release() to decrement the
                 // refcount. This call will return 'true' when the refcount reaches 0.
-        
+
                 // Return 'true', if the instance shall be deleted
             }
 
@@ -103,7 +103,7 @@ namespace senf {
             friend class intrusive_base;
         };
         \endcode
-       
+
         Two additional benefits of using intrusive_refcount are
         \li The object can access it's own refcount
         \li It is valid and safe to convert a plain object pointer to an intrusive_ptr at any time

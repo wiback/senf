@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2010 
+// Copyright (C) 2010
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -33,7 +33,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     template <class T, class B = boost::detail::empty_base<T> >
     struct strict_totally_ordered1
         : boost::totally_ordered1< T, boost::equivalent1< T, B > >

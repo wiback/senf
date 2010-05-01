@@ -39,10 +39,10 @@ SENF_AUTO_UNIT_TEST(areaRegistry)
 {
     BOOST_CHECK( true );
 #if 0
-    // Need to rewrite this test ... 
+    // Need to rewrite this test ...
     char const * areas[] = { "GlobalTestArea",
-                             "senf::log::DefaultArea", 
-                             "senf::log::test::Foo", 
+                             "senf::log::DefaultArea",
+                             "senf::log::test::Foo",
                              "senf::log::test::myArea" };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::AreaRegistry::instance().begin(),

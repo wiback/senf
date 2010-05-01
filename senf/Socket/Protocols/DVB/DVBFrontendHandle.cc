@@ -65,20 +65,20 @@ prefix_ bool senf::DVBFrontendSocketProtocol::eof()
 }
 
 prefix_ void senf::DVBFrontendSocketProtocol::tune(const struct dvb_frontend_parameters & frontend)
-    const 
+    const
 {
     // tuning
     if (::ioctl(fd(), FE_SET_FRONTEND, &frontend) )
         SENF_THROW_SYSTEM_EXCEPTION("") << "ioctl FE_SET_FRONTEND failed. Socket should initialized with r/w permissions.";;
 }
 
-prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_T(unsigned int frequency, 
+prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_T(unsigned int frequency,
         fe_spectral_inversion_t inversion,
-        fe_bandwidth_t bandwidth, 
+        fe_bandwidth_t bandwidth,
         fe_code_rate_t code_rate_HP, /* high priority stream code rate */
         fe_code_rate_t code_rate_LP, /* low priority stream code rate */
         fe_modulation_t constellation, /* modulation type */
-        fe_transmit_mode_t transmission_mode, 
+        fe_transmit_mode_t transmission_mode,
         fe_guard_interval_t guard_interval,
         fe_hierarchy_t hierarchy_information
         )
@@ -86,26 +86,26 @@ prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_T(unsigned int frequency,
 {
     struct dvb_ofdm_parameters ofdm; /* DVB-T Parameters */
     struct dvb_frontend_parameters frontend;
-    
+
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
     ::memset(&ofdm, 0, sizeof(struct dvb_ofdm_parameters));
-    
+
     ofdm.bandwidth = bandwidth;
     ofdm.code_rate_HP = code_rate_HP;
     ofdm.code_rate_LP = code_rate_LP;
-    ofdm.constellation = constellation; 
+    ofdm.constellation = constellation;
     ofdm.guard_interval = guard_interval;
     ofdm.hierarchy_information = hierarchy_information;
-    
+
     frontend.frequency = frequency;
     frontend.inversion = inversion;
     frontend.u.ofdm = ofdm;
-    
+
     tune(frontend);
-    
+
 }
-prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_S(unsigned int frequency, 
-        fe_spectral_inversion_t inversion, 
+prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_S(unsigned int frequency,
+        fe_spectral_inversion_t inversion,
         unsigned int symbole_rate, /* symbol rate in Symbols per second */
         fe_code_rate_t fec_inner /* forward error correction (see above) */
     )
@@ -113,21 +113,21 @@ prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_S(unsigned int frequency,
 {
     struct dvb_qpsk_parameters qpsk; /* DVB-S Parameters*/
     struct dvb_frontend_parameters frontend;
-    
+
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
     ::memset(&qpsk, 0, sizeof(struct dvb_qpsk_parameters));
-    
+
     qpsk.symbol_rate = symbole_rate;
     qpsk.fec_inner = fec_inner;
-    
+
     frontend.frequency = frequency;
     frontend.inversion = inversion;
     frontend.u.qpsk = qpsk;
-    
+
     tune(frontend);
 }
 
-prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_C(unsigned int frequency, 
+prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_C(unsigned int frequency,
         fe_spectral_inversion_t inversion,
         unsigned int symbol_rate,
         fe_code_rate_t fec_inner,
@@ -137,22 +137,22 @@ const
 {
     struct dvb_qam_parameters qam; /* DVB-C Parameters*/
     struct dvb_frontend_parameters frontend;
-    
+
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
     ::memset(&qam, 0, sizeof(struct dvb_qam_parameters));
-    
+
     qam.symbol_rate = symbol_rate;
     qam.fec_inner = fec_inner;
     qam.modulation = modulation;
-    
-    
+
+
     frontend.frequency = frequency;
     frontend.inversion = inversion;
     frontend.u.qam = qam;
-       
+
     tune(frontend);
 }
-prefix_ void senf::DVBFrontendSocketProtocol::setNonBlock(bool on) 
+prefix_ void senf::DVBFrontendSocketProtocol::setNonBlock(bool on)
     const
 {
    if (on)
@@ -166,7 +166,7 @@ prefix_ dvb_frontend_info senf::DVBFrontendSocketProtocol::getInfo()
 {
     struct dvb_frontend_info info;
     ::memset(&info, 0, sizeof(struct dvb_frontend_info));
-    
+
     if (::ioctl(fd(), FE_GET_INFO, &info)) {
         SENF_THROW_SYSTEM_EXCEPTION("") << "Could not read on fildescriptor.";
     }
@@ -175,9 +175,9 @@ prefix_ dvb_frontend_info senf::DVBFrontendSocketProtocol::getInfo()
 
 prefix_ dvb_frontend_parameters senf::DVBFrontendSocketProtocol::getFrontendParam() const {
     struct dvb_frontend_parameters frontend_;
-    
+
     ::memset(&frontend_, 0, sizeof(struct dvb_frontend_parameters));
-    
+
     if (::ioctl(fd(), FE_GET_FRONTEND, &frontend_)) {
         switch(errno) {
             case EBADF:
@@ -198,9 +198,9 @@ prefix_ dvb_frontend_parameters senf::DVBFrontendSocketProtocol::getFrontendPara
 
 prefix_ dvb_frontend_event senf::DVBFrontendSocketProtocol::getEvent() const{
     struct dvb_frontend_event ev ;
-    
+
     ::memset(&ev, 0, sizeof(struct dvb_frontend_event));
-    
+
     if (::ioctl(fd(), FE_GET_EVENT, &ev)) {
         switch(errno) {
             case EBADF:
@@ -226,7 +226,7 @@ prefix_ int16_t senf::DVBFrontendSocketProtocol::signalStrength()
 }
 
 prefix_ int16_t senf::DVBFrontendSocketProtocol::signalNoiseRatio()
-    const 
+    const
 {
     int16_t snr;
     if (::ioctl(fd(), FE_READ_SNR, &snr) < 0)

@@ -80,7 +80,7 @@ namespace senf {
 
     public:
         SomeServer(SomeSocketHandle handle)
-            : handle_ (handle), 
+            : handle_ (handle),
               event_ ("SomeServer handler", senf::membind(&SomeServer::readData, this),
                       handle, senf::scheduler::FdEvent::EV_READ)
         {}
@@ -115,7 +115,7 @@ namespace senf {
     // Handle callback function
     void callback(UDPv4ClientSocketHandle handle, senf::Scheduler::EventId event) {..}
     // Pass 'handle' as additional first argument to callback()
-    senf::scheduler::FdEvent event ("name", boost::bind(&callback, handle, _1), 
+    senf::scheduler::FdEvent event ("name", boost::bind(&callback, handle, _1),
                                     handle, senf::scheduler::FdEvent::EV_READ);
      // Timeout function
     void timeout( int n) {..}
@@ -130,7 +130,7 @@ namespace senf {
     // e.g. in Foo::Foo() constructor:
     Foo::Foo()
         : handle_ (...),
-          readevent_ ("Foo read", senf::membind(&Foo::callback, this), 
+          readevent_ ("Foo read", senf::membind(&Foo::callback, this),
                       handle_, senf::scheduler::FdEvent::EV_READ)
     { ... }
     \endcode
@@ -142,7 +142,7 @@ namespace senf {
     \section sched_exec Executing the Scheduler
 
     To enter the scheduler main-loop, call
-    
+
     \code
     senf::scheduler::process();
     \endcode
@@ -163,15 +163,15 @@ namespace senf {
     \code
     #include <boost/ptr_container/ptr_map.hpp>
     #include <boost/bind.hpp>
-    
+
     class Foo
     {
     public:
         void add(int fd)
         {
             fdEvents.insert(
-                fd, 
-                new senf::scheduler::FdEvent("foo", boost::bind(&callback, this, fd, _1), fd, 
+                fd,
+                new senf::scheduler::FdEvent("foo", boost::bind(&callback, this, fd, _1), fd,
                                              senf::scheduler::FdEvent::EV_READ) );
         }
 
@@ -207,7 +207,7 @@ namespace senf {
     can produce an informative message and optionally the program can be aborted.
 
     The watchdog is controlled using the watchdogTimeout(), watchdogEvents() and watchdogAbort().
-    functions. 
+    functions.
 
     The watchdog is implemented using a free running interval timer. The watchdog signal (\c SIGURG)
     must \e not be blocked. If signals need to be blocked for some reason, those regions will not be
@@ -227,13 +227,13 @@ namespace senf {
   */
 namespace scheduler {
 
-    /** \brief Event handler main loop 
-        
+    /** \brief Event handler main loop
+
         This member must be called at some time to enter the event handler main loop. Only while
         this function is running any events are handled. The call will return if
         \li a callback calls terminate()
-        \li the run queue becomes empty. 
-     */    
+        \li the run queue becomes empty.
+     */
     void process();
 
     /** \brief \c true, if scheduler is running, \c false otherwise */
@@ -242,9 +242,9 @@ namespace scheduler {
     /** \brief Called by callbacks to terminate the main loop
 
         This member may be called by any callback to tell the main loop to terminate. The main loop
-        will return to it's caller after the currently running callback returns. 
+        will return to it's caller after the currently running callback returns.
      */
-    void terminate(); 
+    void terminate();
 
     /** \brief Immediately rescheduler
 
@@ -256,9 +256,9 @@ namespace scheduler {
     /** \brief Return timestamp of last event
 
         This is the timestamp, the last event has been signaled. This is the real time at which the
-        event is delivered \e not the time it should have been delivered (in the case of timers). 
+        event is delivered \e not the time it should have been delivered (in the case of timers).
      */
-    ClockService::clock_type eventTime(); 
+    ClockService::clock_type eventTime();
 
     /** \brief Return (approximate) current time
 
@@ -270,22 +270,22 @@ namespace scheduler {
     ClockService::clock_type now();
 
     /** \brief Set watchdog timeout to \a ms milliseconds.
-        
+
         Setting the watchdog timeout to 0 will disable the watchdog.
      */
-    void watchdogTimeout(unsigned ms); 
+    void watchdogTimeout(unsigned ms);
 
     /** \brief Current watchdog timeout in milliseconds */
-    unsigned watchdogTimeout(); 
+    unsigned watchdogTimeout();
 
-    /** \brief Number of watchdog events 
+    /** \brief Number of watchdog events
 
         calling watchtogEvents() will reset the counter to 0
      */
-    unsigned watchdogEvents(); 
+    unsigned watchdogEvents();
 
     /** \brief Enable/disable abort on watchdog event.
-        
+
         Calling watchdogAbort(\c true) will enable aborting the program execution on a watchdog
         event.
      */
@@ -295,7 +295,7 @@ namespace scheduler {
     bool watchdogAbort();
 
     /** \brief Switch to using hi resolution timers
-        
+
         By default, timers are implemented directly using epoll. This however restricts the timer
         resolution to that of the kernel HZ value.
 
@@ -325,12 +325,12 @@ namespace scheduler {
     bool usingHiresTimers();
 
     /** \brief Restart scheduler
-        
+
         This call will restart all scheduler dispatchers (timers, signals, file descriptors). This
         is necessary after a fork().
         \warning This call will \e remove all registered events from the scheduler
      */
-    void restart(); 
+    void restart();
 
     /** \brief Return \c true, if no event is registered, \c false otherwise. */
     bool empty();
@@ -356,7 +356,7 @@ namespace scheduler {
     /** \brief Temporarily block all signals
 
         This class is used to temporarily block all signals in a critical section.
-        
+
         \code
         // Begin critical section
         {
@@ -379,7 +379,7 @@ namespace scheduler {
                                         /**< \param[in] initiallyBlocked set to \c false to not
                                              automatically block signals initially */
         ~BlockSignals();                ///< Release all signal blocks
-        
+
         void block();                   ///< Block signals if not blocked
         void unblock();                 ///< Unblock signals if blocked
         bool blocked() const;           ///< \c true, if signals currently blocked, \c false

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -102,7 +102,7 @@ namespace term {
         \c v_handleOptionParameters() member is called.
 
         \code
-        class MyTelnetHandler 
+        class MyTelnetHandler
             : public senf::term::BaseTelnetProtocol::TelnetHandler
         {
         public:
@@ -113,14 +113,14 @@ namespace term {
 
         protected:
             MyTelnetHandler() { registerHandler(this); }
-        
+
         private:
             virtual void v_init()
             {
                 sendOptionParameters(OPTION_CODE, "my special subnegotiation");
                 incrementRequestCounter();
             }
-        
+
             virtual void v_handleOptionParameters(std::string const & data)
             {
                 if (data == "another special subnegotiation")
@@ -139,8 +139,8 @@ namespace term {
         static unsigned const DEFAULT_REQUEST_TIMEOUT_MS = 500u;
 
         typedef ClientSocketHandle<senf::MakeSocketPolicy<
-            ConnectedCommunicationPolicy, 
-            StreamFramingPolicy, 
+            ConnectedCommunicationPolicy,
+            StreamFramingPolicy,
             ReadablePolicy,
             WriteablePolicy>::policy> Handle; ///< Type of socket handle required
 
@@ -165,7 +165,7 @@ namespace term {
         void sendEC();                  ///< Send EraseCharacter to peer
         void sendEL();                  ///< Send EraseLine to peer
         void sendGA();                  ///< Send GoAhead to peer
-        
+
         void sendOptionParameters(option_type option, std::string const & data);
                                         ///< Send extended option parameter to peer
                                         /**< This will send \a data as extended option parameter of
@@ -189,7 +189,7 @@ namespace term {
 
         bool localOption(option_type option); ///< \c true, if \a option locally enabled
         bool peerOption(option_type option); ///< \c true, if \a option enabled in peer
-        
+
     protected:
         explicit BaseTelnetProtocol(Handle handle); ///< Construct telnet protocol handler
         BaseTelnetProtocol();           ///< Provided for TelnetHandler mixins only
@@ -235,7 +235,7 @@ namespace term {
         virtual void v_handleEC();      ///< Called, when the peer sends an EraseCharacter
         virtual void v_handleEL();      ///< Called, when the peer sends an EraseLine
         virtual void v_handleGA();      ///< Called, when the peer sends a GoAhead
-        
+
     private:
         void handleChar(char c);
         void handleNormalChar(char c);
@@ -258,7 +258,7 @@ namespace term {
         void writeHandler(int state);
         void timeout();
 
-        enum Command { 
+        enum Command {
             CMD_NONE = 0,
             CMD_SE = 240,
             CMD_NOP = 241,
@@ -294,7 +294,7 @@ namespace term {
             WantState wantState;
             OptionState optionState;
             bool enabled;
-            
+
         };
 
         OptInfo & getOption(bool local, option_type option);
@@ -312,7 +312,7 @@ namespace term {
         typedef std::vector<char> SendQueue;
         SendQueue sendQueue_;
 
-        enum CharState { NORMAL, IAC_SEEN, EXPECT_OPTION, CR_SEEN, 
+        enum CharState { NORMAL, IAC_SEEN, EXPECT_OPTION, CR_SEEN,
                          SB_OPTION, SB_DATA, SB_IAC_SEEN };
         CharState charState_;
 
@@ -332,7 +332,7 @@ namespace term {
     };
 
     /** \brief Telnet handler base class
-        
+
         \see BaseTelnetProtocol
      */
     struct BaseTelnetProtocol::TelnetHandler
@@ -348,7 +348,7 @@ namespace term {
 
         See http://www.iana.org/assignments/telnet-options for a list of options
 
-        \ingroup telnet_group 
+        \ingroup telnet_group
      */
     namespace telnetopt { BaseTelnetProtocol::option_type const ECHO = 1u; }
     namespace telnetopt { BaseTelnetProtocol::option_type const TRANSMIT_BINARY = 0u; }
@@ -383,7 +383,7 @@ namespace telnethandler {
 
         void nextTerminalType();        ///< Request another terminal type
         std::string const & terminalType() const; ///< Return current terminal type
-        
+
     protected:
         TerminalType();
 
@@ -395,18 +395,18 @@ namespace telnethandler {
     };
 
     /** \brief Implement NAWS (Negotiation About Window Size) option
-        
+
         This telnet handler implements the NAWS option. The client terminals window size will be
         requested during initialization. The current window size may always be accessed using the
-        width() and height() members. 
-        
+        width() and height() members.
+
         Whenever the window size is changed, the v_windowSizeChanged() function is called. This
         function must be implemented in a derived class.
 
         \see BaseTelnetProtocol for how to integrate this handler \n
             <a href="http://tools.ietf.org/html/rfc1073">RFC 1073</a> Telnet Window Size Option
      */
-    class NAWS 
+    class NAWS
         : public BaseTelnetProtocol::TelnetHandler
     {
     public:
@@ -417,7 +417,7 @@ namespace telnethandler {
 
     protected:
         NAWS();
-        
+
 #   ifndef DOXYGEN
     private:
 #   endif
@@ -432,7 +432,7 @@ namespace telnethandler {
         unsigned width_;
         unsigned height_;
     };
-    
+
 }
 
 }}

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -94,7 +94,7 @@ namespace {
 
         UserContainerModule()
         {
-            noroute(input); 
+            noroute(input);
             input.onRequest(&UserContainerModule::request);
         }
 
@@ -111,7 +111,7 @@ namespace {
         void connectorDestroy(ConnectorType const * c)
         {
             Connectors::iterator i (
-                std::find_if(connectors_.begin(), connectors_.end(), 
+                std::find_if(connectors_.begin(), connectors_.end(),
                              boost::bind(&Connectors::value_type::get,_1) == c));
             if (i != connectors_.end())
                 connectors_.erase(i);
@@ -126,10 +126,10 @@ namespace {
         }
 
         Connectors connectors_;
-                
+
         friend class module::MultiConnectorMixin<UserContainerModule, connector::ActiveOutput<>, void, void>;
     };
-        
+
     struct IntAnnotation {
         int value;
         bool operator<(IntAnnotation const & other) const { return value < other.value; }
@@ -202,13 +202,13 @@ SENF_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
     module::PassiveJoin join2;
     module::AnnotationRouter<IntAnnotation> router;
     UserContainerModule module;
-    
+
     ppi::connect(source, join1);
     ppi::connect(join1, router);
     ppi::connect(router, 1, join2);
     ppi::connect(join2, module);
     ppi::connect(module, sink);
-    
+
     senf::Packet p (senf::DataPacket::create());
     p.annotation<IntAnnotation>().value = 1;
 

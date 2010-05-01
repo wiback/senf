@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -39,7 +39,7 @@ namespace senf {
     namespace console { class DirectoryNode; }
 
 namespace log {
-    
+
     /** \brief Log target writing to the syslog
 
         The SyslogTarget will send all log messages to the syslog at the given facility.
@@ -52,7 +52,7 @@ namespace log {
         \endcode
 
         Valid facility values (taken from <tt>man 3 syslog</tt>):
-        \par "" 
+        \par ""
            <tt>LOG_AUTHPRIV</tt>, <tt>LOG_CRON</tt>, <tt>LOG_DAEMON</tt>, <tt>LOG_FTP</tt>,
            <tt>LOG_KERN</tt>, <tt>LOG_LOCAL0</tt>, <tt>LOG_LOCAL1</tt>, <tt>LOG_LOCAL2</tt>,
            <tt>LOG_LOCAL3</tt>, <tt>LOG_LOCAL4</tt>, <tt>LOG_LOCAL5</tt>, <tt>LOG_LOCAL6</tt>,
@@ -74,7 +74,7 @@ namespace log {
 
         \ingroup targets
      */
-    class SyslogTarget 
+    class SyslogTarget
         : public Target
     {
     public:
@@ -88,16 +88,16 @@ namespace log {
         ///////////////////////////////////////////////////////////////////////////
 
     private:
-        void v_write(time_type timestamp, std::string const & stream, 
-                     std::string const & area, unsigned level, 
+        void v_write(time_type timestamp, std::string const & stream,
+                     std::string const & area, unsigned level,
                      std::string const & message);
 
         int facility_;
 
     public:
         static int const LEVELMAP[8];
-        
-        enum LogFacility { 
+
+        enum LogFacility {
             AUTHPRIV = LOG_AUTHPRIV,
             CRON = LOG_CRON,
             DAEMON = LOG_DAEMON,

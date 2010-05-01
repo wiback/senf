@@ -104,7 +104,7 @@ namespace senf {
                                   SPolicy,ConnectedCommunicationPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static unsigned write(ClientSocketHandle<SPolicy> handle, char const * buffer, 
+        static unsigned write(ClientSocketHandle<SPolicy> handle, char const * buffer,
                               unsigned size);
                                         ///< write data to socket
                                         /**< This member is only enabled if the socket uses

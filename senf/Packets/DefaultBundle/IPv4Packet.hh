@@ -52,16 +52,16 @@ namespace senf {
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
         operator value_type() const { return value(); }
         byte & operator[](size_type index) const { return *boost::next(i(),index); }
-        INet4AddressParser const & operator= (value_type const & other) 
+        INet4AddressParser const & operator= (value_type const & other)
             { value(other); return *this; }
     };
 
     /** \brief Parse an IPv4 packet
 
         Parser implementing the IPv4 header.
-        
+
         \image html IPv4Packet.png
-                
+
         \see IPv4PacketType \n
             <a href="http://tools.ietf.org/html/rfc791">RFC 791</a>
 
@@ -96,7 +96,7 @@ namespace senf {
         }
 
         SENF_PARSER_FINALIZE(IPv4PacketParser);
-        
+
         boost::uint16_t calcChecksum() const; ///< calculate header checksum
                                               /**< calculate and return the checksum of the header
                                                    \see \ref senf::IpChecksum */
@@ -104,8 +104,8 @@ namespace senf {
         bool validateChecksum() const {
             return checksum() == calcChecksum();
         }                               ///< validate header checksum
-                                        /**< return \c true if the \ref checksum() "checksum" 
-                                             field is equal to the \ref calcChecksum() 
+                                        /**< return \c true if the \ref checksum() "checksum"
+                                             field is equal to the \ref calcChecksum()
                                              "calculated checksum" */
     };
 
@@ -121,7 +121,7 @@ namespace senf {
     };
 
     /** \brief IPv4 packet
-        
+
         \par Packet type (typedef):
             \ref IPv4Packet
 
@@ -139,7 +139,7 @@ namespace senf {
             <td>\ref IPv4PacketParser::version() "Version"</td>
             <td>\ref IPv4PacketParser::ihl() "IHL"</td>
             <td colspan="2">\ref IPv4PacketParser::tos() "TOS"</td>
-            <td colspan="8">\ref IPv4PacketParser::length() "Length"</td> 
+            <td colspan="8">\ref IPv4PacketParser::length() "Length"</td>
           </tr><tr>
             <td colspan="4">\ref IPv4PacketParser::identifier() "Identifier"</td>
             <td>R</td>
@@ -162,7 +162,7 @@ namespace senf {
 
         \par Finalize action:
             \copydetails finalize()
- 
+
         \ingroup protocolbundle_default
      */
     struct IPv4PacketType
@@ -180,18 +180,18 @@ namespace senf {
         using mixin::initSize;
         using mixin::init;
 
-        static key_t nextPacketKey(packet p) 
+        static key_t nextPacketKey(packet p)
             { return p->protocol(); }
-        
+
         /** \brief Dump given IPv4Packet in readable form to given output stream */
-        static void dump(packet p, std::ostream & os); 
-        
+        static void dump(packet p, std::ostream & os);
+
         static void finalize(packet p); ///< Finalize packet.
-                                        /**< \li set \ref IPv4PacketParser::length() "length" 
+                                        /**< \li set \ref IPv4PacketParser::length() "length"
                                                from payload size
-                                             \li set \ref IPv4PacketParser::protocol() "protocol" 
+                                             \li set \ref IPv4PacketParser::protocol() "protocol"
                                                from type of next packet if found in \ref IpTypes
-                                             \li calculate and set 
+                                             \li calculate and set
                                                \ref IPv4PacketParser::checksum() "checksum" */
     };
 

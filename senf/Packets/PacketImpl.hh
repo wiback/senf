@@ -91,8 +91,8 @@ namespace detail {
     };
 
     template <class Annotation>
-    struct AnnotationIndexer 
-        : public senf::singleton< AnnotationIndexer<Annotation> >, 
+    struct AnnotationIndexer
+        : public senf::singleton< AnnotationIndexer<Annotation> >,
           public AnnotationIndexerBase
     {
         AnnotationIndexer();
@@ -105,7 +105,7 @@ namespace detail {
 #       if 0 // The test is difficult since it does not work with user-defined trivial constructors
 #       ifdef BOOST_HAS_TYPE_TRAITS_INTRINSICS
 
-        BOOST_STATIC_ASSERT(( (boost::has_trivial_constructor<Annotation>::value 
+        BOOST_STATIC_ASSERT(( (boost::has_trivial_constructor<Annotation>::value
                                && boost::has_trivial_destructor<Annotation>::value)
                               || Complex ));
 
@@ -221,7 +221,7 @@ namespace detail {
         refcount_t refcount_;
         raw_container data_;
         interpreter_list interpreters_;
-        
+
         typedef std::vector<AnnotationEntry> Annotations;
         Annotations annotations_;
 

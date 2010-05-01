@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -132,7 +132,7 @@ SENF_AUTO_UNIT_TEST(boolTraits)
 
 SENF_AUTO_UNIT_TEST(stringTraits)
 {
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
         senf::console::ArgumentTraits<std::string>::str("Test\nOf\nA \"String\"\x01\x7f\xa0\xff"),
         "\"Test\\x0aOf\\x0aA \\\"String\\\"\\x01\\x7f\\xa0\\xff\"" );
 }
@@ -147,7 +147,7 @@ SENF_AUTO_UNIT_TEST(enumSupport)
     senf::console::root().add("test", dir);
 
     dir.add("test",fty::Command(&test));
-    
+
     std::stringstream ss;
     SENF_CHECK_NO_THROW(
         parser.parse("test/test Foo",
@@ -207,7 +207,7 @@ SENF_AUTO_UNIT_TEST(singleToken)
 {
     BOOST_CHECK( senf::console::ArgumentTraits<std::string>::singleToken );
     BOOST_CHECK( senf::console::ArgumentTraits<int>::singleToken );
-    BOOST_CHECK( ! senf::console::ArgumentTraits< 
+    BOOST_CHECK( ! senf::console::ArgumentTraits<
                        senf::console::FlagCollection<TestEnum> >::singleToken );
 }
 

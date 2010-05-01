@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -83,7 +83,7 @@ prefix_ void senf::console::detail::ProgramOptionsSource::v_parse(RestrictedExec
                             --n;
                         }
                     }
-                    else 
+                    else
                         param = arg.substr(i+1);
                     i = arg.size();
                 }
@@ -120,7 +120,7 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
 
     ParseCommandInfo cmd;
     Path path;
- 
+
     DirectoryNode::ptr cwd (executor.root().thisptr());
     std::string::size_type b (0);
     while (b < name.size()) {

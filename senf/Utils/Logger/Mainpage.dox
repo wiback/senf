@@ -63,8 +63,8 @@
         <em>disabled</em> at compile time. senf::log::VERBOSE message will therefore only appear,
         if you explictly enable the messages for the area in question using (here for the area
         <code>some::Area</code>)
-        <pre> 
-        g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug), (some)(Area), VERBOSE ))" 
+        <pre>
+        g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug), (some)(Area), VERBOSE ))"
         </pre>
         in addition to routing the messages at runtime. For more, see \ref config.
 
@@ -72,7 +72,7 @@
     any number of \e targets. A \e target receives messages and using it's routing information
     decides, wether the message is output or not. A message may be routed to multiple targets
     simultaneously or may not be output by any target at all. (see: \ref targets)
-    
+
     \section logging_tutorial Tutorial introduction
 
     Using the logging library mostly concerns using \ref SENF_LOG statements in your code. There are
@@ -81,7 +81,7 @@
     \code
     namespace foo {
 
-        // Define a new log stream with default level, runtime limit and compile time limit 
+        // Define a new log stream with default level, runtime limit and compile time limit
         // set to senf::log::MESSAGE
         SENF_LOG_DEFINE_STREAM( UserLog, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
 
@@ -140,7 +140,7 @@
         design goals
         \li Flexible configuration at compile and runtime
         \li Concise usage and simple interface
-        \li Zero overhead for compile-time disabled log messages 
+        \li Zero overhead for compile-time disabled log messages
 
         I did not find any non-mcaro implementation which was not either completely convoluted,
         unusable or slow. So I turned to a macro based implementation which can provide all the

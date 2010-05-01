@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@
 prefix_ senf::term::BaseEditor::BaseEditor(AbstractTerminal & terminal)
     : terminal_ (&terminal),
       keyTimeout_ (senf::ClockService::milliseconds(DEFAULT_KEY_TIMEOUT_MS)),
-      timer_ ("senf::term::BaseEditor::keySequenceTimeout", 
+      timer_ ("senf::term::BaseEditor::keySequenceTimeout",
               senf::membind(&BaseEditor::keySequenceTimeout, this)),
       column_ (0u), displayHeight_ (1u), line_ (0u)
 {
@@ -278,7 +278,7 @@ prefix_ void senf::term::BaseEditor::write(std::string const & s)
 ///////////////////////////////////////////////////////////////////////////
 
 prefix_ senf::term::LineEditor::LineEditor(AbstractTerminal & terminal, AcceptCallback cb)
-    : BaseEditor(terminal), enabled_ (false), prompt_ ("$"), promptWidth_ (1u), editWidth_ (0u), 
+    : BaseEditor(terminal), enabled_ (false), prompt_ ("$"), promptWidth_ (1u), editWidth_ (0u),
       text_ (""), point_ (0u), displayPos_ (0u), lastKey_ (0u), callback_ (cb), historyPoint_ (0u)
 {
     defineKey(KeyParser::Return,    &bindings::accept);
@@ -656,11 +656,11 @@ prefix_ void senf::term::bindings::complete(LineEditor & editor, Completer compl
     completer(editor, b, e, prefix, completions);
     if (completions.empty())
         return;
-    if (e > text.size()) 
+    if (e > text.size())
         e = text.size();
     if (b > e)
         b = e;
-    
+
     // Find common start string of all completions
     unsigned commonStart (completions[0].size());
     unsigned maxLen (commonStart);
@@ -701,8 +701,8 @@ prefix_ void senf::term::bindings::complete(LineEditor & editor, Completer compl
         std::string line;
         for (unsigned column (0); column < nColumns && i != completions.end(); ++column, ++i) {
             std::string entry (colWidth, ' ');
-            std::copy(i->begin(), 
-                      i->size() > colWidth-2 ? i->begin()+colWidth-2 : i->end(), 
+            std::copy(i->begin(),
+                      i->size() > colWidth-2 ? i->begin()+colWidth-2 : i->end(),
                       entry.begin());
             line += entry;
         }

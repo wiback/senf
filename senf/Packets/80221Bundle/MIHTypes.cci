@@ -33,32 +33,32 @@
 ///////////////////////////////////////////////////////////////////////////
 // MIHFId
 prefix_ senf::MIHFId::MIHFId()
-    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address,
             senf::INet6Address, std::string, senf::EUI64 > ( boost::blank())
 { }
 
 prefix_ senf::MIHFId::MIHFId(senf::MACAddress const & addr)
-    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address,
             senf::INet6Address, std::string, senf::EUI64 > ( addr)
 { }
 
 prefix_ senf::MIHFId::MIHFId(senf::INet4Address const & addr)
-    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address,
             senf::INet6Address, std::string, senf::EUI64 > ( addr)
 { }
 
 prefix_ senf::MIHFId::MIHFId(senf::INet6Address const & addr)
-    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address,
             senf::INet6Address, std::string, senf::EUI64 > ( addr)
 { }
 
 prefix_ senf::MIHFId::MIHFId(std::string const & addr)
-    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address,
             senf::INet6Address, std::string, senf::EUI64 > ( addr)
 { }
 
 prefix_ senf::MIHFId::MIHFId(senf::EUI64 const & addr)
-    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+    :  boost::variant< boost::blank, senf::MACAddress, senf::INet4Address,
             senf::INet6Address, std::string, senf::EUI64 > ( addr)
 { }
 
@@ -75,7 +75,7 @@ prefix_ bool senf::MIHFId::operator==(senf::MIHFId const & other)
 }
 
 prefix_ bool senf::MIHFId::operator<(senf::MIHFId const & other)
-    const 
+    const
 {
     if (type() != other.type()) return type() < other.type();
     return boost::apply_visitor( LessThanVisitor(), *this, other);

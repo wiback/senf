@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -48,7 +48,7 @@ namespace detail {
 
     struct FindNumericSignal {
         bool operator()(SignalEvent const & a, int b) const
-            { return a.signal_ < b; } 
+            { return a.signal_ < b; }
         bool operator()(int a, SignalEvent const & b) const
             { return a < b.signal_; }
     };
@@ -73,7 +73,7 @@ namespace detail {
         bool empty() const;
 
         struct DuplicateSignalRegistrationException : public Exception
-        { DuplicateSignalRegistrationException() 
+        { DuplicateSignalRegistrationException()
               : Exception("duplicate signal registration") {} };
 
     protected:

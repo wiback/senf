@@ -44,7 +44,7 @@
 
 namespace senf {
 namespace log {
-    
+
     class DefaultArea;
     class Debug;
     class NONE;
@@ -84,7 +84,7 @@ namespace detail {
 
     senf::mpl::rv<5> Parameters_select_(AliasBase *);
     template <class Base, class Param>
-    struct Parameters_<Base,Param,5> 
+    struct Parameters_<Base,Param,5>
         : public Param::template apply<Base>::type
     {};
 
@@ -92,7 +92,7 @@ namespace detail {
     // this name is created by SENF_LOG_CLASS_AREA()
     template <class T>
     senf::mpl::rv<6> Parameters_select_(
-        T *, 
+        T *,
         typename boost::disable_if< boost::is_convertible<T*,StreamBase*> >::type * = 0,
         typename boost::disable_if< boost::is_convertible<T*,AreaBase*> >::type * = 0,
         typename boost::disable_if< boost::is_convertible<T*,LevelBase*> >::type * = 0,
@@ -107,16 +107,16 @@ namespace detail {
     template <class Base>
     struct Parameters : public Base
     {
-        typedef typename boost::mpl::if_c< Base::level::value == NONE::value, 
-                                           typename Base::stream::defaultLevel, 
+        typedef typename boost::mpl::if_c< Base::level::value == NONE::value,
+                                           typename Base::stream::defaultLevel,
                                            typename Base::level >::type level;
 
         static bool const compileEnabled = senf::log::Enabled<
-            typename Base::stream, 
-            typename Base::area_base, 
+            typename Base::stream,
+            typename Base::area_base,
             level>::value;
 
-        static bool enabled() { 
+        static bool enabled() {
             return compileEnabled
                 && ( senf::log::detail::TargetRegistry::instance().fallbackRouting() ||
                      Base::area::instance().limit(Base::stream::instance()) <= level::value );
@@ -133,8 +133,8 @@ namespace detail {
         template <class Base, class Param>
         struct apply {
             typedef Parameters_<
-                Base, 
-                Param, 
+                Base,
+                Param,
                 SENF_MPL_RV(Parameters_select_(static_cast<Param*>(0)))> type;
         };
     };

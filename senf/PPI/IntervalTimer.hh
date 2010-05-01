@@ -67,7 +67,7 @@ namespace ppi {
         explicit IntervalTimer(ClockService::clock_type interval,
                                unsigned eventsPerInterval=1);
         IntervalTimer();
-        
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 

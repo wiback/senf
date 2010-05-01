@@ -74,7 +74,7 @@ prefix_ unsigned senf::VariantParser<AuxPolicy,Parsers>::variant()
 template <class AuxPolicy, class Parsers>
 template <unsigned N>
 prefix_ typename boost::mpl::at<
-    typename senf::VariantParser<AuxPolicy,Parsers>::parsers, 
+    typename senf::VariantParser<AuxPolicy,Parsers>::parsers,
     boost::mpl::int_<N> >::type
 senf::VariantParser<AuxPolicy,Parsers>::get()
     const

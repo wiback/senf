@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,7 +45,7 @@ namespace {
     std::string cb4(std::ostream & os) { os << "text\n"; return "value"; }
     void cb5(std::ostream & os, std::string const & v) { os << "Value: " << v << "\n"; }
 
-    struct TestParser 
+    struct TestParser
     {
         void operator()(senf::console::ParseCommandInfo::TokensRange const &,
                         std::string & out) const
@@ -68,7 +68,7 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
         dir.add("cb1", fty::Command(&cb1));
-        parser.parse("test/cb1 2 3.2", 
+        parser.parse("test/cb1 2 3.2",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
         BOOST_CHECK_EQUAL( ss.str(), "5\n" );
     }
@@ -108,18 +108,18 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
 
-        BOOST_CHECK_THROW( 
-            parser.parse("test/cb1 2 3.2 foo", 
+        BOOST_CHECK_THROW(
+            parser.parse("test/cb1 2 3.2 foo",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
             senf::console::SyntaxErrorException );
 
         BOOST_CHECK_THROW(
-            parser.parse("test/cb1 2", 
+            parser.parse("test/cb1 2",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
             senf::console::SyntaxErrorException );
 
         BOOST_CHECK_THROW(
-            parser.parse("test/cb1 2 foo", 
+            parser.parse("test/cb1 2 foo",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
             senf::console::SyntaxErrorException );
     }
@@ -129,7 +129,7 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
         std::stringstream ss;
 
         // Just for the fun of it, use a functor and not a function pointer as parser ...
-        dir.add("cb6", 
+        dir.add("cb6",
                 fty::Command(&cb5)
                     .arg( kw::parser = TestParser() )
             );
@@ -142,9 +142,9 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
 
-        // This tests adding boost::function objects and at the same time validates, that 
+        // This tests adding boost::function objects and at the same time validates, that
         // compatible types also work
-        dir.add("cb7", 
+        dir.add("cb7",
                 fty::Command(boost::function<float()>(&cb2))
                     .formatter( &testFormatter )
             );
@@ -177,7 +177,7 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
 
             .arg( description   = "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf." )
 
-            .arg( name          = "checkup", 
+            .arg( name          = "checkup",
                   type_name     = "number",
                   description   = "Florgel, dargel and durgel",
                   default_value = 2.1,
@@ -189,7 +189,7 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
                 .overloadDoc(
                     "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
                     "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
-                    "iam, in vos nam Custodi." ) 
+                    "iam, in vos nam Custodi." )
                 .arg( "text", default_value = "" ) )
             );
 
@@ -216,8 +216,8 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
         senf::console::root()["test"]("cb").help(ss);
-        BOOST_CHECK_EQUAL( 
-            ss.str(), 
+        BOOST_CHECK_EQUAL(
+            ss.str(),
             "Usage:\n"
             "    1- cb arg11:int [checkup:number]\n"
             "    2- cb [text:string]\n"
@@ -248,7 +248,7 @@ SENF_AUTO_UNIT_TEST(parsedCommand)
 }
 
 namespace {
-    struct Test 
+    struct Test
     {
         senf::console::ScopedDirectory<Test> dir;
         std::string name_;
@@ -271,11 +271,11 @@ SENF_AUTO_UNIT_TEST(memberParsedCommand)
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
-    
+
     {
         Test obj ("bar");
         dir.add("obj", obj.dir);
-        
+
         std::stringstream ss;
         parser.parse("test/obj/name \": foo\"",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
@@ -285,7 +285,7 @@ SENF_AUTO_UNIT_TEST(memberParsedCommand)
 
 namespace {
 
-    senf::console::DirectoryNode::ptr dircb() 
+    senf::console::DirectoryNode::ptr dircb()
     {
         namespace fty = senf::console::factory;
 
@@ -312,11 +312,11 @@ SENF_AUTO_UNIT_TEST(directoryReturn)
         SENF_CHECK_NO_THROW(
             parser.parse("test/test { ll; }",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-        BOOST_CHECK_EQUAL( ss.str(), 
+        BOOST_CHECK_EQUAL( ss.str(),
                            "<Directory at '/test/dircb'>\n"
                            "cb1                         \n" );
     }
-    
+
 }
 
 #ifdef COMPILE_CHECK
@@ -343,7 +343,7 @@ COMPILE_FAIL(defaultDoc)
 }
 
 #endif
-    
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

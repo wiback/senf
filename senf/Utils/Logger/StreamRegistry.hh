@@ -43,21 +43,21 @@ namespace log {
 
     namespace detail { struct StreamBase; }
 
-    /** \brief Stream registry 
-        
+    /** \brief Stream registry
+
         The stream registry keeps track of all streams defined. stream classes are defined as
         singletons and will automatically register with this registry.
 
         The stream registry exposes a forward sequence interface which is a sequence of the names of
         all registered streams.
      */
-    class StreamRegistry 
+    class StreamRegistry
         : public senf::singleton<StreamRegistry>
     {
         typedef std::map<std::string, detail::StreamBase const *> Registry;
 
     public:
-        typedef boost::transform_iterator< ::__gnu_cxx::select1st<Registry::value_type>, 
+        typedef boost::transform_iterator< ::__gnu_cxx::select1st<Registry::value_type>,
                                            Registry::const_iterator > iterator;
 
 #       ifdef DOXYGEN

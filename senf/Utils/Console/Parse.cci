@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -226,7 +226,7 @@ senf::console::ParseCommandInfo::ArgumentIterator::dereference()
     const
 {
     if (b_ == e_) setRange();
-    return b_->is(Token::ArgumentGroupOpen) 
+    return b_->is(Token::ArgumentGroupOpen)
         ? boost::make_iterator_range(boost::next(b_), boost::prior(e_))
         : boost::make_iterator_range(b_, e_);
 }

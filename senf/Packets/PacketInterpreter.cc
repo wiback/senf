@@ -55,11 +55,11 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::append(ptr
 {
     if (next())
         impl().truncateInterpreters(next().get());
-    
+
     optional_range r (nextPacketRange());
     if (!r)
         throw InvalidPacketChainException();
-    
+
     ptr rv (packet->appendClone(&impl(), *r));
     rv->data().resize(packet->data().size());
     std::copy(packet->data().begin(), packet->data().end(), rv->data().begin());

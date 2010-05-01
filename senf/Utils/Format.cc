@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -38,8 +38,8 @@
 
 namespace {
 
-    char const SIPrefix[] = { 'y', 'z', 'a', 'f', 'p', 'n', 'u', 'm', 
-                              ' ', 
+    char const SIPrefix[] = { 'y', 'z', 'a', 'f', 'p', 'n', 'u', 'm',
+                              ' ',
                               'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
     unsigned const SIScales = 8;
 
@@ -59,7 +59,7 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
         os.fill(v_.fill_);
 
     unsigned prec (os.precision());
-    if (prec < 4) 
+    if (prec < 4)
         prec = 4;
     unsigned w (os.width());
     char fill (os.fill());
@@ -68,7 +68,7 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
     std::ios_base::fmtflags align (flags & std::ios_base::adjustfield);
     if (! std::isnan(v_.d_))
         minw += prec+3;
-    
+
     float ref (std::fabs(v_.v_));
     float v (v_.v_);
     float d (0.0);
@@ -93,7 +93,7 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
     if (w > 0) {
         if ((align == 0 || align == std::ios_base::right || align == std::ios_base::internal))
             os << std::setw(prec+2+(w>minw ? w-minw : 0));
-        else 
+        else
             os << std::right << std::setfill(' ') << std::setw(prec+2);
     }
     else
@@ -113,7 +113,7 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
             os << SIPrefix[scale/3+SIScales];
     }
     else if ((flags & std::ios_base::showpoint) || scale != 0)
-        os << ((flags & std::ios_base::uppercase)?'E':'e') 
+        os << ((flags & std::ios_base::uppercase)?'E':'e')
            << std::showpos << std::internal << std::setw(3) << scale;
     else if (w > 0)
         os << "    ";
@@ -135,8 +135,8 @@ prefix_ std::string senf::format::detail::dumpintUnsigned(unsigned long long v, 
     int bytes ((bits+7)/8);
     int digs (int(2.4*bytes)+1);
     std::stringstream ss;
-    ss << (sign ? (sign<0 ? "-" : " ") : "") 
-       << "0x" << std::setw(2*bytes) << std::setfill('0') << std::hex 
+    ss << (sign ? (sign<0 ? "-" : " ") : "")
+       << "0x" << std::setw(2*bytes) << std::setfill('0') << std::hex
        << 1u*v
        << " (" << std::setw(digs+(sign ? 1 : 0)) << std::setfill(' ') << std::dec;
     if (sign)

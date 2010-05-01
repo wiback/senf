@@ -27,7 +27,7 @@
     member functions.
     \code
     #include <senf/Utils/Daemon.hh>
-    
+
     class MyDaemon : public senf::Daemon
     {
         void configure() {
@@ -38,7 +38,7 @@
             // here after setting default parameters
             senf::Daemon::configure();
         }
-    
+
         void init() {
             // Initialize application. Setup all necessary objects. After init()
             // has completed, the startup should not fail
@@ -65,10 +65,10 @@
     Since there are times, where separating init() and run() into two separate functions is
     difficult, instead of defining init() and run(), the member main() may be defined. This member
     must call detach() as soon as initialization is completed to detach from the foreground
-    terminal.    
+    terminal.
     \code
     #include <senf/Utils/Daemon.hh>
-    
+
     class MyDaemon : public senf::Daemon
     {
         // 'configure()' like above. Don't implement 'init()' or 'run()' if you implement 'main()'.
@@ -97,7 +97,7 @@
     SENF_DAEMON_MAIN(MyDaemon);
     \endcode
 
-    \see 
+    \see
         \ref senf::Daemon class \n
         \ref SENF_DAEMON_MAIN() main() implementation macro
  */

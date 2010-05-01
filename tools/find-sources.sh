@@ -11,6 +11,7 @@ set -f
 find . \
     -name .svn -prune -o \
     -name .git -prune -o \
+    -name .sconf_temp -prune -o \
     -name doc -prune -o \
     -name debian -prune -o \
     -name dist -prune -o \

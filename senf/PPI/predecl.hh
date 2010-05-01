@@ -66,8 +66,8 @@ namespace ppi {
 
 #endif
 
-    namespace module {       
-        class Module;       
+    namespace module {
+        class Module;
         namespace detail {
             template <class Source, class Target> class RouteHelper;
         }

@@ -25,7 +25,7 @@
  */
 
 /** \defgroup handle_group The Handle Hierarchy
-    
+
     \diaimage FhHierarchy.dia
 
     The senf::FileHandle class is the base of a hierarchy of socket handle classes (realized as
@@ -130,11 +130,11 @@ namespace senf {
 
         bool readable() const;       ///< Check, whether a read on the handle would not block
                                      ///< (ignoring blocking state)
-        bool waitReadable(senf::ClockService::clock_type timeout = -1) const;  
+        bool waitReadable(senf::ClockService::clock_type timeout = -1) const;
                                      ///< Wait, until read on the handle would not block (ignoring
                                      ///< blocking state)
                                      /**< \param[in] timeout max time to wait, default is to wait
-                                              forever.  
+                                              forever.
                                           \returns \c true, if handle became readable or \c false on
                                               timeout. */
         bool writeable() const;      ///< Check, whether a write on the handle would not block
@@ -143,16 +143,16 @@ namespace senf {
                                      ///< Wait, until a write on the handle would not block
                                      ///< (ignoring blocking state)
                                      /**< \param[in] timeout max time to wait, default is to wait
-                                              forever.  
+                                              forever.
                                           \returns \c true, if handle became writable or \c false on
                                               timeout. */
-        bool oobReadable() const;    ///< Check, whether a read of prioritized data on the handle 
+        bool oobReadable() const;    ///< Check, whether a read of prioritized data on the handle
                                      ///< would not block (ignoring blocking state)
-        bool waitOOBReadable(senf::ClockService::clock_type timeout = -1) const; 
+        bool waitOOBReadable(senf::ClockService::clock_type timeout = -1) const;
                                      ///< Wait, until read of prioritized data on the handle does
                                      ///< not block (ignoring blocking state)
                                      /**< \param[in] timeout max time to wait, default is to wait
-                                              forever.  
+                                              forever.
                                           \returns \c true, if handle became readable for
                                               out-of-band data or \c false on timeout. */
 

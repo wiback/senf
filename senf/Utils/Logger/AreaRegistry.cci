@@ -97,7 +97,7 @@ prefix_ bool senf::log::detail::AreaBase::alive()
 prefix_ unsigned senf::log::detail::AreaBase::limit(StreamBase const & stream)
     const
 {
-    return stream.index >= routingCache_.size() ? 
+    return stream.index >= routingCache_.size() ?
         DISABLED::value : routingCache_[stream.index].limit;
 }
 

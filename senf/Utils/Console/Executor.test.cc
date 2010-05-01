@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -58,7 +58,7 @@ SENF_AUTO_UNIT_TEST(executor)
     senf::console::CommandParser parser;
 
     BOOST_CHECK( &executor.cwd() == &senf::console::root() );
-    
+
     {
         std::stringstream os;
         parser.parse("cd dir1", &setCommand);
@@ -101,7 +101,7 @@ SENF_AUTO_UNIT_TEST(executor)
         parser.parse("ll", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLL );
-        BOOST_CHECK_EQUAL( os.str(), 
+        BOOST_CHECK_EQUAL( os.str(),
                            "dir1/                       \n"
                            "dir2/                       Helptext\n"
                            "sys/                        \n" );
@@ -122,7 +122,7 @@ SENF_AUTO_UNIT_TEST(executor)
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
         BOOST_CHECK_EQUAL( os.str(), "" );
     }
-    
+
     {
         std::stringstream os;
         parser.parse("lr", &setCommand);
@@ -211,7 +211,7 @@ SENF_AUTO_UNIT_TEST(executorChroot)
 }
 
 namespace {
-    
+
     void testPolicy(senf::console::DirectoryNode & dir, std::string const & entry)
     {
         if (dir == senf::console::root() && entry == "dir2")
@@ -290,14 +290,14 @@ SENF_AUTO_UNIT_TEST(executorAuto)
         BOOST_CHECK_EQUAL( executor.cwdPath(), "/dir2" );
         BOOST_CHECK_EQUAL( os.str(), "" );
     }
-    
+
     {
         std::stringstream os;
         parser.parse("t", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( os.str(), "testCommand\n" );
     }
-    
+
     commands.clear();
     senf::console::root().remove("tdir1");
     senf::console::root().remove("dir2");

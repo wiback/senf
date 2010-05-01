@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -44,7 +44,7 @@
 
 namespace senf {
 namespace ppi {
-    
+
 #ifdef DOXYGEN
 
     // For exposition only.
@@ -62,7 +62,7 @@ namespace ppi {
     template <class MultiConnectorSource, class Target, class A1>
     MultiConnectorSource::ConnectorType & connect(
         MultiConnectorSource & source, A1 const & a1, Target & target);
-    
+
     /** \brief Connect arbitrary source to MultiConnector target
 
         Additional implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments.
@@ -99,7 +99,7 @@ namespace module {
         This mixin provides a module with support for a runtime configurable number of input or
         output connectors.
         \code
-        class MyModule 
+        class MyModule
             : public senf::ppi::module::Module,
               public senf::ppi::module::MultiConnectorMixin<
                   MyModule, senf::ppi::connector::ActiveInput<> >
@@ -116,7 +116,7 @@ namespace module {
                 route(input, output);
                 input.onThrottle(&MyModule::doThrottle);
             }
-        
+
             // Optional
             void connectorDestroy(senf::ppi::connector::ActiveInput const & input)
             {
@@ -124,7 +124,7 @@ namespace module {
             }
 
             void doThrottle()
-            { 
+            {
                 // ...
             }
 
@@ -180,7 +180,7 @@ namespace module {
         allocate a new connector
         \code
         MyModule muModule;
-        
+
         senf::ppi::connect(someModule, myModule);
         \endcode
         Some modules will expect additional arguments to be passed (see below)
@@ -214,7 +214,7 @@ namespace module {
         Implementing \c connectorDestroy now is \e mandatory. The signature is changed to take a
         pointer as argument
         \code
-        class MyModule 
+        class MyModule
             : public senf::ppi::module::Module,
               public senf::ppi::module::MultiConnectorMixin<
                   MyModule, senf::ppi::connector::ActiveInput<>, void, void >
@@ -249,12 +249,12 @@ namespace module {
             successfully, otherwise your code will break.
 
      */
-    template <class Self_, 
-              class ConnectorType_, 
-              class KeyType_=void, 
+    template <class Self_,
+              class ConnectorType_,
+              class KeyType_=void,
               class ContainerType_=typename detail::MultiConnectorDefaultContainer<
                                                KeyType_,ConnectorType_>::type>
-    class MultiConnectorMixin 
+    class MultiConnectorMixin
         : private detail::MultiConnectorSelectBase<ConnectorType_>::type
     {
     public:
@@ -286,7 +286,7 @@ namespace module {
 
         friend class detail::MultiConnectorMixinAccess;
         friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
-        
+
         ContainerType_ connectors_;
     };
 
@@ -300,7 +300,7 @@ namespace module {
     {
     public:
         typedef ConnectorType_ ConnectorType;
-        
+
     protected:
         typedef ContainerType_ ContainerType;
 
@@ -320,14 +320,14 @@ namespace module {
 #       include BOOST_PP_ITERATE()
 
         void disconnected(ConnectorType_ const & c);
-        
+
         friend class detail::MultiConnectorMixinAccess;
         friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
 
         ContainerType_ connectors_;
     };
 
-    template <class Self_, 
+    template <class Self_,
               class ConnectorType_>
     class MultiConnectorMixin<Self_,ConnectorType_,void,void>
         : private detail::MultiConnectorSelectBase<ConnectorType_>::type
@@ -352,7 +352,7 @@ namespace module {
     };
 
 #endif
-        
+
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////

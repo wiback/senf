@@ -41,12 +41,12 @@ class Psi2TsModule
 {
     SENF_PPI_MODULE(Psi2TsModule);
 
-public: 
+public:
     senf::ppi::connector::PassiveInput<> input;
     senf::ppi::connector::ActiveOutput<senf::TransportPacket> output;
     Psi2TsModule(unsigned pid, senf::ClockService::clock_type timout=0);
     void onRequest();
-    
+
 private:
     enum state {IDLE, PROC, WAIT};
     typedef senf::PacketData::iterator iterator;

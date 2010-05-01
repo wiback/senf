@@ -46,15 +46,15 @@ SENF_AUTO_UNIT_TEST(NetdeviceController) {
     int index = ctrl.interfaceIndex();
     BOOST_CHECK_EQUAL( index, senf::NetdeviceController(index).interfaceIndex() );
     BOOST_CHECK_EQUAL( index, if_nametoindex( ifname.c_str()) );
-    
+
     BOOST_CHECK_THROW( senf::NetdeviceController("invalid_interfacename"), senf::SystemException );
-    
+
     int oldMTU (0);
     SENF_CHECK_NO_THROW( oldMTU = ctrl.mtu());
-    
+
     bool promisc (false);
     SENF_CHECK_NO_THROW( promisc = ctrl.promisc());
-    
+
     BOOST_CHECK( ctrl.isUp());
 
     if (getuid() != 0) {
@@ -66,7 +66,7 @@ SENF_AUTO_UNIT_TEST(NetdeviceController) {
     BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU-16);
     SENF_CHECK_NO_THROW( ctrl.mtu(oldMTU));
     BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU);
-    
+
     SENF_CHECK_NO_THROW( ctrl.promisc( !promisc));
     BOOST_CHECK_EQUAL( ctrl.promisc(), !promisc);
     SENF_CHECK_NO_THROW( ctrl.promisc( promisc));

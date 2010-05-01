@@ -37,7 +37,7 @@
 namespace senf {
 
     /** \brief Parse an IPv6 address
-        
+
         \see INet6Address
      */
     struct INet6AddressParser : public PacketParserBase
@@ -53,7 +53,7 @@ namespace senf {
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
         operator value_type() const { return value(); }
         byte & operator[](size_type index) const { return *boost::next(i(),index); }
-        INet6AddressParser const & operator= (value_type const & other) 
+        INet6AddressParser const & operator= (value_type const & other)
             { value(other); return *this; }
     };
 
@@ -88,7 +88,7 @@ namespace senf {
 
         \par Packet type (typedef):
             \ref IPv6Packet
-        
+
         \par Fields:
             \ref IPv6PacketParser
 
@@ -114,7 +114,7 @@ namespace senf {
               \ref IPv6PacketParser::destination()  "Destination Address"</td>
           </tr>
         </table>
-          
+
         \par Associated registries:
             \ref IpTypes
 
@@ -138,17 +138,17 @@ namespace senf {
         using mixin::initSize;
         using mixin::init;
 
-        static key_t nextPacketKey(packet p) 
+        static key_t nextPacketKey(packet p)
             { return p->nextHeader(); }
-        
+
         /** \brief Dump given IPv6Packet in readable form to given output stream */
-        static void dump(packet p, std::ostream & os); 
-        
+        static void dump(packet p, std::ostream & os);
+
         static void finalize(packet p); ///< Finalize packet.
-                                        /**< \li set \ref IPv6PacketParser::length() "length" 
+                                        /**< \li set \ref IPv6PacketParser::length() "length"
                                                from payload size
-                                             \li set \ref IPv6PacketParser::nextHeader() 
-                                               "nextHeader" from type of next packet if found 
+                                             \li set \ref IPv6PacketParser::nextHeader()
+                                               "nextHeader" from type of next packet if found
                                                in \ref IpTypes */
     };
 

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -69,11 +69,11 @@ namespace detail {
         typedef detail::CreateParsedCommandOverload<Traits> CreateOverload;
         typedef boost::function<void (Variable const &)> OnChangeHandler;
         typedef void result_type;
-        
+
         SetVariable(Variable & var, OnChangeHandler handler = OnChangeHandler());
 
         static typename Traits::Overload::ptr create(Variable & var);
-        
+
         void operator()(Variable const & value) const;
 
         Variable & var_;

@@ -68,7 +68,7 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
 
     BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<FooPacket>(), 1u );
     BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<BarPacket>(), 2u );
-    BOOST_CHECK_THROW( PacketRegistry<BaseTag>::key<OtherPacket>(), 
+    BOOST_CHECK_THROW( PacketRegistry<BaseTag>::key<OtherPacket>(),
                        PacketTypeNotRegisteredException );
 
     BOOST_CHECK_EQUAL( PacketRegistry<StringTag>::key<FooPacket>(), "foo" );

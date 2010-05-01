@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -46,7 +46,7 @@ namespace console {
         does support multicast operation.
 
         Every UDP packet will be executed in a clean context: No directory groups are open/closed,
-        and the current directory is always the root directory. 
+        and the current directory is always the root directory.
 
         By default, the server will send command replies via UDP to the sender of the corresponding
         incoming command. Replies may however either be completely disabled or be sent to a fixed
@@ -75,7 +75,7 @@ namespace console {
                                         ///< Open UDP server on \a address
         explicit UDPServer(senf::INet6SocketAddress const & address);
                                         ///< Open UDP server on \a address
-        
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 

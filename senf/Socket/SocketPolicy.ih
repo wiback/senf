@@ -91,7 +91,7 @@ namespace senf {
     template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SENF_SOCKET_POLICIES ) >
     struct SocketPolicy
         : public SocketPolicyBase,
-          public senf::pool_alloc_mixin< 
+          public senf::pool_alloc_mixin<
               SocketPolicy< BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateParms, , SENF_SOCKET_POLICIES ) > >
     {
 #   define SP_DeclarePolicyMember(x1,x2,SomePolicy)                                               \
@@ -197,30 +197,30 @@ namespace impl {
 
 } // namespace impl
 
-    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SENF_SOCKET_POLICIES_N, 
-                                                    class T, 
+    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SENF_SOCKET_POLICIES_N,
+                                                    class T,
                                                     mpl::nil ) >
     class MakeSocketPolicy
         : public boost::mpl::if_< boost::is_convertible< T0*, SocketPolicyBase* >,
-                                  impl::MakeSocketPolicy_impl< 
-                                      T0, 
-                                      boost::mpl::vector< 
-                                          BOOST_PP_ENUM_SHIFTED_PARAMS( 
+                                  impl::MakeSocketPolicy_impl<
+                                      T0,
+                                      boost::mpl::vector<
+                                          BOOST_PP_ENUM_SHIFTED_PARAMS(
                                               SENF_SOCKET_POLICIES_N, T ) > >,
-                                  impl::MakeSocketPolicy_impl< 
+                                  impl::MakeSocketPolicy_impl<
                                       SocketPolicy<>,
-                                      boost::mpl::vector< 
-                                          BOOST_PP_ENUM_PARAMS( 
+                                      boost::mpl::vector<
+                                          BOOST_PP_ENUM_PARAMS(
                                               SENF_SOCKET_POLICIES_N, T ) > > >::type
     {};
 
     template <class BasePolicy, class DerivedPolicy>
     struct SocketPolicyIsBaseOf
-        : public boost::mpl::if_< 
+        : public boost::mpl::if_<
               boost::mpl::and_< boost::is_convertible< BasePolicy*, SocketPolicyBase* >,
                                 boost::is_convertible< DerivedPolicy*, SocketPolicyBase* > >,
               impl::SocketPolicy_compatibility<BasePolicy,DerivedPolicy>,
-              boost::false_type 
+              boost::false_type
           >::type
     {};
 

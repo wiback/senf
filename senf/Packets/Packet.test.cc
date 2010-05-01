@@ -43,7 +43,7 @@ namespace {
         typedef unsigned key_t;
     };
 
-    struct FooPacketType 
+    struct FooPacketType
         : public senf::PacketTypeBase,
           public senf::PacketTypeMixin<FooPacketType>
     {
@@ -57,7 +57,7 @@ namespace {
         // mode. Otherwise, mixin::nextPacketRange() would query the parser for it's size to find
         // the header size. Since the parser is VoidPacketParser, the header size would therefore be
         // 0
-        static size_type initHeadSize() 
+        static size_type initHeadSize()
             { return initSize(); }
     };
     typedef senf::ConcretePacket<FooPacketType> FooPacket;
@@ -65,7 +65,7 @@ namespace {
     struct BarPacketParser : public senf::PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        
+
         SENF_PARSER_FIELD( type,     senf::UInt16Parser );
         SENF_PARSER_FIELD( length,   senf::Int32Parser  );
         SENF_PARSER_FIELD( reserved, senf::UInt16Parser );
@@ -77,7 +77,7 @@ namespace {
         SENF_PARSER_FINALIZE(BarPacketParser);
     };
 
-    struct BarPacketType 
+    struct BarPacketType
         : public senf::PacketTypeBase,
           public senf::PacketTypeMixin<BarPacketType,RegTag>
     {
@@ -116,7 +116,7 @@ namespace {
 
     std::ostream & operator<<(std::ostream & os, IntAnnotation const & v)
     { os << v.value; return os; }
-    
+
     struct LargeAnnotation {
         char value[32];
     };
@@ -152,7 +152,7 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(packet)
 {
-    senf::Packet packet (FooPacket::create());    
+    senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);
 
     BOOST_REQUIRE( packet );
@@ -171,7 +171,7 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( packet.next().is<BarPacket>() );
     BOOST_CHECK( packet.first() == packet );
     BOOST_CHECK( packet.last() == packet.next() );
-    
+
     senf::Packet p2 (packet.next());
     BOOST_CHECK( p2 );
     packet.parseNextAs<FooPacket>();
@@ -180,7 +180,7 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( packet.next().is<FooPacket>() );
     BOOST_CHECK( ! p2 );
     BOOST_CHECK( packet.next().as<FooPacket>() );
-    
+
     p2 = packet.next().clone();
     BOOST_REQUIRE( p2 );
     packet.next().append( p2 );
@@ -193,19 +193,19 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK_EQUAL( senf::PacketRegistry<RegTag>::key(packet), 1u );
     packet.next().parseNextAs( senf::PacketRegistry<RegTag>::lookup(2u).factory() );
     BOOST_CHECK( packet.next().next().is<BarPacket>() );
-    
+
     std::stringstream s;
     packet.dump(s);
-    BOOST_CHECK_EQUAL( s.str(), 
+    BOOST_CHECK_EQUAL( s.str(),
                        "Annotations:\n"
                        "  (anonymous namespace)::ComplexAnnotation: no value\n"
                        "  (anonymous namespace)::IntAnnotation: 0\n"
                        "BarPacket:\n"
                        "  type: 0\n"
                        "  length: 0\n" );
-    
+
     packet.finalizeAll();
-    BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(), 
+    BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(),
                        BarPacket::Parser::type_t::value_type(-1) );
     packet.last().append(FooPacket::create());
     packet.finalizeThis();
@@ -236,7 +236,7 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( packet.last().rfind<FooPacket>() == packet.last() );
     BOOST_CHECK( packet.next<BarPacket>() == packet.next() );
     BOOST_CHECK( packet.last().prev().prev<FooPacket>() == packet );
-    
+
     senf::DataPacket::createAfter(packet);
     BOOST_CHECK_THROW( packet.next().next().next().parseNextAs<BarPacket>(),
             senf::InvalidPacketChainException );
@@ -268,13 +268,13 @@ SENF_AUTO_UNIT_TEST(concretePacket)
     // No 'u' suffix here to check, that the disable_if works ...
     BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,10).size(), 10u );
     BOOST_CHECK_EQUAL( packet.size(), 14u );
-    
+
     BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,2u,senf::noinit).size(), 2u );
     BOOST_CHECK_EQUAL( packet.size(), 6u );
-    
+
     BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,data).size(), 6u );
     BOOST_CHECK_EQUAL( packet.size(), 10u );
-    
+
     BOOST_CHECK_EQUAL( FooPacket::createBefore(packet).size(), 14u );
     BOOST_CHECK_EQUAL( packet.size(), 10u );
 
@@ -307,7 +307,7 @@ SENF_AUTO_UNIT_TEST(packetAssign)
 
     bar2->type() << 0x2A2Bu;
     bar1.parser() << bar2;
-    
+
     BOOST_CHECK_EQUAL( bar1->type(), 0x2A2Bu );
 }
 

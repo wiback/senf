@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -66,7 +66,7 @@ namespace detail {
 
         \fixme Don't throw exceptions ... set stream error indicator (if at all)
      */
-    class NonblockingSocketSink 
+    class NonblockingSocketSink
         : public boost::iostreams::sink
     {
     public:
@@ -74,7 +74,7 @@ namespace detail {
         std::streamsize write(const char * s, std::streamsize n);
 
         Client & client() const;
-        
+
     private:
         Client & client_;
     };
@@ -82,7 +82,7 @@ namespace detail {
     typedef boost::iostreams::stream<NonblockingSocketSink> NonblockingSocketOStream;
 
     typedef senf::ServerSocketHandle<
-        senf::MakeSocketPolicy< senf::TCPv4SocketProtocol::Policy, 
+        senf::MakeSocketPolicy< senf::TCPv4SocketProtocol::Policy,
                                 senf::BSDAddressingPolicy>::policy > ServerHandle;
 
     /** \brief Internal: Generic client interface
@@ -129,7 +129,7 @@ namespace detail {
     };
 
     /** \brief Internal: Primitive ClientReader implementation
-        
+
         This implementation uses the cooked telnet mode to read lines from the console. It does not
         support explicit line editing or any other advanced features.
      */
@@ -154,7 +154,7 @@ namespace detail {
     };
 
     /** \brief Internal: Primitive ClientReader implementation
-        
+
         This implementation uses the cooked telnet mode to read lines from the console. It does not
         support explicit line editing or any other advanced features.
      */
@@ -175,7 +175,7 @@ namespace detail {
         scheduler::FdEvent readevent_;
         std::string buffer_;
     };
-    
+
 }}}
 
 ///////////////////////////////ih.e////////////////////////////////////////

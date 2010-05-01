@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -51,7 +51,7 @@ namespace detail {
         typedef PrefixAuxParserPolicy ParserPolicy;
 
         static PacketParserBase::size_type const aux_bytes = P::fixed_bytes;
-        
+
         typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
@@ -68,14 +68,14 @@ namespace detail {
         typedef FixedAuxParserPolicy ParserPolicy;
 
         static PacketParserBase::size_type const aux_bytes = 0;
-        
+
         typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
     };
 
     template <class P> struct DynamicWrapperAuxParserPolicy;
-    
+
     /** \brief Internal: Dynamic aux-parser policy
 
         Place auxiliary field at a variable distance before the container/collection
@@ -90,7 +90,7 @@ namespace detail {
 
         DynamicAuxParserPolicy(P p);
         DynamicAuxParserPolicy(WrapperPolicy const & other);
-        
+
         typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
@@ -112,7 +112,7 @@ namespace detail {
         static PacketParserBase::size_type const aux_bytes = 0;
 
         DynamicWrapperAuxParserPolicy(ParserPolicy const & other);
-        
+
         typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
@@ -140,7 +140,7 @@ namespace detail {
         typedef TransformAuxParserPolicy<typename Policy::ParserPolicy, Transform> ParserPolicy;
 
         static PacketParserBase::size_type const aux_bytes = Policy::aux_bytes;
-        
+
         TransformAuxParserPolicy();
         template <class Arg> TransformAuxParserPolicy(Arg const & arg);
 

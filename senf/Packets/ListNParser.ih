@@ -57,7 +57,7 @@ namespace detail {
         size_type bytes  (data_iterator i, state_type s) const;
         size_type size   (data_iterator i, state_type s) const;
         void      init   (data_iterator i, state_type s) const;
-        
+
         void      construct (container_type & c) const;
         void      destruct  (container_type & c) const;
         void      erase     (container_type & c, data_iterator p) const;
@@ -85,8 +85,8 @@ namespace detail {
     };
 
     template <class ElementParser, class AuxPolicy, class Transform>
-    struct ListParserPolicy<ElementParser, AuxPolicy, 
-                            senf::detail::auxtag::transform<Transform, 
+    struct ListParserPolicy<ElementParser, AuxPolicy,
+                            senf::detail::auxtag::transform<Transform,
                                                             senf::detail::auxtag::none> >
     {
         typedef ListNParser_Policy< ElementParser,

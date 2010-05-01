@@ -72,16 +72,16 @@ private:
 
 
 int main(int argc, char const * argv[])
-{       
+{
     try {
         std::ofstream f1 ("233.132.152.1.txt");
         std::ofstream f2 ("233.132.152.2.txt");
-        
+
         MCSniffer sniffer1 (
             senf::INet4Address::from_string("233.132.152.1"), f1);
         MCSniffer sniffer2 (
             senf::INet4Address::from_string("233.132.152.2"), f2);
-            
+
         senf::scheduler::process();
     }
     catch (std::exception const & ex) {
@@ -90,7 +90,7 @@ int main(int argc, char const * argv[])
     return 0;
 }
 
- 
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "MCSniffer.mpp"

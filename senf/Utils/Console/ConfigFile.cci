@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -50,7 +50,7 @@ senf::console::detail::ConfigFileSource::ignoreMissing()
 prefix_ senf::console::detail::ConfigFileSource::ConfigFileSource(std::string const & filename)
     : filename_ (filename), ignoreMissing_ (false)
 {}
-#endif 
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ConfigFile

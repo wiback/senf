@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -118,12 +118,12 @@ senf::ppi::connector::GenericPassiveOutputJack::reset(GenericPassiveOutput & out
 
 prefix_ senf::ppi::connector::ActiveInputJack<senf::Packet>::
 ActiveInputJack(GenericActiveInput & input)
-    : GenericActiveInputJack (input) 
+    : GenericActiveInputJack (input)
 {}
 
 prefix_ senf::ppi::connector::ActiveInputJack<senf::Packet>::
 ActiveInputJack(GenericActiveInputJack input)
-    : GenericActiveInputJack (input.connector()) 
+    : GenericActiveInputJack (input.connector())
 {}
 
 prefix_ void senf::ppi::connector::ActiveInputJack<senf::Packet>::reset(GenericActiveInput & input)
@@ -138,12 +138,12 @@ prefix_ void senf::ppi::connector::ActiveInputJack<senf::Packet>::reset(GenericA
 
 prefix_ senf::ppi::connector::ActiveOutputJack<senf::Packet>::
 ActiveOutputJack(GenericActiveOutput & output)
-    : GenericActiveOutputJack (output) 
+    : GenericActiveOutputJack (output)
 {}
 
 prefix_ senf::ppi::connector::ActiveOutputJack<senf::Packet>::
 ActiveOutputJack(GenericActiveOutputJack & output)
-    : GenericActiveOutputJack (output.connector()) 
+    : GenericActiveOutputJack (output.connector())
 {}
 
 prefix_ void senf::ppi::connector::ActiveOutputJack<senf::Packet>::reset(GenericActiveOutput & output)
@@ -159,12 +159,12 @@ senf::ppi::connector::ActiveOutputJack<senf::Packet>::reset(GenericActiveOutputJ
 
 prefix_ senf::ppi::connector::PassiveInputJack<senf::Packet>::
 PassiveInputJack(GenericPassiveInput & input)
-    : GenericPassiveInputJack (input) 
+    : GenericPassiveInputJack (input)
 {}
 
 prefix_ senf::ppi::connector::PassiveInputJack<senf::Packet>::
 PassiveInputJack(GenericPassiveInputJack & input)
-    : GenericPassiveInputJack (input.connector()) 
+    : GenericPassiveInputJack (input.connector())
 {}
 
 prefix_ void senf::ppi::connector::PassiveInputJack<senf::Packet>::reset(GenericPassiveInput & input)
@@ -180,12 +180,12 @@ senf::ppi::connector::PassiveInputJack<senf::Packet>::reset(GenericPassiveInputJ
 
 prefix_ senf::ppi::connector::PassiveOutputJack<senf::Packet>::
 PassiveOutputJack(GenericPassiveOutput & output)
-    : GenericPassiveOutputJack (output) 
+    : GenericPassiveOutputJack (output)
 {}
 
 prefix_ senf::ppi::connector::PassiveOutputJack<senf::Packet>::
 PassiveOutputJack(GenericPassiveOutputJack & output)
-    : GenericPassiveOutputJack (output.connector()) 
+    : GenericPassiveOutputJack (output.connector())
 {}
 
 prefix_ void

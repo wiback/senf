@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -73,7 +73,7 @@ prefix_ bool senf::scheduler::detail::FIFORunner::TaskInfo::v_enabled()
 // senf::scheduler::detail::FIFORunner::NullTask
 
 prefix_ senf::scheduler::detail::FIFORunner::NullTask::NullTask()
-    : senf::scheduler::detail::FIFORunner::TaskInfo ("<null>") 
+    : senf::scheduler::detail::FIFORunner::TaskInfo ("<null>")
 {}
 
 prefix_ senf::scheduler::detail::FIFORunner::NullTask::~NullTask()

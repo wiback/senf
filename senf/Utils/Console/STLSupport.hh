@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -42,7 +42,7 @@ namespace console {
 
     template <class T, class Alloc>
     struct ArgumentTraits< std::vector<T,Alloc> >
-        : public detail::CollectionArgumentTraits< std::vector<T,Alloc>, 
+        : public detail::CollectionArgumentTraits< std::vector<T,Alloc>,
                                                    detail::PushBackFunctor >
     {};
 
@@ -53,7 +53,7 @@ namespace console {
 
     template <class T, class Alloc>
     struct ArgumentTraits< std::list<T,Alloc> >
-        : public detail::CollectionArgumentTraits< std::list<T,Alloc>, 
+        : public detail::CollectionArgumentTraits< std::list<T,Alloc>,
                                                    detail::PushBackFunctor >
     {};
 
@@ -64,7 +64,7 @@ namespace console {
 
     template <class Key, class Compare, class Alloc>
     struct ArgumentTraits< std::set<Key,Compare,Alloc> >
-        : public detail::CollectionArgumentTraits< std::set<Key,Compare,Alloc>, 
+        : public detail::CollectionArgumentTraits< std::set<Key,Compare,Alloc>,
                                                    detail::InsertFunctor >
     {};
 
@@ -75,7 +75,7 @@ namespace console {
 
     template <class Key, class Compare, class Alloc>
     struct ArgumentTraits< std::multiset<Key,Compare,Alloc> >
-        : public detail::CollectionArgumentTraits< std::multiset<Key,Compare,Alloc>, 
+        : public detail::CollectionArgumentTraits< std::multiset<Key,Compare,Alloc>,
                                                    detail::InsertFunctor >
     {};
 

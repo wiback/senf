@@ -49,7 +49,7 @@ prefix_ void senf::DTCPHelloPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("tunnel protocol")           << unsigned(p->tunnelProtocol())            << "\n"
        << senf::fieldName("number of BDL ips")         << unsigned(p->fbipCount())                 << "\n"
        << "  feed BDL ips:\n";
-    
+
     switch (p->ipVersion()) {
     case 4 : {
         typedef DTCPHelloPacket::Parser::v4fbipList_t FBIPList;

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -36,21 +36,21 @@
 namespace senf {
 namespace console {
 
-    template < class FunctionTraits, 
-               class ReturnType=typename FunctionTraits::result_type, 
+    template < class FunctionTraits,
+               class ReturnType=typename FunctionTraits::result_type,
                unsigned arity=FunctionTraits::arity >
     class ParsedCommandOverload;
 
-    template < class Overload, 
-               unsigned index=0, 
+    template < class Overload,
+               unsigned index=0,
                bool flag=(index < unsigned(Overload::traits::arity)) >
     class ParsedArgumentAttributor;
 
 namespace detail {
 
     /** \brief Internal: Argument information structure
-        
-        This class is used to hold argument information for automatically parsed commands. 
+
+        This class is used to hold argument information for automatically parsed commands.
 
         \see ParsedCommandOverloadBase
      */
@@ -58,32 +58,32 @@ namespace detail {
         : public intrusive_refcount
     {
         typedef boost::intrusive_ptr<ArgumentInfoBase> ptr;
-        
+
         std::string type;
         std::string name;
         std::string defaultDoc;
         bool hasDefault;
         std::string doc;
         bool singleToken;
-        
+
         explicit ArgumentInfoBase(std::string const & type, bool singleToken=false);
         virtual ~ArgumentInfoBase();
 
         virtual std::string defaultValueStr() const = 0;
     };
-    
+
     /** \brief Internal: Argument information structure
-        
-        This class is used to hold argument information for automatically parsed commands. 
+
+        This class is used to hold argument information for automatically parsed commands.
 
         \see ParsedCommandOverloadBase
      */
     template <class ParameterType>
-    struct ArgumentInfo 
+    struct ArgumentInfo
         : public ArgumentInfoBase
     {
         typedef boost::intrusive_ptr<ArgumentInfo> ptr;
-        typedef boost::function<void (ParseCommandInfo::TokensRange const &, 
+        typedef boost::function<void (ParseCommandInfo::TokensRange const &,
                                       ParameterType &)> Parser;
 
         static ptr create();
@@ -94,7 +94,7 @@ namespace detail {
 
         virtual std::string defaultValueStr() const;
     };
-    
+
 #ifndef DOXYGEN
 
     // FirstArgType returns void, if the function has no arguments, otherwise it returns arg1_type
@@ -130,8 +130,8 @@ namespace detail {
         static const bool has_ostream_arg = boost::is_same<first_arg_type, std::ostream &>::value;
 
         typedef typename boost::mpl::if_c<
-            has_ostream_arg, 
-            typename function_traits_remove_arg<base_traits>::type, 
+            has_ostream_arg,
+            typename function_traits_remove_arg<base_traits>::type,
             base_traits>
         ::type traits;
 
@@ -140,7 +140,7 @@ namespace detail {
         static const bool is_callable = true;
         static const bool is_member = boost::is_member_pointer<base_type>::value;
         static const bool is_simple = false;
-        
+
         typedef typename senf::member_class<base_type>::type class_type;
 
         typedef ParsedCommandOverload<traits> Overload;
@@ -156,7 +156,7 @@ namespace detail {
 
     template <class FunctionP>
     struct ParsedCommandTraits
-        : public ParsedCommandTraits_i< FunctionP, 
+        : public ParsedCommandTraits_i< FunctionP,
                                         typename senf::remove_any_pointer<FunctionP>::type >
     {};
 
@@ -175,9 +175,9 @@ namespace detail {
     //
     // If however, it does NOT take an std::ostream first argument, 'ignoreOneArg' will be true and
     // the create member will use boost::bind to DROP the first argument.
-    
-    template <class Traits, 
-              bool ignoreOneArg=! Traits::has_ostream_arg, 
+
+    template <class Traits,
+              bool ignoreOneArg=! Traits::has_ostream_arg,
               unsigned arity=Traits::traits::arity>
     struct CreateParsedCommandOverload
     {};
@@ -186,9 +186,9 @@ namespace detail {
     struct CreateParsedCommandOverload<Traits, false, arity>
     {
         typedef typename Traits::traits traits;
-        
+
         template <class Function>
-        static typename senf::console::ParsedCommandOverload<traits>::ptr create(Function fn) 
+        static typename senf::console::ParsedCommandOverload<traits>::ptr create(Function fn)
             { return senf::console::ParsedCommandOverload<traits>::create(fn); };
     };
 

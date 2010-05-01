@@ -93,7 +93,7 @@ namespace senf
         boost::uint16_t sequenceNumber() const {
             return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
         };
-        
+
         void sequenceNumber(boost::uint16_t sn);
     };
 
@@ -215,7 +215,7 @@ namespace senf
         boost::uint16_t sequenceNumber() const {
             return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
         };
-        
+
         void sequenceNumber(boost::uint16_t sn);
 
         // TODO fourth address field in case of WDS
@@ -267,9 +267,9 @@ namespace senf
         using mixin::initSize;
         using mixin::nextPacketRange;
 
-        static factory_t nextPacketType(packet p) { 
-            return p->subtype() == 0 || p->subtype() == 8 
-                ? LlcSnapPacket::factory() 
+        static factory_t nextPacketType(packet p) {
+            return p->subtype() == 0 || p->subtype() == 8
+                ? LlcSnapPacket::factory()
                 : no_factory();
         }
 

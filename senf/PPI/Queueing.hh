@@ -58,14 +58,14 @@ namespace ppi {
         virtual ~QueueingDiscipline();
 
         enum Event { ENQUEUE, DEQUEUE }; ///< Possible queueing events
-        
+
         virtual void update(connector::GenericPassiveInput & input, Event event) = 0;
                                         ///< Calculate new queueing state
                                         /**< Whenever the queue is manipulated, this member is
                                              called to calculate the new throttling state. The
                                              member must call \a input's \c throttle() or \c
                                              unthrottle() member to set the new throttling state.
-                                             
+
                                              \param[in] input Connector holding the queue
                                              \param[in] event Type of event triggering the update */
     };
@@ -74,7 +74,7 @@ namespace ppi {
 
         The ThresholdQueueing QueueingDiscipline is a simple queueing discipline which throttles the
         input as soon the number of packets in the queue reaches the \a high threshold. The input
-        will be unthrottled when the number of packets drops to the \a low threshold. 
+        will be unthrottled when the number of packets drops to the \a low threshold.
 
         The default queueing discipline is ThresholdQueueing(1,0).
      */

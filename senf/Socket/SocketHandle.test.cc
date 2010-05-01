@@ -106,7 +106,7 @@ SENF_AUTO_UNIT_TEST(socketHandle)
 
         SENF_CHECK_NO_THROW( myh.facet<senf::test::SomeSocketProtocol>() );
     }
-    
+
     // Ensure, the destructor is called and calls the correct close() implementation
     BOOST_CHECK( senf::test::SomeSocketProtocol::closeCount() >= 1u );
 }

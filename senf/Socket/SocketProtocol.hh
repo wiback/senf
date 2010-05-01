@@ -103,7 +103,7 @@ namespace senf {
 
         \attention SocketProtocol must \e always be inherited using public \e virtual inheritance.
      */
-    class SocketProtocol 
+    class SocketProtocol
         : boost::noncopyable
     {
     public:
@@ -138,7 +138,7 @@ namespace senf {
                                              in a single (non-blocking) read operation. If the
                                              socket does not support reading (viz. NotReadablePolicy
                                              is set), this member should always return \c 0.
-                                             
+
                                              Depending on the protocol, it may not be possible to
                                              return a good value. In this case, an upper bound may
                                              be returned (e.g.: When reading from a socket which
@@ -159,16 +159,16 @@ namespace senf {
         virtual void close();           ///< Close socket
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is closed.
-                                             \throws senf::SystemException 
+                                             \throws senf::SystemException
                                              \fixme Move into (at least) BSDSOcketProtocol */
-        
+
         virtual void terminate() const; ///< Forcibly close socket
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is called. Additionally it will
                                              disable SO_LINGER to ensure, that v_terminate will not
                                              block. Like the overriden method, this member will ignore
                                              failures and will never throw. It is therefore safe to be
-                                             called from a destructor. 
+                                             called from a destructor.
                                              \fixme Move into (at least) BSDSocketProtocol */
 
         virtual void state(SocketStateMap & map, unsigned lod) const;
@@ -180,7 +180,7 @@ namespace senf {
                                              \a lod value with a default value of 0. The
                                              interpretation of the \a lod value is completely
                                              implementation defined.
-                                             
+
                                              Every class derived from SocketProtocol should
                                              reimplement state(). The reimplemented method should
                                              call (all) baseclass-implementations of this
@@ -191,21 +191,21 @@ namespace senf {
                                              keys are interpreted as hierarchical strings with '.'
                                              as a separator (like hostnames or struct or class
                                              members). They are automatically sorted correctly.
-                                             
+
                                              The values are std:string with one additional feature:
                                              they allow assignment or conversion from *any* type as
                                              long as that type is streamable. This simplifies
                                              assigning non-string values to the map:
-                                             
+
                                              \code
                                                  map["socket.protocol.ip.address"] << peer();
                                                  map["socket.protocol.tcp.backlog"] << backlog();
                                              \endcode
-                                             
+
                                              This will work even if peer() returns an ip-address
                                              object or backlog() returns an integer. The values are
                                              automatically converted to their string representation.
-                                             
+
                                              Additionally, if the slot the date is written to is not
                                              empty, the <tt>\<\<</tt> operator will add add a comma
                                              as separator. */
@@ -237,7 +237,7 @@ namespace senf {
 
         friend class SocketBody;
     };
-    
+
     template <class SPolicy> class ClientSocketHandle;
     template <class SPolicy> class ServerSocketHandle;
 
@@ -256,7 +256,7 @@ namespace senf {
         protocols themselves, they are combined to build concrete protocols. This structure will
         remove a lot of code duplication. It is important to ensure, that the protocol facets do not
         overlap, since otherwise there will be problems resolving overlapping members.
-        
+
         \doc init_client init_server
      */
     template <class SocketPolicy, class Self>
@@ -283,9 +283,9 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         Policy const & policy() const;
-        
+
     protected:
-        ClientSocketHandle<Policy> clientHandle() const; 
+        ClientSocketHandle<Policy> clientHandle() const;
                                         ///< Get client handle for associated socket
                                         /**< Returns a client handle for the socket associated with
                                              this protocol instance */

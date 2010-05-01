@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -51,7 +51,7 @@ namespace {
     public:
         TempFile(std::string const & name) : name_ (name), file_ (name_.c_str()) {}
         ~TempFile() { file_.close(); boost::filesystem::remove(name_); }
-        
+
         template <class T> TempFile & operator<<(T const & v) { file_ << v; return *this; }
         enum Closer { close }; void operator<<(Closer) { file_.close(); }
         std::string const & name() { return name_; }
@@ -60,20 +60,20 @@ namespace {
         std::string name_;
         std::ofstream file_;
     };
-   
+
 }
 
 SENF_AUTO_UNIT_TEST(configBundle_empty)
 {
     TempFile cfg ("test.cfg");
     cfg << TempFile::close;
-    
+
     senf::console::ScopedDirectory<> root;
     root.add("fun2", senf::console::factory::Command(&fun2));
-    
+
     senf::console::ConfigBundle bundle(root);
     bundle.add( senf::console::FileConfig(cfg.name()));
-    
+
     SENF_CHECK_NO_THROW( bundle.parse() );
 }
 
@@ -104,7 +104,7 @@ SENF_AUTO_UNIT_TEST(configBundle)
     SENF_CHECK_NO_THROW( bundle.parse() );
     BOOST_CHECK_EQUAL( val1, "bar" );
     BOOST_CHECK_EQUAL( val2, true );
-    
+
     bundle.chroot( chroot);
     SENF_CHECK_NO_THROW( bundle.parse() );
     BOOST_CHECK_EQUAL( val1, "bar" );

@@ -186,7 +186,7 @@ SENF_AUTO_UNIT_TEST(inet6Network)
     BOOST_CHECK( ! net.match(net2) );
     BOOST_CHECK( net2.match(INet6Network("2001:db8:1234::/48")) );
     BOOST_CHECK( ! net2.match(INet6Network("2001:db8:1234::/32")) );
-    
+
     BOOST_CHECK( ! INet6Network("ff14:1234::1/128").match(INet6Network("ff14:1234::2/128")) );
 
     BOOST_CHECK_EQUAL( senf::str(net2), "2001:db8:1230::/44" );

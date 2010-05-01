@@ -54,7 +54,7 @@ namespace senf {
         }
 
         template<class Iterator>
-        void do(Iterator i, boost::true_type) 
+        void do(Iterator i, boost::true_type)
         {
             typename Iterator::pointer p (senf::storage_iterator(i));
             // Manipulate the container by manipulating the data pointed at via 'p'
@@ -71,7 +71,7 @@ namespace senf {
 
         Thie \ref senf::storage_iterator helper function will convert an iterator to a pointer to
         the same element the iterator is referencing.
-        
+
         This trait will return \c true for pointers. Additonally it should be configured to return
         true for all standard containers which obey above implementation restrictions. This
         typically includes \c std::vector and \c std::basic_string.
@@ -95,7 +95,7 @@ namespace senf {
     {};
 
     /** \brief Convert contiguous storage iterator to pointer
-        
+
         storage_iterator will convert a contiguous storage iterator into a pointer to the same
         element in the container. This allows to directly access the containers storage.
 
@@ -104,7 +104,7 @@ namespace senf {
      */
     template <class Iterator>
     typename std::iterator_traits<Iterator>::pointer storage_iterator(Iterator i);
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

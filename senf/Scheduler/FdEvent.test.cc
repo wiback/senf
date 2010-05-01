@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -185,7 +185,7 @@ SENF_AUTO_UNIT_TEST(fdDispatcher)
         error("connect");
         BOOST_FAIL("connect");
     }
-    
+
     {
         senf::scheduler::FdEvent sockread ("testHandler",  boost::bind(&callback, sock, _1),
                                            sock, senf::scheduler::FdEvent::EV_READ);
@@ -221,7 +221,7 @@ SENF_AUTO_UNIT_TEST(fdDispatcher)
         BOOST_CHECK_EQUAL( calls, 3 );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         BOOST_CHECK_EQUAL( calls, 3 );
-    
+
         // Ensure, removing an already closed file-descriptor doesn't wreak havoc
         close(sock);
     }
@@ -254,15 +254,15 @@ SENF_AUTO_UNIT_TEST(fileDispatcher)
     senf::scheduler::detail::FileDispatcher::instance().timeout(500);
 
     int fd (open("test.empty.file", O_RDWR|O_CREAT|O_TRUNC, 0600));
-    
+
     senf::ClockService::clock_type t (senf::ClockService::now());
     try {
-        senf::scheduler::FdEvent fde ("testHandler", &handler, 
+        senf::scheduler::FdEvent fde ("testHandler", &handler,
                                       fd, senf::scheduler::FdEvent::EV_READ);
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FileDispatcher::instance().prepareRun() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
-        
+
         BOOST_CHECK( called );
         if (enabled)
             BOOST_CHECK_PREDICATE( is_close, (t)(senf::ClockService::now()) );
@@ -281,7 +281,7 @@ SENF_AUTO_UNIT_TEST(fileDispatcher)
 
     BOOST_CHECK( ! called );
     if (enabled)
-        BOOST_CHECK_PREDICATE( 
+        BOOST_CHECK_PREDICATE(
             is_close, (t+senf::ClockService::milliseconds(500))(senf::ClockService::now()) );
 
     unlink("test.empty.file");

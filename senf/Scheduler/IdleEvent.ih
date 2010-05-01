@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@ namespace scheduler {
     void restart();
 
 namespace detail {
-    
+
     class IdleEventDispatcher
         : public singleton<IdleEventDispatcher>
     {
@@ -47,7 +47,7 @@ namespace detail {
 
         void add(IdleEvent & event);
         void remove(IdleEvent & event);
-        
+
         void prepareRun();
 
         // Called by PollTimerSource

@@ -37,7 +37,7 @@
 namespace senf {
 namespace ppi {
 
-namespace detail { 
+namespace detail {
     struct DisableStandardInput {};
     struct DisableStandardOutput {};
     struct DisableStandardConnect : public DisableStandardInput, public DisableStandardOutput {};
@@ -65,7 +65,7 @@ namespace detail {
 
         \throws connector::IncompatibleConnectorsException if the two connectors are not type
             compatible.
-        
+
         \see \ref ppi_connections
      */
     void connect(connector::OutputConnector & source, connector::InputConnector & target, ...);
@@ -77,7 +77,7 @@ namespace detail {
 
 #endif
 
-#ifndef DOXYGEN    
+#ifndef DOXYGEN
 
     template <class T, class C>
     void connect(T & source, C & target,
@@ -99,7 +99,7 @@ namespace detail {
                  typename boost::disable_if< boost::is_base_of<detail::DisableStandardInput, T2> >:: type * = 0);
 
 #endif
-    
+
     /** \brief Start the network
 
         Calling senf::ppi::run() will start processing the network. The main event loop is managed
@@ -116,7 +116,7 @@ namespace detail {
     void run();
 
     /** \brief Manually initialize the network
-        
+
         For debugging purposes, it is sometimes simpler to not use senf::ppi::run() but instead
         drive the network via explicit calls using the debug modules. However, it is still necessary
         to initialize the network. This operation is performed by senf::ppi::init().

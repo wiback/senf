@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -157,26 +157,26 @@ prefix_ senf::format::eng const & senf::format::eng::right()
 // senf::format::IndentHelper
 
 prefix_ senf::format::IndentHelper::IndentHelper()
-    : instance_level(1) 
+    : instance_level(1)
 {
-    ++static_level; 
+    ++static_level;
 }
 
 prefix_ senf::format::IndentHelper::~IndentHelper()
 {
-    static_level -= instance_level; 
+    static_level -= instance_level;
 }
 
 prefix_ void senf::format::IndentHelper::increase()
 {
-    ++static_level; 
-    ++instance_level; 
+    ++static_level;
+    ++instance_level;
 }
 
-prefix_ unsigned int senf::format::IndentHelper::level() 
+prefix_ unsigned int senf::format::IndentHelper::level()
     const
-{ 
-    return static_level; 
+{
+    return static_level;
 }
 
 prefix_ std::ostream & senf::format::operator<<(std::ostream & os, senf::format::IndentHelper const & indent)

@@ -53,17 +53,17 @@ namespace senf {
 
 
     \section basic_mixins Mixin classes
-    
+
     <table class="listing">
     <tr><td>\ref intrusive_refcount</td><td>mixin to simplify writing classes for use with <a
     href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a></td></tr>
 
     <tr><td>\ref safe_bool</td><td>a mixin class to provide a really safe replacement for
     <tt>operator bool</tt>
-    
+
     <tr><td>\ref singleton</td><td>mixin to make a class a singleton</td></tr>
     </table>
-    
+
 
     \section memory_management Memory Management
 
@@ -72,7 +72,7 @@ namespace senf {
     buffers</td></tr>
 
     <tr><td>\ref pool_alloc_mixin</td><td>mixin to provide pool allocation to a class</td></tr>
-    
+
     <tr><td>\ref contiguous_storage_iterator</td><td>traits class to check iterator type for raw
     pointer accessibility</td></tr>
     </table>
@@ -87,7 +87,7 @@ namespace senf {
     <tr><td>\ref TypeIdValue</td><td>class wrapping a typeid in a way that it can be used like any
     other value type, e.g. as the key in a map.</td></tr>
     </table>
-    
+
 
     \section miscstuff Miscellaneous
 
@@ -95,7 +95,7 @@ namespace senf {
     <tr><td>\ref exception</td><td>standard exception for system errors (errno)</td></tr>
 
     <tr><td>\ref senf_statistics</td><td>statistics functionality</td></tr>
-    
+
     <tr><td>\ref hexdump</td><td>a simple but usefull function to write binary data in in
     hexadecimal format.</td></tr>
 
@@ -106,7 +106,7 @@ namespace senf {
 
     <tr><td>stringJoin()</td><td>Utility to join a string range into
     a single string (with separator)</td></tr>
-    
+
     <tr><td>make_transform_range()</td><td>\c boost::make_transform_iterator() with support for
     ranges</td></tr>
 

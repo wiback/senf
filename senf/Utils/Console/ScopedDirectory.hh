@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -94,7 +94,7 @@ namespace console {
         public:
             ScopedDirectory<MyClass> configDir;
 
-            MyClass() : configDir(this) 
+            MyClass() : configDir(this)
             {
                 configDIr.add(...);
             }
@@ -120,7 +120,7 @@ namespace console {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-        
+
         typedef Owner owner;
 
         ///////////////////////////////////////////////////////////////////////////

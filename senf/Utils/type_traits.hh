@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -54,12 +54,12 @@ namespace senf
 
         If the function described in \a Traits does not take any arguments, it is returned
         unchanged.
-        
+
         \code
         typedef boost::function_traits<void (int, double)> traits
-        BOOST_STATIC_ASSERT(( boost::is_same< 
-            senf::function_traits_remove_arg< traits >::type, 
-            boost::function_traits<void (double)> 
+        BOOST_STATIC_ASSERT(( boost::is_same<
+            senf::function_traits_remove_arg< traits >::type,
+            boost::function_traits<void (double)>
         >::value ));
         \endcode
 
@@ -69,7 +69,7 @@ namespace senf
     struct function_traits_remove_arg {};
 
     /** \brief Get argument type from function traits
-        
+
         function_traits_arg<Traits, index> will return the type of the \a index-th argument from \a
         Traits. If the function has no argument at that index, \c void is returned
 
@@ -77,18 +77,18 @@ namespace senf
         typedef boost::function_traits<void (int, double)> traits;
         BOOST_STATIC_ASSERT(( boost:is_same<
             senf::function_traits_arg_type< traits, 0 >::type,
-            int 
+            int
         >::value ));
         BOOST_STATIC_ASSERT(( boost::is_same<
             senf::function_traits_arg_type< traits, 2 >::type,
             void
         >::value ));
         \endcode
-        
+
         \tparam Traits \c boost::function_traits instantiation
         \tparam index 0 based argument index
      */
-    template < class Traits, int index, bool flag = (index < Traits::arity) > 
+    template < class Traits, int index, bool flag = (index < Traits::arity) >
     struct function_traits_arg_type {};
 
 #ifndef DOXYGEN
@@ -107,12 +107,12 @@ namespace senf
         will be returned unchanged.
 
         \code
-        BOOST_STATIC_ASSERT(( boost::is_same< 
-            senf::remove_member_pointer< int (Class::*) >::type, 
-            int 
+        BOOST_STATIC_ASSERT(( boost::is_same<
+            senf::remove_member_pointer< int (Class::*) >::type,
+            int
         >::value ));
-        BOOST_STATIC_ASSERT(( boost::is_same< 
-            senf::remove_member_pointer< void (Class::*)(int) >::type, 
+        BOOST_STATIC_ASSERT(( boost::is_same<
+            senf::remove_member_pointer< void (Class::*)(int) >::type,
             void (int)
         >::value ));
         \endcode
@@ -160,7 +160,7 @@ namespace senf
     {
         typedef void type;
     };
-    
+
 #ifndef DOXYGEN
 
     template < class C, class T > struct member_class <T (C::*) >
@@ -179,14 +179,14 @@ namespace senf
 
         This meta function will remove a plain or member pointer from the given type. If \a T is
         neither a member pointer nor an ordinary pointer, \a T will be returned unchanged.
-        
+
         \code
-        BOOST_STATIC_ASSERT(( boost::is_same< 
-            senf::remove_any_pointer< int (Class::*) >::type, 
+        BOOST_STATIC_ASSERT(( boost::is_same<
+            senf::remove_any_pointer< int (Class::*) >::type,
             int
         >::value ));
-        BOOST_STATIC_ASSERT(( boost::is_same< 
-            senf::remove_any_pointer< void (Class::*)(int) >::type, 
+        BOOST_STATIC_ASSERT(( boost::is_same<
+            senf::remove_any_pointer< void (Class::*)(int) >::type,
             void (int) > );
         BOOST_STATIC_ASSERT(( boost::is_same<
             senf::remove_any_pointer < int (*)() >::type,
@@ -206,7 +206,7 @@ namespace senf
     {};
 
     /** \brief Test object if it is a function or member-function (pointer)
-        
+
         is_any_function will inherit from \c boost::true_type, when \a T is a function type,
         function pointer type or a member function pointer type. Otherwise, it will inherit from \c
         boost::false_type.
@@ -226,7 +226,7 @@ namespace senf
     {};
 
     /** \brief Remove reference and CV qualification from type
-       
+
         remove_cvref will remove all the 'ornaments' from a type as typically used to pass
         arguments: references and any CV spec. It will thus convert a typical argument type into
         it's basic type.

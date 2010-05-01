@@ -105,7 +105,7 @@ namespace senf {
            ...
         }
         \endcode
-        
+
         If the class to be made using senf::safe_bool is itself comparable via it's own \c
         operator==, you must use comparable_safe_bool instead of safe_bool to not loose this
         capability.

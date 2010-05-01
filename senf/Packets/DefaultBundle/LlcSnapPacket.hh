@@ -37,7 +37,7 @@
 namespace senf {
 
     /** \brief Parse a LLC/SNAP header
-        
+
         \image html LlcSnapPacket.png
         \todo document me
      */
@@ -53,7 +53,7 @@ namespace senf {
         SENF_PARSER_FIELD( type_length, UInt16Parser );
 
         SENF_PARSER_FINALIZE(LlcSnapPacketParser);
-        
+
         SENF_PARSER_INIT() {
             dsap() = 0xaa;
             ssap() = 0xaa;
@@ -81,7 +81,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     struct LlcSnapPacketType
-        : public PacketTypeBase, 
+        : public PacketTypeBase,
           public PacketTypeMixin<LlcSnapPacketType, EtherTypes>
     {
 #ifndef DOXYGEN
@@ -93,10 +93,10 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::initSize;
         using mixin::init;
-        
+
         static factory_t nextPacketType(packet p);
         /** \brief Dump given LlcSnapPacket in readable form to given output stream */
-        static void dump(packet p, std::ostream & os); 
+        static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
     };
 

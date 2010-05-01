@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -43,11 +43,11 @@ namespace detail {
 
 #ifndef DOXYGEN
 
-    struct FilePositionWithIndex 
+    struct FilePositionWithIndex
         : public boost::spirit::file_position
     {
         int index;
-        
+
         FilePositionWithIndex(std::string const & file_ = std::string(),
                                  int line_ = 1, int column_ = 1, int index_ = 0)
             : boost::spirit::file_position (file_, line_, column_), index (index_)
@@ -55,7 +55,7 @@ namespace detail {
 
         bool operator==(const FilePositionWithIndex & fp) const
             {
-                return boost::spirit::file_position::operator==(fp) && index == fp.index; 
+                return boost::spirit::file_position::operator==(fp) && index == fp.index;
             }
     };
 
@@ -105,7 +105,7 @@ namespace detail {
 
         //////////////////////////////////////////////////////////////////////////
         // charachter sets
-        
+
         static boost::spirit::chset<> special_p;
         static boost::spirit::chset<> punctuation_p;
         static boost::spirit::chset<> space_p;
@@ -125,19 +125,19 @@ namespace detail {
 
         ///////////////////////////////////////////////////////////////////////////
 
-        CommandGrammar(ParseDispatcher & d, Context & c) 
+        CommandGrammar(ParseDispatcher & d, Context & c)
             : context(c), incremental(false), dispatcher(d) {}
 
         template <class Scanner>
-        struct definition 
-            : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>, 
+        struct definition
+            : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>,
                                                  boost::spirit::rule<Scanner>,
                                                  boost::spirit::rule<Scanner>,
                                                  boost::spirit::rule<Scanner> >
         {
             boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
-                punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
-                skip, statement, relpath, abspath, arguments, group_start, group_close, 
+                punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin,
+                skip, statement, relpath, abspath, arguments, group_start, group_close,
                 statement_end, opt_path;
 
             definition(CommandGrammar const & self)
@@ -176,7 +176,7 @@ namespace detail {
                 // Beside this, we use some special parsers (ch_p, eps_p, confix_p, lex_escape_ch_p,
                 // keyword_p, comment_p) and directives (lexeme_d), however, the parser should be
                 // quite readable.
-                //   
+                //
                 //   ch_p             match character
                 //   eps_p            always matches nothing (to attach unconditional actions)
                 //   confix_p(a,b,c)  match b, preceded by a and terminated by c. Used to parse
@@ -197,7 +197,7 @@ namespace detail {
                 //
                 // More info is in the Boost.Spirit documentation
 
-                command 
+                command
                     =    builtin >> end_of_statement_expected(statement_end)
                     |    group_close
                     |    ch_p(';') // Ignore empty commands
@@ -207,14 +207,14 @@ namespace detail {
                 statement
                     =    path_expected(path)      [ bind(&PD::beginCommand)(d_, path_) ]
                       >> arguments
-                      >> end_of_statement_expected( 
+                      >> end_of_statement_expected(
                            ( group_start | statement_end )
                                                   [ bind(&PD::endCommand)(d_) ]
                          )
                     ;
 
                 builtin
-                    =    self.keyword_p("cd") 
+                    =    self.keyword_p("cd")
                       >> path_expected(path)
                       >> eps_p                    [ bind(&PD::builtin_cd)(d_, path_) ]
                     |    self.keyword_p("ls")
@@ -248,24 +248,24 @@ namespace detail {
                     =    simple_argument          [ bind(&PD::pushToken)(d_, token_) ]
                     |    balanced_tokens
                     ;
-                
+
                 simple_argument         // All these return their value in context.token
                     =    string
                     |    hexstring
                     |    word
                     ;
-                
+
                 string                  // Returns value in context.token
                     =    eps_p                    [ pos_ = positionOf(arg1) ][ clear(str_) ]
                       >> lexeme_d
                          [
                              ch_p('"')
-                          >> * ( ( lex_escape_ch_p[ ch_ = arg1 ] 
-                                   - '"' 
+                          >> * ( ( lex_escape_ch_p[ ch_ = arg1 ]
+                                   - '"'
                                  )                [ str_ += ch_ ]
                                )
                           >> quote_expected(ch_p('"'))
-                                                  [ token_ = construct_<Token>(Token::BasicString, 
+                                                  [ token_ = construct_<Token>(Token::BasicString,
                                                                                str_,
                                                                                pos_) ]
                          ]
@@ -280,7 +280,7 @@ namespace detail {
                                                                                str_,
                                                                                pos_) ]
                     ;
-                
+
                 opt_path
                     = ! path                      [ bind(&PD::beginCommand)(d_, path_) ]
                                                   [ bind(&PD::endCommand)(d_) ]
@@ -303,7 +303,7 @@ namespace detail {
                          | eps_p                  [ push_back(path_, construct_<Token>()) ] )
                     ;
 
-                balanced_tokens 
+                balanced_tokens
                     =    eps_p                    [ pos_ = positionOf(arg1) ]
                       >> ch_p('(')                [ token_ = construct_<Token>(
                                                         Token::ArgumentGroupOpen,
@@ -355,7 +355,7 @@ namespace detail {
                              (+ self.word_p)      [ str_ = construct_<std::string>(arg1, arg2) ]
                          ]
                       >> eps_p                    [ token_ = construct_<Token>(
-                                                        Token::Word, 
+                                                        Token::Word,
                                                         str_,
                                                         pos_) ]
                     ;
@@ -370,7 +370,7 @@ namespace detail {
                                ch_p(';')
                          ]
                          .else_p [
-                               ch_p(';') 
+                               ch_p(';')
                              | end_p
                          ]
                     ;
@@ -416,7 +416,7 @@ namespace detail {
         ",=");
     template <class PD> boost::spirit::chset<> CommandGrammar<PD>::space_p (
         " \t\n\r");
-    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::invalid_p ( 
+    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::invalid_p (
         (boost::spirit::chset<>('\0') | boost::spirit::chset<>("\x01-\x20")) - space_p );
     template <class PD> boost::spirit::chset<> CommandGrammar<PD>::word_p (
         boost::spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p);

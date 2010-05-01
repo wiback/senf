@@ -201,7 +201,7 @@ prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
     AnnotationIndexerBase::dump(this, os);
 }
 
-// This function has a problem being inlined. Somehow, often when calling this, the size of the 
+// This function has a problem being inlined. Somehow, often when calling this, the size of the
 // resulting inlined code would be huge?
 
 prefix_ void senf::detail::PacketImpl::release(refcount_t n)

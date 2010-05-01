@@ -43,10 +43,10 @@ namespace senf {
 #       include SENF_FIXED_PARSER()
         SENF_PARSER_FIELD ( identifier, UInt16Parser );
         SENF_PARSER_FIELD ( seqNr,      UInt16Parser );
-        
+
         SENF_PARSER_FINALIZE ( ICMPv6EchoRequestParser );
     };
-    
+
     /** \brief ICMPv6 Echo Request
 
         \par Packet type (typedef):
@@ -65,16 +65,16 @@ namespace senf {
         typedef PacketTypeMixin<ICMPv6EchoRequestType> mixin;
         typedef ConcretePacket<ICMPv6EchoRequestType> packet;
         typedef ICMPv6EchoRequestParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
 
         static void dump(packet p, std::ostream & os);
     };
-    
+
     typedef ConcretePacket<ICMPv6EchoRequestType> ICMPv6EchoRequest;
-    
+
     //#############################################################
     //ICMPv6 Echo Reply
     //#############################################################
@@ -83,10 +83,10 @@ namespace senf {
 #       include SENF_FIXED_PARSER()
         SENF_PARSER_FIELD ( identifier, UInt16Parser );
         SENF_PARSER_FIELD ( seqNr,      UInt16Parser );
-        
+
         SENF_PARSER_FINALIZE ( ICMPv6EchoReplyParser );
     };
-    
+
     /** \brief ICMPv6 Echo Reply
 
         \par Packet type (typedef):
@@ -105,28 +105,28 @@ namespace senf {
         typedef PacketTypeMixin<ICMPv6EchoReplyType> mixin;
         typedef ConcretePacket<ICMPv6EchoReplyType> packet;
         typedef ICMPv6EchoReplyParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
-        
+
     typedef ConcretePacket<ICMPv6EchoReplyType> ICMPv6EchoReply;
-    
+
     //#############################################################
     //ICMPv6 Error Destination Unreachable Message
     //#############################################################
     struct ICMPv6ErrDestUnreachableParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        
+
         //should be set static 0 by sender and ignored by receiver
         SENF_PARSER_PRIVATE_FIELD ( unused, UInt32Parser );
-        
-        SENF_PARSER_INIT() { 
-            unused() = 0; 
+
+        SENF_PARSER_INIT() {
+            unused() = 0;
         }
         /*   Code     0 - No route to destination
                     1 - Communication with destination
@@ -140,10 +140,10 @@ namespace senf {
             ICMPv6Packet icmpv6 (senf::Packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = code;
         }
-        
+
         SENF_PARSER_FINALIZE ( ICMPv6ErrDestUnreachableParser );
     };
-    
+
     /** \brief ICMPv6 Destination unreachable
 
         \par Packet type (typedef):
@@ -152,7 +152,7 @@ namespace senf {
         \par Fields:
             \ref ICMPv6ErrDestUnreachableParser
             \image html ICMPv6ErrDestUnreachable.png
- 
+
         \ingroup protocolbundle_default
     */
     struct ICMPv6ErrDestUnreachableType
@@ -162,16 +162,16 @@ namespace senf {
         typedef PacketTypeMixin<ICMPv6ErrDestUnreachableType> mixin;
         typedef ConcretePacket<ICMPv6ErrDestUnreachableType> packet;
         typedef ICMPv6ErrDestUnreachableParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
-        
+
     typedef ConcretePacket<ICMPv6ErrDestUnreachableType> ICMPv6ErrDestUnreachable;
-    
+
     //#############################################################
     //ICMPv6 Error Packet Too Big Message
     //#############################################################
@@ -179,16 +179,16 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
         SENF_PARSER_FIELD ( mtu, UInt32Parser );
-    
+
         /*   Code     static set to 0       */
         SENF_PARSER_INIT() {
             ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = 0;
         }
-        
+
         SENF_PARSER_FINALIZE ( ICMPv6ErrTooBigParser );
     };
-    
+
     /** \brief ICMPv6 Packet to big
 
         \par Packet type (typedef):
@@ -207,16 +207,16 @@ namespace senf {
         typedef PacketTypeMixin<ICMPv6ErrTooBigType> mixin;
         typedef ConcretePacket<ICMPv6ErrTooBigType> packet;
         typedef ICMPv6ErrTooBigParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
 
     typedef ConcretePacket<ICMPv6ErrTooBigType> ICMPv6ErrTooBig;
-    
+
     //#############################################################
     //ICMPv6 Error Time Exceeded Message
     //#############################################################
@@ -232,10 +232,10 @@ namespace senf {
             ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = code;
         }
-        
+
         SENF_PARSER_FINALIZE ( ICMPv6ErrTimeExceededParser );
     };
-    
+
     /** \brief ICMPv6 Time exceeded
 
         \par Packet type (typedef):
@@ -254,15 +254,15 @@ namespace senf {
         typedef PacketTypeMixin<ICMPv6ErrTimeExceededType> mixin;
         typedef ConcretePacket<ICMPv6ErrTimeExceededType> packet;
         typedef ICMPv6ErrTimeExceededParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<ICMPv6ErrTimeExceededType> ICMPv6ErrTimeExceeded;
-    
+
     //#############################################################
     //ICMPv6 Error Parameter Problem Message
     //#############################################################
@@ -274,7 +274,7 @@ namespace senf {
         /*  Code      0 - Erroneous header field encountered
                     1 - Unrecognized Next Header type encountered
                     2 - Unrecognized IPv6 option encountered          */
-        
+
         void setErrCode(int code)
         {
             ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
@@ -282,7 +282,7 @@ namespace senf {
         }
         SENF_PARSER_FINALIZE ( ICMPv6ErrParamProblemParser );
     };
-    
+
     /** \brief ICMPv6 Parameter problem
 
         \par Packet type (typedef):
@@ -301,15 +301,15 @@ namespace senf {
         typedef PacketTypeMixin<ICMPv6ErrParamProblemType> mixin;
         typedef ConcretePacket<ICMPv6ErrParamProblemType> packet;
         typedef ICMPv6ErrParamProblemParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<ICMPv6ErrParamProblemType> ICMPv6ErrParamProblem;
-    
+
     //#############################################################
     //ICMPv6 MLDv2 (RFC 3810) Multicast Listener Query
     //#############################################################
@@ -319,13 +319,13 @@ namespace senf {
         //need a variant here
         // a.) maxResponseCode < 32768 =>Interger
         // b.) maxResponseCode >=32768 => float (is there a float parser???)
-        /* 
-        float value as followed: 
+        /*
+        float value as followed:
         0 1 2 3 4 5 6 7 8 9 A B C D E F
         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         |1| exp |          mant         |
         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
-        
+
         SENF_PARSER_FIELD ( maxResponseCode, UInt16Parser       );
         SENF_PARSER_FIELD ( reserved,        UInt16Parser       ); // set to zero by default
         SENF_PARSER_FIELD ( mcAddress,       INet6AddressParser );
@@ -335,15 +335,15 @@ namespace senf {
         SENF_PARSER_FIELD    ( qqic, UInt8Parser );
         SENF_PARSER_PRIVATE_FIELD ( nrSources, UInt16Parser );
         SENF_PARSER_VECTOR   (srcAddresses, nrSources, INet6AddressParser );
-        
+
         SENF_PARSER_FINALIZE ( MLDv2ListenerQueryParser );
-        
-        SENF_PARSER_INIT() { 
-            reserved() = 0; 
+
+        SENF_PARSER_INIT() {
+            reserved() = 0;
             resv() = 0;
         }
     };
-    
+
     /** \brief MLDv2 Listener query
 
         \par Packet type (typedef):
@@ -362,16 +362,16 @@ namespace senf {
         typedef PacketTypeMixin<MLDv2ListenerQueryType> mixin;
         typedef ConcretePacket<MLDv2ListenerQueryType> packet;
         typedef MLDv2ListenerQueryParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
-        
+
     typedef ConcretePacket<MLDv2ListenerQueryType> MLDv2ListenerQuery;
-    
+
     //#############################################################
     //ICMPv6 MLDv2 (RFC 3810) Multicast Listener Report Message
     //#############################################################
@@ -379,32 +379,32 @@ namespace senf {
     struct MLDv2AddressRecordParser : public PacketParserBase
     {
 #       include SENF_PARSER()
-        
+
         SENF_PARSER_FIELD   ( recordType, UInt8Parser );
         SENF_PARSER_PRIVATE_FIELD   ( auxDataLen, UInt8Parser );
         SENF_PARSER_PRIVATE_FIELD   ( nrOfSrcs, UInt16Parser );
         SENF_PARSER_FIELD   ( mcAddress, INet6AddressParser);
         SENF_PARSER_VECTOR  ( srcAddresses, nrOfSrcs, INet6AddressParser );
         SENF_PARSER_VECTOR  ( auxData, auxDataLen, UInt32Parser );
-        
+
         SENF_PARSER_FINALIZE ( MLDv2AddressRecordParser );
     };
-    
+
     struct MLDv2ListenerReportParser : public PacketParserBase
     {
 #       include SENF_PARSER()
-        
+
         SENF_PARSER_FIELD   ( reserved, UInt16Parser );   //set to zero by default
         SENF_PARSER_PRIVATE_FIELD   ( nrMcastAddrRecords_, UInt16Parser );
         SENF_PARSER_LIST    ( mcastAddrRecords, nrMcastAddrRecords_, MLDv2AddressRecordParser );
-        
+
         SENF_PARSER_FINALIZE ( MLDv2ListenerReportParser );
-        
-        SENF_PARSER_INIT() { 
-            reserved() = 0; 
+
+        SENF_PARSER_INIT() {
+            reserved() = 0;
         }
     };
-    
+
     /** \brief MLDv2 Listener report
 
         \par Packet type (typedef):
@@ -424,11 +424,11 @@ namespace senf {
         typedef PacketTypeMixin<MLDv2ListenerReportType> mixin;
         typedef ConcretePacket<MLDv2ListenerReportType> packet;
         typedef MLDv2ListenerReportParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<MLDv2ListenerReportType> MLDv2ListenerReport;

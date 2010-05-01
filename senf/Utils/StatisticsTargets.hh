@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -42,7 +42,7 @@ namespace senf {
      */
     typedef unspecified StatisticsStream;
 #else
-    SENF_LOG_DEFINE_STREAM(StatisticsStream, 
+    SENF_LOG_DEFINE_STREAM(StatisticsStream,
                            senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE);
 #endif
 

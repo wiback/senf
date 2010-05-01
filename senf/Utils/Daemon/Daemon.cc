@@ -86,12 +86,12 @@ prefix_ bool senf::Daemon::daemon()
     return daemonize_;
 }
 
-prefix_ int senf::Daemon::argc() 
+prefix_ int senf::Daemon::argc()
 {
     return argc_;
 }
 
-prefix_ char const ** senf::Daemon::argv() 
+prefix_ char const ** senf::Daemon::argv()
 {
     return argv_;
 }
@@ -139,7 +139,7 @@ prefix_ void senf::Daemon::openLog()
             stderr_ = ::dup(fd);
             if (stderr_ < 0)
                 SENF_THROW_SYSTEM_EXCEPTION("::dup()");
-        } 
+        }
         else {
             fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
             if (fd < 0)
@@ -154,21 +154,21 @@ prefix_ void senf::Daemon::logReopen()
 {
     if (! stdoutLog_.empty()) {
         int fd (::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666));
-        if (fd < 0) 
+        if (fd < 0)
             goto error;
-        if (::dup2(fd, 1) < 0) 
+        if (::dup2(fd, 1) < 0)
             goto error;
         if (stderrLog_ == stdoutLog_) {
-            if (::dup2(fd, 2) < 0) 
+            if (::dup2(fd, 2) < 0)
                 goto error;
             return;
         }
     }
     if (! stderrLog_.empty()) {
         int fd (::open(stderrLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666));
-        if (fd < 0) 
+        if (fd < 0)
             goto error;
-        if (::dup2(fd, 2) < 0) 
+        if (::dup2(fd, 2) < 0)
             goto error;
     }
     return;
@@ -194,7 +194,7 @@ namespace {
 prefix_ void senf::Daemon::detach()
 {
     if (daemonize_ && ! detached_) {
-        // Wow .. ouch .. 
+        // Wow .. ouch ..
         // To ensure all data is written to the console log file in the correct order, we suspend
         // execution here until the parent process tells us to continue via SIGUSR1: We block
         // SIGUSR1 and install our own signal handler saving the old handler and signal mask. Then
@@ -262,7 +262,7 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
             if (pidfileCreate())
                 pidfileCreated_ = true;
             else {
-                std::cerr << "PID file '" << pidfile_ 
+                std::cerr << "PID file '" << pidfile_
                           << "' creation failed. Daemon running ?" << std::endl;
                 return 1;
             }
@@ -375,7 +375,7 @@ prefix_ void senf::Daemon::fork()
     LIBC_CALL( ::sigprocmask, (SIG_BLOCK, &cldsig, &oldsig) );
 
     if (! senf::scheduler::empty() ) {
-        std::cerr << 
+        std::cerr <<
             "\n"
             "*** WARNING ***\n"
             "Scheduler not empty before fork(). THIS MUST NOT HAPPEN.\n"
@@ -385,7 +385,7 @@ prefix_ void senf::Daemon::fork()
             "\n*** WARNING ***\n"
             "\n";
     }
-    
+
     LIBC_CALL_RV( pid, ::fork, () );
 
     if (pid == 0) {
@@ -406,7 +406,7 @@ prefix_ void senf::Daemon::fork()
 
     // Ouch ... ensure, the daemon watcher does not remove the pidfile ...
     pidfile_ = "";
-    
+
     LIBC_CALL( ::close, (coutpipe[1]) );
     LIBC_CALL( ::close, (cerrpipe[1]) );
 
@@ -449,7 +449,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
         }
 
         if (::link(tempname.c_str(), pidfile_.c_str()) < 0) {
-            if (errno != EEXIST) 
+            if (errno != EEXIST)
                 SENF_THROW_SYSTEM_EXCEPTION("") << linkErrorFormat % pidfile_ % tempname;
         }
         else {
@@ -464,8 +464,8 @@ prefix_ bool senf::Daemon::pidfileCreate()
             int old_pid (-1);
             std::ifstream pidf (pidfile_.c_str());
             if ( ! (pidf >> old_pid)
-                 || old_pid < 0 
-                 || ::kill(old_pid, 0) >= 0 
+                 || old_pid < 0
+                 || ::kill(old_pid, 0) >= 0
                  || errno == EPERM ) {
                 LIBC_CALL( ::unlink, (tempname.c_str()) );
                 return false;
@@ -496,7 +496,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
                 return false;
             }
         }
-        
+
         {
             std::ofstream pidf (tempname.c_str());
             pidf << ::getpid() << std::endl;
@@ -571,7 +571,7 @@ prefix_ void senf::Daemon::installSighandlers()
     ::sigaction(SIGFPE,    &sa, NULL);
     ::sigaction(SIGBUS,    &sa, NULL);
     ::sigaction(SIGSEGV,   &sa, NULL);
-#ifdef SIGSTKFLT //SIGSTKFLT is used for stack faults on coprocessors. That condition doesn't exist on MIPS 
+#ifdef SIGSTKFLT //SIGSTKFLT is used for stack faults on coprocessors. That condition doesn't exist on MIPS
     ::sigaction(SIGSTKFLT, &sa, NULL);
 #endif
     ::sigaction(SIGSYS,    &sa, NULL);
@@ -588,8 +588,8 @@ prefix_ senf::detail::DaemonWatcher::DaemonWatcher(int pid, int coutpipe, int ce
       stderr_(stderr), sigChld_(false),
       cldSignal_ (SIGCHLD, senf::membind(&DaemonWatcher::sigChld, this)),
       timer_ ("senf::detail::DaemonWatcher::childOk", senf::membind(&DaemonWatcher::childOk, this)),
-      coutForwarder_(coutpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 1)), 
-      cerrForwarder_(cerrpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 2)) 
+      coutForwarder_(coutpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 1)),
+      cerrForwarder_(cerrpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 2))
 {
     coutForwarder_.addTarget(1);
     if (stdout_ >= 0)
@@ -654,7 +654,7 @@ prefix_ void senf::detail::DaemonWatcher::childOk()
 // senf::detail::DaemonWatcher::Forwarder
 
 prefix_ senf::detail::DaemonWatcher::Forwarder::Forwarder(int src, Callback cb)
-    : src_(src), cb_(cb), 
+    : src_(src), cb_(cb),
       readevent_("senf::detail::DaemonWatcher::Forwarder::readevent", senf::membind(&Forwarder::readData, this),
                  src_, scheduler::FdEvent::EV_READ)
 {}
@@ -677,16 +677,16 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(int event)
     while (1) {
         n = ::read(src_,buf,1024);
         if (n<0) {
-            if (errno != EINTR) 
+            if (errno != EINTR)
                 SENF_THROW_SYSTEM_EXCEPTION("::read()");
-        } 
-        else 
+        }
+        else
             break;
     }
 
     if (n == 0) {
         if (buffer_.empty())
-            cb_(); 
+            cb_();
         src_ = -1;
         readevent_.disable();
         return;
@@ -703,7 +703,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(int event)
 }
 
 prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(int event, Target * target)
-{    
+{
     if (event != scheduler::FdEvent::EV_WRITE) {
         // Broken pipe while writing data ? Not much, we can do here, we just drop the data
         targets_.erase_and_destroy(Targets::current(*target),DestroyDelete());

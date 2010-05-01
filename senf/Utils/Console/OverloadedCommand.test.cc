@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -69,17 +69,17 @@ SENF_AUTO_UNIT_TEST(overladedCommand)
         std::stringstream ss;
         BOOST_CHECK_THROW( senf::console::root()("overload")(ss, info),
                            senf::console::SyntaxErrorException );
-        
+
         cmd.add(senf::console::SimpleCommandOverload::create(&fn3)).doc("fn3");
         SENF_CHECK_NO_THROW( senf::console::root()("overload")(ss, info) );
         BOOST_CHECK_EQUAL( ss.str(), "fn3\n" );
     }
-    
+
     {
         std::stringstream ss;
         cmd.help(ss);
-        BOOST_CHECK_EQUAL( ss.str(), 
-                           "Usage:\n" 
+        BOOST_CHECK_EQUAL( ss.str(),
+                           "Usage:\n"
                            "    1- overload ...\n"
                            "    2- overload ...\n"
                            "    3- overload ...\n"

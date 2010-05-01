@@ -39,7 +39,7 @@ namespace senf {
 
     /** \brief Protocol facet providing Unix Domain Addressing related API
 
-        This protocol facet introduces all the socket api protocol members which are related to Unix 
+        This protocol facet introduces all the socket api protocol members which are related to Unix
         Domain addressing.
      */
     class UNSocketProtocol
@@ -49,7 +49,7 @@ namespace senf {
         virtual void close();           ///< Close socket
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is closed.
-                                             \throws senf::SystemException */ // 
+                                             \throws senf::SystemException */ //
         virtual void terminate() const;       ///< Forcibly close socket
                                         /**< This override will automatically \c shutdown() the
                                            socket whenever it is called. Additionally it will
@@ -61,10 +61,10 @@ namespace senf {
 
          unsigned available() const;
          bool eof() const;
-         
+
     private:
-        void check_and_unlink() const;  
-      
+        void check_and_unlink() const;
+
         std::string path_;
     };
 

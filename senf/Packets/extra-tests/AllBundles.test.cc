@@ -37,18 +37,18 @@ SENF_AUTO_UNIT_TEST(packetLink)
 {
     // This test shall test, if there is now duplicated packet registration in AllBundles.
     // The test will fail at the start with an assertion error in this case.
-    
+
     boost::uint8_t data[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,             // source mac
                               0x00, 0x00, 0x00, 0x00, 0x00, 0x02,             // target mac
                               0x86, 0xdd,                                     // ethertype
 
-                              0x60, 0x00, 0x00, 0x00,                         // IP version, class, 
+                              0x60, 0x00, 0x00, 0x00,                         // IP version, class,
                                                                               //          flow label
                               0x00, 0x00,                                     // payload length
                               0x3B,                                           // no next header
                               0x10,                                           // hop limit
                               0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // source ip
-                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
                               0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // target ip
                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02 };
 

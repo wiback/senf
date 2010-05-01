@@ -59,7 +59,7 @@ private:
 };
 
 RateFilter::RateFilter(senf::ClockService::clock_type interval)
-    : timer(interval) 
+    : timer(interval)
 {
     route(input,timer);
     route(timer,output);
@@ -85,7 +85,7 @@ public:
     connector::PassiveInput<> & input;
     connector::ActiveOutput<> & output;
 
-    RateStuffer(senf::ClockService::clock_type interval, 
+    RateStuffer(senf::ClockService::clock_type interval,
                 senf::Packet packet,
                 unsigned high = 1,
                 unsigned low  = 0)
@@ -105,7 +105,7 @@ public:
         queue.qdisc(ppi::ThresholdQueueing(high,low));
     }
 };
-        
+
 // ////////////////////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
 
@@ -132,7 +132,7 @@ int main(int argc, char * argv[])
         senf::INet4SocketAddress("localhost:44345"));
 
     module::ActiveSocketSource<>  udpSource ( inputSocket );
-    RateStuffer                   stuffer   ( 1000000000ul, 
+    RateStuffer                   stuffer   ( 1000000000ul,
                                               senf::DataPacket::create(std::string("<idle>\n")),
                                               2u, 1u );
     module::PassiveSocketSink<>   udpSink   ( outputSocket );

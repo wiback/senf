@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,13 +45,13 @@ SENF_AUTO_UNIT_TEST(stringJoin)
 
 SENF_AUTO_UNIT_TEST(lexicalCast)
 {
-    SENF_CHECK_NO_THROW( 
-        BOOST_CHECK_EQUAL( 
-            senf::lexical_cast<unsigned>()[std::setbase(0)](std::string("0x1a2b")), 
+    SENF_CHECK_NO_THROW(
+        BOOST_CHECK_EQUAL(
+            senf::lexical_cast<unsigned>()[std::setbase(0)](std::string("0x1a2b")),
             6699u ) );
-    SENF_CHECK_NO_THROW( 
-        BOOST_CHECK_EQUAL( 
-            senf::lexical_cast<std::string>()[std::hex][std::uppercase][std::showbase](6699u), 
+    SENF_CHECK_NO_THROW(
+        BOOST_CHECK_EQUAL(
+            senf::lexical_cast<std::string>()[std::hex][std::uppercase][std::showbase](6699u),
             "0X1A2B" ) );
     SENF_CHECK_NO_THROW(
         BOOST_CHECK_EQUAL(

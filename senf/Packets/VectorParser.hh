@@ -47,7 +47,7 @@ namespace senf {
         A Vector is a collection of fixed-size elements of which the size of the collection can be
         determined directly (that is without traversing the collection). This allows very efficient
         random access to the elements of the collection.
-        
+
         A vector is a model of an STL random-access sequence. The parser only provides a reduced
         interface, the container wrapper however completes this interface.
 
@@ -58,7 +58,7 @@ namespace senf {
         Some basic vector access methods are defined as parser members. To access the complete list
         API however you will need to instantiate a container wrapper for the vector. See \ref
         packet_usage_fields_collection.
-        
+
         \see
             \ref How to access \ref packet_usage_fields_collection \n
             SENF_PARSER_VECTOR() macro used to define vector fields \n
@@ -67,8 +67,8 @@ namespace senf {
         \ingroup parsecollection
      */
     template <class ElementParser, class AuxPolicy>
-    struct VectorParser 
-        : public PacketParserBase, 
+    struct VectorParser
+        : public PacketParserBase,
           private AuxPolicy
     {
         VectorParser(data_iterator i, state_type s);
@@ -101,11 +101,11 @@ namespace senf {
         value_type back() const;
 
         // Mutators
-        
+
         // The mutators provided here are those which don't take an iterator argument.
         // If you need to pass an iterator it is much simpler and cleaner to use the
         // 'container' wrapper
-                   
+
         template <class Value> void push_back        (Value const & value, size_type n=1) const;
         value_type                  push_back_space  (size_type n=1) const;
         template <class Value> void push_front       (Value const & value, size_type n=1) const;
@@ -127,7 +127,7 @@ namespace senf {
         the vector in the packet data).
 
         The vector container wrapper provides a complete STL random-access sequence interface.
-        
+
         \code
         SomePacket p (...);
         SomePacket::aVectorCollection_t::container c (p->aVectorCollection());
@@ -221,7 +221,7 @@ namespace senf {
 
         size_type bytes() const;
         void init() const;
-        
+
         ///@}
 
     protected:
@@ -234,7 +234,7 @@ namespace senf {
     };
 
     /** \brief Define VectorParser field
-        
+
         This macro is a special helper to define a senf::VectorParser type field, a vector of
         elements of type \a elt_type (a parser) which size is given by the \a size field.
 
@@ -255,7 +255,7 @@ namespace senf {
         <table class="senf fixedcolumn">
         <tr><td>\c bytes(\a size)</td><td>\a size gives the size of the vector in bytes not the
         number of contained elements</td></tr>
-        
+
         <tr><td>\c packetSize()</td><td>Use the size of the packet to get the vector size. The
         vector will occupy all space up to the end of the packet.</td></tr>
 
@@ -280,12 +280,12 @@ namespace senf {
         SENF_PARSER_VECTOR ( vec, transform(MyTransform, vec_size_), senf::UInt32Parser );
         SENF_PARSER_VECTOR ( vec, packetSize(), senf::UInt32Parser );
         \endcode
-        
+
         \param[in] name field name
         \param[in] size name of field giving the vector size
         \param[in] elt_type vector element type
 
-        \see 
+        \see
             How to use \ref packet_usage_fields_collection \n
             senf::VectorParser the vector parser API for vector field access
             senf::VectorParser_Container the vector parser container API for vector field access

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -51,9 +51,9 @@ namespace detail {
             virtual void signal(int events) = 0; ///< Called when the given event is posted
         };
 
-        enum Events { 
+        enum Events {
             EV_READ = Poller<Event>::EV_READ, EV_PRIO = Poller<Event>::EV_PRIO, EV_WRITE = Poller<Event>::EV_WRITE,
-            EV_HUP = Poller<Event>::EV_HUP, EV_ERR = Poller<Event>::EV_ERR 
+            EV_HUP = Poller<Event>::EV_HUP, EV_ERR = Poller<Event>::EV_ERR
         };
 
         using singleton<FdManager>::instance;
@@ -70,7 +70,7 @@ namespace detail {
                                         /**< This call waits until at least one event is posted but
                                              no longer than the current timeout(). */
         ClockService::clock_type eventTime() const; ///< Time of last event
-        
+
     protected:
 
     private:

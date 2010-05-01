@@ -54,8 +54,8 @@ SENF_AUTO_UNIT_TEST(unDatagramSocketHandle)
     BOOST_CHECKPOINT( 5 );
     BOOST_CHECK_EQUAL( inputSocket.read(), testString);
 
-      
-    
+
+
 
     BOOST_CHECKPOINT( 6 );
     outputSocket.close();

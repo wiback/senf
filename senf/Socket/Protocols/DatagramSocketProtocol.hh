@@ -55,7 +55,7 @@ namespace senf {
                                                  on the socket.
                                              \returns timestamp when last packet was received */
     };
-    
+
 
     ///\}
 }

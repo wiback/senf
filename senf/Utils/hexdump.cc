@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -27,7 +27,7 @@
 #include "hexdump.ih"
 
 // Custom includes
-#include <iomanip> 
+#include <iomanip>
 
 //#include "hexdump.mpp"
 #define prefix_
@@ -66,7 +66,7 @@ prefix_ senf::detail::HexDumper::~HexDumper()
     }
 }
 
-#endif 
+#endif
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "hexdump.mpp"

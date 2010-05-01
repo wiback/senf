@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -49,7 +49,7 @@ prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor
             throw;
     }
 }
-#endif 
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 

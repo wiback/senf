@@ -45,7 +45,7 @@ prefix_ void senf::TransportPacketParser::init_fields()
 prefix_ senf::UInt8Parser senf::TransportPacketParser::pointer_field()
     const
 {
-    return pointer_field_().get<1>(); 
+    return pointer_field_().get<1>();
 }
 
 prefix_ void senf::TransportPacketParser::setPUSI(bool pusi)
@@ -54,7 +54,7 @@ prefix_ void senf::TransportPacketParser::setPUSI(bool pusi)
     if (pusi) pointer_field_().init<1>();
     else      pointer_field_().init<0>();
 }
-            
+
 prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);

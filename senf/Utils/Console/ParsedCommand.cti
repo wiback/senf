@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,7 +45,7 @@ senf::console::detail::ArgumentInfo<ParameterType>::create()
 
 template <class ParameterType>
 prefix_ senf::console::detail::ArgumentInfo<ParameterType>::ArgumentInfo()
-    : ArgumentInfoBase ( ArgumentTraits<ParameterType>::description(), 
+    : ArgumentInfoBase ( ArgumentTraits<ParameterType>::description(),
                          ArgumentTraits<ParameterType>::singleToken ),
       defaultValue ()
 {}
@@ -318,7 +318,7 @@ template <class Overload, unsigned index>
 prefix_
 senf::console::ParsedArgumentAttributor<Overload, index, false>::
 ParsedArgumentAttributor(typename Overload::ptr overload)
-    : ParsedArgumentAttributorBase< 
+    : ParsedArgumentAttributorBase<
           Overload, ParsedArgumentAttributor<Overload, index, false> > (overload, index)
 {}
 
@@ -364,7 +364,7 @@ namespace detail {
 ///////////////////////////////////////////////////////////////////////////
 
 template <class Signature>
-prefix_ senf::console::SimpleOverloadAttributor 
+prefix_ senf::console::SimpleOverloadAttributor
 senf::console::factory::
 Command(boost::function<Signature> fn,
         typename boost::enable_if_c<detail::ParsedCommandTraits<Signature>::is_simple>::type *)
@@ -373,7 +373,7 @@ Command(boost::function<Signature> fn,
 }
 
 template <class Function>
-prefix_ senf::console::SimpleOverloadAttributor 
+prefix_ senf::console::SimpleOverloadAttributor
 senf::console::factory::
 Command(Function fn,
         typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_simple>::type *)
@@ -382,7 +382,7 @@ Command(Function fn,
 }
 
 template <class Owner, class Member>
-prefix_ senf::console::SimpleOverloadAttributor 
+prefix_ senf::console::SimpleOverloadAttributor
 senf::console::factory::
 Command(Member memfn, Owner * owner,
         typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *,
@@ -392,7 +392,7 @@ Command(Member memfn, Owner * owner,
 }
 
 template <class Owner, class Member>
-prefix_ senf::console::SimpleOverloadAttributor 
+prefix_ senf::console::SimpleOverloadAttributor
 senf::console::factory::
 Command(Member memfn, Owner const * owner,
         typename boost::enable_if<boost::is_member_function_pointer<Member> >::type *,

@@ -45,9 +45,9 @@ prefix_ void senf::IPv6PacketType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "Internet protocol Version 6:\n"
        << senf::fieldName("version")                   << unsigned(p->version()) << "\n"
-       << senf::fieldName("traffic class") 
+       << senf::fieldName("traffic class")
        << "0x" << std::hex << std::setw(2) << std::setfill('0') << unsigned(p->trafficClass()) << "\n"
-       << senf::fieldName("flow label") 
+       << senf::fieldName("flow label")
        << "0x" << std::hex << std::setw(5) << std::setfill('0') << unsigned(p->flowLabel()) << "\n"
        << senf::fieldName("payload length")            << std::dec << unsigned(p->length()) << "\n"
        << senf::fieldName("next header")               << unsigned(p->nextHeader()) << "\n"

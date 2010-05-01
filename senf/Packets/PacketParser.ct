@@ -32,7 +32,7 @@
 
 #ifndef DOXYGEN
 template <class Parser>
-prefix_ typename boost::enable_if< 
+prefix_ typename boost::enable_if<
         boost::is_base_of<senf::PacketParserBase, Parser>,
         Parser >::type senf::operator<<(Parser target, Parser source)
 {

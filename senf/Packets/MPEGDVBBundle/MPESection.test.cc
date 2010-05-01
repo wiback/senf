@@ -187,7 +187,7 @@ SENF_AUTO_UNIT_TEST(MPESection_create)
             0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x52, 0xdf,
             0x6a, 0x1d
     };
-    SENF_CHECK_EQUAL_COLLECTIONS( 
+    SENF_CHECK_EQUAL_COLLECTIONS(
             sec_data, sec_data+sizeof(sec_data), sec.data().begin(), sec.data().end() );
 }
 

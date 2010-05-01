@@ -69,7 +69,7 @@ SENF_AUTO_UNIT_TEST(timerEventProxy)
         BOOST_CHECK( timers.remove( 4));
         BOOST_CHECK(! timers.remove( 4));
         timers.add( t + senf::ClockService::milliseconds(700), 2, &handler);
-        
+
         BOOST_CHECK_EQUAL( timers.timeout(1), t + senf::ClockService::milliseconds(200));
         BOOST_CHECK_EQUAL( timers.timeout(2), t + senf::ClockService::milliseconds(700));
         BOOST_CHECK_EQUAL( timers.timeout(4), 0);
@@ -78,7 +78,7 @@ SENF_AUTO_UNIT_TEST(timerEventProxy)
 
         BOOST_CHECK( mask == 3);
     }
-    
+
     senf::scheduler::TimerEventProxy<int> timers ("test", senf::console::ScopedDirectory<>());
 }
 

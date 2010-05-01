@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Module public header 
+    \brief Module public header
 */
 
 #ifndef HH_SENF_PPI_Module_
@@ -47,13 +47,13 @@ namespace module {
 
     /** \namespace senf::ppi::module
         \brief PPI Modules
-       
+
         The modules build the PPI core. The PPI provides a set of general purpose infrastructure
         modules. For concrete applications, additional application specific processing modules need
         to be implemented.
 
         \section module_impl Implementing Modules
-        
+
         All modules derive from senf::ppi::module::Module. See this class for a documentation on how
         to write new modules.
 
@@ -88,7 +88,7 @@ namespace module {
 
         senf::ppi::Module is the base-class of all PPI modules. It provides the module implementation
         with interfaces to several PPI facilities:
-        
+
         \li Connector management
         \li Flow management (routing)
         \li Event handling
@@ -111,8 +111,8 @@ namespace module {
             senf::ppi::connector::PassiveInput<> input;
             senf::ppi::connector::ActiveOutput<> output;
 
-            SomeModule(senf::FileHandle h) 
-              : handle ( h ), 
+            SomeModule(senf::FileHandle h)
+              : handle ( h ),
                 event  ( handle, senf::ppi::IOEvent::Read )
             {
                 // Set up routing. If some connector is not routed you need to explicitly state this
@@ -186,7 +186,7 @@ namespace module {
 
 #ifndef DOXYGEN
         template <class Source, class Target>
-        Route<Source, Target> & route(Source & source, Target & target); 
+        Route<Source, Target> & route(Source & source, Target & target);
 #else
         Route<connector::InputConnector, connector::OutputConnector> &
         route(connector::InputConnector & input, connector::OutputConnector & output);
@@ -213,7 +213,7 @@ namespace module {
                                                  incoming data (connector or event)
                                              \param[in] output Data target, object which controls
                                                  outgoing data (connector or event)
-                                             \returns Route instance describing this route 
+                                             \returns Route instance describing this route
                                              \see \ref ppi_throttling
                                              \note The real implementation is not provided by three
                                                  overloads but by a single template member */
@@ -230,7 +230,7 @@ namespace module {
                                              event is signaled.).
 
                                              This event routing allows to automatically
-                                             enable/disable the event on throttling notifications. 
+                                             enable/disable the event on throttling notifications.
 
                                              \see \ref route() */
 
@@ -245,7 +245,7 @@ namespace module {
                                              generated whenever the event is signaled).
 
                                              This event routing allows to automatically
-                                             enable/disable the event on throttling notifications. 
+                                             enable/disable the event on throttling notifications.
 
                                              \see \ref route() */
 #endif
@@ -258,7 +258,7 @@ namespace module {
                                              information for terminal connectors</em>.
 
                                              See the route() documentation for more on routing
-                                             
+
                                              \param[in] connector Terminal connector to declare */
 
 #ifndef DOXYGEN
@@ -282,7 +282,7 @@ namespace module {
 
                                              \param[in] target The handler to call whenever the
                                                  event is signaled
-                                             \param[in] descriptor The type of event to register 
+                                             \param[in] descriptor The type of event to register
                                              \note The real implementation has the second arguments
                                                  type as an additional template parameter. */
 #endif
@@ -301,7 +301,7 @@ namespace module {
         virtual void v_init();          ///< Called after module setup
                                         /**< This member is called directly before the PPI (resumes)
                                              execution. It is called after connections have been
-                                             setup before entering the PPI main loop. 
+                                             setup before entering the PPI main loop.
 
                                              You may overload this member. Your overload should
                                              always call the base-class implementation. */
@@ -310,11 +310,11 @@ namespace module {
     public:
 #endif
         void destroy();
-        
+
     private:
         EventManager & eventManager() const;
         ModuleManager & moduleManager() const;
-        
+
         void registerConnector(connector::Connector & connector);
         void unregisterConnector(connector::Connector & connector);
         void unregisterEvent(EventDescriptor & event);
@@ -336,7 +336,7 @@ namespace module {
 
     /** \brief Define PPI Module
 
-        Every module must begin by using this macro. 
+        Every module must begin by using this macro.
 
         \see senf::ppi::module::Module
      */

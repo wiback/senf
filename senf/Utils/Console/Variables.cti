@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -151,7 +151,7 @@ template <class Variable>
 prefix_ typename senf::console::factory::VariableFactory<Variable>
 senf::console::factory::VariableFactory<Variable>::onChange(OnChangeHandler handler)
 {
-    setOverload_->function( 
+    setOverload_->function(
         boost::bind(detail::SetVariable<Variable>(var_, handler),_2));
     return *this;
 }
@@ -193,7 +193,7 @@ senf::console::factory::VariableFactory<Variable>::create(DirectoryNode & dir,
 
 template <class Variable>
 prefix_ senf::console::factory::VariableFactory<Variable>::VariableFactory(Variable & var)
-    : ConstVariableFactory<Variable> (var), 
+    : ConstVariableFactory<Variable> (var),
       setOverload_ (detail::SetVariable<Variable>::create(var)),
       var_ (var)
 {}

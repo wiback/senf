@@ -37,13 +37,13 @@
 namespace senf {
 
     struct MIHTLVLengthException : public senf::Exception
-    { 
-        MIHTLVLengthException() 
-          : senf::Exception("MIHTLVLengthException") {} 
+    {
+        MIHTLVLengthException()
+          : senf::Exception("MIHTLVLengthException") {}
     };
 
-    
-    class MIHTLVLengthParser 
+
+    class MIHTLVLengthParser
         : public detail::packet::IntParserOps<MIHTLVLengthParser, boost::uint32_t>,
           public PacketParserBase
     {
@@ -57,7 +57,7 @@ namespace senf {
 
         value_type value() const;
         void value(value_type const & v);
-        
+
         MIHTLVLengthParser const & operator= (value_type other);
         size_type bytes() const;
         void init() const;
@@ -72,35 +72,35 @@ namespace senf {
         void finalize();
         void capacity(value_type v);
         value_type capacity() const;
-        
+
     private:
         void resize_(size_type size);
-    };  
-        
+    };
+
 
     /** \brief Base class for MIH TLV parsers
-     
+
          MIHBaseTLVParser is the abstract base class for MIH TLV parsers. It defines the
-         \ref type() field as an \ref senf::UInt8Parser and the \ref length() field as a 
-         MIHTLVLengthParser. The length field is read-only. 
-         
-         To create your own \c TLVParser you have to inherit from MIHBaseTLVParser (don't 
-         forget \ref SENF_PARSER_INHERIT) and define the \c value field. In the following example 
-         the value is a vector of MacAddresses: 
+         \ref type() field as an \ref senf::UInt8Parser and the \ref length() field as a
+         MIHTLVLengthParser. The length field is read-only.
+
+         To create your own \c TLVParser you have to inherit from MIHBaseTLVParser (don't
+         forget \ref SENF_PARSER_INHERIT) and define the \c value field. In the following example
+         the value is a vector of MacAddresses:
          \code
          struct MacAddressesTLVParser : public MIHBaseTLVParser {
-         #   include SENF_PARSER()        
+         #   include SENF_PARSER()
              SENF_PARSER_INHERIT ( MIHBaseTLVParser );
              SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser );
              SENF_PARSER_FINALIZE( MacAddressesTLVParser );
          };
          \endcode
-         
-         You have to adjust the maximum length value with the \ref maxLength function 
+
+         You have to adjust the maximum length value with the \ref maxLength function
          before the length value is set. The default maximum value is 128. So, in the above
          example adding more than 21 MACAddresses to the vector will throw a TLVLengthException
          if you don't call \c maxLength( \e some_value) before.
-         
+
          \see MIHTLVLengthParser \n
            MIHGenericTLVParser \n
      */
@@ -111,27 +111,27 @@ namespace senf {
         SENF_PARSER_FIELD    ( type,   UInt8Parser        );
         SENF_PARSER_FIELD_RO ( length, MIHTLVLengthParser );
         SENF_PARSER_FINALIZE ( MIHBaseTLVParser           );
-        
+
         /** \brief shrink size of the TLV length field to minimum
-    
+
             The size of the length field will be decreased to minimum necessary to hold
             the current length value.
          */
         void finalize();
-    
+
         typedef GenericTLVParserRegistry<MIHBaseTLVParser> Registry;
-        
+
     protected:
         /** \brief set maximum value of TLV length field
-    
+
             The size of the length field will be increased if necessary.
             \param v maximum value of length field
          */
         void maxLength(MIHTLVLengthParser::value_type maxl) const;
     };
 
-    
-        
+
+
     /** \brief Parser for a generic TLV packet
      */
     struct MIHGenericTLVParser
@@ -144,15 +144,15 @@ namespace senf {
             defaultInit();
             maxLength( MIHTLVLengthParser::max_value);
         }
-        
+
         using base::init;
         using base::maxLength;
     };
-        
-        
+
+
     /** \brief Base class for list TLV parser
-     */ 
-    struct MIHBaseListTLVParser 
+     */
+    struct MIHBaseListTLVParser
         : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
@@ -166,19 +166,19 @@ namespace senf {
     template <class Self>
     struct MIHListTLVParserMixin
     {
-        void finalize();            
+        void finalize();
     };
- 
-        
+
+
     /** \brief Parse a MIHF_ID
 
          Note that the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
          We could set maxLength in init(), but for the most MIHF_IDs the default
          maximum length of 128 should be enough.
-         
+
          \note you must call maxIdLength( 253) *before* setting MIHF_IDs values longer
              than 128.
-                  
+
          \see MIHFId
     */
     class MIHFIdTLVParser : public MIHBaseTLVParser
@@ -189,41 +189,41 @@ namespace senf {
         SENF_PARSER_LABEL    ( idValue          );
         SENF_PARSER_SKIP     ( idLength(), 0    );
         SENF_PARSER_FINALIZE ( MIHFIdTLVParser  );
-        
+
     public:
         ///\name Value setters
         ///@{
         void value( MIHFId const & id);
-        
+
         void value( std::string        const & id  );
         void value( senf::MACAddress   const & addr);
         void value( senf::INet4Address const & addr);
         void value( senf::INet6Address const & addr);
-        void value( senf::EUI64        const & addr);    
+        void value( senf::EUI64        const & addr);
         ///@}
 
         ///\name Value getters
         ///@{
         MIHFId valueAs( MIHFId::Type type) const;
-        
+
         std::string        valueAsString()       const;
         senf::MACAddress   valueAsMACAddress()   const;
         senf::INet4Address valueAsINet4Address() const;
         senf::INet6Address valueAsINet6Address() const;
         senf::EUI64        valueAsEUI64()        const;
         ///@}
-        
+
         ///\name Value comparisons
         ///@{
         bool valueEquals( MIHFId const & id) const;
-        
+
         bool valueEquals( std::string        const & id  ) const;
         bool valueEquals( senf::MACAddress   const & addr) const;
         bool valueEquals( senf::INet4Address const & addr) const;
         bool valueEquals( senf::INet6Address const & addr) const;
         bool valueEquals( senf::EUI64        const & addr) const;
         ///@}
-        
+
         void dump(std::ostream & os) const;
         void maxIdLength(boost::uint8_t maxl) const;
         void finalize();
@@ -231,7 +231,7 @@ namespace senf {
     private:
         /// resize the packet after the length field to given size
         senf::safe_data_iterator resizeValueField(MIHTLVLengthParser::value_type size);
-        
+
         data_iterator valueBegin() const;
         data_iterator valueEnd() const;
 
@@ -241,9 +241,9 @@ namespace senf {
             void operator()(boost::uint8_t v);
             OutputIterator & i_;
         };
-        
+
         template <class OutputIterator>
-        static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> > 
+        static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> >
         getNAIEncodedOutputIterator(OutputIterator i);
 
         struct binaryNAIDecoder {
@@ -251,11 +251,11 @@ namespace senf {
             bool operator()(boost::uint8_t v);
             bool readNextByte_;
         };
-        
+
         template <class Iterator>
-        static boost::filter_iterator<binaryNAIDecoder, Iterator> 
+        static boost::filter_iterator<binaryNAIDecoder, Iterator>
         getNAIDecodedIterator(Iterator begin, Iterator end);
-        
+
         struct ValueSetterVisitor : public boost::static_visitor<> {
             MIHFIdTLVParser & parser;
             ValueSetterVisitor( MIHFIdTLVParser & p) : parser(p) {}
@@ -267,7 +267,7 @@ namespace senf {
                 parser.value( id);
             }
         };
-        
+
         struct ValueEqualsVisitor : public boost::static_visitor<bool> {
             MIHFIdTLVParser const & parser;
             ValueEqualsVisitor( MIHFIdTLVParser const & p) : parser(p) {}
@@ -286,7 +286,7 @@ namespace senf {
     struct MIHFSrcIdTLVParser : public MIHFIdTLVParser
     {
         MIHFSrcIdTLVParser(data_iterator i, state_type s) : MIHFIdTLVParser(i,s) {}
-        
+
         void init() const {
             defaultInit();
             type() << typeId+0;
@@ -294,13 +294,13 @@ namespace senf {
         static type_t::value_type const typeId = 1;
         void dump(std::ostream & os) const;
     };
-    
+
     /** \brief Parser for 802.21 destination MIHF_ID TLV
      */
     struct MIHFDstIdTLVParser : public MIHFIdTLVParser
     {
         MIHFDstIdTLVParser(data_iterator i, state_type s) : MIHFIdTLVParser(i,s) {}
-        
+
         void init() const {
             defaultInit();
             type() << typeId+0;
@@ -308,7 +308,7 @@ namespace senf {
         static type_t::value_type const typeId = 2;
         void dump(std::ostream & os) const;
     };
-    
+
     /** \brief Parser for 802.21 Status TLV
      */
     struct MIHStatusTLVParser : public MIHBaseTLVParser
@@ -317,7 +317,7 @@ namespace senf {
         SENF_PARSER_INHERIT ( MIHBaseTLVParser   );
         SENF_PARSER_FIELD   ( value, UInt8Parser );
         SENF_PARSER_FINALIZE( MIHStatusTLVParser );
-        
+
         SENF_PARSER_INIT() {
             defaultInit();
             type() << typeId+0;
@@ -325,36 +325,36 @@ namespace senf {
         }
         static type_t::value_type const typeId = 3;
         void dump(std::ostream & os) const; ///< dump string representation to given stream
-        
-        enum StatusCode { 
+
+        enum StatusCode {
             Success, UnspecifiedFailure, Rejected, AuthorizationFailure, NetworkError };
     };
-    
+
     struct MIHRegisterReqCodeTLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
         SENF_PARSER_FIELD    ( value, UInt8Parser );
         SENF_PARSER_FINALIZE ( MIHRegisterReqCodeTLVParser );
-            
+
         SENF_PARSER_INIT() {
             defaultInit();
             type() = typeId+0;
             length_() = 1;
         }
-        static type_t::value_type const typeId = 11;  
+        static type_t::value_type const typeId = 11;
         void dump(std::ostream & os) const; ///< dump string representation to given stream
-        
+
         enum RequestCode { Registration, ReRegistration };
     };
-    
+
     struct MIHValidTimeIntervalTLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
         SENF_PARSER_FIELD    ( value, UInt32Parser );
         SENF_PARSER_FINALIZE ( MIHValidTimeIntervalTLVParser );
-            
+
         SENF_PARSER_INIT() {
             defaultInit();
             type() = typeId+0;

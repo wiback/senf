@@ -119,7 +119,7 @@ namespace log {
         The routing table is processed from first route to last route, the first matching entry
         determines the fate of a log messages. Therefore, the ordering of routing entries is
         important.
-        
+
         If no position is explicitly specified, new routing entries are added to the end of the
         routing table. All routing statements however take an index as optional argument to
         explicitly specify the position of the new routing entry.

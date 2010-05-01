@@ -48,7 +48,7 @@ namespace log {
 
         \code
         senf::log::FileTarget target ("file.name");
-        
+
         // Route all messages to this file.
         target.route();
         \endcode
@@ -58,7 +58,7 @@ namespace log {
 
         \ingroup targets
       */
-    class FileTarget 
+    class FileTarget
         : private boost::base_from_member<std::ofstream>,
           public IOStreamTarget
     {
@@ -69,7 +69,7 @@ namespace log {
         ///\name Structors and default members
         ///@{
 
-        explicit FileTarget(std::string const & filename, std::string const & nodename = ""); 
+        explicit FileTarget(std::string const & filename, std::string const & nodename = "");
                                         ///< Construct FileTarget writing to \a file
 
         ///@}

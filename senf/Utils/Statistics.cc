@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -88,17 +88,17 @@ prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os
 {
     namespace fmt = senf::format;
 
-    os << boost::format("%s%-5d%|15t|  %12.5g  %19.5g  %12.5g\n") 
-        % std::string(2*level,' ') % rank() 
+    os << boost::format("%s%-5d%|15t|  %12.5g  %19.5g  %12.5g\n")
+        % std::string(2*level,' ') % rank()
         % fmt::eng(min()).setw() % fmt::eng(avg(),dev()).setw() % fmt::eng(max()).setw();
     {
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
         for (; i != i_end; ++i)
             os << boost::format("            %3d  %12.5g  %19.5g  %12.5g\n")
-                % i->second.n 
-                % fmt::eng(i->second.min).setw() 
-                % fmt::eng(i->second.avg, i->second.dev).setw() 
+                % i->second.n
+                % fmt::eng(i->second.min).setw()
+                % fmt::eng(i->second.avg, i->second.dev).setw()
                 % fmt::eng(i->second.max).setw();
     }
     {
@@ -230,7 +230,7 @@ prefix_ void senf::Statistics::consoleCollect(std::vector<unsigned> & ranks)
 
     for (; i != i_end; ++i)
         stats = & (stats->collect(*i));
-        
+
 }
 
 prefix_  boost::shared_ptr<senf::console::DirectoryNode>
@@ -239,7 +239,7 @@ senf::Statistics::consoleOutput(std::vector<unsigned> & ranks, unsigned window)
     StatisticsBase * stats (this);
     std::vector<unsigned>::const_iterator i (ranks.begin());
     std::vector<unsigned>::const_iterator const i_end (ranks.end());
-    
+
     try {
         for (; i != i_end; ++i)
             stats = &(*stats)[*i];
@@ -248,7 +248,7 @@ senf::Statistics::consoleOutput(std::vector<unsigned> & ranks, unsigned window)
 
     for (; i != i_end; ++i)
         stats = & (stats->collect(*i));
-    
+
     return stats->output(window).dir().node().thisptr();
 }
 

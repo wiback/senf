@@ -59,7 +59,7 @@ SENF_AUTO_UNIT_TEST(ListBParser)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             MyListBParser::init_bytes));
-    
+
     MyListBParser p (pi->data().begin(),&pi->data());
     p.init();
     BOOST_CHECK_EQUAL( p.size(), 0u );
@@ -80,14 +80,14 @@ SENF_AUTO_UNIT_TEST(ListBParser_container)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             MyListBParser::init_bytes));
-    
+
     {
         MyListBParser::container c (MyListBParser(pi->data().begin(),&pi->data()));
-     
+
         BOOST_CHECK_EQUAL( c.size(), 0u );
         BOOST_CHECK_EQUAL( c.bytes(), 2u );
         BOOST_CHECK( c.begin() == c.end() );
-        
+
         c.shift(c.begin());
         BOOST_CHECK_EQUAL( c.size(), 1u );
         BOOST_CHECK_EQUAL( c.bytes(), 3u );
@@ -108,7 +108,7 @@ SENF_AUTO_UNIT_TEST(ListBParser_container)
 
             BOOST_CHECK_EQUAL(c2.size(), 1u);
             BOOST_CHECK_EQUAL(c2.bytes(), 7u);
-            
+
             c.insert(c.end(),c2.back());
             BOOST_CHECK_EQUAL( c.size(), 2u );
             BOOST_CHECK_EQUAL( c.bytes(), 10u );
@@ -119,7 +119,7 @@ SENF_AUTO_UNIT_TEST(ListBParser_container)
             c.insert(boost::next(c.begin()), 2u, c2.back());
             BOOST_CHECK_EQUAL( c.size(), 4u );
             BOOST_CHECK_EQUAL( c.bytes(), 20u );
-            BOOST_CHECK_EQUAL( (*boost::next(c.begin())).vec()[0], 0x1357u ); 
+            BOOST_CHECK_EQUAL( (*boost::next(c.begin())).vec()[0], 0x1357u );
             BOOST_CHECK_EQUAL( (*boost::next(c.begin(),2)).vec()[0], 0x1357u );
 
             c2.back().vec()[0] << 0x2468u;
@@ -133,7 +133,7 @@ SENF_AUTO_UNIT_TEST(ListBParser_container)
             BOOST_CHECK_EQUAL( c.bytes(), 17u );
             BOOST_CHECK_EQUAL( c.front().vec()[0],0x1357u );
             BOOST_CHECK_EQUAL( c.back().vec()[0], 0x2345u );
-            
+
             c.erase((boost::next(c.begin(),2)),c.end());
             BOOST_CHECK_EQUAL( c.size(), 2u );
             BOOST_CHECK_EQUAL( c.bytes(), 12u );
@@ -148,7 +148,7 @@ SENF_AUTO_UNIT_TEST(ListBParser_container)
 }
 
 namespace {
-    
+
     struct TestTransform
     {
         typedef unsigned value_type;
@@ -165,7 +165,7 @@ namespace {
         SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
         SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
         SENF_PARSER_LIST          ( list1  , bytes(size1) , VectorParser );
-        SENF_PARSER_LIST          ( list2  , transform(TestTransform, bytes(size2)) , 
+        SENF_PARSER_LIST          ( list2  , transform(TestTransform, bytes(size2)) ,
                                              VectorParser );
 
         SENF_PARSER_FINALIZE(TestListParser);
@@ -189,10 +189,10 @@ SENF_AUTO_UNIT_TEST(listBytesMacro)
                              0x0D, 0x0E,             // list2()[1].vec()[1]
                              0x01,                   // list2()[2].size()
                              0x0F, 0x10 };           // list2()[2].vec()[0]
-    
+
     senf::DataPacket p (senf::DataPacket::create(data));
     TestListParser parser (p.data().begin(), &p.data());
-    
+
     BOOST_CHECK_EQUAL( parser.list1().size(), 2u );
     BOOST_CHECK_EQUAL( parser.list2().size(), 3u );
     BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
@@ -211,7 +211,7 @@ SENF_AUTO_UNIT_TEST(listBytesMacro)
         BOOST_CHECK_EQUAL( i->vec().size(), 2u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0708u );
         BOOST_CHECK_EQUAL( i->vec()[1], 0x090Au );
-        
+
         ++i;
         BOOST_CHECK( i == list.end() );
     }
@@ -227,11 +227,11 @@ SENF_AUTO_UNIT_TEST(listBytesMacro)
         BOOST_CHECK_EQUAL( i->vec().size(), 2u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0B0Cu );
         BOOST_CHECK_EQUAL( i->vec()[1], 0x0D0Eu );
-        
+
         ++i;
         BOOST_CHECK_EQUAL( i->vec().size(), 1u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0F10u );
-        
+
         ++i;
         BOOST_CHECK( i == list.end() );
     }
@@ -266,7 +266,7 @@ SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
                              0x0D, 0x0E,             // list()[3].vec()[1]
                              0x01,                   // list()[4].vec().size()
                              0x0F, 0x10 };           // list()[4].vec()[0]
-    
+
     senf::DataPacket p (senf::DataPacket::create(data));
 
     {

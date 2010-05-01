@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@
 //#include "FIFORunner.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace senf { 
+namespace senf {
 namespace scheduler {
 
     void restart();
@@ -56,8 +56,8 @@ namespace detail {
         typedef boost::intrusive::ilist<TaskListBase::value_traits<TaskInfo>, false> TaskList;
 
     public:
-        class TaskInfo 
-            : public Event, 
+        class TaskInfo
+            : public Event,
               public TaskListBase
         {
         public:
@@ -72,7 +72,7 @@ namespace detail {
 
         protected:
             void setRunnable();
-            
+
         private:
             virtual void v_run() = 0;
             virtual bool v_enabled() const;
@@ -94,7 +94,7 @@ namespace detail {
 
         void enqueue(TaskInfo * task);
         void dequeue(TaskInfo * task);
-        
+
         void run();
 
         void taskTimeout(unsigned ms);
@@ -123,7 +123,7 @@ namespace detail {
 
         TaskList::iterator priorityEnd(TaskInfo::Priority p);
         void run(TaskList::iterator f, TaskList::iterator l);
-        
+
         struct NullTask : public TaskInfo
         {
             NullTask();
@@ -138,7 +138,7 @@ namespace detail {
 
         NullTask normalPriorityEnd_;
         NullTask highPriorityEnd_;
-        
+
         timer_t watchdogId_;
         bool watchdogRunning_;
         unsigned watchdogMs_;

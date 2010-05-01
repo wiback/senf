@@ -63,7 +63,7 @@ prefix_ void senf::log::detail::AreaBase::updateRoutingCache(Target & target,
         if (i->limit < l)
             l = i->limit;
     }
-    if (i == i_end) 
+    if (i == i_end)
         routingCache_[stream.index].routes.push_back(RouteEntry(limit, &target));
     else
         for (; i != i_end; ++i)

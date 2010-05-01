@@ -40,7 +40,7 @@ SENF_AUTO_UNIT_TEST(VariantParser)
     typedef senf::ArrayParser<10, senf::UInt8Parser> Array10;
     typedef senf::VariantParser< senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1>,
         boost::mpl::vector<senf::VoidPacketParser, Array10, senf:: UInt32Parser> > Variant;
-    
+
     unsigned char data[] = { 0x01, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
                              0x19, 0x1A, 0x1B };
     senf::DataPacket p (senf::DataPacket::create(data));
@@ -55,7 +55,7 @@ SENF_AUTO_UNIT_TEST(VariantParser)
         BOOST_REQUIRE_EQUAL( p.data().size(), 11u );
         BOOST_REQUIRE_EQUAL( v.variant(), 0u );
         BOOST_CHECK_EQUAL( senf::bytes(v), 0u );
-        
+
         v.init<2>();
         // v invalidated
     }
@@ -78,13 +78,13 @@ SENF_AUTO_UNIT_TEST(VariantParser)
     };
 }
 
-// We can't use the unnamed namespace here since there's a bug in gcc-4.2.3 which is 
+// We can't use the unnamed namespace here since there's a bug in gcc-4.2.3 which is
 // the default version of gcc on ubuntu hardy :-(
 // See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34213
 namespace VariantParser_test_cc_anon_namespace {
-    
+
     struct SubParser : public senf::PacketParserBase
-    { 
+    {
 #       include SENF_FIXED_PARSER()
 
         SENF_PARSER_FIELD( foo, senf::UInt32Parser );
@@ -100,7 +100,7 @@ namespace VariantParser_test_cc_anon_namespace {
         SENF_PARSER_BITFIELD_RO( len,  4, unsigned );
         SENF_PARSER_BITFIELD_RO( type, 4, unsigned );
         // just here so the second variant is 'var'
-        SENF_PARSER_VARIANT( value, len, 
+        SENF_PARSER_VARIANT( value, len,
                                  (senf::VoidPacketParser)
                                  (senf::UInt8Parser)
                                  (senf::UInt16Parser)
@@ -113,14 +113,14 @@ namespace VariantParser_test_cc_anon_namespace {
 
         SENF_PARSER_FINALIZE(TestParser);
     };
-    
+
 }
 using namespace VariantParser_test_cc_anon_namespace;
 
 SENF_AUTO_UNIT_TEST(VariantParserMacro)
 {
     senf::DataPacket p (senf::DataPacket::create(senf::init_bytes<TestParser>::value));
-    
+
     {
         TestParser v (p.data().begin(), & p.data());
         v.init();

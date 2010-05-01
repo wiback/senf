@@ -77,7 +77,7 @@
     </pre>
 
     All the entries specified via \c SENF_LOG_CONF are applied in a fixed order:
-    
+
     \li First the entries which have both a stream and an area specified are checked
     \li next all entries with area but no stream given are checked
     \li followed by all entries with a given stream but no area
@@ -105,7 +105,7 @@
     consoleLog.route<foo::Transactions, senf::log::IMPORTANT>();
 
     fileLog.route<foo::Transactions>();
-    \endcode 
+    \endcode
     Here we see an already relatively complex setup: All debug messages (that is, those, which are
     not disabled at compile time) are routed to the console. We also route important transactions to
     the console \e except transactions from the \c foo::SomeClass area. The \c fileLog simply
@@ -119,13 +119,13 @@
         enabled \e explicitly by setting \c SENF_LOG_CONF so they can be routed.
 
     \section config_fallback Fallback routing
-    
+
     There are two cases, where this setup may lead to inadvertently lost log messages:
     \li When using a library which does internally use the Logger but not initializing the logger in
         your application.
     \li When log messages are created during initialization of static objects.
     Since no route is set up in these cases, the messages will be dropped.
-    
+
     To counter this problem, the logger is initially in <em>fallback routing</em> state. If any log
     message arrives in this state, the message will be logged to the console if it is above the
     default runtime limit of it's stream. The first routing statement on any target will take the
@@ -175,7 +175,7 @@ namespace log {
             <tr><td>name</td>            <td>::= arbitrary C++ identifier</td></tr>
             </table>
 
-        \ref SENF_LOG_CONF is a Boost.Preprocessor style sequence of 3-tuples. 
+        \ref SENF_LOG_CONF is a Boost.Preprocessor style sequence of 3-tuples.
 
         The first tuple element \e optional_stream specifies the stream to match. If this is
         <tt>(_)</tt>, the entry will match any stream.
@@ -195,13 +195,13 @@ namespace log {
 #   endif
 
     /** \brief Check, if logging is enabled for stream/area/level tuple
-        
+
         This is a template meta-function which will check, whether logging to the given combination
         of parameters \a Stream, \a Area and \a Level is compile-time enabled. The logging might
         still be disabled at runtime.
         \code
-        if (senf::log::Enabled<senf::log::Debug, 
-                               senf::log::DefaultArea, 
+        if (senf::log::Enabled<senf::log::Debug,
+                               senf::log::DefaultArea,
                                senf::log::VERBOSE>::value) {
             // ...
         }

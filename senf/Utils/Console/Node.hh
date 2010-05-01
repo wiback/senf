@@ -230,7 +230,7 @@ namespace console {
 
         Recursively dumps the console directory structure starting at \a dir. By default, dumps the
         complete tree beginning at the root node.
-        
+
         In contrast to the console 'lr' command, links are dumped by showing the \e absolute path
         to the target node.
      */
@@ -574,7 +574,7 @@ namespace console {
                                              \param[in] command command arguments. This is a
                                                  range of ranges of Token instances. */
 
-        void execute(boost::any & rv, std::ostream & output, ParseCommandInfo const & command) 
+        void execute(boost::any & rv, std::ostream & output, ParseCommandInfo const & command)
             const;
                                         ///< Execute the command
                                         /**< \param[out] rv command return value
@@ -677,7 +677,7 @@ namespace console {
 #ifndef DOXYGEN
 
 namespace factory {
-    
+
     class SimpleCommand
         : public detail::NodeFactory
     {

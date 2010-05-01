@@ -175,7 +175,7 @@ prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::resize(size_type n, Va
 template <class ElementParser, class AuxPolicy>
 prefix_ senf::VectorParser_Container<ElementParser,AuxPolicy>::
 VectorParser_Container(parser_type const & vector)
-    : AuxPolicy::WrapperPolicy(static_cast<AuxPolicy const &>(vector)), state_ (vector.state()), 
+    : AuxPolicy::WrapperPolicy(static_cast<AuxPolicy const &>(vector)), state_ (vector.state()),
       i_ (std::distance(data().begin(),vector.i()))
 {}
 

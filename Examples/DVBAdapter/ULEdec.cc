@@ -52,10 +52,10 @@ ULEdec::ULEdec(unsigned short adapter, unsigned short device)
     pes_filter.pes_type = DMX_PES_OTHER;
     pes_filter.flags = DMX_IMMEDIATE_START;
     demuxHandle.protocol().setPESFilter( &pes_filter );
-    
+
     senf::Scheduler::instance().add(
         dvrHandle, senf::membind(&ULEdec::handleEvent, this));
-    
+
     this->receiver_state = Idle;
     this->priv_sndu_type_1 = false;
 }
@@ -65,7 +65,7 @@ void ULEdec::handleEvent(senf::Scheduler::EventId event)
     senf::TransportPacket ts_packet (
             senf::TransportPacket::create(188, senf::noinit));
     dvrHandle.read( ts_packet.data() );
-    
+
     // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.
     if ( (ts_packet->sync_byte() != senf::TransportPacketType::SYNC_BYTE) ||
          (ts_packet->transport_error_indicator() == true) ||
@@ -75,7 +75,7 @@ void ULEdec::handleEvent(senf::Scheduler::EventId event)
         // drop partly decoded SNDU, reset state, resync on PUSI.
         return;
     }
-    
+
     handleTSPacket(ts_packet);
 }
 

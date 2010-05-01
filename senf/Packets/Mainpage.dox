@@ -27,12 +27,12 @@
 
     \autotoc
 
-    
+
     \section packet_intro_arch Introduction
     \seechapter \ref packet_arch
 
     The Packet library consists of several components:
-    
+
     \li The \ref packet_module manages the packet data and provides the framework for handling the
         chain of packet headers. The visible interface is provided by the Packet class.
     \li \ref packetparser provides the framework for interpreting packet data. It handles
@@ -45,11 +45,11 @@
 
 
     \section packet_intro_usage Tutorial
-    \seechapter \ref packet_usage 
+    \seechapter \ref packet_usage
 
-    This chapter discusses the usage of the packet library from a high level view. 
+    This chapter discusses the usage of the packet library from a high level view.
 
-    
+
     \section packet_intro_api The packet API
 
     The packet library API is divided into three areas
@@ -58,7 +58,7 @@
     \li the packet interpreter chain providing \ref packet_module
     \li and \ref packetparser which provides access to protocol specific packet fields.
 
-   
+
     \section protocolbundles Supported packet types (protocols)
 
     Each protocol bundle provides a collection of related concrete packet classes for a group of
@@ -70,7 +70,7 @@
     \li \ref protocolbundle_80221 : 802.21 protocols
 
     There are two ways to link with a bundle
-    
+
     \li If you only work with known packets which you explicitly reference you may just link with
         the corresponding library.
     \li If you need to parse unknown packets and want those to be parsed as complete as possible
@@ -79,7 +79,7 @@
         included whether they are explicitly referenced or not (and they will all automatically be
         registered).
 
-    
+
     \section packet_intro_new Defining new packet types
     \seechapter \ref packet_new
 
@@ -95,19 +95,19 @@
 
     \autotoc
 
-    
+
     \section packet_arch_handle The Packet handle
 
     Whenever we are using a Packet, we are talking about a senf::Packet (or a
     senf::ConcretePacket). This class is a \e handle referencing an internally managed packet data
     structure. So even though we pass senf::Packet instances around by value, they work like
     references. The packet library automatically manages all required memory resources using
-    reference counting. 
+    reference counting.
 
     Different Packet handles may really internally share one Packet data structure if they both
     point to the same packet.
 
-   
+
     \section packet_arch_data The Packet as a 'bunch of bytes'
 
     From the outside, a packet is just a bunch of bytes just as it is read from (or will be
@@ -120,7 +120,7 @@
     Packet p = ...;
 
     // Change first byte of packet to 1
-    p.data()[0] = 1u; 
+    p.data()[0] = 1u;
 
     // Copy packet data into a vector
     std::vector<char> data (p.data().size());
@@ -133,12 +133,12 @@
     \see senf::Packet::data() \n
         senf::PacketData
 
-    
+
     \section packet_arch_chain The Interpreter Chain
 
     On the next level, the packet is divided into a nested list of sub-packets (or headers) called
     interpreters. Each senf::Packet handle internally points to an interpreter or header. This
-    allows us to access one and the same packet in different ways. 
+    allows us to access one and the same packet in different ways.
 
     Consider an Ethernet Packet with an IP payload holding a UDP packet. We may reference either the
     Ethernet packet as a whole or we may reference the IP or UDP interpreters (sub-packets or
@@ -167,7 +167,7 @@
     udp.prev() == ip                   // true
     udp.prev<EthernetPacket>()         // throws InvalidPacketChainException
     \endcode
-    
+
     \see \ref packet_module
 
 
@@ -188,7 +188,7 @@
     senf::EthernetPacket eth      (senf::EthernetPacket::create());
     senf::IPv4Packet     ip       (senf::IPv4Packet    ::createAfter(eth));
     senf::UDPPacket      udp      (senf::UDPPacket     ::createAfter(ip));
-    senf::DataPacket     payload  (senf::DataPacket    ::createAfter(udp, 
+    senf::DataPacket     payload  (senf::DataPacket    ::createAfter(udp,
                                                                      std::string("Hello, world!")));
 
     udp->source()      = 2000u;
@@ -198,7 +198,7 @@
     ip->destination()  = senf::INet4Address::from_string("192.168.0.2");
     eth->source()      = senf::MACAddress::from_string("00:11:22:33:44:55");
     eth->destination() = senf::MACAddress::from_string("00:11:22:33:44:66");
-    
+
     eth.finalizeAll();
     \endcode
 
@@ -224,14 +224,14 @@
     \code
     #include "Packets.hh"
     \endcode
-    
+
     explicitly.
 
     \warning Never include any other Packets library header directly, only include \c
     Packets.hh or one (or several) protocol headers from the protocol bundles.
 
     Most every use of the packet library starts with some concrete packet typedef. Some fundamental
-    packet types are provided by \ref protocolbundle_default. 
+    packet types are provided by \ref protocolbundle_default.
 
 
     \section packet_usage_create Creating a new packet
@@ -247,7 +247,7 @@
     senf::EthernetPacket eth      (senf::EthernetPacket::create());
     senf::IPv4Packet     ip       (senf::IPv4Packet    ::createAfter(eth));
     senf::UDPPacket      udp      (senf::UDPPacket     ::createAfter(ip));
-    senf::DataPacket     payload  (senf::DataPacket    ::createAfter(udp, 
+    senf::DataPacket     payload  (senf::DataPacket    ::createAfter(udp,
                                                                      std::string("Hello, world!")));
     \endcode
 
@@ -271,7 +271,7 @@
     ip->destination()  = senf::INet4Address::from_string("192.168.0.2");
     eth->source()      = senf::MACAddress::from_string("00:11:22:33:44:55");
     eth->destination() = senf::MACAddress::from_string("00:11:22:33:44:66");
-    
+
     eth.finalizeAll();
     \endcode
 
@@ -292,7 +292,7 @@
 
     The chain navigation functions are also used to parse a packet. Let's read an Ethernet packet
     from a packet socket handle:
-    
+
     \code
     senf::PacketSocketHandle sock();
     sock.bind( senf::LLSocketAddress("eth0"));
@@ -323,10 +323,10 @@
 
 
     \section packet_usage_container The raw data container
-    
+
     Every packet is based internally on a raw data container holding the packet data. This container
     is accessed via senf::Packet::data() member.
-    
+
     This container is a random access container. It can be used like an ordinary STL container and
     supports all the standard container members.
 
@@ -383,7 +383,7 @@
 
     \code
     eth.data().insert(eth.data().end(), 5, 0x01);
-    assert(    eth.data().end() == ip.data().end() + 5 
+    assert(    eth.data().end() == ip.data().end() + 5
             && ip.data().end()  == udp.data().end() );
 
     // Or alternatively: (You could even use eth.data().end() here ... it's the same)
@@ -442,7 +442,7 @@
     \endcode
 
     Additionally, the parsers have a parser specific API which allows to manipulate or query the
-    value. 
+    value.
 
     This is a very abstract description of the parser structure. For a more concrete description, we
     need to differentiate between the different parser types
@@ -483,7 +483,7 @@
 
     \subsection packet_usage_fields_collection Collection parsers
 
-    Besides simple composites, the packet library has support for more complex collections. 
+    Besides simple composites, the packet library has support for more complex collections.
 
     \li The senf::ArrayParser allows to repeat an arbitrary parser a fixed number of times.
     \li senf::VectorParser and senf::ListParser are two different types of lists with variable
@@ -509,7 +509,7 @@
 
     To demonstrate nested collections, we use the \c MLDv2ReportPacket as an example. The relevant
     fields of this packet are;
-    
+
     <table class="fields">
     <tr><td>nrOfRecords</td><td>Integer</td><td>Number of multicast address records</td></tr>
     <tr><td>records</td><td>List of Records</td><td>List of multicast groups and sources</td></tr>
@@ -521,7 +521,7 @@
     <tr><td>nrOfSources</td><td>Integer</td><td>Number of sources in this record</td></tr>
     <tr><td>sources</td><td>Vector of IPv6 Addresses</td><td>Multicast sources</td></tr>
     </table>
-    
+
     The first example will iterate over the sources in a \c MLDv2QueryPacket:
 
     \code
@@ -531,7 +531,7 @@
     MLDv2QueryPacket::Parser::sources_t::container sources (mld->sources());
 
     // Iterate over all the addresses in that list
-    for (MLDv2QueryPacket::Parser::sources_t::container::iterator i (sources.begin()); 
+    for (MLDv2QueryPacket::Parser::sources_t::container::iterator i (sources.begin());
          i != sources.end(); ++i)
         std::cout << *i << std::endl;
     \endcode
@@ -569,7 +569,7 @@
         // Allocate a collection wrapper for the multicast address record
         typedef MLDv2ReportPacket::Parser::records_t::value_type::sources_t Sources;
         Sources::container sources (i->sources());
-        
+
         // Iterate over the sources in this record
         for (Sources::container::iterator i (sources.begin());
              i != sources.end(); ++i)
@@ -588,10 +588,10 @@
     parser). Any change made to the packet not via the collection wrapper has the potential to
     invalidate the wrapper if it changes the packets size.
 
-    \see 
+    \see
         senf::VectorParser / senf::VectorParser_Container Interface of the vector parser \n
         senf::ListParser / senf::ListParser_Container Interface of the list parser
-    
+
 
     \subsubsection packet_usage_collection_variant The Variant Parser
 
@@ -659,7 +659,7 @@
     fbips.resize(addrs.size());
     std::copy(addrs.begin(), addrs.end(), fbips.begin());
     \endcode
-    
+
     \note Here we have documented the default variant interface as it is preferred. It is possible
         to define variants in a different way giving other names to the special members (\c has_\e
         name or \c init_\e name etc.). This must be documented with the composite or protocol parser
@@ -678,9 +678,9 @@
     struct Timestamp {
         senf::ClockService::clock_t value;
     };
-    
-    std::ostream & operator<<(std::ostream & os, Timestamp const & tstamp) { 
-        os << tstamp.value; return os; 
+
+    std::ostream & operator<<(std::ostream & os, Timestamp const & tstamp) {
+        os << tstamp.value; return os;
     }
 
     senf::EthernetPacket packet (senf::EthernetPacket::create(senf::noinit));
@@ -691,21 +691,21 @@
     In the same way, the annotation can be used later
 
     \code
-    if (senf::ClockService::now() - packet.annotation<Timestamp>().value 
+    if (senf::ClockService::now() - packet.annotation<Timestamp>().value
             > senf::ClockService::seconds(1)) {
         // this packet is to old
         // ...
     }
     \endcode
-    
+
     It is very important to define a specific structure (or class or enum) type for each type of
     annotation. \e Never directly store a fundamental type as an annotation: The name of the type is
     used to look up the annotation, so you can store only one annotation for each built-in type. \c
     typedef does not help since \c typedef does not introduce new type names, it only defines an
     alias.
 
-    The annotation type must support the output \c operator<< for description purposes 
-    (e.g. for the \ref senf::Packet::dump() "Packet::dump()" member). 
+    The annotation type must support the output \c operator<< for description purposes
+    (e.g. for the \ref senf::Packet::dump() "Packet::dump()" member).
 
     Of course, the annotation structure can be arbitrary. However, one very important caveat: If the
     annotation is not a POD type, it needs to inherit from senf::ComplexAnnotation. A type is POD,
@@ -728,7 +728,7 @@
     // Or store a reference to the annotation for easier access
 
     ReadInfo & info (packet.annotation<ReadInfo>());
-    
+
     if (info.interface == "eth0") {
         // ...
     }
@@ -779,11 +779,11 @@
         SENF_PARSER_FINALIZE(EthernetPacketParser);
     };
     \endcode
-    
+
     There are a lot of other possibilities to define fields. See \ref packetparsermacros for a
     detailed description of the macro language which is used to define composite parsers.
 
-    \see 
+    \see
         \ref packetparsermacros
 
     \section packet_new_type The packet type policy class
@@ -796,7 +796,7 @@
         in this packet
     \li It provides methods to initialize a new packet and get information about the packet size
 
-    All this information is provided via static or typedef members. 
+    All this information is provided via static or typedef members.
 
     \code
     struct EthernetPacketType

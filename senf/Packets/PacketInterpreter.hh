@@ -44,14 +44,14 @@ namespace senf {
     template <class PacketType> class PacketInterpreter;
 
     /** \brief Internal: Base packet interpreter class
-        
+
         \internal
 
         This is the base class for the persistent interpreter. This class encapsulates all the
         functionality accessible via the packet handle, most handle operations are just forwarded.
       */
     class PacketInterpreterBase
-        : protected PacketData, 
+        : protected PacketData,
           public detail::packet::interpreter_list_base,
           public intrusive_refcount_t<PacketInterpreterBase>
     {
@@ -83,7 +83,7 @@ namespace senf {
             almost any one of the create / createAfter / createBefore static PacketInterpreter
             without static information on the type of packet to create.
          */
-        struct Factory { 
+        struct Factory {
             virtual ~Factory();
 
             // Create completely new packet
@@ -94,18 +94,18 @@ namespace senf {
             virtual ptr create(size_type size, senf::NoInit_t) const = 0;
             template <class ForwardReadableRange>
             ptr create(ForwardReadableRange const & range) const;
-            
+
             // Create packet as new packet after a given packet
 
             virtual ptr createAfter(PacketInterpreterBase::ptr packet) const = 0;
             virtual ptr createAfter(PacketInterpreterBase::ptr packet, senf::NoInit_t) const = 0;
             virtual ptr createAfter(PacketInterpreterBase::ptr packet, size_type size) const = 0;
-            virtual ptr createAfter(PacketInterpreterBase::ptr packet, size_type size, 
+            virtual ptr createAfter(PacketInterpreterBase::ptr packet, size_type size,
                                     senf::NoInit_t) const = 0;
             template <class ForwardReadableRange>
-            ptr createAfter(PacketInterpreterBase::ptr packet, 
+            ptr createAfter(PacketInterpreterBase::ptr packet,
                             ForwardReadableRange const & range) const;
-            
+
             // Create packet as new packet (header) const before a given packet
 
             virtual ptr createBefore(PacketInterpreterBase::ptr packet) const = 0;
@@ -132,9 +132,9 @@ namespace senf {
         virtual ~PacketInterpreterBase();
 
         static                             factory_t no_factory();
-        
+
         ptr clone();
- 
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
@@ -160,7 +160,7 @@ namespace senf {
 
         using PacketData::valid;
         PacketData & data();
-        
+
         ///@}
 
         ///\name Annotations
@@ -278,7 +278,7 @@ namespace senf {
         static ptr createAfter(PacketInterpreterBase::ptr packet, size_type size);
         static ptr createAfter(PacketInterpreterBase::ptr packet, size_type size, senf::NoInit_t);
         template <class ForwardReadableRange>
-        static ptr createAfter(PacketInterpreterBase::ptr packet, 
+        static ptr createAfter(PacketInterpreterBase::ptr packet,
                                ForwardReadableRange const & range);
 
         // Create packet as new packet (header) before a given packet
@@ -327,7 +327,7 @@ namespace senf {
         // virtual interface
 
         virtual optional_range v_nextPacketRange();
-        virtual PacketInterpreterBase::ptr v_appendClone(detail::PacketImpl * impl, 
+        virtual PacketInterpreterBase::ptr v_appendClone(detail::PacketImpl * impl,
                                                          iterator base, iterator new_base);
         virtual PacketInterpreterBase::ptr v_appendClone(detail::PacketImpl * impl, range r);
         virtual void v_finalize();
@@ -339,7 +339,7 @@ namespace senf {
         // factory
 
         /** \brief Internal: Implementation of abstract factory interface
-            
+
             \internal
 
             Implements the abstract factory interface for \a PacketType
@@ -351,27 +351,27 @@ namespace senf {
             virtual PacketInterpreterBase::ptr create(senf::NoInit_t) const;
             virtual PacketInterpreterBase::ptr create(size_type size) const;
             virtual PacketInterpreterBase::ptr create(size_type size,senf::NoInit_t) const;
-            
+
             // Create packet as new packet after a given packet
 
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet) 
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet)
                 const;
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet, 
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet,
                                                            senf::NoInit_t) const;
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet, 
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet,
                                                            size_type size) const;
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet, 
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet,
                                                            size_type size, senf::NoInit_t) const;
-            
+
             // Create packet as new packet (header) before a given packet
 
-            virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr packet) 
+            virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr packet)
                 const;
             virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr packet,
-                                                            senf::NoInit_t) 
+                                                            senf::NoInit_t)
                 const;
 
-            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr packet) 
+            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr packet)
                 const;
             virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr packet,
                                                                   senf::NoInit_t)
@@ -379,7 +379,7 @@ namespace senf {
 
             // Parse next packet in chain
 
-            virtual PacketInterpreterBase::ptr parseNext(PacketInterpreterBase::ptr packet) 
+            virtual PacketInterpreterBase::ptr parseNext(PacketInterpreterBase::ptr packet)
                 const;
         };
 
@@ -393,11 +393,11 @@ namespace senf {
     /** \brief Invalid packet chain operation
 
         This exception signals an invalid operation on the chain like trying to find a non-existent
-        chain member and other similar error conditions. 
+        chain member and other similar error conditions.
      */
     struct InvalidPacketChainException : public senf::Exception
     { InvalidPacketChainException() : senf::Exception("invalid packet chain") {} };
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

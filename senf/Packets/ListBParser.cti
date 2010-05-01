@@ -187,7 +187,7 @@ next(container_type const & c, iterator_data & d)
     const
 {
     return boost::next( container_type::iterator::get(d).i(),
-                        senf::bytes(ElementParser( container_type::iterator::get(d).i(), 
+                        senf::bytes(ElementParser( container_type::iterator::get(d).i(),
                                                    c.state() )) );
 }
 

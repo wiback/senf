@@ -41,7 +41,7 @@
                                       SENFLogParameters::area,                                    \
                                       SENFLogParameters::level >(log.str());                      \
         }                                                                                         \
-    } while(0) 
+    } while(0)
 
 #define SENF_LOG_BLOCK_TPL_(parameters, block)                                                    \
     do {                                                                                          \
@@ -53,7 +53,7 @@
                              typename SENFLogParameters::area,                                    \
                              typename SENFLogParameters::level>(log.str());                       \
         }                                                                                         \
-    } while(0) 
+    } while(0)
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif

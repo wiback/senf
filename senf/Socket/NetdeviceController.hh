@@ -70,16 +70,16 @@ namespace senf {
         void interfaceName(const std::string &newName);
                                         ///< set interface name
                                         /**< Changes the name of the interface.
-                                             Note, that setting the name is a privileged operation. 
-                                             It is only allowed when the interface is not up. If 
-                                             the interface is up, this call will cause an 
+                                             Note, that setting the name is a privileged operation.
+                                             It is only allowed when the interface is not up. If
+                                             the interface is up, this call will cause an
                                              SystemException to be thrown. */
 
         int mtu() const;                ///< return the Maximum Transmission Unit
         void mtu(int new_mtu);          ///< set the Maximum Transmission Unit
                                         /**< Set the MTU (Maximum Transfer Unit) of the device.
                                              Note, that this is a privileged operation.
-                                             Setting the MTU to too small values may cause kernel 
+                                             Setting the MTU to too small values may cause kernel
                                              crashes. */
 
         bool promisc() const;           ///< return \c true if interface is in promiscuous mode

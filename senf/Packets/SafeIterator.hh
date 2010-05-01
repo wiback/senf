@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -59,7 +59,7 @@ namespace senf {
         typedef PacketData::size_type size_type;
 
         safe_data_iterator(); ///< Make uninitialized iterator
-        explicit safe_data_iterator(PacketData & data); 
+        explicit safe_data_iterator(PacketData & data);
                                         ///< Construct iterator only setting the data container
         safe_data_iterator(PacketData & data, PacketData::iterator i);
                                         ///< Initialize iterator to given position

@@ -42,7 +42,7 @@
 prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 {
     // The connector is not registered -> route() or noroute() statement missing
-    SENF_ASSERT( module_ && 
+    SENF_ASSERT( module_ &&
                  "senf::ppi::connector::Connector::connect(): (source) "
                  "Missing route() or noroute()" );
     // The connector is already connected
@@ -58,14 +58,14 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
                  "senf::ppi::connector::Connector::connect(): (target) "
                  "duplicate connection" );
     if (! (packetTypeID() == typeid(void) ||
-           target.packetTypeID() == typeid(void) || 
+           target.packetTypeID() == typeid(void) ||
            packetTypeID() == target.packetTypeID()) )
-        throw IncompatibleConnectorsException() 
-            << ": " << prettyName(packetTypeID()) 
+        throw IncompatibleConnectorsException()
+            << ": " << prettyName(packetTypeID())
             << " [in module " << prettyName(typeid(*module_))  << "] "
             << ", " << prettyName(target.packetTypeID())
             << " [in module " << prettyName(typeid(*target.module_)) << "]";
-            
+
     peer_ = & target;
     target.peer_ = this;
 
@@ -84,8 +84,8 @@ prefix_ void senf::ppi::connector::Connector::trace(Packet const & p, char const
         return;
     SENF_LOG_BLOCK(({
                 std::string type (prettyName(p.typeId().id()));
-                log << "PPI packet trace: " << label << " 0x" << std::hex << p.id() << " " 
-                    << type.substr(21, type.size()-22) << " on " << & module() << " " 
+                log << "PPI packet trace: " << label << " 0x" << std::hex << p.id() << " "
+                    << type.substr(21, type.size()-22) << " on " << & module() << " "
                     << prettyName(typeid(module())) << " connector 0x" << this << "\n";
                 if (traceState_ == TRACE_CONTENTS)
                     p.dump(log);
@@ -98,14 +98,14 @@ prefix_ void senf::ppi::connector::Connector::throttleTrace(char const * label,
     if (traceState_ == NO_TRACING)
         return;
     SENF_LOG_BLOCK(({
-                log << "PPI throttling trace: " << label << " " << type << " on " << & module() 
+                log << "PPI throttling trace: " << label << " " << type << " on " << & module()
                     << " " << prettyName(typeid(module())) << " connector 0x" << this << "\n";
             }));
 }
 
 namespace senf { namespace ppi { namespace connector {
 
-    SENF_CONSOLE_REGISTER_ENUM_MEMBER( 
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER(
         Connector, TraceState, (NO_TRACING)(TRACE_IDS)(TRACE_CONTENTS) );
 
 }}}
@@ -218,7 +218,7 @@ prefix_ void senf::ppi::connector::PassiveConnector::v_unthrottleEvent()
 
 prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
 {
-    if (std::find_if(routes_.begin(), routes_.end(), 
+    if (std::find_if(routes_.begin(), routes_.end(),
                      boost::bind(&ForwardingRoute::throttled, _1)) == routes_.end()) {
         remoteThrottled_ = false;
         if (!nativeThrottled_)
@@ -323,7 +323,7 @@ prefix_ void senf::ppi::connector::GenericActiveInput::v_requestEvent()
 // senf::ppi::connector::GenericPassiveInput
 
 ////////////////////////////////////////
-// private members 
+// private members
 
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_enqueueEvent()
 {

@@ -39,8 +39,8 @@
 
 namespace senf {
 
-    class MIHFId 
-        : public boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+    class MIHFId
+        : public boost::variant< boost::blank, senf::MACAddress, senf::INet4Address,
                 senf::INet6Address, std::string, senf::EUI64 >,
           public boost::less_than_comparable<MIHFId>,
           public boost::equality_comparable<MIHFId>
@@ -49,18 +49,18 @@ namespace senf {
         static MIHFId const Multicast; ///< The multicast (empty) MIHF Id
         static MIHFId const None; ///< The multicast (empty) MIHF Id
         enum Type { Empty, MACAddress, INet4Address, INet6Address, String, EUI64 };
-      
+
         MIHFId();                                   ///< Create empty instance.
-        MIHFId(senf::MACAddress const & addr);      ///< Construct id with given MACAddress 
+        MIHFId(senf::MACAddress const & addr);      ///< Construct id with given MACAddress
         MIHFId(senf::INet4Address const & addr);    ///< Construct id with given INet4Address
         MIHFId(senf::INet6Address const & addr);    ///< Construct id with given INet6Address
         MIHFId(std::string const & addr);           ///< Construct id with given String
         MIHFId(senf::EUI64 const & addr);           ///< Construct id with given EUI64
-        
+
         Type type() const;
         bool operator==(MIHFId const & other) const;
-        bool operator<(MIHFId const & other) const; 
-        
+        bool operator<(MIHFId const & other) const;
+
     private:
         struct GetTypeVisitor : public boost::static_visitor<Type> {
             Type operator()(boost::blank const &) const { return Empty; }

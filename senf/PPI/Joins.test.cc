@@ -74,7 +74,7 @@ SENF_AUTO_UNIT_TEST(passiveJoin)
     sink.input.throttle();
     BOOST_CHECK( ! source1 );
     BOOST_CHECK( ! source2 );
-    
+
     source1.submit(p);
     source2.submit(p);
     BOOST_CHECK_EQUAL( sink.size(), 2u );
@@ -105,7 +105,7 @@ SENF_AUTO_UNIT_TEST(priorityJoin)
 
     senf::Packet p1 (senf::DataPacket::create());
     senf::Packet p2 (senf::DataPacket::create());
-    
+
     source1.submit(p1);
     BOOST_CHECK( sink );
     source2.submit(p2);
@@ -128,10 +128,10 @@ SENF_AUTO_UNIT_TEST(priorityJoin)
     ppi::connect(source3, join, 0);
     ppi::connect(source4, join, -2);
     // Ordering now: source3, source1, source4, source2
- 
+
     senf::Packet p3 (senf::DataPacket::create());
     senf::Packet p4 (senf::DataPacket::create());
- 
+
     source4.submit(p4);
     source3.submit(p3);
     source2.submit(p2);

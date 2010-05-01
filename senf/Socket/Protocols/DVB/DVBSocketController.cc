@@ -39,7 +39,8 @@ using namespace std;
 
 unsigned int senf::DVBSocketController::controllerNr(0);
 
-senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_, const Callback & cb_)
+senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_,
+                                               const Callback & cb_)
     : dir( this ),
       frontendHandle( frontendHandle_ ),
       type( frontendHandle.protocol().getInfo().type ),
@@ -47,7 +48,9 @@ senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_
       cb( cb_ ),
       sectionNr(1),
       pesNr(1),
-      event( "senf::DVBSocketController::readEvent", senf::membind(&DVBSocketController::readEvent, this), frontendHandle, senf::scheduler::FdEvent::EV_PRIO, false )
+      event( "senf::DVBSocketController::readEvent",
+             senf::membind(&DVBSocketController::readEvent, this), frontendHandle,
+             senf::scheduler::FdEvent::EV_PRIO, false )
 {
     initConsole();
 }
@@ -59,22 +62,22 @@ prefix_ senf::DVBDemuxSectionHandle
 senf::DVBSocketController::createDVBDemuxSectionHandle(int adapternumber, int demuxnumber,
                                                        bool addToConsole)
 {
-    DVBDemuxSectionHandle sectionHandle(adapternumber, demuxnumber); 
+    DVBDemuxSectionHandle sectionHandle(adapternumber, demuxnumber);
     if (addToConsole)
         this->addToConsole(sectionHandle);
     return sectionHandle;
-        
+
 }
 
 prefix_ senf::DVBDemuxPESHandle
 senf::DVBSocketController::createDVBDemuxPESHandle(int adapternumber, int demuxnumber,
                                                    bool addToConsole)
 {
-    DVBDemuxPESHandle pesHandle(adapternumber, demuxnumber); 
+    DVBDemuxPESHandle pesHandle(adapternumber, demuxnumber);
     if (addToConsole)
         this->addToConsole(pesHandle);
     return pesHandle;
-        
+
 }
 
 prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxSectionHandle sh)
@@ -112,13 +115,18 @@ prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const st
     if (mode.c_str()[0]=='a') {
         switch (type) {
             case FE_QPSK:
-                tuneDVB_S(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate, frontend.u.qpsk.fec_inner);
+                tuneDVB_S(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate,
+                          frontend.u.qpsk.fec_inner);
                 break;
             case FE_QAM:
-                tuneDVB_C(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate, frontend.u.qam.fec_inner, frontend.u.qam.modulation);
+                tuneDVB_C(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate,
+                          frontend.u.qam.fec_inner, frontend.u.qam.modulation);
                 break;
             case FE_OFDM:
-                tuneDVB_T(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth, frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP, frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode, frontend.u.ofdm.guard_interval, frontend.u.ofdm.hierarchy_information);
+                tuneDVB_T(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth,
+                          frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP,
+                          frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode,
+                          frontend.u.ofdm.guard_interval, frontend.u.ofdm.hierarchy_information);
                 break;
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("Could not determine type of card.");
@@ -127,13 +135,19 @@ prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const st
     else {
         switch (type) {
             case FE_QPSK:
-                tuneDVB_S_sync(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate, frontend.u.qpsk.fec_inner);
+                tuneDVB_S_sync(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate,
+                               frontend.u.qpsk.fec_inner);
                 break;
             case FE_QAM:
-                tuneDVB_C_sync(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate, frontend.u.qam.fec_inner, frontend.u.qam.modulation);
+                tuneDVB_C_sync(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate,
+                               frontend.u.qam.fec_inner, frontend.u.qam.modulation);
                 break;
             case FE_OFDM:
-                tuneDVB_T_sync(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth, frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP, frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode, frontend.u.ofdm.guard_interval, frontend.u.ofdm.hierarchy_information);
+                tuneDVB_T_sync(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth,
+                               frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP,
+                               frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode,
+                               frontend.u.ofdm.guard_interval,
+                               frontend.u.ofdm.hierarchy_information);
                 break;
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("Could not determine type of card.");
@@ -150,13 +164,18 @@ prefix_ void senf::DVBSocketController::tuneTo(const string & channel)
     frontend = parser.getFrontendParam(configLine);
     switch (type) {
         case FE_QPSK:
-            tuneDVB_S(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate, frontend.u.qpsk.fec_inner);
+            tuneDVB_S(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate,
+                      frontend.u.qpsk.fec_inner);
             break;
         case FE_QAM:
-            tuneDVB_C(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate, frontend.u.qam.fec_inner, frontend.u.qam.modulation);
+            tuneDVB_C(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate,
+                      frontend.u.qam.fec_inner, frontend.u.qam.modulation);
             break;
         case FE_OFDM:
-            tuneDVB_T(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth, frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP, frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode, frontend.u.ofdm.guard_interval, frontend.u.ofdm.hierarchy_information);
+            tuneDVB_T(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth,
+                      frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP,
+                      frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode,
+                      frontend.u.ofdm.guard_interval, frontend.u.ofdm.hierarchy_information);
             break;
         default:
             SENF_THROW_SYSTEM_EXCEPTION("Could not determine type of card.");
@@ -175,7 +194,8 @@ prefix_ void senf::DVBSocketController::tuneDVB_T(unsigned int frequency,
                 )
 {
     if (type != FE_OFDM)
-        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-T Card!";
+        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ")
+            << getTypeString() << " for this operation you need a DVB-T Card!";
 
     event.enable();
 
@@ -191,10 +211,14 @@ prefix_ void senf::DVBSocketController::tuneDVB_T(unsigned int frequency,
                 hierarchy_information);
 }
 
-prefix_ void senf::DVBSocketController::tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate)
+prefix_ void senf::DVBSocketController::tuneDVB_S(unsigned int frequency,
+                                                  fe_spectral_inversion_t inversion,
+                                                  unsigned int symbole_rate,
+                                                  fe_code_rate_t code_rate)
 {
     if (type != FE_QPSK)
-        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-S Card!";
+        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ")
+            << getTypeString() << " for this operation you need a DVB-S Card!";
 
     event.enable();
 
@@ -210,7 +234,8 @@ prefix_ void senf::DVBSocketController::tuneDVB_C(unsigned int frequency,
                 )
 {
     if (type != FE_QAM)
-        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-C Card!";
+        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ")
+            << getTypeString() << " for this operation you need a DVB-C Card!";
 
     event.enable();
 
@@ -228,13 +253,19 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneTo_sync(const string &
     frontend = parser.getFrontendParam(configLine);
     switch (type) {
         case FE_QPSK:
-            ev = tuneDVB_S_sync(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate, frontend.u.qpsk.fec_inner);
+            ev = tuneDVB_S_sync(frontend.frequency, frontend.inversion,
+                                frontend.u.qpsk.symbol_rate, frontend.u.qpsk.fec_inner);
             break;
         case FE_QAM:
-            ev = tuneDVB_C_sync(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate, frontend.u.qam.fec_inner, frontend.u.qam.modulation);
+            ev = tuneDVB_C_sync(frontend.frequency, frontend.inversion, frontend.u.qam.symbol_rate,
+                                frontend.u.qam.fec_inner, frontend.u.qam.modulation);
             break;
         case FE_OFDM:
-            ev = tuneDVB_T_sync(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth, frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP, frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode, frontend.u.ofdm.guard_interval, frontend.u.ofdm.hierarchy_information);
+            ev = tuneDVB_T_sync(frontend.frequency, frontend.inversion, frontend.u.ofdm.bandwidth,
+                                frontend.u.ofdm.code_rate_HP, frontend.u.ofdm.code_rate_LP,
+                                frontend.u.ofdm.constellation, frontend.u.ofdm.transmission_mode,
+                                frontend.u.ofdm.guard_interval,
+                                frontend.u.ofdm.hierarchy_information);
             break;
         default:
             SENF_THROW_SYSTEM_EXCEPTION("Could not determine type of card.");
@@ -254,7 +285,8 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_T_sync(unsigned in
                 )
 {
     if (type != FE_OFDM)
-        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-T Card!";
+        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ")
+            << getTypeString() << " for this operation you need a DVB-T Card!";
 
     event.disable();
 
@@ -282,7 +314,8 @@ senf::DVBSocketController::tuneDVB_S_sync(unsigned int frequency,
                                           unsigned int symbole_rate, fe_code_rate_t code_rate)
 {
     if (type != FE_QPSK)
-        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-S Card!";
+        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ")
+            << getTypeString() << " for this operation you need a DVB-S Card!";
 
     event.disable();
 
@@ -303,7 +336,8 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_C_sync(unsigned in
                 )
 {
     if (type != FE_QAM)
-        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-C Card!";
+        SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ")
+            << getTypeString() << " for this operation you need a DVB-C Card!";
 
     event.disable();
 
@@ -432,25 +466,36 @@ prefix_ void senf::DVBSocketController::initConsole()
     ++controllerNr;
 
     dir.add("type", fty::Command(&DVBSocketController::getTypeString, this)
-	    .doc("Shows actual type of card DVB-{T, S, C}") );
+            .doc("Shows actual type of card DVB-{T, S, C}") );
 
     dir.add("info", fty::Command(&DVBSocketController::getTuneInfo, this)
-	    .doc("Returns a string which shows actual tuning status.\n"
-		 "'S' prints signal strength (in hex)\n"
-		 "'s' prints singal to noise ration (in hex)\n"
-		 "'b' prints bit error rate (in hex)\n"
-		 "'u' prints uncorrected blocks (in hex)\n"
-		 "'f' prints readable overal status e.g. 'Has Lock'\n\n"
-		 "These characters can be used to form the output. Be aware, some\n"
-		 "features may not be supported be your current driver implementation\n"
-		 "and could end in throwing an exception!")
-	    .arg("conf", "Ssbuf", kw::default_value = "Ssbuf") );
+            .doc("Returns a string which shows actual tuning status.\n"
+                 "'S' prints signal strength (in hex)\n"
+                 "'s' prints singal to noise ration (in hex)\n"
+                 "'b' prints bit error rate (in hex)\n"
+                 "'u' prints uncorrected blocks (in hex)\n"
+                 "'f' prints readable overal status e.g. 'Has Lock'\n\n"
+                 "These characters can be used to form the output. Be aware, some\n"
+                 "features may not be supported be your current driver implementation\n"
+                 "and could end in throwing an exception!")
+            .arg("conf", "Ssbuf", kw::default_value = "Ssbuf") );
 
     dir.add("tune", fty::Command(&DVBSocketController::tuneToCMD, this)
-	    .doc("tunes to channel listet in the configfile.")
-	    .arg("channel", "channel to tune")
-	    .arg("mode", "mode 'sync' or 'async'", kw::default_value = "async") );
+            .doc("tunes to channel listet in the configfile.")
+            .arg("channel", "channel to tune")
+            .arg("mode", "mode 'sync' or 'async'", kw::default_value = "async") );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

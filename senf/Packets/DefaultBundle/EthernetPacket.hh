@@ -36,7 +36,7 @@
 
 namespace senf {
 
-    /** \brief Parse an Ethernet MAC address 
+    /** \brief Parse an Ethernet MAC address
 
         The ethernet MAC is returned by value as a 6-byte sequence
 
@@ -46,7 +46,7 @@ namespace senf {
     struct MACAddressParser : public PacketParserBase
     {
         MACAddressParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
-       
+
         ///////////////////////////////////////////////////////////////////////////
 
         typedef MACAddress value_type;
@@ -59,7 +59,7 @@ namespace senf {
 
         MACAddressParser const & operator= (value_type const & other) { value(other); return *this; }
     };
-    
+
     /** \brief Parse an Ethernet packet
 
         Parser implementing an ethernet header.
@@ -80,7 +80,7 @@ namespace senf {
     /** \brief EtherType registry
 
         This registry registers packet types with their EtherType number.
-        
+
         \see <a href="http://www.iana.org/assignments/ethernet-numbers">Ethernet numbers</a> \n
             \ref PacketRegistry
      */
@@ -121,7 +121,7 @@ namespace senf {
 
         static factory_t nextPacketType(packet p);
         /// Dump given EthernetPacket in readable form to given output stream
-        static void dump(packet p, std::ostream & os); 
+        static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
     };
 
@@ -130,9 +130,9 @@ namespace senf {
      */
     typedef ConcretePacket<EthernetPacketType> EthernetPacket;
 
-    
+
     /** \brief Parse an ethernet VLAN tag
-        
+
         Parser interpreting the ethernet VLAN tag. Fields are
 
         \see EthVLanPacketType
@@ -158,7 +158,7 @@ namespace senf {
         \par Fields:
             \ref EthVLanPacketParser
             \image html EthVLanPacket.png
-        
+
         \par Associated registries:
             \ref EtherTypes
 
@@ -168,7 +168,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     struct EthVLanPacketType
-        : public PacketTypeBase, 
+        : public PacketTypeBase,
           public PacketTypeMixin<EthVLanPacketType, EtherTypes>
     {
 #ifndef DOXYGEN
@@ -184,7 +184,7 @@ namespace senf {
 
         /** \todo Add LLC/SNAP support -> only use the registry
             for type() values >=1536, otherwise expect an LLC header */
-        static key_t nextPacketKey(packet p) 
+        static key_t nextPacketKey(packet p)
             { return p->type(); }
 
         /// Dump given EthVLanPacket in readable form to given output stream

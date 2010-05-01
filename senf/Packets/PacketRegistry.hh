@@ -78,7 +78,7 @@ namespace senf {
         static registration only works when the symbol is included into the final binary. To force
         this inclusion, you should not put packet registrations into a library but into an object
         file.
-        
+
         To simplify static registration the SENF_PACKET_REGISTRY_REGISTER macro can be used:
         \code
         SENF_PACKET_REGISTRY_REGISTER(SomeTag, SomePacket, key_of_somePacket);

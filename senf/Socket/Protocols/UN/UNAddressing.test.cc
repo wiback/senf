@@ -41,19 +41,19 @@ SENF_AUTO_UNIT_TEST(UNSocketAddress)
 {
     senf::UNSocketAddress addr;
     BOOST_CHECK( ! addr);
-        
+
     std::string path ("/tmp/SENF_TEST");
     addr.path( path);
-    
+
     BOOST_CHECK( addr);
     BOOST_CHECK_EQUAL( addr.path(), path);
     BOOST_CHECK_EQUAL( addr, senf::UNSocketAddress(path));
     BOOST_CHECK_EQUAL( addr, senf::UNSocketAddress(addr));
-    
+
     std::stringstream str;
     str << addr;
     BOOST_CHECK_EQUAL( str.str(), path );
-    
+
     // UNSocketAddress path too long
     BOOST_CHECK_THROW( senf::UNSocketAddress(std::string(1024, 'x')), senf::AddressSyntaxException );
 }

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -28,7 +28,7 @@
 
 // Custom includes
 #ifdef SENF_DEBUG
-	#include <execinfo.h>
+    #include <execinfo.h>
 #endif
 #include <cxxabi.h>
 #include <boost/regex.hpp>
@@ -43,7 +43,7 @@ prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigne
 #ifdef SENF_DEBUG
     char ** symbols (::backtrace_symbols(backtrace, numEntries));
 
-    static boost::regex const backtraceRx 
+    static boost::regex const backtraceRx
         ("(.*)\\((.*)\\+(0x[0-9a-f]+)\\) \\[(0x[0-9a-f]+)\\]");
     enum { File = 1,
            Symbol = 2,
@@ -61,7 +61,7 @@ prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigne
                 symbol = std::string(demangled);
                 free(demangled);
             }
-            os << "    " << symbol << " + " << match[Offset] 
+            os << "    " << symbol << " + " << match[Offset]
                << "\n        in " << match[File] << " [" << match[Address] << "]\n";
         }
         else if (sym == "[0xffffe410]")

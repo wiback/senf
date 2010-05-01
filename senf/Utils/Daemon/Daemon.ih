@@ -52,7 +52,7 @@ namespace detail {
 
     private:
 
-        class Forwarder 
+        class Forwarder
         {
         public:
             typedef boost::function<void ()> Callback;
@@ -96,7 +96,7 @@ namespace detail {
             Callback cb_;
             scheduler::FdEvent readevent_;
         };
-        
+
         void pipeClosed(int id);
         void sigChld(siginfo_t const &);
         void childDied();

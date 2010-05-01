@@ -39,7 +39,7 @@
 prefix_ void senf::ppi::ThresholdQueueing::update(connector::GenericPassiveInput & input, Event event)
 {
     switch (event) {
-    case ENQUEUE:    
+    case ENQUEUE:
         if (input.queueSize() >= high_)
             input.throttle();
         break;

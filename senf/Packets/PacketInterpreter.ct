@@ -43,11 +43,11 @@ senf::PacketInterpreterBase::parseNextAs()
     optional_range r (nextPacketRange());
     if (!r)
         throw InvalidPacketChainException();
-    
+
     if (next())
         impl().truncateInterpreters(next().get());
 
-    typename PacketInterpreter<Type>::ptr pi 
+    typename PacketInterpreter<Type>::ptr pi
         (PacketInterpreter<Type>::create(&impl(),r->begin(),r->end(),Append));
     return pi;
 }
@@ -118,7 +118,7 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr pack
     optional_range r (packet->nextPacketRange());
     if (!r)
         throw InvalidPacketChainException();
-    
+
     if (packet->next())
         packet->impl().truncateInterpreters(packet->next().get());
 
@@ -379,7 +379,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBas
     optional_range r (packet->nextPacketRange());
     if (!r)
         throw InvalidPacketChainException();
-    
+
     if (packet->next())
         packet->impl().truncateInterpreters(packet->next().get());
 
@@ -387,7 +387,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBas
 }
 
 template <class PacketType>
-const typename senf::PacketInterpreter<PacketType>::FactoryImpl 
+const typename senf::PacketInterpreter<PacketType>::FactoryImpl
     senf::PacketInterpreter<PacketType>::factory_;
 
 ///////////////////////////////ct.e////////////////////////////////////////

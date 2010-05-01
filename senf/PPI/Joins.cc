@@ -85,12 +85,12 @@ senf::ppi::module::PriorityJoin::connectorSetup(PriorityJoin::ConnectorType & co
 
     if (priority < 0) {
         priority = connectors().size() + priority;
-        if (priority < 0) 
+        if (priority < 0)
             priority = 0;
     }
     if (priority >= int(connectors().size())-1)
         return;
-    
+
     connectors().insert(connectors().begin()+priority, connectors().pop_back().release());
 }
 

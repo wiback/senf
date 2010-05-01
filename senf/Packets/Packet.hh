@@ -242,7 +242,7 @@ namespace senf {
 
 
         Packet      first() const;      ///< Return first packet in chain
-        template <class OtherPacket> OtherPacket first() const; 
+        template <class OtherPacket> OtherPacket first() const;
                                         ///< Return first packet in chain and cast
                                         /**< \throws std::bad_cast if the first() packet is not of
                                              type \a OtherPacket */

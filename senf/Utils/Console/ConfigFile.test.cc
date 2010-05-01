@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -41,7 +41,7 @@ namespace {
 
     int var1 (0);
     bool var2 (false);
-    
+
     void fun1(int v) { var1 = v; }
     void fun2() { var2 = true; }
 
@@ -50,7 +50,7 @@ namespace {
     public:
         TempFile(std::string const & name) : name_ (name), file_ (name_.c_str()) {}
         ~TempFile() { file_.close(); boost::filesystem::remove(name_); }
-        
+
         template <class T> TempFile & operator<<(T const & v) { file_ << v; return *this; }
         enum Closer { close }; void operator<<(Closer) { file_.close(); }
         std::string const & name() { return name_; }
@@ -59,7 +59,7 @@ namespace {
         std::string name_;
         std::ofstream file_;
     };
-    
+
 }
 
 #define SENF_CHECK_THROW_SYSTEMEXCEPTION( expr, errorNumber, msg)   \
@@ -71,16 +71,16 @@ namespace {
         BOOST_CHECK( ex.anyOf( errorNumber));                       \
         BOOST_CHECK( ex.message().find(msg) != std::string::npos);  \
     }                                                               \
-        
+
 
 SENF_AUTO_UNIT_TEST(configFile)
 {
     namespace fty = senf::console::factory;
 
     TempFile cfgf ("test.cfg");
-    cfgf << "dir1/fun1 10;\n" 
+    cfgf << "dir1/fun1 10;\n"
          << TempFile::close;
-    
+
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
     dir1.add("fun1",fty::Command(&fun1));
@@ -125,11 +125,11 @@ SENF_AUTO_UNIT_TEST(configFileRestrict)
     cfgf << "dir1/fun1 10;\n"
          << "dir2/fun2;\n"
          << TempFile::close;
-    
+
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
     dir1.add("fun1",fty::Command(&fun1));
-    
+
     {
         var1 = 0;
         var2 = false;
@@ -161,14 +161,14 @@ SENF_AUTO_UNIT_TEST(configFileSkipGroup)
     cfgf << "dir1/fun1 10;\n"
          << "dir2 { dir3 { fun2; } fun1 5; }"
          << TempFile::close;
-    
+
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
     dir1.add("fun1",fty::Command(&fun1));
-    
+
     senf::console::ScopedDirectory<> dir2;
     senf::console::root().add("dir2", dir2);
-    
+
     dir2.add("dir3",fty::Directory()).add("fun2", fty::Command(&fun2));
     dir2.add("fun1", fty::Command(&fun1));
 
@@ -204,14 +204,14 @@ SENF_AUTO_UNIT_TEST(configRestrictAndLink)
     cfgf << "dir1/fun1 10;\n"
          << "link1 { dir3 { fun2; } fun1 5; }"
          << TempFile::close;
-    
+
     senf::console::ScopedDirectory<> dir1;
     senf::console::root().add("dir1", dir1);
     dir1.add("fun1",fty::Command(&fun1));
-    
+
     senf::console::ScopedDirectory<> dir2;
     dir1.add("dir2", dir2);
-    
+
     dir2.add("dir3",fty::Directory()).add("fun2", fty::Command(&fun2));
     dir2.add("fun1", fty::Command(&fun1));
 

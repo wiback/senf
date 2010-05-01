@@ -56,20 +56,20 @@ namespace {
 
     class MyDaemon : public senf::Daemon
     {
-        void configure() { 
-            std::cout << "Running configure()" << std::endl; 
+        void configure() {
+            std::cout << "Running configure()" << std::endl;
             pidFile("invalid.pid");
             consoleLog("invalid.log");
             senf::Daemon::configure();
         }
 
-        void init() { 
-            std::cout << "Running init()" << std::endl; 
+        void init() {
+            std::cout << "Running init()" << std::endl;
             std::cerr << "(stderr)" << std::endl;
         }
 
         void run() {
-            std::cout << "Running run()" << std::endl; 
+            std::cout << "Running run()" << std::endl;
             delay(2000);
         }
     };
@@ -107,10 +107,10 @@ namespace {
         }
         signal(SIGCHLD, SIG_DFL);
         int status;
-        if (::waitpid(pid, &status, 0) < 0) 
+        if (::waitpid(pid, &status, 0) < 0)
             throw senf::SystemException("::waitpid()");
         if (WIFSIGNALED(status))
-            std::cerr << "Terminated with signal " 
+            std::cerr << "Terminated with signal "
                       << senf::signalName(WTERMSIG(status)) << "(" << WTERMSIG(status) << ")\n";
         else if (WIFEXITED(status))
             std::cerr << "Exited normally with exit status " << WEXITSTATUS(status) << "\n";
@@ -121,8 +121,8 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(testDaemon)
 {
-    char const * args[] = { "run", 
-                            "--console-log=testDaemon.log", 
+    char const * args[] = { "run",
+                            "--console-log=testDaemon.log",
                             "--pid-file=testDaemon.pid" };
 
     SENF_CHECK_NO_THROW( BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args), args), 0 ) );
@@ -131,7 +131,7 @@ SENF_AUTO_UNIT_TEST(testDaemon)
     BOOST_CHECK( ! boost::filesystem::exists("invalid.pid") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.pid") );
     BOOST_REQUIRE( boost::filesystem::exists("testDaemon.log") );
-    
+
     boost::filesystem::rename("testDaemon.log", "testDaemon.log.1");
     {
         std::ifstream pidFile ("testDaemon.pid");
@@ -146,7 +146,7 @@ SENF_AUTO_UNIT_TEST(testDaemon)
     BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.log") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.log.1") );
-    
+
     std::ifstream log ("testDaemon.log.1");
     std::stringstream data;
     data << log.rdbuf();

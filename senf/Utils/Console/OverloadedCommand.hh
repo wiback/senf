@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -75,15 +75,15 @@ namespace console {
         void execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command);
                                         ///< Call the overload
                                         /**< If the \a arguments are not acceptable for this
-                                             overload, a SyntaxErrorException must be thrown. 
+                                             overload, a SyntaxErrorException must be thrown.
                                              Same as operator()() */
 
         void operator()(boost::any & rv, std::ostream & os, ParseCommandInfo const & command);
                                         ///< Call the overload
                                         /**< If the \a arguments are not acceptable for this
-                                             overload, a SyntaxErrorException must be thrown. 
+                                             overload, a SyntaxErrorException must be thrown.
                                              Same as execute() */
-        
+
         unsigned numArguments() const;  ///< Number of arguments this overload takes
         void argumentDoc(unsigned index, ArgumentDoc & doc) const;
                                         ///< Get information on argument \a index
@@ -94,7 +94,7 @@ namespace console {
                                              \param[out] doc Argument documentation */
 
         std::string doc() const;        ///< Get overload documentation
-        
+
         OverloadedCommandNode & node() const; ///< Access owning node
                                         /**< \pre The command \e must have been added to an
                                              OverloadedCommandNode. */
@@ -142,7 +142,7 @@ namespace console {
         'SyntaxErrorException' exception is thrown.
 
         This works by first adding an OverloadedCommandNode to the directory in question and then
-        adding commands to that node. Commands are derived from CommandOverload. 
+        adding commands to that node. Commands are derived from CommandOverload.
         \code
         senf::console::DirectoryNode & dir (...);
         senf::console::OverloadedCommandNode & cmd (
@@ -185,7 +185,7 @@ namespace console {
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-        
+
         template <class Command>
         Command & add(boost::intrusive_ptr<Command> overload); ///< Add an additional overload
 
@@ -223,7 +223,7 @@ namespace console {
     /** \brief Basic command overload
 
         This is an implementation of CommandOverload which allows to call an arbitrary callback with
-        the correct signature 
+        the correct signature
         (<tt>void (std::ostream &, senf::console::ParseCommandInfo const &)</tt>)
       */
     class SimpleCommandOverload
@@ -277,7 +277,7 @@ namespace console {
         SimpleOverloadAttributor const & overloadDoc(std::string const & doc) const;
 
         OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
-        
+
     private:
         SimpleCommandOverload::ptr overload_;
         mutable boost::optional<std::string> doc_;

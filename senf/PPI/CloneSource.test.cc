@@ -52,7 +52,7 @@ SENF_AUTO_UNIT_TEST(cloneSource)
     BOOST_CHECK( sink.request() != p );
     BOOST_CHECK( sink.request().data()[0] == p.data()[0] );
     BOOST_CHECK( sink.request().data()[0] == p.data()[0] );
-    
+
     data[0] = 0xcd;
     senf::Packet p2 (senf::DataPacket::create(data));
     source.replacePacket( p2);

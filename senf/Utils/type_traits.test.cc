@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -45,9 +45,9 @@ SENF_AUTO_UNIT_TEST(typeTraits)
 {
     typedef boost::function_traits<void (int, double)> traits;
 
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::function_traits_remove_arg< traits >::type, 
-        boost::function_traits<void (double)> 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::function_traits_remove_arg< traits >::type,
+        boost::function_traits<void (double)>
     >::value ));
 
     BOOST_STATIC_ASSERT(( boost::is_same<
@@ -59,36 +59,36 @@ SENF_AUTO_UNIT_TEST(typeTraits)
         void
     >::value ));
 
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< Class (Class::*) >::type, 
-        Class 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< Class (Class::*) >::type,
+        Class
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< Class const (Class::*) >::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< Class const (Class::*) >::type,
         Class const
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< Class (Class::*)(int) >::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< Class (Class::*)(int) >::type,
         Class (int)
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< Class const (Class::*)(int) >::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< Class const (Class::*)(int) >::type,
         Class const (int)
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< void (Class::*)(int) const>::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< void (Class::*)(int) const>::type,
         void (int)
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< Class const (Class::*)(int) const>::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< Class const (Class::*)(int) const>::type,
         Class const (int)
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< void (Class::* const)(int)>::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< void (Class::* const)(int)>::type,
         void (int)
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_member_pointer< void (Class::* const)(int) const>::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_member_pointer< void (Class::* const)(int) const>::type,
         void (int)
     >::value ));
 
@@ -101,12 +101,12 @@ SENF_AUTO_UNIT_TEST(typeTraits)
         void
     >::value ));
 
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_any_pointer< int (Class::*) >::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_any_pointer< int (Class::*) >::type,
         int
     >::value ));
-    BOOST_STATIC_ASSERT(( boost::is_same< 
-        senf::remove_any_pointer< void (Class::*)(int) >::type, 
+    BOOST_STATIC_ASSERT(( boost::is_same<
+        senf::remove_any_pointer< void (Class::*)(int) >::type,
         void (int)
     >::value ));
     BOOST_STATIC_ASSERT(( boost::is_same<
@@ -140,7 +140,7 @@ SENF_AUTO_UNIT_TEST(typeTraits)
 
     BOOST_STATIC_ASSERT((   senf::is_pair< std::pair<int,void*> >::value ));
     BOOST_STATIC_ASSERT(( ! senf::is_pair< void () >::value ));
-    
+
     BOOST_CHECK( true );
 }
 

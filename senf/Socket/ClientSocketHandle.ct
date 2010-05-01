@@ -106,10 +106,10 @@ template <class SPolicy>
 template <class Sequence>
 prefix_ void senf::ClientSocketHandle<SPolicy>::read(Sequence & container, unsigned limit)
 {
-    if (limit == 0) 
+    if (limit == 0)
         limit = available();
     container.resize(limit);
-    container.erase(read( std::make_pair(container.begin(), container.end()) ), 
+    container.erase(read( std::make_pair(container.begin(), container.end()) ),
                     container.end());
 }
 
@@ -134,7 +134,7 @@ prefix_ void senf::ClientSocketHandle<SPolicy>::readfrom(Sequence & container, A
     if (limit>0 && nread>limit)
         nread = limit;
     container.resize(nread);
-    container.erase(readfrom( std::make_pair(container.begin(), container.end()), from ), 
+    container.erase(readfrom( std::make_pair(container.begin(), container.end()), from ),
                     container.end());
 }
 

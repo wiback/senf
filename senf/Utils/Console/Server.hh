@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -72,7 +72,7 @@ namespace console {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-        
+
         typedef detail::ServerHandle ServerHandle;
 
         enum Mode { Automatic, Interactive, Noninteractive };
@@ -98,9 +98,9 @@ namespace console {
 
         Mode mode() const;              ///< Get mode
                                         /**< \see \ref mode(Mode) */
-        
+
         Server & mode(Mode mode);       ///< Set mode
-                                        /**< There are two Server types: 
+                                        /**< There are two Server types:
                                              \li An interactive server displays a command prompt and
                                                  optionally supports command-line editing.
                                              \li A non-interactive server does not display any
@@ -115,7 +115,7 @@ namespace console {
                                              opened. */
 
         void stop();                    ///< Stop the server
-                                        /**< All clients will be closed 
+                                        /**< All clients will be closed
                                              \warning The Server instance itself will be deleted */
 
     protected:
@@ -127,19 +127,19 @@ namespace console {
 
         void newClient(int event);
         void removeClient(Client & client);
-        
+
         ServerHandle handle_;
         scheduler::FdEvent event_;
         DirectoryNode::ptr root_;
         Mode mode_;
-        
+
         typedef std::set< boost::intrusive_ptr<Client> > Clients;
         Clients clients_;
         std::string name_;
-        
+
         friend class Client;
     };
-    
+
     /** \brief Server client instance
 
         Whenever a new client connects, a new instance of this class is created. This class shows a
@@ -149,7 +149,7 @@ namespace console {
         \ingroup console_access
      */
     class Client
-        : public senf::intrusive_refcount, 
+        : public senf::intrusive_refcount,
           private boost::base_from_member< detail::NonblockingSocketOStream >,
           public senf::log::IOStreamTarget
     {
@@ -174,7 +174,7 @@ namespace console {
         ClientHandle handle() const;    ///< Get the client's network socket handle
         std::ostream & stream();        ///< Get client's output stream
                                         /**< Data sent to this stream is sent out over the network
-                                             via the client's socket handle. Write operation is 
+                                             via the client's socket handle. Write operation is
                                              non-blocking and data may be dropped. Data is written
                                              using Client::write(). */
         std::string promptString() const; ///< Get the prompt string
@@ -204,18 +204,18 @@ namespace console {
                                              will return the associated Client instance reference.
                                              \throws std::bad_cast if \a os is not associated with a
                                                  Client instance. */
-        static unsigned getWidth(std::ostream & os, unsigned defaultWidth = 0, 
+        static unsigned getWidth(std::ostream & os, unsigned defaultWidth = 0,
                                  unsigned minWidth = 0);
                                         ///< Get width of client console if possible
                                         /**< If possible, the width of the client console attached
                                              to the stream \a os is returned. If this is not
                                              possible, the \a defaultValue will be used.
-                                             
+
                                              If the width obtained this way is smaller than \a
                                              minWidth, \a defaultValue will be returned instead. */
 
     protected:
-        
+
     private:
         Client(Server & server, ClientHandle handle);
 
@@ -223,10 +223,10 @@ namespace console {
         void setNoninteractive();
 
         size_t handleInput(std::string input, bool incremental = false);
-        virtual void v_write(senf::log::time_type timestamp, std::string const & stream, 
-                             std::string const & area, unsigned level, 
+        virtual void v_write(senf::log::time_type timestamp, std::string const & stream,
+                             std::string const & area, unsigned level,
                              std::string const & message);
-        
+
         Server & server_;
         ClientHandle handle_;
         scheduler::FdEvent readevent_;
@@ -242,15 +242,15 @@ namespace console {
         friend class detail::ClientReader;
         friend class detail::NonblockingSocketSink;
 
-        class SysBacktrace 
+        class SysBacktrace
         {
             SysBacktrace();
             static void  backtrace(std::ostream & os);
             static SysBacktrace instance_;
         };
-        
+
     };
-        
+
     /** \brief Output Console Client instance as it's string representation
         \related Client
      */

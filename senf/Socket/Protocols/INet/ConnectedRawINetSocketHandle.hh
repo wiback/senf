@@ -61,19 +61,20 @@ namespace senf {
         \par Address Type:
             INet4SocketAddress
 
-        ConnectedRawV4SocketProtocol provides an Internet protocol raw socket based on IPv4 addressing.
-        This socket will put data written to it onto the IPv4 layer: if you call writeto don't include 
-        the header!
-        On the other hand `read` will return the packet data including the IP header. 
-        This behaviour is strange and differs from the behaviour of IPv6 RAW sockets and should be 
-        changed in the future. 
+        ConnectedRawV4SocketProtocol provides an Internet protocol raw socket based on IPv4
+        addressing. This socket will put data written to it onto the IPv4 layer: if you call
+        writeto don't include the header!
+
+        On the other hand `read` will return the packet data including the IP header.
+        This behaviour is strange and differs from the behaviour of IPv6 RAW sockets and should be
+        changed in the future.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
 
-        \attention
-            If socket handle with ConnectedRawV4SocketProtocol is connected via INet4SocketAddress, the port number
-            is interpreted as protocol number for IPv4 layer. Please refer manpage: "man 7 raw".
+        \attention If socket handle with ConnectedRawV4SocketProtocol is connected via
+            INet4SocketAddress, the port number is interpreted as protocol number for IPv4
+            layer. Please refer manpage: "man 7 raw".
 
         \see ConnectedRawV6SocketProtocol
         \see RawV4SocketProtocol
@@ -97,24 +98,27 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        void init_client(int const & protocol) const;       ///< Create unconnected client socket for protocol
-        
+        void init_client(int const & protocol) const;
+                                        ///< Create unconnected client socket for protocol
+
         void init_client(int const & protocol, INet4SocketAddress const & address) const;
                                         ///< Create client socket and connect
-                                        /**< Creates a new client socket for the given protocol and connects to the given
-                                             address.
-                                             \param[in] protocol Layer 4 protocol to filter for / to send 
+                                        /**< Creates a new client socket for the given protocol and
+                                             connects to the given address.
+                                             \param[in] protocol Layer 4 protocol to filter for / to
+                                                 send
                                              \param[in] address local address to connect to */
 
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<ConnectedRawV4SocketProtocol> ConnectedRawV4ClientSocketHandle;
+    typedef ProtocolClientSocketHandle<ConnectedRawV4SocketProtocol>
+        ConnectedRawV4ClientSocketHandle;
 
 
 
 
-//////////////////////////////////////////////////////////////////// Raw IPv6 Socket //////////////////////////////////////
+//////////////////////////////////////////////// Raw IPv6 Socket ////////////////////////////
     typedef MakeSocketPolicy<
         INet6AddressingPolicy,
         DatagramFramingPolicy,
@@ -128,24 +132,25 @@ namespace senf {
         \par Socket Handle typedefs:
         \ref ConnectedRawV6ClientSocketHandle (ProtocolClientSocketHandle)
 
-        \par Policy Interface: 
+        \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
             ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer()
-            
+
         \par Address Type:
             INet6Address
 
-        ConnectedRawV6SocketProtocol provides an internet protocol raw socket based on IPv6 addressing which is connected to certain peer.
-        This socket will put data written to it onto the IPv6 layer: if you call writeto don't inlude the header!
-        On the other hand `read` will return the packet data on top of the IPv6 layer, excluding the IP header. 
-        Note: This behaviour is differs from the behaviour of IPv4 RAW sockets. 
+        ConnectedRawV6SocketProtocol provides an internet protocol raw socket based on IPv6
+        addressing which is connected to certain peer.  This socket will put data written to it onto
+        the IPv6 layer: if you call writeto don't inlude the header!  On the other hand `read` will
+        return the packet data on top of the IPv6 layer, excluding the IP header.  Note: This
+        behaviour is differs from the behaviour of IPv4 RAW sockets.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
 
-		\attention
-            If socket handle with ConnectedRawV6SocketProtocol is connected via INet6SocketAddress, the port number
-            is interpreted as protocol number for IPv6 layer. Please refer manpage: "man 7 ipv6".
+        \attention If socket handle with ConnectedRawV6SocketProtocol is connected via
+            INet6SocketAddress, the port number is interpreted as protocol number for IPv6
+            layer. Please refer manpage: "man 7 ipv6".
 
         \see ConnectedRawV4SocketProtocol
         \see RawV4SocketProtocol
@@ -170,25 +175,39 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        void init_client(int const & protocol) const;       ///< Create unconnected client socket for protocol
+        void init_client(int const & protocol) const;
+                                        ///< Create unconnected client socket for protocol
 
         void init_client(int const & protocol, INet6SocketAddress const & address) const;
                                         ///< Create client socket and connect
-                                        /**< Creates a new client socket for the given protocol and connects to the given
-                                             address.
-                                             \param[in] protocol Layer 4 protocol to filter for / to send 
-                                             \param[in] address local address to connect to */
-                                        /**< \note This member is implicitly called from the
+                                        /**< Creates a new client socket for the given protocol and
+                                             connects to the given address.
+                                             \param[in] protocol Layer 4 protocol to filter for / to
+                                                 send
+                                             \param[in] address local address to connect to
+                                             \note This member is implicitly called from the //
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor (??) */
 
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<ConnectedRawV6SocketProtocol> ConnectedRawV6ClientSocketHandle;
+    typedef ProtocolClientSocketHandle<ConnectedRawV6SocketProtocol>
+        ConnectedRawV6ClientSocketHandle;
 
     /// @}
 
 }
 
 #endif /*CONNECTEDHH_SENF_Socket_Protocols_INet_RawINetSocketHandle_*/
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -73,9 +73,9 @@ prefix_ void senf::scheduler::detail::EventManager::listEvents(std::ostream & os
         FIFORunner::iterator i (FIFORunner::instance().begin());
         FIFORunner::iterator const i_end (FIFORunner::instance().end());
         for (; i != i_end; ++i)
-            os << fmt 
+            os << fmt
                 % i->type()
-                % i->name() 
+                % i->name()
                 % reinterpret_cast<unsigned long>(&(*i))
                 % i->runCount()
                 % (i->runnable() ? "R" : "W")
@@ -88,7 +88,7 @@ prefix_ void senf::scheduler::detail::EventManager::listEvents(std::ostream & os
             if (! i->enabled())
                 os << fmt
                     % i->type()
-                    % i->name() 
+                    % i->name()
                     % reinterpret_cast<unsigned long>(&(*i))
                     % i->runCount()
                     % "-"

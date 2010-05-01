@@ -36,7 +36,7 @@ namespace senf {
 namespace log {
 
     /** \defgroup loglevels Log levels
-        
+
         These are the valid %log levels with some additional special values:
 
         <dl><dt>VERBOSE</dt><dd>Really verbose %log messages. Messages at this level are used for
@@ -54,13 +54,13 @@ namespace log {
 
         <dt>CRITICAL</dt><dd>Error condition which does not terminate the program completely but has
         non-reversible adverse effects</dd>
-        
+
         <dt>FATAL</dt><dd>Error condition which does terminate program execution or enforces a
         restart or some kind of re-initialization with loss of state and context.</dd></dl>
 
         There are also some special values which <em>must not be used as a %log level</em>:
-        
-        <dl><dt>DISABLED</dt><dd>Disable all %log messages.</dd> 
+
+        <dl><dt>DISABLED</dt><dd>Disable all %log messages.</dd>
 
         <dt>NONE</dt><dd>Special value which signifies inheritance of the default %log
         level.</dd></dl>
@@ -74,7 +74,7 @@ namespace log {
      */
 
     ///\{
-    
+
     /** \brief Log level %VERBOSE
         \see loglevels */
     struct VERBOSE   : public detail::LevelBase { static unsigned const value = 1; };
@@ -108,7 +108,7 @@ namespace log {
     struct NONE      : public detail::LevelBase { static unsigned const value = 0; };
 
     ///\}
-    
+
     static char const * const LEVELNAMES[8] = {
         "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
 

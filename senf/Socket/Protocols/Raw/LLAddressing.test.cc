@@ -40,7 +40,7 @@
 SENF_AUTO_UNIT_TEST(llAddress)
 {
     using senf::LLSocketAddress;
-    
+
     {
         LLSocketAddress addr;
 
@@ -83,19 +83,19 @@ SENF_AUTO_UNIT_TEST(llAddress)
         BOOST_CHECK_EQUAL( addr.pkttype(), LLSocketAddress::Undefined );
         BOOST_CHECK( ! addr.address() );
     }
-    
+
     {
         BOOST_CHECK_THROW( LLSocketAddress addr("SENF_TEST_INVALID_INTERFACENAME"),
                 senf::AddressSyntaxException );
-        
+
         LLSocketAddress addr ("lo");
-        
+
         BOOST_CHECK_EQUAL( addr.protocol(), 0u );
         BOOST_CHECK_EQUAL( addr.interface(), "lo" );
         BOOST_CHECK_EQUAL( addr.arptype(), 0u );
         BOOST_CHECK_EQUAL( addr.pkttype(), LLSocketAddress::Undefined );
         BOOST_CHECK( ! addr.address() );
-        
+
         BOOST_CHECK_EQUAL( LLSocketAddress("").interface(), "" );
     }
 }

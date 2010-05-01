@@ -42,7 +42,7 @@ SENF_AUTO_UNIT_TEST(logger)
     target.route<senf::log::Debug>();
 
     // We cannot easily check the exact log string since that includes the current date/time
-    
+
     SENF_LOG_DEFAULT_STREAM(senf::log::Debug);
     SENF_LOG_DEFAULT_AREA(senf::log::DefaultArea);
     SENF_LOG_DEFAULT_LEVEL(senf::log::VERBOSE);
@@ -54,7 +54,7 @@ SENF_AUTO_UNIT_TEST(logger)
     SENF_LOG((senf::log::VERBOSE)("Log message 2"));
     BOOST_CHECK( target.str().empty() );
     target.clear();
-    
+
     SENF_LOG((senf::log::IMPORTANT)("Important message"));
     std::cerr << target.str();
     BOOST_CHECK( ! target.str().empty() );

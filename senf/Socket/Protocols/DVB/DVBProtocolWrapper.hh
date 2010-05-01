@@ -43,7 +43,7 @@ namespace senf {
     /** \brief Helperclass for configuration and controlling DVB protocol handles.
 
      */
-    class DVBSectionProtocolWrapper : public DVBProtocolWrapper 
+    class DVBSectionProtocolWrapper : public DVBProtocolWrapper
     {
     private:
         const DVBDemuxSectionSocketProtocol& protocol;
@@ -57,11 +57,11 @@ namespace senf {
 
         DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh);
         ~DVBSectionProtocolWrapper() { }
-        
+
         void setSectionFilter(unsigned short int pid, u_int8_t filter,
                 unsigned int flags, u_int8_t mask, u_int8_t mode, unsigned int timeout);
 
-        void setBufferSize(unsigned long size); 
+        void setBufferSize(unsigned long size);
                                 ///< Set the size of the circular buffer used for filtered data.
                                 /**< The default size is two maximum sized sections, i.e. if
                                      this function is not called a buffer size of 2 * 4096 bytes
@@ -70,16 +70,16 @@ namespace senf {
         void startFiltering();  ///< Starts filtering
         void stopFiltering();   ///< Stops filtering
     };
-    
+
     SENF_CONSOLE_REGISTER_ENUM_MEMBER(DVBSectionProtocolWrapper, Flags,
             (CHECK_CRC)(ONESHOT)(IMMEDIATE_START)(KERNEL_CLIENT));
 
-    
+
     class DVBPESProtocolWrapper : public senf::DVBProtocolWrapper
     {
     private:
         const senf::DVBDemuxPESSocketProtocol& protocol;
-    
+
     public:
         enum Flags {CHECK_CRC = DMX_CHECK_CRC,
             ONESHOT = DMX_ONESHOT,
@@ -95,7 +95,7 @@ namespace senf {
         void startFiltering(); ///< Starts filtering
         void stopFiltering();  ///< Stops filtering
     };
-    
+
     SENF_CONSOLE_REGISTER_ENUM_MEMBER(DVBPESProtocolWrapper, Flags,
             (CHECK_CRC)(ONESHOT)(IMMEDIATE_START)(KERNEL_CLIENT));
 }

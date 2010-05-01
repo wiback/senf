@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -35,11 +35,11 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::console::UDPServer::UDPServer(senf::INet4SocketAddress const & address)
-    : replies_ (true), emptyReplies_ (true), target_ (), 
-      handle_ (senf::UDPv4ClientSocketHandle(address)), 
-      readevent_ ("senf::console::UDPServer::readevent", 
-                  senf::membind(&UDPServer::handleInput, this), 
-                  handle_, 
+    : replies_ (true), emptyReplies_ (true), target_ (),
+      handle_ (senf::UDPv4ClientSocketHandle(address)),
+      readevent_ ("senf::console::UDPServer::readevent",
+                  senf::membind(&UDPServer::handleInput, this),
+                  handle_,
                   senf::scheduler::FdEvent::EV_READ),
       parser_ (), executor_ ()
 {
@@ -49,10 +49,10 @@ prefix_ senf::console::UDPServer::UDPServer(senf::INet4SocketAddress const & add
 }
 
 prefix_ senf::console::UDPServer::UDPServer(senf::INet6SocketAddress const & address)
-    : replies_ (true), target_ (), handle_ (senf::UDPv6ClientSocketHandle(address)), 
-      readevent_ ("senf::console::UDPServer::readevent", 
-                  senf::membind(&UDPServer::handleInput, this), 
-                  handle_, 
+    : replies_ (true), target_ (), handle_ (senf::UDPv6ClientSocketHandle(address)),
+      readevent_ ("senf::console::UDPServer::readevent",
+                  senf::membind(&UDPServer::handleInput, this),
+                  handle_,
                   senf::scheduler::FdEvent::EV_READ),
       parser_ (), executor_ ()
 {
@@ -71,7 +71,7 @@ prefix_ senf::console::UDPServer &
 senf::console::UDPServer::replies(senf::INet4SocketAddress const & address)
 {
     SENF_ASSERT( handle_.local().family() == senf::INet4SocketAddress::addressFamily );
-    target_ = address; 
+    target_ = address;
     return *this;
 }
 
@@ -139,7 +139,7 @@ prefix_ void senf::console::UDPServer::handleInput(int events)
             stream << '\0';
         handle_.writeto(address, stream.str());
     }
-    
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

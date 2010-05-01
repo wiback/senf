@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -48,7 +48,7 @@ namespace console {
         // Parse only statements under the directory of some object. The object 'ob'
         // must have been registered somewhere in the node tree
         cf.parse(ob.dir);
-        
+
         // Parse rest of the config file
         cf.parse();
         \endcode
@@ -57,7 +57,7 @@ namespace console {
 
         \ingroup console_access
       */
-    class ConfigFile 
+    class ConfigFile
         : public detail::BundleMixin
     {
     public:

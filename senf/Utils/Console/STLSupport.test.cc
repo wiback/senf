@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -62,7 +62,7 @@ namespace {
         }
         return std::make_pair(keys,sum);
     }
-                
+
 }
 
 SENF_AUTO_UNIT_TEST(vectorSupport)
@@ -86,11 +86,11 @@ SENF_AUTO_UNIT_TEST(vectorSupport)
     BOOST_CHECK_EQUAL( ss.str(), "9\n" "0\n" "5\n" "13\n" "17\n" );
 
     ss.str("");
-    SENF_CHECK_NO_THROW( 
+    SENF_CHECK_NO_THROW(
         parser.parse("help test/test",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL(
-        ss.str(), 
+        ss.str(),
         "Usage:\n"
         "    test [data:vector<int>]\n"
         "\n"
@@ -120,11 +120,11 @@ SENF_AUTO_UNIT_TEST(listSupport)
     BOOST_CHECK_EQUAL( ss.str(), "9\n" "0\n" "5\n" "13\n" "17\n" );
 
     ss.str("");
-    SENF_CHECK_NO_THROW( 
+    SENF_CHECK_NO_THROW(
         parser.parse("help test/test",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL(
-        ss.str(), 
+        ss.str(),
         "Usage:\n"
         "    test [data:list<int>]\n"
         "\n"
@@ -154,11 +154,11 @@ SENF_AUTO_UNIT_TEST(setSupport)
     BOOST_CHECK_EQUAL( ss.str(), "9\n" "0\n" "5\n" "13\n" "17\n" );
 
     ss.str("");
-    SENF_CHECK_NO_THROW( 
+    SENF_CHECK_NO_THROW(
         parser.parse("help test/test",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL(
-        ss.str(), 
+        ss.str(),
         "Usage:\n"
         "    test [data:set<int>]\n"
         "\n"
@@ -187,14 +187,14 @@ SENF_AUTO_UNIT_TEST(mapSupport)
         parser.parse("test/test; test/test (); "
                      "test/test (vier=4 fuenf = 5 acht=8 )",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-    BOOST_CHECK_EQUAL( ss.str(), "(\"barfoo bar\" 9)\n" "(\"\" 0)\n" "(achtfuenfvier 17)\n" ); // 
+    BOOST_CHECK_EQUAL( ss.str(), "(\"barfoo bar\" 9)\n" "(\"\" 0)\n" "(achtfuenfvier 17)\n" ); //
 
     ss.str("");
-    SENF_CHECK_NO_THROW( 
+    SENF_CHECK_NO_THROW(
         parser.parse("help test/test",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL(
-        ss.str(), 
+        ss.str(),
         "Usage:\n"
         "    test [data:map<string,int>]\n"
         "\n"

@@ -42,8 +42,8 @@
 ///\{
 ///\ingroup senfpp
 
-/** \brief Return last element of a sequence 
-    \hideinitializer 
+/** \brief Return last element of a sequence
+    \hideinitializer
  */
 #define SENF_PP_SEQ_BACK(seq) BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(seq)),seq)
 

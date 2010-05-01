@@ -62,25 +62,25 @@ prefix_ void senf::ICMPv6EchoReplyType::dump(packet p, std::ostream & os)
 
 prefix_ void senf::ICMPv6ErrDestUnreachableType::dump(packet p, std::ostream & os)
 {
-    os << "ICMPv6 Error Destination Unreachable (no further fields available here)\n";    
+    os << "ICMPv6 Error Destination Unreachable (no further fields available here)\n";
 }
 
 prefix_ void senf::ICMPv6ErrTooBigType::dump(packet p, std::ostream & os)
 {
     os << "ICMPv6 Error Packet Too Big:\n"
-       << senf::fieldName("MTU")            << unsigned(p->mtu() ) << "\n";    
+       << senf::fieldName("MTU")            << unsigned(p->mtu() ) << "\n";
 }
 
 prefix_ void senf::ICMPv6ErrTimeExceededType::dump(packet p, std::ostream & os)
 {
     os << "ICMPv6 Error Time Exceeded:\n"
-       << senf::fieldName("Unused(32Bit)")  << unsigned(p->unused() ) << "\n";    
+       << senf::fieldName("Unused(32Bit)")  << unsigned(p->unused() ) << "\n";
 }
 
 prefix_ void senf::ICMPv6ErrParamProblemType::dump(packet p, std::ostream & os)
 {
     os << "ICMPv6 Error Parameter Problem:\n"
-       << senf::fieldName("Pointer")        << unsigned(p->pointer() ) << "\n";    
+       << senf::fieldName("Pointer")        << unsigned(p->pointer() ) << "\n";
 }
 
 prefix_ void senf::MLDv2ListenerQueryType::dump(packet p, std::ostream & os)
@@ -97,16 +97,16 @@ prefix_ void senf::MLDv2ListenerQueryType::dump(packet p, std::ostream & os)
     senf::MLDv2ListenerQuery::Parser::srcAddresses_t::container c (p->srcAddresses());
     senf::MLDv2ListenerQuery::Parser::srcAddresses_t::container::iterator i (c.begin());
     for (unsigned int nr =1; i != c.end(); ++i, ++nr)
-        os << "    " << nr << ".) " << *i << "\n";    
-    os << "\n";    
+        os << "    " << nr << ".) " << *i << "\n";
+    os << "\n";
 }
 
 prefix_ void senf::MLDv2ListenerReportType::dump(packet p, std::ostream & os)
 {
     os << "ICMPv6 Multicast Listener Report Message:\n"
-       << senf::fieldName("Reserved")              << unsigned(p->reserved() ) 
+       << senf::fieldName("Reserved")              << unsigned(p->reserved() )
        <<"\n  Multicast Address Records:\n";
-    
+
     senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container cAddrR (p->mcastAddrRecords() );
     senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container::iterator iAddrR (cAddrR.begin() );
     for (; iAddrR != cAddrR.end(); ++iAddrR) {

@@ -47,7 +47,7 @@ namespace {
         SENF_PARSER_CUSTOM_FIELD ( customField          , int, 2             ) {
             return parse<senf::UInt16Parser>(customField_offset);
         }
-        
+
         SENF_PARSER_BITFIELD     ( signedBitfield       , 4, signed          );
         SENF_PARSER_BITFIELD     ( unsignedBitfield     , 3, unsigned        );
         SENF_PARSER_BITFIELD     ( boolBitfield         , 1, bool            );
@@ -67,7 +67,7 @@ namespace {
 
         SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::UInt8Parser  );
 
-        unsigned lowbyteOfNormalField() { 
+        unsigned lowbyteOfNormalField() {
             return privLowbyteOfNormalField();
         }
 
@@ -81,14 +81,14 @@ namespace {
 #       include SENF_FIXED_PARSER()
 
         SENF_PARSER_INHERIT( FixedBaseParser );
-        
+
         SENF_PARSER_FIELD        ( derivedField         , senf::UInt16Parser );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( signedBitfield );
 
         SENF_PARSER_FIELD        ( anotherOverlay       , senf::UInt16Parser );
-        
+
         SENF_PARSER_GOTO( end );
 
         SENF_PARSER_FINALIZE( FixedDerivedParser )
@@ -140,7 +140,7 @@ SENF_AUTO_UNIT_TEST(fixedParser)
     BOOST_CHECK_EQUAL (   derivedParser.overlayOfRoField()     , 0x0304  );
     BOOST_CHECK_EQUAL (   derivedParser.overlayOfBitfield()    , 0x83u   );
     BOOST_CHECK_EQUAL (   derivedParser.lowbyteOfNormalField() , 0x02u   );
-    
+
     BOOST_CHECK_EQUAL (   derivedParser.derivedField()         , 0x0708u );
     BOOST_CHECK_EQUAL (   derivedParser.anotherOverlay()       , 0x8384u );
 }
@@ -157,7 +157,7 @@ namespace {
         SENF_PARSER_CUSTOM_FIELD ( customField              , int, 2, 2          ) {
             return parse<senf::UInt16Parser>(customField_offset());
         }
-        
+
         SENF_PARSER_BITFIELD      ( signedBitfield           , 4, signed          );
         SENF_PARSER_BITFIELD      ( unsignedBitfield         , 3, unsigned        );
         SENF_PARSER_BITFIELD      ( boolBitfield             , 1, bool            );
@@ -177,7 +177,7 @@ namespace {
 
         SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::UInt8Parser  );
 
-        unsigned lowbyteOfNormalField() { 
+        unsigned lowbyteOfNormalField() {
             return privLowbyteOfNormalField();
         }
 
@@ -191,14 +191,14 @@ namespace {
 #       include SENF_PARSER()
 
         SENF_PARSER_INHERIT( VariableBaseParser );
-        
+
         SENF_PARSER_FIELD        ( derivedField         , senf::UInt16Parser );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( signedBitfield );
 
         SENF_PARSER_FIELD        ( anotherOverlay       , senf::UInt16Parser );
-        
+
         SENF_PARSER_GOTO( end );
 
         SENF_PARSER_FINALIZE( VariableDerivedParser );
@@ -212,7 +212,7 @@ SENF_AUTO_UNIT_TEST(variableParser)
     senf::DataPacket p (senf::DataPacket::create(data));
 
     VariableBaseParser baseParser (p.data().begin(), &p.data());
-    
+
     BOOST_CHECK_EQUAL ( senf::bytes(baseParser), 8u );
 
     BOOST_CHECK_EQUAL (   baseParser.normalField()          , 0x0102u );
@@ -250,7 +250,7 @@ SENF_AUTO_UNIT_TEST(variableParser)
     BOOST_CHECK_EQUAL (   derivedParser.overlayOfRoField()     , 0x0304  );
     BOOST_CHECK_EQUAL (   derivedParser.overlayOfBitfield()    , 0x83u   );
     BOOST_CHECK_EQUAL (   derivedParser.lowbyteOfNormalField() , 0x02u   );
-    
+
     BOOST_CHECK_EQUAL (   derivedParser.derivedField()         , 0x0708u );
     BOOST_CHECK_EQUAL (   derivedParser.anotherOverlay()       , 0x8384u );
 }

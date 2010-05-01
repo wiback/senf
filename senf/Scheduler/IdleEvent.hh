@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -56,8 +56,8 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///\{
-        
-        IdleEvent(std::string const & name, Callback const & cb, 
+
+        IdleEvent(std::string const & name, Callback const & cb,
                   bool initiallyEnabled = true);
         ~IdleEvent();
 
@@ -77,10 +77,10 @@ namespace detail {
         virtual std::string v_info() const;
 
         Callback cb_;
-        
+
         friend class detail::IdleEventDispatcher;
     };
-        
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

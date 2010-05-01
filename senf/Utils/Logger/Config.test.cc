@@ -37,21 +37,21 @@
 
 SENF_AUTO_UNIT_TEST(logConfig)
 {
-    BOOST_CHECK((   senf::log::Enabled< senf::log::Debug, 
-                                        senf::log::DefaultArea, 
+    BOOST_CHECK((   senf::log::Enabled< senf::log::Debug,
+                                        senf::log::DefaultArea,
                                         senf::log::NOTICE >::value ));
 
-    BOOST_CHECK(( ! senf::log::Enabled< senf::log::Debug, 
-                                        senf::log::DefaultArea, 
+    BOOST_CHECK(( ! senf::log::Enabled< senf::log::Debug,
+                                        senf::log::DefaultArea,
                                         senf::log::VERBOSE >::value ));
 
-    BOOST_CHECK(( ! senf::log::Enabled< senf::log::test::myStream, 
-                                        senf::log::DefaultArea, 
+    BOOST_CHECK(( ! senf::log::Enabled< senf::log::test::myStream,
+                                        senf::log::DefaultArea,
                                         senf::log::VERBOSE >::value ));
 
 
-    BOOST_CHECK((   senf::log::Enabled< senf::log::test::myStream, 
-                                        senf::log::test::Foo, 
+    BOOST_CHECK((   senf::log::Enabled< senf::log::test::myStream,
+                                        senf::log::test::Foo,
                                         senf::log::VERBOSE >::value ));
 }
 

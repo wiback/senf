@@ -87,7 +87,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
 
     SENF_CHECK_NO_THROW( p->bssid() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
     SENF_CHECK_NO_THROW(p->sequenceNumber(4095u));
-    
+
     BOOST_CHECK_EQUAL( p->type(), 2u );
     BOOST_CHECK_EQUAL( p->sequenceNumber(), 4095u );
 }
@@ -115,7 +115,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
             0xa3, 0x40, 0x00, 0x27, 0xa4, 0x00, 0x00, 0x42,
             0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00, 0xa0,
             0x00, 0xdd, 0x09, 0x00, 0x03, 0x7f, 0x01, 0x01,
-            0x00, 0x24, 0xff, 0x7f, 
+            0x00, 0x24, 0xff, 0x7f,
     };
 
     senf::WLANPacket_MgtFrame p (senf::WLANPacket_MgtFrame::create(data));
@@ -173,8 +173,8 @@ SENF_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
 SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
 {
     unsigned char data[] = {
-            0xd4, 0x00, 0x00, 0x00, 
-            0x00, 0x0b, 0x6b, 0x57, 0x06, 0xb0, 
+            0xd4, 0x00, 0x00, 0x00,
+            0x00, 0x0b, 0x6b, 0x57, 0x06, 0xb0,
             0x4f, 0xda, // What is this ?
     };
 
@@ -204,7 +204,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_create)
     senf::WLANPacket_CtrlFrame p (senf::WLANPacket_CtrlFrame::create()) ;
     p->receiverAddress() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c");
     p->set_ack();
-    
+
     BOOST_CHECK_EQUAL( p->type(), 1u);
     BOOST_CHECK_EQUAL( p->subtype(), 13u);
 }

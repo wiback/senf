@@ -89,7 +89,7 @@ ArrayParser_iterator(PacketParserBase::data_iterator const & i, PacketParserBase
 {}
 
 template <class ElementParser>
-prefix_ ElementParser 
+prefix_ ElementParser
 senf::detail::ArrayParser_iterator<ElementParser>::operator[](int i)
     const
 {
@@ -107,7 +107,7 @@ senf::detail::ArrayParser_iterator<ElementParser>::raw()
 // iterator_facade interface
 
 template <class ElementParser>
-prefix_ ElementParser 
+prefix_ ElementParser
 senf::detail::ArrayParser_iterator<ElementParser>::dereference()
     const
 {

@@ -37,7 +37,7 @@
 
 namespace senf {
 
-    class DVBConfigParser 
+    class DVBConfigParser
     {
         struct DVBParams {
                 std::map<std::string, fe_spectral_inversion_t> inversion;
@@ -47,17 +47,17 @@ namespace senf {
                 std::map<std::string, fe_hierarchy_t> hierarchy;
                 std::map<std::string, fe_modulation_t> modulation;
                 std::map<std::string, fe_transmit_mode_t> transmit_mode;
-                DVBParams(); 
+                DVBParams();
         };
         static const DVBParams params;
         typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
- 
+
     public:
         DVBConfigParser(fe_type_t type_, const std::string & configFilePath = "");
         ~DVBConfigParser();
 
         std::string getConfigLine(std::string channel);
-    
+
         dvb_frontend_parameters getFrontendParam(std::string configLine);
 
     private:
@@ -73,4 +73,4 @@ namespace senf {
     };
 }
 
-#endif 
+#endif

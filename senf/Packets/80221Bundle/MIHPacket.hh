@@ -43,8 +43,8 @@ namespace senf {
 #   define SENF_MIH_PACKET_REGISTRY_REGISTER( packet )                    \
         SENF_PACKET_REGISTRY_REGISTER(                                    \
             senf::MIHMessageRegistry, packet::type::MESSAGE_ID, packet )
-    
-     
+
+
     /** \brief Parse a MIH packet
 
         Parser implementing the MIH header. The fields implemented are:
@@ -70,13 +70,13 @@ namespace senf {
         SENF_PARSER_BITFIELD ( sid,     4,  unsigned   );
         SENF_PARSER_BITFIELD ( opcode,  2,  unsigned   );
         SENF_PARSER_BITFIELD ( aid,    10,  unsigned   );
-        
+
         SENF_PARSER_SKIP_BITS ( 4                           );
         SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
         SENF_PARSER_FIELD_RO  ( payloadLength, UInt16Parser );
-        
+
         SENF_PARSER_GOTO_OFFSET( 8, 8); // just to limit the offset calculation
-        
+
         // Source MIHF Id
         SENF_PARSER_FIELD ( src_mihfId, MIHFSrcIdTLVParser );
         // Destination MIHF Id

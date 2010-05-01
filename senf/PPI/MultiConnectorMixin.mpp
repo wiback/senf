@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -29,11 +29,11 @@
 // Custom includes
 #include <boost/preprocessor/iteration/iterate.hpp>
 #include <boost/preprocessor/control/if.hpp>
-#include <boost/preprocessor/facilities/empty.hpp> 
+#include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp> 
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
@@ -140,7 +140,7 @@ connect(Source & source mpp_FnParamsKomma(), Target & target mpp_FnParamsKomma2(
 // senf::ppi::module::detail::MultiConnectorMixinAccess member declaration 1..MAX_ARGS
 
 template <class Module mpp_TplParamsKomma()>
-static typename Module::ConnectorType & 
+static typename Module::ConnectorType &
 newConnector(Module & module mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 // senf::ppi::module::detail::MultiConnectorMixinAccess members
 
 template <class Module mpp_TplParamsKomma()>
-typename Module::ConnectorType & 
+typename Module::ConnectorType &
 senf::ppi::module::detail::MultiConnectorMixinAccess::newConnector(
     Module & module mpp_FnParamsKomma())
 {
@@ -280,13 +280,13 @@ senf::ppi::connect(Source & source mpp_FnParamsKomma(), Target & target mpp_FnPa
 #undef mpp_TplParamsKomma
 #undef mpp_TplParams_
 #undef mpp_TplParams
-            
+
 // ////////////////////////////////////////////////////////////////////////
 /*
  (save-excursion (re-search-backward "^// Undefine local Macros")
  (forward-line 1) (delete-region (point) (progn (search-forward
  "// ////") (forward-line -1) (point))) (insert "\n") (let ((b (point))
- (e (progn (insert (save-excursion (re-search-backward 
+ (e (progn (insert (save-excursion (re-search-backward
  "^// Local Macros") (search-forward "#define") (beginning-of-line)
  (buffer-substring (point) (progn (search-forward "// ////")
  (search-backward "#define") (forward-line 1) (point))))) (point))))

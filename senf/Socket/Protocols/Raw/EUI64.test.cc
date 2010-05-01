@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -54,18 +54,18 @@ SENF_AUTO_UNIT_TEST(eui64)
     BOOST_CHECK_EQUAL( eui, senf::EUI64::from_data(data) );
     BOOST_CHECK_EQUAL( eui, senf::EUI64::from_string("10:20:30:ff-FE:40:50:60") );
 
-    BOOST_CHECK_THROW( senf::EUI64::from_string("123:20:30:40:50:60:70:80"), 
+    BOOST_CHECK_THROW( senf::EUI64::from_string("123:20:30:40:50:60:70:80"),
                        senf::AddressSyntaxException );
-    BOOST_CHECK_THROW( senf::EUI64::from_string("12:20:30:40:50:60:70"), 
+    BOOST_CHECK_THROW( senf::EUI64::from_string("12:20:30:40:50:60:70"),
                        senf::AddressSyntaxException );
-    BOOST_CHECK_THROW( senf::EUI64::from_string("12:20:30:40:50:60:70:8g"), 
+    BOOST_CHECK_THROW( senf::EUI64::from_string("12:20:30:40:50:60:70:8g"),
                        senf::AddressSyntaxException );
-    BOOST_CHECK_THROW( senf::EUI64::from_string("12:20:30:40:50:60:70:80:90"), 
+    BOOST_CHECK_THROW( senf::EUI64::from_string("12:20:30:40:50:60:70:80:90"),
                        senf::AddressSyntaxException );
-    
+
     BOOST_CHECK_EQUAL( senf::EUI64::None, senf::EUI64(0) );
     BOOST_CHECK(! senf::EUI64::None );
-    
+
     {
         std::stringstream ss;
         ss << std::uppercase << eui;
@@ -74,7 +74,7 @@ SENF_AUTO_UNIT_TEST(eui64)
         BOOST_CHECK( !eui );
         ss >> eui;
         BOOST_CHECK_EQUAL( eui, senf::EUI64(0x102030fffe405060ull) );
-        
+
         BOOST_CHECK( (ss >> eui).fail() );
     }
 

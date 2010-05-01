@@ -73,7 +73,7 @@ namespace senf {
             the simple typedef is replaced with a nested struct.
          */
         template <class T=void>
-        struct pool 
+        struct pool
             : public boost::singleton_pool< pool_alloc_mixin_tag, sizeof(Self) >
         {
             typedef boost::singleton_pool< pool_alloc_mixin_tag, sizeof(Self) > type;

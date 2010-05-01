@@ -51,9 +51,9 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
        << senf::fieldName("  more fragments")    << p->moreFragment() << "\n"
        << senf::fieldName("  fragment number")   << p->fragmentNr() << "\n"
        << senf::fieldName("  message ID (MID)")  << unsigned( p->messageId()) << "\n"
-       << senf::fieldName("    sid")             << unsigned( p->sid()) << "\n"        
+       << senf::fieldName("    sid")             << unsigned( p->sid()) << "\n"
        << senf::fieldName("    opcode")          << unsigned( p->opcode()) << "\n"
-       << senf::fieldName("    aid")             << unsigned( p->aid()) << "\n"      
+       << senf::fieldName("    aid")             << unsigned( p->aid()) << "\n"
        << senf::fieldName("  transaction id")    << unsigned( p->transactionId()) << "\n"
        << senf::fieldName("  payload length")    << unsigned( p->payloadLength()) << "\n";
     p->src_mihfId().dump( os);

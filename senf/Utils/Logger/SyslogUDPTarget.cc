@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -82,7 +82,7 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
 
     std::string line;
     unsigned sz (896-prf.size());
-    for (; i != i_end; ++i) 
+    for (; i != i_end; ++i)
         for (unsigned j (0); j < i->size(); j += sz) {
             line = prf;
             line += std::string(*i, j, sz);
@@ -112,8 +112,8 @@ prefix_ senf::log::SyslogUDPTarget::RegisterConsole::RegisterConsole()
     namespace fty = senf::console::factory;
 
     detail::TargetRegistry::instance().consoleDir()
-        .add("udp-target", 
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4SocketAddress const &, 
+        .add("udp-target",
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4SocketAddress const &,
                                                                 LogFacility)
              >(&RegisterConsole::create)
              .arg("address", "target address to send log messages to")
@@ -137,22 +137,22 @@ prefix_ senf::log::SyslogUDPTarget::RegisterConsole::RegisterConsole()
                   "        syslog false;                  # no syslog format, just plain udp\n"
                   "    }\n") );
     detail::TargetRegistry::instance().consoleDir()
-        .add("udp-target", 
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4Address const &, 
+        .add("udp-target",
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4Address const &,
                                                                 LogFacility)
              >(&RegisterConsole::create)
              .arg("address")
              .arg("facility", kw::default_value = USER) );
     detail::TargetRegistry::instance().consoleDir()
-        .add("udp-target", 
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6SocketAddress const &, 
+        .add("udp-target",
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6SocketAddress const &,
                                                                 LogFacility)
              >(&RegisterConsole::create)
              .arg("address")
              .arg("facility", kw::default_value = USER) );
     detail::TargetRegistry::instance().consoleDir()
-        .add("udp-target", 
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6Address const &, 
+        .add("udp-target",
+             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6Address const &,
                                                                 LogFacility)
              >(&RegisterConsole::create)
              .arg("address")

@@ -132,16 +132,16 @@ namespace senf {
 
         /** \brief Dump given MPESection in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-        
+
         static void finalize(packet p);
-        
+
         static factory_t nextPacketType(packet p);
-        
+
         static PacketParserBase::size_type initSize();
         static PacketParserBase::size_type initHeadSize();
     };
 
-    /** \brief MPESection packet typedef 
+    /** \brief MPESection packet typedef
          \ingroup protocolbundle_mpegdvb
      */
     typedef ConcretePacket<MPESectionType> MPESection;

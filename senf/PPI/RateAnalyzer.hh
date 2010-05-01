@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -54,7 +54,7 @@ namespace module {
         senf::RateAnalyzer analyzer;
         senf::Statistics packets;
         senf::Statistics packetSize;
-        
+
         analyzer.signals.packetsPerSecond.connect(packets);
         analyzer.signals.bytesPerPacket.connect(packetSize);
 
@@ -75,7 +75,7 @@ namespace module {
         ///\{
 
         RateAnalyzer();
-    
+
         ///\}
         ///////////////////////////////////////////////////////////////////////////
         // Statistics signals

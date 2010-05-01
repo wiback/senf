@@ -142,7 +142,7 @@ namespace senf {
 
                                              \param lod level of %detail requested. The
                                                 interpretation of this value is protocol specific
-                                             
+
                                              \implementation This member will be re-implemented in
                                                  every derived class. See the state()
                                                  documentation. */

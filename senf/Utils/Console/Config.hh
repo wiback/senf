@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -56,7 +56,7 @@ namespace console {
 
         This bundle may also be passed to other code which may use restricted parsing to parse
         partial information from all configuration sources.
-        
+
         \ingroup console_access
       */
     class ConfigBundle
@@ -75,7 +75,7 @@ namespace console {
         template <class Source>
         Source & add(boost::intrusive_ptr<Source> source);
                                         ///< Add configuration source
-       
+
         void parse();                   ///< Parse config bundle
                                         /**< All nodes already parsed are skipped */
         void parse(DirectoryNode & restrict); ///< Parse config bundle under \a restrict
@@ -134,7 +134,7 @@ namespace detail {
     protected:
         template <class Source>
         Source & add(boost::intrusive_ptr<Source> source);
-        
+
     private:
         ConfigBundle bundle_;
     };

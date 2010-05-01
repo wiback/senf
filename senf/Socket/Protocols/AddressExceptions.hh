@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -52,13 +52,13 @@ namespace senf {
 
     /** \brief Resolver failure */
     struct UnknownHostnameException : public AddressException
-    { 
-        UnknownHostnameException() : AddressException("failed to resolve hostname") {} 
+    {
+        UnknownHostnameException() : AddressException("failed to resolve hostname") {}
         UnknownHostnameException(const std::string &hostname)
             : AddressException("Failed to resolve hostname (\"" + hostname + "\")") {}
     };
 
-}        
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "AddressExceptions.cci"

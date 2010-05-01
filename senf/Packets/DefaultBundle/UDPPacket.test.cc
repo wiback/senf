@@ -40,7 +40,7 @@
 SENF_AUTO_UNIT_TEST(udpPacket_parse)
 {
 
-    unsigned char data[] = { 
+    unsigned char data[] = {
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
     };
 
@@ -57,12 +57,12 @@ SENF_AUTO_UNIT_TEST(udpPacket_parse)
 
 SENF_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
 {
-    unsigned char data[] = { 
+    unsigned char data[] = {
             0x45, 0x00, 0x00, 0x26, 0x00, 0x00, 0x40, 0x00,
             0x40, 0x11, 0x3c, 0xc5, 0x7f, 0x00, 0x00, 0x01,
             0x7f, 0x00, 0x00, 0x01, 0x5b, 0xa0, 0x30, 0x39,
             0x00, 0x12, 0xfa, 0x6e, 0x54, 0x45, 0x53, 0x54,
-            0x2d, 0x57, 0x52, 0x49, 0x54, 0x45 
+            0x2d, 0x57, 0x52, 0x49, 0x54, 0x45
     };
 
     senf::IPv4Packet ip (senf::IPv4Packet::create());
@@ -81,7 +81,7 @@ SENF_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
     BOOST_CHECK( udp->validateChecksum() );
 
     ip.finalizeAll();
-    BOOST_CHECK_EQUAL_COLLECTIONS( 
+    BOOST_CHECK_EQUAL_COLLECTIONS(
             data, data+sizeof(data), ip.data().begin(), ip.data().end() );
     BOOST_CHECK( udp->validateChecksum() );
 }
@@ -89,7 +89,7 @@ SENF_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
 SENF_AUTO_UNIT_TEST(udpPacket_in_ipv6_parse)
 {
     // captured udp packet generated with mgen send over ipv6
-    unsigned char data[] = { 
+    unsigned char data[] = {
             // IPv6 Packet
             0x60, 0x00, 0x00, 0x00, 0x00, 0x32, 0x11, 0x40,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -104,7 +104,7 @@ SENF_AUTO_UNIT_TEST(udpPacket_in_ipv6_parse)
             0x00, 0x09, 0x5b, 0x37, 0x13, 0x88, 0x02, 0x10,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-            0x00, 0x00    
+            0x00, 0x00
     };
 
     senf::IPv6Packet ip (senf::IPv6Packet::create(data));
@@ -113,18 +113,18 @@ SENF_AUTO_UNIT_TEST(udpPacket_in_ipv6_parse)
     BOOST_CHECK_EQUAL( ip->hopLimit(),   64u  );
     BOOST_CHECK_EQUAL( ip->source().value(),      senf::INet6Address::Loopback );
     BOOST_CHECK_EQUAL( ip->destination().value(), senf::INet6Address::Loopback );
-    
+
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( ip.dump( oss));
-    
+
     BOOST_REQUIRE( ip.next().is<senf::UDPPacket>() );
     senf::UDPPacket udp (ip.next().as<senf::UDPPacket>());
-    
+
     BOOST_CHECK_EQUAL( udp->source(),      5001u  );
     BOOST_CHECK_EQUAL( udp->destination(), 5000u  );
     BOOST_CHECK_EQUAL( udp->length(),      50u    );
     BOOST_CHECK_EQUAL( udp->checksum(),    0x1123 );
-    
+
     BOOST_CHECK( udp->validateChecksum() );
 }
 

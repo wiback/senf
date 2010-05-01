@@ -60,8 +60,8 @@ namespace senf {
         defined condition. This is the parser to use, if the type and/or number of fields of a
         packet change depending on some condition.
         \code
-        typedef senf::VariantParser< 
-            MyAuxPolicy, 
+        typedef senf::VariantParser<
+            MyAuxPolicy,
             senf::mpl::vector<senf::VoidPacketParser, TypeAParser, TypeBParser> > MyVariantParser;
         \endcode
         This typedef defines a variant parser choosing one of three sub
@@ -71,13 +71,13 @@ namespace senf {
         When creating a new packet containing a variant parser, the variant parser will always be
         initialized to the first sub-parser.
 
-        \see 
+        \see
             ExampleAuxPolicy on how to implement the \a AuxPolicy \n
             \ref SENF_PARSER_VARIANT() on how to integrate the parser into another parser
         \ingroup parsecollection
      */
     template <class AuxPolicy, class Parsers>
-    class VariantParser 
+    class VariantParser
         : public PacketParserBase, private AuxPolicy
     {
         typedef Parsers parsers;
@@ -91,9 +91,9 @@ namespace senf {
 
         size_type bytes() const;
         void init();
-        
-        static const size_type init_bytes = senf::init_bytes< 
-            typename boost::mpl::at<parsers, boost::mpl::int_<0> >::type>::value 
+
+        static const size_type init_bytes = senf::init_bytes<
+            typename boost::mpl::at<parsers, boost::mpl::int_<0> >::type>::value
                 + AuxPolicy::aux_bytes;
 
         ///\}
@@ -105,7 +105,7 @@ namespace senf {
                                              \returns Index of currently selected variant. Integer
                                                  in the range from 0 to (number-of-sub-parsers - 1)
                                           */
-        
+
         template <unsigned N>
         typename boost::mpl::at< parsers, boost::mpl::int_<N> >::type get() const;
                                         ///< Access sub-parser
@@ -130,7 +130,7 @@ namespace senf {
         struct SomeParser : public PacketParserBase
         {
         #   include SENF_PARSER()
-        
+
             SENF_PARSER_PRIVATE_FIELD( type, senf::UInt8Parser );
             SENF_PARSER_VARIANT( content, type,
                                     (novalue( disable,      senf::VoidPacketParser ))
@@ -141,10 +141,10 @@ namespace senf {
 
             SENF_PARSER_FINALIZE(SomeParser);
         };
-        \endcode 
-            
+        \endcode
+
         The variant \c content chooses one of the sub parsers depending on the \c type field. If \c
-        type is 0, senf::VoidPacketParser is selected, if it is 1, senf::UInt8Parser and so on. 
+        type is 0, senf::VoidPacketParser is selected, if it is 1, senf::UInt8Parser and so on.
 
         \warning Realize, that the \a chooser field is controlled by the variant parser. This field
             should therefore be declared either read-only or private and must be changed only via
@@ -193,7 +193,7 @@ namespace senf {
 
         <tr><td><tt>void</tt> <tt>init_</tt><em>name</em>()</td><td>Set the variant to have a value
         of this type. If the field is \c novalue, the \c init_ prefix is omitted.</td></tr>
-        
+
         <tr><td><tt>bool</tt> <tt>has_</tt><em>name</em>()</td><td>Return \c true, if the variant
         currently holds this kind of value, \c false otherwise. Only if not \c novalue.</td></tr>
         </table>
@@ -231,13 +231,13 @@ namespace senf {
                                             (senf::UInt24Parser)
                                             (senf::UInt32Parser) );
         \endcode
-        
+
         \param[in] name name of the field
         \param[in] chooser name of the field choosing the variant to use
         \param[in] types a Boost.Preprocessor style sequence of sub-parser types
 
-        \see 
-            senf::VariantParser for the VariantParser API\n 
+        \see
+            senf::VariantParser for the VariantParser API\n
             \ref SENF_PARSER_PRIVATE_VARIANT()
         \hideinitializer
         \ingroup packetparsermacros
@@ -246,7 +246,7 @@ namespace senf {
         SENF_PARSER_VARIANT_I(public, name, chooser, types)
 
     /** \brief Define private VariantParser field
-        
+
         \see \ref SENF_PARSER_VARIANT()
         \hideinitializer
         \ingroup packetparsermacros

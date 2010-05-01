@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@ template <class Handle>
 prefix_ senf::scheduler::FdEvent::FdEvent(std::string const & name, Callback const & cb,
                                           Handle const & handle, int events,
                                           bool initiallyEnabled)
-    : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (detail::get_descriptor(handle)), 
+    : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (detail::get_descriptor(handle)),
       pollable_ (true), events_ (events)
 {
     if (initiallyEnabled)

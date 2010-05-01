@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -67,12 +67,12 @@ SENF_AUTO_UNIT_TEST(annotationRouter)
     debug::PassiveSink sink2;
 
     AnnotationRouter router;
-    
+
     ppi::connect(source, router);
     ppi::connect(router, 1, sink1);
     ppi::connect(router, 2, sink2);
-    
-    BOOST_CHECK_THROW( connect(router, 2, sink2), 
+
+    BOOST_CHECK_THROW( connect(router, 2, sink2),
             module::AnnotationRouter<IntAnnotation>::DuplicateKeyException);
 
     ppi::init();
@@ -98,7 +98,7 @@ SENF_AUTO_UNIT_TEST(annotationRouter)
     senf::ppi::connect(router, 1, sink1);
     senf::ppi::init();
     source.submit(p1);
- 
+
     BOOST_CHECK_EQUAL( sink1.size(), 2u );
     BOOST_CHECK_EQUAL( sink2.size(), 1u );
 }

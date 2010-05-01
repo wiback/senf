@@ -36,11 +36,11 @@ namespace log {
 namespace detail {
 
     /// Internal: Log stream base class
-    struct StreamBase 
+    struct StreamBase
     {
         StreamBase();
         virtual ~StreamBase();
-        
+
         std::string fullName() const;
         virtual std::string v_name() const;
         virtual unsigned defaultRuntimeLimit() const = 0;

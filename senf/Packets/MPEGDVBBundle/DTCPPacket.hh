@@ -40,9 +40,9 @@ namespace senf {
 #   define DTCP_V6_MCADDRESS "FF02:0:0:0:0:0:1:4"
 #   define DTCP_UDP_PORT 652
 
-    struct DTCPIPv4AddressListParser : public PacketParserBase 
+    struct DTCPIPv4AddressListParser : public PacketParserBase
     {
-#       include SENF_PARSER()        
+#       include SENF_PARSER()
 
         SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser ); //<pkgdraw: hide
         SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser ); //<pkgdraw: hide
@@ -55,10 +55,10 @@ namespace senf {
 
         SENF_PARSER_FINALIZE(DTCPIPv4AddressListParser);
     };
-        
-    struct DTCPIPv6AddressListParser : public PacketParserBase 
+
+    struct DTCPIPv6AddressListParser : public PacketParserBase
     {
-#       include SENF_PARSER()        
+#       include SENF_PARSER()
 
         SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser ); //<pkgdraw: hide
         SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser ); //<pkgdraw: hide
@@ -75,7 +75,7 @@ namespace senf {
     /** \brief Parse a DTCP HELLO packet
 
         Parser implementing the DTCP packet according to RFC 3077
-        
+
         \see DTCPHelloPacketType
      */
     struct DTCPHelloPacketParser : public PacketParserBase
@@ -95,17 +95,17 @@ namespace senf {
         SENF_PARSER_BITFIELD         ( receiveCapableFeed,   1, bool );
         SENF_PARSER_BITFIELD_RO      ( ipVersion,            4, unsigned );  // 4=IPv4, 6=IPv6
 
-        SENF_PARSER_FIELD            ( tunnelProtocol,       UInt8Parser ); 
+        SENF_PARSER_FIELD            ( tunnelProtocol,       UInt8Parser );
         SENF_PARSER_FIELD_RO         ( fbipCount,            UInt8Parser );
         //>pkgdraw: name=
-        SENF_PARSER_PRIVATE_FIELD    ( reserved1_,           UInt8Parser );  // must be zero 
+        SENF_PARSER_PRIVATE_FIELD    ( reserved1_,           UInt8Parser );  // must be zero
 
         // Go back to fbipCount so the variant has access to that field
         SENF_PARSER_GOTO( fbipCount );
 
         SENF_PARSER_VARIANT          ( fbipList_,            ipVersion,
                            ( ids(na, has_v4fbipList, init_v4fbipList,
-                                 key(4, DTCPIPv4AddressListParser)) ) 
+                                 key(4, DTCPIPv4AddressListParser)) )
                            ( ids(na, has_v6fbipList, init_v6fbipList,
                                  key(6, DTCPIPv6AddressListParser)) ) );
 
@@ -117,12 +117,12 @@ namespace senf {
 
         typedef DTCPIPv6AddressListParser::fbips_t v6fbipList_t;
         v6fbipList_t v6fbipList() { return fbipList_().get<1>().fbips(); }
-                                                                 
+
         SENF_PARSER_FINALIZE(DTCPHelloPacketParser);
     };
-    
+
     /** \brief DTCP HELLO packet
-        
+
         \par Packet type (typedef):
             \ref DTCPHelloPacket
 
@@ -140,14 +140,14 @@ namespace senf {
         typedef PacketTypeMixin<DTCPHelloPacketType> mixin;
         typedef ConcretePacket<DTCPHelloPacketType> packet;
         typedef DTCPHelloPacketParser parser;
-    
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
     };
-    
+
     /** \brief DTCP packet typedef */
     typedef DTCPHelloPacketType::packet DTCPHelloPacket;
 }

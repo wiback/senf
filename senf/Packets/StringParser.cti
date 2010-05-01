@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -32,30 +32,30 @@
 
 template <class LengthParser>
 prefix_ senf::StringParser<LengthParser>::StringParser(data_iterator i, state_type s)
-    : PacketParserBase(i, s, init_bytes) 
+    : PacketParserBase(i, s, init_bytes)
  {}
 
 template <class LengthParser>
 prefix_ typename senf::StringParser<LengthParser>::size_type senf::StringParser<LengthParser>::bytes()
     const
-{ 
-    return length().value() + senf::bytes(length()); 
+{
+    return length().value() + senf::bytes(length());
 }
 
 template <class LengthParser>
 prefix_ typename senf::StringParser<LengthParser>::value_type senf::StringParser<LengthParser>::value()
     const
-{ 
-    validate(bytes()); 
-    return std::string(i()+senf::bytes(length()), i()+bytes()); 
+{
+    validate(bytes());
+    return std::string(i()+senf::bytes(length()), i()+bytes());
 }
 
 template <class LengthParser>
 prefix_ void senf::StringParser<LengthParser>::value(value_type v)
-{ 
+{
     validate(bytes());
-    resize(bytes(), v.size()+senf::bytes(length())); 
-    length() << v.size(); 
+    resize(bytes(), v.size()+senf::bytes(length()));
+    length() << v.size();
     std::copy(v.begin(), v.end(), i()+senf::bytes(length()));
 }
 
@@ -63,13 +63,13 @@ template <class LengthParser>
 prefix_ senf::StringParser<LengthParser>::operator value_type()
     const
 {
-    return value(); 
+    return value();
 }
 
 template <class LengthParser>
 prefix_ typename senf::StringParser<LengthParser> const & senf::StringParser<LengthParser>::operator=(value_type other)
-{ 
-    value(other); return *this; 
+{
+    value(other); return *this;
 }
 
 template <class LengthParser>

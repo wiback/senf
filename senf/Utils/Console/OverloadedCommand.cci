@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -66,7 +66,7 @@ senf::console::OverloadedCommandNode::shortdoc(std::string const & doc)
 prefix_ unsigned
 senf::console::OverloadedCommandNode::overloadIndex(CommandOverload const & overload)
 {
-    return find(overloads_.begin(), overloads_.end(), CommandOverload::cptr(&overload)) 
+    return find(overloads_.begin(), overloads_.end(), CommandOverload::cptr(&overload))
         - overloads_.begin() + 1;
 }
 

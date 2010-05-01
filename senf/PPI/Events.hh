@@ -38,7 +38,7 @@ namespace senf {
 namespace ppi {
 
     namespace detail { class EventBindingBase; }
-    
+
     /** \defgroup event_group Events
 
         Events provide notification of events outside the PPI framework: I/O activity, Timers
@@ -49,13 +49,13 @@ namespace ppi {
 
         All events are derived from EventImplementation which is based on EventDescriptor.
         \see EventImplementation \n
-            \ref ppi_events        
+            \ref ppi_events
      */
 
     // Implementation: The concrete EventDescriptor implementation will need to set things up so
     // some callback (within the EventDescriptor implementation) will be called when the event
     // happens. This setup happens in 'v_enable()'. This internal handler sets up an EventType
-    // instance if needed and calls 'callback()'. 
+    // instance if needed and calls 'callback()'.
     //
     // 'callback()' will access the EventBinding wrapper to find the user-callback to signal. It
     // will do any needed internal processing, call that user callback and clean up afterwards.
@@ -65,7 +65,7 @@ namespace ppi {
         The EventDescriptor base-class provides an interface to control events.
 
         \see \ref ppi_events
-     */ 
+     */
     class EventDescriptor
     {
     public:
@@ -100,7 +100,7 @@ namespace ppi {
         friend class ForwardingRoute;
         friend class detail::EventBindingBase;
     };
-    
+
     /** \brief Internal: Callback forwarders
      */
     template <class EventType, class Self>
@@ -121,7 +121,7 @@ namespace ppi {
     private:
         detail::EventBinding<EventType> & binding();
     };
-    
+
 #ifndef DOXYGEN
 
     template <class Self>
@@ -139,7 +139,7 @@ namespace ppi {
 
     /** \brief Event implementation base class
 
-        EventImplementation provides the base-class for all Event implementations. 
+        EventImplementation provides the base-class for all Event implementations.
         \code
         class SomeEvent : public EventImplementation<SomeEventArg>
         {
@@ -157,7 +157,7 @@ namespace ppi {
 
             void cb() {
                 // Build event argument
-                SomeEventArg arg (...); 
+                SomeEventArg arg (...);
                 // Call the event callback
                 callback(arg);
             }
@@ -176,7 +176,7 @@ namespace ppi {
      */
     template <class EventType>
     class EventImplementation
-        : public EventDescriptor, 
+        : public EventDescriptor,
           public EventImplementationHelper< EventType, EventImplementation<EventType> >
     {
     public:
@@ -185,7 +185,7 @@ namespace ppi {
 
         module::Module & module() const; ///< Module in which the event is registered
         EventManager & manager() const; ///< EventManager of the event
-        
+
     protected:
         EventImplementation();
 

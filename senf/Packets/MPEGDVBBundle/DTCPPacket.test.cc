@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -38,7 +38,7 @@
 
 SENF_AUTO_UNIT_TEST(dtcpPacket)
 {
-    unsigned char data[] = { 
+    unsigned char data[] = {
             0x11,                 // versionNumber = 1, command = JOIN
             5,                    // interval
             0x0A, 0x0B,           // sequence number
@@ -72,7 +72,7 @@ SENF_AUTO_UNIT_TEST(dtcpPacket)
 
     std::stringstream ss;
     hello.dump(ss);
-    BOOST_CHECK_EQUAL( ss.str(), 
+    BOOST_CHECK_EQUAL( ss.str(),
                        "DTCP HELLO Packet:\n"
                        "  version                 : 1\n"
                        "  command                 : JOIN\n"

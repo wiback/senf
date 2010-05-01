@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -38,7 +38,7 @@
 prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol(Handle handle)
     : handle_ (handle), charState_ (NORMAL), command_ (CMD_NONE), option_ (0),
       inputEvent_ ("senf::term::BaseTelnetProtocol::input",
-                   senf::membind(&BaseTelnetProtocol::readHandler, this), handle, 
+                   senf::membind(&BaseTelnetProtocol::readHandler, this), handle,
                    senf::scheduler::FdEvent::EV_READ),
       outputEvent_ ("senf::term::BaseTelnetProtocol::output",
                     senf::membind(&BaseTelnetProtocol::writeHandler, this), handle,
@@ -212,7 +212,7 @@ prefix_ void senf::term::BaseTelnetProtocol::handleCommand(char c)
         handleChar(c);
         break;
     }
-}        
+}
 
 prefix_ void senf::term::BaseTelnetProtocol::handleOption(char c)
 {
@@ -343,14 +343,14 @@ prefix_ void senf::term::BaseTelnetProtocol::readHandler(int state)
 }
 
 prefix_ void senf::term::BaseTelnetProtocol::writeHandler(int state)
-{ 
+{
     if (state != senf::scheduler::FdEvent::EV_WRITE) {
         outputEvent_.disable();
         inputEvent_.disable();
         v_eof();
         return;
     }
-    sendQueue_.erase(sendQueue_.begin(), 
+    sendQueue_.erase(sendQueue_.begin(),
                      handle_.write(boost::make_iterator_range(
                                        sendQueue_.begin(), sendQueue_.end())));
     if (sendQueue_.empty())
@@ -403,7 +403,7 @@ prefix_ void senf::term::BaseTelnetProtocol::response(OptInfo & info, bool enabl
     }
     else if (enabled != info.enabled) {
         // Request to change the current state
-        if (!enabled || 
+        if (!enabled ||
             (enabled && (info.wantState == OptInfo::WANTED || info.wantState == OptInfo::ACCEPTED))) {
             // accept the request
             info.optionState = OptInfo::ACKNOWLEDGED;

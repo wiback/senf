@@ -48,7 +48,7 @@ namespace {
         if ( p.order()          ) os << " order";
 
         if ( !(p.toDS() || p.fromDS() || p.moreFrag() || p.retry() || p.pwrMgt() ||
-               p.moreData() || p.protectedFrame() || p.order()) ) 
+               p.moreData() || p.protectedFrame() || p.order()) )
             os << " none";
         os << "\n"
            << "  duration                : " << unsigned(p.duration()) << "\n";
@@ -95,9 +95,9 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::destinationAddr
 {
     switch (dsBits()) {
     case 0 :
-    case 2 : 
+    case 2 :
         return addr1();
-    default: 
+    default:
         return addr3();
     }
 }
@@ -111,7 +111,7 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sourceAddress()
         return addr2();
     // TODO wds frames
     // case 3 : return addr4();
-    default: 
+    default:
         return addr3();
     }
 }

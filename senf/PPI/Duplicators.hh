@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -46,7 +46,7 @@ namespace module {
 
         Since ActiveDuplicator allows any number of incoming packet streams, the input connectors
         are dynamically managed. A special senf::ppi::connect() overload is used to dynamically
-        create the needed input connectors. This hides this extra functionality from the user. 
+        create the needed input connectors. This hides this extra functionality from the user.
         \code
         senf::ppi::module::ActiveDuplicator dup;
 

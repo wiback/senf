@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -77,7 +77,7 @@
         SENF_MPL_SLOT_INIT_ZERO(bitfield_size);
         SENF_MPL_SLOT_INIT_ZERO(group);
 
-        void init_chain (senf::mpl::rv <0> *) const {} 
+        void init_chain (senf::mpl::rv <0> *) const {}
         size_type field_offset_ (senf::mpl::rv <0> *) const { return 0; }
 
         // /////////////////////////////////////////////////////////////////////////
@@ -104,13 +104,13 @@
         void init_chain (senf::mpl::rv<type_index> *) const
             {
                 init_chain (static_cast<senf::mpl::rv<type_index - 1> *>(0));
-            } 
+            }
 
     public:
         size_type type_offset() const
             {
                 return field_offset_(static_cast<senf::mpl::rv<type_index - 1> *>(0)) -
-                    SENF_MPL_SLOT_GET(bitfield_size); 
+                    SENF_MPL_SLOT_GET(bitfield_size);
             }
         static size_type const type_init_bytes =
             SENF_MPL_SLOT_GET(init_bytes) - SENF_MPL_SLOT_GET(bitfield_size);
@@ -158,7 +158,7 @@
                 return 1;
             }
         template <content__chooser_value_type (*KeyFn) ()>
-        struct content__key_value_template 
+        struct content__key_value_template
             : public senf::detail::VariantKey<content__chooser_value_type, KeyFn> {};
         template <class T, T (*K)()> friend class senf::detail::VariantKey;
         typedef senf::detail::VariantKeyTransform<
@@ -171,16 +171,16 @@
 
         // start SENF_PARSER_COLLECTION_I
         static bool const content__aux_fixed = (SENF_MPL_SLOT_GET(group) - type_group) == 0;
-        typedef senf::detail::ParserAuxPolicySelect < 
-            type_t, 
+        typedef senf::detail::ParserAuxPolicySelect <
+            type_t,
             SENF_MPL_SLOT_GET(init_bytes) - type_init_bytes,
-            content__aux_fixed 
+            content__aux_fixed
             >::type content__aux_policy;
         typedef content__traits::parser<content__aux_policy, senf::detail::auxtag::none>::type
             content__collection_t;
         SENF_MPL_SLOT_SET(bit, 0);
         SENF_MPL_SLOT_SET(bitfield_size, 0);
-        typedef content__collection_t content__t;        
+        typedef content__collection_t content__t;
         static size_type const content__index = SENF_MPL_SLOT_GET(index) + 1;
         SENF_MPL_SLOT_SET(index, content__index);
         void init_chain (senf::mpl::rv<content__index> *) const
@@ -204,7 +204,7 @@
                 return content__next_offset();
             }
         SENF_MPL_SLOT_SET(init_bytes, content__next_init_bytes);
-        static size_type const content__group = 
+        static size_type const content__group =
             SENF_MPL_SLOT_GET(group) + (senf::is_fixed<content__collection_t>::value ? 0 : 1);
         SENF_MPL_SLOET_SET(group, content__group);
         template < class T >
@@ -242,7 +242,7 @@
         void init_content() const
             {
                 content_().init<1>();
-            } 
+            }
         bool has_content() const
             {
                 return content_().variant() == 1;
@@ -260,9 +260,9 @@
             {}
 
     private:
-        template <class T> 
+        template <class T>
         void init(T) const
-            { 
+            {
                 defaultInit ();
             }
 

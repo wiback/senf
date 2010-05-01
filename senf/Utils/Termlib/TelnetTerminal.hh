@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -40,7 +40,7 @@ namespace term {
     /** \brief AbstractTerminal interface implementation based on telnet
 
         This class provides a telnet server implementation implementing the AbstractTerminal
-        interface. 
+        interface.
 
         TelnetTerminal provides one additional callback which needs to be implemented in a derived
         class: v_setupFailed(). This member will be called, when not all required telnet options are

@@ -52,10 +52,10 @@ prefix_ void senf::ppi::EventManager::destroyEvent(EventDescriptor & event)
 {
     using boost::lambda::_1;
     namespace l = boost::lambda;
-    
+
     SENF_ASSERT(
         std::find_if(registrations_.begin(), registrations_.end(),
-                     l::bind(&detail::EventBindingBase::descriptor_,_1) == &event) 
+                     l::bind(&detail::EventBindingBase::descriptor_,_1) == &event)
         == registrations_.end());
 }
 

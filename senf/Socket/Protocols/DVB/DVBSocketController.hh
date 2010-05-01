@@ -53,9 +53,9 @@ namespace senf {
      You have to find out which parts of these functionality are implemented by your preferred
      device driver by your own.
 */
-    
-    
-    
+
+
+
 class DVBSocketController : boost::noncopyable
 {
 public:
@@ -67,26 +67,26 @@ public:
 
     DVBSocketController(DVBFrontendHandle frontendHandle_ = DVBFrontendHandle(0,0), const Callback & cb = NULL);
     ~DVBSocketController();
-    
+
     senf::DVBDemuxSectionHandle createDVBDemuxSectionHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
     senf::DVBDemuxPESHandle createDVBDemuxPESHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
 
     void addToConsole(senf::DVBDemuxSectionHandle sh);
-                                        ///< Adds an DVBDemuxSectionHandle to the console 
-                                        /**< Allocates the functionality of DVBDemuxSectionProtocol 
-                                             into the folder of the DVBSocketController. If the 
-                                             protocol is closed, or all handles are discarded the 
+                                        ///< Adds an DVBDemuxSectionHandle to the console
+                                        /**< Allocates the functionality of DVBDemuxSectionProtocol
+                                             into the folder of the DVBSocketController. If the
+                                             protocol is closed, or all handles are discarded the
                                              console support will automatically removed.
                                              \param[in] sh handle of a protocol*/
-    
+
     void addToConsole(senf::DVBDemuxPESHandle sh);
-                                        ///< Adds an DVBDemuxPESHandle to the console 
+                                        ///< Adds an DVBDemuxPESHandle to the console
                                         /**< Allocates the functionality of DVBDemuxPESProtocol into
                                              the folder of the DVBSocketController. If the protocol
-                                             is closed, or all handles are discarded the console 
+                                             is closed, or all handles are discarded the console
                                              support will automatically removed.
                                              \param[in] sh handle of a protocol*/
-    
+
     void tuneToCMD( const std::string & input, const std::string & mode = "async");
                                         ///< Tunes a DVB device given by the type of the DVBFrontendHandle
                                         /**< Tunes a DVB device by a channel name or complete

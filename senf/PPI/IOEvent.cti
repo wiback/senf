@@ -36,7 +36,7 @@
 
 template <class Handle>
 prefix_ senf::ppi::IOEvent::IOEvent(Handle handle, unsigned events)
-    : fd_ (-1), event_ ("senf::ppi::IOEvent", boost::bind(&IOEvent::cb,this,_1)) 
+    : fd_ (-1), event_ ("senf::ppi::IOEvent", boost::bind(&IOEvent::cb,this,_1))
 {
     set(handle,events);
 }

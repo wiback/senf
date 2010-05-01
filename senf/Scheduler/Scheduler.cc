@@ -65,12 +65,12 @@ prefix_ senf::ClockService::clock_type senf::scheduler::now()
 }
 
 namespace {
-    
+
     // We don't want try { } catch(...) { ... throw; } since that will make debugging more
     // difficult: the stack backtrace for an unexpected exception would always end here.
     struct SchedulerScopedInit
     {
-        SchedulerScopedInit() 
+        SchedulerScopedInit()
             {
                 senf::scheduler::detail::FIFORunner::instance().startWatchdog();
                 senf::scheduler::detail::SignalDispatcher::instance().unblockSignals();
@@ -126,7 +126,7 @@ prefix_ void senf::scheduler::restart()
     fdd->~FdDispatcher();
     ffr->~FIFORunner();
     fdm->~FdManager();
-    
+
     new (fdm) detail::FdManager();
     new (ffr) detail::FIFORunner();
     new (fdd) detail::FdDispatcher();
@@ -139,7 +139,7 @@ prefix_ void senf::scheduler::restart()
 
 prefix_ bool senf::scheduler::empty()
 {
-    return detail::FdDispatcher::instance().empty() 
+    return detail::FdDispatcher::instance().empty()
         && detail::TimerDispatcher::instance().empty()
         && detail::FileDispatcher::instance().empty()
         && detail::SignalDispatcher::instance().empty()

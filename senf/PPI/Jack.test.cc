@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@
 
 namespace {
 
-    class ActiveDummyForward 
+    class ActiveDummyForward
         : public senf::ppi::module::Module
     {
         SENF_PPI_MODULE(ActiveDummyForward);
@@ -55,7 +55,7 @@ namespace {
             { ++n; output(input()); }
     };
 
-    class PassiveDummyForward 
+    class PassiveDummyForward
         : public senf::ppi::module::Module
     {
         SENF_PPI_MODULE(PassiveDummyForward);
@@ -98,7 +98,7 @@ namespace {
 
         PassiveGroup()
             : input (forward1.input), output (forward1.output) {}
-        
+
         void flip()
         {
             input.reset(forward2.input);
@@ -120,9 +120,9 @@ SENF_AUTO_UNIT_TEST(jacks)
 
         senf::ppi::connect(source, group);
         senf::ppi::connect(group, sink);
-        
+
         senf::ppi::init();
-        
+
         {
             senf::Packet p (senf::DataPacket::create());
             source.submit(p);
@@ -132,7 +132,7 @@ SENF_AUTO_UNIT_TEST(jacks)
 
         group.flip();
         senf::ppi::init();
-        
+
         {
             senf::Packet p (senf::DataPacket::create());
             source.submit(p);
@@ -143,7 +143,7 @@ SENF_AUTO_UNIT_TEST(jacks)
         BOOST_CHECK_EQUAL( group.forward1.n, 1u );
         BOOST_CHECK_EQUAL( group.forward2.n, 1u );
     }
-     
+
     {
         PassiveGroup group;
         senf::ppi::module::debug::ActiveSource source;

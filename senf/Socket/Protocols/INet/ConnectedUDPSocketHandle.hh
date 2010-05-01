@@ -67,7 +67,7 @@ namespace senf {
 
         \par Address Type:
             INet4SocketAddress
-        
+
         ConnectedUDPv4SocketProtocol provides an internet protocol stream socket based on the UDP
         protocol and IPv4 addressing.
 
@@ -123,7 +123,7 @@ namespace senf {
         \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
             ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer()
-            
+
         \par Address Type:
             INet6Address
 

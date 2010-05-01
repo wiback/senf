@@ -50,7 +50,7 @@ namespace scheduler {
         host a big count of timers.
      */
     template<typename IdType>
-    class TimerEventProxy 
+    class TimerEventProxy
     {
     public:
         typedef boost::function<void(ClockService::clock_type, IdType const &)> Callback;
@@ -59,18 +59,18 @@ namespace scheduler {
         TimerEventProxy(std::string const & name, console::DirectoryNode & node);
                                         /**< \brief Instantiate a TimerEventProxy and add the list
                                                     command to the give DirectoryNode */
-        
+
         void add(ClockService::clock_type timeout, IdType const & id, Callback cb);
                                         ///< Add new deadline timer
-        
+
         bool remove(IdType const & id); ///< Remove timer by given \a id.
-        
+
         std::vector<std::pair<ClockService::clock_type, IdType> > list() const;
                                         ///< Returns a vector of all active timers with timeout and id.
-        
+
         ClockService::clock_type timeout(IdType const & id) const;
                                         ///< Returns timeout for given id
-                                        /**< if no timer for this id is registered \a 0 is returned. */ 
+                                        /**< if no timer for this id is registered \a 0 is returned. */
     private:
 #ifndef DOXYGEN
         struct Entry {
@@ -90,11 +90,11 @@ namespace scheduler {
             boost::multi_index::indexed_by<
                 boost::multi_index::ordered_non_unique<
                     boost::multi_index::tag<Timeout>,
-                    boost::multi_index::member<Entry, ClockService::clock_type, &Entry::timeout> 
+                    boost::multi_index::member<Entry, ClockService::clock_type, &Entry::timeout>
                 >,
                 boost::multi_index::ordered_unique<
                     boost::multi_index::tag<Id>,
-                    boost::multi_index::member<Entry, IdType, &Entry::id> 
+                    boost::multi_index::member<Entry, IdType, &Entry::id>
                 >
             >
         > EntrySet_t;
@@ -104,7 +104,7 @@ namespace scheduler {
         EntrySet_t entrySet;
         EntrySetById_t & entrySetById;
         EntrySetByTimeout_t & entrySetByTimeout;
-        
+
         scheduler::TimerEvent timer;
 
         void timerEvent();  // callback for the Scheduler timer event

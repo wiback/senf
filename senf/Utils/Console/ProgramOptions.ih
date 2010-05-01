@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -35,7 +35,7 @@
 namespace senf {
 namespace console {
 namespace detail {
-    
+
 #ifndef DOXYGEN
 
     class ProgramOptionsSource : public ConfigSource
@@ -48,10 +48,10 @@ namespace detail {
         template <class Container>
         ProgramOptionsSource & nonOptions(Container & container);
         ProgramOptionsSource & alias(char letter, std::string const & longOpt, bool withArg=false);
-        
+
     private:
         ProgramOptionsSource(int argc, char const ** argv);
-        
+
         virtual void v_parse(RestrictedExecutor & executor);
 
         void parseLongOption(std::string const & arg, RestrictedExecutor & executor);
@@ -84,7 +84,7 @@ namespace detail {
         };
 
         typedef std::map<char, ShortOption> ShortOptions;
-        
+
         int argc_;
         char const ** argv_;
         CommandParser parser_;

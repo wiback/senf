@@ -65,8 +65,8 @@ namespace senf {
 
         RawV4SocketProtocol provides an internet protocol raw socket based on IPv4 addressing.
         This socket will put data written to it onto the IPv4 layer: if you call writeto don't inlude the header!
-        On the other hand `read` will return the packet data including the IP header. 
-        This behaviour is strange and differs from the behaviour of IPv6 RAW sockets and should be changed in the future. 
+        On the other hand `read` will return the packet data including the IP header.
+        This behaviour is strange and differs from the behaviour of IPv6 RAW sockets and should be changed in the future.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
@@ -97,12 +97,12 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
         void init_client(int const & protocol) const;       ///< Create unconnected client socket for protocol
-        
+
         void init_client(int const & protocol, INet4SocketAddress const & address) const;
                                         ///< Create client socket and bind
                                         /**< Creates a new client socket for the given protocol and binds to the given
                                              address.
-                                             \param[in] protocol Layer 4 protocol to filter for / to send 
+                                             \param[in] protocol Layer 4 protocol to filter for / to send
                                              \param[in] address local address to bind to */
 
         ///@}
@@ -127,7 +127,7 @@ namespace senf {
         \par Socket Handle typedefs:
         \ref RawV6ClientSocketHandle (ProtocolClientSocketHandle)
 
-        \par Policy Interface: 
+        \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
             ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local()
 
@@ -136,8 +136,8 @@ namespace senf {
 
         RawV6SocketProtocol provides an internet protocol raw socket based on IPv6 addressing.
         This socket will put data written to it onto the IPv6 layer: if you call writeto don't inlude the header!
-        On the other hand `read` will return the packet data on top of the IPv6 layer, excluding the IP header. 
-        Note: This behaviour is differs from the behaviour of IPv4 RAW sockets. 
+        On the other hand `read` will return the packet data on top of the IPv6 layer, excluding the IP header.
+        Note: This behaviour is differs from the behaviour of IPv4 RAW sockets.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
@@ -174,7 +174,7 @@ namespace senf {
                                         ///< Create client socket and bind
                                         /**< Creates a new client socket for the given protocol and binds to the given
                                              address.
-                                             \param[in] protocol Layer 4 protocol to filter for / to send 
+                                             \param[in] protocol Layer 4 protocol to filter for / to send
                                              \param[in] address local address to bind to */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()

@@ -65,7 +65,7 @@ namespace senf {
             \e must also derive from senf::pool_alloc_mixin
       */
     class FileBody
-        : public senf::intrusive_refcount, 
+        : public senf::intrusive_refcount,
           public senf::pool_alloc_mixin<FileBody>
     {
     public:

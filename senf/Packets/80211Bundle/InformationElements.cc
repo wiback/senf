@@ -37,7 +37,7 @@ SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANPowerConstraintInfoElementParser );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANSupportedRatesInfoElementParser  );
 
 
-prefix_ void senf::WLANPowerConstraintInfoElementParser::dump(std::ostream & os) 
+prefix_ void senf::WLANPowerConstraintInfoElementParser::dump(std::ostream & os)
     const
 {
     os << "  WLAN PowerConstraint Information Element\n"
@@ -46,7 +46,7 @@ prefix_ void senf::WLANPowerConstraintInfoElementParser::dump(std::ostream & os)
        << "    value:  " << unsigned(value()) << "\n";
 }
 
-prefix_ void senf::WLANSSIDInfoElementParser::dump(std::ostream & os) 
+prefix_ void senf::WLANSSIDInfoElementParser::dump(std::ostream & os)
     const
 {
     os << "  WLAN SSID Information Element\n"
@@ -55,7 +55,7 @@ prefix_ void senf::WLANSSIDInfoElementParser::dump(std::ostream & os)
        << "    value:  " << value() << "\n";
 }
 
-prefix_ void senf::WLANSupportedRatesInfoElementParser::dump(std::ostream & os) 
+prefix_ void senf::WLANSupportedRatesInfoElementParser::dump(std::ostream & os)
     const
 {
     os << "  WLAN SupportedRates Information Element\n"

@@ -72,7 +72,7 @@ namespace senf {
     class ConnectedUNDatagramSocketProtocol
         : public ConcreteSocketProtocol<ConnectedUNDatagramSocket_Policy,
                                         ConnectedUNDatagramSocketProtocol>,
-          public UNSocketProtocol, 
+          public UNSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
     {
@@ -87,7 +87,7 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        void init_client(UNSocketAddress const & address) const; 
+        void init_client(UNSocketAddress const & address) const;
                                         ///< Create client socket and connect
                                         /**< Creates a new client socket and connects to the given
                                              address.
@@ -95,7 +95,7 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        
+
         ///@}
     };
 

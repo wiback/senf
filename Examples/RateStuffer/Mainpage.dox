@@ -27,7 +27,7 @@ using namespace senf::ppi::module;
     This example application implements a simple PPI application: It will read UDP packets from an
     input port and will forward them to another port at a fixed packet rate. If the input stream
     does not provide enough packets, empty UDP packets will be sent instead.
-    
+
     \section run Running the example
 
     Running the example is a little bit more complicated since we need to provide example UDP
@@ -38,7 +38,7 @@ using namespace senf::ppi::module;
     <pre>
     # nc -u -l -p 44345
     </pre>
-    
+
     The next command starts the \c ratestuffer
     <pre>
     # cd .../Examples/RateStuffer
@@ -137,8 +137,8 @@ using namespace senf::ppi::module;
 
     \skip class
     \until rateFilter
-    
-    First the needed modules are declared. We have 
+
+    First the needed modules are declared. We have
     - the \a barrier to discard incoming packets sent to fast
     - the \a queue to receive incoming packets and create throttling notifications
     - the \a generator to create the stuffing packets
@@ -154,7 +154,7 @@ using namespace senf::ppi::module;
 
     The constructor now initializes all the local objects. We pass the template \a packet to the \a
     generator and set the timing \a interval of the \a rateFilter.
-    
+
     The \a input and \a output connector references are bound to the corresponding connectors we
     want to expose: \a input to the \a barrier's \a input and \a output to the \a rateFilter's \a
     output.
@@ -187,7 +187,7 @@ using namespace senf::ppi::module;
     \until udpSink
 
     The \ref senf::ppi::connect() calls setup the necessary connections.
-    
+
     The module setup is complete, \ref senf::ppi::run() is called to enter the event loop.
 
     \until }

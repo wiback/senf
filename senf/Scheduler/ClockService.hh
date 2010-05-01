@@ -27,7 +27,7 @@
 #define HH_SENF_Scheduler_ClockService_ 1
 
 // Custom includes
-#include <sys/time.h> 
+#include <sys/time.h>
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -51,7 +51,7 @@ namespace senf {
     // To allow conversion between clock value and absolute time, the ClockService samples the
     // absolute current time and the clock value when the conversion is performed. This is done at
     // most once per second on a if-needed basis.
-    
+
     /** \brief Reliable high precision monotonous clock source
 
         The ClockService provides a highly accurate monotonous clock source based on
@@ -69,7 +69,7 @@ namespace senf {
         // Types
 
         /** \brief ClockService timer data type
-            
+
             Unsigned integer type representing scheduler time. Scheduler time is measured in
             nanoseconds relative to some implementation defined reference time.
          */
@@ -96,7 +96,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         static clock_type now();  ///< Return current clock value
-        
+
         static abstime_type abstime(clock_type clock); ///< Convert clock to absolute time
                                         /**< This member converts a clock value into an absolute
                                              Boost.DateTime value.
@@ -116,12 +116,12 @@ namespace senf {
                                              corresponding clock value.
                                              \see abstime */
 
-        static clock_type from_time_t(time_t const & time); 
+        static clock_type from_time_t(time_t const & time);
                                         ///< Convert legacy time_t to clock value
-                                        /**< This member converts an absolute time value 
+                                        /**< This member converts an absolute time value
                                              represented as a time_t value into a clock value */
 
-        static clock_type from_timeval(timeval const & time); 
+        static clock_type from_timeval(timeval const & time);
                                         ///< Convert legacy timeval to clock value
                                         /**< This member converts an absolute time value
                                              represented as a timeval value into a clock value */
@@ -197,7 +197,7 @@ namespace senf {
         <tr><td><code>2md</code></td><td>(very unusual) 2 milli-days</td></tr>
         </table>
      */
-    void parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & tokens, 
+    void parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & tokens,
                                    ClockService::clock_type & out);
 
     void formatClockServiceInterval(ClockService::clock_type interval, std::ostream & os);

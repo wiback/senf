@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -46,7 +46,7 @@ namespace console {
     template <class _> struct ReturnValueTraits;
 
 namespace detail {
-    
+
     template <class CharT>
     struct MatchingShortType
         : public boost::mpl::if_c<std::numeric_limits<CharT>::is_signed,short,unsigned short>
@@ -73,7 +73,7 @@ namespace detail {
     struct StringILess
     {
         bool operator()(std::string const & left, std::string const & right) const
-            { return boost::algorithm::to_lower_copy(left) 
+            { return boost::algorithm::to_lower_copy(left)
                   < boost::algorithm::to_lower_copy(right); }
     };
 

@@ -37,13 +37,13 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-namespace log { 
+namespace log {
 
     namespace detail { struct AreaBase; }
 
-    /** \brief Area registry 
-        
-        The area registry keeps track of all areas defined. 
+    /** \brief Area registry
+
+        The area registry keeps track of all areas defined.
 
         The area registry exposes a forward sequence interface which allows to query the list of all
         registered areas.
@@ -56,7 +56,7 @@ namespace log {
     {
         typedef std::map<std::string, detail::AreaBase const *> Registry;
 
-        struct SelectName 
+        struct SelectName
         {
             typedef std::string result_type;
             std::string const & operator()(Registry::value_type const & v) const;
@@ -89,8 +89,8 @@ namespace log {
         friend class senf::singleton<AreaRegistry>;
         friend class detail::AreaBase;
         friend class Target;
-    };        
-    
+    };
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

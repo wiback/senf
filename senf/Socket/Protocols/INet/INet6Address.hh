@@ -215,7 +215,7 @@ namespace senf {
                                         ///< Construct link-local INet6 address
                                         /**< This will construct a link local address of the form
                                              <tt>fe80::xxxx:xxxx:xxxx:xxxx</tt>. */
-        
+
         in6_addr toin6_addr() const;    ///< get the linux in6_addr struct (convinience only)
 
         ///@}

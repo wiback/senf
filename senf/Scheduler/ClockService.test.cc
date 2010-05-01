@@ -38,7 +38,7 @@
 
 namespace {
 
-    bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
+    bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b,
                         senf::ClockService::clock_type delta)
     {
         return (a<b ? b-a : a-b ) < delta;
@@ -57,19 +57,19 @@ namespace {
 SENF_AUTO_UNIT_TEST(clockService)
 {
     BOOST_CHECK( senf::ClockService::abstime(0).is_not_a_date_time());
-    
+
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
     BOOST_CHECK( true );
 
     senf::ClockService::restart(); // So we know, when the signal will be delivered
-    
+
     senf::ClockService::clock_type t1 (senf::ClockService::now());
     delay(200);
     senf::ClockService::clock_type t2 (senf::ClockService::now());
     if (enabled)
         BOOST_CHECK_PREDICATE( is_close_clock,
-                               (t1 + senf::ClockService::milliseconds(200)) 
+                               (t1 + senf::ClockService::milliseconds(200))
                                (t2)
                                (senf::ClockService::milliseconds(100)) );
 
@@ -100,7 +100,7 @@ SENF_AUTO_UNIT_TEST(clockService)
     if (enabled)
         BOOST_CHECK_PREDICATE( is_close_clock,
                                (t1 + senf::ClockService::milliseconds(200))
-                               (senf::ClockService::now()) 
+                               (senf::ClockService::now())
                                (senf::ClockService::milliseconds(100)) );
 }
 

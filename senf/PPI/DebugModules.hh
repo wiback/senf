@@ -186,7 +186,7 @@ namespace debug {
 
     private:
         void request();
-        
+
         Queue packets_;
     };
 

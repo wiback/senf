@@ -54,7 +54,7 @@ namespace detail {
 
     std::ostream & operator<<(std::ostream & os, LogParameters const & pm);
 
-    void senf_console_parse_argument(console::ParseCommandInfo::TokensRange const & tokens, 
+    void senf_console_parse_argument(console::ParseCommandInfo::TokensRange const & tokens,
                                      LogParameters & out);
 
     /** \brief Internal: Target registry */
@@ -62,18 +62,18 @@ namespace detail {
         : public senf::singleton<TargetRegistry>
     {
     public:
-        enum Level { 
-            VERBOSE = senf::log::VERBOSE::value, 
-            NOTICE = senf::log::NOTICE::value, 
-            MESSAGE = senf::log::MESSAGE::value, 
-            IMPORTANT = senf::log::IMPORTANT::value, 
-            CRITICAL = senf::log::CRITICAL::value, 
+        enum Level {
+            VERBOSE = senf::log::VERBOSE::value,
+            NOTICE = senf::log::NOTICE::value,
+            MESSAGE = senf::log::MESSAGE::value,
+            IMPORTANT = senf::log::IMPORTANT::value,
+            CRITICAL = senf::log::CRITICAL::value,
             FATAL = senf::log::FATAL::value
         };
 
         using senf::singleton<TargetRegistry>::instance;
 
-        void write(StreamBase const & stream, AreaBase const & area, unsigned level, 
+        void write(StreamBase const & stream, AreaBase const & area, unsigned level,
                    std::string const & msg);
 
         void routed();
@@ -86,7 +86,7 @@ namespace detail {
     private:
         TargetRegistry();
         ~TargetRegistry();
-        
+
         void registerTarget(Target * target, std::string const & name);
         void unregisterTarget(Target * target);
 
@@ -104,7 +104,7 @@ namespace detail {
         console::LazyDirectory consoleDir_;
 
         Targets dynamicTargets_;
-        
+
         friend class senf::log::Target;
         friend class senf::singleton<TargetRegistry>;
     };
@@ -115,7 +115,7 @@ namespace detail {
 
 #ifndef DOXYGEN
 
-    // This code takes the routing target template arguments in any order and sorts them 
+    // This code takes the routing target template arguments in any order and sorts them
     // by type (Stream, Area and Level).
 
     senf::mpl::rv<0u> RouteParameterCheck_(...);

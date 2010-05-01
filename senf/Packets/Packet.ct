@@ -38,9 +38,9 @@ prefix_ OtherPacket senf::Packet::find(NoThrow_t)
     const
 {
     Packet p (*this);
-    while (p && ! p.is<OtherPacket>()) 
+    while (p && ! p.is<OtherPacket>())
         p = p.next(nothrow);
-    if (p) 
+    if (p)
         return p.as<OtherPacket>();
     else
         return OtherPacket();
@@ -51,9 +51,9 @@ prefix_ OtherPacket senf::Packet::rfind(NoThrow_t)
     const
 {
     Packet p (*this);
-    while (p && ! p.is<OtherPacket>()) 
+    while (p && ! p.is<OtherPacket>())
         p = p.prev(nothrow);
-    if (p) 
+    if (p)
         return p.as<OtherPacket>();
     else
         return OtherPacket();

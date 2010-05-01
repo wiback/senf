@@ -63,8 +63,8 @@ namespace connector {
         We therefore have 4 connector types each of which is parameterized by the type of packet
         traversing the connector:
         \li senf::ppi::connector::ActiveInput
-        \li senf::ppi::connector::ActiveOutput 
-        \li senf::ppi::connector::PassiveInput 
+        \li senf::ppi::connector::ActiveOutput
+        \li senf::ppi::connector::PassiveInput
         \li senf::ppi::connector::PassiveOutput.
 
         Connectors are declared as module data members and are then externally connected to other
@@ -115,7 +115,7 @@ namespace connector {
             senf::ppi::connector::ActiveInputJack<senf::EthernetPacket> input;
             senf::ppi::connector::ActiveOutputJack<senf::EthernetPacket> output;
 
-            MyGroup() 
+            MyGroup()
                 : queue (), analyzer (), input (queue.input), output (analyzer.output)
             {
                 senf::ppi::connect(queue, analyzer);
@@ -186,10 +186,10 @@ namespace connector {
         void throttleTrace(char const * label, char const * type);
 
         void unregisterConnector();
-        
+
     private:
         virtual std::type_info const & packetTypeID();
-        
+
         virtual void v_disconnected() const;
 
         void setModule(module::Module & module);
@@ -348,7 +348,7 @@ namespace connector {
         typedef std::vector<ForwardingRoute*> NotifyRoutes;
         NotifyRoutes notifyRoutes_;
 
-        bool throttled_;        
+        bool throttled_;
 
         friend class senf::ppi::ForwardingRoute;
         friend class PassiveConnector;
@@ -568,12 +568,12 @@ namespace connector {
 #else
 
     /** \brief Connector actively reading packets
-        
+
         \tparam PacketType Type of packet to read. Defaults to senf::Packet
 
         The %ActiveInput %connector template reads data actively from a connected %module. This
-        class is completely implemented via it's base-class, GenericActiveInput, the only 
-        difference is that read packets are returned as \a PacketType instead of generic 
+        class is completely implemented via it's base-class, GenericActiveInput, the only
+        difference is that read packets are returned as \a PacketType instead of generic
         senf::Packet references.
 
         \see GenericActiveInput \n
@@ -595,7 +595,7 @@ namespace connector {
         \tparam PacketType Type of packet to read. Defaults to senf::Packet
 
         The %PassiveInput %connector template receives packets sent to it from a connected
-        %module. This class is completely implemented via it's base-class, GenericPassiveInput, 
+        %module. This class is completely implemented via it's base-class, GenericPassiveInput,
         the only difference is that read packets are returned as \a PacketType instead of generic
         senf::Packet references.
 
@@ -617,7 +617,7 @@ namespace connector {
 
         \tparam PacketType Type of packet to send. Defaults to senf::Packet
 
-        The %ActiveOutput %connector template sends data actively to a connected %module. This 
+        The %ActiveOutput %connector template sends data actively to a connected %module. This
         class is completely implemented via it's base-class, GenericActiveOutput, the only
         difference is that it only sends packets of type \a PacketType.
 
@@ -636,9 +636,9 @@ namespace connector {
 
         \tparam PacketType Type of packet to send. Defaults to senf::Packet
 
-        The %PassiveOutput %connector template provides data passively to a connected %module 
-        whenever signaled. This class is completely implemented via it's base-class, 
-        GenericPassiveOutput, the only difference is that it only sends packets of type 
+        The %PassiveOutput %connector template provides data passively to a connected %module
+        whenever signaled. This class is completely implemented via it's base-class,
+        GenericPassiveOutput, the only difference is that it only sends packets of type
         \a PacketType.
 
         \see GenericPassiveOutput \n

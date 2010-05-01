@@ -106,7 +106,7 @@ SENF_AUTO_UNIT_TEST(packetImpl_data)
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create());
     senf::detail::PacketImpl * p (senf::detail::packet::test::TestDriver::impl(pi));
 
-    senf::detail::PacketImpl::byte data[] = 
+    senf::detail::PacketImpl::byte data[] =
         { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
 
     p->insert(&pi->data(),p->begin(),data, data+sizeof(data));
@@ -114,7 +114,7 @@ SENF_AUTO_UNIT_TEST(packetImpl_data)
     BOOST_CHECK_EQUAL(p->begin()[0], 0x00u);
     BOOST_CHECK_EQUAL(p->begin()[7], 0x07u);
     BOOST_CHECK_EQUAL(pi->data().size(), p->size());
-    
+
     p->insert(&pi->data(),p->begin()+2,0xf0u);
     BOOST_CHECK_EQUAL(p->size(),9u);
     BOOST_CHECK_EQUAL(p->begin()[8], 0x07u);
@@ -131,7 +131,7 @@ SENF_AUTO_UNIT_TEST(packetImpl_data)
     BOOST_CHECK_EQUAL(p->size(),16u);
     BOOST_CHECK_EQUAL(p->begin()[0], 0x01u);
     BOOST_CHECK_EQUAL(pi->data().size(), p->size());
-    
+
     p->erase(&pi->data(),p->begin()+2, p->begin()+7);
     BOOST_CHECK_EQUAL(p->size(),11u);
     BOOST_CHECK_EQUAL(p->begin()[2], 0x07u);
@@ -185,12 +185,12 @@ SENF_AUTO_UNIT_TEST(packetImpl_interpreters)
         BOOST_CHECK( pi1->data().begin() == p->begin() );
         BOOST_CHECK( pi2->data().begin() == p->begin() );
         BOOST_CHECK( pi3->data().begin() == p->end() );
-        
+
         p->insert(&pi3->data(),p->end(), 0x00u);
         BOOST_CHECK_EQUAL(pi1->data().size(), 11u);
         BOOST_CHECK_EQUAL(pi2->data().size(), 11u);
         BOOST_CHECK_EQUAL(pi3->data().size(), 1u);
-        
+
         p->insert(&pi1->data(),p->end(), 2, 0x00u);
         BOOST_CHECK_EQUAL(pi1->data().size(), 13u);
         BOOST_CHECK_EQUAL(pi2->data().size(), 11u);

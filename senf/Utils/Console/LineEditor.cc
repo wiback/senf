@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -86,7 +86,7 @@ LineEditorClientReader(Client & client, LineEditorSwitcher & switcher)
                       senf::membind(&LineEditorClientReader::deleteCharOrExit, this));
     editor_.defineKey(senf::term::KeyParser::Tab,
                       boost::bind(&term::bindings::complete,
-                                  _1, 
+                                  _1,
                                   senf::membind(&LineEditorClientReader::completePath, this)));
     editor_.defineKey(senf::term::KeyParser::Return, &senf::term::bindings::acceptWithRepeat);
 }
@@ -148,7 +148,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
     std::string const & t (editor.text());
     // Search backward from e finding the longest valid path. This does *not* accept all valid
     // path's, only those without embedded white-space. However, this is only for completion so
-    // it's ok. 
+    // it's ok.
     if (b<e) {
         unsigned bb (e-1);
         for (;;) {
@@ -171,7 +171,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
     catch (CommandParser::ParserErrorException & ex) {
         return;
     }
- 
+
     ParseCommandInfo::TokensRange path (cmd.commandPath());
     if (path.empty()) {
         DirectoryNode::ChildrenRange cs (client().cwd().children());
@@ -179,7 +179,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
             completions.push_back(i->first + (i->second->followLink().isDirectory() ? "/" : " "));
         return;
     }
-    
+
     ParseCommandInfo::TokensRange::const_iterator i (path.begin());
     ParseCommandInfo::TokensRange::const_iterator const i_end (boost::prior(path.end()));
     DirectoryNode * dir (& client().cwd());
@@ -195,7 +195,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
             if (parent) dir = parent;
             prefix += "../";
         }
-        else if (*i == WordToken(".")) 
+        else if (*i == WordToken("."))
             prefix += "./";
         else {
             if (dir->hasChild(i->value())) {
@@ -206,7 +206,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
                     return;
                 }
                 prefix += i->value() + "/";
-            } 
+            }
             else {
                 DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
                 if (has_one_elt(cs)) {

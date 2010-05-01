@@ -24,7 +24,7 @@
     \brief PacketParser public header */
 
 /** \defgroup packetparser The PacketParser facility
-    
+
     The PacketParser facility provides a framework to implement very lightweight classes which parse
     the raw content of a packet into meaningful values. PacketParsers are always passed around
     <em>by value</em>, they can be understood as pointers into the packet data with added type
@@ -61,7 +61,7 @@
     the field name. Each returns a parser object. Simple parsers can be used like their
     corresponding basic type (e.g. a UInt16Parser field can be used like an unsigned integer), more
     complex parsers provide type specific access members. Assigning a value to a parser will change
-    the underlying representation (the packet data). 
+    the underlying representation (the packet data).
 
     Parsers can be grouped into several categories. These categories are not all defined rigorously
     but are nevertheless helpful when working with the parsers:
@@ -86,7 +86,7 @@
     processing fields in some way and so on). You should however be very wary to access data outside
     the range assigned to the packet (the range starting at \c i() and with a size of senf::bytes()
     bytes).
-    
+
     Each parser type has specific features
 
     \subsection parserimpl_value Value parsers
@@ -95,7 +95,7 @@
     \code
     // SomeParser must have a 'value_type', The 'value_type' must be default constructible, copy
     // constructible and assignable
-    SomeParser::value_type v; 
+    SomeParser::value_type v;
 
     // An instance of 'SomeParser' must have a 'value' member which returns a value which may be
     // assigned to a variable of type 'value_type'
@@ -127,7 +127,7 @@
     \see parsecollection
 
     \subsection parserimpl_composite Composite parsers
-    
+
     If possible, composite parsers should be implemented using the \ref packetparsermacros. In
     addition to the normal parser requirements, these macros ensure, that for each field,
     <em>fieldname</em><tt>_t</tt> is a typedef for the fields parser and
@@ -169,7 +169,7 @@
 namespace senf {
 
     class Packet;
-    
+
     /** \brief Parser Base class
 
         Parsers come in two flavors: fixed and dynamically sized parsers. A <em>fixed size
@@ -180,7 +180,7 @@ namespace senf {
         A <em>dynamically sized</em> parser on the other hand infers it's size from the contents of
         the data parsed. Any parser containing at least one dynamically sized sub-parser will itself
         be dynamically sized.
-        
+
         Both kinds of parser need to derive from PacketParserBase and implement several required
         members. Which members to implement depends on the parsers flavor. There are two ways how to
         do this.
@@ -215,7 +215,7 @@ namespace senf {
 
               // ////////////////////////////////////////////////////////////////////////
 
-              // Add here members returning (sub-)parsers for the fields. The 'parse' member is 
+              // Add here members returning (sub-)parsers for the fields. The 'parse' member is
               // used to construct the sub-parsers. This member either takes an iterator to the
               // data to be parsed or just an offset in bytes.
 
@@ -223,7 +223,7 @@ namespace senf {
               senf::UInt16Parser size() const { return parse<UInt16Parser>( 2 ); }
           };
         \endcode
-        
+
         You should never call the \c bytes() member of a parser directly. Instead you should use the
         freestanding senf::bytes() function. This function will return the correct size irrespective
         of the parsers flavor. You may access \c fixed_bytes directly, however be aware that this
@@ -271,8 +271,8 @@ namespace senf {
                                              offset. However, the parser checks, that the iterator is
                                              still within range of the raw data
                                              container. Otherwise a TruncatedPacketException is
-                                             thrown. 
-                                             
+                                             thrown.
+
                                              \throws TruncatedPacketException if the raw data
                                                  container does not hold at least \a offset bytes
                                                  starting at i(). */
@@ -295,20 +295,20 @@ namespace senf {
         struct ParserProtector {
             senf::safe_data_iterator safe_i_;
             mutable PacketParserBase const * parser_;
-            
+
             ParserProtector( PacketParserBase const * parser);
             ParserProtector(ParserProtector const & other_);
             ~ParserProtector();
         };
     protected:
         ParserProtector protect() const;
-        
+
         PacketParserBase(data_iterator i, state_type s); ///< Standard constructor
                                         /**< This is the constructor used by most parsers. The
                                              parameters are just forwarded from the derived classes
                                              constructor parameters. */
 
-        PacketParserBase(data_iterator i, state_type s, size_type size); 
+        PacketParserBase(data_iterator i, state_type s, size_type size);
                                         ///< Size checking constructor
                                         /**< In addition to the standard constructor, this
                                              constructor will validate, that there is enough data in
@@ -387,7 +387,7 @@ namespace senf {
     };
 
     /** \brief Return raw size parsed by the given parser object
-        
+
         This function will either call <tt>p.bytes()</tt> or return <tt>Parser::fixed_bytes</tt>
         depending on the type of parser.
 
@@ -402,7 +402,7 @@ namespace senf {
      */
     template <class Parser>
     PacketParserBase::size_type bytes(Parser p);
-    
+
     namespace detail { template <class Parser> class ParserInitBytes; }
     namespace detail { template <class Parser> class ParserIsFixed; }
 
@@ -445,7 +445,7 @@ namespace senf {
 
 #   ifndef DOXYGEN
     template <class Parser>
-    typename boost::enable_if< 
+    typename boost::enable_if<
         boost::is_base_of<PacketParserBase, Parser>,
         Parser >::type
     operator<<(Parser target, Parser source);
@@ -469,17 +469,17 @@ namespace senf {
 
 #   ifndef DOXYGEN
     template <class Parser, class Value>
-    typename boost::enable_if_c < 
-        boost::is_base_of<PacketParserBase, Parser>::value 
+    typename boost::enable_if_c <
+        boost::is_base_of<PacketParserBase, Parser>::value
             && ! boost::is_base_of<PacketParserBase, Value>::value,
         Parser >::type
     operator<<(Parser target, Value const & value);
-#   else 
+#   else
     /** \brief Generic parser value assignment
 
         This operator allows to assign a value to parsers which implement a <tt>value(</tt>\a
         value<tt>)</tt> member. This operator allows to use a common syntax for assigning values or
-        parsers to a parser. 
+        parsers to a parser.
 
         \ingroup packetparser
      */
@@ -489,17 +489,17 @@ namespace senf {
 
 #   ifndef DOXYGEN
     template <class Parser, class Value>
-    typename boost::enable_if_c < 
-        boost::is_base_of<PacketParserBase, Parser>::value 
+    typename boost::enable_if_c <
+        boost::is_base_of<PacketParserBase, Parser>::value
             && ! boost::is_base_of<PacketParserBase, Value>::value,
         Parser >::type
     operator<<(Parser target, boost::optional<Value> const & value);
-#   else 
+#   else
     /** \brief Generic parser value assignment
 
         This operator allows to assign a value to parsers which implement a <tt>value(</tt>\a
         value<tt>)</tt> member. This special version allows to assign optional values: IF the
-        optional value is not set, the assignment will be skipped. 
+        optional value is not set, the assignment will be skipped.
 
         This operator allows to use a common syntax for assigning values or parsers to a parser.
 
@@ -511,7 +511,7 @@ namespace senf {
 
     /** \brief Default parser parsing nothing
      */
-    struct VoidPacketParser 
+    struct VoidPacketParser
         : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()

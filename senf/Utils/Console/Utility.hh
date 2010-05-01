@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -51,7 +51,7 @@ namespace console {
         argument/return type \a CharT  to CharAsString<CharT>:
         \code
         char foo(char v) { return v; }
-        
+
         senf::console::root().add(
             "foo", boost::function< CharAsString<char> (CharAsString<char>) >(&foo));
         \endcode
@@ -67,7 +67,7 @@ namespace console {
         CharAsString(CharT value_);
         operator CharT () const;
         CharT value;
-    };    
+    };
 
 #ifndef DOXYGEN
 
@@ -76,7 +76,7 @@ namespace console {
     {
         typedef CharAsString<CharT> type;
         static bool const singleToken = true;
-        
+
         static void parse(ParseCommandInfo::TokensRange const & tokens, CharAsString<CharT> & out);
         static std::string description();
         static std::string str(CharAsString<CharT> value);
@@ -86,14 +86,14 @@ namespace console {
     struct ReturnValueTraits< CharAsString<CharT> >
     {
         typedef CharAsString<CharT> type;
-        
+
         static void format(CharAsString<CharT> value, std::ostream & os);
     };
 
 #endif
 
     /** \brief Value range
-        
+
         A value range may be represented in the console either by a single value (setting both \a
         low and \a high to the same value) or as a lower and upper bound seperated by a colon.
 
@@ -132,7 +132,7 @@ namespace console {
     /** \brief Bit-mask flag argument type
 
         senf::console::FlagCollection supplies a special argument type for use in registering
-        console commands. This argument type is used to represent a bit-mask of single flags. 
+        console commands. This argument type is used to represent a bit-mask of single flags.
 
         \code
         // Function taking a flags argument
@@ -144,7 +144,7 @@ namespace console {
                      Baz = 4,
                      Doo = 8 };
         SENF_CONSOLE_REGISTER_ENUM(MyFlags, (Foo)(Bar)(Baz)(Boo));
-        
+
         // Register the function with a FlagCollection argument type
         consoleDir.add("func", boost::function<void (FlagCollection<MyFlags>)>(&func));
         \endcode
@@ -157,7 +157,7 @@ namespace console {
 
         The nice thing is, that \c boot::function supports compatible argument types and does
         automatic type conversion. Since a FlagCollection is convertible to and from unsigned long,
-        this conversion will work. 
+        this conversion will work.
 
         After registering this function, you can call it with a collection of flags as argument
 

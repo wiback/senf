@@ -37,21 +37,21 @@
 
 SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 58, senf::ICMPv6Packet);
 
-prefix_ boost::uint16_t senf::ICMPv6PacketParser::calcChecksum() 
+prefix_ boost::uint16_t senf::ICMPv6PacketParser::calcChecksum()
     const
 {
     senf::IPv6Packet ipv6 (packet().rfind<senf::IPv6Packet>(senf::nothrow));
     if (! ipv6) return 0u;
-    
+
     senf::IpChecksum summer;
 
     ////////////////////////////////////////
     // IPv6 pseudo header
-    summer.feed( ipv6->source().i(), 
+    summer.feed( ipv6->source().i(),
                  ipv6->source().i() + senf::IPv6Packet::Parser::source_t::fixed_bytes );
     // need support for HopByHop routing header -> the destination used here must be the *final*
     // destination ...
-    summer.feed( ipv6->destination().i(), 
+    summer.feed( ipv6->destination().i(),
                  ipv6->destination().i() + senf::IPv6PacketParser::destination_t::fixed_bytes );
     // packet length
     boost::uint32_t size (data().size());

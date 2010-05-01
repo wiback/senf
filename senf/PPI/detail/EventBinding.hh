@@ -46,9 +46,9 @@ namespace detail {
 
         EventManager & manager() const;
         module::Module & module() const;
-        
+
     protected:
-        EventBindingBase(EventManager & manager, module::Module & module, 
+        EventBindingBase(EventManager & manager, module::Module & module,
                          EventDescriptor & descriptor);
 
         void eventTime(ClockService::clock_type time);
@@ -72,7 +72,7 @@ namespace detail {
 
         void callback(EventArg event, ClockService::clock_type time);
         void callback(EventArg event);
-        
+
     private:
         Self & self();
     };
@@ -85,7 +85,7 @@ namespace detail {
     public:
         void callback(ClockService::clock_type time);
         void callback();
-        
+
     private:
         Self & self();
     };
@@ -95,7 +95,7 @@ namespace detail {
     /** \brief Internal: Association Event - Module - Handler, event type specific */
     template <class EventType>
     class EventBinding
-        : public EventBindingBase, 
+        : public EventBindingBase,
           public EventBindingHelper<EventType, EventBinding<EventType> >
     {
     public:

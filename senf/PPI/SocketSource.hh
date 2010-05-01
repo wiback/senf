@@ -46,7 +46,7 @@ namespace ppi {
 
         This read helper will read a datagram from a datagram socket. This datagram will then be
         interpreted as a packet of type \a Packet as defined in the packet library. \a Packet
-        defaults to DataPacket (type DataPacketType), which will place the data uninterpreted 
+        defaults to DataPacket (type DataPacketType), which will place the data uninterpreted
         into a packet data structure.
      */
     template <class Packet=DataPacket, unsigned MaxSize=0u>
@@ -105,7 +105,7 @@ namespace module {
         \ingroup io_modules
      */
     template <class Reader=DgramReader<> >
-    class ActiveSocketSource 
+    class ActiveSocketSource
         : public Module
     {
         SENF_PPI_MODULE(ActiveSocketSource);
@@ -113,9 +113,9 @@ namespace module {
     public:
         typedef typename Reader::Handle Handle; ///< Handle type requested by the reader
 
-        connector::ActiveOutput<typename Reader::PacketType> output; 
+        connector::ActiveOutput<typename Reader::PacketType> output;
                                         ///< Output connector to which the data received is written
-        
+
         ActiveSocketSource();           ///< Create non-connected reader
                                         /**< The reader will be disabled until a socket is set
                                              \pre Requires \a Reader to be default constructible */
@@ -139,10 +139,10 @@ namespace module {
         void handle(Handle handle);     ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new, valid handle is assigned. */
-        
+
     private:
         void read();
-        
+
         Handle handle_;
         IOEvent event_;
         Reader reader_;

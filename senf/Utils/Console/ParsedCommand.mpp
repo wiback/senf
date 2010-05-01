@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -103,7 +103,7 @@ protected:
 private:
     ParsedCommandOverload(Function fn);
 
-    virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command) 
+    virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
         const;
 
     Function function_;
@@ -142,7 +142,7 @@ protected:
 private:
     ParsedCommandOverload(Function fn);
 
-    virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command) 
+    virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
         const;
 
     Function function_;
@@ -180,7 +180,7 @@ senf::console::detail::ArgumentInfo<
 senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >::
 arg() const
 {
-    return static_cast< detail::ArgumentInfo< 
+    return static_cast< detail::ArgumentInfo<
         typename boost::mpl::at_c<arg_types, n>::type > & >(arg(n));
 }
 
@@ -196,7 +196,7 @@ template <class FunctionTraits, class ReturnValue>
 prefix_
 senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION()>::
 ParsedCommandOverload(Function fn)
-    : function_ (fn) 
+    : function_ (fn)
 {
 #   define mpp_l(z,n,d) addParameter< mpp_ArgTypeN(n) >();
     BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
@@ -221,7 +221,7 @@ senf::console::detail::ArgumentInfo<
 senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::
 arg() const
 {
-    return static_cast< detail::ArgumentInfo< 
+    return static_cast< detail::ArgumentInfo<
         typename boost::mpl::at_c<arg_types, n>::type > & >(arg(n));
 }
 
@@ -237,7 +237,7 @@ template <class FunctionTraits>
 prefix_
 senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::
 ParsedCommandOverload(Function fn)
-    : function_ (fn) 
+    : function_ (fn)
 {
 #   define mpp_l(z,n,d) addParameter< mpp_ArgTypeN(n) >();
     BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
@@ -279,7 +279,7 @@ v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
                 ArgumentTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );                  \
         }
 #   define mpp_l_(z,n,d) mpp_l(z, BOOST_PP_SUB(BOOST_PP_DEC(BOOST_PP_ITERATION()), n), d)
-    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l_, _ ) 
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l_, _ )
 #   undef mpp_l
 #   undef mpp_l_
 
@@ -321,7 +321,7 @@ v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
                 ArgumentTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );                  \
         }
 #   define mpp_l_(z,n,d) mpp_l(z, BOOST_PP_SUB(BOOST_PP_DEC(BOOST_PP_ITERATION()), n), d)
-    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l_, _ ) 
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l_, _ )
 #   undef mpp_l
 #   undef mpp_l_
 
@@ -354,7 +354,7 @@ struct CreateParsedCommandOverload<Traits, true, BOOST_PP_ITERATION()>
 
 // Create keyword arg forwarding functions
 
-template <BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), class A ) > 
+template <BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), class A ) >
 next_type arg ( BOOST_PP_ENUM_BINARY_PARAMS( BOOST_PP_ITERATION(), A, const & a ),
                 typename arg_params::match< BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ) >::type
                     kw = arg_params()) {

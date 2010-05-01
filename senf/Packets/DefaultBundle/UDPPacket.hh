@@ -38,7 +38,7 @@ namespace senf {
 
         Parser implementing the UDP header. The fields implemented are:
         \image html UDPPacket.png
-        
+
         \see UDPPacketType \n
             <a href="http://tools.ietf.org/html/rfc768">RFC 768</a>
      */
@@ -64,7 +64,7 @@ namespace senf {
     };
 
     /** \brief UDP packet
-        
+
         \par Packet type (typedef):
             \ref UDPPacket
 
@@ -83,7 +83,7 @@ namespace senf {
             <td colspan="3">\ref UDPPacketParser::checksum() "Checksum"</td>
           </tr>
         </table>
-          
+
         \par Finalize action:
             \copydetails finalize()
 
@@ -105,15 +105,15 @@ namespace senf {
 
         /** \brief Dump given UDPPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-        
+
         static void finalize(packet p); ///< Finalize packet.
-                                        /**< \li set \ref UDPPacketParser::length() "length" from 
+                                        /**< \li set \ref UDPPacketParser::length() "length" from
                                                payload size
-                                             \li calculate and set \ref UDPPacketParser::checksum() 
+                                             \li calculate and set \ref UDPPacketParser::checksum()
                                                "checksum" */
     };
 
-    /** \brief UDP packet typedef 
+    /** \brief UDP packet typedef
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<UDPPacketType> UDPPacket;

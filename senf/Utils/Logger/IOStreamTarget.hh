@@ -44,9 +44,9 @@ namespace log {
         \verbatim <date> [<level>][<area>] <message> \endverbatim
 
         The \e area will be omitted if it is \c senf::log::DefaultArea.
-        
+
         \warning The class keeps a reference to the passed stream.
-        
+
         \ingroup targets
       */
     class IOStreamTarget
@@ -68,10 +68,10 @@ namespace log {
         using detail::LogFormat::showArea;
         using detail::LogFormat::timeFormat;
         using detail::LogFormat::tag;
-        
+
     protected:
-        void v_write(time_type timestamp, std::string const & stream, 
-                     std::string const & area, unsigned level, 
+        void v_write(time_type timestamp, std::string const & stream,
+                     std::string const & area, unsigned level,
                      std::string const & message);
 
     private:

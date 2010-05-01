@@ -38,14 +38,14 @@ prefix_ boost::uint32_t senf::SNDUPacketParser::calcCrc()
     const
 {
     return std::for_each(
-            data().begin(), 
-            boost::prior(data().end(), 4), 
+            data().begin(),
+            boost::prior(data().end(), 4),
             ule_crc32() ).checksum();
 }
 
 //prefix_ senf::SNDUPacketType::key_t senf::SNDUPacketType::nextPacketKey(packet p)
 //{
-//    return p->type(); 
+//    return p->type();
 //}
 
 prefix_ void senf::SNDUPacketType::init(packet p)
@@ -65,12 +65,12 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::SNDUPacketType::nextPacketT
     return e ? e->factory() : no_factory();
 }
 
-prefix_ senf::PacketInterpreterBase::optional_range 
-senf::SNDUPacketType::nextPacketRange(packet p) 
+prefix_ senf::PacketInterpreterBase::optional_range
+senf::SNDUPacketType::nextPacketRange(packet p)
 {
     if (p.data().size() < 8)
         return no_range();
-    
+
     size_type sz = 2 + 2;  // D-Bit + 15 bits length + 16 bits type field
     if (! p->d_bit() )
         sz += 6;  // + 6 Byte NPA destination address

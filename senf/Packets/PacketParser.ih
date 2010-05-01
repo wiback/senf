@@ -40,7 +40,7 @@ namespace detail {
 
     // Use SFINAE to check, if Parser has an integer-valued fixed_bytes member. If not,
     // 'Parser_TakeNum<Parser::fixed_bytes>' fails and the overload is removed from the overload
-    // set. 
+    // set.
     template <class Parser>
     PacketParserBase::size_type packetParserSize(
         Parser p, int, senf::mpl::take_uint<Parser::fixed_bytes> * = 0);
@@ -61,7 +61,7 @@ namespace detail {
     // This version of ParserInitBytes_Choose uses 'Parser::init_bytes' to provide 'value' (via
     // 'boost::integral_constant')
     template <class Parser, unsigned _>
-    struct ParserInitBytes_Choose 
+    struct ParserInitBytes_Choose
         : public boost::integral_constant<PacketParserBase::size_type, Parser::init_bytes> {};
     // ^^-- g++ error signaled here:
     //    error: 'fixed_bytes' is not a member of 'some-class-name'

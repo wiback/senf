@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -40,7 +40,7 @@ template <class Collection>
 prefix_ std::string
 senf::console::detail::CollectionArgumentTraitsBase<Collection>::description()
 {
-    return senf::prettyBaseName(typeid(Collection)) + "<" 
+    return senf::prettyBaseName(typeid(Collection)) + "<"
         + ArgumentTraits<typename Collection::value_type>::description() + ">";
 }
 
@@ -83,7 +83,7 @@ senf::console::detail::CollectionReturnValueTraits<Collection>::format(Collectio
     if (i != i_end)
         for (;;) {
             os << senf::console::str(*i);
-            if (++i == i_end) 
+            if (++i == i_end)
                 break;
             else
                 os << " ";
@@ -115,7 +115,7 @@ parse(ParseCommandInfo::TokensRange const & tokens, Collection & out)
 template <class Collection>
 prefix_ std::string senf::console::detail::MapArgumentTraits<Collection>::description()
 {
-    return senf::prettyBaseName(typeid(Collection)) + "<" 
+    return senf::prettyBaseName(typeid(Collection)) + "<"
         + ArgumentTraits<typename Collection::key_type>::description() + ","
         + ArgumentTraits<typename Collection::mapped_type>::description() + ">";
 }
@@ -145,7 +145,7 @@ senf::console::detail::MapReturnValueTraits<Collection>::format(Collection const
             os << senf::console::str(i->first)
                << "="
                << senf::console::str(i->second);
-            if (++i == i_end) 
+            if (++i == i_end)
                 break;
             else
                 os << " ";

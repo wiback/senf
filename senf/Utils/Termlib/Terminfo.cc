@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -194,13 +194,13 @@ namespace {
     {
         std::vector<senf::term::Terminfo::number_t> stack;
 
-        void push(senf::term::Terminfo::number_t v) 
+        void push(senf::term::Terminfo::number_t v)
             {
                 stack.push_back(v);
             }
 
-        senf::term::Terminfo::number_t pop() 
-            { 
+        senf::term::Terminfo::number_t pop()
+            {
                 if (stack.empty())
                     return 0;
                 else {
@@ -282,11 +282,11 @@ prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
         case '~': stack.push(~stack.pop()); break;
         case 't': bCondValue = stack.pop();
         case 'e': if ((bCondValue = !bCondValue)) // this also supports elsif
-            --(i = prgstr.begin() + std::min (prgstr.find ("%e", i-prgstr.begin()), 
+            --(i = prgstr.begin() + std::min (prgstr.find ("%e", i-prgstr.begin()),
                                               prgstr.find ("%;", i-prgstr.begin())));
         case '?':
         case ';': break;
-        case 'p': 
+        case 'p':
             switch (*++i) {
             case '1': stack.push(arg1); break;
             case '2': stack.push(arg2); break;
@@ -338,7 +338,7 @@ prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
          NumberVec::const_iterator i (numbers_.begin());
          NumberVec::const_iterator const i_end (numbers_.end());
          for (; i != i_end; ++i, ++n)
-             if (*i != NoValue 
+             if (*i != NoValue
                  && n < sizeof(properties::NumericNames)/sizeof(properties::NumericNames[0]))
                  os << "    " << properties::NumericNames[n] << " = " << *i << "\n";
      }
@@ -424,7 +424,7 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
     }
     if (booleans_.size() & 1)
         is.ignore(1u);
-    
+
     numbers_.resize(h.nNumbers);
     for (NumberVec::iterator i (numbers_.begin()); i != numbers_.end(); ++i) {
         number_t v;
@@ -442,7 +442,7 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
         if (!is) throw InvalidTerminfoException();
         *i = v;
     }
-    
+
     stringPool_.resize(h.stringPoolSz);
     is.read(&(stringPool_[0]), stringPool_.size());
     if (!is) throw InvalidTerminfoException();
@@ -561,7 +561,7 @@ senf::term::KeyParser::lookup(std::string const & key)
     if (key.empty())
         return std::make_pair(KeyCode(0), 0);
 
-    // There are several cases: 
+    // There are several cases:
     // a) 'key' is an incomplete key sequence. In this case, 'key' will precede all completions in
     //    the key table. The first possible completion is found by 'upper_bound'
     // b) 'key' is a complete key sequence. This is the key sequence *preceding* the 'upper_bound'

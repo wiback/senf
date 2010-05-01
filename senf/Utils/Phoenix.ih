@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -46,7 +46,7 @@ namespace detail {
     struct clear {
         template <class A1>
         struct result { typedef void type; };
-        
+
         template <class A1>
         void operator()(A1 & a1) const
             { a1.clear(); }

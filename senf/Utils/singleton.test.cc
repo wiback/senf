@@ -87,7 +87,7 @@ namespace {
         ~AliveTest2();
     };
 
-    AliveTest1::AliveTest1() 
+    AliveTest1::AliveTest1()
     {
         test2Alive = AliveTest2::alive();
     }

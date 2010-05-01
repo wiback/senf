@@ -42,8 +42,8 @@ senf::PacketTypeMixin<Self,void>::nextPacketRange(Packet const & p)
     /// (the function address) Self::initHeadSize is different from PacketTypeBase::initHeadSize
     if (sz == PacketTypeBase::size_type(-1)) {
         typename Self::size_type headsz (bytes(p.as< ConcretePacket<Self> >().parser()));
-        return p.data().size() < headsz ? 
-            PacketTypeBase::no_range() : 
+        return p.data().size() < headsz ?
+            PacketTypeBase::no_range() :
             PacketInterpreterBase::optional_range(
                 PacketTypeBase::range(boost::next(p.data().begin(), headsz),
                                       p.data().end()));
@@ -56,7 +56,7 @@ senf::PacketTypeMixin<Self,void>::nextPacketRange(Packet const & p)
         //
         // So, the helper only works with fixed-size parsers if the packet has a trailer.
         return p.data().size() < Self::initSize() ?
-            PacketTypeBase::no_range() : 
+            PacketTypeBase::no_range() :
             PacketInterpreterBase::optional_range(
                 PacketTypeBase::range(boost::next(p.data().begin(),sz),
                                       boost::prior(p.data().end(),Self::initSize()-sz)));

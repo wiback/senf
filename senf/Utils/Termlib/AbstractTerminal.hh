@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -39,7 +39,7 @@ namespace term {
 
         This abstract interface base class provides an abstract interface to a terminal. There are
         two parts to this interface:
-        
+
         \li The interface which allows the terminal user to get information about the terminal
         \li The interface which allows the terminal to send messages to the terminal user
 

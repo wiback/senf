@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -38,7 +38,7 @@
 SENF_AUTO_UNIT_TEST(syslogTarget)
 {
     senf::log::SyslogTarget syslog;
-    
+
     syslog.route();
     BOOST_WARN_MESSAGE( false, "Check the system log for the test message" );
     SENF_LOG(("SENF syslog test message"));

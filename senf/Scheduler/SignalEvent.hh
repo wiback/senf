@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -61,7 +61,7 @@ namespace scheduler {
      */
     class SignalEvent
         : public detail::FIFORunner::TaskInfo,
-          public detail::SignalSetBase 
+          public detail::SignalSetBase
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ namespace scheduler {
         virtual void v_run();
         virtual char const * v_type() const;
         virtual std::string v_info() const;
-        
+
         int signal_;
         Callback cb_;
         siginfo_t siginfo_;

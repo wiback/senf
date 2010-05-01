@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -89,7 +89,7 @@ SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
 
     {
         UInt16VectorParser v (p.data().begin(), &p.data());
-        
+
         BOOST_REQUIRE_EQUAL( v.size(), p.data().size()/2 );
         BOOST_CHECK_EQUAL( v[0], 0x1011u );
         BOOST_CHECK_EQUAL( v[1], 0x1213u );
@@ -111,10 +111,10 @@ SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
         w.erase(w.begin()+3, w.begin()+5);
         BOOST_CHECK_EQUAL( w.size(), p.data().size()/2 );
 
-        senf::UInt16Parser::value_type  data2[] = 
+        senf::UInt16Parser::value_type  data2[] =
             { 0x1011u, 0x0000u, 0x1213u, 0x2223u, 0x2425u };
 
-        BOOST_CHECK_EQUAL_COLLECTIONS( w.begin(), w.end(), 
+        BOOST_CHECK_EQUAL_COLLECTIONS( w.begin(), w.end(),
                                        data2, data2+sizeof(data2)/sizeof(data2[0]) );
     }
 }
@@ -154,10 +154,10 @@ SENF_AUTO_UNIT_TEST(listPacketSizeAuxPolicy)
         w.erase(boost::next(w.begin(),3), boost::next(w.begin(),5));
         BOOST_CHECK_EQUAL( w.size(), p.data().size()/2 );
 
-        senf::UInt16Parser::value_type  data2[] = 
+        senf::UInt16Parser::value_type  data2[] =
             { 0x1011u, 0x0000u, 0x1213u, 0x2223u, 0x2425u };
 
-        BOOST_CHECK_EQUAL_COLLECTIONS( w.begin(), w.end(), 
+        BOOST_CHECK_EQUAL_COLLECTIONS( w.begin(), w.end(),
                                        data2, data2+sizeof(data2)/sizeof(data2[0]) );
     }
 }

@@ -75,7 +75,7 @@ SENF_AUTO_UNIT_TEST(passiveConnector)
     target.input.throttle();
     BOOST_CHECK( target.input.throttled() );
     BOOST_CHECK( target.input.nativeThrottled() );
-    
+
     target.input.unthrottle();
     BOOST_CHECK( ! target.input.throttled() );
     BOOST_CHECK( ! target.input.nativeThrottled() );
@@ -84,9 +84,9 @@ SENF_AUTO_UNIT_TEST(passiveConnector)
 }
 
 namespace {
-    
+
     bool called = false;
-    
+
     void handler() { called = true; }
 }
 
@@ -136,7 +136,7 @@ SENF_AUTO_UNIT_TEST(inputConnector)
     // peek() is implicitly tested within the Active/PassiveSink implementation
 
     BOOST_CHECK_EQUAL ( & target.input.peer(), & source.output );
-    
+
     BOOST_CHECK( target.input.begin() == target.input.end() );
     BOOST_CHECK_EQUAL( target.input.queueSize(), 0u );
     BOOST_CHECK( target.input.empty() );
@@ -188,23 +188,23 @@ SENF_AUTO_UNIT_TEST(passiveInput)
     ppi::init();
 
     BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
-    
+
     target.input.throttle();
     senf::Packet p (senf::DataPacket::create());
     source.submit(p);
-    
+
     BOOST_CHECK_EQUAL( target.counter, 0u );
     BOOST_CHECK( target.input );
     BOOST_CHECK_EQUAL( target.input.queueSize(), 1u );
     target.input.unthrottle();
     BOOST_CHECK( target.input );
     BOOST_CHECK_EQUAL( target.counter, 1u );
-    
+
     BOOST_CHECK( target.input() == p );
     BOOST_CHECK( ! target.input );
-    
+
     source.submit(p);
-    
+
     BOOST_CHECK_EQUAL( target.counter, 2u );
     BOOST_CHECK( target.input.throttled() );
     BOOST_CHECK( target.input() == p );
@@ -239,7 +239,7 @@ SENF_AUTO_UNIT_TEST(passiveOutput)
 
     source.submit(p);
     BOOST_CHECK( target.request() == p );
-    
+
     // connect() is tested indirectly via ppi::connect
 }
 
@@ -275,7 +275,7 @@ SENF_AUTO_UNIT_TEST(activeOutput)
 
     ppi::connect(source,target);
     ppi::init();
-    
+
     BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
     BOOST_CHECK( source.output );
     target.input.throttle();
@@ -372,7 +372,7 @@ SENF_AUTO_UNIT_TEST(typedInput)
 
     senf::Packet p (senf::DataPacket::create());
     source.submit(p);
-    
+
     BOOST_CHECK( true );
 }
 
@@ -383,9 +383,9 @@ SENF_AUTO_UNIT_TEST(tyepdOutput)
 
     ppi::connect(source,target);
     ppi::init();
-    
+
     senf::IGNORE( target.request() );
-    
+
     BOOST_CHECK( true );
 }
 
@@ -394,13 +394,13 @@ SENF_AUTO_UNIT_TEST(connectorTest)
     {
         TypedPassiveInput<> input;
         TypedActiveOutput<MyPacket> output;
-        BOOST_CHECK_THROW( ppi::connect(output, input), 
+        BOOST_CHECK_THROW( ppi::connect(output, input),
                            ppi::connector::IncompatibleConnectorsException );
     }
     {
         TypedPassiveInput<MyPacket> input;
         TypedActiveOutput<> output;
-        BOOST_CHECK_THROW( ppi::connect(output, input), 
+        BOOST_CHECK_THROW( ppi::connect(output, input),
                            ppi::connector::IncompatibleConnectorsException );
     }
     {
@@ -408,7 +408,7 @@ SENF_AUTO_UNIT_TEST(connectorTest)
         TypedActiveOutput<> output;
         SENF_CHECK_NO_THROW( ppi::connect(output, input) );
     }
-    { 
+    {
         TypedPassiveInput<> input;
         debug::ActiveSource output;
         SENF_CHECK_NO_THROW( ppi::connect(output, input) );
@@ -476,13 +476,13 @@ SENF_AUTO_UNIT_TEST(delayedConnect)
 
         ppi::connect(source, target);
         ppi::init();
-        
+
         BOOST_CHECK( source.output );
 
         senf::Packet p (senf::DataPacket::create());
         source.submit(p);
 
-        BOOST_CHECK( target.front() == p );        
+        BOOST_CHECK( target.front() == p );
         BOOST_CHECK_EQUAL( target.size(), 1u );
     }
 
@@ -498,7 +498,7 @@ SENF_AUTO_UNIT_TEST(delayedConnect)
 
         ppi::connect(source, target);
         ppi::init();
-        
+
         BOOST_CHECK( ! source.output );
         target.unthrottle();
         BOOST_CHECK( source.output );
@@ -520,10 +520,10 @@ SENF_AUTO_UNIT_TEST(disconnect)
         source.submit(p);
 
         BOOST_CHECK( target.input );
-        
+
         target.input.disconnect();
         ppi::init();
-        
+
         BOOST_CHECK( ! target.input );
     }
     {

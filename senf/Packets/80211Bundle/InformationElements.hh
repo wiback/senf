@@ -41,12 +41,12 @@ namespace senf {
         SENF_PARSER_FIELD    ( type,   UInt8Parser   );
         SENF_PARSER_FIELD    ( length, UInt8Parser   );
         SENF_PARSER_FINALIZE ( WLANInfoElementParser );
-        
+
         typedef GenericTLVParserRegistry<WLANInfoElementParser> Registry;
     };
 
     typedef GenericTLVParserBase<WLANInfoElementParser> WLANGenericInfoElementParser;
-    
+
     struct WLANSSIDInfoElementParser
         : public WLANInfoElementParser
     {
@@ -56,33 +56,33 @@ namespace senf {
         SENF_PARSER_GOTO     ( length                           );
         SENF_PARSER_FIELD    ( value, StringParser<UInt8Parser> );
         SENF_PARSER_FINALIZE ( WLANSSIDInfoElementParser        );
-     
+
         SENF_PARSER_INIT() {
             type() = typeId;
-        }        
+        }
         static const type_t::value_type typeId = 0x00u;
-        
+
         void dump(std::ostream & os) const;
     };
-        
+
     struct WLANSupportedRatesInfoElementParser
         : public WLANInfoElementParser
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( WLANInfoElementParser               );
-        // we just skip the value here. If somebody needs the information he has to implement 
-        // this strange information element hisself. 
+        // we just skip the value here. If somebody needs the information he has to implement
+        // this strange information element hisself.
         SENF_PARSER_SKIP     ( length(), 0                         );
         SENF_PARSER_FINALIZE ( WLANSupportedRatesInfoElementParser );
-     
+
         SENF_PARSER_INIT() {
             type() = typeId;
-        }        
+        }
         static const type_t::value_type typeId = 0x01u;
-        
+
         void dump(std::ostream & os) const;
     };
-        
+
     struct WLANPowerConstraintInfoElementParser
         : public WLANInfoElementParser
     {
@@ -90,13 +90,13 @@ namespace senf {
         SENF_PARSER_INHERIT  ( WLANInfoElementParser                );
         SENF_PARSER_FIELD    ( value,   UInt8Parser                 );
         SENF_PARSER_FINALIZE ( WLANPowerConstraintInfoElementParser );
-     
+
         SENF_PARSER_INIT() {
             type() = typeId;
             length() = 1;
-        }        
+        }
         static const type_t::value_type typeId = 0x20u;
-        
+
         void dump(std::ostream & os) const;
     };
 }

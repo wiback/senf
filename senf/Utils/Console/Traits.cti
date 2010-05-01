@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -96,12 +96,12 @@ prefix_ std::string senf::console::ArgumentTraits<Type>::str(Type const & value)
             if (rv[i] == '"' || rv[i] == '\\')
                 rv.insert(i++,"\\");
             else if (rv[i] < ' ' || rv[i] > 126) {
-                rv.insert(i+1, (boost::format("x%02x") 
+                rv.insert(i+1, (boost::format("x%02x")
                                 % unsigned(static_cast<unsigned char>(rv[i]))).str().c_str());
                 rv[i] = '\\';
                 i += 3;
             }
-        
+
         rv.insert(0,"\"");
         rv.push_back('"');
         return rv;

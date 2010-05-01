@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -46,8 +46,8 @@ struct TestObject
 {
     senf::console::ScopedDirectory<TestObject> dir;
 
-    TestObject() 
-        : dir(this) 
+    TestObject()
+        : dir(this)
         {
             dir.add("vat", fty::Command(&TestObject::vat, this)
                     .arg("vat", "VAT in %", kw::default_value = 19)
@@ -55,7 +55,7 @@ struct TestObject
                     .doc("Returns the amount of {vat}-% VAT included in {amount}") );
         }
 
-    double vat (int vat, double amount) 
+    double vat (int vat, double amount)
         {
             return amount * vat/(100.0+vat);
         }

@@ -49,7 +49,7 @@ namespace detail {
     {
         AreaBase();
         virtual ~AreaBase();
-        
+
         std::string fullName() const;
         virtual std::string v_name() const;
 
@@ -57,8 +57,8 @@ namespace detail {
         bool alive() const;
 
         unsigned limit(StreamBase const & stream) const;
-        void updateRoutingCache(Target & target, StreamBase const & stream, unsigned limit) const; 
-        void removeRoutingCache(Target & target, StreamBase const & stream) const; 
+        void updateRoutingCache(Target & target, StreamBase const & stream, unsigned limit) const;
+        void removeRoutingCache(Target & target, StreamBase const & stream) const;
         void write(time_type timestamp, StreamBase const & stream, unsigned level,
                    std::string const & msg) const;
 

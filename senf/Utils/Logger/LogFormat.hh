@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -66,7 +66,7 @@ namespace detail {
         void tag(std::string const & tag); ///< Set tag (log line prefix)
 
     protected:
-        std::string prefix(time_type timestamp, std::string const & stream, 
+        std::string prefix(time_type timestamp, std::string const & stream,
                            std::string const & area, unsigned level);
         bool isPlainFormat() const;
         void consoleFormat(std::ostream & os);

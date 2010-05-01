@@ -44,7 +44,7 @@ template <unsigned a, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl5<a,0,restbits>::match(boost::uint8_t v0,
                                                                         boost::uint8_t v1)
 {
-    return v0 & ~boost::low_bits_mask_t<8-restbits>::sig_bits 
+    return v0 & ~boost::low_bits_mask_t<8-restbits>::sig_bits
         == boost::uint8_t(a>>8) & ~boost::low_bits_mask_t<8-restbits>::sig_bits;
 }
 
@@ -60,11 +60,11 @@ prefix_ bool senf::detail::CheckINet6Network_impl5<a,1,restbits>::match(boost::u
                                                                         boost::uint8_t v1)
 {
     return v0 == boost::uint8_t(a>>8) &&
-        v1 & ~boost::low_bits_mask_t<8-restbits>::sig_bits 
+        v1 & ~boost::low_bits_mask_t<8-restbits>::sig_bits
             == boost::uint8_t(a) & ~boost::low_bits_mask_t<8-restbits>::sig_bits;
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,0,restbits>::
 match(INet6Address const & addr)
@@ -72,45 +72,45 @@ match(INet6Address const & addr)
     return CheckINet6Network_impl4<a0,restbits>::match(addr[0],addr[1]);
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,1,restbits>::
 match(INet6Address const & addr)
 {
-    return 
+    return
         addr[0] == boost::uint8_t(a0>>8) && addr[1] == boost::uint8_t(a0) &&
         CheckINet6Network_impl4<a1,restbits>::match(addr[2],addr[3]);
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,2,restbits>::
 match(INet6Address const & addr)
 {
-    return 
+    return
         addr[0] == boost::uint8_t(a0>>8) && addr[1] == boost::uint8_t(a0) &&
         addr[2] == boost::uint8_t(a1>>8) && addr[3] == boost::uint8_t(a1) &&
         CheckINet6Network_impl4<a1,restbits>::match(addr[4],addr[5]);
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,3,restbits>::
 match(INet6Address const & addr)
 {
-    return 
+    return
         addr[0] == boost::uint8_t(a0>>8) && addr[1] == boost::uint8_t(a0) &&
         addr[2] == boost::uint8_t(a1>>8) && addr[3] == boost::uint8_t(a1) &&
         addr[4] == boost::uint8_t(a2>>8) && addr[5] == boost::uint8_t(a2) &&
         CheckINet6Network_impl4<a3,restbits>::match(addr[6],addr[7]);
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,4,restbits>::
 match(INet6Address const & addr)
 {
-    return 
+    return
         addr[0] == boost::uint8_t(a0>>8) && addr[1] == boost::uint8_t(a0) &&
         addr[2] == boost::uint8_t(a1>>8) && addr[3] == boost::uint8_t(a1) &&
         addr[4] == boost::uint8_t(a2>>8) && addr[5] == boost::uint8_t(a2) &&
@@ -118,12 +118,12 @@ match(INet6Address const & addr)
         CheckINet6Network_impl4<a4,restbits>::match(addr[8],addr[9]);
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,5,restbits>::
 match(INet6Address const & addr)
 {
-    return 
+    return
         addr[0] == boost::uint8_t(a0>>8) && addr[1] == boost::uint8_t(a0) &&
         addr[2] == boost::uint8_t(a1>>8) && addr[3] == boost::uint8_t(a1) &&
         addr[4] == boost::uint8_t(a2>>8) && addr[5] == boost::uint8_t(a2) &&
@@ -132,12 +132,12 @@ match(INet6Address const & addr)
         CheckINet6Network_impl4<a5,restbits>::match(addr[10],addr[11]);
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,6,restbits>::
 match(INet6Address const & addr)
 {
-    return 
+    return
         addr[0] == boost::uint8_t(a0>>8) && addr[1] == boost::uint8_t(a0) &&
         addr[2] == boost::uint8_t(a1>>8) && addr[3] == boost::uint8_t(a1) &&
         addr[4] == boost::uint8_t(a2>>8) && addr[5] == boost::uint8_t(a2) &&
@@ -147,12 +147,12 @@ match(INet6Address const & addr)
         CheckINet6Network_impl4<a6,restbits>::match(addr[12],addr[13]);
 }
 
-template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5, 
+template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,
           unsigned a6, unsigned a7, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,7,restbits>::
 match(INet6Address const & addr)
 {
-    return 
+    return
         addr[0] == boost::uint8_t(a0>>8) && addr[1] == boost::uint8_t(a0) &&
         addr[2] == boost::uint8_t(a1>>8) && addr[3] == boost::uint8_t(a1) &&
         addr[4] == boost::uint8_t(a2>>8) && addr[5] == boost::uint8_t(a2) &&

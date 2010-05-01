@@ -56,14 +56,14 @@ namespace detail {
 
         PacketParserBase::data_iterator raw() const;
         PacketParserBase::data_iterator i() const;
-        
+
         static ListParser_Iterator & get(typename Container::policy::iterator_data & d);
         static ListParser_Iterator const & get(typename Container::policy::iterator_data const & d);
 
     private:
         friend class boost::iterator_core_access;
         template <class P> friend class ListParser_Container;
-        
+
         value_type dereference() const;
         bool equal(ListParser_Iterator const & other) const;
         void increment();

@@ -56,7 +56,7 @@ namespace senf {
         SENF_PARSER_BITFIELD ( optionType, 5, unsigned );
         SENF_PARSER_FIELD    ( length, UInt8Parser );
         SENF_PARSER_FINALIZE ( IPv6OptionParser );
-        
+
         typedef GenericTLVParserRegistry<IPv6OptionParser> Registry;
     };
 

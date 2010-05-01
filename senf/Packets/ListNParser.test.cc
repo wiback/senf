@@ -46,7 +46,7 @@ namespace {
 
         SENF_PARSER_PRIVATE_FIELD( size, senf::UInt8Parser );
         SENF_PARSER_VECTOR( vec, size, senf::UInt16Parser );
-        
+
         SENF_PARSER_FINALIZE(MyVec);
     };
 
@@ -124,7 +124,7 @@ SENF_AUTO_UNIT_TEST(ListNParser)
         BOOST_CHECK_EQUAL( p.size(), 2u );
         BOOST_CHECK_EQUAL( p.bytes(), 8u );
         BOOST_CHECK_EQUAL( p.back().vec().size(), 0u );
-        
+
         p.back().vec().push_front(0x0123u);
         BOOST_CHECK_EQUAL( p.front().vec().size(), 2u );
         BOOST_CHECK_EQUAL( p.back().vec().size(), 1u );
@@ -132,7 +132,7 @@ SENF_AUTO_UNIT_TEST(ListNParser)
         p.push_front_space(2u);
         BOOST_CHECK_EQUAL( p.size(), 4u );
         BOOST_CHECK_EQUAL( p.front().vec().size(), 0u);
-        
+
         p.resize(3u);
         BOOST_CHECK_EQUAL( p.size(), 3u );
         BOOST_CHECK_EQUAL( p.back().vec()[0], 0x1234u );
@@ -143,7 +143,7 @@ SENF_AUTO_UNIT_TEST(ListNParser)
 }
 
 namespace {
-    
+
     struct TestTransform
     {
         typedef unsigned value_type;
@@ -183,10 +183,10 @@ SENF_AUTO_UNIT_TEST(listMacro)
                              0x0D, 0x0E,             // list2()[1].vec()[1]
                              0x01,                   // list2()[2].size()
                              0x0F, 0x10 };           // list2()[2].vec()[0]
-    
+
     senf::DataPacket p (senf::DataPacket::create(data));
     TestListParser parser (p.data().begin(), &p.data());
-    
+
     BOOST_CHECK_EQUAL( parser.list1().size(), 2u );
     BOOST_CHECK_EQUAL( parser.list2().size(), 3u );
     BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
@@ -205,7 +205,7 @@ SENF_AUTO_UNIT_TEST(listMacro)
         BOOST_CHECK_EQUAL( i->vec().size(), 2u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0708u );
         BOOST_CHECK_EQUAL( i->vec()[1], 0x090Au );
-        
+
         ++i;
         BOOST_CHECK( i == list.end() );
     }
@@ -221,11 +221,11 @@ SENF_AUTO_UNIT_TEST(listMacro)
         BOOST_CHECK_EQUAL( i->vec().size(), 2u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0B0Cu );
         BOOST_CHECK_EQUAL( i->vec()[1], 0x0D0Eu );
-        
+
         ++i;
         BOOST_CHECK_EQUAL( i->vec().size(), 1u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0F10u );
-        
+
         ++i;
         BOOST_CHECK( i == list.end() );
     }

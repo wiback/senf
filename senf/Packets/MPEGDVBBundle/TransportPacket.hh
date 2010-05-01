@@ -38,7 +38,7 @@ namespace senf {
 
         Parser implementing the header of a MPEG Transport Stream packet.
         \image html TransportPacket.png
-        
+
         \see TransportPacketType
      */
     struct TransportPacketParser : public PacketParserBase
@@ -57,9 +57,9 @@ namespace senf {
 
         SENF_PARSER_PRIVATE_VARIANT ( pointer_field_, pusi,
                 (senf::VoidPacketParser) (UInt8Parser) );
-        
+
         SENF_PARSER_FINALIZE( TransportPacketParser );
-        
+
         UInt8Parser pointer_field() const;
         void init_fields() const;
         void setPUSI(bool pusi) const;
@@ -69,9 +69,9 @@ namespace senf {
             init_fields();
         }
     };
-    
+
     /** \brief Transport Stream packet
-        
+
         <table class="senf">
           <tr style="text-align:center">
             <th>Syntax</th><th>No. of bits</th></tr>
@@ -105,7 +105,7 @@ namespace senf {
           <tr>
             <td>}</td> <td></td></tr>
         </table>
-        
+
         \par Packet type (typedef):
             \ref TransportPacket
 
@@ -123,16 +123,16 @@ namespace senf {
 #endif
         typedef ConcretePacket<TransportPacketType> packet; ///< Transport packet typedef
         typedef TransportPacketParser parser; ///< typedef to the parser of Transport packet
-    
+
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
+
         /** \brief Dump given Transport packet in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
         static const byte SYNC_BYTE = 0x47;
     };
-    
+
     /** \brief Transport packet typedef */
     typedef ConcretePacket<TransportPacketType> TransportPacket;
 }

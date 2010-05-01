@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -54,7 +54,7 @@ namespace console {
         // Parse only options under the directory of some object. The object 'ob'
         // must have been registered somewhere in the node tree
         cf.parse(ob.dir);
-        
+
         // Parse rest of the config file
         cf.parse();
         \endcode
@@ -71,7 +71,7 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-        
+
         ProgramOptions(int argc, char const ** argv, DirectoryNode & root = root());
                                         ///< Create ProgramOptions parser for given options
                                         /**< The given argc/argv values are those passed to main by
@@ -80,7 +80,7 @@ namespace console {
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-        
+
         template <class Container>
         ProgramOptions & nonOptions(Container & container);
                                         ///< Set container to add non-option arguments to
@@ -96,7 +96,7 @@ namespace console {
                                              line. This argument will be appended (with an
                                              additional '=') to \a longOpt. If \a withArg is \c
                                              false (the default), \a longOpt may optional contain an
-                                             argument. 
+                                             argument.
                                              \param[in] letter option letter
                                              \param[in] longOpt long option alias
                                              \param[in] withArg \c true, if the option should take

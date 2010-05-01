@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -49,7 +49,7 @@ namespace {
             return token.value();
         }
     };
-    
+
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
 
     try {
         switch(command.builtin()) {
-        case ParseCommandInfo::NoBuiltin : 
+        case ParseCommandInfo::NoBuiltin :
             if (skipping())
                 return;
             exec(output, command);
@@ -105,7 +105,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
                     "'cd' cannot be skipped (don't use 'cd' in conf-files)");
             }
             break;
-            
+
         case ParseCommandInfo::BuiltinLS :
             if (skipping())
                 break;
@@ -134,12 +134,12 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             else
                 exec(output, command);
             break;
-            
+
         case ParseCommandInfo::BuiltinPOPD :
             // The parser ensures, we have no arguments
             popd();
             break;
-            
+
         case ParseCommandInfo::BuiltinEXIT :
             if (skipping())
                 break;
@@ -287,7 +287,7 @@ namespace {
 
     typedef std::map<senf::console::DirectoryNode*,std::string> NodesMap;
 
-    void dolr(std::ostream & output, unsigned width, NodesMap & nodes, std::string const & base, 
+    void dolr(std::ostream & output, unsigned width, NodesMap & nodes, std::string const & base,
               unsigned level, senf::console::DirectoryNode & node)
     {
         boost::format fmt ("%s%s%s  %|" BOOST_PP_STRINGIZE(HELP_COLUMN) "t|%s\n");
@@ -301,7 +301,7 @@ namespace {
                 NodesMap::iterator j (nodes.find(&subnode));
                 if (j == nodes.end()) {
                     output << fmt
-                        % pad % i->first 
+                        % pad % i->first
                         % ( i->second->isDirectory() ? "/" : i->second->isLink() ? "@" : "" )
                         % i->second->shorthelp().substr(0,width);
                     std::string subbase (base);
@@ -311,12 +311,12 @@ namespace {
                     nodes.insert(std::make_pair(&subnode, subbase));
                     dolr(output, width, nodes, subbase, level+1, subnode);
                 } else
-                    output << pad << i->first 
+                    output << pad << i->first
                            << ( i->second->isDirectory() ? "/" : i->second->isLink() ? "@" : "" )
                            << " -> " << j->second << "\n";
             } else {
                 output << fmt
-                    % pad % i->first 
+                    % pad % i->first
                     % ( i->second->isDirectory() ? "/" : i->second->isLink() ? "@" : "" )
                     % i->second->shorthelp().substr(0,width);
             }
@@ -332,7 +332,7 @@ prefix_ void senf::console::Executor::lr(std::ostream & output,
     traverseDirectory(path, dir);
     DirectoryNode & node (*dir.back().lock());
     NodesMap nodes;
-    dolr(output, senf::console::Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1), 
+    dolr(output, senf::console::Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1),
          nodes, "", 0, node);
 }
 

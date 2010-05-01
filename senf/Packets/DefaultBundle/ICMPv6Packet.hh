@@ -31,7 +31,7 @@
 
 //#include "ICMPv6Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
-namespace senf 
+namespace senf
 {
     struct ICMPv6PacketParser : public PacketParserBase
     {
@@ -39,12 +39,12 @@ namespace senf
         SENF_PARSER_FIELD ( type,     UInt8Parser  );
         SENF_PARSER_FIELD ( code,     UInt8Parser  );
         SENF_PARSER_FIELD ( checksum, UInt16Parser );
-    
+
         SENF_PARSER_FINALIZE ( ICMPv6PacketParser );
-        
+
         boost::uint16_t calcChecksum() const;
     };
-    
+
     struct ICMPTypes {
         // ICMP type registry
         typedef boost::uint8_t key_t;
@@ -58,37 +58,37 @@ namespace senf
         \par Fields:
             \ref ICMPv6PacketParser
             \image html ICMPv6Packet.png
-        
+
         \par Associated registries:
             \ref ICMPTypes
 
         \ingroup protocolbundle_default
      */
-    struct ICMPv6PacketType 
+    struct ICMPv6PacketType
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6PacketType, ICMPTypes>
     {
         typedef PacketTypeMixin<ICMPv6PacketType, ICMPTypes> mixin;
         typedef ConcretePacket<ICMPv6PacketType> packet;
         typedef ICMPv6PacketParser parser;
-        
+
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::init;
         using mixin::initSize;
-        
+
         static void dump(packet p, std::ostream & os);
-        
-        static key_t nextPacketKey(packet p) { 
+
+        static key_t nextPacketKey(packet p) {
             return p->type();
         }
-        
+
         static void finalize(packet p) {
             p->type() << key(p.next(senf::nothrow));
             p->checksum() << p->calcChecksum();
         }
     };
-    
+
     /** \brief ICMPv6 packet typedef
         \ingroup protocolbundle_default
      */

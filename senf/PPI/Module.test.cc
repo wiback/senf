@@ -87,7 +87,7 @@ namespace {
     void timeout() {
         senf::scheduler::terminate();
     }
-    
+
     class InitTest : public ppi::module::Module
     {
         SENF_PPI_MODULE(InitTest);
@@ -114,7 +114,7 @@ namespace {
 SENF_AUTO_UNIT_TEST(delayedInit)
 {
     MakeInit maker;
-    senf::scheduler::TimerEvent timer ( 
+    senf::scheduler::TimerEvent timer (
         "delayedInit timer",
         senf::membind(&MakeInit::make, &maker),
         senf::ClockService::now() + senf::ClockService::milliseconds(250) );

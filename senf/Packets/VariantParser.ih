@@ -63,7 +63,7 @@ namespace detail {
 
     template <class Transform, class AuxPolicy, class AuxTag>
     struct VariantParserPolicy
-        : public VariantParserPolicy< void, 
+        : public VariantParserPolicy< void,
                                       TransformAuxParserPolicy<AuxPolicy, Transform>, AuxTag >
     {};
 
@@ -75,8 +75,8 @@ namespace detail {
 
     template <class AuxPolicy, class Transform>
     struct VariantParserPolicy<void,
-                               AuxPolicy, 
-                               senf::detail::auxtag::transform<Transform, 
+                               AuxPolicy,
+                               senf::detail::auxtag::transform<Transform,
                                                                senf::detail::auxtag::none> >
     {
         typedef TransformAuxParserPolicy<AuxPolicy, Transform> type;
@@ -93,8 +93,8 @@ namespace detail {
         };
     };
 
-    template <class T, T (*KeyFn)()> 
-    struct VariantKey 
+    template <class T, T (*KeyFn)()>
+    struct VariantKey
     {
         static T key() { return (*KeyFn)(); }
     };
@@ -121,7 +121,7 @@ namespace detail {
         static Out get(In v);
         static In set(Out v);
     };
-    
+
 #   define SENF_PARSER_VARIANT_I(access, name, chooser, types)                                    \
         SENF_PARSER_REQUIRE_VAR(variant)                                                          \
     protected:                                                                                    \
@@ -185,7 +185,7 @@ namespace detail {
 
 #   define SENF_PARSER_VARIANT_IFNOTNA(id, x)                                                     \
         BOOST_PP_EXPR_IIF( BOOST_PP_NOT( SENF_PARSER_VARIANT_NA(id) ), x )
-    
+
 #   define SENF_PARSER_VARIANT_MAKEACCESSOR_VALUE(name, i, elem, id)                              \
         SENF_PARSER_VARIANT_IFNOTNA( id,                                                          \
             typedef SENF_PARSER_VARIANT_GETTYPE(elem)                                             \
@@ -193,7 +193,7 @@ namespace detail {
             BOOST_PP_CAT(id, _t) id() const                                                       \
                 { return name().get<i>(); }                                                       \
         )
-                                     
+
 #   define SENF_PARSER_VARIANT_MAKEACCESSOR_HAS(name, i, elem, id)                                \
         SENF_PARSER_VARIANT_IFNOTNA( id,                                                          \
             bool id() const                                                                       \

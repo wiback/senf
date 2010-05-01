@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -62,14 +62,14 @@ senf::console::OverloadedCommandNode::insertOverload(DirectoryNode & dir,
 //          default: 1.23
 //      arg3 -   arg3-doc
 //
-// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj 
+// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj
 // sdflkja sldkfjslkdfj sdlkfj lskjdf lskjdf lksj dflkj lsdkfj lskdjf lskjkd
-// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj 
+// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj
 // sdflkja sldkfjslkdfj sdlkfj lskjdf lskjdf lksj dflkj lsdkfj lskdjf lskjkd
-// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj 
+// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj
 // sdflkja sldkfjslkdfj sdlkfj lskjdf lskjdf lksj dflkj lsdkfj lskdjf lskjkd
 //
-// Variant 1: 
+// Variant 1:
 // Variant 1 doc la;ksjf lkj sdlkfj lkjekj sdflkj ekljsdlkfj wlej
 // slkj dkj sldkfj lwekljsdf skldjf lskjdf l jsd
 //
@@ -78,7 +78,7 @@ senf::console::OverloadedCommandNode::insertOverload(DirectoryNode & dir,
 //
 // Variatn 3:
 // Variant 3 doc slkjflw ekj lskdfj lskdjf laksdj flksj elkj aldskjf lwkejlksdj
-// ldkfaj wlekj slkdfj lskdjf lwkejlkasdjf 
+// ldkfaj wlekj slkdfj lskdjf lwkejlkasdjf
 
 prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
     const
@@ -137,8 +137,8 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
         ArgumentDocs::const_iterator const i_end (argumentDocs.end());
         for (; i != i_end; ++i) {
             if (! i->doc.empty() || ! i->defaultValue.empty()) {
-                os << "    " 
-                   << i->name 
+                os << "    "
+                   << i->name
                    << std::string(i->name.length()<8 ? 8-i->name.length() : 0, ' ')
                    << "  "
                    << i->doc
@@ -148,10 +148,10 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
             }
         }
     }
-    
+
     if (! doc_.empty())
         os << "\n" << doc_ << "\n";
-    
+
     {
         Overloads::const_iterator i (overloads_.begin());
         Overloads::const_iterator const i_end (overloads_.end());
@@ -179,7 +179,7 @@ prefix_ std::string senf::console::OverloadedCommandNode::v_shorthelp()
     Overloads::const_iterator const i_end (overloads_.end());
     for (; i != i_end; ++i) {
         std::string overloadDoc ((*i)->doc());
-        if (! overloadDoc.empty()) 
+        if (! overloadDoc.empty())
             return overloadDoc.substr(0,overloadDoc.find('\n'));
     }
     return "";

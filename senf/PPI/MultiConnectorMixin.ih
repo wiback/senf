@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -46,9 +46,9 @@ namespace detail {
     };
 
     template <class KeyType, class ConnectorType>
-    struct MultiConnectorDefaultContainer 
-    { 
-        typedef boost::ptr_map<KeyType, ConnectorType> type; 
+    struct MultiConnectorDefaultContainer
+    {
+        typedef boost::ptr_map<KeyType, ConnectorType> type;
     };
 
     template <class Module, class Connector>
@@ -62,8 +62,8 @@ namespace detail {
 #ifndef DOXYGEN
 
     template <class ConnectorType>
-    struct MultiConnectorDefaultContainer<void,ConnectorType> 
-    { 
+    struct MultiConnectorDefaultContainer<void,ConnectorType>
+    {
         typedef boost::ptr_vector<ConnectorType> type;
     };
 
@@ -71,19 +71,19 @@ namespace detail {
 
     template <class ConnectorType>
     struct MultiConnectorSelectBase
-        : public boost::mpl::if_< 
+        : public boost::mpl::if_<
               boost::is_base_of<connector::InputConnector, ConnectorType>,
               ppi::detail::DisableStandardInput, ppi::detail::DisableStandardOutput >
     {};
 
     template <class T> senf::mpl::rv<0> isMulticonnector(...);
     template <class T> senf::mpl::rv<1> isMulticonnector(
-        typename boost::enable_if<boost::is_base_of<connector::OutputConnector, 
-                                                    typename T::ConnectorType>, 
+        typename boost::enable_if<boost::is_base_of<connector::OutputConnector,
+                                                    typename T::ConnectorType>,
                                   int>::type);
     template <class T> senf::mpl::rv<2> isMulticonnector(
-        typename boost::enable_if<boost::is_base_of<connector::InputConnector, 
-                                                    typename T::ConnectorType>, 
+        typename boost::enable_if<boost::is_base_of<connector::InputConnector,
+                                                    typename T::ConnectorType>,
                                   int>::type);
 
     template <class T, unsigned N>

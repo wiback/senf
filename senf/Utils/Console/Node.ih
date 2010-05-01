@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -40,11 +40,11 @@ namespace detail {
     {
     public:
         NodeTraverser(DirectoryNode & root, DirectoryNode & dir, bool autocomplete);
-        
+
         void operator()(std::string const & name);
-        
+
         GenericNode & node();
-      
+
     private:
         DirectoryNode & root_;
         DirectoryNode::ptr dir_;

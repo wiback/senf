@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -58,7 +58,7 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-        
+
         explicit Event(std::string const & name);
         virtual ~Event();
 
@@ -91,7 +91,7 @@ namespace detail {
     public:
         using singleton<EventManager>::instance;
         using singleton<EventManager>::alive;
-        
+
         struct IteratorFilter {
             bool operator()(Event const & e);
         };

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -75,7 +75,7 @@ SENF_AUTO_UNIT_TEST(variables)
 
     ss.str("");
     dir("var").help(ss);
-    BOOST_CHECK_EQUAL(ss.str(), 
+    BOOST_CHECK_EQUAL(ss.str(),
                       "Usage:\n"
                       "    1- var\n"
                       "    2- var new_value:number\n"
@@ -98,19 +98,19 @@ SENF_AUTO_UNIT_TEST(variables)
 }
 
 namespace {
-    
+
     class Test2
     {
     public:
         senf::console::ScopedDirectory<Test2> dir;
-        
+
         Test2() : dir(this), var_(0)
             { dir.add("var", senf::console::factory::Variable(boost::ref(var_))); }
-        
+
     private:
         int var_;
     };
-  
+
 }
 
 SENF_AUTO_UNIT_TEST(memberVariables)

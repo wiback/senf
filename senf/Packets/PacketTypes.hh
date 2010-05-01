@@ -55,7 +55,7 @@ namespace packet {
     struct smart_pointer {
         typedef boost::intrusive_ptr<T> ptr_t;
     };
-    
+
     struct interpreter_list_tag;
     typedef boost::intrusive::ilist_base_hook<interpreter_list_tag> interpreter_list_base;
     typedef interpreter_list_base::value_traits<PacketInterpreterBase> interpreter_list_type;
@@ -66,7 +66,7 @@ namespace packet {
     typedef std::vector<byte> raw_container;
     typedef raw_container::size_type size_type;
     typedef raw_container::difference_type difference_type;
-    
+
     typedef raw_container::iterator iterator;
     typedef raw_container::const_iterator const_iterator;
     typedef long refcount_t; // This is long since boost uses long for refcounts .. hmm ..

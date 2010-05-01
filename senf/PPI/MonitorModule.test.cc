@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
+
     class PacketCounter : public senf::ppi::module::MonitorModule<>
     {
         SENF_PPI_MODULE(PacketCounter);
@@ -54,12 +54,12 @@ SENF_AUTO_UNIT_TEST(monitorModulePassthrough)
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::debug::PassiveSink sink;
     PacketCounter counter;
-    
+
     senf::ppi::connect(source, counter);
     senf::ppi::connect(counter, sink);
 
     senf::ppi::init();
-    
+
     senf::Packet p (senf::DataPacket::create());
 
     BOOST_CHECK_EQUAL( counter.count, 0u );
@@ -83,7 +83,7 @@ SENF_AUTO_UNIT_TEST(monitorModuleNoPassthrough)
     senf::ppi::init();
 
     senf::Packet p (senf::DataPacket::create());
-    
+
     BOOST_CHECK_EQUAL( counter.count, 0u );
     source.submit(p);
     BOOST_CHECK_EQUAL( counter.count, 1u );
@@ -100,7 +100,7 @@ SENF_AUTO_UNIT_TEST(monitorModuleDynamicConnect)
     senf::ppi::init();
 
     senf::Packet p (senf::DataPacket::create());
-    
+
     BOOST_CHECK_EQUAL( counter.count, 0u );
     source.submit(p);
     BOOST_CHECK_EQUAL( counter.count, 1u );
@@ -125,7 +125,7 @@ SENF_AUTO_UNIT_TEST(monitorModuleDynamicConnect)
     BOOST_CHECK( source );
     source.submit(p);
     BOOST_CHECK_EQUAL( counter.count, 3u );
-    
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

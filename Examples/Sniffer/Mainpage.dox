@@ -46,8 +46,8 @@
     \until #include <senf/Scheduler/Scheduler.hh>
 
     The example includes two implementations, one using blocking calls and a while loop, the other
-    using the senf::Scheduler for asynchronous event notification. They are implemented in 
-    \c loop_main() and \c scheduler_main(). They will be documented below. For now, we skip these 
+    using the senf::Scheduler for asynchronous event notification. They are implemented in
+    \c loop_main() and \c scheduler_main(). They will be documented below. For now, we skip these
     implementations and go straight to the \c main() function
 
     \skip int main(
@@ -73,7 +73,7 @@
     backtrace of the exception origin in the debugger.
 
     We now create a packet socket and bind it to the interface given as second command line argument.
-    A packet socket is a linux specific type of socket which returns ethernet packets directly from 
+    A packet socket is a linux specific type of socket which returns ethernet packets directly from
     the network wire. By uncommenting the last line, you may switch the interface into promiscuous mode.
 
     \until //
@@ -88,7 +88,7 @@
     \until sock.read
 
     \doc the following section is obsolete!
-    
+
     Lets digest this line step by step: We declare a variable named \c packet as a smart pointer to
     an \c EthernetPacket instance. \c ptr is a typedef member of all Packet classes for the
     corresponding smart pointer type. We then initialize this pointer with a call to the static \c

@@ -47,7 +47,7 @@ namespace detail {
     struct RoutingTraitsImplementation
     {
         BOOST_STATIC_ASSERT((boost::is_base_of<connector::Connector, Connector>::value));
-        
+
         static bool const event = false;
 
         static bool const notifySource = boost::is_base_of<
@@ -59,7 +59,7 @@ namespace detail {
             connector::InputConnector, Connector>::value;
         static bool const dataTarget = boost::is_base_of<
             connector::OutputConnector, Connector>::value;
-        
+
         typedef Connector type;
     };
 
@@ -88,12 +88,12 @@ namespace detail {
     // for Events
     template <class Object>
     struct RoutingTraits
-        : public RoutingTraitsImplementation<Object, 
+        : public RoutingTraitsImplementation<Object,
                                              boost::is_convertible<Object*,
                                                                    EventDescriptor*>::value>
     {};
 
-    // This is the generic route implementation for all routes. It just provides access to the 
+    // This is the generic route implementation for all routes. It just provides access to the
     // source and target.
     template <class Source, class Target, class Base>
     class BaseRouteImplementation
@@ -140,7 +140,7 @@ namespace detail {
         : public BaseRouteImplementation<Source, Target, ForwardingRoute>
     {
         typedef BaseRouteImplementation<Source, Target, ForwardingRoute> Base;
-        
+
     protected:
         ForwardingRouteImplementation(module::Module & module, Source & source, Target & target);
         ~ForwardingRouteImplementation();
@@ -161,7 +161,7 @@ namespace detail {
     };
 
     // This helper class finds the base-class suitable for a specific route. Routes are classified
-    // into two groups: 
+    // into two groups:
     //  1) A forwarding routes is a routed which forwards notifications from a notifySource to a
     //     notifyTarget. Forwarding routes are implemneted using ForwardingRouteImplementation
     //  2) Non-forwarding routes don't forward notifications. They are implemented directly
@@ -174,14 +174,14 @@ namespace detail {
 
         static bool const isForwarding = (srcTrait::notifySource && trgTrait::notifyTarget)
             || (srcTrait::notifyTarget && trgTrait::notifySource);
-        
+
         typedef typename boost::mpl::if_c<
-            isForwarding, 
-            ForwardingRouteImplementation<Source,Target>, 
+            isForwarding,
+            ForwardingRouteImplementation<Source,Target>,
             BaseRouteImplementation<Source,Target,RouteBase> >::type base;
     };
 
-    // RouteImplementation2 has two purposes: 
+    // RouteImplementation2 has two purposes:
     //  1) Ensure, that routing is always from a data source to a data target
     //  2) To find the correct base-class. This is delegated to RouteImplementationBase
     template <class Source, class Target>
@@ -190,7 +190,7 @@ namespace detail {
     {
         typedef typename RouteImplementationBase<Source,Target>::base Base;
 
-        BOOST_STATIC_ASSERT( RoutingTraits<Source>::dataSource && 
+        BOOST_STATIC_ASSERT( RoutingTraits<Source>::dataSource &&
                              RoutingTraits<Target>::dataTarget );
 
     protected:

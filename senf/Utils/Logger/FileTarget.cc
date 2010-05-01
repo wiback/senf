@@ -36,7 +36,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
+
     std::string getNodename(std::string const & filename, std::string const & nodename)
     {
         if (! nodename.empty())
@@ -48,8 +48,8 @@ namespace {
 
 prefix_ senf::log::FileTarget::FileTarget(std::string const & filename,
                                           std::string const & nodename)
-    : ofstream_t (filename.c_str(), std::ofstream::app), 
-      IOStreamTarget (getNodename(filename, nodename), ofstream_t::member), 
+    : ofstream_t (filename.c_str(), std::ofstream::app),
+      IOStreamTarget (getNodename(filename, nodename), ofstream_t::member),
       file_ (filename)
 {
     namespace fty = senf::console::factory;
@@ -61,7 +61,7 @@ prefix_ senf::log::FileTarget::FileTarget(std::string const & filename,
               fty::Command(SENF_MEMBINDFNP(void, FileTarget, reopen, ()))
               .doc("Reopen logfile") );
     consoleDir()
-        .add("reopen", 
+        .add("reopen",
              fty::Command(SENF_MEMBINDFNP(void, FileTarget, reopen, (std::string const &)))
              .arg("filename","new filename")
              .overloadDoc("Reopen logfile under new name") );
@@ -118,7 +118,7 @@ prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>
-senf::log::FileTarget::RegisterConsole::create(std::string const & filename, 
+senf::log::FileTarget::RegisterConsole::create(std::string const & filename,
                                                std::string const & nodename)
 {
     std::auto_ptr<Target> tp (new FileTarget(filename, nodename));

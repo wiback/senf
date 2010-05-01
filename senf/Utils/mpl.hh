@@ -42,8 +42,8 @@ namespace mpl {
     /** \brief Marker class for empty default values etc.
 
         This is like Boosts \c boost::mpl::na just an empty class used as template default argument
-        to mark missing arguments 
-        
+        to mark missing arguments
+
         \note Don't use this as an empty base class. We may add some informative members to this.
         \ingroup senfmpl
      */
@@ -113,14 +113,14 @@ namespace mpl {
         \ingroup senfmpl
      */
     template <unsigned n>
-    struct rv { 
-        char _[SENF_MPL_RV_ALIGNMENT][n+1]; 
+    struct rv {
+        char _[SENF_MPL_RV_ALIGNMENT][n+1];
     };
 
     /** \brief Get return value of overload selector
-        
+
         Used together with senf::mpl::rv to implement overload selection.
-        
+
         \see \ref senf::mpl::rv
         \ingroup senfmpl
         \hideinitializer
@@ -128,7 +128,7 @@ namespace mpl {
 #   define SENF_MPL_RV(expr) (sizeof(expr)/SENF_MPL_RV_ALIGNMENT-1)
 
     /** \brief Take an arbitrary unsigned integer template argument
-        
+
         Used together with <a href="http://en.wikipedia.org/wiki/SFINAE">SFINAE</a>: The expression
         <tt>take_uint<</tt> \a expr <tt>></tt> is only valid if \a expr is valid and returns a value
         convertible to an unsigned integer.
@@ -138,7 +138,7 @@ namespace mpl {
     template <unsigned long _> struct take_uint {};
 
     /** \brief Take an arbitrary integer template argument
-        
+
         Used together with <a href="http://en.wikipedia.org/wiki/SFINAE">SFINAE</a>: The expression
         <tt>take_int<</tt> \a expr <tt>></tt> is only valid if \a expr is valid and returns a value
         convertible to an integer.
@@ -148,7 +148,7 @@ namespace mpl {
     template <long _> struct take_int {};
 
     /** \brief Take an arbitrary type template argument
-        
+
         Used together with <a href="http://en.wikipedia.org/wiki/SFINAE">SFINAE</a>: The expression
         <tt>take_class<</tt> \a expr <tt>></tt> is only valid if \a expr is valid and is a type.
 

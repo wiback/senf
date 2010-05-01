@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -73,7 +73,7 @@ prefix_ void senf::term::TelnetTerminal::v_setupComplete()
 
     if (setupFailed_)
         v_setupFailed();
-    else if (! (width() > 0 
+    else if (! (width() > 0
                 && ! terminalType().empty()
                 && localOption(telnetopt::SUPPRESS_GO_AHEAD)
                 && peerOption(telnetopt::SUPPRESS_GO_AHEAD)
@@ -98,7 +98,7 @@ prefix_ void senf::term::TelnetTerminal::v_setupComplete()
             if (! init)
                 log << "    terminal initialization (cb_init) failed\n";
         }));
-                  
+
         setupFailed_ = true;
         requestPeerOption(telnetopt::SUPPRESS_GO_AHEAD, false);
         requestLocalOption(telnetopt::SUPPRESS_GO_AHEAD, false);

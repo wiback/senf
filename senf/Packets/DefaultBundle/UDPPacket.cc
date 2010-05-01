@@ -20,7 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file 
+/** \file
     \brief UDPPacket non-inline non-template implementation */
 
 #include "UDPPacket.hh"
@@ -52,26 +52,26 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
     IPv4Packet ipv4 (packet().rfind<IPv4Packet>(nothrow));
     if (ipv4) {
         // Pseudo header defined in RFC768
-        summer.feed( ipv4->source().i(), 
+        summer.feed( ipv4->source().i(),
                      ipv4->source().i() + IPv4Packet::Parser::source_t::fixed_bytes );
         ///\fixme What about a hop-by-hop routing option? Which destination is used in IPv4 ?
-        summer.feed( ipv4->destination().i(), 
+        summer.feed( ipv4->destination().i(),
                      ipv4->destination().i() + IPv4PacketParser::destination_t::fixed_bytes );
         summer.feed( 0u );
         ///\fixme May there be another header between the IPv4 header and UDP? if so, we
         /// need to hack the correct protocol number here ...
         summer.feed( 17u );
         summer.feed( i() + length_offset, i() + length_offset + 2 );
-    } 
+    }
     else {
         // Pseudo header defined in RFC2460
         IPv6Packet ipv6 (packet().rfind<IPv6Packet>(nothrow));
         if (ipv6) {
-            summer.feed( ipv6->source().i(), 
+            summer.feed( ipv6->source().i(),
                          ipv6->source().i() + IPv6Packet::Parser::source_t::fixed_bytes );
             ///\todo Implement routing header support
             // The destination used here must be the *final* destination ...
-            summer.feed( ipv6->destination().i(), 
+            summer.feed( ipv6->destination().i(),
                          ipv6->destination().i() + IPv6PacketParser::destination_t::fixed_bytes );
             // This is a simplification. The value is really 32bit to support UDP Jumbograms
             // (RFC2147). However, skipping an even number of 0 bytes does not change the checksum
@@ -82,8 +82,8 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
             summer.feed( 17u );
         }
     }
-    
-    // since header are 16 / even 32bit aligned we don't have to care for padding. since IpChecksum 
+
+    // since header are 16 / even 32bit aligned we don't have to care for padding. since IpChecksum
     // cares for padding at the final summing we don't have to care is the payload is 16nbit-aligned, too.
     summer.feed( i(), i()+checksum_offset );
     summer.feed( i()+checksum_offset+2, data().end() );

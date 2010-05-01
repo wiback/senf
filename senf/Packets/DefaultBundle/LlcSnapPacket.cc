@@ -42,7 +42,7 @@ prefix_ void senf::LlcSnapPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("  dsap")                    << "0x" << unsigned(p->dsap()) << "\n"
        << senf::fieldName("  ssap")                    << "0x" << unsigned(p->ssap()) << "\n"
        << senf::fieldName("  control id")              << "0x" << unsigned(p->ctrl()) << "\n"
-       << "  SNAP\n"       
+       << "  SNAP\n"
        << senf::fieldName("  protocol id")             << "0x" << std::setw(6) << unsigned(p->protocolId()) << "\n"
        << senf::fieldName("  type/length")             << "0x" << std::setw(4) << unsigned(p->type_length()) << "\n";
 }

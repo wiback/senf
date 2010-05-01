@@ -52,14 +52,14 @@ namespace senf {
         NotWriteablePolicy
         >::policy DVBDemux_Policy;   ///< Socket Policy for xxxx
 
-    /** \brief Baseclass of various DVBProtocolWrappers which are defined in DVBProtocolWrapper.hh 
+    /** \brief Baseclass of various DVBProtocolWrappers which are defined in DVBProtocolWrapper.hh
      */
     class DVBProtocolWrapper :public boost::enable_shared_from_this<DVBProtocolWrapper> {
         public:
             DVBProtocolWrapper() {}
             virtual ~DVBProtocolWrapper() {}
     };
-    /** \brief Baseclass for DVBSocketProtocols which want use Wrappers for console. 
+    /** \brief Baseclass for DVBSocketProtocols which want use Wrappers for console.
     */
     class DVBSocketProtocol : public virtual SocketProtocol {
 private:
@@ -67,9 +67,9 @@ private:
 public:
         DVBSocketProtocol() {}
         ~DVBSocketProtocol() {}
-        
-        void addWrapper(boost::shared_ptr<DVBProtocolWrapper> wrap)/**< Binds a wrapper to a DVBProtocol, 
-                                                                        so if it is closed the functionality of the wrapper is automatically removed from console.*/ 
+
+        void addWrapper(boost::shared_ptr<DVBProtocolWrapper> wrap)/**< Binds a wrapper to a DVBProtocol,
+                                                                        so if it is closed the functionality of the wrapper is automatically removed from console.*/
         {
             wrap_ = wrap;
         }
@@ -80,14 +80,14 @@ public:
 
         }
     };
-    
-    
+
+
     class DVBDemuxSectionSocketProtocol
         : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDemuxSectionSocketProtocol>,
-          public DVBDemuxSocketProtocol, 
+          public DVBDemuxSocketProtocol,
           public DVBSocketProtocol
     {
-    
+
     public:
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
@@ -103,24 +103,24 @@ public:
         ///@}
         ///\name Abstract Interface Implementation
         ///@{
-        
+
         unsigned available() const;
 
         ///@}
-        
-        void setSectionFilter(unsigned short int pid, 
+
+        void setSectionFilter(unsigned short int pid,
                 unsigned char filter= 0x3e,
-                unsigned int flags= DMX_IMMEDIATE_START | DMX_CHECK_CRC, 
-                unsigned char mask = 0xff, 
+                unsigned int flags= DMX_IMMEDIATE_START | DMX_CHECK_CRC,
+                unsigned char mask = 0xff,
                 unsigned char mode =0x00,
                 unsigned int timeout =0x00) const;
-        
+
     };
 
     typedef ProtocolClientSocketHandle<DVBDemuxSectionSocketProtocol> DVBDemuxSectionHandle;
-    
+
     // ----------------------------------------------------------------
-    
+
     /** \brief xxx
      */
     class DVBDemuxPESSocketProtocol
@@ -143,20 +143,20 @@ public:
         ///@}
         ///\name Abstract Interface Implementation
         ///@{
-        
+
         unsigned available() const;
 
         ///@}
-        
-        void setPESFilter(unsigned short int pid, dmx_input_t input, dmx_output_t output, dmx_pes_type_t pesType, unsigned int flags)const;    
+
+        void setPESFilter(unsigned short int pid, dmx_input_t input, dmx_output_t output, dmx_pes_type_t pesType, unsigned int flags)const;
     };
 
     typedef ProtocolClientSocketHandle<DVBDemuxPESSocketProtocol> DVBDemuxPESHandle;
 
-    
+
     // ----------------------------------------------------------------
-    
-    
+
+
     /** \brief xxx
          */
     class DVBDvrSocketProtocol
@@ -178,7 +178,7 @@ public:
         ///@}
         ///\name Abstract Interface Implementation
         ///@{
-        
+
         unsigned available() const;
 
         ///@}
@@ -187,7 +187,7 @@ public:
      typedef ProtocolClientSocketHandle<DVBDvrSocketProtocol> DVBDvrHandle;
 
     ///@}
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

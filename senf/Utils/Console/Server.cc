@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -71,7 +71,7 @@ senf::console::Server::start(senf::INet4SocketAddress const & address)
 {
     senf::TCPv4ServerSocketHandle handle (address);
     Server & server (senf::console::Server::start(handle));
-    SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
+    SENF_LOG((Server::SENFLogArea)(log::NOTICE)(
                  "Console server started at " << address ));
     return server;
 }
@@ -81,7 +81,7 @@ senf::console::Server::start(senf::INet6SocketAddress const & address)
 {
     senf::TCPv6ServerSocketHandle handle (address);
     Server & server (senf::console::Server::start(handle));
-    SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
+    SENF_LOG((Server::SENFLogArea)(log::NOTICE)(
                  "Console server started at " << address ));
     return server;
 }
@@ -94,7 +94,7 @@ prefix_ senf::console::Server & senf::console::Server::start(ServerHandle handle
 }
 
 prefix_ senf::console::Server::Server(ServerHandle handle)
-    : handle_ (handle), 
+    : handle_ (handle),
       event_ ("senf::console::Server", senf::membind(&Server::newClient, this),
               handle_, scheduler::FdEvent::EV_READ),
       root_ (senf::console::root().thisptr()), mode_ (Automatic),
@@ -143,7 +143,7 @@ senf::console::detail::DumbClientReader::clientData(senf::ReadHelper<ClientHandl
         stopClient();
         return;
     }
-    
+
     promptLen_ = 0;
     promptActive_ = false;
 
@@ -199,8 +199,8 @@ prefix_ unsigned senf::console::detail::DumbClientReader::v_width()
 
 prefix_
 senf::console::detail::NoninteractiveClientReader::NoninteractiveClientReader(Client & client)
-    : ClientReader (client), 
-      readevent_ ("senf::console::detail::NoninteractiveClientReader", 
+    : ClientReader (client),
+      readevent_ ("senf::console::detail::NoninteractiveClientReader",
                   senf::membind(&NoninteractiveClientReader::newData, this),
                   handle(), senf::scheduler::FdEvent::EV_READ)
 {}
@@ -244,13 +244,13 @@ senf::console::detail::NoninteractiveClientReader::newData(int event)
 // senf::console::Client
 
 prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
-    : out_t(boost::ref(*this)), 
-      senf::log::IOStreamTarget("client-" + senf::str(handle.peer()), out_t::member), 
-      server_ (server), handle_ (handle), 
-      readevent_ ("senf::console::Client::interactive_check", 
-                  boost::bind(&Client::setNoninteractive,this), 
+    : out_t(boost::ref(*this)),
+      senf::log::IOStreamTarget("client-" + senf::str(handle.peer()), out_t::member),
+      server_ (server), handle_ (handle),
+      readevent_ ("senf::console::Client::interactive_check",
+                  boost::bind(&Client::setNoninteractive,this),
                   handle, scheduler::FdEvent::EV_READ, false),
-      timer_ ("senf::console::Client::interactive_timer", 
+      timer_ ("senf::console::Client::interactive_timer",
               boost::bind(&Client::setInteractive, this),
               scheduler::eventTime() + ClockService::milliseconds(INTERACTIVE_TIMEOUT),
               false),
@@ -317,7 +317,7 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
         if (i != std::string::npos) {
             backtrace_ = msg.substr(0,i);
             msg = msg.substr(i+4);
-        } else 
+        } else
             backtrace_.clear();
         stream() << msg << std::endl;
     }
@@ -342,8 +342,8 @@ prefix_ unsigned senf::console::Client::getWidth(std::ostream & os, unsigned def
                                                  unsigned minWidth)
 {
     unsigned rv (defaultWidth);
-    try { 
-        rv = get(os).width(); 
+    try {
+        rv = get(os).width();
     }
     catch (std::bad_cast &) {}
     return rv < minWidth ? defaultWidth : rv;

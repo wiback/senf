@@ -4,17 +4,17 @@
   (save-excursion
     (back-to-indentation)
     (if (and (looking-at "namespace")
-	     (looking-at ".*{")
-	     (not (looking-at ".*}")))
-	[0] '+)))
+             (looking-at ".*{")
+             (not (looking-at ".*}")))
+        [0] '+)))
 
  (defconst senf-c-style
   '((c-basic-offset              . 4)
     (c-backslash-column          . 98)
-    (c-cleanup-list              . (empty-defun-braces 
-				    defun-close-semi 
-				    list-close-comma 
-				    scope-operator))
+    (c-cleanup-list              . (empty-defun-braces
+                                    defun-close-semi
+                                    list-close-comma
+                                    scope-operator))
     (c-hanging-braces-alist      . ((namespace-open after)
                                     (namespace-close before after)
                                     (brace-list-open)
@@ -35,12 +35,12 @@
 (c-add-style "senf" senf-c-style)
 
 (set (make-local-variable 'ccide-file-vars)
-     '(( fill-column  . 100 )
-       ( comment-column . 40 )
-       ( c-file-style . "senf" )
-       ( indent-tabs-mode . nil )
-       ( ispell-local-dictionary . "american" )
-       ( compile-command . "scons -u test") ))
+     '((fill-column  . 100)
+       (comment-column . 40)
+       (c-file-style . "senf")
+       (indent-tabs-mode . nil)
+       (ispell-local-dictionary . "american")
+       (compile-command . "scons -u test")))
 
 (set (make-local-variable 'ccide-default-copyright)
      (concat "//\n"
@@ -71,12 +71,12 @@ checks for C/C++ preproc directives. Additionally, anything after ^L
 is ignored (Those are the file local variables and local words)."
   (let ((f (get-text-property (point) 'face)))
     (and (memq f flyspell-prog-text-faces)
-	 (not (save-excursion 
-		(beginning-of-line) 
-		(looking-at "\\(//\\)?#")))
-	 (not (let ((l (max (point-min) (- (point-max) 4096))))
-		(and (< l (point))
-		     (save-excursion (search-backward "" l t))))))))
+         (not (save-excursion 
+                (beginning-of-line) 
+                (looking-at "\\(//\\)?#")))
+         (not (let ((l (max (point-min) (- (point-max) 4096))))
+                (and (< l (point))
+                     (save-excursion (search-backward "" l t))))))))
 
 (defun flyspell-cc-mode ()
   "Torn on `flyspell-mode` for comments and strings in C/C++ mode."
@@ -100,3 +100,8 @@ is ignored (Those are the file local variables and local words)."
       (insert "#include <senf/Utils/auto_unit_test.hh>"))))
 
 (add-hook 'ccide-new-file-hooks 'senf-new-file-hook nil t)
+
+
+// Local Variables:
+// indent-tabs-mode: nil
+// End:

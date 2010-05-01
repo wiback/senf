@@ -43,15 +43,15 @@ namespace senf {
 
         SENF_PARSER_FIELD( ssidIE, WLANSSIDInfoElementParser );
         WLANSSIDInfoElementParser::value_t ssid() const { return ssidIE().value(); }
-        
+
         SENF_PARSER_FIELD( supportedRatesIE, WLANSupportedRatesInfoElementParser );
-        
+
         SENF_PARSER_LIST ( ieList, packetSize(), WLANGenericInfoElementParser );
-        
+
         SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
     };
 
- 
+
     /** \brief WLAN Beacon frame packet
 
         \par Packet type (typedef):

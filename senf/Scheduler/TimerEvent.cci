@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -70,7 +70,7 @@ prefix_ void senf::scheduler::TimerEvent::action(Callback const & cb)
     cb_ = cb;
 }
 
-prefix_ void senf::scheduler::TimerEvent::timeout(ClockService::clock_type timeout, 
+prefix_ void senf::scheduler::TimerEvent::timeout(ClockService::clock_type timeout,
                                                   bool initiallyEnabled)
 {
     disable();

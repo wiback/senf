@@ -127,7 +127,7 @@ SENF_AUTO_UNIT_TEST(socketPolicy)
         // The following should fail at compile time
         // p1 = p3;
     }
-    
+
     {
         Policy1 p1;
         Policy3 p3;

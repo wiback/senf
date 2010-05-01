@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -41,9 +41,9 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace 
+namespace
 {
-    struct TestParseDispatcher 
+    struct TestParseDispatcher
     {
         TestParseDispatcher(std::ostream & os) : os_ (os) {}
 
@@ -54,11 +54,11 @@ namespace
         void popDirectory()
             { os_ << "popDirectory()\n"; }
 
-        void beginCommand(std::vector<senf::console::Token> const & command) 
+        void beginCommand(std::vector<senf::console::Token> const & command)
             { os_ << "beginCommand( " << senf::stringJoin(command, "/") << " )\n"; }
-        void endCommand() 
+        void endCommand()
             { os_ << "endCommand()\n"; }
-        
+
         void pushToken(senf::console::Token token)
             { os_ << "pushToken( " << token << " )\n"; }
 
@@ -82,12 +82,12 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
     senf::console::detail::CommandGrammar<TestParseDispatcher>::Context context;
     std::stringstream ss;
     TestParseDispatcher dispatcher (ss);
-    
+
     typedef senf::console::detail::CommandGrammar<TestParseDispatcher> Grammar;
     Grammar grammar (dispatcher, context);
 
     {
-        static char text[] = 
+        static char text[] =
             "# Comment\n"
             "doo / bii / // doo arg"
             "                flab::blub"
@@ -97,11 +97,11 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
             "                x\"01 02 # Inner comment\n"
             "                   0304\";";
 
-        BOOST_CHECK( boost::spirit::parse( 
-                         text, 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         text,
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
-        BOOST_CHECK_EQUAL( ss.str(), 
+        BOOST_CHECK_EQUAL( ss.str(),
                            "beginCommand( Word('doo')/Word('bii')/Word('doo') )\n"
                            "pushToken( Word('arg') )\n"
                            "pushToken( Word('flab::blub') )\n"
@@ -127,47 +127,47 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse( 
-                         "ls //foo/bar;", 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         "ls //foo/bar;",
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "builtin_ls( None('')/Word('foo')/Word('bar') )\n" );
     }
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse( 
-                         "lr /foo/bar;", 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         "lr /foo/bar;",
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "builtin_lr( None('')/Word('foo')/Word('bar') )\n" );
     }
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse( 
-                         "cd /foo/bar;", 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         "cd /foo/bar;",
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "builtin_cd( None('')/Word('foo')/Word('bar') )\n" );
     }
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse( 
-                         "exit;", 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         "exit;",
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "builtin_exit()\n" );
     }
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse( 
-                         "foo/bar// {", 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         "foo/bar// {",
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
-        BOOST_CHECK_EQUAL( ss.str(), 
+        BOOST_CHECK_EQUAL( ss.str(),
                            "beginCommand( Word('foo')/Word('bar')/None('') )\n"
                            "pushDirectory()\n"
                            "endCommand()\n" );
@@ -175,18 +175,18 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse( 
-                         "}", 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         "}",
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "popDirectory()\n" );
     }
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse( 
-                         "help /foo/bar", 
-                         grammar.use_parser<Grammar::CommandParser>(), 
+        BOOST_CHECK( boost::spirit::parse(
+                         "help /foo/bar",
+                         grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "builtin_help( None('')/Word('foo')/Word('bar') )\n" );
     }
@@ -202,7 +202,7 @@ SENF_AUTO_UNIT_TEST(commandParser)
 {
     senf::console::CommandParser parser;
 
-    char const text[] = 
+    char const text[] =
         "# Comment\n"
         "doo / bii / doo arg"
         "                flab::blub"
@@ -219,8 +219,8 @@ SENF_AUTO_UNIT_TEST(commandParser)
     {
         senf::console::ParseCommandInfo const & info (commands.front());
 
-        senf::console::Token path[] = { 
-            senf::console::Token(senf::console::Token::Word, "doo"), 
+        senf::console::Token path[] = {
+            senf::console::Token(senf::console::Token::Word, "doo"),
             senf::console::Token(senf::console::Token::Word, "bii"),
             senf::console::Token(senf::console::Token::Word, "doo")
         };
@@ -229,10 +229,10 @@ SENF_AUTO_UNIT_TEST(commandParser)
                                        path, path + sizeof(path)/sizeof(path[0]) );
         BOOST_CHECK_EQUAL( boost::next(info.commandPath().begin())->index(), 16u );
         BOOST_CHECK_EQUAL( unsigned(info.tokens().size()), 15u );
-        
-        char const * tokens[] = { "arg", 
-                                  "flab::blub", 
-                                  "123.434>a", 
+
+        char const * tokens[] = { "arg",
+                                  "flab::blub",
+                                  "123.434>a",
                                   "(", "a", ",", "b", ",", "c", "(", "huhu", ")", ")",
                                   "foo\"bar",
                                   "\x01\x02\x03\x04" };
@@ -241,17 +241,17 @@ SENF_AUTO_UNIT_TEST(commandParser)
         BOOST_REQUIRE( args != info.arguments().end() );
         BOOST_REQUIRE_EQUAL( unsigned(args->size()), 1u );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[0] );
-        
+
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
         BOOST_REQUIRE_EQUAL( args->size(), 1u );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[1] );
-        
+
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
         BOOST_REQUIRE_EQUAL( args->size(), 1u );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[2] );
-        
+
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
         BOOST_REQUIRE_EQUAL( args->size(), 8u );
@@ -260,18 +260,18 @@ SENF_AUTO_UNIT_TEST(commandParser)
         BOOST_CHECK_EQUAL( info.tokens().begin()[3].index(), 96u );
         BOOST_CHECK_EQUAL( info.tokens().begin()[5].index(), 98u );
         BOOST_CHECK_EQUAL( info.tokens().begin()[12].index(), 109u );
-        
+
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
         BOOST_REQUIRE_EQUAL( args->size(), 1u );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[13] );
         BOOST_CHECK_EQUAL( args->begin()->index(), 126u );
-        
+
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
         BOOST_REQUIRE_EQUAL( args->size(), 1u );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[14] );
-        
+
         ++ args;
         BOOST_CHECK( args == info.arguments().end() );
     }
@@ -293,16 +293,16 @@ SENF_AUTO_UNIT_TEST(checkedArgumentIterator)
     senf::console::CommandParser parser;
 
     SENF_CHECK_NO_THROW( parser.parse("foo a", &setInfo) );
-    BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
+    BOOST_CHECK_THROW( parseArgs(commands.back().arguments()),
                        senf::console::SyntaxErrorException );
 
     SENF_CHECK_NO_THROW( parser.parse("foo a b", &setInfo) );
     SENF_CHECK_NO_THROW( parseArgs(commands.back().arguments()) );
 
     SENF_CHECK_NO_THROW( parser.parse("foo a b c", &setInfo) );
-    BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
+    BOOST_CHECK_THROW( parseArgs(commands.back().arguments()),
                        senf::console::SyntaxErrorException );
-    
+
     senf::console::CheckedArgumentIteratorWrapper arg (commands.back().arguments());
     BOOST_CHECK( arg == commands.back().arguments().begin() );
     BOOST_CHECK( arg != commands.back().arguments().end() );
@@ -351,7 +351,7 @@ SENF_AUTO_UNIT_TEST(parseExceptions)
         try { parser.parse(c, &setInfo); }                                                        \
         catch (std::exception & ex) { msg = parseErrorMessage(ex.what()); }                       \
         BOOST_CHECK_EQUAL( msg, e )
-    
+
     CheckParseEx( "/foo/bar;\n  ()", "path expected\nat <unknown>:2:3" );
     CheckParseEx( "cd /foo/bar foo/bar", "end of statement expected\nat <unknown>:1:13" );
     CheckParseEx( "/foo/bar foo /", "end of statement expected\nat <unknown>:1:14" );

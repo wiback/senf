@@ -124,9 +124,9 @@
         Foo()
         {
             // Get bound member function for second overload
-            SENF_MEMBINDFNP(int, Foo, foo, () const) 
+            SENF_MEMBINDFNP(int, Foo, foo, () const)
         }
-    
+
     };
     \endcode
 

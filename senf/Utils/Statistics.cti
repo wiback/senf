@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -35,7 +35,7 @@
 
 template <class Owner>
 prefix_ senf::StatisticsBase::OutputProxy<Owner>::OutputProxy(Owner * owner, OutputEntry * entry)
-    : owner_ (owner), entry_ (entry) 
+    : owner_ (owner), entry_ (entry)
 {}
 
 template <class Owner>

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -41,17 +41,17 @@ namespace senf {
 namespace console {
 
     /** \brief Customize argument parsing
-        
+
         ArgumentTraits provides argument parsing, Additionally, this class provides a way to get a
         string-description of a type and to convert a value back into it's string representation
         used to display default values.
-        
-        The default implementation provided here 
+
+        The default implementation provided here
         \li will use senf_console_parse_argument() to parse a value. This functions default
             implementation uses \c boost::lexical_cast and thereby \c iostreams to convert an
             argument consisting of a single input token into the required type.
         \li will name types by returning the last component of the fully scoped name (e.g. \c
-            "string" for \c std::string). 
+            "string" for \c std::string).
         \li Will format values (for default value display) by forwarding the value to the
             ReturnValueTraits of that type.
 
@@ -64,7 +64,7 @@ namespace console {
     {
         typedef Type type;
 
-        static bool const singleToken = 
+        static bool const singleToken =
             boost::is_same< typeof(senf_console_parse_argument(
                                        *static_cast<ParseCommandInfo::TokensRange const *>(0),
                                        *static_cast<Type*>(0))),
@@ -163,7 +163,7 @@ namespace console {
 
     /** \brief Register enum type for argument parsing
 
-        Enum types need to be registered explicitly to support parsing. 
+        Enum types need to be registered explicitly to support parsing.
         \code
         enum Foo { Foo1, Foo2 };
         SENF_CONSOLE_REGISTER_ENUM( Foo, (Foo1)(Foo2) );
@@ -182,7 +182,7 @@ namespace console {
 
     /** \brief Register enum type for argument parsing
 
-        Enum types need to be registered explicitly to support parsing. 
+        Enum types need to be registered explicitly to support parsing.
         \code
         class SomeClass
         {
@@ -207,7 +207,7 @@ namespace console {
 
     /** \brief Format boolean value as \c enabled / \c disabled */
     void formatEnabledDisabled(bool value, std::ostream & os);
-    
+
     /** \brief Format boolean value as \c on / \c off */
     void formatOnOff(bool value, std::ostream & os);
 
@@ -242,7 +242,7 @@ namespace console {
     template <> struct ArgumentTraits<signed char> : public detail::CharArgumentTraits<signed char> {};
     template <> struct ReturnValueTraits<signed char> : public detail::CharReturnValueTraits<signed char> {};
     template <> struct ArgumentTraits<unsigned char> : public detail::CharArgumentTraits<unsigned char> {};
-    template <> struct ReturnValueTraits<unsigned char> : public detail::CharReturnValueTraits<unsigned char> {};    
+    template <> struct ReturnValueTraits<unsigned char> : public detail::CharReturnValueTraits<unsigned char> {};
 
 #endif
 

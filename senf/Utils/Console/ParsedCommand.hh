@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -113,7 +113,7 @@ namespace console {
         should do so to make the unwieldy casts unnecessary.
 
         \section overload_parse Custom parameter parsers
-        
+
         By default, parameters are parsed using \c boost::lexical_cast and therefore using \c
         iostreams. This means, that any type which can be read from a stream can automatically be
         used as argument type.
@@ -194,7 +194,7 @@ namespace console {
 
         Attributes for parsed commands are not set directly on the node. They are set via a special
         attributor temporary returned when adding a parsed command to the tree.
-        
+
         This class is the base class for those attributors. It provides members which do not depend
         in any way on the exact type of command added.
 
@@ -217,12 +217,12 @@ namespace console {
         void argDoc(std::string const & doc);
         void typeName(std::string const & doc);
         void defaultDoc(std::string const & doc);
-        
+
         ParsedCommandOverloadBase & overload() const;
         void overloadDoc(std::string const & doc);
         void nodeDoc(std::string const & doc);
         void shortDoc(std::string const & doc);
-        
+
     private:
         ParsedCommandOverloadBase::ptr overload_;
         unsigned index_;
@@ -230,8 +230,8 @@ namespace console {
         boost::optional<std::string> shortdoc_;
     };
 
-    /** \brief Non argument dependent ParsedCommandBase attributes 
-        
+    /** \brief Non argument dependent ParsedCommandBase attributes
+
         Attributes for parsed commands are not set directly on the node. They are set via a special
         attributor temporary returned when adding a parsed command to the tree.
 
@@ -265,7 +265,7 @@ namespace console {
         // Either qualify them with their complete namespace
         dir.add(...)
             .arg( senf::console::kw::name = "name" );
-        
+
         // Or use a namespace alias
         namespace kw = senf::console::kw;
         dir.add(...)
@@ -300,7 +300,7 @@ namespace console {
         <pre>
         Usage:
             command [name:type_name]
-        
+
         With:
             name      description
                 default: default_doc
@@ -376,7 +376,7 @@ namespace console {
                                              token list returned by the console/config parser into
                                              the appropriate value. If not set explicitly, this
                                              conversion is supplied by the ArgumentTraits
-                                             class. 
+                                             class.
 
                                              Setting the \a parser attribute allows to use a custom
                                              parser. The parser is an arbitrary callable object with
@@ -395,7 +395,7 @@ namespace console {
 
         Attributes for parsed commands are not set directly on the node. They are set via a special
         attributor temporary returned when adding a parsed command to the tree.
-        
+
         This class adds all those members, which do not depend on any specific argument but which
         need to return the correct attributor type.
 
@@ -409,7 +409,7 @@ namespace console {
         Self doc(std::string const & doc); ///< Set documentation for all overloads
         Self shortdoc(std::string const & doc); ///< Set short documentation for all overloads
         Self overloadDoc(std::string const & doc); ///< Set overload specific documentation
-        Self formatter(typename Overload::Formatter formatter); 
+        Self formatter(typename Overload::Formatter formatter);
                                         ///< Set return value formatter
                                         /**< This member is only available, if the \a ReturnType of
                                              the installed callback is not \c void.
@@ -448,12 +448,12 @@ namespace console {
     };
 
 #endif
-    
+
     /** \brief Argument dependent ParsedCommandBase attributes
 
         Attributes for parsed commands are not set directly on the node. They are set via a special
         attributor temporary returned when adding a parsed command to the tree.
-        
+
         This class adds all those members, which depend on a specific argument. Each call to \c arg
         will advance to the next argument.
 
@@ -461,7 +461,7 @@ namespace console {
      */
     template <class Overload, unsigned index, bool flag>
     class ParsedArgumentAttributor
-        : public ParsedArgumentAttributorBase< Overload, 
+        : public ParsedArgumentAttributorBase< Overload,
                                                 ParsedArgumentAttributor<Overload, index, flag> >
     {
         typedef boost::parameter::parameters<
@@ -473,7 +473,7 @@ namespace console {
             kw::type::parser> arg_params;
 
     public:
-        typedef typename senf::function_traits_arg_type< 
+        typedef typename senf::function_traits_arg_type<
             typename Overload::traits, int(index) >::type arg_type;
         typedef typename senf::remove_cvref< arg_type >::type value_type;
         typedef ParsedArgumentAttributor<Overload, index+1> next_type;
@@ -483,16 +483,16 @@ namespace console {
                                              argument. The attributes are passed to arg() as keyword
                                              arguments using the <a
                                              href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
-                                             library. 
+                                             library.
                                              \code
                                              ...
-                                                 .arg( kw::name          = "name", 
+                                                 .arg( kw::name          = "name",
                                                        kw::default_value = 1 )
                                              ...
                                              \endcode
                                              The valid keywords are defined in the senf::console::kw
                                              namespace.
-                                             
+
                                              Each call to arg() will increment the argument index
                                              and advance to the next argument. This member is only
                                              present, if there is an argument at the current
@@ -518,22 +518,22 @@ namespace console {
         void argInfo(Kw const &, ArgumentPack const &, boost::mpl::false_);
 
         template <class ArgumentPack>
-        void argInfo(boost::parameter::keyword<kw::type::name> const &, 
+        void argInfo(boost::parameter::keyword<kw::type::name> const &,
                      ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
-        void argInfo(boost::parameter::keyword<kw::type::description> const &, 
+        void argInfo(boost::parameter::keyword<kw::type::description> const &,
                      ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
-        void argInfo(boost::parameter::keyword<kw::type::default_value> const &, 
+        void argInfo(boost::parameter::keyword<kw::type::default_value> const &,
                      ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
-        void argInfo(boost::parameter::keyword<kw::type::type_name> const &, 
+        void argInfo(boost::parameter::keyword<kw::type::type_name> const &,
                      ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
-        void argInfo(boost::parameter::keyword<kw::type::default_doc> const &, 
+        void argInfo(boost::parameter::keyword<kw::type::default_doc> const &,
                      ArgumentPack const & args, boost::mpl::true_);
         template <class ArgumentPack>
-        void argInfo(boost::parameter::keyword<kw::type::parser> const &, 
+        void argInfo(boost::parameter::keyword<kw::type::parser> const &,
                      ArgumentPack const & args, boost::mpl::true_);
 
         next_type next() const;
@@ -551,7 +551,7 @@ namespace console {
 
     template <class Overload, unsigned index>
     class ParsedArgumentAttributor<Overload, index, false>
-        : public ParsedArgumentAttributorBase< Overload, 
+        : public ParsedArgumentAttributorBase< Overload,
                                                 ParsedArgumentAttributor<Overload, index, false> >
     {
     public:
@@ -573,12 +573,12 @@ namespace console {
 namespace factory {
 
     template <class Signature>
-    SimpleOverloadAttributor 
+    SimpleOverloadAttributor
     Command(boost::function<Signature> fn,
             typename boost::enable_if_c<detail::ParsedCommandTraits<Signature>::is_simple>::type * = 0);
 
     template <class Function>
-    SimpleOverloadAttributor 
+    SimpleOverloadAttributor
     Command(Function fn,
             typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_simple>::type * = 0);
 
@@ -603,7 +603,7 @@ namespace factory {
     Command(Function fn,
             typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type * = 0,
             typename boost::disable_if<boost::is_member_function_pointer<Function> >::type * = 0);
-    
+
     template <class Signature>
     typename senf::console::detail::ParsedCommandTraits<Signature>::Attributor
     Command(boost::function<Signature> fn);
@@ -623,7 +623,7 @@ namespace factory {
     typename senf::console::detail::ParsedCommandTraits<Member>::Attributor
     Command(Member memfn, Owner const * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
-    
+
     template <class CastTo, class Owner, class Member>
     typename senf::console::detail::ParsedCommandTraits<CastTo>::Attributor
     Command(Member memfn, Owner * owner,

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -86,9 +86,9 @@ SENF_AUTO_UNIT_TEST(formatEng)
     CheckFormat( (1.345e-3, 3.456),          "0.0+-3.5" );
 
 #   undef CheckFormat
-    
+
     // From documentation
-    
+
     {
         std::stringstream ss;
         ss << senf::format::eng(1.23);
@@ -103,7 +103,7 @@ SENF_AUTO_UNIT_TEST(formatEng)
 
     {
         std::stringstream ss;
-        ss << std::setw(25) << std::setprecision(5) << std::showpos << std::uppercase 
+        ss << std::setw(25) << std::setprecision(5) << std::showpos << std::uppercase
            << std::internal << senf::format::eng(12345,67);
         BOOST_CHECK_EQUAL( ss.str(), "+       12.35+-000.07E+03" );
     }
@@ -135,7 +135,7 @@ SENF_AUTO_UNIT_TEST(formatEng)
 SENF_AUTO_UNIT_TEST(dumpint)
 {
     std::stringstream ss;
-    
+
 #   define CheckFormat(v,s)                                             \
         {                                                               \
             ss.str("");                                                 \
@@ -167,7 +167,7 @@ SENF_AUTO_UNIT_TEST(indent)
 {
     std::stringstream ss;
     f2(ss);
-    BOOST_CHECK_EQUAL( ss.str(), 
+    BOOST_CHECK_EQUAL( ss.str(),
             "  f2_1\n"
             "    f1\n"
             "  f2_2\n"

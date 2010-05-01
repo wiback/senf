@@ -25,12 +25,12 @@
 
 // Custom includes
 
-#define prefix_ inline 
+#define prefix_ inline
 ///////////////////////////////cci.p////////////////////////////////////////
 
 prefix_ void senf::DVBSectionProtocolWrapper::setSectionFilter(
-        unsigned short int pid, u_int8_t filter, unsigned int flags, u_int8_t mask, 
-        u_int8_t mode, unsigned int timeout) 
+        unsigned short int pid, u_int8_t filter, unsigned int flags, u_int8_t mask,
+        u_int8_t mode, unsigned int timeout)
 {
     protocol.setSectionFilter(pid, timeout, flags, filter, mask, mode);
 }
@@ -52,7 +52,7 @@ prefix_ void senf::DVBSectionProtocolWrapper::stopFiltering()
 
 
 prefix_ void senf::DVBPESProtocolWrapper::setPESFilter(unsigned short int pid, dmx_input_t input,
-        dmx_output_t output, dmx_pes_type_t pesType, unsigned int flags) 
+        dmx_output_t output, dmx_pes_type_t pesType, unsigned int flags)
 {
     protocol.setPESFilter(pid, input, output, pesType, flags);
 }

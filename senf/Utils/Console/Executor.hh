@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -64,7 +64,7 @@ namespace console {
         // Types
 
         /// Thrown by built-in 'exit' command
-        struct ExitException {};        
+        struct ExitException {};
 
         /// Executor policy function
         typedef boost::function<void (DirectoryNode &,std::string const &)> SecurityPolicy;
@@ -77,7 +77,7 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
         //\/name Structors and default members
         ///\{
-        
+
         Executor();
 
         ///\}
@@ -85,12 +85,12 @@ namespace console {
 
         void execute(std::ostream & output, ParseCommandInfo const & command);
                                         ///< Execute command
-                                        /**< Output will be written to \a output. 
+                                        /**< Output will be written to \a output.
                                              Same as operator()(). */
 
         void operator()(std::ostream & output, ParseCommandInfo const & command);
                                         ///< Execute command
-                                        /**< Output will be written to \a output. 
+                                        /**< Output will be written to \a output.
                                              Same as execute(). */
         GenericNode & getNode(ParseCommandInfo const & command);
         DirectoryNode & cwd() const;    ///< Current working directory
@@ -119,7 +119,7 @@ namespace console {
         DirectoryNode & chroot() const; ///< Get root node
                                         /**< The root node defaults to senf::console::root(). If
                                              changed, all path references are relative to this node
-                                             and objects outside that tree cannot be accessed. */ 
+                                             and objects outside that tree cannot be accessed. */
 
         Executor & chroot(DirectoryNode & node); ///< chroot into given directory
                                         /**< After this call, all path's are interpreted relative to
@@ -156,7 +156,7 @@ namespace console {
             std::string path;
             InvalidPathException() : path() {}
             InvalidPathException(std::string path_) : path(path_) {}
-            
+
         };
         struct InvalidDirectoryException {
             std::string path;
@@ -164,7 +164,7 @@ namespace console {
             InvalidDirectoryException(std::string path_) : path(path_) {}
         };
         struct InvalidCommandException {};
-        
+
         DirectoryNode::ptr root_;
         SecurityPolicy policy_;
         mutable Path cwd_;

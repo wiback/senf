@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -61,7 +61,7 @@ namespace log {
 
         This time source is installed by default and uses gettimeofday() (via the Boost.DateTime
         library) to get the current universal time.
-        
+
         \ingroup config
      */
     struct SystemTimeSource : public TimeSource

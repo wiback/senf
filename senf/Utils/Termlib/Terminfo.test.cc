@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -56,7 +56,7 @@ SENF_AUTO_UNIT_TEST(terminfo)
     //ifo.dump(std::cout);
     //kp.dump(std::cout);
 
-    BOOST_CHECK_EQUAL( kp.lookup("\e[5\x7e"), 
+    BOOST_CHECK_EQUAL( kp.lookup("\e[5\x7e"),
                        Pair(senf::term::KeyParser::PageUp, 4u) );
     BOOST_CHECK_EQUAL( kp.lookup("\e"),
                        Pair(senf::term::KeyParser::Incomplete, 1u) );

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -40,17 +40,17 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
-    class MyTelnet 
+
+    class MyTelnet
         : public senf::term::TelnetTerminal
     {
     public:
-        explicit MyTelnet(Handle handle) 
-            : senf::term::BaseTelnetProtocol (handle), 
-              editor_ (*this, senf::membind(&MyTelnet::executeLine, this)) 
+        explicit MyTelnet(Handle handle)
+            : senf::term::BaseTelnetProtocol (handle),
+              editor_ (*this, senf::membind(&MyTelnet::executeLine, this))
             {
                 editor_.prompt("myTelnet-with-an-endlesssly-long-prompt$");
-                editor_.defineKey(senf::term::KeyParser::Ctrl('D'), 
+                editor_.defineKey(senf::term::KeyParser::Ctrl('D'),
                                   senf::membind(&MyTelnet::deleteCharOrExit, this));
             }
 

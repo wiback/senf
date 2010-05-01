@@ -62,7 +62,7 @@ namespace senf {
         API however you will need to instantiate a container wrapper for the list. See \ref
         packet_usage_fields_collection.
 
-        \see 
+        \see
             How to access \ref packet_usage_fields_collection \n
             SENF_PARSER_LIST() macro used to define list fields \n
             ListParser_Container list container wrapper API \n
@@ -240,7 +240,7 @@ namespace senf {
         // Define the list
         SENF_PARSER_LIST ( list, list_size_, EltParser );
         \endcode
-        
+
         Here \c EltParser can be an arbitrary parser and need not have a fixed size.
 
         \warning Realize, that the \a size field is controlled by the list parser. This field
@@ -261,7 +261,7 @@ namespace senf {
 
         <tr><td>\c transform(\a transform, \c bytes(\a size))</td><td>The \a transform is applied to
         the \a size value. The value is then interpreted containing the list size in bytes not
-        number of elements</td> 
+        number of elements</td>
         </table>
 
         The optional \a transform is a class with the following layout
@@ -272,7 +272,7 @@ namespace senf {
             static value_type get(other_type v);
             static other_type set(value_type v);
         };
-        \endcode 
+        \endcode
 
         \c other_type is \a size ::\c value_type, the type of the value returned by the \a size
         field, whereas the \c value_type typedef is the arbitrary return type of the transform.
@@ -297,7 +297,7 @@ namespace senf {
         \param[in] size name of field giving the list size
         \param[in] elt_type list element type
 
-        \see 
+        \see
             How to use \ref packet_usage_fields_collection \n
             senf::ListParser the list parser API for list field access
             senf::ListParser_Container the list parser container API for list field access

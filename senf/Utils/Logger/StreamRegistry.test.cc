@@ -37,7 +37,7 @@
 
 SENF_AUTO_UNIT_TEST(streamRegistry)
 {
-    char const * streams[] = 
+    char const * streams[] =
         { "senf::SenfLog", "senf::log::Debug", "senf::log::test::myStream" };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::StreamRegistry::instance().begin(),

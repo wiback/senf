@@ -54,9 +54,9 @@ template <class A1, class A2, class A3>
 prefix_ void senf::log::Target::route(action_t action, int index)
 {
     typedef detail::RouteParameters<A1,A2,A3> Params;
-    route( detail::InstanceP<typename Params::Stream, detail::StreamBase>::value(), 
-           detail::InstanceP<typename Params::Area, detail::AreaBase>::value(), 
-           Params::Level::value, 
+    route( detail::InstanceP<typename Params::Stream, detail::StreamBase>::value(),
+           detail::InstanceP<typename Params::Area, detail::AreaBase>::value(),
+           Params::Level::value,
            action, index);
 }
 
@@ -76,13 +76,13 @@ template <class A1, class A2, class A3>
 prefix_ void senf::log::Target::unroute(action_t action)
 {
     typedef detail::RouteParameters<A1,A2,A3> Params;
-    unroute( detail::InstanceP<typename Params::Stream, detail::StreamBase>::value(), 
-             detail::InstanceP<typename Params::Area, detail::AreaBase>::value(), 
-             Params::Level::value, 
+    unroute( detail::InstanceP<typename Params::Stream, detail::StreamBase>::value(),
+             detail::InstanceP<typename Params::Area, detail::AreaBase>::value(),
+             Params::Level::value,
              action);
 }
 
-#endif 
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // namespace senf::log::detail members

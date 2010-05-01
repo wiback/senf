@@ -44,7 +44,7 @@ template <class Arg>
 prefix_
 senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::
 ListOptionTypeParser_Policy(Arg const & arg)
-    : AuxPolicy(arg) 
+    : AuxPolicy(arg)
 {}
 
 template <class ElementParser, class AuxPolicy>
@@ -88,7 +88,7 @@ template <class ElementParser, class AuxPolicy>
 prefix_
 senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
 container_policy(parser_policy const & p)
-    : AuxPolicy(p) 
+    : AuxPolicy(p)
 {}
 
 //destructor

@@ -50,7 +50,7 @@
 
     \section senfutil_overview Building Projects using SENF
 
-    When building projects using %senf, SENFSCons has a very simple helper module 
+    When building projects using %senf, SENFSCons has a very simple helper module
     \ref senf_senfutil "senfutil.py" to make the building of libraries utilizing %senf simpler.
 
     \see \ref senf_senfutil
@@ -88,7 +88,7 @@
         CXXFLAGS_final   = [ '-O2' ],
         CXXFLAGS_normal  = [ '-O0', '-g' ],
         CXXFLAGS_debug   = [ '$CXXFLAGS_normal' ],
-    
+
         LINKFLAGS_normal = [ '-Wl,-S' ],
 
         LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ],
@@ -103,7 +103,7 @@
 
     # Build objects from sources
     objects = env.Object(sources)
-    
+
     # Build main binary
     env.Default( env.Program( target='example', source=objects + ['main.cc'] ) )
 
@@ -146,7 +146,7 @@
     where \e optional_stream and \e optional_area are optional fully scoped C++ names (e.g. \c
     senf::log::Debug) and \e level is the loglevel. There must be \e no whitespace in a single
     specification, multiple specifications are either specified using an array or separated with
-    whitespace. 
+    whitespace.
 
     \section senf_senfutil_default Default options
 
@@ -203,11 +203,11 @@
 
     # Build main target, e.g. a Binary with additional sources which are not part of the unit test
     env.Program('example', objects+extra_sources)
-    
+
     # Build unit tests including additional test sources
     env.BoostUnitTest('test', objects+tests)
     \endcode
-    
+
     It is important to exclude the \c main function from the unit-test build since the boost unit
     test library provides it's own.
 
@@ -227,9 +227,9 @@
 
     The \c senfutil.Doxygen utility autogenerates a \c Doxyfile.
 
-    The utility will search for a SENF documentation in the \c senfdoc and \c %senf subdirectories 
+    The utility will search for a SENF documentation in the \c senfdoc and \c %senf subdirectories
     as well as via the senfutil module directory and some other standard locations. If SENF
-    documentation is found, the SENF tagfiles will automatically be added. Links will be resolved 
+    documentation is found, the SENF tagfiles will automatically be added. Links will be resolved
     to the documentation found.
 
     \c senfutil.Doxygen takes some additional optional keyword arguments:
@@ -333,7 +333,7 @@
     </pre>
 
     in the \c %senf directory. This assumes, that you want to build the library with your default
-    gcc and requires the boost libraries to be available in the system include paths. If this is 
+    gcc and requires the boost libraries to be available in the system include paths. If this is
     not the case, you can take a look at <tt>SConfig.template</tt> file. Copy this file to
     <tt>SConfig</tt> and comment out all the variables you don't want to change (The \e values in
     the template file are just arbitrary examples).
@@ -488,7 +488,7 @@
          \ref senf_setup
 
     \section senf_conventions Coding Conventions
-    
+
     Here we have laid down the coding conventions used throughout the SENF framework. Please ad here
     to these conventions when changing or adding code. If you use emacs, you can use the C++ IDE for
     emacs from http://g0dil.de which greatly simplifies following these conventions.
@@ -501,7 +501,7 @@
     \par Rationale:
         This simplifies finding the implementation/header for a given class and also reduces the
         size of each single file.
-    
+
     The implementation is divided into a number of different files:
 
     <table class="glossary"> <tr><td>\c .h</td><td>C public header</td></tr>
@@ -521,7 +521,7 @@
 
     <tr><td>\c .cci</td><td>C++ implementation of inline non-template functions and
     members</td></tr>
-    
+
     <tr><td>\c .cti</td><td>C++ implementation of inline template functions and members</td></tr>
 
     <tr><td>\c .mpp</td><td>Special include file used for external iteration by the
@@ -562,7 +562,7 @@
     \li When defining simple exception classes, the 'what()' member may be defined inline if it
         returns a string constant.
     \li It may be OK to use inline implementations for one-line implementations in internal
-        headers. 
+        headers.
     \li The Packet library allows inline implementations for the definition of parsers since doing
         so outside the declaration just gets to verbose and parsers definitions are quite length but
         very simple and straight forward.

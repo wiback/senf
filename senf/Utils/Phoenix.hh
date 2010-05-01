@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -37,7 +37,7 @@
 
 namespace senf {
 namespace phoenix {
-    
+
     /** \brief \c push_back phoenix functor
 
         <tt>push_back(c, x) := c.push_back(x)</tt>

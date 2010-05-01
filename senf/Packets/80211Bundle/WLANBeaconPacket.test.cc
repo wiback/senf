@@ -58,11 +58,11 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     BOOST_CHECK_EQUAL( p->ssidIE().length(), 5);
     BOOST_CHECK_EQUAL( p->ssidIE().value().value(), "boxC1");
     BOOST_CHECK_EQUAL( p->ssid().value(), "boxC1");
-    
+
     typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
     ieListContainer_t ieListContainer (p->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 5);
-    
+
     ieListContainer_t::iterator i ( ieListContainer.begin());
     BOOST_CHECK_EQUAL( i->type(), 0x03); //DS parameter set
     ++i;
@@ -79,7 +79,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     BOOST_CHECK_EQUAL( i->type(), 0xdd); //vendor specific
     BOOST_CHECK_EQUAL( i->length(), 0x18);
     BOOST_CHECK_EQUAL( boost::size(i->value()), 0x18);
-    
+
     unsigned char value[] = {
             0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x88, 0x00,
             0x02, 0xa3, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
@@ -87,7 +87,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( value, value+sizeof(value),
             boost::begin(i->value()), boost::end(i->value()) );
-    
+
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( p.dump( oss ));
 }
@@ -98,15 +98,15 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
     p->timestamp() << 0x0000009C4CAA303AuLL;
     p->beaconInterval() << 100u;
     p->ssidIE().value() << "boxC1";
-    
+
     typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
     ieListContainer_t ieListContainer (p->ieList());
     senf::WLANPowerConstraintInfoElementParser ie (
             ieListContainer.push_back_space().init<senf::WLANPowerConstraintInfoElementParser>() );
-    ie.value() << 0x42;    
-    
+    ie.value() << 0x42;
+
     p.finalizeThis();
-    
+
     unsigned char data[] = {
         0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00, //timestamp
         0x64, 0x00, //beacon interval

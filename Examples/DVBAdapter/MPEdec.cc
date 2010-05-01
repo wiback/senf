@@ -59,7 +59,7 @@ public:
         sec_filter.flags |= DMX_CHECK_CRC;
 
         handle.protocol().setSectionFilter( &sec_filter );
-        
+
         senf::Scheduler::instance().add(
             handle, senf::membind(&MySniffer::dumpSection, this));
     }

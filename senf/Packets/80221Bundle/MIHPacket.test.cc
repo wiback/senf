@@ -43,7 +43,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_msgId)
     mihPacket->sid() = 4;
     mihPacket->opcode() = 3;
     mihPacket->aid() = 42;
-    BOOST_CHECK_EQUAL( mihPacket->messageId(), 0x4c2a );        
+    BOOST_CHECK_EQUAL( mihPacket->messageId(), 0x4c2a );
 }
 
 SENF_AUTO_UNIT_TEST(MIHPacket_create_eth)
@@ -65,7 +65,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
     mihPacket->src_mihfId().value( "senf@berlios.de");
     mihPacket->dst_mihfId().value( "test");
     mihPacket.finalizeThis();
-    
+
     unsigned char data[] = {
             // MIH header
             0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x19,
@@ -90,9 +90,9 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
     mihPacket->dst_mihfId().maxIdLength(128);
     mihPacket->dst_mihfId().value( std::string(128, 'x'));
     mihPacket.finalizeThis();
-    // packet size is now MIH header (8 bytes) + src MIHIFId TLV (18 bytes) + 
-    // dst MIHIFId TLV (1 byte type + 2 byte TLV length + 1 byte id length + 128 id value) 
-    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 18 + 1+2+1+128));  
+    // packet size is now MIH header (8 bytes) + src MIHIFId TLV (18 bytes) +
+    // dst MIHIFId TLV (1 byte type + 2 byte TLV length + 1 byte id length + 128 id value)
+    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 18 + 1+2+1+128));
     BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 18 + 1+2+1+128);
     BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().length(), 1+128);
     BOOST_CHECK_EQUAL( senf::bytes(mihPacket->dst_mihfId()), 1+2+1+128);
@@ -101,9 +101,9 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
     mihPacket->dst_mihfId().maxIdLength(129);
     mihPacket->dst_mihfId().value( std::string(129, 'x'));
     mihPacket.finalizeThis();
-    // packet size is now MIH header (8 bytes) + src MIHIFId TLV (18 bytes) + 
-    // dst MIHIFId TLV (1 byte type + 2 byte TLV length + 2 byte id length + 128 id value) 
-    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 18 + 1+2+2+129));  
+    // packet size is now MIH header (8 bytes) + src MIHIFId TLV (18 bytes) +
+    // dst MIHIFId TLV (1 byte type + 2 byte TLV length + 2 byte id length + 128 id value)
+    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 18 + 1+2+2+129));
     BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 18 + 1+2+2+129);
     BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().length(), 2+129);
     BOOST_CHECK_EQUAL( senf::bytes(mihPacket->dst_mihfId()), 1+2+2+129);
@@ -112,7 +112,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
     mihPacket.finalizeThis();
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             mihPacket.data().begin(), mihPacket.data().end() );
-    
+
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( mihPacket.dump( oss));
 }
@@ -269,7 +269,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_parse)
     BOOST_CHECK_EQUAL( tlv2.type(), 0x0c);
     BOOST_CHECK_EQUAL( tlv2.length(), 0x04u);
     BOOST_CHECK_EQUAL( tlv2.value().size(), 0x04);
-    
+
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( mihPayload.dump( oss));
 }
@@ -286,7 +286,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_create)
     MIHGenericPayloadPacket mihPayload (MIHGenericPayloadPacket::createAfter(mihPacket));
     MIHGenericPayloadPacket::Parser::tlvList_t::container tlvListContainer (
             mihPayload->tlvList() );
-    
+
     unsigned char tlv1_value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
     MIHGenericTLVParser tlv1 ( tlvListContainer.push_back_space());
@@ -324,7 +324,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_create)
             0x1a, 0x2b, 0x3c, 0x4d // value
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
-            mihPacket.data().begin(), mihPacket.data().end() );    
+            mihPacket.data().begin(), mihPacket.data().end() );
 }
 
 

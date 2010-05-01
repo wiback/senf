@@ -20,7 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file 
+/** \file
     \brief RTPPacket non-inline non-template implementation */
 
 #include "RTPPacket.hh"
@@ -31,7 +31,7 @@
 
 #define prefix_
 
-namespace 
+namespace
 {
     std::string ptName(int pt)
     {
@@ -56,7 +56,7 @@ namespace
                 return ptList[n].name;
             ++n;
         }
-        
+
         return "UNKNOWN";
     }
 }
@@ -70,7 +70,7 @@ prefix_ void senf::RTPPacketType::dump(packet p, std::ostream &os)
        << senf::fieldName("extension")             << p->extension() << "\n"
        << senf::fieldName("contributing source cnt")   << p->csrcCount() << "\n"
        << senf::fieldName("marker")                << p->marker() << "\n"
-       << senf::fieldName("payload type")          << p->payloadType() << " " 
+       << senf::fieldName("payload type")          << p->payloadType() << " "
            << ptName(p->payloadType() ) <<"\n"
        << senf::fieldName("sequence number")       << p->seqNumber() << "\n"
        << senf::fieldName("timestamp")             << p->timeStamp() << "\n"

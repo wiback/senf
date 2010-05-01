@@ -163,7 +163,7 @@ namespace senf {
                                                "checksum" */
     };
 
-    /** \brief TCP packet typedef 
+    /** \brief TCP packet typedef
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<TCPPacketType> TCPPacket;

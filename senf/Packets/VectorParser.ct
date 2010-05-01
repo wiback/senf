@@ -75,7 +75,7 @@ prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::insert(itera
                                                                        size_type n,
                                                                        Value const & t)
 {
-    for (iterator j (shift(pos,n)); n; --n, ++j) 
+    for (iterator j (shift(pos,n)); n; --n, ++j)
         *j << t;
 }
 

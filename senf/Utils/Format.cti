@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009 
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -31,9 +31,9 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class T>
-prefix_ std::string 
+prefix_ std::string
 senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_signed<T> >::type *)
-{ 
+{
    return detail::dumpintSigned(v, std::numeric_limits<T>::digits);
 }
 
@@ -41,13 +41,13 @@ template <class T>
 prefix_ std::string
 senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_unsigned<T> >::type *)
 {
-   return detail::dumpintUnsigned(v, std::numeric_limits<T>::digits); 
+   return detail::dumpintUnsigned(v, std::numeric_limits<T>::digits);
 }
 
 template <class T>
-prefix_ std::string 
+prefix_ std::string
 senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_signed<typename T::value_type> >::type *)
-{ 
+{
    return detail::dumpintSigned(v.value(), std::numeric_limits<typename T::value_type>::digits);
 }
 
@@ -55,7 +55,7 @@ template <class T>
 prefix_ std::string
 senf::format::dumpint(T const & v, typename boost::enable_if<boost::is_unsigned<typename T::value_type> >::type *)
 {
-   return detail::dumpintUnsigned(v.value(), std::numeric_limits<typename T::value_type>::digits); 
+   return detail::dumpintUnsigned(v.value(), std::numeric_limits<typename T::value_type>::digits);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

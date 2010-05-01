@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -51,7 +51,7 @@ namespace {
                 output << "/\n";
                 dodump(output, level+1,static_cast<senf::console::DirectoryNode&>(*i->second));
             }
-            else if (i->second->isLink()) 
+            else if (i->second->isLink())
                 output << "@ -> " << i->second->followLink().path() << '\n';
             else
                 output << '\n';
@@ -144,7 +144,7 @@ prefix_ senf::console::GenericNode::ptr
 senf::console::DirectoryNode::remove(std::string const & name)
 {
     ChildMap::iterator i (children_.find(name));
-    if (i == children_.end()) 
+    if (i == children_.end())
         throw UnknownNodeNameException() << ": '" << name << "'";
     GenericNode::ptr node (i->second);
     children_.erase(i);
@@ -167,7 +167,7 @@ prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node)
             ++suffix;
             newName = node->name() + "-" + boost::lexical_cast<std::string>(suffix);
         } while (children_.find(newName) != children_.end());
-        SENF_LOG((senf::log::MESSAGE)("Uniquifying node '" << node->name() << "' to '" 
+        SENF_LOG((senf::log::MESSAGE)("Uniquifying node '" << node->name() << "' to '"
                                       << newName << "'"));
         node->name(newName);
     }

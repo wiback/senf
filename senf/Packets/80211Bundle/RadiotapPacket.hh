@@ -208,9 +208,9 @@ namespace senf {
         \par Fields:
             \ref RadiotapPacketParser
             \image html RadiotapPacket.png
-        
+
         \see http://www.radiotap.org/
-        
+
         \ingroup protocolbundle_80211
      */
     struct RadiotapPacketType

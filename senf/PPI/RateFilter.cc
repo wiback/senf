@@ -33,7 +33,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 senf::ppi::module::RateFilter::RateFilter(senf::ClockService::clock_type interval)
-    : timer_(interval) 
+    : timer_(interval)
 {
     route(input, timer_);
     route(timer_, output);

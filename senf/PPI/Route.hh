@@ -88,7 +88,7 @@ namespace ppi {
                                              forwarded from active to passive connectors. This may
                                              be disabled by setting the authoThrottling state to \c
                                              false.
-                                             
+
                                              Routing from/to an event to/from a passive connector
                                              will automatically create throttling notifications on
                                              the connector whenever the event is disabled. Routing
@@ -102,7 +102,7 @@ namespace ppi {
                                         /**< This member checks only the automatic throttling
                                              state. If autoThrottling() is \c false, this member
                                              will always return \c false. */
-        
+
     protected:
         ForwardingRoute(module::Module & module);
 
@@ -137,7 +137,7 @@ namespace senf {
 namespace ppi {
 
     /** \brief Route descriptor
-        
+
         Route instances are created by Module::route statements. The Route class provides an
         interface to manipulate the flow processing.
 
@@ -158,7 +158,7 @@ namespace ppi {
     private:
         typedef detail::RouteImplementation<Source,Target> Base;
         typedef detail::RouteImplementation<Source,Target> Implementation;
-        
+
         Route(module::Module & module, Source & source, Target & target);
 
         friend class module::Module;

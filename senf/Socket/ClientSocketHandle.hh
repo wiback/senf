@@ -136,7 +136,7 @@ namespace senf {
 #       else
         template <class OtherPolicy>
         ClientSocketHandle<OtherPolicy> const & operator=(ClientSocketHandle<OtherPolicy> other);
-#       endif        
+#       endif
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ namespace senf {
             the other end) and will block, if no data is available now. If you do not want to block,
             you \e must make the socket non-blocking (using FileHandle::blocking()).
 
-            \throws senf::SystemException 
+            \throws senf::SystemException
 
 
             This variant will read up to \c limit bytes from the
@@ -191,9 +191,9 @@ namespace senf {
                                              range. read returns a past-the-end iterator after the
                                              last character read. This iterator will point to
                                              somewhere within the input range.
-                                             \param[in,out] range Range to store data in 
+                                             \param[in,out] range Range to store data in
                                              \returns past-the-end iterator pointer to after the
-                                                 last read character 
+                                                 last read character
                                              \see \ref read() \n
                                                   <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
 #       endif
@@ -219,7 +219,7 @@ namespace senf {
                                              work, the container must be a model of 'Sequence' as
                                              defined in the STL documentation
                                              \param[out] container Container to write data to
-                                             \param[in] limit Maximum number of characters to read 
+                                             \param[in] limit Maximum number of characters to read
                                              \see \ref read() */
         char *       read         (char * start, char * end);
                                         ///< Read data into memory area
@@ -260,11 +260,11 @@ namespace senf {
                                              range. read returns a past-the-end iterator after the
                                              last character read. This iterator will point to
                                              somewhere within the input range.
-                                             \param[in,out] range Range to store data in 
+                                             \param[in,out] range Range to store data in
                                              \param[out] from peers address from which the data was
                                                  received
                                              \returns past-the-end iterator pointer to after the
-                                                 last read character 
+                                                 last read character
                                              \see \ref readfrom() \n
                                                   <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
         template <class ForwardWritableRange>
@@ -282,7 +282,7 @@ namespace senf {
                                              work, the container must be a model of 'Sequence' as
                                              defined in the STL documentation
                                              \param[out] container Container to write data to
-                                             \param[in] limit Maximum number of characters to read 
+                                             \param[in] limit Maximum number of characters to read
                                              \param[out] from peers address from which the data was
                                                  received
                                              \see \ref readfrom() */

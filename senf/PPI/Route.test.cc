@@ -65,7 +65,7 @@ namespace {
         ppi::DebugEvent event;
 
         ppi::ForwardingRoute * rt;
-        
+
         RouteTester() : events(0), throttles(0) {
                    route( activeIn,  activeOut  );  // non-forwarding
             rt = & route( activeIn,  passiveOut );  // forward throttling
@@ -99,7 +99,7 @@ namespace {
         void throttleRequest() {
             ++ throttles;
         }
-        
+
         void unthrottleRequest() {
             -- throttles;
         }
@@ -145,9 +145,9 @@ SENF_AUTO_UNIT_TEST(route)
     passiveSink.input.unthrottle();
     BOOST_CHECK( activeSource );
     BOOST_CHECK( tester.event.enabled() );
-    
+
     // Now throttle the passive source by exhausting the queue
-    
+
     BOOST_CHECK( p1 == activeSink.request() );
     BOOST_CHECK( passiveSource.output.throttled() );
     BOOST_CHECK( ! tester.activeIn );
@@ -155,7 +155,7 @@ SENF_AUTO_UNIT_TEST(route)
     BOOST_CHECK( tester.passiveOut.throttled() );
     BOOST_CHECK( ! activeSink );
     BOOST_CHECK( ! tester.event.enabled() );
-    
+
     passiveSource.submit(p1);
     BOOST_CHECK( activeSink );
     BOOST_CHECK( tester.event.enabled() );
@@ -185,7 +185,7 @@ namespace {
     void timeout() {
         senf::scheduler::terminate();
     }
-    
+
     // just a helper class for the test
     struct ModuleConnector {
         module::PriorityJoin & join_;
@@ -197,7 +197,7 @@ namespace {
         }
         boost::scoped_ptr<module::PassiveQueue> queue;
     };
-    
+
     class TestSink : public module::Module
     {
         SENF_PPI_MODULE(TestSink);
@@ -220,23 +220,23 @@ SENF_AUTO_UNIT_TEST(connect_runtime)
     module::ActiveFeeder feeder;
     module::PriorityJoin join;
     module::CloneSource source1 (senf::DataPacket::create());
-    
+
     ppi::connect( source1, join);
     ppi::connect( join, feeder);
     ppi::connect( feeder, sink);
-    
+
     ModuleConnector moduleConnector ( join);
-    senf::scheduler::TimerEvent timer ( 
+    senf::scheduler::TimerEvent timer (
         "connect_runtime timer",
         senf::membind(&ModuleConnector::connect, &moduleConnector),
         senf::ClockService::now() + senf::ClockService::milliseconds(250));
-    
+
     senf::scheduler::TimerEvent timeoutTimer (
         "connect_runtime test timeoutTimer", &timeout,
         senf::ClockService::now() + senf::ClockService::milliseconds(500));
-    
+
     senf::ppi::run();
-    
+
     BOOST_CHECK( true );
 }
 

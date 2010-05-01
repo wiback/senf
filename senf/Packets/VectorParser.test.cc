@@ -54,7 +54,7 @@ SENF_AUTO_UNIT_TEST(VectorParser)
 
     {
         UInt16VectorParser v (boost::next(p->data().begin(), 1), &p->data());
-        
+
         BOOST_CHECK_EQUAL( v[0], 0x1011 );
         BOOST_CHECK_EQUAL( v[2], 0x1415 );
         BOOST_CHECK_EQUAL( v.size(), 3u );
@@ -63,7 +63,7 @@ SENF_AUTO_UNIT_TEST(VectorParser)
         p->data()[0] = 0x06;
         BOOST_CHECK_EQUAL( v.size(), 6u );
         BOOST_CHECK_EQUAL( v.bytes(), 12u );
-        
+
         UInt16VectorParser::iterator b (v.begin());
         UInt16VectorParser::iterator e (v.end());
         BOOST_CHECK_EQUAL(std::distance(b,e), UInt16VectorParser::difference_type(v.size()));
@@ -85,7 +85,7 @@ SENF_AUTO_UNIT_TEST(VectorParser)
         v.push_back_space() = 37u;
         BOOST_CHECK_EQUAL( v.size(), 9u );
         BOOST_CHECK_EQUAL( v[8], 37u );
-        
+
         v.push_front(0xf3f4u);
         BOOST_CHECK_EQUAL( v.size(), 10u );
         BOOST_CHECK_EQUAL( v[0], 0xf3f4u );
@@ -134,7 +134,7 @@ SENF_AUTO_UNIT_TEST(VectorParser_wrapper)
     BOOST_CHECK_EQUAL( w.size(), 3u );
     p->data()[0] = 0x06;
     BOOST_CHECK_EQUAL( w.size(), 6u );
-    BOOST_CHECK_EQUAL( std::distance(w.begin(),w.end()), 
+    BOOST_CHECK_EQUAL( std::distance(w.begin(),w.end()),
                        UInt16VectorParser::difference_type(w.size()) );
 
     w.shift(w.begin()+1);
@@ -188,7 +188,7 @@ SENF_AUTO_UNIT_TEST(dynamicPolicyVector)
     UInt16VectorParser v (senf::UInt8Parser(p->data().begin(), &p->data()),
                           boost::next(p->data().begin(),1), &p->data());
     UInt16VectorParser::container w (v);
-    
+
     BOOST_CHECK_EQUAL( v.size(), 3u );
     BOOST_CHECK_EQUAL( w.size(), 3u );
 
@@ -208,7 +208,7 @@ namespace {
         static unsigned set(unsigned v) { return v+2; }
     };
 
-    struct TestVectorParser 
+    struct TestVectorParser
         : public senf::PacketParserBase
     {
 #       include SENF_PARSER()
@@ -221,7 +221,7 @@ namespace {
 
         SENF_PARSER_FINALIZE( TestVectorParser );
     };
-        
+
     struct TestVectorPacketType
         : public senf::PacketTypeBase,
           public senf::PacketTypeMixin<TestVectorPacketType>
@@ -231,7 +231,7 @@ namespace {
 
         using mixin::nextPacketRange;
         using mixin::init;
-        using mixin::initSize;        
+        using mixin::initSize;
     };
     typedef senf::ConcretePacket<TestVectorPacketType> TestVectorPacket;
 
@@ -250,7 +250,7 @@ SENF_AUTO_UNIT_TEST(vectorMacro_parse)
 
     senf::DataPacket p (senf::DataPacket::create(data));
     TestVectorParser parser (p.data().begin(), &p.data());
-    
+
     BOOST_CHECK_EQUAL( parser.vec1().size(), 3u );
     BOOST_CHECK_EQUAL( parser.vec2().size(), 2u );
     BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
@@ -271,8 +271,8 @@ SENF_AUTO_UNIT_TEST(vectorMacro_create)
     p->vec2().push_back( 0x0B0Cu);
     p->vec2().push_back( 0x0D0Eu);
     p.finalizeAll();
-    
-    unsigned char data[] = { 
+
+    unsigned char data[] = {
             0x05,                   // size1
             0x04,                   // size2
             0x01, 0x02, 0x03, 0x04, // dummy
@@ -282,13 +282,13 @@ SENF_AUTO_UNIT_TEST(vectorMacro_create)
             0x0B, 0x0C,             // vec2[0]
             0x0D, 0x0E              // vec2[1]
     };
-    SENF_CHECK_EQUAL_COLLECTIONS( 
+    SENF_CHECK_EQUAL_COLLECTIONS(
             data, data+sizeof(data), p.data().begin(), p.data().end() );
 }
 
 namespace {
-    
-    struct TestVectorBaseParser 
+
+    struct TestVectorBaseParser
         : public senf::PacketParserBase
     {
 #       include SENF_PARSER()
@@ -328,7 +328,7 @@ SENF_AUTO_UNIT_TEST(vectorMacro_inherit)
 
     senf::DataPacket p (senf::DataPacket::create(data));
     TestVectorDerivedParser parser (p.data().begin(), &p.data());
-    
+
     BOOST_CHECK_EQUAL( parser.vec1().size(), 3u );
     BOOST_CHECK_EQUAL( parser.vec2().size(), 2u );
     BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
@@ -347,7 +347,7 @@ namespace {
 #       include SENF_PARSER()
 
         SENF_PARSER_VECTOR        ( vec   , packetSize() , senf::UInt16Parser );
-        
+
         SENF_PARSER_FINALIZE( TestPacketSizeVectorParser );
     };
 

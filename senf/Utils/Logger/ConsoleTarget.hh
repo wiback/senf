@@ -32,7 +32,7 @@
 //#include "ConsoleTarget.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace senf { 
+namespace senf {
 namespace log {
 
     /** \brief Write %log messages to std::cout
@@ -53,7 +53,7 @@ namespace log {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-        
+
         static ConsoleTarget & instance();
 
         ///@}

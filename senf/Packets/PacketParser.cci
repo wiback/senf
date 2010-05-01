@@ -50,26 +50,26 @@ prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::end()
 }
 
 prefix_ senf::PacketParserBase::ParserProtector::ParserProtector(PacketParserBase const * p)
-    : safe_i_( *p), parser_(p) 
+    : safe_i_( *p), parser_(p)
 {}
 
 prefix_ senf::PacketParserBase::ParserProtector::ParserProtector(ParserProtector const & other_)
-    : safe_i_( *other_.parser_), parser_(other_.parser_) 
+    : safe_i_( *other_.parser_), parser_(other_.parser_)
 {
     other_.parser_ = 0;
 }
 
-prefix_ senf::PacketParserBase::ParserProtector::~ParserProtector() 
-{ 
-    if (parser_) const_cast<PacketParserBase *>(parser_)->i_ = safe_i_; 
+prefix_ senf::PacketParserBase::ParserProtector::~ParserProtector()
+{
+    if (parser_) const_cast<PacketParserBase *>(parser_)->i_ = safe_i_;
 }
 
 // protected members
 
 prefix_ senf::PacketParserBase::ParserProtector senf::PacketParserBase::protect()
     const
-{ 
-    return ParserProtector(this); 
+{
+    return ParserProtector(this);
 }
 
 prefix_ bool senf::PacketParserBase::check(size_type size)
@@ -78,7 +78,7 @@ prefix_ bool senf::PacketParserBase::check(size_type size)
     return size <= size_type(std::distance(i(),end()));
 }
 
-prefix_ void senf::PacketParserBase::validate(size_type size) 
+prefix_ void senf::PacketParserBase::validate(size_type size)
    const
 {
     if (! check(size))
@@ -89,7 +89,7 @@ prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s)
     : i_ (i), data_ (s)
 {}
 
-prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s, 
+prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s,
                                                  size_type size)
     : i_ (i), data_ (s)
 {

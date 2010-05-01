@@ -56,7 +56,7 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     SENF_CHECK_NO_THROW( pListenerReport.dump( oss));
 
     unsigned char dataListenerQuery[] = {
-        0x82, 0x00, 0xf7, 0xd6, 0x27, 0x10, 0x00, 0x00, 
+        0x82, 0x00, 0xf7, 0xd6, 0x27, 0x10, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x02, 0x7d, 0x00, 0x00
@@ -70,7 +70,7 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pListenerQuery.next().size(), 24u );
 
     SENF_CHECK_NO_THROW( pListenerQuery.dump( oss));
-    
+
     unsigned char dataEchoRequest[] = {
         0x80, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x07
     };
@@ -83,11 +83,11 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pEchoRequest.next().size(), 4u );
 
     SENF_CHECK_NO_THROW( pEchoRequest.dump( oss));
-    
+
     unsigned char dataEchoReply[] = {
         0x81, 0x00, 0x00, 0x00, 0x00, 0x13, 0x00, 0x4d
     };
-    
+
     senf::ICMPv6Packet pEchoReply ( senf::ICMPv6Packet::create(dataEchoReply) );
     BOOST_CHECK_EQUAL( pEchoReply->type(),     0x81   );
     BOOST_CHECK_EQUAL( pEchoReply->code(),     0x00   );
@@ -97,12 +97,12 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pEchoReply.next().size(), 4u );
 
     SENF_CHECK_NO_THROW( pEchoReply.dump( oss));
-    
-    
+
+
     unsigned char dataErrDestUnreachable[] = {
-        0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 
+        0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    
+
     senf::ICMPv6Packet pErrDestUnreachable ( senf::ICMPv6Packet::create(dataErrDestUnreachable) );
     BOOST_CHECK_EQUAL( pErrDestUnreachable->type(),     0x01   );
     BOOST_CHECK_EQUAL( pErrDestUnreachable->code(),     0x00   );
@@ -112,12 +112,12 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pErrDestUnreachable.next().size(), 4u );
 
     SENF_CHECK_NO_THROW( pErrDestUnreachable.dump( oss));
-    
-    
+
+
     unsigned char dataErrTooBig[] = {
-        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0xd8 
+        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0xd8
     };
-    
+
     senf::ICMPv6Packet pErrTooBig ( senf::ICMPv6Packet::create(dataErrTooBig) );
     BOOST_CHECK_EQUAL( pErrTooBig->type(),     0x02   );
     BOOST_CHECK_EQUAL( pErrTooBig->code(),     0x00   );
@@ -127,12 +127,12 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pErrTooBig.next().size(), 4u );
 
     SENF_CHECK_NO_THROW( pErrTooBig.dump( oss));
-    
-    
+
+
     unsigned char dataErrTimeExceeded[] = {
         0x03, 0x63, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    
+
     senf::ICMPv6Packet pErrTimeExceeded ( senf::ICMPv6Packet::create(dataErrTimeExceeded) );
     BOOST_CHECK_EQUAL( pErrTimeExceeded->type(),     0x03   );
     BOOST_CHECK_EQUAL( pErrTimeExceeded->code(),     0x63   );
@@ -142,12 +142,12 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pErrTimeExceeded.next().size(), 4u );
 
     SENF_CHECK_NO_THROW( pErrTimeExceeded.dump( oss));
-    
-    
+
+
     unsigned char dataErrParamProblem[] = {
         0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    
+
     senf::ICMPv6Packet pErrParamProblem ( senf::ICMPv6Packet::create(dataErrParamProblem) );
     BOOST_CHECK_EQUAL( pErrParamProblem->type(),     0x04   );
     BOOST_CHECK_EQUAL( pErrParamProblem->code(),     0x01   );
@@ -157,7 +157,7 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pErrParamProblem.next().size(), 4u );
 
     SENF_CHECK_NO_THROW( pErrParamProblem.dump( oss));
-    
+
     unsigned char dataRouterSolicitation[] = {
         0x85, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00,
@@ -263,14 +263,14 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
 SENF_AUTO_UNIT_TEST(ICMPv6Packet_create)
 {
     std::ostringstream oss (std::ostringstream::out);
-    
+
     unsigned char ping[] = { 0x60, 0x00, 0x00, 0x00, 0x00, 0x40, 0x3a, 0x40,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
                              0x80, 0x00, 0xda, 0xe0, 0x9f, 0x7e, 0x00, 0x09,
-                             
+
                              0xb7, 0x3c, 0xbb, 0x4a, 0x9d, 0x90, 0x0a, 0x00, //payload
                              0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
                              0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
@@ -287,7 +287,7 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_create)
 
     senf::ICMPv6Packet icmp (senf::ICMPv6Packet::createAfter(ip));
     icmp->code() = 0;
-    
+
     senf::ICMPv6EchoRequest ereq (senf::ICMPv6EchoRequest::createAfter(icmp));
     ereq->identifier() = 0x9f7e;
     ereq->seqNr() = 9;
@@ -296,7 +296,7 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_create)
         senf::DataPacket::createAfter(ereq, std::make_pair(ping+48, ping+sizeof(ping))));
 
     ip.finalizeAll();
-    
+
     SENF_CHECK_NO_THROW (ip.dump( oss ));
 
     std::string dump (

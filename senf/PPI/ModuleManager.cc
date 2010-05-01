@@ -70,7 +70,7 @@ prefix_ void senf::ppi::ModuleManager::run()
 // private members
 
 prefix_ senf::ppi::ModuleManager::ModuleManager()
-    : running_(false), terminate_(false), 
+    : running_(false), terminate_(false),
       initRunner_ ("senf::ppi::init", membind(&ModuleManager::init, this),
                    scheduler::EventHook::PRE, false)
 {

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -38,7 +38,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
+
     unsigned calls (0u);
     float ppss[] = { 13.333333f, 20.f, 13.333333f, 20.f, 13.333333f, 20.f };
 
@@ -58,7 +58,7 @@ namespace {
         if (calls >= sizeof(ppss) / sizeof(ppss[0]))
             senf::scheduler::terminate();
     }
-    
+
     void collectBPS(float bytesPerSecond)
     {
         bps += bytesPerSecond;
@@ -91,7 +91,7 @@ SENF_AUTO_UNIT_TEST(rateAnalyzer)
     senf::ppi::connect(filter, analyzer);
 
     senf::ppi::run();
-    
+
     BOOST_CHECK_EQUAL( calls, 6u );
 
     pps /= calls;

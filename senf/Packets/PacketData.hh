@@ -44,12 +44,12 @@ namespace senf {
 
         Whenever the data is manipulated through PacketData, the change is assumed to be within the
         data range of that packet: All insertions take place \e inside \c this packet and \e outside
-        any following packets in the packet chain. 
+        any following packets in the packet chain.
 
         \warning It is not permissible to change data belonging to a following
             packet/header/interpreter even though this data is part of \c this sequence. Doing so
             will corrupt the packet data.
-        
+
         \par
 
         \warning When accessing packet data via the PacketData interface you are on your own: The
@@ -91,21 +91,21 @@ namespace senf {
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-    
+
         ///\name Sequence interface to raw data
         ///@{
 
         iterator begin() const; ///< Return iterator to beginning
                                 /**< Returns an <em>random access iterator</em> referring to the
                                      first byte of the packet data. */
-        iterator end() const; ///< Return iterator to end 
-                              /**< Returns an <em>random access iterator</em> referring to the 
+        iterator end() const; ///< Return iterator to end
+                              /**< Returns an <em>random access iterator</em> referring to the
                                    byte past the end of the packet data. */
         size_type size() const; ///< Returns the number of bytes in the packet data.
         bool empty() const; ///< Test whether the packet data is empty.
                             /**< Returns whether the packet data is empty, i.e. whether its size
-                                 is 0. This function does not modify the content of the packet 
-                                 data in any way. To clear the content use clear() */        
+                                 is 0. This function does not modify the content of the packet
+                                 data in any way. To clear the content use clear() */
         byte operator[](size_type n) const; ///< Access byte in the packet data
         byte & operator[](size_type n); ///< Access byte in the packet data
 
@@ -128,7 +128,7 @@ namespace senf {
         void erase(iterator pos);
         void erase(iterator first, iterator last);
         void clear(); ///< All bytes of the packet data dropped, leaving the container with a size of 0. */
-        
+
         void resize(size_type n, byte v=0);
 
         void reserve(size_type n);

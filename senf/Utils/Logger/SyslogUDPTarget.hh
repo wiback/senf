@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -43,7 +43,7 @@ namespace log {
 
     /** \brief Log target writing UDP syslog packets
 
-        The SyslogUDPTarget will send all %log messages directly via UDP to a target host. This 
+        The SyslogUDPTarget will send all %log messages directly via UDP to a target host. This
         host should have a syslog daemon or relay running. The protocol is defined in <a
         href="http://tools.ietf.org/html/rfc3164">RFC-3164</a>.
 
@@ -57,7 +57,7 @@ namespace log {
 
         Valid facility values are from <tt>man 3 syslog</tt>:
 
-        \par "" 
+        \par ""
            <tt>LOG_AUTHPRIV</tt>, <tt>LOG_CRON</tt>, <tt>LOG_DAEMON</tt>, <tt>LOG_FTP</tt>,
            <tt>LOG_KERN</tt>, <tt>LOG_LOCAL0</tt>, <tt>LOG_LOCAL1</tt>, <tt>LOG_LOCAL2</tt>,
            <tt>LOG_LOCAL3</tt>, <tt>LOG_LOCAL4</tt>, <tt>LOG_LOCAL5</tt>, <tt>LOG_LOCAL6</tt>,
@@ -122,9 +122,9 @@ namespace log {
         void syslog(bool enabled=true); ///< Set syslog format
 
     private:
-        void init(); 
-        void v_write(time_type timestamp, std::string const & stream, 
-                     std::string const & area, unsigned level, 
+        void init();
+        void v_write(time_type timestamp, std::string const & stream,
+                     std::string const & area, unsigned level,
                      std::string const & message);
 
         void consoleFormat(std::ostream & os);
@@ -138,7 +138,7 @@ namespace log {
         bool syslogFormat_;
 
     public:
-        enum LogFacility { 
+        enum LogFacility {
             AUTHPRIV = LOG_AUTHPRIV,
             CRON = LOG_CRON,
             DAEMON = LOG_DAEMON,

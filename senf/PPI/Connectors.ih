@@ -40,7 +40,7 @@ namespace detail {
     {
     public:
         typedef PacketType Type;
-        
+
         Type operator()();
         Type read();
     };
@@ -50,7 +50,7 @@ namespace detail {
     {
     public:
         typedef PacketType Type;
-        
+
         void operator()(Type p);
         void write(Type p);
     };
