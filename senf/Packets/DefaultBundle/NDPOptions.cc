@@ -27,13 +27,10 @@
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-namespace {
-    SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPSourceLLAddressTLVParser );
-    SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPTargetLLAddressTLVParser );
-    SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPPrefixInformationTLVParser );
-    SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPMTUTLVParser );
-}
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPSourceLLAddressTLVParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPTargetLLAddressTLVParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPPrefixInformationTLVParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::NDPMTUTLVParser );
 
 prefix_ void senf::NDPSourceLLAddressTLVParser::dump(std::ostream & os) const
 {

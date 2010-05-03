@@ -46,7 +46,17 @@ namespace senf {
 
         typedef GenericTLVParserRegistry<NDPOptionParser> Registry;
     };
-    typedef GenericTLVParserBase<NDPOptionParser> NDPGenericOptionParser;
+
+    struct NDPGenericOptionParser : public GenericTLVParserBase<NDPOptionParser>
+    {
+        typedef GenericTLVParserBase<NDPOptionParser> base;
+        NDPGenericOptionParser(data_iterator i, state_type s) : base(i,s) {}
+
+        senf::PacketParserBase::size_type bytes() const
+        {
+            return length()*8;
+        }
+    };
 
     struct NDPSourceLLAddressTLVParser : public NDPOptionParser
     {
@@ -76,7 +86,11 @@ namespace senf {
             type() = typeId;
             length() = 1;
         }
-        static const UInt8Parser::value_type typeId = 0x02;
+
+        senf::PacketParserBase::size_type bytes(NDPTargetLLAddressTLVParser p) {
+                    return length()*8;
+        }
+        static const type_t::value_type typeId = 0x02;
         void dump(std::ostream & os) const;
     };
 
@@ -100,6 +114,9 @@ namespace senf {
             length() = 4;
             reserved1() = 0;
             reserved2() = 0;
+        }
+        senf::PacketParserBase::size_type bytes(NDPPrefixInformationTLVParser p) {
+            return length()*8;
         }
         static const UInt8Parser::value_type typeId = 0x03;
         void dump(std::ostream & os) const;

@@ -34,6 +34,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 SENF_AUTO_UNIT_TEST(NDPMessage_create)
 {
+    senf::dumpPacketRegistries(std::cout);
+
     unsigned char data[] = {
             0x60, 0x00, 0x00, 0x00, 0x00, 0x20, 0x3a, 0xff, //IPv6
             0x20, 0x01, 0x08, 0x90, 0x06, 0x00, 0xff, 0xff,
