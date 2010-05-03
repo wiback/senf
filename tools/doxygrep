@@ -1,0 +1,27 @@
+#!/usr/bin/perl -0777n
+
+BEGIN { 
+    $re = shift;
+    if (! $re) {
+	print STDERR 
+	    "Usage: doxygrep <re> [<file>...]\n".
+	    "\n".
+	    "Greps for <re> only within doxygen comments in [files] or stdin\n";
+	exit(1);
+    }
+}
+
+while(m{/\*\*<?(.*?)\*/|///<?(.*?)$}smg) {
+    $t=$1||$2;
+    $pre=$`;
+    $post=$'; #';
+    while ($t=~/$re/mg) {
+	$ppre=$pre.$`;
+	$ppost=$'.$post; #';
+	($tt = $&.$ppost)=~s/\n.*$//s;
+	$n = ($ppre =~ tr{\n}{\n})+1;
+	$ppre =~ s/^.*\n//s;
+	$m = length($ppre);
+	print "$ARGV:$n:$m:$ppre$tt\n";
+    }
+}

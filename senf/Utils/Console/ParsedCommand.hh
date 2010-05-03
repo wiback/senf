@@ -64,12 +64,13 @@ namespace console {
 
         \section overload_add Adding argument parsing callbacks to the tree
 
-        Adding appropriate callbacks to the tree is very simple: just path a function pointer to
-        DirectoryNode::add() or a member function pointer to ScopedDirectory::add().
+        To add overloads to the tree, use the senf::console::factory::Command factory:
         \code
+        namespace fty = senf::console::factory;
+
         std::string taskStatus(int id);
 
-        senf::console::root().add("taskStatus", &taskStatus);
+        senf::console::root().add("taskStatus", fty::Command(&taskStatus));
         \endcode
 
         There are quite a number of additional parameters available to be set. These parameters are
@@ -77,11 +78,11 @@ namespace console {
         calls after adding the node:
 
         \code
-        senf::console::root().add("taskStatus", &taskStatus)
+        senf::console::root().add("taskStatus", fty::Command(&taskStatus)
             .doc("Query the current task status")
             .arg( name = "id",
                   description = "numeric id of task to check, -1 for the current task."
-                  default_value = -1 );
+                  default_value = -1 ) );
         \endcode
 
         You may also add an additional \c std::ostream & Argument as first argument to the
@@ -95,17 +96,19 @@ namespace console {
         std::string taskStatus(std::string const & name);
 
         senf::console::root()
-            .add("taskStatus", static_cast<std::string (*)(int)>(&taskStatus))
+            .add("taskStatus", fty::Command(static_cast<std::string (*)(int)>(
+                                                &taskStatus))
             .doc("Query the current task status")
             .overloadDoc("Query status by id")
             .arg( name = "id",
                   description = "numeric id of task to check, -1 for the current task."
-                  default_value = -1 );
+                  default_value = -1 ) );
         senf::console::root()
-            .add("taskStatus", static_cast<std::string (*)(std::string const &)>(&taskStatus))
+            .add("taskStatus", fty::Commande(static_cast<std::string (*)(std::string const &)>(
+                                                 &taskStatus))
             .overloadDoc("Query status by name")
             .arg( name = "name",
-                  description = "name of task to check" );
+                  description = "name of task to check" ) );
         \endcode
 
         We can see here, that taking the address of an overloaded function requires a cast. If you
@@ -262,19 +265,21 @@ namespace console {
 
         For the keyword tags, the standard C++ scoping rules apply
         \code
+        namespace fty=senf::console::factory;
+
         // Either qualify them with their complete namespace
-        dir.add(...)
-            .arg( senf::console::kw::name = "name" );
+        dir.add(..., fty::Command(...)
+            .arg( senf::console::kw::name = "name" ) );
 
         // Or use a namespace alias
         namespace kw = senf::console::kw;
-        dir.add(...)
-            .arg( kw::name = "name" );
+        dir.add(..., fty::Command(...)
+            .arg( kw::name = "name" ) );
 
         // Or import the keywords into the current namespace (beware of name collisions)
         using namespace senf::console::kw;
-        dir.add(...)
-            .arg( name = "name" );
+        dir.add(..., fty::Command(...)
+            .arg( name = "name" ) );
         \endcode
 
         The second alternative is preferred, the <tt>using namespace</tt> directive may be used as
@@ -288,12 +293,12 @@ namespace console {
         \code
         void command(int);
 
-        dir.add("command", &command)
+        dir.add("command", fty::Command(&command)
             .arg( kw::name          = "name",
                   kw::description   = "description",
                   kw::default_value = 1,
                   kw::type_name     = "type_name",
-                  kw::default_doc   = "default_doc" );
+                  kw::default_doc   = "default_doc" ) );
         \endcode
         Will create the following documentation:
         \htmlonly

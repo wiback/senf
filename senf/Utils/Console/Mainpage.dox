@@ -65,6 +65,7 @@
     }
 
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
     int main(int argc, char** argv)
     {
@@ -73,11 +74,10 @@
             .doc("This is someServer server");
 
         // Add a command
-        senf::console::root()
-            .add("mycommand", &mycommand)
+        senf::console::root().add("mycommand", fty::Command(&mycommand)
             .doc("If <bar> is given, flurgle the <foo>, otherwise burgle it")
             .arg("foo")
-            .arg(kw::name = "bar", kw::default_value = 0);
+            .arg(kw::name = "bar", kw::default_value = 0) );
 
        // Parse command line parameters
        senf::console::parseOptions(argc,argv);
@@ -363,7 +363,8 @@
     parsing.
 
     \code
-    // Create a console/config aware object and place it into the node tree
+    // Create a console/config aware object and place it (that is it's directory node) into the node
+    // tree
     FooObject foo;
     senf::console::root().add("foo", foo.dir);
 
@@ -573,20 +574,19 @@
 /** \defgroup console_commands Supported command types
 
     The Console/config library supports quite a number of different command types. All these types
-    of command are registered, by passing them to DirectoryNode::add()
+    of command are registered by passing an appropriate factory instance to DirectoryNode::add()
 
     \autotoc
 
 
     \section console_cmdadd Adding commands and setting attributes
 
-    Basically, all commands are added using senf::console::DirectoryNode::add(). What exactly
-    happens depends on the type of object added.
+    Basically, all commands are added using senf::console::DirectoryNode::add().
     \code
-    dir.add("name", callback)
+    namespace fty = senf::console::factory;
+    dir.add("name", fty::Command(callback));
     \endcode
-    will add a command 'name' which will execute 'callback' when called, where 'callback' can be a
-    lot of things as documented in the following chapters.
+    will add the command 'name' which will execute 'callback' when called.
 
     The add call always returns (something which can be used as) a reference to the command node
     added:
@@ -598,21 +598,14 @@
     (e.g. senf::console::SimpleCommand) if you know the type of node returned.
 
     Depending on the type of object added, there are additional attributes which can be set. These
-    attributes are always set by calling them on the return value <b>before saving that value as a
-    node reference</b>. It is \e not guaranteed, you can call these members on the node
-    reference.
+    attributes are always set by calling them on the factory return value. It is \e not guaranteed,
+    you can call these members on the node reference returned by the \c add() call.
     \code
-    dir.add("name", callback)
-        .doc("The documentation");
+    namespace fty = senf::console::factory;
+    dir.add("name", fty::Command(callback)
+        .doc("The documentation") );
     \endcode
-    sets the \e doc attribute (if that is available, otherwise this will fail to compile). The
-    attribute members return value is again (something which can be used as) a reference to the
-    command node
-    \code
-    senf::console::CommandNode & node (
-        dir.add("name", callback)
-            .doc("The documentation") );
-    \endcode
+    sets the \e doc attribute (if that is available, otherwise this will fail to compile).
 
 
     \section console_manualparse Manually parsing command arguments
@@ -648,12 +641,12 @@
     Registering this callback is done by simply adding it. To provide online help, pass it to
     'doc()':
     \code
-    senf::console::root()
-        .add("test1", &fun1)
+    namespace fty = senf::console::factory;
+    senf::console::root().add("test1", fty::Command(&fun1)
         .doc("Usage:\n"
              "    test1 arg\n"
              "\n"
-             "Echo 'arg' to the console");
+             "Echo 'arg' to the console") );
     \endcode
 
     The callback may now be called interactively on the console by it's registered name:
@@ -707,8 +700,8 @@
 
     This extremely simple callback may be registered by adding it to a senf::console::DirectoryNode.
     \code
-    senf::console::root()
-        .add("test2", &fun2);
+    namespace fty = senf::console::factory;
+    senf::console::root().add("test2", fty::Command(&fun2));
     \endcode
     The functionality is now identical to \c test1:
     \htmlonly
@@ -734,13 +727,14 @@
     passed the current consoles output stream object in this argument. With this, the callback can
     output arbitrary messages to the network console.
     \code
+    namespace fty = senf::console::factory;
+
     void fun3(std::ostream & os, unsigned n, std::string text)
     {
         while (n-- > 0) os << text << std::endl;
     }
 
-    senf::console::root()
-        .add("test3", &fun3);
+    senf::console::root().add("test3", fty::Command(&fun3));
     \endcode
 
     This simple command can now be used thus:
@@ -766,10 +760,10 @@
     Automatically parsed commands can be overloaded: You can register multiple commands under the
     same name. Each overload is tried in turn until no SyntaxErrorException is raised.
     \code
-    senf::console::root()
-        .add("test4", &fun3);
-    senf::console::root()
-        .add("test4", &fun2);
+    namespace fty = senf::console::factory;
+
+    senf::console::root().add("test4", fty::Command(&fun3));
+    senf::console::root().add("test4", fty::Command(&fun2));
     \endcode
     And now, we can call \c test4 with one or two args:
     <pre>
@@ -794,13 +788,13 @@
     Utils/membind.hh to simplify this:
 
     \code
+    namespace fty = senf::console::factory;
+
     void over(int);
     void over(int,int);
 
-    senf::console::root()
-        .add("over", SENF_FNP(void, over, (int)));
-    senf::console::root()
-        .add("over", SENF_FNP(void, over, (int,int));
+    senf::console::root().add("over", fty::Command(SENF_FNP(void, over, (int))));
+    senf::console::root().add("over", fty::Command(SENF_FNP(void, over, (int,int)));
 
     class SomeModule {
       senf::console::ScopedDirectory<SomeModule> dir;
@@ -809,10 +803,12 @@
       void overlodedMethod(unsigned int)   {....};
 
       void addConsoleCommands() {
-        dir.node().add("overlodedMethod",
-                       SENF_MEMBINDFNP(unsigned int, SomeModule, overlodedMethod, () const));
-        dir.node().add("overlodedMethod",
-                       SENF_MEMBINDFNP(unsigned int, SomeModule, overlodedMethod, (unsigned int));
+        dir.node()
+            .add("overlodedMethod", fty::Command(
+                     SENF_MEMBINDFNP(unsigned int, SomeModule, overlodedMethod, () const)));
+        dir.node()
+            .add("overlodedMethod", fty::Command(
+                     SENF_MEMBINDFNP(unsigned int, SomeModule, overlodedMethod, (unsigned int))));
       }
     }
     \endcode
@@ -823,13 +819,13 @@
     As have seen so far, some documentation is automatically provided. We can add more info, by
     setting additional attributes.
     \code
-    senf::console::root()
-        .add("test5", &fun3)
+    namespace fty = senf::console::factory;
+
+    senf::console::root().add("test5", fty::Command(&fun3)
         .doc("Echo text to the console")
-        .overloadDoc("Repeat {arg12} for {arg11} lines");
-    senf::console::root()
-        .add("test4", &fun2)
-        .overloadDoc("Echo the {arg21} argument")
+        .overloadDoc("Repeat {arg12} for {arg11} lines") );
+    senf::console::root().add("test4", fty::Command(&fun2)
+        .overloadDoc("Echo the {arg21} argument") );
     \endcode
 
     This additional info is used to provide more documentation:
@@ -859,17 +855,16 @@
 
     \code
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
-    senf::console::root()
-        .add("test6", &fun3)
+    senf::console::root().add("test6", fty::Command(&fun3)
         .doc("Echo text to the console")
         .overloadDoc("Repeat {text} for {n} lines");
         .arg( kw::name = "n", kw::description="Number of repetitions" )
-        .arg( kw::name = "text", kw::description="Text to output" );
-    senf::console::root()
-        .add("test6", &fun2)
+        .arg( kw::name = "text", kw::description="Text to output" ) );
+    senf::console::root().add("test6", fty::Command(&fun2)
         .overloadDoc("Echo the {text} argument")
-        .arg( kw::name = "text" );
+        .arg( kw::name = "text" ) );
     \endcode
 
     (Sadly, there is no way to automatically find out the \e name of an argument, just it's type.)
@@ -909,16 +904,15 @@
     order. So the following will give the exactly same result as above:
     \code
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
-    senf::console::root()
-        .add("test6", &fun3)
+    senf::console::root().add("test6", fty::Command(&fun3)
         .doc("Echo text to the console")
         .overloadDoc("Repeat <text> for <n> lines");
         .arg("n",    "Number of repetitions")
-        .arg("text", "Text to output");
-    senf::console::root()
-        .add("test6", &fun2)
-        .overloadDoc("Echo the <text> argument")
+        .arg("text", "Text to output") );
+    senf::console::root().add("test6", fty::Command(&fun2)
+        .overloadDoc("Echo the <text> argument") );
         .arg("text");
     \endcode
 
@@ -932,12 +926,12 @@
     values. These have to be declared explicitly:
     \code
     namespace kw = senf::console::kw;
+    namespace fty = senf::console::factory;
 
-    senf::console::root()
-        .add("test7", &fun3)
+    senf::console::root().add("test7", fty::Command(&fun3)
         .doc("Echo {text} to the console, repeating {text} for {n} lines")
         .arg("n",    "Number of repetitions", kw::default_value=1)
-        .arg("text", "Text to output");
+        .arg("text", "Text to output") );
     \endcode
 
     Default values can be used together with overloading. Default (optional) value support is quite
@@ -973,13 +967,13 @@
 
     It is possible to add other callable objects besides function (and member-function)
     pointers. However, since it is not possible to automatically deduce the argument and return
-    types in this case, the callables have to be wrapped in a \c boost::function object:
-
+    types in this case, the signature has to be specified explicitly:
     \code
+    namespace fty = senf::console::factory;
+
     senf::console::root()
-        .add("test8",
-             boost::function<void (std::ostream &, std::string const &)>(
-                 boost::bind(&fun3, _1, 4u, _2)));
+        .add("test8",fty::Command<void (std::ostream &, std::string const &)>(
+                         boost::bind(&fun3, _1, 4u, _2)));
     \endcode
 
     This works with any callable object where argument types cannot be deduced automatically:
@@ -1044,14 +1038,16 @@
     identical to non-members). They must however be added through a senf::console::ScopedDirectory
     instance to bind them to their instance.
     \code
+    namespace fty = senf::console::factory;
+
     class Test1
     {
     public:
         senf::console::ScopedDirectory<Test1> dir;
 
         Test1(std::string label) : dir(this), label_ (label)
-            { dir.add("test", &Test::test1);
-              dir.add("test", &Test::test2); }
+            { dir.add("test", fty::Command(&Test::test1, this));
+              dir.add("test", fty::Command(&Test::test2, this)); }
 
         std::string test1(std::string const & text)
             { return label_ + ": " + text; }
@@ -1081,13 +1077,15 @@
     variable command consists of two overloads, one to query the current value and one to change the
     value.
     \code
+    namespace fty = senf::console::factory;
+
     class Test2
     {
     public:
         senf::console::ScopedDirectory<Test2> dir;
 
         Test2() : dir(this), var_(0)
-            { dir.add("var", var_); }
+            { dir.add("var", fty::Variabl(var_) ); }
 
     private:
         int var_;
@@ -1120,9 +1118,11 @@
     The library also supports read-only variables. To make a variable read-only, just wrap it in \c
     boost::cref() (where \c cref stands for \c const reference)
     \code
+    namespace fty = senf::console::factory;
+
     int var (0);
 
-    senf::console::root().add("var1", boost::cref(var));
+    senf::console::root().add("var1", fty::Variable(boost::cref(var)));
     \endcode
     A read-only variable only has a single overload:
     \htmlonly
@@ -1160,6 +1160,8 @@
     reference to the old value. The handler is called, after the value has been changed
 
     \code
+    namespace fty = senf::console::factory;
+
     int var (0);
 
     // Since this is int, it would make sense to declare the argument pass-by-value (int old)
@@ -1169,8 +1171,8 @@
         // ...
     }
 
-    senf::console::root().add("var2",var)
-        .onChange(&varChanged);
+    senf::console::root().add("var2", fty::Variable(var)
+        .onChange(&varChanged) );
     \endcode
 
     After this setup, \c varChanged will be called, whenever the value has changed.
@@ -1261,13 +1263,14 @@
     Enum types are a special case, since it is not possible, to find a string representation for the
     enumerator values automatically. Therefore, enum types need to be registered manually.
     \code
+    namespace fty = senf::console::factory;
+
     enum MyEnum { Sit, Run, Jump };
     SENF_CONSOLE_REGISTER_ENUM( MyEnum, (Sit)(Run)(Jump) );
 
     MyEnum fun4(MyEnum v) { return v }
 
-    senf::console::root()
-        .add("test9", &fun4);
+    senf::console::root().add("test9", fty::Command(&fun4));
     \endcode
 
     After an enum type is registered, it can be used like any other type for arguments or
@@ -1290,6 +1293,8 @@
     register enums defined within some class, use \ref SENF_CONSOLE_REGISTER_ENUM_MEMBER()
 
     \code
+    namespace fty = senf::console::factory;
+
     class Test3
     {
     public:
@@ -1304,7 +1309,7 @@
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( Test3, Color, (Red)(Green)(Blue) );
 
     Test3::Test3() : dir(this)
-        { dir.add("test", &Test3::mem3); }
+        { dir.add("test", fty::Command(&Test3::mem3, this)); }
 
     Test3 test3ob;
     senf::console::root().add("test3ob", test3ob.dir);
@@ -1327,22 +1332,25 @@
     \subsection console_args_convert Handling argument types by conversion
 
     Sometimes an argument type is best handled by just pretending it to be of some other type. The
-    basic idea is, to us \c boost::function to convert the real argument type to some different type
+    basic idea is, to provide an explicit signature with different (but compatible) types to the
+    factory:
 
     \code
+    namespace fty = senf::console::factory;
+
     int fun4(int value)
     {
         return value;
     }
 
     senf::console::root()
-        .add("test8", boost::function<bool (bool)>(&fun4));
+        .add("test8", fty::Command<bool (bool)>(&fun4));
     \endcode
 
-    Here, the type signature specified via \c boost::function is different from the real type
-    signature but is compatible. \c boost::function automatically handles the conversion
-    process. Since the console library now sees the argument and return value of type \c bool,
-    the values will be parsed and formatted as boolean values.
+    Here, the type signature passed to fty::Command is different from the real type signature but it
+    is compatible, the conversion is handled automatically. Since the console library now sees the
+    argument and return value of type \c bool, the values will be parsed and formatted as boolean
+    values.
 
 
     \subsection console_args_special Special Console types
@@ -1390,12 +1398,14 @@
     The formatter writes out the value as a parenthesized pair.
 
     \code
+    namespace fty = senf::console::factory;
+
     Coordinate fun5(Coordinate const & p) { return Coordinate(2*p.x, 2*p.y) }
 
     namespace kw = senf::console::kw;
 
     senf::console::root()
-        .add("test10", &fun5)
+        .add("test10", fty::Command(&fun5))
         .arg("x","coordinate to double",
              kw::default_value = Coordinate())
     \endcode

@@ -53,7 +53,7 @@ namespace console {
         char foo(char v) { return v; }
 
         senf::console::root().add(
-            "foo", boost::function< CharAsString<char> (CharAsString<char>) >(&foo));
+            "foo", fty::Command< CharAsString<char> (CharAsString<char>) >(&foo));
         \endcode
 
         \tparam CharT character type, one of \c char, \c signed \c char or \c unsigned \c char
@@ -146,7 +146,7 @@ namespace console {
         SENF_CONSOLE_REGISTER_ENUM(MyFlags, (Foo)(Bar)(Baz)(Boo));
 
         // Register the function with a FlagCollection argument type
-        consoleDir.add("func", boost::function<void (FlagCollection<MyFlags>)>(&func));
+        consoleDir.add("func", fty::Command<void (FlagCollection<MyFlags>)>(&func));
         \endcode
 
         To use the FlagCollection class

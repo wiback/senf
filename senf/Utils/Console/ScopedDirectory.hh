@@ -96,7 +96,7 @@ namespace console {
 
             MyClass() : configDir(this)
             {
-                configDIr.add(...);
+                configDir.add(...);
             }
         };
         \endcode

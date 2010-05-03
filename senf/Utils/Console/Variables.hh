@@ -82,7 +82,7 @@ namespace factory {
             int var;
             ScopedDirectory<> dir;
 
-        dir.add("var", var);
+        dir.add("var", fty::Variable(var));
         \endcode
 
         Variables should be registered only with a ScopedDirectory declared in the same scope
@@ -97,7 +97,7 @@ namespace factory {
         boost::cref(). Such a variable cannot be changed only queried. Therefore, it does not have
         the parser() and typeName() attributes.
         \code
-            dir.add("const_var", boost::cref(var))
+            dir.add("const_var", fty::Variable(boost::cref(var)));
         \endcode
 
         \ingroup console_commands

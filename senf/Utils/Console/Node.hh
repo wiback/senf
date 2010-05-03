@@ -58,7 +58,7 @@
             dir.doc("Manager for something");
 
             // Add a member function (the pointer-to-member is automatically bound to this instance)
-            dir.add("member", fty::Command(this, &SomeClass::member)
+            dir.add("member", fty::Command(&SomeClass::member, this)
                 .doc("Do the member operation"));
         }
 
@@ -132,7 +132,7 @@
     \code
     void callback(std::ostream & os, senf::console::ParseCommandInfo const & command) { ... }
     // ...
-    myDirectory.add("foo",&callback);
+    myDirectory.add("foo",fty::Command(&callback));
     \endcode
 
     Every node is identified among it's siblings by it's name. The name of the node is set when
@@ -158,10 +158,10 @@
     Depending on the node type added, additional node parameters may be set. For example, every node
     has a documentation parameter which is used by the online-help system. To assign these
     parameters, the node exposes corresponding member functions. Since
-    senf::console::DirectoryNode::add() returns the newly added node by reference, additional
-    parameters may just be added to the end of the add command:
+    senf::console::DirectoryNode::add() returns the newly added node by reference. Additional
+    parameters may be added after the factory call:
     \code
-    myDirectory.add("foo",&fooCallback).doc("The foo method");
+    myDirectory.add("foo", fty::Command(&fooCallback).doc("The foo method") );
     \endcode
     Since the parameter setters all return the node reference, additional parameters may just be
     added to the end of the command.
@@ -387,8 +387,8 @@ namespace console {
         This node type provides the internal and root nodes of the tree. It allows to add arbitrary
         children and supports directory traversal.
 
-        Nodes are normally not instantiated manually but are created by the DirectoryNode via
-        mkdir() or add(). Special add() members however allow externally allocated node objects.
+        Nodes are normally not instantiated manually but are created using factory calls. Special
+        add() members however allow externally allocated node objects.
 
         Nodes may be added to the tree only once, otherwise chaos will ensue. Since nodes are always
         managed dynamically, there is a special ScopedDirectory proxy template which provides a
