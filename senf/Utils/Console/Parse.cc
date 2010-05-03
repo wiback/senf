@@ -30,8 +30,16 @@
 #include <cerrno>
 #include <sys/stat.h>
 #include <boost/iterator/transform_iterator.hpp>
-#include <boost/spirit/iterator/file_iterator.hpp>
-#include <boost/spirit/iterator/position_iterator.hpp>
+#include <senf/config.hh>
+
+#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
+#  include <boost/spirit/include/classic_file_iterator.hpp>
+#  include <boost/spirit/include/classic_position_iterator.hpp>
+#else
+#  include <boost/spirit/iterator/file_iterator.hpp>
+#  include <boost/spirit/iterator/position_iterator.hpp>
+#endif
+
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/senfassert.hh>
 
@@ -279,6 +287,9 @@ namespace {
 
 namespace boost {
 namespace spirit {
+#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
+namespace classic {
+#endif
 
     template <>
     struct position_policy<senf::console::detail::FilePositionWithIndex>
@@ -305,6 +316,9 @@ namespace spirit {
             }
     };
 
+#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
+}
+#endif
 }}
 
 prefix_ senf::console::CommandParser::CommandParser()
@@ -321,27 +335,27 @@ template <class Iterator>
 prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator npb, Iterator npe,
                                                          std::string const & source, Callback cb)
 {
-    typedef boost::spirit::position_iterator<
+    typedef detail::boost_spirit::position_iterator<
         Iterator, detail::FilePositionWithIndex> PositionIterator;
     PositionIterator b (npb, npe, source);
     PositionIterator e (npe, npe, source);
     ParseCommandInfo info;
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
-    boost::spirit::parse_info<PositionIterator> result;
+    detail::boost_spirit::parse_info<PositionIterator> result;
 
     for(;;) {
-        result = boost::spirit::parse(
+        result = detail::boost_spirit::parse(
             b, e, * impl().grammar.use_parser<Impl::Grammar::SkipParser>());
         b = result.stop;
         if (b == e)
             return e.base();
         info.clear();
         try {
-            result = boost::spirit::parse(b, e,
+            result = detail::boost_spirit::parse(b, e,
                                           impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
                                           impl().grammar.use_parser<Impl::Grammar::SkipParser>());
         }
-        catch (boost::spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
+        catch (detail::boost_spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
             if (impl().grammar.incremental && ex.where == e)
                 return b.base();
             else
@@ -375,7 +389,7 @@ prefix_ void senf::console::CommandParser::parseFile(std::string const & filenam
     if (stat( filename.c_str(), &statBuf) != 0)
         throw SystemException(filename, errno SENF_EXC_DEBUGINFO);
     if (statBuf.st_size == 0) return;
-    boost::spirit::file_iterator<> i (filename);
+    detail::boost_spirit::file_iterator<> i (filename);
     if (!i) {
         if (errno == 0)
             // hmm.. errno==0 but the file_iterator is false; something is wrong but we
@@ -384,25 +398,25 @@ prefix_ void senf::console::CommandParser::parseFile(std::string const & filenam
         else
             throw SystemException(filename, errno SENF_EXC_DEBUGINFO);
     }
-    boost::spirit::file_iterator<> const i_end (i.make_end());
+    detail::boost_spirit::file_iterator<> const i_end (i.make_end());
     parseLoop(i, i_end, filename, cb);
 }
 
 prefix_ void senf::console::CommandParser::parseArguments(std::string const & arguments,
                                                           ParseCommandInfo & info)
 {
-    typedef boost::spirit::position_iterator<
+    typedef detail::boost_spirit::position_iterator<
         std::string::const_iterator, detail::FilePositionWithIndex> PositionIterator;
     PositionIterator b (arguments.begin(), arguments.end(), std::string("<unknown>"));
     PositionIterator e (arguments.end(), arguments.end(), std::string("<unknown>"));
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
-    boost::spirit::parse_info<PositionIterator> result;
+    detail::boost_spirit::parse_info<PositionIterator> result;
     try {
-        result = boost::spirit::parse( b, e,
+        result = detail::boost_spirit::parse( b, e,
                                        impl().grammar.use_parser<Impl::Grammar::ArgumentsParser>(),
                                        impl().grammar.use_parser<Impl::Grammar::SkipParser>() );
     }
-    catch (boost::spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
+    catch (detail::boost_spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
         throwParserError(ex);
     }
     if (! result.full) {
@@ -415,18 +429,18 @@ prefix_ void senf::console::CommandParser::parseArguments(std::string const & ar
 prefix_ void senf::console::CommandParser::parsePath(std::string const & path,
                                                      ParseCommandInfo & info)
 {
-    typedef boost::spirit::position_iterator<
+    typedef detail::boost_spirit::position_iterator<
         std::string::const_iterator, detail::FilePositionWithIndex> PositionIterator;
     PositionIterator b (path.begin(), path.end(), std::string("<unknown>"));
     PositionIterator e (path.end(), path.end(), std::string("<unknown>"));
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
-    boost::spirit::parse_info<PositionIterator> result;
+    detail::boost_spirit::parse_info<PositionIterator> result;
     try {
-        result = boost::spirit::parse( b, e,
+        result = detail::boost_spirit::parse( b, e,
                                        impl().grammar.use_parser<Impl::Grammar::PathParser>(),
                                        impl().grammar.use_parser<Impl::Grammar::SkipParser>() );
     }
-    catch (boost::spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
+    catch (detail::boost_spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
         throwParserError(ex);
     }
     if (! result.full) {

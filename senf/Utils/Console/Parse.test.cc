@@ -97,7 +97,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
             "                x\"01 02 # Inner comment\n"
             "                   0304\";";
 
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          text,
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
@@ -127,7 +127,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          "ls //foo/bar;",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
@@ -136,7 +136,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          "lr /foo/bar;",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
@@ -145,7 +145,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          "cd /foo/bar;",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
@@ -154,7 +154,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          "exit;",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
@@ -163,7 +163,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          "foo/bar// {",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
@@ -175,7 +175,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          "}",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
@@ -184,7 +184,7 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
 
     {
         ss.str("");
-        BOOST_CHECK( boost::spirit::parse(
+        BOOST_CHECK( senf::console::detail::boost_spirit::parse(
                          "help /foo/bar",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );

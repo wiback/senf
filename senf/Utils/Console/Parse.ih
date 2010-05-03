@@ -29,10 +29,19 @@
 // Custom includes
 #include <vector>
 #include <senf/config.hh>
-#include <boost/spirit.hpp>
-#include <boost/spirit/utility/grammar_def.hpp>
-#include <boost/spirit/dynamic.hpp>
-#include <boost/spirit/phoenix.hpp>
+
+#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
+#  include <boost/spirit/include/classic.hpp>
+#  include <boost/spirit/include/classic_grammar_def.hpp>
+#  include <boost/spirit/include/classic_dynamic.hpp>
+#  include <boost/spirit/include/phoenix1.hpp>
+#else
+#  include <boost/spirit.hpp>
+#  include <boost/spirit/utility/grammar_def.hpp>
+#  include <boost/spirit/dynamic.hpp>
+#  include <boost/spirit/phoenix.hpp>
+#endif
+
 #include <senf/Utils/Phoenix.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
@@ -41,21 +50,27 @@ namespace senf {
 namespace console {
 namespace detail {
 
+#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
+    namespace boost_spirit = ::boost::spirit::classic;
+#else
+    namespace boost_spirit = ::boost::spirit;
+#endif
+
 #ifndef DOXYGEN
 
     struct FilePositionWithIndex
-        : public boost::spirit::file_position
+        : public boost_spirit::file_position
     {
         int index;
 
         FilePositionWithIndex(std::string const & file_ = std::string(),
                                  int line_ = 1, int column_ = 1, int index_ = 0)
-            : boost::spirit::file_position (file_, line_, column_), index (index_)
+            : boost_spirit::file_position (file_, line_, column_), index (index_)
             {}
 
         bool operator==(const FilePositionWithIndex & fp) const
             {
-                return boost::spirit::file_position::operator==(fp) && index == fp.index;
+                return boost_spirit::file_position::operator==(fp) && index == fp.index;
             }
     };
 
@@ -71,7 +86,7 @@ namespace detail {
     // Grammar
 
     template <class ParseDispatcher>
-    struct CommandGrammar : boost::spirit::grammar<CommandGrammar<ParseDispatcher> >
+    struct CommandGrammar : boost_spirit::grammar<CommandGrammar<ParseDispatcher> >
     {
         ///////////////////////////////////////////////////////////////////////////
         // Start rules
@@ -106,12 +121,12 @@ namespace detail {
         //////////////////////////////////////////////////////////////////////////
         // charachter sets
 
-        static boost::spirit::chset<> special_p;
-        static boost::spirit::chset<> punctuation_p;
-        static boost::spirit::chset<> space_p;
-        static boost::spirit::chset<> invalid_p;
-        static boost::spirit::chset<> word_p;
-        static boost::spirit::distinct_parser<> keyword_p;
+        static boost_spirit::chset<> special_p;
+        static boost_spirit::chset<> punctuation_p;
+        static boost_spirit::chset<> space_p;
+        static boost_spirit::chset<> invalid_p;
+        static boost_spirit::chset<> word_p;
+        static boost_spirit::distinct_parser<> keyword_p;
 
         ///////////////////////////////////////////////////////////////////////////
         // Errors
@@ -130,19 +145,19 @@ namespace detail {
 
         template <class Scanner>
         struct definition
-            : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>,
-                                                 boost::spirit::rule<Scanner>,
-                                                 boost::spirit::rule<Scanner>,
-                                                 boost::spirit::rule<Scanner> >
+            : public boost_spirit::grammar_def< boost_spirit::rule<Scanner>,
+                                                 boost_spirit::rule<Scanner>,
+                                                 boost_spirit::rule<Scanner>,
+                                                 boost_spirit::rule<Scanner> >
         {
-            boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
+            boost_spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
                 punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin,
                 skip, statement, relpath, abspath, arguments, group_start, group_close,
                 statement_end, opt_path;
 
             definition(CommandGrammar const & self)
             {
-                using namespace boost::spirit;
+                using namespace boost_spirit;
                 using namespace ::phoenix;
                 using namespace senf::phoenix;
                 typedef ParseDispatcher PD;
@@ -410,18 +425,18 @@ namespace detail {
         };
     };
 
-    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::special_p (
+    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::special_p (
         "/(){};\"");
-    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::punctuation_p (
+    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::punctuation_p (
         ",=");
-    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::space_p (
+    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::space_p (
         " \t\n\r");
-    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::invalid_p (
-        (boost::spirit::chset<>('\0') | boost::spirit::chset<>("\x01-\x20")) - space_p );
-    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::word_p (
-        boost::spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p);
-    template <class PD> boost::spirit::distinct_parser<> CommandGrammar<PD>::keyword_p (
-        word_p | boost::spirit::ch_p('/'));
+    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::invalid_p (
+        (boost_spirit::chset<>('\0') | boost_spirit::chset<>("\x01-\x20")) - space_p );
+    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::word_p (
+        boost_spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p);
+    template <class PD> boost_spirit::distinct_parser<> CommandGrammar<PD>::keyword_p (
+        word_p | boost_spirit::ch_p('/'));
 
 #endif
 

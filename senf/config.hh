@@ -39,6 +39,7 @@ namespace config {
 
 }}
 
+# include "autoconf.hh"
 # include "local_config.hh"
 #
 # ifndef SENF_ABSOLUTE_INCLUDE_PATH
@@ -115,4 +116,3 @@ namespace config {
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u all_tests"
 // End:
-

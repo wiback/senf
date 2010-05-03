@@ -196,11 +196,16 @@ def Glob(env, exclude=[], subdirs=[]):
 
 
 def Configure(env):
-    conf = env.Configure(clean=False, help=False, custom_tests = senfconf.Tests())
+    conf = env.Configure(clean=False, 
+                         help=False, 
+                         custom_tests=senfconf.Tests(), 
+                         config_h="#/senf/autoconf.hh")
     env.Replace(
         BOOST_VERSION  =  conf.CheckBoostVersion(),
         BOOST_VARIANT  = conf.CheckBoostVariants( '', 'mt' ),
         NEED_BOOST_EXT = not conf.CheckCXXHeader("boost/bimap.hpp"),
+        HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP = conf.CheckCXXHeader(
+            "boost/spirit/include/classic.hpp"),
     )
     conf.Finish()
 
