@@ -82,6 +82,12 @@ namespace senf {
                                              Setting the MTU to too small values may cause kernel
                                              crashes. */
 
+        int txqueuelen() const;         ///< return the Tx Queue Length
+        void txqueuelen(int new_mtu);   ///< set the Tx Queue Length
+                                        /**< Set the Tx Queue Length (in Packets) MTU of the device.
+                                             Note, that this is a privileged operation. */
+
+
         bool promisc() const;           ///< return \c true if interface is in promiscuous mode
         void promisc(bool mode);        ///< enable/disable promiscuous mode of the interface
                                         /**< Note, that this is a privileged operation. */

@@ -115,6 +115,24 @@ prefix_ void senf::NetdeviceController::mtu(int new_mtu)
     doIoctl( ifr, SIOCSIFMTU);
 }
 
+prefix_ int senf::NetdeviceController::txqueuelen()
+    const
+{
+    struct ifreq ifr;
+    ifrName( ifr);
+    doIoctl( ifr, SIOCGIFTXQLEN);
+    return ifr.ifr_qlen;
+}
+
+prefix_ void senf::NetdeviceController::txqueuelen(int new_txqueuelen)
+{
+    struct ifreq ifr;
+    ifrName( ifr);
+    ifr.ifr_qlen = new_txqueuelen;
+    doIoctl( ifr, SIOCSIFTXQLEN);
+}
+
+
 prefix_ bool senf::NetdeviceController::promisc()
     const
 {
