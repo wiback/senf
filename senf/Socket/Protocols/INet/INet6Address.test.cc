@@ -196,12 +196,28 @@ SENF_AUTO_UNIT_TEST(inet6Network)
 
     BOOST_CHECK_THROW( INet6Network(""), AddressSyntaxException );
     BOOST_CHECK_THROW( INet6Network("2001:db8:1234::/beef"), AddressSyntaxException );
+
+    {
+        std::stringstream str;
+        INet6Network net;
+        str >> net;
+        BOOST_CHECK( str.fail());
+    }
+    {
+        std::stringstream str;
+        INet6Network net ("2001:db8:1230::/44");
+        str << net;
+        BOOST_CHECK_EQUAL( str.str(), "2001:db8:1230::/44");
+        str >> net;
+        BOOST_CHECK( ! str.fail());
+        BOOST_CHECK_EQUAL(net, INet6Network("2001:db8:1230::/44"));
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

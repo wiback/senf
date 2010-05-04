@@ -292,7 +292,9 @@ namespace senf {
         \related INet6Address
      */
     std::ostream & operator<<(std::ostream & os, INet6Address const & addr);
+
     /** \brief Try to initialize INet6Address instance from a string representation
+
         sets std::ios::failbit on the stream if an error occurred
         \see INet6Address from_string()
         \related INet6Address
@@ -394,6 +396,13 @@ namespace senf {
         \related INet6Network
      */
     std::ostream & operator<<(std::ostream & os, INet6Network const & addr);
+
+    /** \brief Try to initialize INet6Network instance from a string representation
+
+        sets std::ios::failbit on the stream if an error occurred
+        \related INet6Network
+     */
+    std::istream & operator>>(std::istream & is, INet6Network & addr);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -402,7 +411,7 @@ namespace senf {
 #include "INet6Address.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

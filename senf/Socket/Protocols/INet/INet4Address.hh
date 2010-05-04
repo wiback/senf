@@ -277,6 +277,7 @@ namespace senf {
     std::ostream & operator<<(std::ostream & os, INet4Network const & addr);
 
     /** \brief Initialize INet4Address instance from a string representation
+
         sets std::ios::failbit on the stream if an error occurred
         \see INet4Address from_string()
         \related INet4Network
@@ -291,7 +292,7 @@ namespace senf {
 #include "INet4Address.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

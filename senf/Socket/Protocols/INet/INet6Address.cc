@@ -141,11 +141,25 @@ prefix_ senf::INet6Network::INet6Network(std::string const & s)
     detail::apply_mask(prefix_len_, address_.begin(), address_.end(), _1 &= _2);
 }
 
+prefix_ std::istream & senf::operator>>(std::istream & is, INet6Network & addr)
+{
+    std::string s;
+    if (!(is >> s))
+        return is;
+    try {
+        addr = INet6Network(s);
+    }
+    catch (AddressException &) {
+        is.setstate(std::ios::failbit);
+    }
+    return is;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "INet6Address.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
