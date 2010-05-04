@@ -41,6 +41,17 @@ RegistrationProxy(typename Tag::key_t key)
     PacketRegistry<Tag>::template registerPacket<PacketType>(key);
 }
 
+template <class Tag>
+template <class PacketType>
+prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>::~RegistrationProxy()
+{
+    try {
+        PacketRegistry<Tag>::template unregisterPacket<PacketType>();
+    }
+    catch (PacketTypeNotRegisteredException & ex)
+    {}
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::PacketRegistry<Tag>
 
@@ -49,6 +60,19 @@ template <class PacketType>
 prefix_ void senf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key)
 {
     registry().registerPacket<PacketType>(key);
+}
+
+template <class Tag>
+template <class PacketType>
+prefix_ void senf::PacketRegistry<Tag>::unregisterPacket()
+{
+    registry().unregisterPacket<PacketType>();
+}
+
+template <class Tag>
+prefix_ void senf::PacketRegistry<Tag>::unregisterPacket(typename Tag::key_t key)
+{
+    registry().unregisterPacket(key);
 }
 
 template <class Tag>

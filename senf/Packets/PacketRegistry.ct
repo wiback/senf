@@ -53,6 +53,13 @@ prefix_ std::string senf::detail::PkReg_EntryImpl<PacketType>::name()
     return prettyName(typeid(PacketType));
 }
 
+template <class PacketType>
+prefix_ senf::TypeIdValue senf::detail::PkReg_EntryImpl<PacketType>::typeIdValue()
+    const
+{
+    return typeid(PacketType);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::PacketRegistry<Tag>
 
@@ -86,6 +93,30 @@ prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key
     // If this assertion fails, the same Packet was registered with two different keys
     SENF_ASSERT( isNew );
 #endif
+}
+
+template <class KeyType>
+template <class PacketType>
+prefix_ void senf::detail::PacketRegistryImpl<KeyType>::unregisterPacket()
+{
+    typename PacketMap::iterator i (registry_.find(key(typeIdValue<PacketType>())));
+    typename ReversePacketMap::iterator j (reverseRegistry_.find(typeIdValue<PacketType>()));
+    if (i != registry_.end())
+        registry_.erase(i);
+    if (j != reverseRegistry_.end())
+        reverseRegistry_.erase(j);
+}
+
+template <class KeyType>
+prefix_ void senf::detail::PacketRegistryImpl<KeyType>::unregisterPacket(key_t key)
+{
+    typename PacketMap::iterator i (registry_.find(key));
+    if (i == registry_.end())
+        throw PacketTypeNotRegisteredException();
+    typename ReversePacketMap::iterator j (reverseRegistry_.find(i->second->typeIdValue()));
+    registry_.erase(i);
+    if (j != reverseRegistry_.end())
+        reverseRegistry_.erase(j);
 }
 
 template <class KeyType>

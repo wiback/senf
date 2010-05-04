@@ -109,6 +109,7 @@ namespace senf {
         struct RegistrationProxy
         {
             RegistrationProxy(typename Tag::key_t key);
+            ~RegistrationProxy();
         };
 
         /** \brief Register new packet type
@@ -125,6 +126,10 @@ namespace senf {
          */
         template <class PacketType>
         static void registerPacket(typename Tag::key_t key);
+
+        template <class PacketType>
+        static void unregisterPacket();
+        static void unregisterPacket(typename Tag::key_t key);
 
         /** \brief Find key of a packet type
 
@@ -245,4 +250,3 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
-

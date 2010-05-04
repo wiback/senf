@@ -56,48 +56,93 @@ namespace {
     struct OtherPacketType : public PacketTypeBase {};
     typedef senf::ConcretePacket<OtherPacketType> OtherPacket;
 
+    bool contains(std::string a, std::string b)
+    { return a.find(b) != std::string::npos; }
+
+    bool contains_not(std::string a, std::string b)
+    { return a.find(b) == std::string::npos; }
+
 }
 
 SENF_PACKET_REGISTRY_REGISTER(StringTag, "foo", FooPacket);
-SENF_PACKET_REGISTRY_REGISTER(StringTag, "bar", BarPacket);
 
 SENF_AUTO_UNIT_TEST(packetRegistry_test)
 {
-    PacketRegistry<BaseTag>::registerPacket<FooPacket>(1u);
-    PacketRegistry<BaseTag>::registerPacket<BarPacket>(2u);
+    {
+        PacketRegistry<StringTag>::registerPacket<BarPacket>("bar");
+        PacketRegistry<BaseTag>::registerPacket<FooPacket>(1u);
+        senf::PacketRegistry<BaseTag>::RegistrationProxy<BarPacket> registerBarInBase (2u);
 
-    BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<FooPacket>(), 1u );
-    BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<BarPacket>(), 2u );
-    BOOST_CHECK_THROW( PacketRegistry<BaseTag>::key<OtherPacket>(),
-                       PacketTypeNotRegisteredException );
+        BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<FooPacket>(), 1u );
+        BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<BarPacket>(), 2u );
+        BOOST_CHECK_THROW( PacketRegistry<BaseTag>::key<OtherPacket>(),
+                           PacketTypeNotRegisteredException );
 
-    BOOST_CHECK_EQUAL( PacketRegistry<StringTag>::key<FooPacket>(), "foo" );
-    BOOST_CHECK( ! PacketRegistry<StringTag>::lookup("blub", senf::nothrow) );
-    BOOST_CHECK( PacketRegistry<BaseTag>::lookup(1u, senf::nothrow) );
+        BOOST_CHECK_EQUAL( PacketRegistry<StringTag>::key<FooPacket>(), "foo" );
+        BOOST_CHECK( ! PacketRegistry<StringTag>::lookup("blub", senf::nothrow) );
+        BOOST_CHECK( PacketRegistry<BaseTag>::lookup(1u, senf::nothrow) );
 
-    unsigned elts1[] = { 1u, 2u };
-    BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<BaseTag>::begin(), PacketRegistry<BaseTag>::end(),
-                                   elts1+0, elts1+sizeof(elts1)/sizeof(elts1[0]) );
+        unsigned elts1[] = { 1u, 2u };
+        BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<BaseTag>::begin(),
+                                       PacketRegistry<BaseTag>::end(),
+                                       elts1+0, elts1+sizeof(elts1)/sizeof(elts1[0]) );
 
-    std::string elts2[] = { "bar", "foo" };
-    BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<StringTag>::begin(), PacketRegistry<StringTag>::end(),
-                                   elts2+0, elts2+sizeof(elts2)/sizeof(elts2[0]) );
+        std::string elts2[] = { "bar", "foo" };
+        BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<StringTag>::begin(),
+                                       PacketRegistry<StringTag>::end(),
+                                       elts2+0, elts2+sizeof(elts2)/sizeof(elts2[0]) );
 
-    std::stringstream s;
-    senf::dumpPacketRegistries(s);
-    BOOST_CHECK_EQUAL( s.str(),
-                       "(anonymous namespace)::BaseTag:\n"
-                       "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
-                       "  0x00000002 (         2) (....) (anonymous namespace)::BarPacketType\n"
-                       "\n"
-                       "(anonymous namespace)::RegTag:\n"
-                       "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
-                       "  0x00000002 (         2) (....) (anonymous namespace)::BarPacketType\n"
-                       "\n"
-                       "(anonymous namespace)::StringTag:\n"
-                       "  bar              (anonymous namespace)::BarPacketType\n"
-                       "  foo              (anonymous namespace)::FooPacketType\n"
-                       "\n" );
+        std::stringstream s;
+        senf::dumpPacketRegistries(s);
+        BOOST_CHECK_PREDICATE(
+            contains,
+            (s.str())
+            ("(anonymous namespace)::BaseTag:\n"
+             "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
+             "  0x00000002 (         2) (....) (anonymous namespace)::BarPacketType\n"
+             "\n"));
+        BOOST_CHECK_PREDICATE(
+            contains,
+            (s.str())
+            ("(anonymous namespace)::StringTag:\n"
+             "  bar              (anonymous namespace)::BarPacketType\n"
+             "  foo              (anonymous namespace)::FooPacketType\n"
+             "\n" ));
+    }
+
+    {
+        std::stringstream s;
+        senf::dumpPacketRegistries(s);
+        BOOST_CHECK_PREDICATE(
+            contains,
+            (s.str())
+            ("(anonymous namespace)::BaseTag:\n"
+             "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
+             "\n"));
+        BOOST_CHECK_PREDICATE(
+            contains,
+            (s.str())
+            ("(anonymous namespace)::StringTag:\n"
+             "  bar              (anonymous namespace)::BarPacketType\n"
+             "  foo              (anonymous namespace)::FooPacketType\n"
+             "\n" ));
+
+        SENF_CHECK_NO_THROW( PacketRegistry<BaseTag>::unregisterPacket(1u) );
+        SENF_CHECK_NO_THROW( PacketRegistry<StringTag>::unregisterPacket<BarPacket>() );
+
+        s.str("");
+        senf::dumpPacketRegistries(s);
+        BOOST_CHECK_PREDICATE(
+            contains_not,
+            (s.str())
+            ("(anonymous namespace)::BaseTag:\n"));
+        BOOST_CHECK_PREDICATE(
+            contains,
+            (s.str())
+            ("(anonymous namespace)::StringTag:\n"
+             "  foo              (anonymous namespace)::FooPacketType\n"
+             "\n" ));
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

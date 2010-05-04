@@ -71,8 +71,8 @@ checks for C/C++ preproc directives. Additionally, anything after ^L
 is ignored (Those are the file local variables and local words)."
   (let ((f (get-text-property (point) 'face)))
     (and (memq f flyspell-prog-text-faces)
-         (not (save-excursion 
-                (beginning-of-line) 
+         (not (save-excursion
+                (beginning-of-line)
                 (looking-at "\\(//\\)?#")))
          (not (let ((l (max (point-min) (- (point-max) 4096))))
                 (and (< l (point))
@@ -101,7 +101,10 @@ is ignored (Those are the file local variables and local words)."
 
 (add-hook 'ccide-new-file-hooks 'senf-new-file-hook nil t)
 
+(setq indent-tabs-mode nil) ;; needed since whitespace-mode caches this value ...
+(whitespace-mode 1)
+
 
-// Local Variables:
-// indent-tabs-mode: nil
-// End:
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:

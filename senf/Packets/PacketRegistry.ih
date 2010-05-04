@@ -48,6 +48,7 @@ namespace senf {
         virtual Packet::factory_t factory() const = 0;
                                         ///< Get factory of the registered packet type
         virtual std::string name() const = 0;
+        virtual TypeIdValue typeIdValue() const = 0;
     };
 
 namespace detail {
@@ -62,6 +63,7 @@ namespace detail {
     {
         virtual Packet::factory_t factory() const;
         virtual std::string name() const;
+        virtual TypeIdValue typeIdValue() const ;
     };
 
     /** \brief Internal: Registry implementation base-class and registry of registries
@@ -122,6 +124,10 @@ namespace detail {
 
         template <class PacketType>
         void registerPacket(key_t key);
+
+        template <class PacketType>
+        void unregisterPacket();
+        void unregisterPacket(key_t key);
 
         key_t key(senf::TypeIdValue const & type);
         boost::optional<key_t> key(senf::TypeIdValue const & type, bool);
