@@ -130,10 +130,9 @@ template <class Sequence>
 prefix_ void senf::ClientSocketHandle<SPolicy>::readfrom(Sequence & container, Address & from,
                                                         unsigned limit)
 {
-    unsigned nread (available());
-    if (limit>0 && nread>limit)
-        nread = limit;
-    container.resize(nread);
+    if (limit == 0)
+        limit = available();
+    container.resize(limit);
     container.erase(readfrom( std::make_pair(container.begin(), container.end()), from ),
                     container.end());
 }
