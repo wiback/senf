@@ -57,12 +57,18 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::SNDUPacketType::nextPacketT
 {
     if (p.data().size() < 8)
         return no_factory();
-    PkReg_Entry const * e;
-    if (p->type() < 1536)
-        e = PacketRegistry<senf::ULEExtHeaderTypes>::lookup( p->type(), nothrow );
-    else
-        e = PacketRegistry<senf::EtherTypes>::lookup( p->type(), nothrow );
-    return e ? e->factory() : no_factory();
+    senf::PacketInterpreterBase::factory_t f (no_factory());
+    if (p->type() < 1536) {
+        PacketRegistry<senf::ULEExtHeaderTypes>::Entry const * e (
+            PacketRegistry<senf::ULEExtHeaderTypes>::lookup( p->type(), nothrow ));
+        if (e) f = e->factory();
+    }
+    else {
+        PacketRegistry<senf::EtherTypes>::Entry const * e (
+            PacketRegistry<senf::ULEExtHeaderTypes>::lookup( p->type(), nothrow ));
+        if (e) f = e->factory();
+    }
+    return f;
 }
 
 prefix_ senf::PacketInterpreterBase::optional_range

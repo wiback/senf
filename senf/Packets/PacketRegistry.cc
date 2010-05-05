@@ -31,9 +31,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_  senf::PkReg_Entry::~PkReg_Entry()
-{}
-
 prefix_ senf::detail::PacketRegistryImplBase::~PacketRegistryImplBase()
 {}
 

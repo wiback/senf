@@ -72,7 +72,8 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketTy
 {
     if (p.data().size() < initSize())
         return no_factory();
-    PkReg_Entry const * e (PacketRegistry<MIHMessageRegistry>::lookup( p->messageId(), nothrow ));
+    PacketRegistry<MIHMessageRegistry>::Entry const * e (
+        PacketRegistry<MIHMessageRegistry>::lookup( p->messageId(), nothrow ));
     return e ? e->factory() : MIHGenericPayloadPacket::factory();
 }
 

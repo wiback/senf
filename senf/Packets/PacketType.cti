@@ -83,7 +83,8 @@ senf::PacketTypeMixin<Self,Registry>::key(Packet const & p)
 template <class Self, class Registry>
 prefix_ senf::PacketTypeBase::factory_t senf::PacketTypeMixin<Self,Registry>::lookup(key_t key)
 {
-    PkReg_Entry const * entry (PacketRegistry<Registry>::lookup( key, senf::nothrow ));
+    typename PacketRegistry<Registry>::Entry const * entry (
+        PacketRegistry<Registry>::lookup( key, senf::nothrow ));
     return entry ? entry->factory() : PacketTypeBase::no_factory();
 }
 

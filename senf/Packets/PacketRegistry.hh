@@ -91,6 +91,7 @@ namespace senf {
     {
     public:
         typedef typename detail::PacketRegistryImpl<typename Tag::key_t>::iterator iterator;
+        typedef typename detail::PacketRegistryImpl<typename Tag::key_t>::Entry Entry;
 
         /** \brief Statically register a packet type in a PacketRegistry
 
@@ -180,13 +181,13 @@ namespace senf {
             \throws PacketTypeNotRegistered if the \a key is not found in the registry
             \return %Packet entry for given \a key
          */
-        static PkReg_Entry const & lookup(typename Tag::key_t key);
+        static Entry const & lookup(typename Tag::key_t key);
 
         /** \brief Lookup a packet by it's key
             \return Pointer to packet entry for given \a key or 0, if the key is not found in the
                 registry.
          */
-        static PkReg_Entry const * lookup(typename Tag::key_t key, NoThrow_t);
+        static Entry const * lookup(typename Tag::key_t key, NoThrow_t);
 
         /** \brief Beginning iterator to list of registered keys
          */

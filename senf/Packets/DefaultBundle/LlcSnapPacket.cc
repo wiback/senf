@@ -50,8 +50,8 @@ prefix_ void senf::LlcSnapPacketType::dump(packet p, std::ostream & os)
 prefix_ senf::PacketInterpreterBase::factory_t senf::LlcSnapPacketType::nextPacketType(packet p)
 {
     if (p->type_length() >= 1536) {
-        PkReg_Entry const * e;
-        e = PacketRegistry<senf::EtherTypes>::lookup( p->type_length(), nothrow );
+        PacketRegistry<senf::EtherTypes>::Entry const * e (
+            PacketRegistry<senf::EtherTypes>::lookup( p->type_length(), nothrow ));
         return e ? e->factory() : no_factory();
     }
     if (p->type_length() <= 1500)

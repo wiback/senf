@@ -29,6 +29,11 @@
 // Custom includes
 #include <ext/functional>
 #include <limits>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/composite_key.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/mem_fun.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <senf/Utils/TypeIdValue.hh>
@@ -36,34 +41,12 @@
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
-
-    /** \brief Registry entry
-
-        Value returned by a registry lookup
-     */
-    struct PkReg_Entry
-        : public intrusive_refcount
-    {
-        virtual ~PkReg_Entry();
-        virtual Packet::factory_t factory() const = 0;
-                                        ///< Get factory of the registered packet type
-        virtual std::string name() const = 0;
-        virtual TypeIdValue typeIdValue() const = 0;
-    };
-
 namespace detail {
 
-    /** \brief Internal: Registry entry implementation for a specific packet type
-
-        \internal
-     */
-    template <class PacketType>
-    struct PkReg_EntryImpl
-        : public PkReg_Entry
+    struct TypeInfoCompare
     {
-        virtual Packet::factory_t factory() const;
-        virtual std::string name() const;
-        virtual TypeIdValue typeIdValue() const ;
+        bool operator()(std::type_info const & a, std::type_info const & b) const
+            { return a.before(b); }
     };
 
     /** \brief Internal: Registry implementation base-class and registry of registries
@@ -99,19 +82,61 @@ namespace detail {
     {
     public:
         typedef KeyType key_t;
-        typedef PkReg_Entry Entry;
+
+        struct Entry : public intrusive_refcount
+        {
+            typedef boost::intrusive_ptr<Entry> ptr;
+
+            Entry(KeyType const & key_, int priority_);
+            virtual ~Entry();
+
+            virtual Packet::factory_t factory() const = 0;
+
+            virtual std::string name() const = 0;
+            virtual std::type_info const & type() const = 0;
+
+            KeyType key;
+            int priority;
+        };
 
     private:
-        typedef boost::intrusive_ptr<Entry> Entry_ptr;
-        typedef std::map<key_t, Entry_ptr> PacketMap;
-        typedef std::map<senf::TypeIdValue, key_t> ReversePacketMap;
+        struct ByKey {};
+        struct ByType {};
+
+        struct RegistryIndices
+            : public boost::multi_index::indexed_by<
+                boost::multi_index::ordered_unique<
+                    boost::multi_index::tag<ByKey>,
+                    boost::multi_index::composite_key<
+                        Entry,
+                        boost::multi_index::member<Entry,KeyType,&Entry::key>,
+                        boost::multi_index::member<Entry,int,&Entry::priority> >,
+                    boost::multi_index::composite_key_compare<
+                        std::less<KeyType>,
+                        std::greater<int> > >,
+                boost::multi_index::ordered_unique<
+                    boost::multi_index::tag<ByType>,
+                    boost::multi_index::mem_fun<Entry const,std::type_info const &,&Entry::type>,
+                    TypeInfoCompare> >
+        {};
+
+        typedef boost::multi_index_container<typename Entry::ptr, RegistryIndices> Registry;
+
+        template <class PacketType>
+        struct EntryImpl : public Entry
+        {
+            EntryImpl(KeyType const & key, int priority);
+
+            virtual Packet::factory_t factory() const;
+            virtual std::string name() const;
+            virtual std::type_info const & type() const;
+        };
 
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::transform_iterator< ::__gnu_cxx::select1st<typename PacketMap::value_type>,
-                                           typename PacketMap::const_iterator > iterator;
+        typedef typename Registry::template index<ByKey>::type::const_iterator iterator;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -123,11 +148,11 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
 
         template <class PacketType>
-        void registerPacket(key_t key);
+        void registerPacket(key_t key, int priority=0);
 
         template <class PacketType>
         void unregisterPacket();
-        void unregisterPacket(key_t key);
+        void unregisterPacket(key_t key, int priority=0);
 
         key_t key(senf::TypeIdValue const & type);
         boost::optional<key_t> key(senf::TypeIdValue const & type, bool);
@@ -145,8 +170,7 @@ namespace detail {
         virtual void v_dump(std::ostream & os) const;
         virtual void v_clear();
 
-        PacketMap registry_;
-        ReversePacketMap reverseRegistry_;
+        Registry registry_;
     };
 
     template <class KeyType, bool is_integral=std::numeric_limits<KeyType>::is_integer>

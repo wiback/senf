@@ -103,14 +103,15 @@ senf::PacketRegistry<Tag>::key(Packet const & packet, NoThrow_t)
 }
 
 template <class Tag>
-prefix_ senf::PkReg_Entry const & senf::PacketRegistry<Tag>::lookup(typename Tag::key_t key)
+prefix_ typename senf::PacketRegistry<Tag>::Entry const &
+senf::PacketRegistry<Tag>::lookup(typename Tag::key_t key)
 {
     return registry().lookup(key);
 }
 
 template <class Tag>
-prefix_ senf::PkReg_Entry const * senf::PacketRegistry<Tag>::lookup(typename Tag::key_t key,
-                                                                    NoThrow_t)
+prefix_ typename senf::PacketRegistry<Tag>::Entry const *
+senf::PacketRegistry<Tag>::lookup(typename Tag::key_t key, NoThrow_t)
 {
     return registry().lookup(key,true);
 }
@@ -141,8 +142,7 @@ prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::iterator
 senf::detail::PacketRegistryImpl<KeyType>::begin()
     const
 {
-    return boost::make_transform_iterator(
-        registry_.begin(), ::__gnu_cxx::select1st<typename PacketMap::value_type>());
+    return registry_.begin();
 }
 
 template <class KeyType>
@@ -150,8 +150,7 @@ prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::iterator
 senf::detail::PacketRegistryImpl<KeyType>::end()
     const
 {
-    return boost::make_transform_iterator(
-        registry_.end(), ::__gnu_cxx::select1st<typename PacketMap::value_type>());
+    return registry_.end();
 }
 
 ///////////////////////////////PacketRegistry..e///////////////////////////////////////

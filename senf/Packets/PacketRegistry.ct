@@ -37,24 +37,49 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::detail::PkReg_EntryImpl<PacketType>
+// senf::detail::PacketRegistryImpl<KeyType>::Entry
 
+template <class KeyType>
+prefix_ senf::detail::PacketRegistryImpl<KeyType>::Entry::Entry(KeyType const & key_,
+                                                                int priority_)
+    : key (key_), priority (priority_)
+{}
+
+template <class KeyType>
+prefix_ senf::detail::PacketRegistryImpl<KeyType>::Entry::~Entry()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::PacketRegistryImpl<KeyType>::EntryImpl<PacketType>
+
+template <class KeyType>
 template <class PacketType>
-prefix_ senf::PacketInterpreterBase::factory_t senf::detail::PkReg_EntryImpl<PacketType>::factory()
+prefix_ senf::detail::PacketRegistryImpl<KeyType>::EntryImpl<PacketType>::
+EntryImpl(KeyType const & key, int priority)
+    : Entry (key, priority)
+{}
+
+template <class KeyType>
+template <class PacketType>
+prefix_ senf::Packet::factory_t
+senf::detail::PacketRegistryImpl<KeyType>::EntryImpl<PacketType>::factory()
     const
 {
     return PacketType::factory();
 }
 
+template <class KeyType>
 template <class PacketType>
-prefix_ std::string senf::detail::PkReg_EntryImpl<PacketType>::name()
+prefix_ std::string senf::detail::PacketRegistryImpl<KeyType>::EntryImpl<PacketType>::name()
     const
 {
     return prettyName(typeid(PacketType));
 }
 
+template <class KeyType>
 template <class PacketType>
-prefix_ senf::TypeIdValue senf::detail::PkReg_EntryImpl<PacketType>::typeIdValue()
+prefix_ std::type_info const &
+senf::detail::PacketRegistryImpl<KeyType>::EntryImpl<PacketType>::type()
     const
 {
     return typeid(PacketType);
@@ -76,87 +101,71 @@ senf::PacketRegistry<Tag>::registry()
 
 template <class KeyType>
 template <class PacketType>
-prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
+prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key, int priority)
 {
-#ifndef SENF_DEBUG
-    registry_.insert(std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>())));
-    reverseRegistry_.insert(std::make_pair(senf::typeIdValue<PacketType>(), key));
-#else
-    bool isUnique (
-        registry_.insert(
-            std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>()))).second);
-    // If this assertion fails, a Packet was registered with an already known key
-    SENF_ASSERT( isUnique );
-    bool isNew (
-        reverseRegistry_.insert(
-            std::make_pair(senf::typeIdValue<PacketType>(), key)).second);
-    // If this assertion fails, the same Packet was registered with two different keys
-    SENF_ASSERT( isNew );
-#endif
+    SENF_ASSERT(registry_.insert(
+                    typename Entry::ptr(new EntryImpl<PacketType>(key,priority))).second);
 }
 
 template <class KeyType>
 template <class PacketType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::unregisterPacket()
 {
-    typename PacketMap::iterator i (registry_.find(key(typeIdValue<PacketType>())));
-    typename ReversePacketMap::iterator j (reverseRegistry_.find(typeIdValue<PacketType>()));
-    if (i != registry_.end())
-        registry_.erase(i);
-    if (j != reverseRegistry_.end())
-        reverseRegistry_.erase(j);
+    registry_.template get<ByType>().erase(typeid(PacketType));
 }
 
 template <class KeyType>
-prefix_ void senf::detail::PacketRegistryImpl<KeyType>::unregisterPacket(key_t key)
+prefix_ void senf::detail::PacketRegistryImpl<KeyType>::unregisterPacket(key_t key, int priority)
 {
-    typename PacketMap::iterator i (registry_.find(key));
-    if (i == registry_.end())
-        throw PacketTypeNotRegisteredException();
-    typename ReversePacketMap::iterator j (reverseRegistry_.find(i->second->typeIdValue()));
-    registry_.erase(i);
-    if (j != reverseRegistry_.end())
-        reverseRegistry_.erase(j);
+    // Why doesn't this work:
+    // registry_.erase(boost::make_tuple(key,priority));
+    typename Registry::iterator i (registry_.find(boost::make_tuple(key,priority)));
+    if (i != registry_.end())
+        registry_.erase(i);
 }
 
 template <class KeyType>
 prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::key_t
 senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type)
 {
-    typename ReversePacketMap::iterator i (reverseRegistry_.find(type));
-    if (i==reverseRegistry_.end())
+    boost::optional<KeyType> k (key(type,true));
+    if (! k)
         throw PacketTypeNotRegisteredException();
-    return i->second;
+    return *k;
 }
 
 template <class KeyType>
 prefix_ boost::optional<typename senf::detail::PacketRegistryImpl<KeyType>::key_t>
 senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type, bool)
 {
-    typename ReversePacketMap::iterator i (reverseRegistry_.find(type));
-    if (i==reverseRegistry_.end())
+    typedef typename Registry::template index<ByType>::type TypeIndex;
+    TypeIndex const & typeIndex (registry_.template get<ByType>());
+    typename TypeIndex::const_iterator i (typeIndex.find(type.id()));
+    if (i == typeIndex.end())
         return boost::optional<key_t>();
-    return i->second;
+    return (*i)->key;
 }
 
 template <class KeyType>
 prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::Entry const &
 senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key)
 {
-    typename PacketMap::iterator i (registry_.find(key));
-    if (i==registry_.end())
+    Entry const * e (lookup(key, true));
+    if (!e)
         throw PacketTypeNotRegisteredException();
-    return *(i->second);
+    return *e;
 }
 
 template <class KeyType>
 prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::Entry const *
 senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key, bool)
 {
-    typename PacketMap::iterator i (registry_.find(key));
-    if (i==registry_.end())
+    typedef typename Registry::template index<ByKey>::type KeyIndex;
+    KeyIndex const & keyIndex (registry_.template get<ByKey>());
+    typename KeyIndex::const_iterator i (keyIndex.lower_bound(key));
+    if (i == keyIndex.end() || (*i)->key != key)
         return 0;
-    return i->second.get();
+    return i->get();
 }
 
 template <class KeyType>
@@ -170,12 +179,13 @@ template <class KeyType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::v_dump(std::ostream & os)
     const
 {
-    typename PacketMap::const_iterator i (registry_.begin());
-    typename PacketMap::const_iterator const i_end (registry_.end());
-    for (; i != i_end; ++i) {
-        std::string n (i->second->name());
-        senf::detail::DumpKey<KeyType>::dump(i->first, os);
-        os << ' ' << n.substr(21,n.size()-22) << "\n";
+    typedef typename Registry::template index<ByKey>::type KeyIndex;
+    KeyIndex const & keyIndex (registry_.template get<ByKey>());
+    for (typename KeyIndex::iterator i (keyIndex.begin()), i_end (keyIndex.end());
+         i != i_end; ++i) {
+        std::string n ((*i)->name());
+        senf::detail::DumpKey<KeyType>::dump((*i)->key, os);
+        os << ' ' << std::setw(6) << (*i)->priority << ' ' << n.substr(21,n.size()-22) << '\n';
     }
 }
 
@@ -183,7 +193,6 @@ template <class KeyType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::v_clear()
 {
     registry_.clear();
-    reverseRegistry_.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////

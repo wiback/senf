@@ -83,14 +83,28 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
         BOOST_CHECK( PacketRegistry<BaseTag>::lookup(1u, senf::nothrow) );
 
         unsigned elts1[] = { 1u, 2u };
-        BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<BaseTag>::begin(),
-                                       PacketRegistry<BaseTag>::end(),
-                                       elts1+0, elts1+sizeof(elts1)/sizeof(elts1[0]) );
+        BOOST_CHECK_EQUAL_COLLECTIONS(
+            boost::make_transform_iterator(
+                PacketRegistry<BaseTag>::begin(),
+                boost::multi_index::member<senf::PacketRegistry<BaseTag>::Entry, unsigned,
+                                           &senf::PacketRegistry<BaseTag>::Entry::key>()),
+            boost::make_transform_iterator(
+                PacketRegistry<BaseTag>::end(),
+                boost::multi_index::member<senf::PacketRegistry<BaseTag>::Entry, unsigned,
+                                           &senf::PacketRegistry<BaseTag>::Entry::key>()),
+            elts1+0, elts1+sizeof(elts1)/sizeof(elts1[0]) );
 
         std::string elts2[] = { "bar", "foo" };
-        BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<StringTag>::begin(),
-                                       PacketRegistry<StringTag>::end(),
-                                       elts2+0, elts2+sizeof(elts2)/sizeof(elts2[0]) );
+        BOOST_CHECK_EQUAL_COLLECTIONS(
+            boost::make_transform_iterator(
+                PacketRegistry<StringTag>::begin(),
+                boost::multi_index::member<senf::PacketRegistry<StringTag>::Entry, std::string,
+                                           &senf::PacketRegistry<StringTag>::Entry::key>()),
+            boost::make_transform_iterator(
+                PacketRegistry<StringTag>::end(),
+                boost::multi_index::member<senf::PacketRegistry<StringTag>::Entry, std::string,
+                                           &senf::PacketRegistry<StringTag>::Entry::key>()),
+            elts2+0, elts2+sizeof(elts2)/sizeof(elts2[0]) );
 
         std::stringstream s;
         senf::dumpPacketRegistries(s);
@@ -98,15 +112,15 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
             contains,
             (s.str())
             ("(anonymous namespace)::BaseTag:\n"
-             "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
-             "  0x00000002 (         2) (....) (anonymous namespace)::BarPacketType\n"
+             "  0x00000001 (         1) (....)      0 (anonymous namespace)::FooPacketType\n"
+             "  0x00000002 (         2) (....)      0 (anonymous namespace)::BarPacketType\n"
              "\n"));
         BOOST_CHECK_PREDICATE(
             contains,
             (s.str())
             ("(anonymous namespace)::StringTag:\n"
-             "  bar              (anonymous namespace)::BarPacketType\n"
-             "  foo              (anonymous namespace)::FooPacketType\n"
+             "  bar                   0 (anonymous namespace)::BarPacketType\n"
+             "  foo                   0 (anonymous namespace)::FooPacketType\n"
              "\n" ));
     }
 
@@ -117,14 +131,14 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
             contains,
             (s.str())
             ("(anonymous namespace)::BaseTag:\n"
-             "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
+             "  0x00000001 (         1) (....)      0 (anonymous namespace)::FooPacketType\n"
              "\n"));
         BOOST_CHECK_PREDICATE(
             contains,
             (s.str())
             ("(anonymous namespace)::StringTag:\n"
-             "  bar              (anonymous namespace)::BarPacketType\n"
-             "  foo              (anonymous namespace)::FooPacketType\n"
+             "  bar                   0 (anonymous namespace)::BarPacketType\n"
+             "  foo                   0 (anonymous namespace)::FooPacketType\n"
              "\n" ));
 
         SENF_CHECK_NO_THROW( PacketRegistry<BaseTag>::unregisterPacket(1u) );
@@ -140,7 +154,7 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
             contains,
             (s.str())
             ("(anonymous namespace)::StringTag:\n"
-             "  foo              (anonymous namespace)::FooPacketType\n"
+             "  foo                   0 (anonymous namespace)::FooPacketType\n"
              "\n" ));
     }
 }
