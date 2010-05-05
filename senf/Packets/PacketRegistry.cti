@@ -36,9 +36,9 @@
 template <class Tag>
 template <class PacketType>
 prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>::
-RegistrationProxy(typename Tag::key_t key)
+RegistrationProxy(typename Tag::key_t key, int priority)
 {
-    PacketRegistry<Tag>::template registerPacket<PacketType>(key);
+    PacketRegistry<Tag>::template registerPacket<PacketType>(key,priority);
 }
 
 template <class Tag>
@@ -57,9 +57,9 @@ prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>::~RegistrationP
 
 template <class Tag>
 template <class PacketType>
-prefix_ void senf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key)
+prefix_ void senf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key, int priority)
 {
-    registry().registerPacket<PacketType>(key);
+    registry().registerPacket<PacketType>(key, priority);
 }
 
 template <class Tag>
@@ -70,9 +70,9 @@ prefix_ void senf::PacketRegistry<Tag>::unregisterPacket()
 }
 
 template <class Tag>
-prefix_ void senf::PacketRegistry<Tag>::unregisterPacket(typename Tag::key_t key)
+prefix_ void senf::PacketRegistry<Tag>::unregisterPacket(typename Tag::key_t key, int priority)
 {
-    registry().unregisterPacket(key);
+    registry().unregisterPacket(key, priority);
 }
 
 template <class Tag>

@@ -64,7 +64,8 @@ namespace {
 
 }
 
-SENF_PACKET_REGISTRY_REGISTER(StringTag, "foo", FooPacket);
+SENF_PACKET_REGISTRY_REGISTER(StringTag, "foo", OtherPacket);
+SENF_PACKET_REGISTRY_REGISTER_PRIORITY(StringTag, "foo", 1, FooPacket);
 
 SENF_AUTO_UNIT_TEST(packetRegistry_test)
 {
@@ -79,6 +80,7 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
                            PacketTypeNotRegisteredException );
 
         BOOST_CHECK_EQUAL( PacketRegistry<StringTag>::key<FooPacket>(), "foo" );
+        BOOST_CHECK( PacketRegistry<StringTag>::lookup("foo").type() == typeid(FooPacket) );
         BOOST_CHECK( ! PacketRegistry<StringTag>::lookup("blub", senf::nothrow) );
         BOOST_CHECK( PacketRegistry<BaseTag>::lookup(1u, senf::nothrow) );
 
@@ -94,7 +96,7 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
                                            &senf::PacketRegistry<BaseTag>::Entry::key>()),
             elts1+0, elts1+sizeof(elts1)/sizeof(elts1[0]) );
 
-        std::string elts2[] = { "bar", "foo" };
+        std::string elts2[] = { "bar", "foo", "foo" };
         BOOST_CHECK_EQUAL_COLLECTIONS(
             boost::make_transform_iterator(
                 PacketRegistry<StringTag>::begin(),
@@ -120,7 +122,8 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
             (s.str())
             ("(anonymous namespace)::StringTag:\n"
              "  bar                   0 (anonymous namespace)::BarPacketType\n"
-             "  foo                   0 (anonymous namespace)::FooPacketType\n"
+             "  foo                   1 (anonymous namespace)::FooPacketType\n"
+             "  foo                   0 (anonymous namespace)::OtherPacketType\n"
              "\n" ));
     }
 
@@ -138,7 +141,8 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
             (s.str())
             ("(anonymous namespace)::StringTag:\n"
              "  bar                   0 (anonymous namespace)::BarPacketType\n"
-             "  foo                   0 (anonymous namespace)::FooPacketType\n"
+             "  foo                   1 (anonymous namespace)::FooPacketType\n"
+             "  foo                   0 (anonymous namespace)::OtherPacketType\n"
              "\n" ));
 
         SENF_CHECK_NO_THROW( PacketRegistry<BaseTag>::unregisterPacket(1u) );
@@ -154,7 +158,8 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
             contains,
             (s.str())
             ("(anonymous namespace)::StringTag:\n"
-             "  foo                   0 (anonymous namespace)::FooPacketType\n"
+             "  foo                   1 (anonymous namespace)::FooPacketType\n"
+             "  foo                   0 (anonymous namespace)::OtherPacketType\n"
              "\n" ));
     }
 }

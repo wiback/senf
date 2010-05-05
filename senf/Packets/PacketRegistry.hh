@@ -109,7 +109,7 @@ namespace senf {
         template <class PacketType>
         struct RegistrationProxy
         {
-            RegistrationProxy(typename Tag::key_t key);
+            RegistrationProxy(typename Tag::key_t key, int priority=0);
             ~RegistrationProxy();
         };
 
@@ -126,11 +126,11 @@ namespace senf {
             \param key The key of the packet
          */
         template <class PacketType>
-        static void registerPacket(typename Tag::key_t key);
+        static void registerPacket(typename Tag::key_t key, int priority=0);
 
         template <class PacketType>
         static void unregisterPacket();
-        static void unregisterPacket(typename Tag::key_t key);
+        static void unregisterPacket(typename Tag::key_t key, int priority=0);
 
         /** \brief Find key of a packet type
 
@@ -210,10 +210,24 @@ namespace senf {
         \ingroup packet_module
         \hideinitializer
      */
-#   define SENF_PACKET_REGISTRY_REGISTER( registry, value, type )                                 \
-        namespace {                                                                               \
-            senf::PacketRegistry< registry >::RegistrationProxy< type >                           \
-                BOOST_PP_CAT(packetRegistration_, __LINE__) ( value );                            \
+#   define SENF_PACKET_REGISTRY_REGISTER( registry, value, type )       \
+        namespace {                                                     \
+            senf::PacketRegistry< registry >::RegistrationProxy< type > \
+            BOOST_PP_CAT(packetRegistration_, __LINE__) ( value );      \
+        }
+
+    /** \brief Statically add an entry to a packet registry
+
+        This macro will declare an anonymous global variable in such a way, that constructing this
+        variable will add a registration to the given packet registry.
+
+        \ingroup packet_module
+        \hideinitializer
+     */
+#   define SENF_PACKET_REGISTRY_REGISTER_PRIORITY( registry, value, priority, type ) \
+        namespace {                                                     \
+            senf::PacketRegistry< registry >::RegistrationProxy< type > \
+            BOOST_PP_CAT(packetRegistration_, __LINE__) ( value, priority ); \
         }
 
     /** \brief Dump all packet registries
