@@ -68,21 +68,19 @@ namespace senf {
         senf::PacketRegistry<SomeTag>::registerPacket<SomePacket>(key_of_somePacket);
 
         // static registration. 'registerSomePacket' is an arbitrary symbol name
-        senf::PacketRegistry<SomeTag>::RegistrationProxy<SomePacket>
-            registerSomePacket (key_of_somePacket);
+        SENF_PACKET_REGISTRY_REGISTER( SomeTag, key_of_somePacket, SomePacket );
         \endcode
 
-        This global variable declaration will register \a SomePacket with the \a SomeTag registry
-        under the key \a key_of_somePacket. The variable \a registerSomePacket is a dummy. It's only
-        function is to force the call of it's constructor during global construction time. This
-        static registration only works when the symbol is included into the final binary. To force
-        this inclusion, you should not put packet registrations into a library but into an object
-        file.
+        SENF_PACKET_REGISTRY_REGISTER will declare an anonymous global variable which will ensure,
+        the packet is registered automatically during global initialization (as long as the object
+        file is linked into the final executable).
 
-        To simplify static registration the SENF_PACKET_REGISTRY_REGISTER macro can be used:
-        \code
-        SENF_PACKET_REGISTRY_REGISTER(SomeTag, SomePacket, key_of_somePacket);
-        \endcode
+        \section packet_registry_priority Multiple registration for a single key
+
+        Ordinarily, the PacketRegistry will reject registering the same key twice. However, the
+        registry supports an additional priority parameter when registering a packet. You may
+        register multiple Packets with the same \a key as long as the \a priority is unique. The
+        registration with the highest \a priority value will take precedence on key lookup.
 
         \ingroup packet_module
      */
@@ -95,16 +93,21 @@ namespace senf {
 
         /** \brief Statically register a packet type in a PacketRegistry
 
-            To use this class, define a global symbol in the following way:
+            This class is normally used via SENF_PACKET_REGISTRY_REGISTER. To use this class
+            directly, define a symbol in the following way:
             \code
             namespace {
                 senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>
-                    registerPacketType (key);
+                    registerPacketType (key, optional_priority);
             }
-            \endcode Here  \a Tag  is the type  tag of the  registry to  register the packet  in, \a
+            \endcode
+            Here  \a Tag  is the type  tag of the  registry to  register the packet  in, \a
             PacketType is the packet to register (this  is the ConcretePacket of that packet) and \a
             key is  the key of  type \c Tag::key_t  under which the packet  is to be  registered. \a
             registerPacketType is an arbitrary name for the global symbol.
+
+            The packet will be registered in the constructor and will be unregistered when the scope
+            of \c registerPacketType ends.
          */
         template <class PacketType>
         struct RegistrationProxy
@@ -118,18 +121,36 @@ namespace senf {
             Register \a PacketType in the packet registry \a Tag under the given \a key.
 
             \par Preconditions:
-                The given \a key must be unique and not be assigned to any other
+                The given pair \a key, \a priority must be unique and not be assigned to any other
                 packet class in this registry.  The %Packet must not already be registered in the
                 registry.
 
             \tparam PacketType ConcretePacket instantiation of packet to register
-            \param key The key of the packet
+            \param[in] key The key of the packet
+            \param [in] priority Optional priority
          */
         template <class PacketType>
         static void registerPacket(typename Tag::key_t key, int priority=0);
 
+        /** \brief Unregister packet by packet type
+
+            Removes \a PacketType from the packet registry. If the packet type is not registered,
+            this is a no-op.
+
+            \tparam PacketType ConcretePacket instantiation of packet to remove from registry
+         */
         template <class PacketType>
         static void unregisterPacket();
+
+        /** \brief Unregister packet by key
+
+            Removes the packet registration for \a key (and \a priority) from the registry. If no
+            packet is registered with the given pair \a key, \a priority, this operation is a
+            no-op.
+
+            \param[in] key Key to remove from the registry
+            \param[in] priority Optional priority of the key to remove
+         */
         static void unregisterPacket(typename Tag::key_t key, int priority=0);
 
         /** \brief Find key of a packet type
@@ -189,11 +210,11 @@ namespace senf {
          */
         static Entry const * lookup(typename Tag::key_t key, NoThrow_t);
 
-        /** \brief Beginning iterator to list of registered keys
+        /** \brief Beginning iterator to list of registered entries
          */
         static iterator begin();
 
-        /** \brief End iterator to list of registered keys
+        /** \brief End iterator to list of registered entries
          */
         static iterator end();
 
@@ -216,7 +237,7 @@ namespace senf {
             BOOST_PP_CAT(packetRegistration_, __LINE__) ( value );      \
         }
 
-    /** \brief Statically add an entry to a packet registry
+    /** \brief Statically add an entry to a packet registry with explicit priority
 
         This macro will declare an anonymous global variable in such a way, that constructing this
         variable will add a registration to the given packet registry.
