@@ -59,7 +59,7 @@ prefix_ long senf::console::detail::parseEnum(EnumTable const & table,
 prefix_ std::string senf::console::detail::formatEnum(EnumTable const & table, long value)
 {
     EnumTable::right_map::const_iterator i (table.right.find(value));
-    SENF_ASSERT( i != table.right.end() );
+    SENF_ASSERT( i != table.right.end(), "Invalid enum value" );
     return i->second;
 }
 

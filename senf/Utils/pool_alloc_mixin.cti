@@ -36,7 +36,7 @@ prefix_ void * senf::pool_alloc_mixin<Self>::operator new(size_t size)
 {
     // When deriving from Self you may not change the class's size without
     // inheriting from pool_alloc_mixin again. See pool_alloc_mixin documentation.
-    SENF_ASSERT( size <= sizeof(Self) &&
+    SENF_ASSERT( size <= sizeof(Self),
                  "senf::pool_alloc_mixin::operator new(): "
                  "Bad object size. Missing pool_alloc_mixin base in derived class?" );
 #ifdef SENF_DEBUG

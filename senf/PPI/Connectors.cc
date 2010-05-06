@@ -42,19 +42,19 @@
 prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 {
     // The connector is not registered -> route() or noroute() statement missing
-    SENF_ASSERT( module_ &&
+    SENF_ASSERT( module_,
                  "senf::ppi::connector::Connector::connect(): (source) "
                  "Missing route() or noroute()" );
     // The connector is already connected
-    SENF_ASSERT( ! peer_ &&
+    SENF_ASSERT( ! peer_,
                  "senf::ppi::connector::Connector::connect(): (source) "
                  "duplicate connection" );
     // The target connector is not registered -> route() or noroute() statement missing
-    SENF_ASSERT( target.module_ &&
+    SENF_ASSERT( target.module_,
                  "senf::ppi::connector::Connector::connect(): (target) "
                  "Missing route() or noroute()" );
     // The target connector is already connected
-    SENF_ASSERT( ! target.peer_ &&
+    SENF_ASSERT( ! target.peer_,
                  "senf::ppi::connector::Connector::connect(): (target) "
                  "duplicate connection" );
     if (! (packetTypeID() == typeid(void) ||
@@ -167,7 +167,7 @@ namespace {
 prefix_ void senf::ppi::connector::Connector::disconnect()
 {
     // Cannot disconnected a non-connected connector
-    SENF_ASSERT( peer_ &&
+    SENF_ASSERT( peer_,
                  "senf::ppi::connector::Connector::disconnect(): Not connected" );
 
     Connector & peer (*peer_);

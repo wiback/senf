@@ -33,12 +33,14 @@
 
 #ifndef SENF_DEBUG
 
-#   define SENF_ASSERT(x)
+#   define SENF_ASSERT(x, comment)
+#   define SENF_ASSERT_EXPRESSION(expression, comment) expression
 
 #else
 
 #   include <cassert>
-#   define SENF_ASSERT(x) assert(x)
+#   define SENF_ASSERT(x, comment) assert((x) && comment)
+#   define SENF_ASSERT_EXPRESSION(expression, comment) assert((expression) && comment)
 
 #endif
 

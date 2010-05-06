@@ -51,7 +51,7 @@ prefix_ typename senf::ListParser<ListPolicy>::value_type
 senf::ListParser<ListPolicy>::back()
     const
 {
-    SENF_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty(), "back() called on empty list" );
     container c(*this);
     typename container::iterator i (c.begin()), j;
     typename container::iterator const e (c.end());
@@ -67,7 +67,7 @@ prefix_ typename senf::ListParser_Container<ListPolicy>::value_type
 senf::ListParser_Container<ListPolicy>::back()
     const
 {
-    SENF_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty(), "back() called on empty list" );
     iterator i (begin()), j;
     iterator const e (end());
     for (j=i; i!=e; j=i, ++i) ;

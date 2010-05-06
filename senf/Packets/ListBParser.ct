@@ -47,7 +47,7 @@ container_policy(parser_policy const & p)
     while (i!=e) {
         ElementParser p (i,selfp.state());
         size_type sz (senf::bytes(p));
-        SENF_ASSERT(sz);
+        SENF_ASSERT(sz, "Broken element parser: reports size of 0 bytes");
         i = p.i(sz);
         ++ n_;
     }

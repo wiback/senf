@@ -67,7 +67,8 @@ prefix_ std::string senf::TypeIdValue::prettyName()
 prefix_ std::type_info const & senf::TypeIdValue::id()
     const
 {
-    SENF_ASSERT(p_);
+    SENF_ASSERT(
+        p_, "Internal failure: Empty TypeIdValue should have p_ point to typeid(void) not 0");
     return *p_;
 }
 

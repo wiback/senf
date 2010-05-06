@@ -38,7 +38,7 @@ prefix_ senf::ppi::connector::Connector & senf::ppi::connector::Connector::peer(
     const
 {
     // The connector is not connected
-    SENF_ASSERT(peer_ && "senf::ppi::connect() call missing");
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
     return *peer_;
 }
 
@@ -47,7 +47,7 @@ prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
 {
     // The connector is not registered in the module -> probably a route() or noroute() statement is
     // missing.
-    SENF_ASSERT(module_ && "Connector not registered: Missing route() or noroute()");
+    SENF_ASSERT(module_, "Connector not registered: Missing route() or noroute()");
     return *module_;
 }
 
@@ -192,7 +192,7 @@ prefix_ senf::ppi::connector::PassiveConnector::PassiveConnector()
 prefix_ void senf::ppi::connector::PassiveConnector::emit()
 {
     // No event callback has been registered (onRequest() call missing)
-    SENF_ASSERT(callback_ && "senf::ppi::connector::PassiveConnector: missing onRequest()");
+    SENF_ASSERT(callback_, "senf::ppi::connector::PassiveConnector: missing onRequest()");
     if (!throttled())
         callback_();
     else
@@ -263,7 +263,7 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::peek()
     const
 {
     // Cannot peek() head of empty queue
-    SENF_ASSERT( ! queue_.empty() &&
+    SENF_ASSERT( ! queue_.empty(),
                  "senf::ppi::connector::InputConnector: cannot call peek() on empty queue" );
     return queue_.back();
 }

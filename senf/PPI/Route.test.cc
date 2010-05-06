@@ -209,7 +209,7 @@ namespace {
         }
     private:
         void request() {
-            SENF_ASSERT(input());
+            SENF_ASSERT(input(), "TestSink called without packet");
         }
     };
 }

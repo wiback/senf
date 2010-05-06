@@ -38,21 +38,25 @@
 prefix_ senf::detail::PacketImpl & senf::PacketData::impl()
     const
 {
-    SENF_ASSERT( impl_ );
+    SENF_ASSERT(
+        impl_,
+        "Internal failure: PacketData (PacketInterpreter) instance not part of any Packet?");
     return *impl_;
 }
 
 prefix_ senf::PacketData::iterator senf::PacketData::begin()
     const
 {
-    SENF_ASSERT(begin_ <= impl().size());
+    SENF_ASSERT(begin_ <= impl().size(),
+                "Internal failure: PacketInterpreter range outside of data container");
     return boost::next(impl().begin(),begin_);
 }
 
 prefix_ senf::PacketData::iterator senf::PacketData::end()
     const
 {
-    SENF_ASSERT(end_ <= impl().size());
+    SENF_ASSERT(end_ <= impl().size(),
+                "Internal failure: PacketInterpreter range outside of data container");
     return boost::next(impl().begin(),end_);
 }
 
@@ -71,13 +75,13 @@ prefix_ bool senf::PacketData::empty()
 prefix_ senf::PacketData::byte senf::PacketData::operator[](size_type n)
     const
 {
-    SENF_ASSERT( n < size() );
+    SENF_ASSERT( n < size(), "Access out of container range" );
     return *( boost::next(begin(),n) );
 }
 
 prefix_ senf::PacketData::byte & senf::PacketData::operator[](size_type n)
 {
-    SENF_ASSERT( n < size() );
+    SENF_ASSERT( n < size(), "Access out of container range" );
     return *( boost::next(begin(),n) );
 }
 

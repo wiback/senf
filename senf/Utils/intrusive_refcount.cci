@@ -52,7 +52,7 @@ prefix_ void senf::intrusive_refcount_base::add_ref()
 
 prefix_ bool senf::intrusive_refcount_base::release()
 {
-    SENF_ASSERT(refcount_>0 &&
+    SENF_ASSERT(refcount_>0,
                 "senf::intrusive_refcount_base: Internal inconsistency: "
                 "Calling release on dead object.");
     return --refcount_ == 0;

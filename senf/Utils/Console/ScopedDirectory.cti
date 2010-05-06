@@ -37,7 +37,7 @@ template <class Owner>
 prefix_ senf::console::ScopedDirectory<Owner>::ScopedDirectory(Owner * owner)
     : owner_ (owner)
 {
-    SENF_ASSERT(owner_);
+    SENF_ASSERT(owner_, "ScopedDirectory owner is mandatory");
 }
 
 template <class Owner>

@@ -79,7 +79,7 @@ prefix_ typename boost::mpl::at<
 senf::VariantParser<AuxPolicy,Parsers>::get()
     const
 {
-    SENF_ASSERT( variant() == N );
+    SENF_ASSERT( variant() == N, "Access to non-active variant member" );
     return typename boost::mpl::at<parsers, boost::mpl::int_<N> >::type(
         AuxPolicy::adjust(i(), state()), state() );
 }

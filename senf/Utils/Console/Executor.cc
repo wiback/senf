@@ -58,7 +58,7 @@ namespace {
 prefix_ senf::console::DirectoryNode & senf::console::Executor::cwd()
     const
 {
-    SENF_ASSERT( ! cwd_.empty() );
+    SENF_ASSERT( ! cwd_.empty(), "Internal error: CWD history empty ?" );
     while (cwd_.size()>1 && (cwd_.back().expired() || ! cwd_.back().lock()->active()))
         cwd_.pop_back();
     return * cwd_.back().lock();

@@ -362,7 +362,7 @@ prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator npb, Iterator 
                 throwParserError(ex);
         }
         // Otherwise the error handling in the parser is broken
-        SENF_ASSERT( result.hit );
+        SENF_ASSERT( result.hit, "Internal parser failure (error handling broken?)" );
         if (! info.empty())
             try {
                 cb(info);

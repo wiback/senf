@@ -329,7 +329,7 @@ senf::console::CheckedArgumentIteratorWrapper::operator++(int)
 
 prefix_ senf::console::CommandParser::Impl & senf::console::CommandParser::impl()
 {
-    SENF_ASSERT(impl_);
+    SENF_ASSERT(impl_, "Ineral error: PIMPL pointer NULL ??");
     return *impl_;
 }
 

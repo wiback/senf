@@ -57,7 +57,10 @@ prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol()
       requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
       timeout_ ("senf::term::BaseTelnetProtocol::timeout", 0)
 {
-    SENF_ASSERT( false );
+    SENF_ASSERT( false,
+                 "Missing BaseTelnetProtocol constructor call in derived class "
+                 "(BaseTelnetProtocol is a VIRTUAL base and MUST be constructed explicitly "
+                 "in the most derived class." );
 }
 
 prefix_ void senf::term::BaseTelnetProtocol::write(std::string const & s)

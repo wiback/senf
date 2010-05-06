@@ -103,9 +103,10 @@ template <class KeyType>
 template <class PacketType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key, int priority)
 {
-    bool ok (registry_.insert(
-                 typename Entry::ptr(new EntryImpl<PacketType>(key,priority))).second);
-    SENF_ASSERT(ok && "Duplicate packet registration");
+    SENF_ASSERT_EXPRESSION(
+        registry_.insert(
+            typename Entry::ptr(new EntryImpl<PacketType>(key,priority))).second,
+        "Duplicate packet registration");
 }
 
 template <class KeyType>

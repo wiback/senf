@@ -52,13 +52,13 @@ prefix_  senf::safe_data_iterator::safe_data_iterator(PacketParserBase const & p
 prefix_ senf::PacketData::iterator senf::safe_data_iterator::i()
     const
 {
-    SENF_ASSERT(data_);
+    SENF_ASSERT(data_, "Use/dereferencing of empty safe_data_iterator");
     return boost::next(data_->begin(),i_);
 }
 
 prefix_ senf::safe_data_iterator & senf::safe_data_iterator::operator=(PacketData::iterator i)
 {
-    SENF_ASSERT(data_);
+    SENF_ASSERT(data_, "Use/dereferencing of empty safe_data_iterator");
     i_ = std::distance(data_->begin(),i);
     return *this;
 }
@@ -86,7 +86,7 @@ prefix_ bool senf::safe_data_iterator::boolean_test()
 prefix_ senf::PacketData & senf::safe_data_iterator::data()
     const
 {
-    SENF_ASSERT(data_);
+    SENF_ASSERT(data_, "Use/dereferencing of empty safe_data_iterator");
     return *data_;
 }
 
@@ -99,7 +99,7 @@ prefix_ senf::safe_data_iterator::value_type & senf::safe_data_iterator::derefer
 prefix_ bool senf::safe_data_iterator::equal(safe_data_iterator const & other)
     const
 {
-    SENF_ASSERT(data_ == other.data_);
+    SENF_ASSERT(data_ == other.data_, "Comparing iterators of two different containers is invalid");
     return i_ == other.i_;
 }
 
@@ -107,7 +107,7 @@ prefix_ senf::safe_data_iterator::difference_type
 senf::safe_data_iterator::distance_to(safe_data_iterator const & other)
     const
 {
-    SENF_ASSERT(data_ == other.data_);
+    SENF_ASSERT(data_ == other.data_, "Comparing iterators of two different containers is invalid");
     return other.i_ - i_;
 }
 
@@ -118,13 +118,13 @@ prefix_ void senf::safe_data_iterator::increment()
 
 prefix_ void senf::safe_data_iterator::decrement()
 {
-    SENF_ASSERT(i_>0);
+    SENF_ASSERT(i_>0, "Decrementing iterator before beginning of container" );
     --i_;
 }
 
 prefix_ void senf::safe_data_iterator::advance(difference_type n)
 {
-    SENF_ASSERT( -n < difference_type(i_) );
+    SENF_ASSERT( -n < difference_type(i_), "Moving iterator to before beginning of container" );
     i_ += n;
 }
 

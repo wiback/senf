@@ -57,7 +57,8 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
             scale = *match.first;
             unit = *boost::next(match.first);
         } else {
-            SENF_ASSERT( match.length() == 1);
+            SENF_ASSERT( match.length() == 1,
+                         "Internal failure: RegEx match returns weird number of matches" );
             unit = *match.first;
         }
         switch (scale) {

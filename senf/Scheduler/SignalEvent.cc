@@ -110,10 +110,11 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::signal(int events)
     i->setRunnable();
 }
 
-prefix_ void senf::scheduler::detail::SignalDispatcher::sigHandler(int signal, ::siginfo_t * siginfo,
-                                                           void *)
+prefix_ void senf::scheduler::detail::SignalDispatcher::sigHandler(int signal,
+                                                                   ::siginfo_t * siginfo,
+                                                                   void *)
 {
-    SENF_ASSERT( alive() );
+    SENF_ASSERT( alive(), "Internal failure: Destroyed signal handler called" );
     // The manpage says, si_signo is unused in linux so we set it here
     siginfo->si_signo = signal;
     // We can't do much on error anyway so we ignore errors here

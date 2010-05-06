@@ -70,7 +70,8 @@ prefix_ senf::console::UDPServer & senf::console::UDPServer::replies(bool enable
 prefix_ senf::console::UDPServer &
 senf::console::UDPServer::replies(senf::INet4SocketAddress const & address)
 {
-    SENF_ASSERT( handle_.local().family() == senf::INet4SocketAddress::addressFamily );
+    SENF_ASSERT( handle_.local().family() == senf::INet4SocketAddress::addressFamily,
+                 "Internal failure: INet6 address on INet4 socket ??" );
     target_ = address;
     return *this;
 }
@@ -78,7 +79,8 @@ senf::console::UDPServer::replies(senf::INet4SocketAddress const & address)
 prefix_ senf::console::UDPServer &
 senf::console::UDPServer::replies(senf::INet6SocketAddress const & address)
 {
-    SENF_ASSERT( handle_.local().family() == senf::INet6SocketAddress::addressFamily );
+    SENF_ASSERT( handle_.local().family() == senf::INet6SocketAddress::addressFamily,
+                 "Internal failure: INet4 address on INet6 socket ??" );
     target_ = address;
     return *this;
 }

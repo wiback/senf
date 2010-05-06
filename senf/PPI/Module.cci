@@ -92,8 +92,10 @@ senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
 
 prefix_ senf::ppi::module::Module::~Module()
 {
-    SENF_ASSERT(connectorRegistry_.empty());
-    SENF_ASSERT(routes_.empty());
+    SENF_ASSERT(connectorRegistry_.empty(),
+                "Internal failure: connectors still registered in Module destructor ??");
+    SENF_ASSERT(routes_.empty(),
+                "internal failure: routes still registered in Module destructor ??");
 
     moduleManager().unregisterModule(*this);
 }

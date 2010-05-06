@@ -164,14 +164,14 @@ prefix_ bool senf::PacketInterpreterBase::release()
 
 prefix_ void senf::PacketInterpreterBase::assignImpl(detail::PacketImpl * impl)
 {
-    SENF_ASSERT(!impl_);
+    SENF_ASSERT(!impl_, "Internal failure: PacketInterpreter added to two Packets");
     impl_ = impl;
     impl_->add_ref(refcount());
 }
 
 prefix_ void senf::PacketInterpreterBase::releaseImpl()
 {
-    SENF_ASSERT(impl_);
+    SENF_ASSERT(impl_, "Internal failure: release of lone PacketInterpreter");
     refcount_t refc (refcount());
     if (refc) {
         impl_->release(refc);

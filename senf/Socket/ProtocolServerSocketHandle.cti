@@ -46,14 +46,16 @@ prefix_ senf::ProtocolServerSocketHandle<SocketProtocol>::ProtocolServerSocketHa
         std::auto_ptr<senf::SocketBody>(new ProtocolSocketBody<SocketProtocol>(true)))
 {}
 
-#define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, SENF_ABSOLUTE_INCLUDE_PATH(Socket/ProtocolServerSocketHandle.mpp), 2))
+#define BOOST_PP_ITERATION_PARAMS_1 \
+    (4, (1, 9, SENF_ABSOLUTE_INCLUDE_PATH(Socket/ProtocolServerSocketHandle.mpp), 2))
 #include BOOST_PP_ITERATE()
 
 template <class SocketProtocol>
 prefix_ SocketProtocol &
 senf::ProtocolServerSocketHandle<SocketProtocol>::protocol()
 {
-    SENF_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
+    SENF_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()),
+                 "Internal failure: Incompatible protocol class fount it's way into this handle");
     // Need dynamic_cast here, since senf::SocketProtocol is a
     // virtual base
     return dynamic_cast<SocketProtocol &>(this->body().protocol());

@@ -55,7 +55,7 @@ template <class Parser>
 prefix_ Parser & senf::SafePacketParserWrapper<Parser>::operator*()
     const
 {
-    SENF_ASSERT( i_ );
+    SENF_ASSERT( i_, "Dereferencing empty SafePacketParserWrapper" );
     parser_->i_ = PacketParserBase::data_iterator(i_);
     return *parser_;
 }
@@ -64,7 +64,7 @@ template <class Parser>
 prefix_ Parser * senf::SafePacketParserWrapper<Parser>::operator->()
     const
 {
-    SENF_ASSERT( i_ );
+    SENF_ASSERT( i_, "Dereferencing empty SafePacketParserWrapper" );
     parser_->i_ = PacketParserBase::data_iterator(i_);
     return & (*parser_);
 }

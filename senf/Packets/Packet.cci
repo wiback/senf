@@ -41,7 +41,7 @@ prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr packet)
 prefix_ senf::PacketInterpreterBase::ptr senf::Packet::ptr()
     const
 {
-    SENF_ASSERT(packet_);
+    SENF_ASSERT(packet_, "Invalid operation (dereferencing) on in-valid() Packet");
     return packet_;
 }
 

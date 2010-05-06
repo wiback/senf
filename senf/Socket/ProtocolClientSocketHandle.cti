@@ -48,7 +48,8 @@ prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientSocketHa
     this->protocol().init_client();
 }
 
-#define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, SENF_ABSOLUTE_INCLUDE_PATH(Socket/ProtocolClientSocketHandle.mpp), 2))
+#define BOOST_PP_ITERATION_PARAMS_1 \
+    (4, (1, 9, SENF_ABSOLUTE_INCLUDE_PATH(Socket/ProtocolClientSocketHandle.mpp), 2))
 #include BOOST_PP_ITERATE()
 
 template <class SocketProtocol>
@@ -61,7 +62,8 @@ template <class SocketProtocol>
 prefix_ SocketProtocol &
 senf::ProtocolClientSocketHandle<SocketProtocol>::protocol()
 {
-    SENF_ASSERT( dynamic_cast<SocketProtocol *>(&this->body().protocol()) );
+    SENF_ASSERT( dynamic_cast<SocketProtocol *>(&this->body().protocol()),
+                 "Internal failure: Incompatible protocol class fount it's way into this handle");
     // Need dynamic_cast here, since senf::SocketProtocol is a
     // virtual base
     return dynamic_cast<SocketProtocol &>(this->body().protocol());

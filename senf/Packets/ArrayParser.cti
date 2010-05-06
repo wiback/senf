@@ -70,7 +70,7 @@ senf::ArrayParser<elements,ElementParser>::operator[](difference_type i)
     const
 {
     // Access out of range element
-    SENF_ASSERT( i>=0 && i < difference_type(elements) );
+    SENF_ASSERT( i>=0 && i < difference_type(elements), "Access to out-of-range array element" );
     return begin()[i];
 }
 

@@ -44,7 +44,7 @@ prefix_ senf::SocketHandle<SPolicy>::SocketHandle()
 template <class SPolicy>
 template <class OtherPolicy>
 prefix_ senf::SocketHandle<SPolicy>::SocketHandle(SocketHandle<OtherPolicy> other,
-                                                              typename IsCompatible<OtherPolicy>::type *)
+                                                  typename IsCompatible<OtherPolicy>::type *)
     : FileHandle(other)
 {}
 
@@ -67,14 +67,16 @@ template <class SPolicy>
 prefix_ senf::SocketHandle<SPolicy>::SocketHandle(FileHandle other, bool isChecked)
     : FileHandle(other)
 {
-    SENF_ASSERT( isChecked );
-    SENF_ASSERT( ! valid() || dynamic_cast<SocketBody *>(&FileHandle::body()) );
+    SENF_ASSERT( isChecked, "Inrernal failure: Wrong overload called !!" );
+    SENF_ASSERT( ! valid() || dynamic_cast<SocketBody *>(&FileHandle::body()),
+                 "Internal failure: Replacing or re-assigning non-empty incompatible handle");
 }
 
 template <class SPolicy>
 prefix_ senf::SocketBody & senf::SocketHandle<SPolicy>::body()
 {
-    SENF_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
+    SENF_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()),
+                 "Internal failure: Invalid body found it's way into SocketHandle");
     return static_cast<SocketBody &>(FileHandle::body());
 }
 
@@ -82,7 +84,8 @@ template <class SPolicy>
 prefix_ senf::SocketBody const & senf::SocketHandle<SPolicy>::body()
     const
 {
-    SENF_ASSERT( dynamic_cast<SocketBody const *>(&FileHandle::body()) );
+    SENF_ASSERT( dynamic_cast<SocketBody const *>(&FileHandle::body()),
+                 "Internal failure: Invalid body found it's way into SocketHandle");
     return static_cast<SocketBody const &>(FileHandle::body());
 }
 
@@ -125,7 +128,8 @@ prefix_ Target senf::static_socket_cast(Source handle)
         boost::is_convertible<Target*,FileHandle*>::value &&
         ( boost::is_convertible<Source,Target>::value ||
           boost::is_convertible<Target,Source>::value ) ));
-    SENF_ASSERT( check_socket_cast<Target>(handle) );
+    SENF_ASSERT( check_socket_cast<Target>(handle),
+                 "Invalid static_socket_cast" );
     return Target::cast_static(handle);
 }
 

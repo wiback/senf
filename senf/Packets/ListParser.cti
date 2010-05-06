@@ -77,7 +77,7 @@ prefix_ typename senf::ListParser<ListPolicy>::value_type
 senf::ListParser<ListPolicy>::front()
     const
 {
-    SENF_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty(), "front() called on empty list" );
     container c(*this);
     return *(c.begin());
 }
@@ -281,7 +281,7 @@ prefix_ typename senf::ListParser_Container<ListPolicy>::value_type
 senf::ListParser_Container<ListPolicy>::front()
     const
 {
-    SENF_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty(), "front() called on empty list" );
     return *begin();
 }
 

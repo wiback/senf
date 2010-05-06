@@ -112,14 +112,14 @@ prefix_ bool senf::FileBody::waitOOBReadable(senf::ClockService::clock_type time
 
 prefix_ senf::FileBody & senf::FileHandle::body()
 {
-    SENF_ASSERT(body_);
+    SENF_ASSERT(body_, "dereferencing in-valid() FileHandle");
     return *body_;
 }
 
 prefix_ senf::FileBody const & senf::FileHandle::body()
     const
 {
-    SENF_ASSERT(body_);
+    SENF_ASSERT(body_, "dereferencing in-valid() FileHandle");
     return *body_;
 }
 

@@ -47,7 +47,7 @@ senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::setFromPosition(conta
     for (; d.n_; --d.n_, j += ElementParser(j,c.state()).bytes())
         if (j==p)
             return;
-    SENF_ASSERT( false );
+    SENF_ASSERT( false, "setFromPosition: position does not point to any list element" );
 }
 
 template <class ElementParser, class AuxPolicy>

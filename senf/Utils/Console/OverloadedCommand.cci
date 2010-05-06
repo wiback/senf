@@ -119,7 +119,7 @@ prefix_ std::string senf::console::CommandOverload::doc()
 prefix_ senf::console::OverloadedCommandNode & senf::console::CommandOverload::node()
     const
 {
-    SENF_ASSERT( node_ );
+    SENF_ASSERT( node_, "Overload not added to any node yet" );
     return *node_;
 }
 

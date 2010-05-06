@@ -50,7 +50,7 @@ prefix_ int senf::SocketProtocol::fd()
 prefix_ void senf::SocketProtocol::fd(int fd)
     const
 {
-    SENF_ASSERT(! body().valid());
+    SENF_ASSERT(! body().valid(), "Replacing filedescriptor of open FileHandle");
     body().fd(fd);
 }
 
