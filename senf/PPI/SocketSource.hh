@@ -140,9 +140,6 @@ namespace module {
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new, valid handle is assigned. */
 
-        bool enabled();                 ///< Check is the IOEvent of the Source is enabled
-        void enabled( bool state);      ///< Change the state of the Source's IOEvent
-
     private:
         void read();
 

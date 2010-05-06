@@ -53,18 +53,6 @@ prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::handle(Handle handle
     event_.set(handle_, IOEvent::Read);
 }
 
-template <class Reader>
-prefix_ bool senf::ppi::module::ActiveSocketSource<Reader>::enabled()
-{
-  return event_.enabled();
-}
-
-template <class Reader>
-prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::enabled( bool state)
-{
-  event_.enabled( state);
-}
-
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
