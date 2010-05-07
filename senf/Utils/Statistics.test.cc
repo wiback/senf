@@ -42,7 +42,7 @@
 
 namespace {
 
-    struct GetRange
+    struct GetRank
     {
         typedef senf::Collector const & first_argument_type;
         typedef unsigned result_type;
@@ -101,6 +101,9 @@ namespace {
     }
 }
 
+#define CHECK_STATS(a, b) CHECK_CLOSE_RANGES(splitFloats(a),splitFloats(b),0.001f)
+#define CHECK_STATS_STR(a,b) BOOST_CHECK_EQUAL(a,b)
+
 SENF_AUTO_UNIT_TEST(statistics)
 {
     senf::Statistics stats;
@@ -127,20 +130,20 @@ SENF_AUTO_UNIT_TEST(statistics)
 
     unsigned children1[] = { 4u };
     BOOST_CHECK_EQUAL_COLLECTIONS(
-        boost::make_transform_iterator(stats.collectors().begin(), GetRange()),
-        boost::make_transform_iterator(stats.collectors().end(), GetRange()),
+        boost::make_transform_iterator(stats.collectors().begin(), GetRank()),
+        boost::make_transform_iterator(stats.collectors().end(), GetRank()),
         children1, children1 + sizeof(children1)/sizeof(children1[0]) );
 
     unsigned children2[] = { 3u };
     BOOST_CHECK_EQUAL_COLLECTIONS(
-        boost::make_transform_iterator(stats[4].collectors().begin(), GetRange()),
-        boost::make_transform_iterator(stats[4].collectors().end(), GetRange()),
+        boost::make_transform_iterator(stats[4].collectors().begin(), GetRank()),
+        boost::make_transform_iterator(stats[4].collectors().end(), GetRank()),
         children2, children2 + sizeof(children2)/sizeof(children2[0]) );
 
     unsigned children3[] = { 2u };
     BOOST_CHECK_EQUAL_COLLECTIONS(
-        boost::make_transform_iterator(stats[4][3].collectors().begin(), GetRange()),
-        boost::make_transform_iterator(stats[4][3].collectors().end(), GetRange()),
+        boost::make_transform_iterator(stats[4][3].collectors().begin(), GetRank()),
+        boost::make_transform_iterator(stats[4][3].collectors().end(), GetRank()),
         children3, children3 + sizeof(children3)/sizeof(children3[0]) );
 
     float values[][3] = {
@@ -154,6 +157,14 @@ SENF_AUTO_UNIT_TEST(statistics)
         {  0.3f,  2.4f,  3.8f }, { -1.1f, -0.3f,  0.0f }, { -0.3f,  3.2f,  3.3f },
         {  1.0f,  1.1f,  1.1f }, {  0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  0.0f },
         { -2.0f, -1.8f, -1.0f }, {  0.0f,  2.3f,  2.4f }, {  0.4f,  1.2f,  4.0f } };
+    // 30 entries
+    //   -> 30 calls of stats()
+    //         (rest 2)
+    //         -> 7 calls of stats[4]()
+    //              (rest 1)
+    //              -> 2 calls of stats[4][3]()
+    //                   (rest 0)
+    //                   -> 1 call of stats[4][3][2]
 
     for (unsigned i (0); i < sizeof(values)/sizeof(values[0]); ++i)
         stats(values[i][0], values[i][1], values[i][2]);
@@ -172,53 +183,96 @@ SENF_AUTO_UNIT_TEST(statistics)
     BOOST_CHECK_CLOSE( stats[4][3].avg(), 1.15f, .001f );
     BOOST_CHECK_CLOSE( stats[4][3].max(),  3.8f, .001f );
 
-    CHECK_CLOSE_RANGES( splitFloats(statslog.str()),
-                        splitFloats("level0 -1 2.3 2.5 0\n"
-                                    "level0 -0.35 2.35 3.15 0\n"
-                                    "level0 -0.4 1.05 1.9 0\n"
-                                    "level0 -0.7 1.45 1.65 0\n"
-                                    "level1 -1.1 1.9 3.8 1.31719\n"
-                                    "averaged1 -1.1 1.9 3.8 1.31719\n"
-                                    "level0 0.35 2.15 2.2 0\n"
-                                    "level0 0.75 0.8 0.8 0\n"
-                                    "level0 0.25 0.25 0.25 0\n"
-                                    "level0 -1 -0.9 -0.5 0\n"
-                                    "level1 -2 -0.05 1.1 1.08282\n"
-                                    "averaged1 -1.55 0.925 2.45 1.20001\n"
-                                    "level0 -1 0.25 0.7 0\n"
-                                    "level0 0.2 1.75 2.2 0\n"
-                                    "level0 -0.3 1.75 2.25 0\n"
-                                    "level0 -0.35 2.35 3.15 0\n"
-                                    "level1 -1 2.05 3.8 0.492442\n"
-                                    "averaged1 -1.36667 1.3 2.9 0.964152\n"
-                                    "level0 -0.4 1.05 1.9 0\n"
-                                    "level0 -0.7 1.45 1.65 0\n"
-                                    "level0 0.35 2.15 2.2 0\n"
-                                    "level0 0.75 0.8 0.8 0\n"
-                                    "level1 -1.1 1.125 3.3 1.29687\n"
-                                    "averaged1 -1.36667 1.04167 2.73333 0.957378\n"
-                                    "level0 0.25 0.25 0.25 0\n"
-                                    "level0 -1 -0.9 -0.5 0\n"
-                                    "level0 -1 0.25 0.7 0\n"
-                                    "level0 0.2 1.75 2.2 0\n"
-                                    "level1 -2 0.425 2.4 1.52049\n"
-                                    "averaged1 -1.36667 1.2 3.16667 1.10327\n"
-                                    "level0 -0.3 1.75 2.25 0\n"
-                                    "level0 -0.35 2.35 3.15 0\n"
-                                    "level0 -0.4 1.05 1.9 0\n"
-                                    "level0 -0.7 1.45 1.65 0\n"
-                                    "level1 -1.1 1.9 3.8 1.31719\n"
-                                    "averaged1 -1.4 1.15 3.16667 1.37818\n"
-                                    "level3 -2 1.225 3.8 1.45752\n"
-                                    "level0 0.35 2.15 2.2 0\n"
-                                    "level0 0.75 0.8 0.8 0\n"
-                                    "level0 0.25 0.25 0.25 0\n"
-                                    "level0 -1 -0.9 -0.5 0\n"
-                                    "level1 -2 -0.05 1.1 1.08282\n"
-                                    "averaged1 -1.7 0.758333 2.43333 1.30683\n"
-                                    "level0 -1 0.25 0.7 0\n"
-                                    "level0 0.2 1.75 3.2 0\n"),
-                        0.001f );
+    CHECK_STATS( statslog.str(),
+                 "level0 -1 2.3 2.5 0\n"
+                 "level0 -0.35 2.35 3.15 0\n"
+                 "level0 -0.4 1.05 1.9 0\n"
+                 "level0 -0.7 1.45 1.65 0\n"
+                 "level1 -1.1 1.9 3.8 1.31719\n"
+                 "averaged1 -1.1 1.9 3.8 1.31719\n"
+                 "level0 0.35 2.15 2.2 0\n"
+                 "level0 0.75 0.8 0.8 0\n"
+                 "level0 0.25 0.25 0.25 0\n"
+                 "level0 -1 -0.9 -0.5 0\n"
+                 "level1 -2 -0.05 1.1 1.08282\n"
+                 "averaged1 -1.55 0.925 2.45 1.20001\n"
+                 "level0 -1 0.25 0.7 0\n"
+                 "level0 0.2 1.75 2.2 0\n"
+                 "level0 -0.3 1.75 2.25 0\n"
+                 "level0 -0.35 2.35 3.15 0\n"
+                 "level1 -1 2.05 3.8 0.492442\n"
+                 "averaged1 -1.36667 1.3 2.9 0.964152\n"
+                 "level0 -0.4 1.05 1.9 0\n"
+                 "level0 -0.7 1.45 1.65 0\n"
+                 "level0 0.35 2.15 2.2 0\n"
+                 "level0 0.75 0.8 0.8 0\n"
+                 "level1 -1.1 1.125 3.3 1.29687\n"
+                 "averaged1 -1.36667 1.04167 2.73333 0.957378\n"
+                 "level0 0.25 0.25 0.25 0\n"
+                 "level0 -1 -0.9 -0.5 0\n"
+                 "level0 -1 0.25 0.7 0\n"
+                 "level0 0.2 1.75 2.2 0\n"
+                 "level1 -2 0.425 2.4 1.52049\n"
+                 "averaged1 -1.36667 1.2 3.16667 1.10327\n"
+                 "level0 -0.3 1.75 2.25 0\n"
+                 "level0 -0.35 2.35 3.15 0\n"
+                 "level0 -0.4 1.05 1.9 0\n"
+                 "level0 -0.7 1.45 1.65 0\n"
+                 "level1 -1.1 1.9 3.8 1.31719\n"
+                 "averaged1 -1.4 1.15 3.16667 1.37818\n"
+                 "level3 -2 1.225 3.8 1.45752\n"
+                 "level0 0.35 2.15 2.2 0\n"
+                 "level0 0.75 0.8 0.8 0\n"
+                 "level0 0.25 0.25 0.25 0\n"
+                 "level0 -1 -0.9 -0.5 0\n"
+                 "level1 -2 -0.05 1.1 1.08282\n"
+                 "averaged1 -1.7 0.758333 2.43333 1.30683\n"
+                 "level0 -1 0.25 0.7 0\n"
+                 "level0 0.2 1.75 3.2 0\n" );
+
+    statslog.clear();
+    stats(20, 10.f, 10.f, 10.f, 0.f);
+    stats(4, 0.f, 0.f, 0.f, 0.f);
+
+    CHECK_STATS( statslog.str(),
+                 "level0 5.2 5.6 7 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level0 10 10 10 0\n"
+                 "level1 0 5.875 10 8.19554\n"
+                 "averaged1 -1.03333 2.575 4.96667 3.53185\n"
+                 "level1 10 10 10 0\n"
+                 "averaged1 2.66667 5.275 7.03333 3.09279\n"
+                 "level1 10 10 10 0\n"
+                 "averaged1 6.66667 8.625 10 2.73185\n"
+                 "level1 10 10 10 0\n"
+                 "averaged1 10 10 10 0\n"
+                 "level1 10 10 10 0\n"
+                 "averaged1 10 10 10 0\n"
+                 "level3 -2 7.6375 10 5.04759\n"
+                 "level0 5 5 5 0\n"
+                 "level0 0 0 0 0\n"
+                 "level0 0 0 0 0\n"
+                 "level0 0 0 0 0\n"
+                 "level1 0 5 10 8.66025\n"
+                 "averaged1 6.66667 8.33333 10 2.88675\n" );
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
