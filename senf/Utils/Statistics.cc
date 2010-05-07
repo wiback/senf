@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <cmath>
+#include <cstdlib>
 #include <sstream>
 #include <senf/Utils/Console/Console.hh>
 #include <senf/Utils/Format.hh>
@@ -40,14 +41,18 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::StatisticsBase
 
-prefix_ void senf::StatisticsBase::enter(float min, float avg, float max, float dev)
+prefix_ void senf::StatisticsBase::enter(unsigned n, float min, float avg, float max, float dev)
 {
     min_ = min;
     avg_ = avg;
     max_ = max;
     dev_ = dev;
-    generateOutput();
-    signalChildren();
+    for (unsigned i (0); i < n; ++i)
+        generateOutput();
+    Children::iterator i (children_.begin());
+    Children::iterator const i_end  (children_.end());
+    for (; i != i_end; ++i)
+        i->second.enter(n, min_, avg_, max_, dev_);
 }
 
 prefix_ senf::Collector & senf::StatisticsBase::operator[](unsigned rank)
@@ -134,14 +139,6 @@ prefix_ void senf::StatisticsBase::generateOutput()
         i->second.dev /= n;
         i->second.signal(i->second.min, i->second.avg, i->second.max, i->second.dev);
     }
-}
-
-prefix_ void senf::StatisticsBase::signalChildren()
-{
-    Children::iterator i (children_.begin());
-    Children::iterator const i_end  (children_.end());
-    for (; i != i_end; ++i)
-        i->second.enter(min_, avg_, max_, dev_);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -266,21 +263,37 @@ prefix_ std::string senf::Statistics::v_path()
 ///////////////////////////////////////////////////////////////////////////
 // senf::Collector
 
-prefix_ void senf::Collector::enter(float min, float avg, float max, float dev)
+prefix_ void senf::Collector::enter(unsigned n, float min, float avg, float max, float dev)
 {
-    accSum_ += avg;
-    accSumSq_ += avg*avg + dev*dev;
     if (min < accMin_) accMin_ = min;
     if (max > accMax_) accMax_ = max;
-    if (++i_ >= rank_) {
-        float accAvg (accSum_ / i_);
-        float accDev (std::sqrt(std::max(0.0f,accSumSq_ / i_ - accAvg*accAvg)));
-        StatisticsBase::enter(accMin_, accAvg, accMax_, accDev);
-        i_ = 0;
+
+    if (i_ + n >= rank_) {
+        accSum_ += (rank_-i_)*avg;
+        accSumSq_ += (rank_-i_)*(rank_-i_)*(avg*avg + dev*dev);
+        float accAvg (accSum_ / rank_);
+        float accDev (std::sqrt(std::max(0.0f,accSumSq_ / rank_ - accAvg*accAvg)));
+        StatisticsBase::enter(1, accMin_, accAvg, accMax_, accDev);
         accMin_ = FLT_MAX;
         accSum_ = 0.0f;
         accSumSq_ = 0.0f;
         accMax_ = -FLT_MAX;
+        n -= (rank_ - i_);
+        i_ = 0;
+
+        if (n >= rank_) {
+            std::div_t d (std::div(int(n), int(rank_)));
+            StatisticsBase::enter(d.quot, min, avg, max, dev);
+            n = d.rem;
+        }
+    }
+
+    if (n>0) {
+        accSum_ += n*avg;
+        accSumSq_ += n*n*(avg*avg+dev*dev);
+        i_ += n;
+        if (min < accMin_) accMin_ = min;
+        if (max > accMax_) accMax_ = max;
     }
 }
 

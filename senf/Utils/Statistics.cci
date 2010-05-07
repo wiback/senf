@@ -170,14 +170,20 @@ senf::Collector::output(unsigned n)
 ///////////////////////////////////////////////////////////////////////////
 // senf::Statistics
 
+prefix_ void senf::Statistics::operator()(unsigned n, float min, float avg, float max,
+                                          float dev)
+{
+    enter(n, min, avg, max, dev);
+}
+
 prefix_ void senf::Statistics::operator()(float min, float avg, float max, float dev)
 {
-    enter(min, avg, max, dev);
+    enter(1, min, avg, max, dev);
 }
 
 prefix_ void senf::Statistics::operator()(float value, float dev)
 {
-    enter(value, value, value, dev);
+    enter(1, value, value, value, dev);
 }
 
 prefix_ senf::StatisticsBase::OutputProxy<senf::Statistics>

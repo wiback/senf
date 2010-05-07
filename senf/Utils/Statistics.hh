@@ -228,14 +228,13 @@ namespace senf {
     protected:
         StatisticsBase();
         virtual ~StatisticsBase();
-        void enter(float min, float avg, float max, float dev);
+        void enter(unsigned n, float min, float avg, float max, float dev);
 
     private:
         virtual Statistics & v_base() = 0;
         virtual std::string v_path() const = 0;
 
         void generateOutput();
-        void signalChildren();
 
         float min_;
         float avg_;
@@ -420,24 +419,40 @@ namespace senf {
 
         Statistics();
 
-        void operator()(float min, float avg, float max, float dev=0.0f);
+        void operator()(unsigned n, float min, float avg, float max, float dev);
                                         ///< Enter new data
-                                        /**< This member must be called whenever a new data value is
-                                             available. It is important to call this member \e
-                                             periodically. The frequency at which this member is
-                                             called defines the basic statistics time scale.
+                                        /**< This member must be called whenever new data is
+                                             available.
 
                                              If \a min and \a max values are not available, this
                                              member should be called with \a min, \a avg and \a max
-                                             set to the same value.
+                                             set to the same value. If no error estimate is
+                                             available, call with \a dev = 0.
 
+                                             In the most common case, this member is to be called
+                                             periodically and \a n will be 1 on all calls. The
+                                             interval, at which this member is called then defines
+                                             the statistics time scale.
+
+                                             Calling with \a n > 1 will submit the value \a n
+                                             times. This makes it possible to aggregate multiple
+                                             time slices into a single call. This does not change
+                                             the basic time scale but can change the number of
+                                             submits per unit time. If the basic time slice is
+                                             small, this allows to submit values almost arbitrarily
+                                             non-periodic.
+
+                                             \param[in] n number of time-slices
                                              \param[in] min minimal data value since last call
                                              \param[in] avg average data value since last call
                                              \param[in] max maximal data values since last call
                                              \param[in] dev standard deviation of avg value */
-
+        void operator()(float min, float avg, float max, float dev=0.0f);
+                                        ///< Same as operator() with \a n==1
+                                        /**< Provided so a Statistics instance can be directly used
+                                             as a signal target. */
         void operator()(float value, float dev=0.0f);
-                                        ///< Same as enter() with \a min == \a avg == \a max
+                                        ///< Same as operator() with \a min == \a avg == \a max
                                         /**< Provided so a Statistics instance can be directly used
                                              as a signal target. */
 
@@ -469,7 +484,7 @@ namespace senf {
 
     private:
         Collector(StatisticsBase * owner, unsigned rank);
-        void enter(float min, float avg, float max, float dev);
+        void enter(unsigned n, float min, float avg, float max, float dev);
         Statistics & v_base();
         std::string v_path() const;
 
