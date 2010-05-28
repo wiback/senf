@@ -59,10 +59,8 @@ Some unit tests will only run when executed to 'root'.
 """)
 
 env.Append(
-   ENV                    = { 'PATH' : os.environ.get('PATH'), 
-                              'HOME' : os.environ.get('HOME'),
-                              'SSH_AGENT_PID': os.environ.get('SSH_AGENT_PID'),
-                              'SSH_AUTH_SOCK': os.environ.get('SSH_AUTH_SOCK') },
+   IMPORT_ENV             = [ 'PATH', 'HOME', 'SSH_*', 'SENF*', 'CCACHE_*', 'DISTCC_*' ],
+
    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*',
                               '.sconf_temp' ],
 
@@ -117,9 +115,6 @@ env.Append(
    LINKFLAGS_debug        = [ '-g' ],
 )
 
-# Add all UNIX env vars starting with 'SENF' to the execution environment
-env.Append( ENV = dict(((k,v) for k,v in os.environ.iteritems() if k.startswith("SENF"))) )
-
 env.SetDefault(
     LIBSENF           = "senf",
     LCOV              = "lcov",
@@ -144,6 +139,12 @@ senfutil.parseArguments(
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
     BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False)
 )
+
+# Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
+env.Append( ENV = dict(( (k,v) 
+                         for pattern in env['IMPORT_ENV']
+                         for k,v in os.environ.iteritems()
+                         if fnmatch.fnmatchcase(k,pattern) )) )
 
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
     import SparseTestHack
