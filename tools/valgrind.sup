@@ -75,5 +75,5 @@
    Memcheck:Param
    socketcall.sendto(msg)
    ...
-   fun:_ZN4senf15WriteablePolicy7writeto*
+   fun:_ZN*
 }
