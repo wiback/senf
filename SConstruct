@@ -223,6 +223,7 @@ if env['sparse_tests']:
 #### install_all, default, all_tests, all
 env.Install('${SCONSINSTALLDIR}', [ 'site_scons/__init__.py',
                                     'site_scons/senfutil.py',
+                                    'site_scons/senfconf.py',
                                     'site_scons/yaptu.py' ])
 env.InstallDir('${SCONSINSTALLDIR}', [ 'site_scons/site_tools', 'site_scons/lib' ],
                FILTER_SUFFIXES=[ '','.css','.pl','.py','.sh','.sty','.xml','.xsl','.yap' ])

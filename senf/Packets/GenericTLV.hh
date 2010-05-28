@@ -184,6 +184,7 @@ namespace senf {
     namespace detail {
         template <class BaseParser>
         struct GenericTLVParserRegistry_EntryBase {
+            virtual ~GenericTLVParserRegistry_EntryBase() {}
             virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const = 0;
             virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const = 0;
         };

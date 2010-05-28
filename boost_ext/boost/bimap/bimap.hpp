@@ -54,7 +54,9 @@ the next step will be:
 #include <boost/mpl/aux_/na.hpp>
 
 #define BOOST_BIMAP_DISABLE_SERIALIZATION
-#define BOOST_MULTI_INDEX_DISABLE_SERIALIZATION
+#ifndef BOOST_MULTI_INDEX_DISABLE_SERIALIZATION
+#define BOOST_MULTI_INDEX_DISABLE_SERIALIZATION 1
+#endif
 
 #ifndef BOOST_BIMAP_DISABLE_SERIALIZATION
     #include <boost/serialization/nvp.hpp>
@@ -151,7 +153,7 @@ class bimap
             ::boost::bimaps::detail::bimap_core<KeyTypeA,KeyTypeB,AP1,AP2,AP3>
         >::type
     >,
-    public ::boost::bimaps::detail::right_map_view_extra_typedefs< 
+    public ::boost::bimaps::detail::right_map_view_extra_typedefs<
         BOOST_DEDUCED_TYPENAME ::boost::bimaps::detail::right_map_view_type<
             ::boost::bimaps::detail::bimap_core<KeyTypeA,KeyTypeB,AP1,AP2,AP3>
         >::type
@@ -209,8 +211,8 @@ class bimap
 
         base_::relation_set(
             ::boost::multi_index::get<
-                BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag 
-            >(core) 
+                BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag
+            >(core)
         ),
         left (
             ::boost::multi_index::get<
@@ -219,7 +221,7 @@ class bimap
         ),
         right (
             ::boost::multi_index::get<
-                BOOST_DEDUCED_TYPENAME base_::logic_right_tag 
+                BOOST_DEDUCED_TYPENAME base_::logic_right_tag
             >(core)
         )
 
@@ -231,7 +233,7 @@ class bimap
         base_::relation_set(
             ::boost::multi_index::get<
                 BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag
-            >(core) 
+            >(core)
         ),
 
         core(first,last),
@@ -254,7 +256,7 @@ class bimap
         base_::relation_set(
             ::boost::multi_index::get<
                 BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag
-            >(core) 
+            >(core)
         ),
 
         core(x.core),

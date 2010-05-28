@@ -1,4 +1,4 @@
-from __future__ import with_statement
+# from __future__ import with_statement
 
 _configTests = {}
 
@@ -10,17 +10,17 @@ def Test(func):
     global _configTests
     _configTests[func.__name__] = func
 
-class TemporaryContext:
-    def __init__(self, context):
-        self._context = context
-        self._env = self._context.env.Clone()
+# class TemporaryContext:
+#     def __init__(self, context):
+#         self._context = context
+#         self._env = self._context.env.Clone()
 
-    def __enter__(self):
-        return None
+#     def __enter__(self):
+#         return None
 
-    def __exit__(self,*args):
-        self._context.env.Replace(**self._env.Dictionary())
-        return False
+#     def __exit__(self,*args):
+#         self._context.env.Replace(**self._env.Dictionary())
+#         return False
 
 @Test
 def CheckBoostVersion(context):
@@ -39,7 +39,9 @@ def CheckBoostVersion(context):
 @Test
 def CheckBoostVariants(context, *variants):
     useVariant = None
-    with TemporaryContext(context):
+#    with TemporaryContext(context):
+    try:
+        _env = context.env.Clone()
         for variant in variants:
             if variant : variantStr = "'%s'" % variant
             else       : variantStr = "default"
@@ -54,6 +56,8 @@ def CheckBoostVariants(context, *variants):
             context.Result( ret )
             if ret and useVariant is None:
                 useVariant = variant
+    finally:
+        context.env.Replace(**_env.Dictionary())
     if useVariant is not None and not context.env.GetOption('no_progress'):
         print  "Using %s boost variant." % (
             useVariant and "'%s'" % useVariant or "default")

@@ -94,8 +94,10 @@ prefix_ void senf::MIHGenericPayloadPacketType::finalize(packet p)
 {
     typedef parser::tlvList_t::container tlvContainer_t;
     tlvContainer_t tlvs (p->tlvList() );
-    for (tlvContainer_t::iterator i (tlvs.begin()); i != tlvs.end(); ++i)
-        i->finalize();
+    for (tlvContainer_t::iterator i (tlvs.begin()); i != tlvs.end(); ++i) {
+        MIHGenericTLVParser p (*i);
+        p.finalize();
+    }
 }
 
 

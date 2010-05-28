@@ -15,6 +15,10 @@
 #pragma once
 #endif
 
+#ifndef BOOST_MULTI_INDEX_DISABLE_SERIALIZATION
+#define BOOST_MULTI_INDEX_DISABLE_SERIALIZATION 1
+#endif
+
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <algorithm>
 #include <boost/detail/allocator_utilities.hpp>
@@ -46,7 +50,7 @@
 #include <boost/multi_index/detail/archive_constructed.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/split_member.hpp>
-#include <boost/throw_exception.hpp> 
+#include <boost/throw_exception.hpp>
 #endif
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)
@@ -129,7 +133,7 @@ public:
 
   typedef typename super::ctor_args_list          ctor_args_list;
   typedef IndexSpecifierList                      index_specifier_type_list;
- 
+
 #if BOOST_WORKAROUND(BOOST_MSVC,<1300)
   /* MSVC++ 6.0 chokes on moderately long index lists (around 6 indices
    * or more), with errors ranging from corrupt exes to duplicate
@@ -191,7 +195,7 @@ public:
     node_count(0)
   {
     BOOST_MULTI_INDEX_CHECK_INVARIANT;
-  }    
+  }
 
   template<typename InputIterator>
   multi_index_container(
@@ -641,7 +645,7 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
   {
     BOOST_MULTI_INDEX_CHECK_INVARIANT;
 
-    clear_(); 
+    clear_();
 
     std::size_t s;
     ar>>serialization::make_nvp("count",s);

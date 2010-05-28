@@ -61,14 +61,15 @@ build-arch-debug-stamp: configure-stamp
 build-indep: build-indep-stamp
 build-indep-stamp: configure-stamp
 # 	Add here commands to compile the indep part of the package.
-	scons -j $(CONCURRENCY_LEVEL) all_docs
-	scons linklint
-	scons fixlinks
-	scons $(destdir)/usr/include $(destdir)/usr/share/doc \
-		syslayout=1 PREFIX='$(destdir)/usr' \
-		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc/html'
+#	scons -j $(CONCURRENCY_LEVEL) all_docs
+#	scons linklint
+#	scons fixlinks
+#	scons $(destdir)/usr/include $(destdir)/usr/share/doc \
+#		syslayout=1 PREFIX='$(destdir)/usr' \
+#		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc/html'
+	scons $(destdir)/usr/include syslayout=1 PREFIX='$(destdir)/usr'
 #       We need to install the example sourcecode
-	find Examples \( -name "*.hh" -o -name "*.cc" \) -printf "%P\n" | \
+	find Examples \( -name "*.hh" -o -name "*.cc" -o -name SConstruct \) -printf "%P\n" | \
 		while read src; do \
 			dir="$(destdir)/usr/share/doc/libsenf-doc/examples/$$(dirname "$$src")"; \
 			mkdir -p "$$dir"; \
