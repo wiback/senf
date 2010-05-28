@@ -137,6 +137,7 @@ def SetupForSENF(env, senf_path = []):
                         CPPPATH = [ sconspath ],
                         BUNDLEDIR = sconspath,
                         SENFDIR = sconspath,
+                        SENFINCDIR = sconspath,
                         SENFSYSLAYOUT = False)
             try:
                 env.MergeFlags(file(os.path.join(path,"senf.conf")).read())
@@ -150,6 +151,7 @@ def SetupForSENF(env, senf_path = []):
                 print "\nUsing system SENF in '%s/'\n" % sconspath
             env.Append(BUNDLEDIR = os.path.join(sconspath,"lib/senf"),
                        SENFDIR = sconspath,
+                       SENFINCDIR = '%s/include' % sconspath,
                        SENFSYSLAYOUT = True)
             break
     else:
@@ -160,7 +162,7 @@ def SetupForSENF(env, senf_path = []):
 
     # Only add senf after all configure checks have run
     env.Append(
-        CPPPATH = '${NEED_BOOST_EXT and "$SENFDIR/boost_ext" or None}',
+        CPPPATH = '${NEED_BOOST_EXT and "$SENFINCDIR/boost_ext" or None}',
         LIBS = [ 'senf', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
                  '$BOOSTFSLIB' ],
         )

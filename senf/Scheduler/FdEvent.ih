@@ -27,7 +27,7 @@
 #define IH_SENF_Scheduler_FdEvent_ 1
 
 // Custom includes
-#include <boost/intrusive/iset.hpp>
+#include <senf/boost_intrusive/iset.hpp>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

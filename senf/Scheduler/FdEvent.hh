@@ -27,7 +27,7 @@
 #define HH_SENF_Scheduler_FdEvent_ 1
 
 // Custom includes
-#include <boost/intrusive/iset_hook.hpp>
+#include <senf/boost_intrusive/iset_hook.hpp>
 #include <senf/Utils/Exception.hh>
 #include "FdManager.hh"
 #include "FIFORunner.hh"

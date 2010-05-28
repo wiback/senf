@@ -28,7 +28,7 @@
 
 // Custom includes
 #include "FdManager.hh"
-#include <boost/intrusive/iset.hpp>
+#include <senf/boost_intrusive/iset.hpp>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/singleton.hh>
 

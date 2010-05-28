@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <signal.h>
-#include <boost/intrusive/iset_hook.hpp>
+#include <senf/boost_intrusive/iset_hook.hpp>
 #include "ClockService.hh"
 #include "FIFORunner.hh"
 #include <senf/Utils/Logger/SenfLog.hh>
