@@ -302,7 +302,7 @@ namespace module {
         Handle & handle();              ///< Access handle
         void handle(Handle handle);     ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
-                                             the module until a new. valid handle is assigned. */
+                                             the module until a new valid handle is assigned. */
 
 #ifndef DOXYGEN
         void replaceHandle(Handle newHandle);

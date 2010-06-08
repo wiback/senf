@@ -54,7 +54,7 @@ template <class OtherPacket>
 prefix_ bool senf::Packet::is()
     const
 {
-    return ptr()->is<typename OtherPacket::type>();
+    return valid() && ptr()->is<typename OtherPacket::type>();
 }
 
 template <class OtherPacket>

@@ -152,12 +152,14 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(packet)
 {
+    BOOST_CHECK(! senf::Packet().is<BarPacket>() );
     senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);
 
     BOOST_REQUIRE( packet );
     BOOST_CHECK( packet.next() );
     BOOST_CHECK( ! packet.next().next(senf::nothrow) );
+    BOOST_CHECK( ! packet.next().next(senf::nothrow).is<BarPacket>() );
     BOOST_CHECK( ! packet.prev(senf::nothrow) );
     BOOST_CHECK( packet.next().prev() == packet );
     SENF_CHECK_NOT_EQUAL( packet.next(), packet );
