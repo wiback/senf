@@ -43,21 +43,15 @@ namespace senf {
         \see MACAddress \n
             EthernetPacket
      */
-    struct MACAddressParser : public PacketParserBase
+    struct MACAddressParser
+        : public ValueParserBase<MACAddressParser, MACAddress, 6u>
     {
-        MACAddressParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
-
-        ///////////////////////////////////////////////////////////////////////////
-
-        typedef MACAddress value_type;
-        static const size_type fixed_bytes = 6u;
+        MACAddressParser(data_iterator i, state_type s) : Base(i,s) {}
 
         value_type value() const { return MACAddress::from_data(i()); }
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
-        operator value_type () { return value(); }
-        byte & operator[](size_type index) { return *boost::next(i(),index);  }
 
-        MACAddressParser const & operator= (value_type const & other) { value(other); return *this; }
+        using Base::operator=;
     };
 
     /** \brief Parse an Ethernet packet

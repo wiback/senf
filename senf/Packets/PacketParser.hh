@@ -518,6 +518,22 @@ namespace senf {
         SENF_PARSER_FINALIZE(VoidPacketParser);
     };
 
+
+    template <class Parser, typename ValueType, PacketParserBase::size_type FixedBytes>
+    struct ValueParserBase : public PacketParserBase
+    {
+        typedef ValueParserBase<Parser, ValueType, FixedBytes> Base;
+
+        static size_type const fixed_bytes = FixedBytes;
+        typedef ValueType value_type;
+
+        ValueParserBase(data_iterator i, state_type s);
+
+        operator value_type () const;
+        byte & operator[](size_type index);
+        Parser const & operator= (value_type const & other);
+    };
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

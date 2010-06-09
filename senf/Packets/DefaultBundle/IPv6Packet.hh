@@ -40,21 +40,15 @@ namespace senf {
 
         \see INet6Address
      */
-    struct INet6AddressParser : public PacketParserBase
+    struct INet6AddressParser
+        : public ValueParserBase<INet6AddressParser, INet6Address, 16u>
     {
-        INet6AddressParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
-
-        ///////////////////////////////////////////////////////////////////////////
-
-        typedef INet6Address value_type;
-        static const size_type fixed_bytes = 16u;
+        INet6AddressParser(data_iterator i, state_type s) : Base(i,s) {}
 
         value_type value() const { return value_type::from_data(i()); }
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
-        operator value_type() const { return value(); }
-        byte & operator[](size_type index) const { return *boost::next(i(),index); }
-        INet6AddressParser const & operator= (value_type const & other)
-            { value(other); return *this; }
+
+        using Base::operator=;
     };
 
     /** \brief Parse an IPv6 packet

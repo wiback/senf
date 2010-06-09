@@ -39,21 +39,15 @@ namespace senf {
 
         \see INet4Address
      */
-    struct INet4AddressParser : public PacketParserBase
+    struct INet4AddressParser
+        : public ValueParserBase<INet4AddressParser, INet4Address, 4u>
     {
-        INet4AddressParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
-
-        ///////////////////////////////////////////////////////////////////////////
-
-        typedef INet4Address value_type;
-        static const size_type fixed_bytes = 4u;
+        INet4AddressParser(data_iterator i, state_type s) : Base(i,s) {}
 
         value_type value() const { return value_type::from_data(i()); }
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
-        operator value_type() const { return value(); }
-        byte & operator[](size_type index) const { return *boost::next(i(),index); }
-        INet4AddressParser const & operator= (value_type const & other)
-            { value(other); return *this; }
+
+        using Base::operator=;
     };
 
     /** \brief Parse an IPv4 packet
