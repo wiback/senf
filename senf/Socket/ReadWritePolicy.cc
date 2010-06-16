@@ -91,6 +91,9 @@ prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle handle, char const *
             case EINTR:
                 break;
             case EAGAIN:
+            case ENOBUFS:
+                // According to the man page this should not happen, since packets are just silently being dropped.
+                // It does happen in NetEmu using small TxQueues on WLAN interfaces 
             case ECONNREFUSED:
                 // Writing to a UDP socket seems return this error code if a corresponding ICMP
                 // error code has been received before (at least on linux). This is inconsistent
@@ -118,6 +121,9 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle handle,
             case EINTR:
                 break;
             case EAGAIN:
+            case ENOBUFS:
+                // According to the man page this should not happen, since packets are just silently being dropped.
+                // It does happen in NetEmu using small TxQueues on WLAN interfaces 
                 rv = 0;
                 break;
             default:
