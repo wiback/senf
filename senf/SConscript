@@ -16,3 +16,19 @@ SConscript("Ext/SConscript")
 
 env.InstallSubdir(target = '$INCLUDEINSTALLDIR', 
                   source = sorted(env.Glob("*.hh", strings=True)))
+
+# Create Version.hh
+MAJOR = 1
+MINOR = 1
+REV = int(os.popen("svn info | grep 'Last Changed Rev:' | awk '{print $4}'").read().strip().lower())
+env.CreateFile("Version.hh", env.Value(
+    '// auto-generated file.\n\n'
+    '#ifndef HH_SENF_Version\n'
+    '#define HH_SENF_Version\n\n'
+    '// SENF_VERSION %% 100000 is the revision number\n'
+    '// SENF_VERSION / 100000 %% 100 is the minor version\n'
+    '// SENF_VERSION / 10000000 is the major version\n'
+    '#define SENF_VERSION %(MAJOR)d%(MINOR)02d%(REV)05d\n\n'
+    '#define SENF_LIB_VERSION "%(MAJOR)d.%(MINOR)02d"\n\n'
+    '#define SENF_REVISION "%(REV)d"\n\n'
+    '#endif\n' % locals()) )

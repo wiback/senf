@@ -36,14 +36,23 @@
 #include <senf/Utils/senfassert.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Version.hh>
 #include "LineEditor.hh"
 #include "ScopedDirectory.hh"
 #include "Sysdir.hh"
+#include "SysInfo.hh"
 #include "ParsedCommand.hh"
 
 //#include "Server.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+namespace {
+    senf::console::SysInfo::Proxy addSysInfo (
+            "SENF: The Simple and Extensible Network Framework\n"
+            "  © 2006-2010 Fraunhofer Institute for Open Communication Systems, Network Research\n"
+            "  Contact: senf-dev@lists.berlios.de\n"
+            "  Version: " SENF_LIB_VERSION " Revision number: " SENF_REVISION "\n", 0);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NonBlockingSocketSink
