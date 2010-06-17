@@ -1,7 +1,7 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, os
+import SENFSCons, os, re
 
 ###########################################################################
 
@@ -20,7 +20,11 @@ env.InstallSubdir(target = '$INCLUDEINSTALLDIR',
 # Create Version.hh
 MAJOR = 1
 MINOR = 1
-REV = int(os.popen("svn info | grep 'Last Changed Rev:' | awk '{print $4}'").read().strip().lower())
+svn_info = re.search('.*last changed rev: (\d+).*', os.popen('svn info').read().strip().lower());
+if svn_info:
+    REV = int(svn_info.groups()[0])
+else:
+    REV = 0
 env.CreateFile("Version.hh", env.Value(
     '// auto-generated file.\n\n'
     '#ifndef HH_SENF_Version\n'
