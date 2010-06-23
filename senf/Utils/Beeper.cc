@@ -21,16 +21,14 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TypeInfo non-inline non-template implementation */
+    \brief Beeper non-inline non-template implementation */
 
 #include "Beeper.hh"
 //#include "Beeper.ih"
 
 // Custom includes
 #include <unistd.h>
-#include <sys/ioctl.h>
 #include <fcntl.h>
-#include <linux/kd.h>
 #include <boost/bind.hpp>
 #include "Exception.hh"
 
@@ -52,16 +50,6 @@ prefix_ senf::Beeper::~Beeper()
 {
     stop_beep();
     ::close(fd_);
-}
-
-prefix_ bool senf::Beeper::start_beep(float freq)
-{
-    return ::ioctl(fd_, KIOCSOUND, (int)(CLOCK_TICK_RATE/freq)) == 0;
-}
-
-prefix_ void senf::Beeper::stop_beep()
-{
-    ::ioctl(fd_, KIOCSOUND, 0);
 }
 
 prefix_ void senf::Beeper::beep_sync(float freq, unsigned length, unsigned count, unsigned delay)

@@ -54,20 +54,24 @@ namespace senf {
 
         void beep_sync(float freq, unsigned length, unsigned count = 1, unsigned delay = 100);
                                         ///< play beep synchronous
-                                        /**< \param freq frequency in Hz, where 0 <freqN < 20000.
+                                        /**< \param freq frequency in Hz, where 0 < \e freq < 20000.
                                                  The regular terminal beep is around 750Hz.
                                              \param length duration in milliseconds.
                                              \param count number of repetitions (defaults to 1).
                                              \param delay delay between repetitions in milliseconds. */
         void beep_async(float freq, unsigned length, unsigned count = 1, unsigned delay = 100);
                                         ///< play beep asynchronous
-                                        /**< \param freq frequency in Hz, where 0 <freqN < 20000.
+                                        /**< \param freq frequency in Hz, where 0 < \e freq < 20000.
                                                  The regular terminal beep is around 750Hz.
                                              \param length duration in milliseconds.
                                              \param count number of repetitions (defaults to 1).
                                              \param delay delay between repetitions in milliseconds. */
 
         void stop_beep();               ///< stop playing.
+        bool start_beep(float freq);    ///< start playing.
+                                        /**< start playing until any other member is called.
+                                             \param freq frequency in Hz, where 0 < \e freq < 20000.
+                                             \returns \a true on success.*/
 
     private:
         static const unsigned CLOCK_TICK_RATE = 1193180;
@@ -85,14 +89,13 @@ namespace senf {
         } params_;
 #endif
 
-        bool start_beep(float freq);
         void timeout();
     };
 
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Beeper.cci"
+#include "Beeper.cci"
 //#include "Beeper.ct"
 //#include "Beeper.cti"
 #endif
