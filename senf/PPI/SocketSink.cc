@@ -54,16 +54,16 @@ prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::destination(senf::INet4Soc
     protocolId_ = dest.port();
 }
 
-prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::operator()(Handle handle,
+prefix_ bool senf::ppi::IPv4SourceForcingDgramWriter::operator()(Handle handle,
                                                                  Packet const & packet)
 {
-    sendtoandfrom(
+    return sendtoandfrom(
             handle.fd(),
             reinterpret_cast<void*> (&*packet.data().begin()),
             packet.size(),
             reinterpret_cast<in_addr*> (&destination_),
             protocolId_,
-            reinterpret_cast<in_addr*> (&source_));
+            reinterpret_cast<in_addr*> (&source_)) > 0;
 }
 
 prefix_ int senf::ppi::IPv4SourceForcingDgramWriter::sendtoandfrom(
@@ -133,16 +133,16 @@ prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::destination(senf::INet6Soc
     protocolId_ = dest.port();
 }
 
-prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::operator()(Handle handle,
+prefix_ bool senf::ppi::IPv6SourceForcingDgramWriter::operator()(Handle handle,
                                                                  Packet const & packet)
 {
-    sendtoandfrom(
+    return sendtoandfrom(
             handle.fd(),
             reinterpret_cast<void*> (&*packet.data().begin()),
             packet.size(),
             reinterpret_cast<in6_addr*> (&destination_),
             protocolId_,
-            reinterpret_cast<in6_addr*> (&source_));
+            reinterpret_cast<in6_addr*> (&source_)) > 0;
 }
 
 prefix_ int senf::ppi::IPv6SourceForcingDgramWriter::sendtoandfrom(

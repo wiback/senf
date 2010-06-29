@@ -27,7 +27,8 @@
 //#include "Jack.test.ih"
 
 // Custom includes
-#include "PPI.hh"
+#include "Jack.hh"
+#include "DebugModules.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

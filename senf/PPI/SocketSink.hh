@@ -58,7 +58,7 @@ namespace ppi {
                                         ///< Handle type supported by this writer
         typedef Packet PacketType;
 
-        void operator()(Handle handle, Packet const & packet);
+        bool operator()(Handle handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -87,7 +87,7 @@ namespace ppi {
         typename Handle::Address target() const; ///< Get current target address
         void target(typename Handle::Address const & target); ///< Set target address
 
-        void operator()(Handle handle, Packet const & packet); ///< Write \a packet to \a handle
+        bool operator()(Handle handle, Packet const & packet); ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
                                              \param[in] handle Handle to write data to
@@ -113,7 +113,7 @@ namespace ppi {
         void destination(senf::INet4SocketAddress & dest);
         senf::INet4SocketAddress destination();
 
-        void operator()(Handle handle, Packet const & packet);
+        bool operator()(Handle handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -142,7 +142,7 @@ namespace ppi {
         void destination(senf::INet6SocketAddress & dest);
         senf::INet6SocketAddress destination();
 
-        void operator()(Handle handle, Packet const & packet);
+        bool operator()(Handle handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -184,7 +184,7 @@ namespace module {
               SomeWriter();                                        // EITHER default constructible OR
               SomeWriter(SomeWriter const & other);                // copy constructible
 
-              void operator()(Handle handle, Packet packet);       // insertion function
+              bool operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
         Whenever a packet is received for sending, the \a Writer's \c operator() is called.
@@ -260,7 +260,7 @@ namespace module {
               SomeWriter();                                          // EITHER default constructible
               SomeWriter(SomeWriter const & other);                    // OR copy constructible
 
-              void operator()(Handle handle, Packet packet);       // insertion function
+              bool operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
         Whenever a packet is received for sending, the \a Writer's \c operator() is called.

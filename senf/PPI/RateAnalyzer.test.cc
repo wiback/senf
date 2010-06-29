@@ -28,7 +28,9 @@
 
 // Custom includes
 #include "RateAnalyzer.hh"
-#include "PPI.hh"
+#include "CloneSource.hh"
+#include "RateFilter.hh"
+#include "Setup.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

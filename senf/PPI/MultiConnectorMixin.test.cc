@@ -27,7 +27,10 @@
 //#include "MultiConnectorMixin.test.ih"
 
 // Custom includes
-#include "PPI.hh"
+#include "MultiConnectorMixin.hh"
+#include "DebugModules.hh"
+#include "Joins.hh"
+#include "AnnotationRouter.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

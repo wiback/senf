@@ -59,11 +59,12 @@ senf::ppi::TargetDgramWriter<HandleType>::target(typename Handle::Address const 
 }
 
 template <class HandleType>
-prefix_ void senf::ppi::TargetDgramWriter<HandleType>::operator()(Handle handle,
+prefix_ bool senf::ppi::TargetDgramWriter<HandleType>::operator()(Handle handle,
                                                                   Packet const & packet)
 {
     if (target_)
-        handle.writeto(target_, packet.data());
+        return handle.writeto(target_, packet.data()) != packet.data().begin();
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////
