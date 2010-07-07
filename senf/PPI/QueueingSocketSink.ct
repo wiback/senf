@@ -31,51 +31,43 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::FIFOQueueingAlgorithm<PacketType>
+// senf::ppi::QueueingAlgorithmRegistry
 
-template <typename PacketType>
-prefix_ senf::ppi::FIFOQueueingAlgorithm<PacketType>::FIFOQueueingAlgorithm(unsigned size)
-    : size_( size)
-{ }
-
-template <typename PacketType>
-prefix_ PacketType senf::ppi::FIFOQueueingAlgorithm<PacketType>::dequeue()
+template <class QAlgorithm>
+prefix_ void senf::ppi::QueueingAlgorithmRegistry::registerQAlgorithm(std::string key)
 {
-    if (queue_.size() > 0) {
-        PacketType const & p = queue_.front();
-        queue_.pop();
-        return p;
-    }
-    return PacketType();
+    if (qAlgoMap_.find( key) == qAlgoMap_.end() )
+        qAlgoMap_.insert(key, new detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>() );
+    else
+        throw Exception("Duplicated QAlgorithm Registration ") << key;
 }
 
-template <typename PacketType>
-prefix_ bool senf::ppi::FIFOQueueingAlgorithm<PacketType>::enqueue(PacketType const & packet)
-{
-    if (queue_.size() < size_) {
-        queue_.push( packet);
-        return true;
-    }
-    return false;
-}
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>
 
-template <typename PacketType>
-prefix_ void senf::ppi::FIFOQueueingAlgorithm<PacketType>::clear()
+template <class QAlgorithm>
+prefix_ senf::ppi::QueueingAlgorithm::ptr senf::ppi::detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>::create()
+    const
 {
-    while (! queue_.empty())
-        queue_.pop();
+    return QAlgorithm::create();
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveQueueingSocketSink<Writer>
 
 template <class Writer>
-template <class QAlgorithm>
-prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSocketSink(Handle handle, QAlgorithm const & qAlgorithm)
-    : handle_( handle), writer_( ),
-      qAlgo_( new QAlgorithm(qAlgorithm)),
+prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSocketSink(Handle handle, QueueingAlgorithm::ptr qAlgorithm)
+    : dir( this),
+      handle_( handle), writer_( ),
+      qAlgo_( qAlgorithm),
       event_( handle_, IOEvent::Write)
 {
+    namespace fty = console::factory;
+    dir.add( "active", qAlgo_->consoleDir());
+    dir.add( "set", fty::Command(
+            &PassiveQueueingSocketSink<Writer>::setQAlgorithm, this) );
+    dir.add( "list", fty::Command(
+            &QueueingAlgorithmRegistry::dump, &QueueingAlgorithmRegistry::instance()));
     registerEvent( event_, &PassiveQueueingSocketSink::writable );
     event_.enabled( false);
     noroute(input);
@@ -116,6 +108,22 @@ prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::checkThrottle
         input.unthrottle();
     else
         input.throttle();
+}
+
+template <class Writer>
+prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::qAlgorithm(QueueingAlgorithm::ptr qAlgorithm)
+{
+//    dir.remove( "active");
+    qAlgo_.reset( qAlgorithm);
+    dir.add( "active", qAlgo_->consoleDir());
+    if (event_.enabled())
+        event_.enabled( false);
+}
+
+template <class Writer>
+prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::setQAlgorithm(std::string const & key)
+{
+    qAlgorithm( QueueingAlgorithmRegistry::instance().createQAlgorithm( key));
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

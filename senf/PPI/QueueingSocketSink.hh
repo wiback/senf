@@ -29,6 +29,7 @@
 // Custom includes
 #include <queue>
 #include "SocketSink.hh"
+#include <senf/Utils/Console/Console.hh>
 
 //#include "QueueingSocketSink.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -36,31 +37,94 @@
 namespace senf {
 namespace ppi {
 
-    template <typename PacketType=Packet>
     class QueueingAlgorithm
+        : private boost::noncopyable
     {
+        console::ScopedDirectory<QueueingAlgorithm> dir_;
+
     public:
+        typedef QueueingAlgorithm * ptr;
+
         virtual ~QueueingAlgorithm() {};
-        virtual PacketType dequeue() = 0;
-        virtual bool enqueue(PacketType const & packet) = 0;
-        virtual unsigned size() const = 0;
-        virtual void clear() = 0;
+
+        console::DirectoryNode & consoleDir();
+        Packet dequeue();
+        bool enqueue(Packet const & packet);
+        unsigned size();
+        void clear();
+
+    protected:
+        QueueingAlgorithm();
+
+        virtual Packet v_dequeue() = 0;
+        virtual bool v_enqueue(Packet const & packet) = 0;
+        virtual unsigned v_size() const = 0;
+        virtual void v_clear() = 0;
     };
 
-    template <typename PacketType=Packet>
-    class FIFOQueueingAlgorithm : public QueueingAlgorithm<PacketType>
+
+    namespace detail {
+        struct QueueingAlgorithmRegistry_EntryBase
+        {
+            virtual QueueingAlgorithm::ptr create() const = 0;
+        };
+
+        template <class QAlgorithm>
+        struct QueueingAlgorithmRegistry_Entry : QueueingAlgorithmRegistry_EntryBase
+        {
+            virtual QueueingAlgorithm::ptr create() const;
+        };
+    }
+
+    class QueueingAlgorithmRegistry
+        : public senf::singleton<QueueingAlgorithmRegistry>
     {
+        typedef boost::ptr_map<std::string, detail::QueueingAlgorithmRegistry_EntryBase> QAlgoMap;
+        QAlgoMap qAlgoMap_;
+
+        QueueingAlgorithmRegistry() {};
     public:
-        FIFOQueueingAlgorithm(unsigned size);
+        using senf::singleton<QueueingAlgorithmRegistry>::instance;
+        friend class senf::singleton<QueueingAlgorithmRegistry>;
 
-        virtual PacketType dequeue();
-        virtual bool enqueue(PacketType const & packet);
-        virtual unsigned size() const;
-        virtual void clear();
+        struct Exception : public senf::Exception {
+            Exception(std::string const & descr) : senf::Exception(descr) {}
+        };
 
-    private:
-        std::queue<PacketType> queue_;
-        unsigned size_;
+        template <class QAlgorithm>
+        struct RegistrationProxy {
+            RegistrationProxy(std::string const & key);
+        };
+
+        template <class QAlgorithm>
+        void registerQAlgorithm(std::string key);
+
+        QueueingAlgorithm::ptr createQAlgorithm(std::string const & key) const;
+        void dump(std::ostream & os) const;
+    };
+
+
+#   define SENF_PPI_REGISTER_QALGORITHM( key, QAlgorithm )                          \
+        namespace {                                                                 \
+            senf::ppi::QueueingAlgorithmRegistry::RegistrationProxy<QAlgorithm>     \
+                BOOST_PP_CAT(qAlgorithmRegistration_, __LINE__)( key);              \
+        }
+
+
+    class FIFOQueueingAlgorithm : public QueueingAlgorithm
+    {
+        std::queue<Packet> queue_;
+        unsigned max_size_;
+
+        FIFOQueueingAlgorithm();
+
+        virtual Packet v_dequeue();
+        virtual bool v_enqueue(Packet const & packet);
+        virtual unsigned v_size() const;
+        virtual void v_clear();
+
+    public:
+        static QueueingAlgorithm::ptr create();
     };
 
 
@@ -80,32 +144,34 @@ namespace module {
         typedef typename Writer::PacketType PacketType;
 
         connector::PassiveInput<PacketType> input; ///< Input connector from which data is received
+        console::ScopedDirectory<PassiveQueueingSocketSink<Writer> > dir;
 
-        template <class QAlgorithm>
-        explicit PassiveQueueingSocketSink(Handle handle, QAlgorithm const & qAlgorithm);
+        explicit PassiveQueueingSocketSink(Handle handle, QueueingAlgorithm::ptr qAlgorithm);
 
         Writer & writer();              ///< Access the Writer
         Handle & handle();              ///< Access handle
         void handle(Handle handle);     ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new valid handle is assigned. */
-        QueueingAlgorithm<PacketType> & qAlgorithm();
+        QueueingAlgorithm & qAlgorithm();
+        void qAlgorithm(QueueingAlgorithm::ptr qAlgorithm);
 
     private:
         void write();
         void writable();
         void checkThrottle();
+        void setQAlgorithm(std::string const & key);
 
         Handle handle_;
         Writer writer_;
-        boost::scoped_ptr<QueueingAlgorithm<PacketType> > qAlgo_;
+        boost::scoped_ptr<QueueingAlgorithm> qAlgo_;
         IOEvent event_;
     };
 
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "QueueingSocketSink.cci"
+#include "QueueingSocketSink.cci"
 #include "QueueingSocketSink.ct"
 #include "QueueingSocketSink.cti"
 #endif

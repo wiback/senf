@@ -1085,7 +1085,7 @@
         senf::console::ScopedDirectory<Test2> dir;
 
         Test2() : dir(this), var_(0)
-            { dir.add("var", fty::Variabl(var_) ); }
+            { dir.add("var", fty::Variable(var_) ); }
 
     private:
         int var_;

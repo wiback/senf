@@ -21,56 +21,50 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief QueueingSocketSink inline template implementation */
+    \brief QueueingSocketSink inline non-template implementation */
 
 //#include "QueueingSocketSink.ih"
 
 // Custom includes
 
 #define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::QueueingAlgorithmRegistry::RegistrationProxy<QAlgorithm>
+// senf::ppi::QueueingAlgorithm
 
-template <class QAlgorithm>
-prefix_ senf::ppi::QueueingAlgorithmRegistry::RegistrationProxy<QAlgorithm>::RegistrationProxy(std::string const & key)
+prefix_ unsigned senf::ppi::QueueingAlgorithm::size()
 {
-    QueueingAlgorithmRegistry::instance().registerQAlgorithm<QAlgorithm>( key);
-};
+    return v_size();
+}
+
+prefix_ void senf::ppi::QueueingAlgorithm::clear()
+{
+    v_clear();
+}
+
+prefix_ senf::Packet senf::ppi::QueueingAlgorithm::dequeue()
+{
+    return v_dequeue();
+}
+
+prefix_ bool senf::ppi::QueueingAlgorithm::enqueue(Packet const & packet)
+{
+    return v_enqueue( packet);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::PassiveQueueingSocketSink<Writer>
+// senf::ppi::FIFOQueueingAlgorithm
 
-template <class Writer>
-prefix_ Writer & senf::ppi::module::PassiveQueueingSocketSink<Writer>::writer()
+prefix_ unsigned senf::ppi::FIFOQueueingAlgorithm::v_size()
+    const
 {
-    return writer_;
-}
-
-template <class Writer>
-prefix_ typename Writer::Handle & senf::ppi::module::PassiveQueueingSocketSink<Writer>::handle()
-{
-    return handle_;
-}
-
-template <class Writer>
-prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::handle(Handle handle)
-{
-    handle_ = handle;
-    qAlgo_->clear();
-    checkThrottle();
-}
-
-template <class Writer>
-prefix_ senf::ppi::QueueingAlgorithm & senf::ppi::module::PassiveQueueingSocketSink<Writer>::qAlgorithm()
-{
-    return *qAlgo_;
+    return queue_.size();
 }
 
 
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
 

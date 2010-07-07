@@ -82,9 +82,8 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
 {
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
             senf::INet4SocketAddress( localhost4str(0)));
-    ppi::FIFOQueueingAlgorithm<TestingConnectedDgramWriter::PacketType> queueingAlgorithm ( 100);
     module::PassiveQueueingSocketSink<TestingConnectedDgramWriter> udpSink (
-            outputSocket, queueingAlgorithm);
+            outputSocket, ppi::FIFOQueueingAlgorithm::create());
     udpSink.writer().throttled = false;
     debug::ActiveSource source;
     ppi::connect(source, udpSink);
