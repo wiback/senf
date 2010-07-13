@@ -59,6 +59,7 @@ template <class Writer>
 prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::handle(Handle handle)
 {
     handle_ = handle;
+    event_.set( handle_, IOEvent::Write);
     qAlgo_->clear();
     checkThrottle();
 }

@@ -75,15 +75,25 @@ namespace {
                 return false;
             return ConnectedDgramWriter::operator()( handle, packet);
         }
+
+        TestingConnectedDgramWriter(){
+            throttled = false;
+        }
     };
 }
 
 SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
 {
+    senf::ConnectedUDPv4ClientSocketHandle os(senf::noinit); 
+
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
             senf::INet4SocketAddress( localhost4str(0)));
     module::PassiveQueueingSocketSink<TestingConnectedDgramWriter> udpSink (
-            outputSocket, ppi::FIFOQueueingAlgorithm::create());
+            os, ppi::FIFOQueueingAlgorithm::create());
+    
+    // test re-assignment of socket
+    udpSink.handle( outputSocket);
+    
     udpSink.writer().throttled = false;
     debug::ActiveSource source;
     ppi::connect(source, udpSink);
@@ -105,6 +115,12 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
 
     source.submit(p);
     BOOST_CHECK_EQUAL( udpSink.qAlgorithm().size(), 1);
+
+    for( int n = 0; n < 100; n++){
+        source.submit(p);
+    }
+    // queue default size is 64
+    BOOST_CHECK_EQUAL( udpSink.qAlgorithm().size(), 64);
 
     udpSink.writer().throttled = false;
 

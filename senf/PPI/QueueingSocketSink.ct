@@ -85,7 +85,7 @@ prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::write()
     }
     if (! writer_( handle_, p)) {
         if (qAlgo_->enqueue( p) && !event_.enabled()) {
-            event_.enabled( true);
+          event_.enabled( true);
         }
     }
 }
