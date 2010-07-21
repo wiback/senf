@@ -108,7 +108,11 @@ construct(container_type & c)
     realAux_ = (AuxPolicy::aux(i, c.state()) * 8) + 6;
     safe_data_iterator e = i + realAux_;
     for (n_ = 0; i != e;) {
-        unsigned int elByte = senf::bytes(ElementParser(i, c.state()));
+        size_type elByte;
+        if (i[0] == 0u)
+            elByte = 1;
+        else
+            elByte = senf::bytes(ElementParser(i, c.state()));
         if (((i + elByte) == e) && (i[0] == 0u || i[0] == 1u)) { //check weather last element is padding or not
             realAux_ -= std::distance(i, e);
             c.data().erase(i, e); //delete padding
