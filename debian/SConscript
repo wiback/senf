@@ -76,8 +76,8 @@ def dpkgIgnoredFilesOpts(target, source, env, for_signature):
     return [ '-I%s' % (('/' in f) and (os.path.split(os.getcwd())[1])+f or f)
              for f in env.subst('$DPKG_IGNORED_FILES').split() ]
 
-# if env.has_key('REVISION'):
-#     rev = env['REVISION']
+if env.has_key('REVISION'):
+    rev = env['REVISION']
 # else:
 #     rev = "(Version %s)" % rev
 
