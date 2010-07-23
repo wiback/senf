@@ -91,7 +91,7 @@ prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & 
 {
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
        << senf::fieldName("next header")               << unsigned(p->nextHeader()) << "\n"
-       << senf::fieldName("header length")             << unsigned(p->headerLength()) << "\n";
+       << senf::fieldName("header length")             << unsigned(p->headerLength()) <<" ("<< unsigned((1+p->headerLength())*8)<< ")\n";
     os << "  OptionTypes:\n";
     typedef IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
     optContainer_t options (p->options());
