@@ -3,7 +3,8 @@
 import sys
 
 COLOR_SCHEME = 'pastel19'  # see http://www.graphviz.org/doc/info/colors.html
-
+SOURCE_SINK = ["ActiveSocketSource", "PassiveSocketSource", "ActiveSocketSink", "PassiveSocketSink"]
+NETEMU = ["InterfaceAnnotater" , "PacketMonitor" , "PacketTypeChecker"]
 mode = "MODULE"
 
 sys.stdout.write("""
@@ -49,11 +50,12 @@ for line in sys.stdin:
 for moduleid, (module, cs) in modules.iteritems():
     module = module.split('<',1)[0]
     if "senf" not in module.split('::',1)[0]:
-	color = 6
-    elif "senf::ppi::module::ActiveSocketSource" in module:
-	color = 1
-    elif "senf::ppi::module::PassiveSocketSink" in module:
-	color = 1
+        if module.rsplit('::',1)[-1] in NETEMU:
+           color = 5
+        else:
+           color = 6
+    elif module.rsplit('::',1)[-1] in SOURCE_SINK:
+        color = 1
     else:
         color = 3
     module = module.rsplit('::',1)[-1]
@@ -66,7 +68,8 @@ for moduleid, (module, cs) in modules.iteritems():
     if inputs: rows.append("{%s}" % "|".join(inputs))
     rows.append("%s (%s)" % (module, moduleid))
     if outputs: rows.append("{%s}" % "|".join(outputs))
-    sys.stdout.write('%s [label="{%s}" style="filled" fillcolor="/%s/%s"  ]\n' % (moduleid, "|".join(rows), 				COLOR_SCHEME, color ))
+    sys.stdout.write('%s [label="{%s}" style="filled" fillcolor="/%s/%s"  ]\n'
+                             % (moduleid, "|".join(rows),COLOR_SCHEME, color ))
 
 anonid = 0
 
@@ -92,3 +95,4 @@ for moduleid, (type, cs) in modules.iteritems():
             anonid += 1
 
 sys.stdout.write("}\n")
+
