@@ -139,13 +139,48 @@ namespace module {
         void handle(Handle handle);     ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new, valid handle is assigned. */
-
     private:
-        void read();
-
         Handle handle_;
         IOEvent event_;
         Reader reader_;
+
+        void read();
+    };
+
+
+    template <class Reader=DgramReader<> >
+    class ActiveBurstSocketSource
+        : public Module
+    {
+        SENF_PPI_MODULE(ActiveBurstSocketSource);
+
+    public:
+        typedef typename Reader::Handle Handle; ///< Handle type requested by the reader
+
+        connector::ActiveOutput<typename Reader::PacketType> output;
+                                        ///< Output connector to which the data received is written
+
+        ActiveBurstSocketSource(unsigned max_burst);
+        explicit ActiveBurstSocketSource(Reader reader, unsigned max_burst);
+        explicit ActiveBurstSocketSource(Handle handle, unsigned max_burst);
+        ActiveBurstSocketSource(Handle handle, Reader reader, unsigned max_burst);
+
+        Reader & reader();              ///< Access Reader helper
+        Handle handle();                ///< Access handle
+        void handle(Handle handle);     ///< Set handle
+                                        /**< Assigning an empty or in-valid() handle will disable
+                                             the module until a new, valid handle is assigned. */
+
+        unsigned maxBurst() const;
+        void maxBurst(unsigned max_burst);
+
+    private:
+        Handle handle_;
+        IOEvent event_;
+        Reader reader_;
+        unsigned maxBurst_;
+
+        void read();
     };
 
 }}}

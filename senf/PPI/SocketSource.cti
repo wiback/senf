@@ -53,13 +53,33 @@ prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::handle(Handle handle
     event_.set(handle_, IOEvent::Read);
 }
 
-////////////////////////////////////////
-// private members
-
 template <class Reader>
 prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::read()
 {
     output(reader_(handle_));
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::ActiveBurstSocketSource<Reader>
+
+template <class Reader>
+prefix_ Reader & senf::ppi::module::ActiveBurstSocketSource<Reader>::reader()
+{
+    return reader_;
+}
+
+template <class Reader>
+prefix_ typename senf::ppi::module::ActiveBurstSocketSource<Reader>::Handle
+senf::ppi::module::ActiveBurstSocketSource<Reader>::handle()
+{
+    return handle_;
+}
+
+template <class Reader>
+prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::handle(Handle handle)
+{
+    handle_ = handle;
+    event_.set(handle_, IOEvent::Read);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

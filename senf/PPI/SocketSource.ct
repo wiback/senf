@@ -37,7 +37,7 @@ template <class Packet, unsigned MaxSize>
 prefix_ Packet senf::ppi::DgramReader<Packet,MaxSize>::operator()(Handle handle)
 {
     Packet packet (Packet::create(senf::noinit));
-    handle.read(packet.data(),MaxSize);
+    handle.read(packet.data(), MaxSize);
     return packet;
 }
 
@@ -74,6 +74,68 @@ prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle
 {
     registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::ActiveBurstSocketSource<Reader>
+
+template <class Reader>
+prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(unsigned max_burst)
+    : maxBurst_(max_burst)
+{
+    registerEvent( event_, &ActiveBurstSocketSource::read );
+    route(event_, output);
+}
+
+template <class Reader>
+prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(Reader reader, unsigned max_burst)
+    : reader_(reader), maxBurst_(maxBurst)
+{
+    registerEvent( event_, &ActiveBurstSocketSource::read );
+    route(event_, output);
+}
+
+template <class Reader>
+prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(Handle handle, unsigned max_burst)
+    : handle_(handle), event_(handle_, IOEvent::Read), maxBurst_(max_burst)
+{
+    registerEvent( event_, &ActiveBurstSocketSource::read );
+    route(event_, output);
+}
+
+template <class Reader>
+prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(Handle handle,
+                                                                          Reader reader, unsigned max_burst)
+    : handle_(handle), event_(handle_, IOEvent::Read), reader_(reader), maxBurst_(max_burst)
+{
+    registerEvent( event_, &ActiveBurstSocketSource::read );
+    route(event_, output);
+}
+
+template <class Reader>
+prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::maxBurst(unsigned max_burst)
+{
+    maxBurst_ = max_burst;
+}
+
+template <class Reader>
+prefix_ unsigned senf::ppi::module::ActiveBurstSocketSource<Reader>::maxBurst()
+    const
+{
+    return maxBurst_;
+}
+
+template <class Reader>
+prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::read()
+{
+    output(reader_(handle_));
+    for (unsigned int i = 0; i < maxBurst_; ++i) {
+        typename Reader::PacketType p (reader_(handle_));
+        if (p.data().size() > 0)
+            output( p);
+        else
+            break;
+    }
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
