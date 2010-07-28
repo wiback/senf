@@ -53,6 +53,15 @@ prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::handle(Handle handle
     event_.set(handle_, IOEvent::Read);
 }
 
+////////////////////////////////////////
+// private members
+
+template <class Reader>
+prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::read()
+{
+    output(reader_(handle_));
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

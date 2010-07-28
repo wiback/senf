@@ -30,33 +30,24 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template<typename IdType>
-prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy()
+prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & description)
     : entrySetById( entrySet.template get<Id>()),
       entrySetByTimeout( entrySet.template get<Timeout> ()),
-      timer( "TimerEventProxy", membind(&TimerEventProxy<IdType>::timerEvent, this), 0, false)
+      timer( "TimerEventProxy " + description,
+              membind(&TimerEventProxy<IdType>::timerEvent, this), 0, false)
 { }
-
-template<typename IdType>
-prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & name, console::DirectoryNode & node)
-    : entrySetById( entrySet.template get<Id>()),
-      entrySetByTimeout( entrySet.template get<Timeout> ()),
-      timer( "TimerEventProxy", membind(&TimerEventProxy<IdType>::timerEvent, this), 0, false)
-{
-    node.add(name, console::factory::Command(
-            &TimerEventProxy<IdType>::list, this) .doc("List active Timers"));
-}
 
 template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::timerEvent()
 {
-    ClockService::clock_type actual = ClockService::now();
+    ClockService::clock_type now = ClockService::now();
     typename EntrySetByTimeout_t::iterator it = entrySetByTimeout.begin();
-    while (it != entrySetByTimeout.end() && it->timeout <= actual) {
+    while (it != entrySetByTimeout.end() && it->timeout <= now) {
         Entry item (*it);
         // remove due entry from set
         entrySetByTimeout.erase(it);
         // call callback
-        item.cb(actual, item.id);
+        item.cb(now, item.id);
         it = entrySetByTimeout.begin();
     }
     if (entrySet.size() > 0)
@@ -76,7 +67,12 @@ prefix_ void senf::scheduler::TimerEventProxy<IdType>::add(
 template<typename IdType>
 prefix_ bool senf::scheduler::TimerEventProxy<IdType>::remove(IdType const & id)
 {
-    return entrySetById.erase( id) > 0;
+    bool removed (entrySetById.erase( id) > 0);
+    if (entrySet.size() > 0)
+        timer.timeout(entrySetByTimeout.begin()->timeout);
+    else
+        timer.disable();
+    return removed;
 }
 
 template<typename IdType>

@@ -55,10 +55,9 @@ namespace scheduler {
     public:
         typedef boost::function<void(ClockService::clock_type, IdType const &)> Callback;
 
-        TimerEventProxy();              ///< Instantiate a TimerEventProxy
-        TimerEventProxy(std::string const & name, console::DirectoryNode & node);
-                                        /**< \brief Instantiate a TimerEventProxy and add the list
-                                                    command to the give DirectoryNode */
+        TimerEventProxy(std::string const & description = "");
+                                        ///< Instantiate a TimerEventProxy
+                                        /**< \param[in] description Descriptive name (purely informational) */
 
         void add(ClockService::clock_type timeout, IdType const & id, Callback cb);
                                         ///< Add new deadline timer

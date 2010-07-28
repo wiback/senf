@@ -61,7 +61,7 @@ SENF_AUTO_UNIT_TEST(timerEventProxy)
 
     senf::ClockService::clock_type t (senf::ClockService::now());
     {
-        senf::scheduler::TimerEventProxy<int> timers;
+        senf::scheduler::TimerEventProxy<int> timers ("unit-test");
 
 //        timers.add( t + senf::ClockService::milliseconds(10000), 0 , &handler);
         timers.add( t + senf::ClockService::milliseconds(800), 4, &handler);
@@ -78,8 +78,6 @@ SENF_AUTO_UNIT_TEST(timerEventProxy)
 
         BOOST_CHECK( mask == 3);
     }
-
-    senf::scheduler::TimerEventProxy<int> timers ("test", senf::console::ScopedDirectory<>());
 }
 
 

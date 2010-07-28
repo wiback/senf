@@ -76,15 +76,6 @@ prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle
     route(event_, output);
 }
 
-////////////////////////////////////////
-// private members
-
-template <class Reader>
-prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::read()
-{
-    output(reader_(handle_));
-}
-
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
