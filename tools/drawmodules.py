@@ -48,7 +48,7 @@ for line in sys.stdin:
 
 for moduleid, (module, cs) in modules.iteritems():
     module = module.split('<',1)[0]
-    if module.rsplit('::',1)[-1] in NETEMU:
+    if module.rsplit('::',1)[-1] in NETEMU or module.startswith("senf::emu"):
         color = 5
     elif module.endswith("Source") or module.endswith("Sink"):
         color = 1
