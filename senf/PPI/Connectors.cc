@@ -80,7 +80,7 @@ senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::tra
 
 prefix_ void senf::ppi::connector::Connector::trace(Packet const & p, char const * label)
 {
-    if (traceState_ ==  NO_TRACING)
+    if (traceState_ == NO_TRACING)
         return;
     SENF_LOG_BLOCK(({
                 std::string type (prettyName(p.typeId().id()));
@@ -119,6 +119,7 @@ namespace {
 
     ConsoleRegister::ConsoleRegister()
     {
+#ifndef SENF_PPI_NOTRACE
         senf::ppi::ModuleManager::instance().consoleDir()
             .add("tracing", senf::console::factory::Command(
                      SENF_FNP(senf::ppi::connector::Connector::TraceState,
@@ -158,6 +159,7 @@ namespace {
                               (senf::ppi::connector::Connector::TraceState)))
                  .arg("state", "new tracing state")
                 );
+#endif
     }
 
     ConsoleRegister consoleRegister;
@@ -224,7 +226,7 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
         if (!nativeThrottled_)
             emitUnthrottle();
     } else
-        throttleTrace("OUT", "not forwarding unthrottle event");
+        SENF_PPI_THROTTLE_TRACE("OUT", "not forwarding unthrottle event");
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -241,7 +243,7 @@ prefix_ void senf::ppi::connector::ActiveConnector::v_init()
 
 prefix_ void senf::ppi::connector::ActiveConnector::notifyThrottle()
 {
-    throttleTrace("IN ", "throttle");
+    SENF_PPI_THROTTLE_TRACE("IN ", "throttle");
     if (! throttled_) {
         throttled_ = true;
         if (throttleCallback_)
@@ -255,7 +257,7 @@ prefix_ void senf::ppi::connector::ActiveConnector::notifyThrottle()
 
 prefix_ void senf::ppi::connector::ActiveConnector::notifyUnthrottle()
 {
-    throttleTrace("IN ", "unthrottle");
+    SENF_PPI_THROTTLE_TRACE("IN ", "unthrottle");
     if (throttled_) {
         throttled_ = false;
         if (unthrottleCallback_)
@@ -292,7 +294,7 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
         queue_.pop_back();
         v_dequeueEvent();
     }
-    trace(p, "IN ");
+    SENF_PPI_TRACE(p, "IN ");
     return p;
 }
 

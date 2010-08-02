@@ -28,7 +28,7 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ int senf::ConnectedCommunicationPolicy::accept(FileHandle handle)
+prefix_ int senf::ConnectedCommunicationPolicy::accept(FileHandle const & handle)
 {
     return do_accept(handle, 0, 0);
 }

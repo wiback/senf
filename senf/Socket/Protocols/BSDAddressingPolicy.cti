@@ -38,7 +38,7 @@
 template <class Address>
 template <class SPolicy>
 prefix_ void senf::BSDAddressingPolicyMixin<Address>::
-peer(SocketHandle<SPolicy> handle, Address & addr,
+peer(SocketHandle<SPolicy> const & handle, Address & addr,
      typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
     try {
@@ -52,7 +52,7 @@ peer(SocketHandle<SPolicy> handle, Address & addr,
 template <class Address>
 template <class SPolicy>
 prefix_ void senf::BSDAddressingPolicyMixin<Address>::
-peer(SocketHandle<SPolicy> handle, Address & addr)
+peer(SocketHandle<SPolicy> const & handle, Address & addr)
 {}
 #endif
 
@@ -60,7 +60,7 @@ peer(SocketHandle<SPolicy> handle, Address & addr)
 template <class Address>
 template <class SPolicy>
 prefix_ void senf::BSDAddressingPolicyMixin<Address>::
-connect(SocketHandle<SPolicy> handle, Address const & addr,
+connect(SocketHandle<SPolicy> const & handle, Address const & addr,
         typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
     try {
@@ -74,12 +74,12 @@ connect(SocketHandle<SPolicy> handle, Address const & addr,
 template <class Address>
 template <class SPolicy>
 prefix_ void senf::BSDAddressingPolicyMixin<Address>::
-connect(SocketHandle<SPolicy> handle, Address const & addr)
+connect(SocketHandle<SPolicy> const & handle, Address const & addr)
 {}
 #endif
 
 template <class Address>
-prefix_ void senf::BSDAddressingPolicyMixin<Address>::local(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::local(FileHandle const & handle,
                                                            Address & addr)
 {
     try {
@@ -92,7 +92,7 @@ prefix_ void senf::BSDAddressingPolicyMixin<Address>::local(FileHandle handle,
 }
 
 template <class Address>
-prefix_ void senf::BSDAddressingPolicyMixin<Address>::bind(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::bind(FileHandle const & handle,
                                                                  Address const & addr)
 {
     try {

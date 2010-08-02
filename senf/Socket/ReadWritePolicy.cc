@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned senf::ReadablePolicy::read(FileHandle handle, char * buffer,
+prefix_ unsigned senf::ReadablePolicy::read(FileHandle & handle, char * buffer,
                                                    unsigned size)
 {
     int rv = -1;
@@ -59,7 +59,7 @@ prefix_ unsigned senf::ReadablePolicy::read(FileHandle handle, char * buffer,
     return rv;
 }
 
-prefix_ unsigned senf::ReadablePolicy::do_readfrom(FileHandle handle, char * buffer,
+prefix_ unsigned senf::ReadablePolicy::do_readfrom(FileHandle & handle, char * buffer,
                                                           unsigned size,
                                                           struct ::sockaddr * addr, socklen_t * len)
 {
@@ -80,7 +80,7 @@ prefix_ unsigned senf::ReadablePolicy::do_readfrom(FileHandle handle, char * buf
     return rv;
 }
 
-prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle handle, char const * buffer,
+prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle & handle, char const * buffer,
                                                         unsigned size)
 {
     int rv = -1;
@@ -109,7 +109,7 @@ prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle handle, char const *
     return rv;
 }
 
-prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle handle,
+prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle & handle,
                                                           char const * buffer, unsigned size,
                                                           struct sockaddr const * addr, socklen_t len)
 {

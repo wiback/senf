@@ -59,7 +59,7 @@ senf::ppi::TargetDgramWriter<HandleType>::target(typename Handle::Address const 
 }
 
 template <class HandleType>
-prefix_ bool senf::ppi::TargetDgramWriter<HandleType>::operator()(Handle handle,
+prefix_ bool senf::ppi::TargetDgramWriter<HandleType>::operator()(Handle & handle,
                                                                   Packet const & packet)
 {
     if (target_)
@@ -84,7 +84,7 @@ senf::ppi::module::ActiveSocketSink<Writer>::handle()
 }
 
 template <class Writer>
-prefix_ void senf::ppi::module::ActiveSocketSink<Writer>::handle(Handle handle)
+prefix_ void senf::ppi::module::ActiveSocketSink<Writer>::handle(Handle const & handle)
 {
     handle_ = handle;
     event_.set(handle_, IOEvent::Write);
@@ -106,7 +106,7 @@ prefix_ typename Writer::Handle & senf::ppi::module::PassiveSocketSink<Writer>::
 }
 
 template <class Writer>
-prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::handle(Handle handle)
+prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::handle(Handle const & handle)
 {
     handle_ = handle;
     checkThrottle();

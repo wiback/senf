@@ -58,7 +58,7 @@ namespace ppi {
                                         ///< Handle type supported by this writer
         typedef Packet PacketType;
 
-        bool operator()(Handle handle, Packet const & packet);
+        bool operator()(Handle & handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -87,7 +87,7 @@ namespace ppi {
         typename Handle::Address target() const; ///< Get current target address
         void target(typename Handle::Address const & target); ///< Set target address
 
-        bool operator()(Handle handle, Packet const & packet); ///< Write \a packet to \a handle
+        bool operator()(Handle & handle, Packet const & packet); ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
                                              \param[in] handle Handle to write data to
@@ -113,7 +113,7 @@ namespace ppi {
         void destination(senf::INet4SocketAddress & dest);
         senf::INet4SocketAddress destination();
 
-        bool operator()(Handle handle, Packet const & packet);
+        bool operator()(Handle & handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -142,7 +142,7 @@ namespace ppi {
         void destination(senf::INet6SocketAddress & dest);
         senf::INet6SocketAddress destination();
 
-        bool operator()(Handle handle, Packet const & packet);
+        bool operator()(Handle & handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -210,11 +210,12 @@ namespace module {
                                              \pre Requires \a Writer to be copy constructible
                                              \param[in] writer Writer helper writing packet date to
                                                  the socket */
-        explicit ActiveSocketSink(Handle handle); ///< Create new writer for the given handle
+        explicit ActiveSocketSink(Handle const & handle);
+                                        ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be default constructible
                                              \param[in] handle Handle to write data to */
-        ActiveSocketSink(Handle handle, Writer const & writer);
+        ActiveSocketSink(Handle const & handle, Writer const & writer);
                                         ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be copy constructible
@@ -224,7 +225,8 @@ namespace module {
 
         Writer & writer();              ///< Access the Writer
         Handle handle();                ///< Access handle
-        void handle(Handle handle);     ///< Set handle
+        void handle(Handle const & handle);
+                                        ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new. valid handle is assigned. */
 
@@ -286,11 +288,12 @@ namespace module {
                                              \pre Requires \a Writer to be copy constructible
                                              \param[in] writer Writer helper writing packet date to
                                                  the socket */
-        explicit PassiveSocketSink(Handle handle); ///< Create new writer for the given handle
+        explicit PassiveSocketSink(Handle const & handle);
+                                        ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be default constructible
                                              \param[in] handle Handle to write data to */
-        PassiveSocketSink(Handle handle, Writer const & writer);
+        PassiveSocketSink(Handle const & handle, Writer const & writer);
                                         ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be copy constructible
@@ -300,7 +303,8 @@ namespace module {
 
         Writer & writer();              ///< Access the Writer
         Handle & handle();              ///< Access handle
-        void handle(Handle handle);     ///< Set handle
+        void handle(Handle const & handle);
+                                        ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new valid handle is assigned. */
 

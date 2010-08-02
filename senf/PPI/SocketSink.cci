@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::ConnectedDgramWriter
 
-prefix_ bool senf::ppi::ConnectedDgramWriter::operator()(Handle handle,
+prefix_ bool senf::ppi::ConnectedDgramWriter::operator()(Handle & handle,
                                                          Packet const & packet)
 {
     return handle.write(packet.data()) != packet.data().begin();

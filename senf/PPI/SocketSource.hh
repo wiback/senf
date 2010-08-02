@@ -59,7 +59,7 @@ namespace ppi {
                                     senf::DatagramFramingPolicy >::policy > Handle;
                                         ///< Handle type supported by this reader
 
-        Packet operator()(Handle handle);
+        Packet operator()(Handle & handle);
                                         ///< Read packet from \a handle
                                         /**< Read a datagram from \a handle and interpret is as
                                              packet of type \c Packet.
@@ -122,12 +122,13 @@ namespace module {
         explicit ActiveSocketSource(Reader reader); ///< Create non-connected reader
                                         /**< The reader will be disabled until a socket is set
                                              \pre Requires \a Reader to be copy constructible */
-        explicit ActiveSocketSource(Handle handle); ///< Create new reader for the given handle
+        explicit ActiveSocketSource(Handle const & handle);
+                                        ///< Create new reader for the given handle
                                         /**< Data will be read from \a handle and be parsed by \a
                                              Reader.
                                              \pre Requires \a Reader to be default constructible
                                              \param[in] handle Handle to read data from */
-        ActiveSocketSource(Handle handle, Reader reader);
+        ActiveSocketSource(Handle const & handle, Reader reader);
                                         ///< Create new reader for the given handle
                                         /**< Data will be read from \a handle and be parsed by \a
                                              Reader.
@@ -136,7 +137,8 @@ namespace module {
 
         Reader & reader();              ///< Access Reader helper
         Handle handle();                ///< Access handle
-        void handle(Handle handle);     ///< Set handle
+        void handle(Handle const & handle);
+                                        ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new, valid handle is assigned. */
     private:
@@ -162,12 +164,13 @@ namespace module {
 
         ActiveBurstSocketSource(unsigned max_burst);
         explicit ActiveBurstSocketSource(Reader reader, unsigned max_burst);
-        explicit ActiveBurstSocketSource(Handle handle, unsigned max_burst);
-        ActiveBurstSocketSource(Handle handle, Reader reader, unsigned max_burst);
+        explicit ActiveBurstSocketSource(Handle const & handle, unsigned max_burst);
+        ActiveBurstSocketSource(Handle const & handle, Reader reader, unsigned max_burst);
 
         Reader & reader();              ///< Access Reader helper
         Handle handle();                ///< Access handle
-        void handle(Handle handle);     ///< Set handle
+        void handle(Handle const & handle);
+                                        ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new, valid handle is assigned. */
 

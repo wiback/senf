@@ -50,10 +50,10 @@ namespace senf {
      */
     struct BSDAddressingPolicyMixinBase
     {
-        static void do_local(FileHandle handle, struct sockaddr * addr, socklen_t * len);
-        static void do_peer(FileHandle handle, struct sockaddr * addr, socklen_t * len);
-        static void do_bind(FileHandle handle, struct sockaddr const * addr, socklen_t len);
-        static void do_connect(FileHandle handle, struct sockaddr const * addr, socklen_t len);
+        static void do_local(FileHandle const & handle, struct sockaddr * addr, socklen_t * len);
+        static void do_peer(FileHandle const & handle, struct sockaddr * addr, socklen_t * len);
+        static void do_bind(FileHandle const & handle, struct sockaddr const * addr, socklen_t len);
+        static void do_connect(FileHandle const & handle, struct sockaddr const * addr, socklen_t len);
     };
 
     /** \brief Template for generic AddressingPolicy implementation based on the BSD socket API
@@ -86,11 +86,11 @@ namespace senf {
     {
 #       ifndef DOXYGEN
         template <class SPolicy>
-        static void peer(SocketHandle<SPolicy> handle, Address & addr,
+        static void peer(SocketHandle<SPolicy> const & handle, Address & addr,
                          typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static void peer(SocketHandle<SPolicy> handle, Address & addr);
+        static void peer(SocketHandle<SPolicy> const & handle, Address & addr);
                                         ///< Return address of remote peer on connected sockets
                                         /**< This member is only available if the socket handles
                                              communication policy is ConnectedCommunicationPolicy.
@@ -98,18 +98,18 @@ namespace senf {
                                              \param[in] handle socket handle to get peer address of
                                              \param[out] addr address of remote peer */
 #       endif
-        static void local(FileHandle handle, Address & addr);
+        static void local(FileHandle const & handle, Address & addr);
                                         ///< Return local of socket
                                         /**< \param[in] handle socket handle to check
                                              \param[out] addr local socket address */
 
 #       ifndef DOXYGEN
         template <class SPolicy>
-        static void connect(SocketHandle<SPolicy> handle, Address const & addr,
+        static void connect(SocketHandle<SPolicy> const & handle, Address const & addr,
                             typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static void connect(SocketHandle<SPolicy> handle, Address const & addr);
+        static void connect(SocketHandle<SPolicy> const & handle, Address const & addr);
                                         ///< Connect to remote host
                                         /**< This member is only available if the socket handles
                                              communication policy is ConnectedCommunicationPolicy.
@@ -118,7 +118,7 @@ namespace senf {
                                              \param[in] addr address of remote peer to connect
                                                  to */
 #       endif
-        static void bind(FileHandle handle, Address const & addr);
+        static void bind(FileHandle const & handle, Address const & addr);
                                         ///< Set local socket address
                                         /**< \param[in] handle socket handle
                                              \param[in] addr local socket address */

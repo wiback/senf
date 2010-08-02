@@ -146,11 +146,12 @@ namespace module {
         connector::PassiveInput<PacketType> input; ///< Input connector from which data is received
         console::ScopedDirectory<PassiveQueueingSocketSink<Writer> > dir;
 
-        explicit PassiveQueueingSocketSink(Handle handle, QueueingAlgorithm::ptr qAlgorithm);
+        explicit PassiveQueueingSocketSink(Handle const & handle, QueueingAlgorithm::ptr qAlgorithm);
 
         Writer & writer();              ///< Access the Writer
         Handle & handle();              ///< Access handle
-        void handle(Handle handle);     ///< Set handle
+        void handle(Handle const & handle);
+                                        ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new valid handle is assigned. */
         QueueingAlgorithm & qAlgorithm();

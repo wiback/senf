@@ -56,7 +56,7 @@ prefix_ senf::ppi::QueueingAlgorithm::ptr senf::ppi::detail::QueueingAlgorithmRe
 // senf::ppi::module::PassiveQueueingSocketSink<Writer>
 
 template <class Writer>
-prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSocketSink(Handle handle, QueueingAlgorithm::ptr qAlgorithm)
+prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSocketSink(Handle const & handle, QueueingAlgorithm::ptr qAlgorithm)
     : dir( this),
       handle_( handle), writer_( ),
       qAlgo_( qAlgorithm),
@@ -138,4 +138,4 @@ prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::setQAlgorithm
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// End:
+// End::

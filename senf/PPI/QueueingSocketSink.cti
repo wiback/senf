@@ -56,7 +56,7 @@ prefix_ typename Writer::Handle & senf::ppi::module::PassiveQueueingSocketSink<W
 }
 
 template <class Writer>
-prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::handle(Handle handle)
+prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::handle(Handle const & handle)
 {
     handle_ = handle;
     event_.set( handle_, IOEvent::Write);

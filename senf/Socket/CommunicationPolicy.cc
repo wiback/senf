@@ -37,13 +37,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::ConnectedCommunicationPolicy::do_listen(FileHandle handle,
+prefix_ void senf::ConnectedCommunicationPolicy::do_listen(FileHandle const & handle,
                                                            unsigned backlog)
 {
     ::listen(handle.fd(),backlog);
 }
 
-prefix_ int senf::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
+prefix_ int senf::ConnectedCommunicationPolicy::do_accept(FileHandle const & handle,
                                                           struct sockaddr * addr,
                                                           unsigned len)
 {

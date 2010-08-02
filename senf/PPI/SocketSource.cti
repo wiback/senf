@@ -47,7 +47,7 @@ senf::ppi::module::ActiveSocketSource<Reader>::handle()
 }
 
 template <class Reader>
-prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::handle(Handle handle)
+prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::handle(Handle const & handle)
 {
     handle_ = handle;
     event_.set(handle_, IOEvent::Read);
@@ -76,7 +76,7 @@ senf::ppi::module::ActiveBurstSocketSource<Reader>::handle()
 }
 
 template <class Reader>
-prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::handle(Handle handle)
+prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::handle(Handle const & handle)
 {
     handle_ = handle;
     event_.set(handle_, IOEvent::Read);

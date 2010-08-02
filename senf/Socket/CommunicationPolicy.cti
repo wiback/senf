@@ -34,7 +34,7 @@
 #ifndef DOXYGEN
 template <class SPolicy>
 prefix_ void senf::ConnectedCommunicationPolicy::
-listen(ServerSocketHandle<SPolicy> handle, unsigned backlog,
+listen(ServerSocketHandle<SPolicy> const & handle, unsigned backlog,
        typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type *)
 {
     do_listen(handle, backlog);
@@ -42,14 +42,14 @@ listen(ServerSocketHandle<SPolicy> handle, unsigned backlog,
 #else
 template <class SPolicy>
 prefix_ void senf::ConnectedCommunicationPolicy::
-listen(ServerSocketHandle<SPolicy> handle, unsigned backlog)
+listen(ServerSocketHandle<SPolicy> const & handle, unsigned backlog)
 {}
 #endif
 
 #ifndef DOXYGEN
 template <class SPolicy>
 prefix_ int senf::ConnectedCommunicationPolicy::
-accept(ServerSocketHandle<SPolicy> handle,
+accept(ServerSocketHandle<SPolicy> const & handle,
        typename ServerSocketHandle<SPolicy>::Address & address,
        typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type *)
 {
@@ -58,7 +58,7 @@ accept(ServerSocketHandle<SPolicy> handle,
 #else
 template <class SPolicy>
 prefix_ int senf::ConnectedCommunicationPolicy::
-accept(ServerSocketHandle<SPolicy> handle,
+accept(ServerSocketHandle<SPolicy> const & handle,
        typename ServerSocketHandle<SPolicy>::Address & address)
 {}
 #endif

@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::BSDAddressingPolicyMixinBase::do_local(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_local(FileHandle const & handle,
                                                                  struct sockaddr * addr,
                                                                  socklen_t * len)
 {
@@ -44,7 +44,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_local(FileHandle handle,
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
-prefix_ void senf::BSDAddressingPolicyMixinBase::do_peer(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_peer(FileHandle const & handle,
                                                                 struct sockaddr * addr,
                                                                 socklen_t * len)
 {
@@ -52,7 +52,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_peer(FileHandle handle,
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
-prefix_ void senf::BSDAddressingPolicyMixinBase::do_bind(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_bind(FileHandle const & handle,
                                                                 struct sockaddr const * addr,
                                                                 socklen_t len)
 {
@@ -60,7 +60,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_bind(FileHandle handle,
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
-prefix_ void senf::BSDAddressingPolicyMixinBase::do_connect(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_connect(FileHandle const & handle,
                                                                    struct sockaddr const * addr,
                                                                    socklen_t len)
 {

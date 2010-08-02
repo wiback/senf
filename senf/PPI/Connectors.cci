@@ -31,6 +31,14 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+#ifdef SENF_PPI_NOTRACE
+#   define SENF_PPI_THROTTLE_TRACE(label, type)
+#   define SENF_PPI_TRACE(packet, label)
+#else
+#   define SENF_PPI_THROTTLE_TRACE(label, type) throttleTrace(label, type)
+#   define SENF_PPI_TRACE(packet, label) trace(packet, label)
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::Connector
 
@@ -119,14 +127,14 @@ prefix_ bool senf::ppi::connector::PassiveConnector::throttled()
 
 prefix_ void senf::ppi::connector::PassiveConnector::emitThrottle()
 {
-    throttleTrace("OUT", "throttle");
+    SENF_PPI_THROTTLE_TRACE("OUT", "throttle");
     if (connected())
         peer().notifyThrottle();
 }
 
 prefix_ void senf::ppi::connector::PassiveConnector::emitUnthrottle()
 {
-    throttleTrace("OUT", "unthrottle");
+    SENF_PPI_THROTTLE_TRACE("OUT", "unthrottle");
     if (connected()) {
         peer().notifyUnthrottle();
         v_unthrottleEvent();
@@ -193,10 +201,11 @@ prefix_ void senf::ppi::connector::PassiveConnector::emit()
 {
     // No event callback has been registered (onRequest() call missing)
     SENF_ASSERT(callback_, "senf::ppi::connector::PassiveConnector: missing onRequest()");
-    if (!throttled())
+    if (!throttled()) {
         callback_();
-    else
-        throttleTrace("IN ", "queueing packet");
+    } else {
+        SENF_PPI_THROTTLE_TRACE("IN ", "queueing packet");
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -307,7 +316,7 @@ prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConne
 
 prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet const & p)
 {
-    trace(p, "OUT");
+    SENF_PPI_TRACE(p, "OUT");
     if (connected())
         peer().enqueue(p);
 }

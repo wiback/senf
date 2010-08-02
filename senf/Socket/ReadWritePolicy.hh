@@ -52,7 +52,7 @@ namespace senf {
      */
     struct ReadablePolicy : public ReadPolicyBase
     {
-        static unsigned read(FileHandle handle, char * buffer, unsigned size);
+        static unsigned read(FileHandle & handle, char * buffer, unsigned size);
                                         ///< read data from socket
                                         /**< \param[in] handle socket handle to read from
                                              \param[in] buffer address of buffer to write data to
@@ -60,13 +60,13 @@ namespace senf {
                                              \returns number of bytes read */
 #       ifndef DOXYGEN
         template <class SPolicy>
-        static unsigned readfrom(ClientSocketHandle<SPolicy> handle, char * buffer, unsigned size,
+        static unsigned readfrom(ClientSocketHandle<SPolicy> & handle, char * buffer, unsigned size,
                                  typename SPolicy::AddressingPolicy::Address & address,
                                  typename IfCommunicationPolicyIs<
                                      SPolicy,UnconnectedCommunicationPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static unsigned readfrom(ClientSocketHandle<SPolicy> handle, char * buffer, unsigned size,
+        static unsigned readfrom(ClientSocketHandle<SPolicy> & handle, char * buffer, unsigned size,
                                  typename Policy::AddressingPolicy::Address & address);
                                         ///< read data from socket returning peer address
                                         /**< \param[in] handle socket handle to read from
@@ -77,7 +77,7 @@ namespace senf {
 #       endif
 
     private:
-        static unsigned do_readfrom(FileHandle handle, char * buffer, unsigned size,
+        static unsigned do_readfrom(FileHandle & handle, char * buffer, unsigned size,
                                     struct ::sockaddr * addr, socklen_t * len);
     };
 
@@ -99,12 +99,12 @@ namespace senf {
     {
 #       ifndef DOXYGEN
         template <class SPolicy>
-        static unsigned write(ClientSocketHandle<SPolicy> handle, char const * buffer, unsigned size,
+        static unsigned write(ClientSocketHandle<SPolicy> & handle, char const * buffer, unsigned size,
                               typename IfCommunicationPolicyIs<
                                   SPolicy,ConnectedCommunicationPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static unsigned write(ClientSocketHandle<SPolicy> handle, char const * buffer,
+        static unsigned write(ClientSocketHandle<SPolicy> & handle, char const * buffer,
                               unsigned size);
                                         ///< write data to socket
                                         /**< This member is only enabled if the socket uses
@@ -119,7 +119,7 @@ namespace senf {
 #       endif
 #       ifndef DOXYGEN
         template <class SPolicy>
-        static unsigned writeto(ClientSocketHandle<SPolicy> handle,
+        static unsigned writeto(ClientSocketHandle<SPolicy> & handle,
                                 typename boost::call_traits<
                                     typename SPolicy::AddressingPolicy::Address>::param_type addr,
                                 char const * buffer, unsigned size,
@@ -127,7 +127,7 @@ namespace senf {
                                     SPolicy,UnconnectedCommunicationPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static unsigned writeto(ClientSocketHandle<SPolicy> handle,
+        static unsigned writeto(ClientSocketHandle<SPolicy> & handle,
                                 typename Policy::AddressingPolicy::Address const & addr,
                                 char const * buffer, unsigned size);
                                         ///< write data to socket sending to given peer
@@ -144,8 +144,8 @@ namespace senf {
 #       endif
 
     private:
-        static unsigned do_write(FileHandle handle, char const * buffer, unsigned size);
-        static unsigned do_writeto(FileHandle handle, char const * buffer, unsigned size,
+        static unsigned do_write(FileHandle & handle, char const * buffer, unsigned size);
+        static unsigned do_writeto(FileHandle & handle, char const * buffer, unsigned size,
                                    struct sockaddr const * addr, socklen_t len);
     };
 

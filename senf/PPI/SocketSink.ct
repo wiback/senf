@@ -49,7 +49,7 @@ prefix_ senf::ppi::module::ActiveSocketSink<Writer>::ActiveSocketSink(Writer con
 }
 
 template <class Writer>
-prefix_ senf::ppi::module::ActiveSocketSink<Writer>::ActiveSocketSink(Handle handle)
+prefix_ senf::ppi::module::ActiveSocketSink<Writer>::ActiveSocketSink(Handle const &  handle)
     : handle_(handle), event_(handle_, IOEvent::Write), writer_()
 {
     registerEvent( event_, &ActiveSocketSink::write );
@@ -57,7 +57,7 @@ prefix_ senf::ppi::module::ActiveSocketSink<Writer>::ActiveSocketSink(Handle han
 }
 
 template <class Writer>
-prefix_ senf::ppi::module::ActiveSocketSink<Writer>::ActiveSocketSink(Handle handle,
+prefix_ senf::ppi::module::ActiveSocketSink<Writer>::ActiveSocketSink(Handle const & handle,
                                                                     Writer const & writer)
     : handle_(handle), event_(handle_, IOEvent::Write), writer_(writer)
 {
@@ -95,7 +95,7 @@ prefix_ senf::ppi::module::PassiveSocketSink<Writer>::PassiveSocketSink(Writer c
 }
 
 template <class Writer>
-prefix_ senf::ppi::module::PassiveSocketSink<Writer>::PassiveSocketSink(Handle handle)
+prefix_ senf::ppi::module::PassiveSocketSink<Writer>::PassiveSocketSink(Handle const & handle)
     : handle_(handle), writer_()
 {
     noroute(input);
@@ -104,7 +104,7 @@ prefix_ senf::ppi::module::PassiveSocketSink<Writer>::PassiveSocketSink(Handle h
 }
 
 template <class Writer>
-prefix_ senf::ppi::module::PassiveSocketSink<Writer>::PassiveSocketSink(Handle handle,
+prefix_ senf::ppi::module::PassiveSocketSink<Writer>::PassiveSocketSink(Handle const & handle,
                                                                       Writer const & writer)
     : handle_(handle), writer_(writer)
 {

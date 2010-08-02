@@ -34,7 +34,7 @@
 // senf::ppi::DgramReader<Packet,MaxSize>
 
 template <class Packet, unsigned MaxSize>
-prefix_ Packet senf::ppi::DgramReader<Packet,MaxSize>::operator()(Handle handle)
+prefix_ Packet senf::ppi::DgramReader<Packet,MaxSize>::operator()(Handle & handle)
 {
     Packet packet (Packet::create(senf::noinit));
     handle.read(packet.data(), MaxSize);
@@ -60,7 +60,7 @@ prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Reader
 }
 
 template <class Reader>
-prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle handle)
+prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle const & handle)
     : handle_(handle), event_(handle_, IOEvent::Read)
 {
     registerEvent( event_, &ActiveSocketSource::read );
@@ -68,7 +68,7 @@ prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle
 }
 
 template <class Reader>
-prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle handle,
+prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle const & handle,
                                                                           Reader reader)
     : handle_(handle), event_(handle_, IOEvent::Read), reader_(reader)
 {
@@ -96,7 +96,7 @@ prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSou
 }
 
 template <class Reader>
-prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(Handle handle, unsigned max_burst)
+prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(Handle const & handle, unsigned max_burst)
     : handle_(handle), event_(handle_, IOEvent::Read), maxBurst_(max_burst)
 {
     registerEvent( event_, &ActiveBurstSocketSource::read );
@@ -104,7 +104,7 @@ prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSou
 }
 
 template <class Reader>
-prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(Handle handle,
+prefix_ senf::ppi::module::ActiveBurstSocketSource<Reader>::ActiveBurstSocketSource(Handle const & handle,
                                                                           Reader reader, unsigned max_burst)
     : handle_(handle), event_(handle_, IOEvent::Read), reader_(reader), maxBurst_(max_burst)
 {

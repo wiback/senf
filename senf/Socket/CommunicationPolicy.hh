@@ -53,11 +53,11 @@ namespace senf {
     {
 #       ifndef DOXYGEN
         template <class SPolicy>
-        static void listen(ServerSocketHandle<SPolicy> handle, unsigned backlog,
+        static void listen(ServerSocketHandle<SPolicy> const & handle, unsigned backlog,
                            typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static void listen(ServerSocketHandle<SPolicy> handle, unsigned backlog);
+        static void listen(ServerSocketHandle<SPolicy> const & handle, unsigned backlog);
                                         ///< Enable establishing new connections on the socket
                                         /**< \param[in] handle socket handle to enable reception on
                                              \param[in] backlog size of backlog queue */
@@ -65,12 +65,12 @@ namespace senf {
 
 #       ifndef DOXYGEN
         template <class SPolicy>
-        static int accept(ServerSocketHandle<SPolicy> handle,
+        static int accept(ServerSocketHandle<SPolicy> const & handle,
                           typename ServerSocketHandle<SPolicy>::Address & address,
                           typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type * = 0);
 #       else
         template <class SPolicy>
-        static int accept(ServerSocketHandle<SPolicy> handle,
+        static int accept(ServerSocketHandle<SPolicy> const & handle,
                           typename ServerSocketHandle<SPolicy>::Address & address);
                                         ///< accept a new connection on the socket.
                                         /**< The accept() member will return a new client file
@@ -84,7 +84,7 @@ namespace senf {
                                              \returns file descriptor of new client socket */
 #       endif
 
-        static int accept(FileHandle handle);
+        static int accept(FileHandle const & handle);
                                         ///< accept a new connection on the socket.
                                         /**< The accept() member will return a new client file
                                              descriptor. This file descriptor will be used by the
@@ -95,8 +95,8 @@ namespace senf {
                                              \returns file descriptor of new client socket */
 
     private:
-        static void do_listen(FileHandle handle, unsigned backlog);
-        static int do_accept(FileHandle handle, struct sockaddr * addr, unsigned len);
+        static void do_listen(FileHandle const & handle, unsigned backlog);
+        static int do_accept(FileHandle const & handle, struct sockaddr * addr, unsigned len);
     };
 
     /** \brief CommunicationPolicy for unconnected sockets
