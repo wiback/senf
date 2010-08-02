@@ -124,17 +124,13 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
 prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
 {
     return eui64.isMACCompatible()
-        && eui64[0] == mac[0]
-        && eui64[1] == mac[1]
-        && eui64[2] == mac[2]
-        && eui64[5] == mac[3]
-        && eui64[6] == mac[4]
-        && eui64[7] == mac[5];
+        && std::equal(eui64.begin(), eui64.begin()+3, mac.begin())
+        && std::equal(eui64.begin()+5, eui64.begin()+8, mac.begin()+3);
 }
 
 prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
 {
-    return mac==eui64;
+    return mac == eui64;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////
