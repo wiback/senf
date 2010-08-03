@@ -37,7 +37,7 @@
 // conversion constructors
 
 template <class PacketType>
-prefix_ senf::Packet::Packet(ConcretePacket<PacketType> packet)
+prefix_ senf::Packet::Packet(ConcretePacket<PacketType> const & packet)
     : packet_(packet.ptr())
 {}
 
@@ -312,7 +312,7 @@ senf::ConcretePacket<PacketType>::operator->()
 // private members
 
 template <class PacketType>
-prefix_ senf::ConcretePacket<PacketType>::ConcretePacket(typename interpreter::ptr packet_)
+prefix_ senf::ConcretePacket<PacketType>::ConcretePacket(typename interpreter::ptr const & packet_)
     : Packet(packet_)
 {}
 

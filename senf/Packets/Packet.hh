@@ -171,7 +171,8 @@ namespace senf {
         // conversion constructors
 
         template <class PacketType>
-        Packet(ConcretePacket<PacketType> packet); ///< Copy-construct Packet from ConcretePacket
+        Packet(ConcretePacket<PacketType> const & packet);
+                                        ///< Copy-construct Packet from ConcretePacket
                                         /**< This constructor allows to convert an arbitrary
                                              ConcretePacket into a general Packet, loosing the
                                              protocol specific interface. */
@@ -489,9 +490,9 @@ namespace senf {
         ///@}
 
     protected:
-        explicit Packet(PacketInterpreterBase::ptr packet);
+        explicit Packet(PacketInterpreterBase::ptr const & packet);
 
-        PacketInterpreterBase::ptr ptr() const;
+        PacketInterpreterBase::ptr const & ptr() const;
 
     private:
         Packet checkNext() const;
@@ -752,7 +753,7 @@ namespace senf {
     private:
         typedef PacketInterpreter<PacketType> interpreter;
 
-        ConcretePacket(typename interpreter::ptr packet_);
+        ConcretePacket(typename interpreter::ptr const & packet_);
 
         typename interpreter::ptr ptr() const;
 

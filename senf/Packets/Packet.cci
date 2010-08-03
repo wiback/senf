@@ -34,11 +34,11 @@
 
 // protected members
 
-prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr packet)
+prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr const & packet)
     : packet_(packet)
 {}
 
-prefix_ senf::PacketInterpreterBase::ptr senf::Packet::ptr()
+prefix_ senf::PacketInterpreterBase::ptr const & senf::Packet::ptr()
     const
 {
     SENF_ASSERT(packet_, "Invalid operation (dereferencing) on in-valid() Packet");

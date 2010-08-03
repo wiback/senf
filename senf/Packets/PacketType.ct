@@ -35,13 +35,13 @@
 
 template <class Self>
 prefix_ senf::PacketInterpreterBase::optional_range
-senf::PacketTypeMixin<Self,void>::nextPacketRange(Packet const & p)
+senf::PacketTypeMixin<Self,void>::nextPacketRange(ConcretePacket<Self> const & p)
 {
     typename Self::size_type sz (Self::initHeadSize());
     ///\idea This if condition could be replaced with a compile time switch by checking, wether
     /// (the function address) Self::initHeadSize is different from PacketTypeBase::initHeadSize
     if (sz == PacketTypeBase::size_type(-1)) {
-        typename Self::size_type headsz (bytes(p.as< ConcretePacket<Self> >().parser()));
+        typename Self::size_type headsz (bytes(p.parser()));
         return p.data().size() < headsz ?
             PacketTypeBase::no_range() :
             PacketInterpreterBase::optional_range(

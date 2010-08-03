@@ -333,10 +333,10 @@ namespace senf {
         ///\name PacketType interface implementation
         ///@{
 
-        static PacketInterpreterBase::optional_range nextPacketRange (Packet const & p);
-        static PacketInterpreterBase::factory_t      nextPacketType  (Packet const & p);
+        static PacketInterpreterBase::optional_range nextPacketRange (ConcretePacket<Self> const & p);
+        static PacketInterpreterBase::factory_t      nextPacketType  (ConcretePacket<Self> const & p);
         static PacketInterpreterBase::size_type      initSize        ();
-        static void                                  init            (Packet const & p);
+        static void                                  init            (ConcretePacket<Self> const & p);
 
         ///@}
     };
@@ -347,9 +347,9 @@ namespace senf {
     class PacketTypeMixin<Self,void>
     {
     public:
-        static PacketInterpreterBase::optional_range nextPacketRange (Packet const & p);
+        static PacketInterpreterBase::optional_range nextPacketRange (ConcretePacket<Self> const & p);
         static PacketInterpreterBase::size_type      initSize        ();
-        static void                                  init            (Packet const & p);
+        static void                                  init            (ConcretePacket<Self> const & p);
     };
 
 #   endif

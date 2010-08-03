@@ -296,7 +296,7 @@ namespace senf {
             senf::safe_data_iterator safe_i_;
             mutable PacketParserBase const * parser_;
 
-            ParserProtector( PacketParserBase const * parser);
+            ParserProtector(PacketParserBase const * parser);
             ParserProtector(ParserProtector const & other_);
             ~ParserProtector();
         };
