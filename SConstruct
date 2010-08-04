@@ -104,7 +104,7 @@ env.Append(
    CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
    expandLogOption        = senfutil.expandLogOption,
    CPPDEFINES_            = senfutil.BuildTypeOptions('CPPDEFINES'),
-   CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE'],
+   CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'BOOST_NO_MT' ],
    CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
    CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
 
