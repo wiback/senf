@@ -131,6 +131,10 @@ env.SetDefault(
     FLAVOR            = '',
 )
 
+env.Replace(
+    _defines          = senfutil.expandDefines
+)
+
 # Set variables from command line
 senfutil.parseArguments(
     env,
