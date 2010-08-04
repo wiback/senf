@@ -59,12 +59,12 @@ prefix_ senf::detail::AnnotationP::~AnnotationP()
 //
 // * The PacketImpl destructor will *explicitly* clean-up the interpreters_ list by removing
 //   each element from the list and deleting it if it's (intrusive) refcount is 0
-// * The PacketInterpreters use safe hooks -> they know wether they are part of a list or not
+// * The PacketInterpreters use safe hooks -> they know whether they are part of a list or not
 // * PacketHandle has an intrusive_ptr to PacketInterpreterBase. The intrusive_ptr_add_ref
 //   will refcount both the PacketImpl as well as the PacketInterpreterBase
 // * intrusive_ptr_remove will only delete the object if it's not in a container
 // * removing an object from the list will decrement the PacketImpl refcount accordingly
-// * inserting an object into the list will incroment the PacketImpl refcount accordingly
+// * inserting an object into the list will increment the PacketImpl refcount accordingly
 // * each PacketInterpreterBase instance holds a *raw* pointer to the PacketImpl
 //
 // The following operations change refcounts:
@@ -89,7 +89,7 @@ prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
     : refcount_(0), data_(size,initValue), annotations_(AnnotationIndexerBase::maxAnnotations)
 {}
 
-// rerference/memory management
+// reference/memory management
 
 prefix_ void senf::detail::PacketImpl::add_ref(refcount_t n)
 {
@@ -209,7 +209,7 @@ prefix_ void senf::detail::PacketImpl::release(refcount_t n)
     SENF_ASSERT(refcount_ >= n, "Internal failure: Releasing dead PacketImpl ??");
     // uah ... we need to be extremely careful here. If refcount_ is n, we want to commit suicide,
     // however the destructor will remove all PacketInterpreters from the list and will thereby
-    // decrement refcount -> only decrenebt refcount_ when *not* caling delete
+    // decrement refcount -> only decrement refcount_ when *not* calling delete
     if (refcount_ == n)
         delete this;
     else

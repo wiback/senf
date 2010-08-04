@@ -125,7 +125,7 @@ prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
 {
     return eui64.isMACCompatible()
         && std::equal(eui64.begin(), eui64.begin()+3, mac.begin())
-        && std::equal(eui64.begin()+5, eui64.begin()+8, mac.begin()+3);
+        && std::equal(eui64.begin()+5, eui64.end(), mac.begin()+3);
 }
 
 prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)

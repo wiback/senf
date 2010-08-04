@@ -288,14 +288,16 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
 {
     if (empty())
         v_requestEvent();
-    Packet p;
     if (! empty()) {
-        p = peek();
+        Packet p ( queue_.back());
         queue_.pop_back();
         v_dequeueEvent();
+        SENF_PPI_TRACE(p, "IN ");
+        return p;
+    } else {
+        SENF_PPI_TRACE(Packet(), "IN ");
+        return Packet();
     }
-    SENF_PPI_TRACE(p, "IN ");
-    return p;
 }
 
 ////////////////////////////////////////
