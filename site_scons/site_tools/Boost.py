@@ -36,7 +36,8 @@ def CompileCheck(target, source, env):
     passedTests = {}
     delay_name = None
     out.seek(0)
-    for error in out.read().splitlines():
+    result = out.read();
+    for error in result.splitlines():
         elts = error.split(':',2)
         if len(elts) != 3 : continue
         filename, line, message = elts
@@ -71,7 +72,7 @@ def CompileCheck(target, source, env):
         if os.path.exists(target[0].abspath):
             os.unlink(target[0].abspath)
         return 1
-    file(target[0].abspath,"w").close()
+    file(target[0].abspath,"w").write(result)
     return 0
 
 CompileCheck = SCons.Script.Action(CompileCheck)
