@@ -58,6 +58,7 @@ namespace ppi {
         virtual ~QueueingDiscipline();
 
         enum Event { ENQUEUE, DEQUEUE }; ///< Possible queueing events
+        enum None_t { NONE };            ///< Type to disable the queueing discipline
 
         virtual void update(connector::GenericPassiveInput & input, Event event) = 0;
                                         ///< Calculate new queueing state

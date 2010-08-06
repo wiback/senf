@@ -76,17 +76,6 @@ prefix_ senf::ppi::connector::Connector::Connector()
     : peer_(), module_()
 {}
 
-prefix_ senf::ppi::connector::Connector::~Connector()
-{
-    if (connected()) {
-        Connector & peer (*peer_);
-        peer_->peer_ = 0;
-        if (! peer.initializationScheduled())
-            peer.enqueueInitializable();
-        peer.v_disconnected();
-    }
-}
-
 prefix_ bool senf::ppi::connector::Connector::connected()
     const
 {
@@ -149,18 +138,6 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyThrottle()
     }
     else
         remoteThrottled_ = true;
-}
-
-prefix_ void senf::ppi::connector::PassiveConnector::registerRoute(ForwardingRoute & route)
-{
-    routes_.push_back(&route);
-}
-
-prefix_ void senf::ppi::connector::PassiveConnector::unregisterRoute(ForwardingRoute & route)
-{
-    Routes::iterator i (std::find(routes_.begin(), routes_.end(), &route));
-    if (i != routes_.end())
-        routes_.erase(i);
 }
 
 // public members

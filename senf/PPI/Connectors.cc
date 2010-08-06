@@ -39,6 +39,17 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::Connector
 
+prefix_ senf::ppi::connector::Connector::~Connector()
+{
+    if (connected()) {
+        Connector & peer (*peer_);
+        peer_->peer_ = 0;
+        if (! peer.initializationScheduled())
+            peer.enqueueInitializable();
+        peer.v_disconnected();
+    }
+}
+
 prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 {
     // The connector is not registered -> route() or noroute() statement missing
@@ -215,6 +226,18 @@ prefix_ void senf::ppi::connector::PassiveConnector::v_init()
         emitUnthrottle();
 }
 
+prefix_ void senf::ppi::connector::PassiveConnector::registerRoute(ForwardingRoute & route)
+{
+    routes_.push_back(&route);
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::unregisterRoute(ForwardingRoute & route)
+{
+    Routes::iterator i (std::find(routes_.begin(), routes_.end(), &route));
+    if (i != routes_.end())
+        routes_.erase(i);
+}
+
 prefix_ void senf::ppi::connector::PassiveConnector::v_unthrottleEvent()
 {}
 
@@ -332,12 +355,19 @@ prefix_ void senf::ppi::connector::GenericActiveInput::v_requestEvent()
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_enqueueEvent()
 {
     emit();
-    qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
+    if (qdisc_)
+        qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
 }
 
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_dequeueEvent()
 {
-    qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
+    if (qdisc_)
+        qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
+}
+
+prefix_ void senf::ppi::connector::GenericPassiveInput::qdisc(QueueingDiscipline::None_t)
+{
+    qdisc_.reset( 0);
 }
 
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_unthrottleEvent()

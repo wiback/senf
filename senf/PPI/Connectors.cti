@@ -63,51 +63,6 @@ prefix_ void senf::ppi::connector::detail::TypedOutputMixin<Self,PacketType>::wr
     static_cast<Self*>(this)->OutputConnector::write(p);
 }
 
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::PassiveConnector
-
-prefix_ senf::ppi::connector::PassiveConnector::~PassiveConnector()
-{
-    // Must be here and NOT in base so it is called before destructing the routes_ member
-    unregisterConnector();
-}
-
-template <class Handler>
-prefix_ void senf::ppi::connector::PassiveConnector::onRequest(Handler handler)
-{
-    callback_ = ppi::detail::Callback<>::make(handler, module());
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::ActiveConnector
-
-prefix_ senf::ppi::connector::ActiveConnector::~ActiveConnector()
-{
-    // Must be here and NOT in base so it is called before destructing the routes_ member
-    unregisterConnector();
-}
-
-template <class Handler>
-prefix_ void senf::ppi::connector::ActiveConnector::onThrottle(Handler handler)
-{
-    throttleCallback_ = ppi::detail::Callback<>::make(handler, module());
-}
-
-template <class Handler>
-prefix_ void senf::ppi::connector::ActiveConnector::onUnthrottle(Handler handler)
-{
-    unthrottleCallback_ = ppi::detail::Callback<>::make(handler, module());
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::GenericPassiveInput
-
-template <class QDisc>
-prefix_ void senf::ppi::connector::GenericPassiveInput::qdisc(QDisc const & disc)
-{
-    qdisc_.reset(new QDisc(disc));
-}
-
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

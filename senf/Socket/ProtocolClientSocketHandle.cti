@@ -63,7 +63,7 @@ prefix_ SocketProtocol &
 senf::ProtocolClientSocketHandle<SocketProtocol>::protocol()
 {
     SENF_ASSERT( dynamic_cast<SocketProtocol *>(&this->body().protocol()),
-                 "Internal failure: Incompatible protocol class fount it's way into this handle");
+                 "Internal failure: Incompatible protocol class found it's way into this handle");
     // Need dynamic_cast here, since senf::SocketProtocol is a
     // virtual base
     return dynamic_cast<SocketProtocol &>(this->body().protocol());

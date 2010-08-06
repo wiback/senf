@@ -463,6 +463,9 @@ namespace connector {
                                              QueueingDiscipline interface.
 
                                              \param[in] disc New queueing discipline */
+        void qdisc(QueueingDiscipline::None_t);
+                                        ///< Disable queueing discipline
+
 
     protected:
         GenericPassiveInput();
@@ -658,7 +661,7 @@ namespace connector {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Connectors.cci"
-//#include "Connectors.ct"
+#include "Connectors.ct"
 #include "Connectors.cti"
 #endif
 

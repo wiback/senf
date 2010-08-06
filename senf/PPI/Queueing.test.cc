@@ -69,7 +69,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(thresholdQueueing)
+SENF_AUTO_UNIT_TEST(PPI_Queueing)
 {
     debug::ActiveSource source;
     QueueTester tester;
@@ -80,18 +80,36 @@ SENF_AUTO_UNIT_TEST(thresholdQueueing)
     ppi::init();
 
     senf::Packet p (senf::DataPacket::create());
-    BOOST_CHECK( source );
-    source.submit(p);
-    BOOST_CHECK( source );
-    source.submit(p);
-    BOOST_CHECK( ! source );
-    BOOST_CHECK_EQUAL( tester.input.queueSize(), 2u );
-    tester.forward();
-    BOOST_CHECK_EQUAL( tester.input.queueSize(), 1u );
-    BOOST_CHECK( source );
-    tester.forward();
-    BOOST_CHECK_EQUAL( tester.input.queueSize(), 0u );
-    BOOST_CHECK( source );
+    {
+        BOOST_CHECK( source );
+        source.submit(p);
+        BOOST_CHECK( source );
+        source.submit(p);
+        BOOST_CHECK( ! source );
+        BOOST_CHECK_EQUAL( tester.input.queueSize(), 2u );
+        tester.forward();
+        BOOST_CHECK_EQUAL( tester.input.queueSize(), 1u );
+        BOOST_CHECK( source );
+        tester.forward();
+        BOOST_CHECK_EQUAL( tester.input.queueSize(), 0u );
+        BOOST_CHECK( source );
+        BOOST_CHECK_EQUAL( sink.size(), 2u);
+        sink.clear();
+    }
+    {
+        tester.input.qdisc(ppi::QueueingDiscipline::NONE);
+        BOOST_CHECK( source );
+        source.submit(p);
+        BOOST_CHECK( source );
+        source.submit(p);
+        BOOST_CHECK( source );
+        BOOST_CHECK_EQUAL( tester.input.queueSize(), 2u );
+        tester.forward();
+        tester.forward();
+        BOOST_CHECK( source );
+        BOOST_CHECK_EQUAL( tester.input.queueSize(), 0u );
+        BOOST_CHECK_EQUAL( sink.size(), 2u);
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
