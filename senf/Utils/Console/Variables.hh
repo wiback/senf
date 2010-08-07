@@ -44,10 +44,8 @@ namespace console {
 
 namespace factory {
 
-    /** \brief Variable command attributes (const)
+#ifndef DOXYGEN
 
-        \see VariableFactory
-     */
     template <class Variable>
     class ConstVariableFactory
         : public detail::NodeFactory
@@ -72,7 +70,9 @@ namespace factory {
         boost::optional<std::string> shortdoc_;
     };
 
-    /** \brief Variable command attributes
+#endif
+
+    /** \brief Variable node factory
 
         Variable commands allow to register any arbitrary variable as a command node. The variable
         will be registered as two command overloads: One which takes a single argument of the
@@ -94,17 +94,24 @@ namespace factory {
         variable.
 
         It is also possible, to register a variable read-only. To achieve this, just wrap it with \c
-        boost::cref(). Such a variable cannot be changed only queried. Therefore, it does not have
-        the parser() and typeName() attributes.
+        boost::cref(). Such a variable only queried. Therefore, it does not have the parser() and
+        typeName() attributes.
         \code
             dir.add("const_var", fty::Variable(boost::cref(var)));
         \endcode
 
-        \ingroup console_commands
+        \note Even though the interface is documented as a class, in reality it is implemented using
+            factory functions returning instances of an internal factory class.
+
+        \see \ref console_variables
      */
+#ifdef DOXYGEN
+    class Variable
+#else
     template <class Variable>
     class VariableFactory
         : public ConstVariableFactory<Variable>
+#endif
     {
     public:
         typedef typename detail::SetVariable<Variable>::Traits::Overload SetOverload;
@@ -147,16 +154,20 @@ namespace factory {
                                                  void handler(Variable const & oldValue);
                                              \endcode */
 
-        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
-
-        explicit VariableFactory(Variable & var);
+        explicit VariableFactory(Variable & var); ///< Create Variable node
 
     protected:
 
     private:
+        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
+
         typename SetOverload::ptr setOverload_;
         Variable & var_;
+
+        friend class senf::console::DirectoryNode;
     };
+
+#ifndef DOXYGEN
 
     template <class Var>
     VariableFactory<Var> Variable(Var & var);
@@ -169,6 +180,8 @@ namespace factory {
 
     template <class Var>
     ConstVariableFactory<Var> Variable(boost::reference_wrapper<Var const> var);
+
+#endif
 
 }}}
 

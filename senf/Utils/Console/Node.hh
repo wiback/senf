@@ -674,10 +674,49 @@ namespace console {
 
     DirectoryNode & provideDirectory(DirectoryNode & dir, std::string const & name);
 
-#ifndef DOXYGEN
+/** \brief Console node factories
 
+    The senf::console::factory namespace (customarily aliased to \c fty in user code) contains
+    factories used to create new node types:
+    \code
+    namespace fty = senf::console::factory;
+
+    senf::console::DirectoryNode & dir (node.add("dirname", fty::Directory()));
+
+    dir.add("name", fty::Command<void(bool)>(&fn)
+                .arg("flag")
+                .doc("documentation"));
+    \endcode
+
+    The node is added by passing the factory instance to senf::console::DirectoryNode::add().
+
+    To further customize the node, you may call attributor members on the temporary factory class
+    instance. Since the attributor members always return a self-reference to the factory class
+    instance, attributor calls may be chained arbitrarily.
+
+    \see
+        \ref console_commands for details on the command nodes \n
+        \ref node_tree for details on the structural nodes (directory, link)
+
+    \note All factories are documented here as classes when in fact some are functions returning
+        internal classes.
+
+    \implementation It is not true, that all attributor members return a self reference. Some
+        attributor members will return a new object of slightly different type. However, the
+        behavior is as documented above.
+
+    \ingroup console_commands
+ */
 namespace factory {
 
+    /** \brief SimpleCommandNode factory
+
+        This factory will create a SimpleCommandNode calling the given callback. A SimpleCommandNode
+        does not support overloading or automatic argument parsing.
+
+        \attention This class is of interest mostly for testing and as a simple CommandNode
+        example. Use senf::console::factory::Command instead.
+     */
     class SimpleCommand
         : public detail::NodeFactory
     {
@@ -687,15 +726,32 @@ namespace factory {
 
         explicit SimpleCommand(SimpleCommandNode::Function fn);
 
-        SimpleCommandNode & create(DirectoryNode & dir, std::string const & name) const;
-
         SimpleCommand const & doc(std::string const & doc) const;
+                                        ///< Set simple command documentation
         SimpleCommand const & shortdoc(std::string const & doc) const;
+                                        ///< Set simple command short documentation
 
     private:
+        SimpleCommandNode & create(DirectoryNode & dir, std::string const & name) const;
+
         SimpleCommandNode::ptr node_;
+
+        friend class senf::console::DirectoryNode;
     };
 
+    /** \brief DirectoryNode factory
+
+        This factory will create new directory nodes. Use
+
+        \code
+        namespace fty = senf::console::factory;
+        node.add("mydir", fty::Directory())
+        \endcode
+
+        To add a directory \a mydir to \a node.
+
+        \see \ref node_tree
+     */
     class Directory
         : public detail::NodeFactory
     {
@@ -705,15 +761,32 @@ namespace factory {
 
         Directory();
 
-        DirectoryNode & create(DirectoryNode & dir, std::string const & name) const;
-
         Directory const & doc(std::string const & doc) const;
+                                        ///< Set directory documentation
         Directory const & shortdoc(std::string const & doc) const;
+                                        ///< Set directory short documentation
 
     private:
+        DirectoryNode & create(DirectoryNode & dir, std::string const & name) const;
+
         DirectoryNode::ptr node_;
+
+        friend class senf::console::DirectoryNode;
     };
 
+    /** \brief LinkNode factory
+
+        This factory will create new link nodes. Use
+
+        \code
+        namespace fty = senf::console::factory;
+        node.add("mylink", fty::Link(targetNode))
+        \endcode
+
+        To add a link \a mylink to \a node pointing to \a targetNode
+
+        \see \ref node_tree
+     */
     class Link
         : public detail::NodeFactory
     {
@@ -723,15 +796,15 @@ namespace factory {
 
         explicit Link(GenericNode & target);
 
+    private:
         LinkNode & create(DirectoryNode & dir, std::string const & name) const;
 
-    private:
         LinkNode::ptr node_;
+
+        friend class senf::console::DirectoryNode;
     };
 
 }
-
-#endif
 
 }}
 

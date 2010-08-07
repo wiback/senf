@@ -389,9 +389,8 @@ namespace connector {
                                              dequeue a packet from the packet queue. If the
                                              connector is active, the connector will request new
                                              packets from the connected module. If the packet
-                                             request cannot be fulfilled, this is considered to be a
-                                             logic error in the module implementation and an
-                                             exception is raised. */
+                                             request cannot be fulfilled an in-valid Packet is
+                                             returned. */
 
         Packet read();                  ///< Alias for operator()()
 

@@ -177,10 +177,6 @@ namespace console {
     {
     public:
         typedef boost::intrusive_ptr<ParsedCommandOverload> ptr;
-
-#ifdef DOXYGEN
-        static ptr create(Function fn);
-#endif
     };
 
 #ifndef DOXYGEN
@@ -210,8 +206,6 @@ namespace console {
         typedef OverloadedCommandNode node_type;
         typedef OverloadedCommandNode & result_type;
 
-        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
-
     protected:
         ParsedCommandAttributorBase(ParsedCommandOverloadBase::ptr overload, unsigned index);
         ParsedCommandAttributorBase(ParsedCommandAttributorBase const & other, unsigned index);
@@ -227,10 +221,14 @@ namespace console {
         void shortDoc(std::string const & doc);
 
     private:
+        OverloadedCommandNode & create(DirectoryNode & dir, std::string const & name) const;
+
         ParsedCommandOverloadBase::ptr overload_;
         unsigned index_;
         boost::optional<std::string> doc_;
         boost::optional<std::string> shortdoc_;
+
+        friend class senf::console::DirectoryNode;
     };
 
     /** \brief Non argument dependent ParsedCommandBase attributes
@@ -577,6 +575,67 @@ namespace console {
 
 namespace factory {
 
+#ifdef DOXYGEN
+
+    /** \brief OverloadedCommandNode factory
+
+        This factory will create new OverloadedCommandNode instances <em>or add new overloads</em>
+        to an existing OverloadedCommandNode. The factory supports automatic argument parsing.
+
+        Commands are added to the tree using
+        \code
+        namespace fty = senf::console::factory;
+        node.add("name", fty::Command(function));
+        \endcode
+
+        The Command factory supports the following features:
+        \li Automatic argument parsing
+        \li Automatic binding of member functions. Pass the owning instance as second argument to
+            the factory
+        \li Conversion to a compatible signature. Pass the signature as template argument to the
+            factory
+
+        If the signature of the command added matches
+        \code
+        void (std::ostream &, senf::console::ParsedCommandInfo const &)
+        \endcode
+        The command is added using manual argument parsing, otherwise it is added using automatic
+        argument parsing.
+
+        See the <a href="classsenf_1_1console_1_1factory_1_1Command-members.html">List of all
+        members</a> for additional attributes.
+
+        \note This class is for exposition only, the real interface consists of several overloaded
+            factory functions.
+
+        \see \ref console_manualparse \n
+            \ref console_autoparse
+     */
+    class Command : public ParsedArgumentAttributor
+    {
+    public:
+        typedef OverloadedCommandNode node_type;
+        typedef unspecified result_type;
+
+        Command(unspecified fn);        ///< Create a node calling \a fn
+        template <class Signature>
+        Command(unspecified fn);        ///< Create a node calling \a fn with signature \a Signature
+                                        /**< The given \a Signature must be compatible with \a fn
+                                             for each argument and the return value. */
+
+        Command(member_function_pointer fn, Owner const * owner);
+                                        ///< Create a node calling member function \a fn on \a owner
+        template <class Signature>
+        Command(member_function_pointer fn, Owner const * owner);
+                                        ///< Create a node calling member function \a fn on \a owner
+                                        ///  with the given \a Signature
+                                        /**< The given \a Signature must be compatible with \a fn
+                                             for each argument and the return value. */
+
+    };
+
+#else
+
     template <class Signature>
     SimpleOverloadAttributor
     Command(boost::function<Signature> fn,
@@ -639,6 +698,7 @@ namespace factory {
     Command(Member memfn, Owner const * owner,
             typename boost::enable_if<boost::is_member_function_pointer<Member> >::type * = 0);
 
+#endif
 
 }}}
 

@@ -5,6 +5,7 @@ do_html_cleanup()
     sed -e 's/id="current"/class="current"/' \
 	| tidy -ascii -q --wrap 0 --show-warnings no --fix-uri no \
 	| sed -e 's/name="\([^"]*\)"\([^>]*\) id="\1"/name="\1"\2/g' \
+              -e 's/id="\([^"]*\)"\([^>]*\) name="\1"/name="\1"\2/g' \
 	| xsltproc --novalid --nonet --html --stringparam topdir "$reltopdir" \
 	      "$base/html-munge.xsl" -
 }
