@@ -276,9 +276,19 @@
     Options can be abbreviated at each directory boundary: A command <tt>/foo/bar/do</tt> can be
     called as <tt>--f-b-d</tt> as long as this name is unique.
 
-    Everything after the first '=' character is parsed into argument tokens using the normal
-    config/console parser. If the option has no '=' character, the list of argument tokens will be
-    empty.
+    Everything after the first '=' character is passed as arguments to the command. The exact
+    interpretation depends on the command:
+    \li If the command only takes a single token as argument (e.g. a single string or numeric
+        value), everything after the '=' sign is parsed into a single token (e.g. see rows 2 and 3
+        of the following table).
+    \li In all other cases, the string after the '=' sign is parsed into argument tokens using the
+        config/console parser. In this case, quoted strings need to be quoted twice, once for the
+        shell and once for the config/console parser (e.g. see rows 4 and 5 of the following table).
+    \li If the option has no '=' character, the list of argument tokens will be empty (e.g. see row
+        1 of the following table)
+
+    Without these rules, multi-word string arguments would \e always have to be quoted twice (for
+    the shell and the config/console parser).
 
     <table style="font-size:80%" class="senf">
     <tr><th>Command</th><th>File syntax</th><th>Option syntax</th></tr>
@@ -297,8 +307,8 @@
 
     <tr>
       <td><tt>void doo(std::string const &)</tt></td>
-      <td><tt>/path/to/doo "some test";</tt></td>
-      <td><tt>--path-to-doo='"some text"'</tt></td>
+      <td><tt>/path/to/doo "some text";</tt></td>
+      <td><tt>--path-to-doo="some text"</tt></td>
     </tr>
 
     <tr>
@@ -306,10 +316,13 @@
       <td><tt>/path/to/doo take 1;</tt></td>
       <td><tt>--path-to-doo="take 1"</tt></td>
     </tr>
-    </table>
 
-    The last column is additionally quoted using standard \c sh quoting: quotes in arguments need to
-    be additionally quoted for the shell.
+    <tr>
+      <td><tt>void doo(std::string const &, int)</tt></td>
+      <td><tt>/path/to/doo "take two" 1;</tt></td>
+      <td><tt>--path-to-doo='"take two" 1'</tt></td>
+    </tr>
+    </table>
 
     Short options are registered as aliases for long options. They can be registered with or without
     an implied parameter and can optionally take a parameter. so after
@@ -333,7 +346,7 @@
     $ program --mycommand="2 3" --mycommand="4 5"
     </pre>
 
-    (Beware, that the second argument to \c alias() is \e not shell quoted).
+    (Beware, that the second argument to \c alias() must \e not be shell quoted).
 
 
     \subsection console_access_root Changing the root node
@@ -1443,4 +1456,3 @@
 // compile-command: "scons -u test"
 // mode: auto-fill
 // End:
-
