@@ -106,8 +106,8 @@ namespace {
     typedef BarPacketType::packet BarPacket;
 
     namespace reg {
-        senf::PacketRegistry<RegTag>::RegistrationProxy<FooPacket> registerFoo(1u);
-        senf::PacketRegistry<RegTag>::RegistrationProxy<BarPacket> registerBar(2u);
+        senf::PacketRegistry<RegTag>::ScopedRegistrationProxy<FooPacket> registerFoo(1u);
+        senf::PacketRegistry<RegTag>::ScopedRegistrationProxy<BarPacket> registerBar(2u);
     }
 
     struct IntAnnotation {

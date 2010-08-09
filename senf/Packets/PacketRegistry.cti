@@ -31,19 +31,19 @@
 ///////////////////////////////PacketRegistry..p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>
+// senf::PacketRegistry<Tag>::ScopedRegistrationProxy<PacketType>
 
 template <class Tag>
 template <class PacketType>
-prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>::
-RegistrationProxy(typename Tag::key_t key, int priority)
+prefix_ senf::PacketRegistry<Tag>::ScopedRegistrationProxy<PacketType>::
+ScopedRegistrationProxy(typename Tag::key_t key, int priority)
 {
     PacketRegistry<Tag>::template registerPacket<PacketType>(key,priority);
 }
 
 template <class Tag>
 template <class PacketType>
-prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>::~RegistrationProxy()
+prefix_ senf::PacketRegistry<Tag>::ScopedRegistrationProxy<PacketType>::~ScopedRegistrationProxy()
 {
     try {
         PacketRegistry<Tag>::template unregisterPacket<PacketType>();

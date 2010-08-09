@@ -97,7 +97,7 @@ namespace senf {
             directly, define a symbol in the following way:
             \code
             namespace {
-                senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>
+                senf::PacketRegistry<Tag>::ScopedRegistrationProxy<PacketType>
                     registerPacketType (key, optional_priority);
             }
             \endcode
@@ -110,10 +110,10 @@ namespace senf {
             of \c registerPacketType ends.
          */
         template <class PacketType>
-        struct RegistrationProxy
+        struct ScopedRegistrationProxy
         {
-            RegistrationProxy(typename Tag::key_t key, int priority=0);
-            ~RegistrationProxy();
+            ScopedRegistrationProxy(typename Tag::key_t key, int priority=0);
+            ~ScopedRegistrationProxy();
         };
 
         /** \brief Register new packet type
@@ -233,7 +233,7 @@ namespace senf {
      */
 #   define SENF_PACKET_REGISTRY_REGISTER( registry, value, type )       \
         namespace {                                                     \
-            senf::PacketRegistry< registry >::RegistrationProxy< type > \
+            senf::PacketRegistry< registry >::ScopedRegistrationProxy< type > \
             BOOST_PP_CAT(packetRegistration_, __LINE__) ( value );      \
         }
 
@@ -247,7 +247,7 @@ namespace senf {
      */
 #   define SENF_PACKET_REGISTRY_REGISTER_PRIORITY( registry, value, priority, type ) \
         namespace {                                                     \
-            senf::PacketRegistry< registry >::RegistrationProxy< type > \
+            senf::PacketRegistry< registry >::ScopedRegistrationProxy< type > \
             BOOST_PP_CAT(packetRegistration_, __LINE__) ( value, priority ); \
         }
 

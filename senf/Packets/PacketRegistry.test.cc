@@ -72,7 +72,7 @@ SENF_AUTO_UNIT_TEST(packetRegistry_test)
     {
         PacketRegistry<StringTag>::registerPacket<BarPacket>("bar");
         PacketRegistry<BaseTag>::registerPacket<FooPacket>(1u);
-        senf::PacketRegistry<BaseTag>::RegistrationProxy<BarPacket> registerBarInBase (2u);
+        senf::PacketRegistry<BaseTag>::ScopedRegistrationProxy<BarPacket> registerBarInBase (2u);
 
         BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<FooPacket>(), 1u );
         BOOST_CHECK_EQUAL( PacketRegistry<BaseTag>::key<BarPacket>(), 2u );
