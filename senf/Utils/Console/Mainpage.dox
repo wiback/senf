@@ -137,7 +137,8 @@
 
 
     \section intro_commands Implementing console/config commands
-    \seechapter \ref console_commands
+    \seechapter \ref console_commands \n
+    \seechapter \ref senf::console::factory
 
     The console/config language does not define, how arguments are passed to the commands, it just
     tokenizes the input and passes the tokens to the commands which then handle the
@@ -610,15 +611,16 @@
     Depending on the object added, you can also bind to a more specific node type
     (e.g. senf::console::SimpleCommand) if you know the type of node returned.
 
-    Depending on the type of object added, there are additional attributes which can be set. These
-    attributes are always set by calling them on the factory return value. It is \e not guaranteed,
-    you can call these members on the node reference returned by the \c add() call.
+    Nodes are always added using a factory from the senf::console::factory namespace. The factory
+    has additional (type specific) attributes. These attributes are set by calling member functions
+    called 'attributors' on the temporary factory instance. It is \e not guaranteed, you can call
+    these members on the node reference returned by the \c add() call.
     \code
     namespace fty = senf::console::factory;
-    dir.add("name", fty::Command(callback)
-        .doc("The documentation") );
+    dir.add("name", fty::Command(callback) .doc("The documentation") );
     \endcode
     sets the \e doc attribute (if that is available, otherwise this will fail to compile).
+    \see senf::console::factory for a list of all node factories.
 
 
     \section console_manualparse Manually parsing command arguments

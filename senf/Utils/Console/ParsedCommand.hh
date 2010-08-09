@@ -311,6 +311,8 @@ namespace console {
         \endhtmlonly
 
         \see \ref senf::console::ParsedArgumentAttributor::arg()
+
+        \ingroup console_commands
      */
     namespace kw {
         BOOST_PARAMETER_KEYWORD(type, name) ///< Argument name
