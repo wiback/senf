@@ -70,6 +70,8 @@ prefix_ senf::log::Target::Target(std::string const & name)
                   "    LEVEL   match messages with level above this. Log levels in increasing order\n"
                   "            are:\n"
                   "                verbose, notice, message, important, critical, fatal\n"
+                  "            If the log level is listed as 'default', the streams default limit\n"
+                  "            applies.\n"
                   "    ACTION  action to take: accept or reject") );
     consoleDir_()
         .add("route", fty::Command(&Target::consoleRoute, this)
@@ -88,9 +90,10 @@ prefix_ senf::log::Target::Target(std::string const & name)
                   "Examples:\n"
                   "\n"
                   "    route ()\n"
-                  "        route all messages to this target.\n"
+                  "        route all messages with level above each streams default log limit to this\n"
+                  "        target.\n"
                   "\n"
-                  "    route 1 (my::Class)\n"
+                  "    route 1 (my::Class VERBOSE)\n"
                   "        route all messages which are in the my::Class area. Insert this route after\n"
                   "        the first route,\n"
                   "\n"
@@ -114,7 +117,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
     consoleDir_()
         .add("unroute", fty::Command(&Target::consoleUnroute, this)
              .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
-                  "              and log level. You may specify any combination of these parameterse\n"
+                  "              and log level. You may specify any combination of these parameters\n"
                   "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
                   "              to list all valid streams and areas. Valid log levels are:\n"
                   "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
@@ -325,12 +328,16 @@ namespace {
             return l.substr(l.size()-29);
         return l;
     }
+
+    char const * levelNames[] = {
+        "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
+
+    char const * levelNamesList[] = {
+        "default", "verbose", "notice", "message", "important", "critical", "fatal", "disabled" };
 }
 
 prefix_ void senf::log::Target::consoleList(std::ostream & os)
 {
-    static char const * levels[] = {
-        "verbose", "verbose", "notice", "message", "important", "critical", "fatal", "disabled" };
 
     boost::format fmt ("%2d %-29s %-29s %-9s %-6s\n");
     os << fmt % "#" % "STREAM" % "AREA" % "LEVEL" % "ACTION";
@@ -340,7 +347,7 @@ prefix_ void senf::log::Target::consoleList(std::ostream & os)
             % n
             % formatLabel(i->stream())
             % formatLabel(i->area())
-            % levels[i->level()]
+            % levelNamesList[i->level()]
             % (i->action() == ACCEPT ? "accept" : "reject");
 }
 
@@ -406,7 +413,7 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
              .doc("List all areas") );
     consoleDir_()
         .add("streams", fty::Command(&TargetRegistry::consoleStreams, this)
-             .doc("List all streams") );
+             .doc("List all streams with the streams default runtime log level limit.") );
     consoleDir_()
         .add("message", fty::Command(&TargetRegistry::consoleWrite, this)
              .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
@@ -455,8 +462,10 @@ prefix_ void senf::log::detail::TargetRegistry::consoleStreams(std::ostream & os
 {
     StreamRegistry::iterator i (StreamRegistry::instance().begin());
     StreamRegistry::iterator const i_end (StreamRegistry::instance().end());
-    for (; i != i_end; ++i)
-        os << *i << "\n";
+    for (; i != i_end; ++i) {
+        os << *i << " "
+           << levelNames[StreamRegistry::instance().lookup(*i)->defaultRuntimeLimit()] << "\n";
+    }
 }
 
 prefix_ void senf::log::detail::TargetRegistry::consoleWrite(LogParameters pm,
@@ -513,9 +522,6 @@ prefix_ std::ostream & senf::log::operator<<(std::ostream & os, senf::log::Targe
 }
 
 namespace {
-
-    char const * levelNames[] = {
-        "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
 
     void parseParamToken(std::string const & value, senf::log::detail::LogParameters & out)
     {
