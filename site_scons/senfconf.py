@@ -9,6 +9,7 @@ def Tests():
 def Test(func):
     global _configTests
     _configTests[func.__name__] = func
+    return func
 
 # class TemporaryContext:
 #     def __init__(self, context):
