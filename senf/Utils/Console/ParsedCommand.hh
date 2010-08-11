@@ -258,7 +258,7 @@ namespace console {
     /** \brief Keyword argument tags
 
         The tags defined in this namespace are used as keyword arguments via the <a
-        href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
+        href="http://www.boost.org/doc/libs/release/libs/parameter/doc/html/index.html">Boost.Parameter</a>
         library.
 
         For the keyword tags, the standard C++ scoping rules apply
@@ -487,7 +487,7 @@ namespace console {
                                         /**< This member changes the attributes for the current
                                              argument. The attributes are passed to arg() as keyword
                                              arguments using the <a
-                                             href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
+                                             href="http://www.boost.org/doc/libs/release/libs/parameter/doc/html/index.html">Boost.Parameter</a>
                                              library.
                                              \code
                                              ...

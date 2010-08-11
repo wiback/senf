@@ -139,9 +139,10 @@
     The senf::scheduler::FdEvent constructor takes several arguments:
     \li a string describing the event.
     \li the callback to call whenever the event occurs.  The callback is specified as a <a
-        href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object. We use the \c
-        senf::membind helper from the Utils library to build such a function object. This helper
-        takes an arbitrary class member and binds it to a specific instance.
+        href="http://www.boost.org/doc/libs/release/doc/html/function.html">Boost.Function</a>
+        object. We use the \c senf::membind helper from the Utils library to build such a
+        function object. This helper takes an arbitrary class member and binds it to a specific 
+        instance.
     \li the handle or file descriptor to monitor.
     \li and the events to watch for.
 

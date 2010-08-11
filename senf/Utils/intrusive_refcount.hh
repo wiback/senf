@@ -73,7 +73,7 @@ namespace senf {
     /** \brief Customizable reference count mixin for intrusive_ptr
 
         This class provides a simple internally managed refcount and supplies the <a
-        href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a>
+        href="http://www.boost.org/doc/libs/release/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a>
         required interface. To make a class compatible with \c boost::intrusive_ptr, just derive
         publicly from intrusive_refcount_t.
 
@@ -127,7 +127,7 @@ namespace senf {
     /** \brief Reference count mixin for intrusive_ptr
 
         This class provides a simple internally managed refcount and supplies the <a
-        href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a>
+        href="http://www.boost.org/doc/libs/release/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a>
         required interface. To make a class compatible with \c boost::intrusive_ptr, just derive
         publicly from intrusive_refcount.
 

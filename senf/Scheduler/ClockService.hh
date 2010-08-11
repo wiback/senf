@@ -83,13 +83,15 @@ namespace senf {
 
         /** \brief Absolute time data type
 
-            Boost.DateTime datatype used to represent absolute date/time values.
+            <a href="www.boost.org/doc/libs/release/libs/date_time/index.html">Boost.DateTime</a>
+            datatype used to represent absolute date/time values.
          */
         typedef boost::posix_time::ptime abstime_type;
 
         /** \brief Relative time data type
 
-            Boost.DateTime datatype used to represent time intervals
+            <a href="www.boost.org/doc/libs/release/libs/date_time/index.html">Boost.DateTime</a>
+            datatype used to represent time intervals
          */
         typedef boost::posix_time::time_duration reltime_type;
 
@@ -99,7 +101,8 @@ namespace senf {
 
         static abstime_type abstime(clock_type clock); ///< Convert clock to absolute time
                                         /**< This member converts a clock value into an absolute
-                                             Boost.DateTime value.
+                                             <a href="www.boost.org/doc/libs/release/libs/date_time/index.html">Boost.DateTime</a>
+                                             value.
                                              \note You should not base timeout calculations on this
                                                  absolute time value. Clock time is guaranteed to be
                                                  monotonous, absolute time may be non-monotonous if
@@ -107,7 +110,8 @@ namespace senf {
 
         static reltime_type reltime(clock_type clock); ///< Convert clock to relative time
                                         /**< This member converts a clock value into a relative
-                                             Boost.DateTime time interval
+                                             <a href="www.boost.org/doc/libs/release/libs/date_time/index.html">Boost.DateTime</a>
+                                             time interval
                                              \note The resolution of reltime_type might be smaller
                                                  than the clock_type resolution */
 

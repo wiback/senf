@@ -53,6 +53,7 @@ prefix_ void senf::ppi::module::PassiveJoin::connectorSetup(connector::PassiveIn
 {
     noroute(conn);
     conn.onRequest(boost::bind(&PassiveJoin::request,this,boost::ref(conn)));
+    conn.qdisc( QueueingDiscipline::NONE);
 }
 
 prefix_ void senf::ppi::module::PassiveJoin::onThrottle()

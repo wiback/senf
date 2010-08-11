@@ -170,7 +170,7 @@ namespace senf {
 
             \tparam PacketType packet of which the key is requested
             \returns key of the packet wrapped in a <a
-                href="http://www.boost.org/libs/optional/doc/optional.html">boost::optional</a> or
+                href="http://www.boost.org/doc/libs/release/libs/optional/index.html">boost::optional</a> or
                 an unbound optional, if the key is not found.
          */
         template <class PacketType>
@@ -192,7 +192,7 @@ namespace senf {
 
             \param packet The packet of which the key is requested
             \returns key of the packet wrapped in a <a
-                href="http://www.boost.org/libs/optional/doc/optional.html">boost::optional</a> or
+                href="http://www.boost.org/doc/libs/release/libs/optional/index.html">boost::optional</a> or
                 an unbound optional, if the key is not found.
          */
         static typename boost::optional<typename Tag::key_t> key(Packet const & packet, NoThrow_t);

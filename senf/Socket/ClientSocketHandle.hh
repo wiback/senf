@@ -98,7 +98,7 @@ namespace senf {
         /// 'Best' type for passing address as parameter
         /** Depending on the type of \c Address, this will be either <tt>Address</tt> or <tt>Address
             const &</tt>. See <a
-            href="http://www.boost.org/libs/utility/call_traits.htm">call_traits documentation in
+            href="http://www.boost.org/doc/libs/release/libs/utility/call_traits.htm">call_traits documentation in
             the Boost.Utility library.</a>
          */
         typedef typename boost::call_traits<Address>::param_type AddressParam;
@@ -195,7 +195,7 @@ namespace senf {
                                              \returns past-the-end iterator pointer to after the
                                                  last read character
                                              \see \ref read() \n
-                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
+                                                  <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a> */
 #       endif
 #       ifndef DOXYGEN
         template <class ForwardWritableRange>
@@ -209,7 +209,7 @@ namespace senf {
                                         ///< Read data into range
                                         /**< \see read(ForwardWritableRange const &) \n
                                                   read() \n
-                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
+                                                  <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>  */
 #       endif
         template <class Sequence>
         void         read         (Sequence & container, unsigned limit);
@@ -266,14 +266,14 @@ namespace senf {
                                              \returns past-the-end iterator pointer to after the
                                                  last read character
                                              \see \ref readfrom() \n
-                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
+                                                  <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>  */
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
                      readfrom     (ForwardWritableRange & range, Address & from);
                                         ///< Read data into range
                                         /**< \see readfrom(ForwardWritableRange const&,Address&) \n
                                                   readfrom()  \n
-                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
+                                                  <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a> */
         template <class Sequence>
         void         readfrom     (Sequence & container, Address & from, unsigned limit);
                                         ///< Read data into container
@@ -328,7 +328,7 @@ namespace senf {
                                              \param[in] end past-the-end pointer to area to write
                                              \returns past-the-end pointer after last byte written
                                              \see \ref write() \n
-                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
+                                                  <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>  */
 
         /** \brief Write data to unconnected socket
 
@@ -358,7 +358,7 @@ namespace senf {
                                              \param[in] end past-the-end pointer after data to write
                                              \returns past-the-end iterator after last byte written
                                              \see \ref writeto() \n
-                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
+                                                  <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>  */
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Addressing

@@ -31,21 +31,21 @@ namespace senf {
 
     <table class="listing">
     <tr><td>\ref membind</td><td>a simple <a
-    href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a> extension</td></tr>
+    href="http://www.boost.org/doc/libs/release/libs/bind/bind.html">Boost.Bind</a> extension</td></tr>
 
     <tr><td>\ref senfmpl</td><td>Some simple tools which help to solve common meta-programming
     tasks</td></tr>
 
     <tr><td>\ref senfpp</td><td>Extensions to the <a
-    href="http://www.boost.org/doc/libs/1_33_1/libs/preprocessor/doc/index.html">Boost.Preprocessor</a>
+    href="http://www.boost.org/doc/libs/release/libs/preprocessor/doc/index.html">Boost.Preprocessor</a>
     library</td></tr>
 
     <tr><td>\ref typetraits</td><td>Extensions to the <a
-    href="http://www.boost.org/doc/libs/1_33_1/doc/html/boost_typetraits.html">Boost.TypeTraits</a>
+    href="http://www.boost.org/doc/libs/release/libs/type_traits/index.html">Boost.TypeTraits</a>
     library</td></tr>
 
     <tr><td>\ref boost_parameter</td><td>Utilities concerning the <a
-    href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
+    href="http://www.boost.org/doc/libs/release/libs/parameter/doc/html/index.html">Boost.Parameter</a>
     library</td></tr>
 
     <tr><td>\ref phoenix_helpers</td><td>Phoenix functors</td></tr>
@@ -56,7 +56,7 @@ namespace senf {
 
     <table class="listing">
     <tr><td>\ref intrusive_refcount</td><td>mixin to simplify writing classes for use with <a
-    href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a></td></tr>
+    href="http://www.boost.org/doc/libs/release/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a></td></tr>
 
     <tr><td>\ref safe_bool</td><td>a mixin class to provide a really safe replacement for
     <tt>operator bool</tt>

@@ -105,12 +105,12 @@ namespace senf {
     \section sched_handlers Specifying handlers
 
     All handlers are specified as generic <a
-    href="http://www.boost.org/doc/html/function.html">Boost.Function</a> objects. This allows to
-    pass any callable as a handler. Depending on the type of handler, some additional arguments may
-    be passed to the handler by the %scheduler.
+    href="http://www.boost.org/doc/libs/release/libs/functional/index.html">Boost.Function</a>
+    objects. This allows to pass any callable as a handler. Depending on the type of handler,
+    some additional arguments may be passed to the handler by the %scheduler.
 
     If you need to pass additional information to your handler, use <a
-    href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a>:
+    href="http://www.boost.org/doc/libs/release/libs/bind/bind.html">Boost.Bind</a>:
     \code
     // Handle callback function
     void callback(UDPv4ClientSocketHandle handle, senf::Scheduler::EventId event) {..}
@@ -125,7 +125,7 @@ namespace senf {
     \endcode
 
     To use member-functions as callbacks, use either <a
-    href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a> or senf::membind()
+    href="http://www.boost.org/doc/libs/release/libs/bind/bind.html">Boost.Bind</a> or senf::membind()
     \code
     // e.g. in Foo::Foo() constructor:
     Foo::Foo()
@@ -194,7 +194,7 @@ namespace senf {
     container API. The only difference is, that all elements added to the container \e must be
     created via \c new and that the pointer containers themselves are \e not copyable (ok, they are,
     if the elements are cloneable ...). See <a
-    href="http://www.boost.org/doc/libs/1_36_0/libs/ptr_container/doc/ptr_container.html">Boost.PointerContainer</a>
+    href="http://www.boost.org/doc/libs/release/libs/ptr_container/doc/ptr_container.html">Boost.PointerContainer</a>
     for the pointer container library reference.
 
 

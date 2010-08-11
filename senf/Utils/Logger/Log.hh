@@ -42,8 +42,8 @@
     The logging library provides several commands to create %log messages. All these macro commands
     take a variable number of arguments. Since this is not supported in a usable way by the C++
     preprocessor, the arguments are encoded into a <a
-    href="http://www.boost.org/libs/preprocessor/doc/index.html">Boost.Preprocessor</a> like
-    sequence:
+    href="http://www.boost.org/doc/libs/release/libs/preprocessor/doc/index.html">Boost.Preprocessor</a>
+    like sequence:
 
     \code
     SENF_LOG( (senf::log::Debug)(senf::log::NOTICE)(FroblizerArea)("The log message") );

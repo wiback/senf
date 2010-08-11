@@ -55,7 +55,7 @@ namespace senf {
         parameter is set up by connecting the Statistics instance with an arbitrary statistics
         source.
 
-        %Statistics sources are <a href="http://www.boost.org/doc/libs/1_37_0/doc/html/signals.html">
+        %Statistics sources are <a href="http://www.boost.org/doc/libs/release/doc/html/signals.html">
         Boost Signals</a> which are emitted periodically to provide new data.
      */
 

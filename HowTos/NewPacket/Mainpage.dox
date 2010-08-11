@@ -561,8 +561,8 @@
     Here we are using the more generic parser assignment expressed using the \c << operator. This
     operator in the most cases works like an ordinary assignment, however it can also be used to
     assign parsers to each other efficiently and it supports 'optional values' (as provided by <a
-    href="http://www.boost.org/libs/optional/doc/optional.html">Boost.Optional</a> and as returned
-    by \c key()).
+    href="http://www.boost.org/doc/libs/release/libs/optional/index.html">Boost.Optional</a> and 
+    as returned by \c key()).
 
 
     \subsection howto_newpacket_type_dump Writing out a complete packet: The 'dump()' member

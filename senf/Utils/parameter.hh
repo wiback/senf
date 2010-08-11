@@ -26,7 +26,7 @@
 /** \defgroup boost_parameter Boost.Parameter utilities
 
     Here we define some utilities for the <a
-    href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
+    href="http://www.boost.org/doc/libs/release/libs/parameter/doc/html/index.html">Boost.Parameter</a>
     library.
  */
 

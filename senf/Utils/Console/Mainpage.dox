@@ -683,7 +683,7 @@
     \endhtmlonly
 
     As you can see above, the arguments and tokens are returned as <a
-    href="http://www.boost.org/doc/libs/1_33_1/libs/range/doc/utility_class.html#iter_range">
+    href="http://www.boost.org/doc/libs/release/libs/range/doc/html/range/reference/utilities/iterator_range.html">
     boost::iterator_range</a> instances. These behave much like containers: They have \c begin() and
     \c end() and some other useful members.
 

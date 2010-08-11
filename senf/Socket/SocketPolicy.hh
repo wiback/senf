@@ -206,14 +206,14 @@
 
     The \c connect member in this example will only be enabled, it the communication policy of the
     socket handle is ConnectedCommunicationPolicy (or a derived type). See <a
-    href="http://www.boost.org/libs/utility/enable_if.html">Boost.Enable_If</a> for a discussion of
-    the third argument (\c senf::ConnectedCommunicationPolicyIs is based on the \c boost::enable_if
-    template).
+    href="http://www.boost.org/doc/libs/release/libs/utility/enable_if.html">Boost.Enable_If</a>
+    for a discussion of the third argument (\c senf::ConnectedCommunicationPolicyIs is based on
+    the \c boost::enable_if template).
 
     \see \ref extend_policy \n
-         <a href="http://www.boost.org/libs/utility/enable_if.html">The Boost enable_if utility</a> \n
-         <a href="http://www.boost.org/libs/mpl/doc/index.html">The Boost.MPL library</a> \n
-         <a href="http://www.boost.org/libs/preprocessor/doc/index.html">The Boost.Preprocessor library</a>
+         <a href="http://www.boost.org/doc/libs/release/libs/utility/enable_if.html">The Boost enable_if utility</a> \n
+         <a href="http://www.boost.org/doc/libs/release/libs/mpl/doc/index.html">The Boost.MPL library</a> \n
+         <a href="http://www.boost.org/doc/libs/release/libs/preprocessor/doc/index.html">The Boost.Preprocessor library</a>
 
     \idea We could combine all the \e Axis \c Is templates into a single template. Since the \e
     trait argument will automatically specify the axis to be used, it is not necessary to specify
@@ -414,9 +414,9 @@ namespace senf {
     /** \brief Enable template overload depending on policy value
 
         This template is an example of the \c If \e Axis \c Is family of templates. It is used like
-        <a href="http://www.boost.org/libs/utility/enable_if.html">Boost.enable_if</a> to enable a
-        templated overload only, if the AddressingPolicy of \e Axis is compatible with \c Trait
-        (that is the AddressingPolicy of \c Policy is derived from \c Trait).
+        <a href="http://www.boost.org/doc/libs/release/libs/utility/enable_if.html">Boost.enable_if</a>
+        to enable a templated overload only, if the AddressingPolicy of \e Axis is compatible with
+        \c Trait (that is the AddressingPolicy of \c Policy is derived from \c Trait).
 
         \see policy_group
      */
@@ -509,7 +509,7 @@ namespace senf {
         SocketHandle with policy \c Base).
 
         The metafunction will return true (that is inherits from \c boost::true_type, see the <a
-        href="http://www.boost.org/libs/mpl/doc/index.html">Boost.MPL</a> library documentation for
+        href="http://www.boost.org/doc/libs/release/libs/mpl/doc/index.html">Boost.MPL</a> library documentation for
         more information) if each policy class in \c Base is a baseclass of (or the same as) the
         corresponding policy class in \c Derived.
 

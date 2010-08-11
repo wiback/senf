@@ -611,7 +611,7 @@ namespace senf {
                                              into the packet representation. The data will \e not be
                                              validated in any way.
 
-                                             \param[in] range <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>
+                                             \param[in] range <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>
                                                  of data to construct packet from. */
 #endif
 
@@ -673,7 +673,7 @@ namespace senf {
                                              header/interpreter after \a packet in that packets
                                              interpreter chain.
                                              \param[in] packet Packet to append new packet to.
-                                             \param[in] range <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>
+                                             \param[in] range <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>
                                                  of data to construct packet from. */
 #endif
 

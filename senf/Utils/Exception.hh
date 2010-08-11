@@ -59,7 +59,7 @@
 
     This will add the user information to any %senf exception thrown. The Exception is however not a
     stream. If you need to do more extensive formating, either use an intermediate string-stream or
-    use <a href="http://www.boost.org/libs/format/doc/format.html">Boost.Format</a>:
+    use <a href="http://www.boost.org/doc/libs/release/libs/format/index.html">Boost.Format</a>:
 
     \code
     try {

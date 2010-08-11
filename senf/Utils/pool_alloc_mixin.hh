@@ -40,7 +40,7 @@ namespace senf {
 
         This mixin will overload a classes <tt>operator new</tt> and <tt>operator delete</tt> so as
         to make the class use the <a
-        href="http://www.boost.org/libs/pool/doc/index.html">Boost.Pool</a> memory allocator by
+        href="http://www.boost.org/doc/libs/release/libs/pool/doc/index.html">Boost.Pool</a> memory allocator by
         default. Using this allocator does however introduce a few restrictions:
 
         \li The operator is defined for a fixed size. Therefore if you derive from the class <b>you
@@ -58,7 +58,7 @@ namespace senf {
         \endcode
 
         \note pool_alloc_mixin uses the <a
-            href="http://www.boost.org/libs/pool/doc/index.html">Boost.Pool</a> <i>singleton
+            href="http://www.boost.org/doc/libs/release/libs/pool/doc/index.html">Boost.Pool</a> <i>singleton
             pool</i> interface with the tag <tt>pool_alloc_mixin_tag</tt>. This class is accessible
             via the <tt>pool</tt> member. Using this member, it is simple to call relevant pool
             functions, e.g. <tt>SomeClass::pool<>::release_memory()</tt>.

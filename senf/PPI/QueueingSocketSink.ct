@@ -72,6 +72,7 @@ prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSoc
     event_.enabled( false);
     noroute(input);
     input.onRequest( &PassiveQueueingSocketSink::write);
+    input.qdisc( QueueingDiscipline::NONE);
     checkThrottle();
 }
 

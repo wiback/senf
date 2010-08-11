@@ -65,10 +65,11 @@
     Scheduler. The <tt> \link senf::Scheduler::add add() \endlink </tt> call takes two Arguments,
     the socket to bind to (which can be a lot of things and must not necessarily be a socket
     instance) and callback function to call, whenever there is an event on that socket.The callback
-    is specified as a <a href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object.
-    A third argument may be specified to restrict the events, on which the function is called, here we
-    used the EV_READ Argument, because we just want the program to read from the socket.
-    The default argument is set to \c senf::Scheduler::EV_ALL, which allows all actions on the socket.
+    is specified as a <a href="http://www.boost.org/doc/libs/release/doc/html/function.html">
+    Boost.Function</a> object. A third argument may be specified to restrict the events, on which 
+    the function is called, here we used the EV_READ Argument, because we just want the program to
+    read from the socket. The default argument is set to \c senf::Scheduler::EV_ALL, which allows 
+    all actions on the socket.
 
     \until }
 
