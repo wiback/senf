@@ -1,0 +1,177 @@
+// $Id$
+//
+// Copyright (C) 2010
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketImpl internal header */
+
+#ifndef IH_SENF_senf_Packets_PacketImpl_
+#define IH_SENF_senf_Packets_PacketImpl_ 1
+
+// Custom includes
+#include <iostream>
+#include <string>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/mpl/sizeof.hpp>
+#include <boost/mpl/int.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/mpl/greater.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
+#include <senf/Utils/TypeInfo.hh>
+#include <senf/Utils/singleton.hh>
+#include <senf/config.hh>
+#include <senf/Utils/IgnoreValue.hh>
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+
+    struct ComplexAnnotation;
+    void dumpPacketAnnotationRegistry(std::ostream & os);
+
+namespace detail {
+
+    template <class Annotation>
+    struct IsComplexAnnotation
+        : public boost::mpl::or_< boost::is_convertible<Annotation*, ComplexAnnotation*>,
+                                  boost::mpl::greater<
+                                      boost::mpl::sizeof_<Annotation>,
+                                      boost::mpl::int_<SENF_PACKET_ANNOTATION_SLOTSIZE> > >
+    {};
+
+    class AnnotationRegistry
+        : public senf::singleton<AnnotationRegistry>
+    {
+    public:
+        typedef int key_t;
+
+        using senf::singleton<AnnotationRegistry>::instance;
+
+        template <class Annotation> class RegistrationProxy;
+
+        class EntryBase;
+        template <class Annotation> class Entry;
+
+        template <class Annotation>
+        key_t registerAnnotation();
+
+        void dump(key_t key, std::ostream & os, void * annotation) const;
+        std::string name(key_t key) const;
+        bool isComplex(key_t key) const;
+        unsigned size(key_t key) const;
+
+        template <class Annotation>
+        static key_t lookup();
+
+        key_t keyBegin() const;
+        key_t keyEnd() const;
+
+        void dumpRegistrations(std::ostream & os);
+
+    private:
+        AnnotationRegistry();
+
+        struct RegistrationBase
+        {
+            virtual ~RegistrationBase () {};
+            key_t key;
+            virtual void v_dump(std::ostream & os, void * annotation) const = 0;
+            virtual std::string v_name() const = 0;
+            virtual bool v_isComplex() const = 0;
+            virtual unsigned v_size() const = 0;
+        };
+
+        template <class Annotation>
+        struct Registration
+            : public RegistrationBase
+        {
+            void v_dump(std::ostream & os, void * annotation) const
+                { os << * static_cast<Annotation*>(annotation); }
+            std::string v_name() const
+                { return prettyName(typeid(Annotation)); }
+            bool v_isComplex() const
+                { return boost::is_convertible<Annotation*, ComplexAnnotation*>::value; }
+            unsigned v_size() const
+                { return sizeof(Annotation); }
+        };
+
+        key_t simpleAnnotationCount_;
+        key_t complexAnnotationCount_;
+
+        typedef boost::ptr_map<key_t, RegistrationBase> Registry;
+        Registry registry_;
+
+        friend class senf::singleton<AnnotationRegistry>;
+    };
+
+    template <class Annotation>
+    class AnnotationRegistry::RegistrationProxy
+    {
+    public:
+        RegistrationProxy()
+            {
+                AnnotationRegistry::Entry<Annotation>::key_ =
+                    AnnotationRegistry::instance().registerAnnotation<Annotation>();
+            }
+    };
+
+    class AnnotationRegistry::EntryBase
+    {
+    public:
+        virtual ~EntryBase() {}
+
+        virtual void * get() = 0;
+    };
+
+    template <class Annotation>
+    class AnnotationRegistry::Entry
+        : public AnnotationRegistry::EntryBase
+    {
+        static RegistrationProxy<Annotation> proxy_;
+        static AnnotationRegistry::key_t key_;
+    public:
+        // We use this member to force instantiation of proxy_ ...
+        static AnnotationRegistry::key_t key()
+            { senf::IGNORE(&proxy_); return key_; }
+
+        virtual void * get() { return & annotation_; }
+
+    private:
+        Annotation annotation_;
+
+        friend class AnnotationRegistry::RegistrationProxy<Annotation>;
+    };
+
+}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

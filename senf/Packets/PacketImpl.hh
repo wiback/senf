@@ -30,14 +30,13 @@
 #include <memory>
 #include <vector>
 #include <boost/utility.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/type_traits/has_trivial_constructor.hpp>
-#include <boost/type_traits/has_trivial_destructor.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <senf/Utils/pool_alloc_mixin.hh>
 #include <senf/Utils/singleton.hh>
 
 //#include "PacketImpl.mpp"
+#include "PacketImpl.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -61,71 +60,6 @@ namespace senf {
     struct ComplexAnnotation {};
 
 namespace detail {
-
-    struct AnnotationP
-    {
-        virtual ~AnnotationP();
-    };
-
-    template <class Annotation>
-    struct TAnnotationP
-        : public AnnotationP
-    {
-        Annotation annotation;
-    };
-
-    union AnnotationEntry {
-        AnnotationP * p;
-        unsigned long long i;
-    };
-
-    struct AnnotationIndexerBase
-    {
-        virtual ~AnnotationIndexerBase();
-        virtual void v_dump(PacketImpl * p, std::ostream & os) = 0;
-
-        static unsigned maxAnnotations;
-        static std::vector<bool> & small();
-        static std::vector<AnnotationIndexerBase*> & registry();
-        static void dump(PacketImpl * p, std::ostream & os);
-    };
-
-    template <class Annotation>
-    struct AnnotationIndexer
-        : public senf::singleton< AnnotationIndexer<Annotation> >,
-          public AnnotationIndexerBase
-    {
-        AnnotationIndexer();
-        virtual void v_dump(PacketImpl * p, std::ostream & os);
-        unsigned index_;
-        static unsigned index();
-        static bool const Complex = boost::is_base_of<ComplexAnnotation, Annotation>::value;
-        static bool const Small = (sizeof(Annotation) <= sizeof(AnnotationEntry) && ! Complex);
-
-#       if 0 // The test is difficult since it does not work with user-defined trivial constructors
-#       ifdef BOOST_HAS_TYPE_TRAITS_INTRINSICS
-
-        BOOST_STATIC_ASSERT(( (boost::has_trivial_constructor<Annotation>::value
-                               && boost::has_trivial_destructor<Annotation>::value)
-                              || Complex ));
-
-#       endif
-#       endif
-    };
-
-    template <class Annotation, bool Small = AnnotationIndexer<Annotation>::Small>
-    struct GetAnnotation
-    {
-        static Annotation & get(AnnotationEntry & e);
-        static void dump(AnnotationEntry & e, std::ostream & os);
-    };
-
-    template <class Annotation>
-    struct GetAnnotation<Annotation, true>
-    {
-        static Annotation & get(AnnotationEntry & e);
-        static void dump(AnnotationEntry & e, std::ostream & os);
-    };
 
     /** \brief Internal: Packet data storage
 
@@ -199,9 +133,8 @@ namespace detail {
         // Annotations
         template <class Annotation>
         Annotation & annotation();
+
         void dumpAnnotations(std::ostream & os);
-        template <class Annotation>
-        void dumpAnnotation(std::ostream & os);
 
         /** \brief Internal: Keep PacketImpl instance alive
 
@@ -218,15 +151,30 @@ namespace detail {
         };
 
     private:
+        void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);
+        void updateIterators(PacketData * self, difference_type pos, difference_type n);
+
+        void * annotation(AnnotationRegistry::key_t key); // may return 0 !
+        void * complexAnnotation(AnnotationRegistry::key_t key); // may return 0 !
+        template <class Annotation>
+        void * complexAnnotation();
+
         refcount_t refcount_;
         raw_container data_;
         interpreter_list interpreters_;
 
-        typedef std::vector<AnnotationEntry> Annotations;
-        Annotations annotations_;
+        union SimpleAnnotationSlot
+        {
+            unsigned char _ [SENF_PACKET_ANNOTATION_SLOTSIZE];
+        };
 
-        void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);
-        void updateIterators(PacketData * self, difference_type pos, difference_type n);
+        typedef boost::ptr_vector< boost::nullable<AnnotationRegistry::EntryBase> >
+            ComplexAnnotations;
+#       ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+            ComplexAnnotations complexAnnotations_;
+#       endif
+
+        SimpleAnnotationSlot simpleAnnotations_[SENF_PACKET_ANNOTATION_SLOTS];
     };
 
 }}
@@ -236,7 +184,7 @@ namespace detail {
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketImpl_i_)
 #define HH_SENF_Packets_PacketImpl_i_
 #include "PacketImpl.cci"
-//#include "PacketImpl.ct"
+#include "PacketImpl.ct"
 #include "PacketImpl.cti"
 #endif
 
@@ -250,4 +198,3 @@ namespace detail {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
-

@@ -92,8 +92,11 @@ namespace config {
 #     define SENF_PACKET_ANNOTATION_SLOTS 8
 # endif
 #
+# ifndef SENF_PACKET_ANNOTATION_SLOTSIZE
+#     define SENF_PACKET_ANNOTATION_SLOTSIZE 16
+# endif
+#
 //# define SENF_PACKET_NO_COMPLEX_ANNOTATIONS
-
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif

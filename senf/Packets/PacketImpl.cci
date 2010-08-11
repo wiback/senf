@@ -31,29 +31,46 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::detail::AnnotationIndexerBase
+// senf::detail::AnnotationRegistry
 
-prefix_ senf::detail::AnnotationIndexerBase::~AnnotationIndexerBase()
+prefix_ void senf::detail::AnnotationRegistry::dump(key_t key, std::ostream & os,
+                                                    void * annotation)
+    const
+{
+    Registry::const_iterator i (registry_.find(key));
+    if (i != registry_.end()) {
+        os << fieldName(i->second->v_name());
+        i->second->v_dump(os, annotation);
+        os << "\n";
+    }
+}
+
+prefix_ std::string senf::detail::AnnotationRegistry::name(key_t key)
+    const
+{
+    Registry::const_iterator i (registry_.find(key));
+    return i == registry_.end() ? "" : i->second->v_name();
+}
+
+prefix_ bool senf::detail::AnnotationRegistry::isComplex(key_t key)
+    const
+{
+    Registry::const_iterator i (registry_.find(key));
+    return i != registry_.end() && i->second->v_isComplex();
+}
+
+prefix_ unsigned senf::detail::AnnotationRegistry::size(key_t key)
+    const
+{
+    Registry::const_iterator i (registry_.find(key));
+    return i == registry_.end() ? 0 : i->second->v_size();
+}
+
+prefix_ senf::detail::AnnotationRegistry::AnnotationRegistry()
+    : simpleAnnotationCount_ (0), complexAnnotationCount_ (0)
 {}
-
-prefix_ std::vector<bool> & senf::detail::AnnotationIndexerBase::small()
-{
-    static std::vector<bool> smalls;
-    return smalls;
-}
-
-prefix_ std::vector<senf::detail::AnnotationIndexerBase*> &
-senf::detail::AnnotationIndexerBase::registry()
-{
-    static std::vector<AnnotationIndexerBase*> reg;
-    return reg;
-}
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::detail::AnnotationP
-
-prefix_ senf::detail::AnnotationP::~AnnotationP()
-{}
 
 // Memory management:
 //
@@ -82,12 +99,16 @@ prefix_ senf::detail::AnnotationP::~AnnotationP()
 // senf::detail::PacketImpl
 
 prefix_ senf::detail::PacketImpl::PacketImpl()
-    : refcount_(0), annotations_(AnnotationIndexerBase::maxAnnotations)
-{}
+    : refcount_(0)
+{
+    ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+}
 
 prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
-    : refcount_(0), data_(size,initValue), annotations_(AnnotationIndexerBase::maxAnnotations)
-{}
+    : refcount_(0), data_(size,initValue)
+{
+    ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+}
 
 // reference/memory management
 
@@ -196,11 +217,6 @@ prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::capacity()
     return data_.capacity();
 }
 
-prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
-{
-    AnnotationIndexerBase::dump(this, os);
-}
-
 // This function has a problem being inlined. Somehow, often when calling this, the size of the
 // resulting inlined code would be huge?
 
@@ -216,6 +232,12 @@ prefix_ void senf::detail::PacketImpl::release(refcount_t n)
         refcount_ -= n;
 }
 
+// Annotations
+
+prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_t key)
+{
+    return key >= 0 ? & simpleAnnotations_[key] : complexAnnotation(key);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl::Guard

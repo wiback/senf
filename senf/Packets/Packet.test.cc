@@ -90,8 +90,8 @@ namespace {
         using mixin::init;
         static void dump(packet p, std::ostream & os) {
             os << "BarPacket:\n"
-               << "  type: " << p->type() << "\n"
-               << "  length: " << p->length() << "\n";
+               << senf::fieldName("type") << p->type() << "\n"
+               << senf::fieldName("length") << p->length() << "\n";
         }
         static void finalize(packet p) {
             if (p.next(senf::nothrow))
@@ -200,11 +200,10 @@ SENF_AUTO_UNIT_TEST(packet)
     packet.dump(s);
     BOOST_CHECK_EQUAL( s.str(),
                        "Annotations:\n"
-                       "  (anonymous namespace)::ComplexAnnotation: no value\n"
-                       "  (anonymous namespace)::IntAnnotation: 0\n"
+                       "  (anonymous namespace)::IntAnnotation : 0\n"
                        "BarPacket:\n"
-                       "  type: 0\n"
-                       "  length: 0\n" );
+                       "  type                    : 0\n"
+                       "  length                  : 0\n" );
 
     packet.finalizeAll();
     BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(),
@@ -315,6 +314,8 @@ SENF_AUTO_UNIT_TEST(packetAssign)
 
 SENF_AUTO_UNIT_TEST(packetAnnotation)
 {
+    typedef senf::detail::AnnotationRegistry Reg;
+
     senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);
 
@@ -329,10 +330,23 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().s, "dead beef" );
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().i, 0x12345678 );
 
-    BOOST_CHECK( senf::detail::AnnotationIndexer<IntAnnotation>::Small );
-    BOOST_CHECK( ! senf::detail::AnnotationIndexer<LargeAnnotation>::Small );
-    BOOST_CHECK( ! senf::detail::AnnotationIndexer<ComplexAnnotation>::Small );
-    BOOST_CHECK( ! senf::detail::AnnotationIndexer<ComplexEmptyAnnotation>::Small );
+    BOOST_CHECK( Reg::lookup<IntAnnotation>() >= 0 );
+    BOOST_CHECK( Reg::lookup<LargeAnnotation>() < 0 );
+    BOOST_CHECK( Reg::lookup<ComplexAnnotation>() < 0 );
+    BOOST_CHECK( Reg::lookup<ComplexEmptyAnnotation>() < 0 );
+
+    std::stringstream ss;
+
+    senf::dumpPacketAnnotationRegistry(ss);
+    BOOST_CHECK_EQUAL(
+        ss.str(),
+        "SENF_PACKET_ANNOTATION_SLOTS = 8\n"
+        "SENF_PACKET_ANNOTATION_SLOTSIZE = 16\n"
+        "SLOT  TYPE                                                      COMPLEX   SIZE\n"
+        "      (anonymous namespace)::ComplexEmptyAnnotation             yes          1\n"
+        "      (anonymous namespace)::ComplexAnnotation                  yes          8\n"
+        "      (anonymous namespace)::LargeAnnotation                    no          32\n"
+        "   0  (anonymous namespace)::IntAnnotation                      no           4\n" );
 }
 
 #ifdef COMPILE_CHECK

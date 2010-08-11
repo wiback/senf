@@ -23,7 +23,7 @@
 /** \file
     \brief PacketImpl inline template implementation */
 
-//#include "PacketImpl.ih"
+#include "PacketImpl.ih"
 
 // Custom includes
 
@@ -31,66 +31,49 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::detail::AnnotationIndexer<Annotation>
+// senf::detail::AnnotationRegistry
 
 template <class Annotation>
-prefix_ senf::detail::AnnotationIndexer<Annotation>::AnnotationIndexer()
-    : index_ (maxAnnotations++)
+prefix_ key_t senf::detail::AnnotationRegistry::registerAnnotation()
 {
-    small().push_back(Small);
-    registry().push_back(this);
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::detail::AnnotationIndexer<Annotation>
-
-
-template <class Annotation>
-prefix_ void senf::detail::AnnotationIndexer<Annotation>::v_dump(PacketImpl * p,
-                                                                 std::ostream & os)
-{
-
-    os << "  " << senf::prettyName(typeid(Annotation)) << ": ";
-    p->dumpAnnotation<Annotation>(os);
-    os << "\n";
+    key_t key (simpleAnnotationCount_ >= SENF_PACKET_ANNOTATION_SLOTS
+               || IsComplexAnnotation<Annotation>::value
+               ? - ++complexAnnotationCount_
+               : simpleAnnotationCount_ ++);
+    registry_.insert(key, new Registration<Annotation>());
+    std::cerr << ">> allocated key " << key
+              << " for " << prettyName(typeid(Annotation))
+              << "(complex: " << IsComplexAnnotation<Annotation>::value
+              << ", convertible: " << boost::is_convertible<Annotation*, ComplexAnnotation*>::value
+              << ", size: " << sizeof(Annotation)
+              << ", max: " << SENF_PACKET_ANNOTATION_SLOTSIZE << ")" << std::endl;
+    return key;
 }
 
 template <class Annotation>
-prefix_ unsigned senf::detail::AnnotationIndexer<Annotation>::index()
+prefix_ key_t senf::detail::AnnotationRegistry::lookup()
 {
-    return AnnotationIndexer::instance().index_;
+    SENF_ASSERT( instance().keyBegin() <= AnnotationRegistry::Entry<Annotation>::key()
+                 && AnnotationRegistry::Entry<Annotation>::key() < instance().keyEnd(),
+                 "internal error: annotation key not registered" );
+    SENF_ASSERT( AnnotationRegistry::Entry<Annotation>::key() < 0
+                 || ! IsComplexAnnotation<Annotation>::value,
+                 "internal error: complex annotation registered with invalid key" );
+    SENF_ASSERT( AnnotationRegistry::Entry<Annotation>::key() < SENF_PACKET_ANNOTATION_SLOTS,
+                 "internal error: annotation key out of valid range" );
+    return AnnotationRegistry::Entry<Annotation>::key();
 }
 
-///////////////////////////////////////////////////////////////////////////
-// senf::detail::GetAnnotation<Annotation,Small>
-
-template <class Annotation, bool Small>
-prefix_ Annotation & senf::detail::GetAnnotation<Annotation,Small>::get(AnnotationEntry & e)
+prefix_ key_t senf::detail::AnnotationRegistry::keyBegin()
+    const
 {
-    if (!e.p)
-        e.p = new TAnnotationP<Annotation>();
-    return static_cast< TAnnotationP<Annotation>* >(e.p)->annotation;
+    return -complexAnnotationCount_;
 }
 
-template <class Annotation, bool Small>
-prefix_ void senf::detail::GetAnnotation<Annotation,Small>::dump(AnnotationEntry & e,
-                                                                 std::ostream & os)
+prefix_ key_t senf::detail::AnnotationRegistry::keyEnd()
+    const
 {
-    if (!e.p) os << "no value";
-    else      os << get(e);
-}
-
-template <class Annotation>
-prefix_ Annotation & senf::detail::GetAnnotation<Annotation, true>::get(AnnotationEntry & e)
-{
-    return * static_cast<Annotation*>(static_cast<void*>(& e.i));
-}
-
-template <class Annotation>
-prefix_ void senf::detail::GetAnnotation<Annotation, true>::dump(AnnotationEntry & e,
-                                                                 std::ostream & os)
-{
-    os << get(e);
+    return simpleAnnotationCount_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -109,23 +92,20 @@ prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, F
 
 template <class InputIterator>
 prefix_ senf::detail::PacketImpl::PacketImpl(InputIterator first, InputIterator last)
-    : refcount_(0), data_(first,last), annotations_(AnnotationIndexerBase::maxAnnotations)
-{}
+    : refcount_(0), data_(first,last)
+{
+    ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+}
 
 // Annotations
 
 template <class Annotation>
 prefix_ Annotation & senf::detail::PacketImpl::annotation()
 {
-    return GetAnnotation<Annotation>::get(
-        annotations_[AnnotationIndexer<Annotation>::index()]);
-}
-
-template <class Annotation>
-prefix_ void senf::detail::PacketImpl::dumpAnnotation(std::ostream & os)
-{
-    GetAnnotation<Annotation>::dump(
-        annotations_[AnnotationIndexer<Annotation>::index()], os);
+    AnnotationRegistry::key_t key (AnnotationRegistry::lookup<Annotation>());
+    void * antn (key >= 0 ? & simpleAnnotations_[key] : complexAnnotation<Annotation>());
+    SENF_ASSERT( antn, "internal error: null annotation pointer" );
+    return * static_cast<Annotation*>(antn);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

@@ -23,28 +23,17 @@
 /** \file
     \brief PacketImpl non-inline non-template implementation */
 
-//#include "PacketImpl.ih"
+#include "PacketImpl.ih"
 
 // Custom includes
 #include <iterator>
+#include <boost/format.hpp>
+#include <senf/Utils/String.hh>
 #include "Packets.hh"
 
 //#include "PacketImpl.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////
-// senf::detail::AnnotationIndexerBase
-
-unsigned senf::detail::AnnotationIndexerBase::maxAnnotations (0);
-
-prefix_ void senf::detail::AnnotationIndexerBase::dump(PacketImpl * p, std::ostream & os)
-{
-    for(std::vector<AnnotationIndexerBase*>::const_iterator
-            i (registry().begin()), i_end (registry().end());
-        i != i_end; ++i)
-        (*i)->v_dump(p,os);
-}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl
@@ -54,12 +43,6 @@ prefix_ senf::detail::PacketImpl::~PacketImpl()
     // We increment refcount_ to ensure, release() won't call delete again
     ++refcount_;
     eraseInterpreters(interpreters_.begin(), interpreters_.end());
-    Annotations::const_iterator  i (annotations_.begin());
-    Annotations::const_iterator const i_end (annotations_.end());
-    std::vector<bool>::iterator small (AnnotationIndexerBase::small().begin());
-    for (; i != i_end; ++i, ++small)
-        if (! *small && i->p)
-            delete i->p;
 }
 
 // interpreter chain
@@ -146,7 +129,60 @@ prefix_ void senf::detail::PacketImpl::updateIterators(PacketData * self, differ
         // else pos is after the packet and we don't need to change anything ...
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+// Annotations
+
+prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
+{
+    for (AnnotationRegistry::key_t key (AnnotationRegistry::instance().keyBegin());
+         key != AnnotationRegistry::instance().keyEnd(); ++key) {
+        void * antn (annotation(key));
+        if (antn)
+            AnnotationRegistry::instance().dump(key, os, antn);
+    }
+}
+
+prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::key_t key)
+{
+    SENF_ASSERT( key<0, "complexAnnotation called with invalid key");
+#ifdef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+    return 0;
+#else
+    while (complexAnnotations_.size() < ComplexAnnotations::size_type(-key))
+        complexAnnotations_.push_back(0);
+    if (complexAnnotations_.is_null(-key-1))
+        return 0;
+    return complexAnnotations_[-key-1].get();
+#endif
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::AnnotationRegistry
+
+prefix_ void senf::detail::AnnotationRegistry::dumpRegistrations(std::ostream & os)
+{
+#ifdef SENF_DEBUG
+    boost::format fmt ("%4.4s  %-56.56s  %-7.7s  %5d\n");
+    os << "SENF_PACKET_ANNOTATION_SLOTS = " << SENF_PACKET_ANNOTATION_SLOTS << "\n"
+       << "SENF_PACKET_ANNOTATION_SLOTSIZE = " << SENF_PACKET_ANNOTATION_SLOTSIZE << "\n";
+    os << fmt % "SLOT" % "TYPE" % "COMPLEX" % "SIZE";
+    for (key_t key (keyBegin()); key != keyEnd(); ++key) {
+        std::string nm (name(key));
+        if (nm.size() > 56) nm.erase(nm.begin(), nm.begin()+nm.size()-32);
+        os << fmt
+            % (key >= 0 ? senf::str(key) : "")
+            % nm
+            % (isComplex(key) ? "yes" : "no")
+            % size(key);
+    }
+#endif
+}
+
+prefix_ void senf::dumpPacketAnnotationRegistry(std::ostream & os)
+{
+    senf::detail::AnnotationRegistry::instance().dumpRegistrations(os);
+}
+
+/////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "PacketImpl.mpp"
 
