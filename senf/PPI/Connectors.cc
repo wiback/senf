@@ -208,6 +208,12 @@ prefix_ void senf::ppi::connector::Connector::v_disconnected()
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector
 
+prefix_ senf::ppi::connector::PassiveConnector::~PassiveConnector()
+{
+    // Must be here and NOT in base so it is called before destructing the routes_ member
+    unregisterConnector();
+}
+
 ////////////////////////////////////////
 // private members
 
@@ -254,6 +260,12 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::ActiveConnector
+
+prefix_ senf::ppi::connector::ActiveConnector::~ActiveConnector()
+{
+    // Must be here and NOT in base so it is called before destructing the routes_ member
+    unregisterConnector();
+}
 
 ////////////////////////////////////////
 // private members

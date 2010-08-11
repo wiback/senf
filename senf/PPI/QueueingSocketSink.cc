@@ -83,7 +83,7 @@ prefix_ senf::ppi::FIFOQueueingAlgorithm::FIFOQueueingAlgorithm()
 prefix_ senf::Packet senf::ppi::FIFOQueueingAlgorithm::v_dequeue()
 {
     if (queue_.size() > 0) {
-        Packet const & p = queue_.front();
+        Packet p (queue_.front());
         queue_.pop();
         return p;
     }

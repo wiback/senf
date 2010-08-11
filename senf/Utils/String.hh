@@ -42,6 +42,22 @@ namespace senf {
     template <class ForwardReadableRange>
     std::string stringJoin(ForwardReadableRange const & range, std::string sep);
 
+    /** \brief Get string representation
+
+        Returns the result of streaming the argument into a standard library string-based
+        stream and then out as a std::string object. The conversion is done with
+        <tt>boost::lexical_cast</tt>. The call is equivalent to
+        <pre>
+            boost::lexical_cast<std::string>(t);
+        </pre>
+        \pre
+            <tt>t</tt> must be <i>OutputStreamable</i>,
+                meaning that an <tt>operator\<\<</tt> is defined\n
+            <tt>t</tt> must be <i>CopyConstructible</i>
+
+        \see <a href="http://www.boost.org/doc/libs/release/libs/conversion/lexical_cast.htm">
+            boost::lexical_cast</a>
+     */
     template <class T>
     std::string str(T const & t);
 

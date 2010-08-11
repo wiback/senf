@@ -33,12 +33,6 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector
 
-prefix_ senf::ppi::connector::PassiveConnector::~PassiveConnector()
-{
-    // Must be here and NOT in base so it is called before destructing the routes_ member
-    unregisterConnector();
-}
-
 template <class Handler>
 prefix_ void senf::ppi::connector::PassiveConnector::onRequest(Handler handler)
 {
@@ -47,12 +41,6 @@ prefix_ void senf::ppi::connector::PassiveConnector::onRequest(Handler handler)
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::ActiveConnector
-
-prefix_ senf::ppi::connector::ActiveConnector::~ActiveConnector()
-{
-    // Must be here and NOT in base so it is called before destructing the routes_ member
-    unregisterConnector();
-}
 
 template <class Handler>
 prefix_ void senf::ppi::connector::ActiveConnector::onThrottle(Handler handler)
