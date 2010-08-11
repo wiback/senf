@@ -43,17 +43,18 @@ namespace config {
 # include "local_config.hh"
 #
 # ifndef SENF_ABSOLUTE_INCLUDE_PATH
-#     define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) <senf/senf_relative_include_file_path>
+#     define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) \
+          <senf/senf_relative_include_file_path>
 # endif
 #
 # ifndef SENF_copy_n
 #     ifdef HAVE_GNUCXX_COPYN
 #         include <ext/algorithm>
-#         define SENF_copy_n __gnu_cxx::copy_n
+          namespace senf { namespace config { using __gnu_cxx::copy_n; }}
 #     endif
 #     ifdef HAVE_STD_COPYN
 #         include <algorithm>
-#         define SENF_copy_n std::copy_n
+          namespace senf { namespace config { using std::copy_n; }}
 #     endif
 #  endif
 #
@@ -61,7 +62,9 @@ namespace config {
 #     define SENF_MPL_RV_ALIGNMENT 16
 # endif
 #
-# if !defined(SENF_BUFFER_USE_LOCALS) && !defined(SENF_BUFFER_USE_ALLOCA) && !defined(SENF_BUFFER_USE_NEW)
+# if    !defined(SENF_BUFFER_USE_LOCALS) \
+     && !defined(SENF_BUFFER_USE_ALLOCA) \
+     && !defined(SENF_BUFFER_USE_NEW)
 #     define SENF_BUFFER_USE_NEW 1
 # endif
 #

@@ -35,7 +35,7 @@ template <class InputIterator>
 prefix_ senf::EUI64 senf::EUI64::from_data(InputIterator i)
 {
     EUI64 eui (senf::noinit);
-    SENF_copy_n(i, 8, eui.begin());
+    senf::config::copy_n(i, 8, eui.begin());
     return eui;
 }
 
