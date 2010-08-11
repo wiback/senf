@@ -92,7 +92,7 @@ namespace detail {
         virtual void disable();
     };
 
-#ifdef HAVE_TIMERFD
+#ifdef HAVE_TIMERFD_CREATE
     class TimerFDTimerSource
         : public detail::FdManager::Event, public TimerSource
     {

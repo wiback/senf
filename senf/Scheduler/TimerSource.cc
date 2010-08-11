@@ -28,7 +28,7 @@
 
 // Custom includes
 #include "IdleEvent.hh"
-#ifdef HAVE_TIMERFD
+#ifdef HAVE_TIMERFD_CREATE
 #include <sys/timerfd.h>
 #endif
 #include "senf/Utils/IgnoreValue.hh"
@@ -178,7 +178,7 @@ prefix_ void senf::scheduler::detail::PollTimerSource::disable()
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::detail::TimerFDTimerSource
 
-#ifdef HAVE_TIMERFD
+#ifdef HAVE_TIMERFD_CREATE
 prefix_ senf::scheduler::detail::TimerFDTimerSource::TimerFDTimerSource()
     : timerfd_ (-1), timeoutEnabled_ (false), timeout_ (0)
 {

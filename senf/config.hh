@@ -47,36 +47,22 @@ namespace config {
 # endif
 #
 # ifndef SENF_copy_n
-#     include <algorithm>
-#     if defined(__GNUC__) && ! defined(_STLP_ALGORITHM) && (__GNUC__>=4 || (__GNUC__==3 && __GNUC_MINOR__>=4))
+#     ifdef HAVE_GNUCXX_COPYN
 #         include <ext/algorithm>
 #         define SENF_copy_n __gnu_cxx::copy_n
-#     else
+#     endif
+#     ifdef HAVE_STD_COPYN
+#         include <algorithm>
 #         define SENF_copy_n std::copy_n
 #     endif
-# endif
+#  endif
 #
 # ifndef SENF_MPL_RV_ALIGNMENT
 #     define SENF_MPL_RV_ALIGNMENT 16
 # endif
 #
 # if !defined(SENF_BUFFER_USE_LOCALS) && !defined(SENF_BUFFER_USE_ALLOCA) && !defined(SENF_BUFFER_USE_NEW)
-#
-#     if defined(__GNUC__)
-#         define SENF_BUFFER_USE_LOCALS 1
-#
-#     // Add other compilers here ...
-#
-#     // dynamic arrays are part of C99. Which is NOT part of C++
-#     // but lets try nonetheless ...
-#     elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#         define SENF_BUFFER_USE_LOCALS 1
-#     endif
-#
-#     if !defined(SENF_BUFFER_USE_LOCALS) && !defined(SENF_BUFFER_USE_ALLOCA)
-#         define SENF_BUFFER_USE_NEW 1
-#     endif
-#
+#     define SENF_BUFFER_USE_NEW 1
 # endif
 #
 # ifndef SENF_SENFLOG_LIMIT
@@ -99,9 +85,12 @@ namespace config {
 #     define PHOENIX_LIMIT 6
 # endif
 #
-# if __GLIBC__>=2 && __GLIBC_MINOR__>=8
-#     define HAVE_TIMERFD 1
+# ifndef SENF_PACKET_ANNOTATION_SLOTS
+#     define SENF_PACKET_ANNOTATION_SLOTS 8
 # endif
+#
+//# define SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif

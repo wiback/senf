@@ -29,7 +29,7 @@ def CheckBoostVersion(context):
     ret = context.TryRun("#include <boost/version.hpp>\n"
                          "#include <iostream>\n"
                          "int main(int, char **) { std::cout << BOOST_LIB_VERSION << std::endl; }",
-                         ".cc")[1].strip()
+                         ".cc")[-1].strip()
     if not ret:
         context.Result("no boost includes found")
         return None
@@ -62,4 +62,5 @@ def CheckBoostVariants(context, *variants):
     if useVariant is not None and not context.env.GetOption('no_progress'):
         print  "Using %s boost variant." % (
             useVariant and "'%s'" % useVariant or "default")
+    context.env.Replace( BOOST_VARIANT = useVariant )
     return useVariant

@@ -176,14 +176,12 @@ def CheckValgrindWildcards(context):
     context.Result( ret[0] )
     return ret[0]
 
-# Default configuration (boost stuff)
-senfutil.Configure(env)
+def customChecks(conf):
+    conf.env.Replace(
+        HAVE_VALGRIND  = conf.CheckValgrind() and conf.CheckValgrindWildcards()
+        )
 
-conf = env.Configure(clean=False, help=False, custom_tests = senfconf.Tests())
-env.Replace(
-    HAVE_VALGRIND  = conf.CheckValgrind() and conf.CheckValgrindWildcards()
-)
-conf.Finish()
+senfutil.Configure(env, customChecks)
 
 # Only add this here, after all configure checks have run
 

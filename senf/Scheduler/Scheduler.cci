@@ -72,7 +72,7 @@ prefix_ void senf::scheduler::loresTimers()
 
 prefix_ bool senf::scheduler::haveScalableHiresTimers()
 {
-#ifndef HAVE_TIMERFD
+#ifndef HAVE_TIMERFD_CREATE
     return false;
 #else
     return detail::TimerFDTimerSource::haveTimerFD();

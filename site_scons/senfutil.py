@@ -257,20 +257,86 @@ def Glob(env, exclude=[], subdirs=[]):
     return (sources, testSources)
 
 
-def Configure(env):
+@senfconf.Test
+def CheckSTLCopyN(context):
+    context.Message("Checking for 'copy_n' implementation... ")
+    versions = [ ('<algorithm>',     'std::copy_n',       'STD'),
+                 ('<ext/algorithm>', '__gnu_cxx::copy_n', 'GNUCXX') ]
+    for include, name, define in versions:
+        ret = context.TryCompile("#include %s\n"
+                                 "int main(int,char**) { int *a,*b; %s(a,0,b); }\n"
+                                 % (include, name),
+                                 ".cc")
+        if ret:
+            context.Result(name)
+            context.sconf.Define("HAVE_%s_COPYN" % define,
+                                 1,
+                                 "Define one of " 
+                                 + ", ".join(("HAVE_%s_COPYN" % elt[2] for elt in versions)))
+            return ret
+
+    context.Result(False)
+    return False
+
+
+@senfconf.Test
+def CheckTempBufferStrategy(context):
+    context.Message("Checking for optimal temporary buffer strategy... ")
+
+    def check():
+      # locals
+      ret = context.TryCompile("void test(int n){int a[n];}",".cc")
+      if ret: return "locals"
+
+      # alloca
+      ret = context.TryCompile("#include <alloca.h>\n"
+                               "void test(int a){void *b(alloca(a));}"
+                               ".cc")
+      if ret: return "alloca"
+      
+      # fallback: new
+      return "new"
+
+    ret = check()
+    context.Result(ret)
+    context.sconf.Define("SENF_BUFFER_USE_%s" % ret.upper(),
+                         1,
+                         "Define one of SENF_BUFFER_USE_LOCALS, SENF_BUFFER_USE_ALLOCA, "
+                         "SENF_BUFFER_USE_NEW")
+    return ret
+
+
+def Fail(msg):
+    SCons.Util.display("scons: *** %s" % msg)
+    Exit(1)
+
+
+def Configure(env, customChecks=None):
     conf = env.Configure(clean=False, 
                          help=False, 
                          custom_tests=senfconf.Tests(), 
                          config_h="#/senf/autoconf.hh")
-    env.SetDefault(
-        BOOST_VERSION  = conf.CheckBoostVersion(),
-        BOOST_VARIANT  = conf.CheckBoostVariants( '', 'mt' ),
-        NEED_BOOST_EXT = not conf.CheckCXXHeader("boost/bimap.hpp"),
-        HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP = conf.CheckCXXHeader(
-            "boost/spirit/include/classic.hpp"),
-    )
-    conf.Finish()
 
+    # Boost
+    if not conf.CheckBoostVersion():
+        Fail("Boost includes not found")
+    if not conf.env['ARGUMENT_VARIABLES'].has_key('BOOST_VARIANT'): conf.CheckBoostVariants( '', 'mt' )
+    conf.env.Replace(NEED_BOOST_EXT = not conf.CheckCXXHeader("boost/bimap.hpp"))
+    conf.CheckCXXHeader("boost/spirit/include/classic.hpp")
+        
+    # Compiler support
+    conf.CheckTempBufferStrategy()
+
+    # Standard library stuff
+    if not conf.CheckSTLCopyN():
+        Fail("No 'copy_n' implementation found")
+    conf.CheckFunc("timerfd_create")
+
+    # User checks
+    if customChecks:
+        customChecks(conf)
+
+    conf.Finish()
 
 tagfiles = None
 
