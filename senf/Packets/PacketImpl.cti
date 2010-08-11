@@ -34,46 +34,35 @@
 // senf::detail::AnnotationRegistry
 
 template <class Annotation>
-prefix_ key_t senf::detail::AnnotationRegistry::registerAnnotation()
+prefix_ senf::detail::AnnotationRegistry::key_type
+senf::detail::AnnotationRegistry::registerAnnotation()
 {
-    key_t key (simpleAnnotationCount_ >= SENF_PACKET_ANNOTATION_SLOTS
+    key_type key (simpleAnnotationCount_ >= SENF_PACKET_ANNOTATION_SLOTS
                || IsComplexAnnotation<Annotation>::value
                ? - ++complexAnnotationCount_
                : simpleAnnotationCount_ ++);
-    registry_.insert(key, new Registration<Annotation>());
-    std::cerr << ">> allocated key " << key
-              << " for " << prettyName(typeid(Annotation))
-              << "(complex: " << IsComplexAnnotation<Annotation>::value
-              << ", convertible: " << boost::is_convertible<Annotation*, ComplexAnnotation*>::value
-              << ", size: " << sizeof(Annotation)
-              << ", max: " << SENF_PACKET_ANNOTATION_SLOTSIZE << ")" << std::endl;
+    std::pair<Registry::iterator, bool> reg (
+        registry_.insert(key, new Registration<Annotation>()));
+    SENF_ASSERT(reg.second, "internal error: duplicate annotation key");
+    index_.insert(std::make_pair(reg.first->second->v_name(), key));
     return key;
 }
 
 template <class Annotation>
-prefix_ key_t senf::detail::AnnotationRegistry::lookup()
+prefix_ senf::detail::AnnotationRegistry::key_type senf::detail::AnnotationRegistry::lookup()
 {
-    SENF_ASSERT( instance().keyBegin() <= AnnotationRegistry::Entry<Annotation>::key()
-                 && AnnotationRegistry::Entry<Annotation>::key() < instance().keyEnd(),
-                 "internal error: annotation key not registered" );
-    SENF_ASSERT( AnnotationRegistry::Entry<Annotation>::key() < 0
-                 || ! IsComplexAnnotation<Annotation>::value,
-                 "internal error: complex annotation registered with invalid key" );
-    SENF_ASSERT( AnnotationRegistry::Entry<Annotation>::key() < SENF_PACKET_ANNOTATION_SLOTS,
-                 "internal error: annotation key out of valid range" );
+    SENF_ASSERT(
+        -instance().complexAnnotationCount_ <= AnnotationRegistry::Entry<Annotation>::key()
+        && AnnotationRegistry::Entry<Annotation>::key() < instance().simpleAnnotationCount_,
+        "internal error: annotation key not registered" );
+    SENF_ASSERT(
+        AnnotationRegistry::Entry<Annotation>::key() < 0
+        || ! IsComplexAnnotation<Annotation>::value,
+        "internal error: complex annotation registered with invalid key" );
+    SENF_ASSERT(
+        AnnotationRegistry::Entry<Annotation>::key() < SENF_PACKET_ANNOTATION_SLOTS,
+        "internal error: annotation key out of valid range" );
     return AnnotationRegistry::Entry<Annotation>::key();
-}
-
-prefix_ key_t senf::detail::AnnotationRegistry::keyBegin()
-    const
-{
-    return -complexAnnotationCount_;
-}
-
-prefix_ key_t senf::detail::AnnotationRegistry::keyEnd()
-    const
-{
-    return simpleAnnotationCount_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -102,7 +91,7 @@ prefix_ senf::detail::PacketImpl::PacketImpl(InputIterator first, InputIterator 
 template <class Annotation>
 prefix_ Annotation & senf::detail::PacketImpl::annotation()
 {
-    AnnotationRegistry::key_t key (AnnotationRegistry::lookup<Annotation>());
+    AnnotationRegistry::key_type key (AnnotationRegistry::lookup<Annotation>());
     void * antn (key >= 0 ? & simpleAnnotations_[key] : complexAnnotation<Annotation>());
     SENF_ASSERT( antn, "internal error: null annotation pointer" );
     return * static_cast<Annotation*>(antn);

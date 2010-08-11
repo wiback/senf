@@ -154,8 +154,8 @@ namespace detail {
         void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);
         void updateIterators(PacketData * self, difference_type pos, difference_type n);
 
-        void * annotation(AnnotationRegistry::key_t key); // may return 0 !
-        void * complexAnnotation(AnnotationRegistry::key_t key); // may return 0 !
+        void * annotation(AnnotationRegistry::key_type key); // may return 0 !
+        void * complexAnnotation(AnnotationRegistry::key_type key); // may return 0 !
         template <class Annotation>
         void * complexAnnotation();
 

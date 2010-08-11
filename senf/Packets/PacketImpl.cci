@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::AnnotationRegistry
 
-prefix_ void senf::detail::AnnotationRegistry::dump(key_t key, std::ostream & os,
+prefix_ void senf::detail::AnnotationRegistry::dump(key_type key, std::ostream & os,
                                                     void * annotation)
     const
 {
@@ -45,25 +45,39 @@ prefix_ void senf::detail::AnnotationRegistry::dump(key_t key, std::ostream & os
     }
 }
 
-prefix_ std::string senf::detail::AnnotationRegistry::name(key_t key)
+prefix_ std::string senf::detail::AnnotationRegistry::name(key_type key)
     const
 {
     Registry::const_iterator i (registry_.find(key));
     return i == registry_.end() ? "" : i->second->v_name();
 }
 
-prefix_ bool senf::detail::AnnotationRegistry::isComplex(key_t key)
+prefix_ bool senf::detail::AnnotationRegistry::isComplex(key_type key)
     const
 {
     Registry::const_iterator i (registry_.find(key));
     return i != registry_.end() && i->second->v_isComplex();
 }
 
-prefix_ unsigned senf::detail::AnnotationRegistry::size(key_t key)
+prefix_ unsigned senf::detail::AnnotationRegistry::size(key_type key)
     const
 {
     Registry::const_iterator i (registry_.find(key));
     return i == registry_.end() ? 0 : i->second->v_size();
+}
+
+prefix_ senf::detail::AnnotationRegistry::iterator senf::detail::AnnotationRegistry::begin()
+    const
+{
+    return boost::make_transform_iterator(index_.begin(),
+                                          __gnu_cxx::select2nd<Index::value_type>());
+}
+
+prefix_ senf::detail::AnnotationRegistry::iterator senf::detail::AnnotationRegistry::end()
+    const
+{
+    return boost::make_transform_iterator(index_.end(),
+                                          __gnu_cxx::select2nd<Index::value_type>());
 }
 
 prefix_ senf::detail::AnnotationRegistry::AnnotationRegistry()
@@ -234,7 +248,7 @@ prefix_ void senf::detail::PacketImpl::release(refcount_t n)
 
 // Annotations
 
-prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_t key)
+prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_type key)
 {
     return key >= 0 ? & simpleAnnotations_[key] : complexAnnotation(key);
 }

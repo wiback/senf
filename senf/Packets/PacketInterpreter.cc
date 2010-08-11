@@ -75,8 +75,8 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::append(ptr
 prefix_ void senf::PacketInterpreterBase::dump(std::ostream & os)
 {
     try {
-        if (detail::AnnotationRegistry::instance().keyBegin()
-            != detail::AnnotationRegistry::instance().keyEnd()) {
+        if (detail::AnnotationRegistry::instance().begin()
+            != detail::AnnotationRegistry::instance().end()) {
             os << "Annotations:\n";
             impl().dumpAnnotations(os);
         }

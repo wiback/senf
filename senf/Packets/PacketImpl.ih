@@ -28,7 +28,10 @@
 
 // Custom includes
 #include <iostream>
+#include <map>
 #include <string>
+#include <ext/functional>
+#include <boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/mpl/sizeof.hpp>
 #include <boost/mpl/int.hpp>
@@ -61,38 +64,13 @@ namespace detail {
         : public senf::singleton<AnnotationRegistry>
     {
     public:
-        typedef int key_t;
-
-        using senf::singleton<AnnotationRegistry>::instance;
-
-        template <class Annotation> class RegistrationProxy;
-
-        class EntryBase;
-        template <class Annotation> class Entry;
-
-        template <class Annotation>
-        key_t registerAnnotation();
-
-        void dump(key_t key, std::ostream & os, void * annotation) const;
-        std::string name(key_t key) const;
-        bool isComplex(key_t key) const;
-        unsigned size(key_t key) const;
-
-        template <class Annotation>
-        static key_t lookup();
-
-        key_t keyBegin() const;
-        key_t keyEnd() const;
-
-        void dumpRegistrations(std::ostream & os);
+        typedef int key_type;
 
     private:
-        AnnotationRegistry();
-
         struct RegistrationBase
         {
             virtual ~RegistrationBase () {};
-            key_t key;
+            key_type key;
             virtual void v_dump(std::ostream & os, void * annotation) const = 0;
             virtual std::string v_name() const = 0;
             virtual bool v_isComplex() const = 0;
@@ -113,11 +91,49 @@ namespace detail {
                 { return sizeof(Annotation); }
         };
 
-        key_t simpleAnnotationCount_;
-        key_t complexAnnotationCount_;
+        typedef boost::ptr_map<key_type, RegistrationBase> Registry;
+        // Index must be a multi-map since two identically named classes
+        // both in the anonymous namespace both have the same demangled name.
+        // we could sort on the mangled name instead ...
+        typedef std::multimap<std::string, key_type> Index;
 
-        typedef boost::ptr_map<key_t, RegistrationBase> Registry;
+    public:
+        typedef boost::transform_iterator< ::__gnu_cxx::select2nd<Index::value_type>,
+                                           Index::const_iterator > iterator;
+
+        using senf::singleton<AnnotationRegistry>::instance;
+
+        template <class Annotation> class RegistrationProxy;
+
+        class EntryBase;
+        template <class Annotation> class Entry;
+
+        template <class Annotation>
+        key_type registerAnnotation();
+
+        void dump(key_type key, std::ostream & os, void * annotation) const;
+        std::string name(key_type key) const;
+        bool isComplex(key_type key) const;
+        unsigned size(key_type key) const;
+
+        template <class Annotation>
+        static key_type lookup();
+
+        iterator begin() const;
+        iterator end() const;
+
+        void dumpRegistrations(std::ostream & os);
+
+    private:
+        AnnotationRegistry();
+
+        key_type simpleAnnotationCount_;
+        key_type complexAnnotationCount_;
+
         Registry registry_;
+        // The index is needed to ensure a persistent and reproducible
+        // ordering of the annotations when dumping
+        Index index_;
 
         friend class senf::singleton<AnnotationRegistry>;
     };
@@ -146,10 +162,10 @@ namespace detail {
         : public AnnotationRegistry::EntryBase
     {
         static RegistrationProxy<Annotation> proxy_;
-        static AnnotationRegistry::key_t key_;
+        static AnnotationRegistry::key_type key_;
     public:
         // We use this member to force instantiation of proxy_ ...
-        static AnnotationRegistry::key_t key()
+        static AnnotationRegistry::key_type key()
             { senf::IGNORE(&proxy_); return key_; }
 
         virtual void * get() { return & annotation_; }

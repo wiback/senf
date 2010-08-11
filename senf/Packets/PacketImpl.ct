@@ -35,16 +35,18 @@ senf::detail::AnnotationRegistry::RegistrationProxy<Annotation>
     senf::detail::AnnotationRegistry::Entry<Annotation>::proxy_;
 
 template <class Annotation>
-senf::detail::AnnotationRegistry::key_t
+senf::detail::AnnotationRegistry::key_type
     senf::detail::AnnotationRegistry::Entry<Annotation>::key_;
 
 template <class Annotation>
 prefix_ void * senf::detail::PacketImpl::complexAnnotation()
 {
-    AnnotationRegistry::key_t key (AnnotationRegistry::lookup<Annotation>());
+    AnnotationRegistry::key_type key (AnnotationRegistry::lookup<Annotation>());
     void * rv (complexAnnotation(key));
 #ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     if (! rv) {
+        while (complexAnnotations_.size() < ComplexAnnotations::size_type(-key))
+            complexAnnotations_.push_back(0);
         complexAnnotations_.replace(-key-1, new AnnotationRegistry::Entry<Annotation>());
         rv = complexAnnotations_[-key-1].get();
     }

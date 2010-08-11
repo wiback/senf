@@ -29,6 +29,7 @@
 // Custom includes
 #include <sstream>
 #include <boost/static_assert.hpp>
+#include <boost/cstdint.hpp>
 #include "Packets.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
@@ -111,7 +112,7 @@ namespace {
     }
 
     struct IntAnnotation {
-        unsigned value;
+        boost::uint32_t value;
     };
 
     std::ostream & operator<<(std::ostream & os, IntAnnotation const & v)
@@ -128,7 +129,7 @@ namespace {
     {
         ComplexAnnotation() : s(), i() {}
         std::string s;
-        int i;
+        boost::int32_t i;
     };
 
     std::ostream & operator<<(std::ostream & os, ComplexAnnotation const & v)
@@ -343,11 +344,11 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
         ss.str(),
         "SENF_PACKET_ANNOTATION_SLOTS = 8\n"
         "SENF_PACKET_ANNOTATION_SLOTSIZE = 16\n"
-        "SLOT  TYPE                                                      COMPLEX   SIZE\n"
-        "      (anonymous namespace)::ComplexEmptyAnnotation             yes          1\n"
-        "      (anonymous namespace)::ComplexAnnotation                  yes          8\n"
-        "      (anonymous namespace)::LargeAnnotation                    no          32\n"
-        "   0  (anonymous namespace)::IntAnnotation                      no           4\n" );
+        "TYPE                                                      FAST  COMPLEX   SIZE\n"
+        "(anonymous namespace)::ComplexAnnotation                  no    yes          8\n"
+        "(anonymous namespace)::ComplexEmptyAnnotation             no    yes          1\n"
+        "(anonymous namespace)::IntAnnotation                      yes   no           4\n"
+        "(anonymous namespace)::LargeAnnotation                    no    no          32\n" );
 #endif
 }
 

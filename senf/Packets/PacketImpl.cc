@@ -27,6 +27,8 @@
 
 // Custom includes
 #include <iterator>
+#include <map>
+#include <string>
 #include <boost/format.hpp>
 #include <senf/Utils/String.hh>
 #include "Packets.hh"
@@ -133,25 +135,23 @@ prefix_ void senf::detail::PacketImpl::updateIterators(PacketData * self, differ
 
 prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
 {
-    for (AnnotationRegistry::key_t key (AnnotationRegistry::instance().keyBegin());
-         key != AnnotationRegistry::instance().keyEnd(); ++key) {
-        void * antn (annotation(key));
+    for (AnnotationRegistry::iterator i (AnnotationRegistry::instance().begin());
+         i != AnnotationRegistry::instance().end(); ++i) {
+        void * antn (annotation(*i));
         if (antn)
-            AnnotationRegistry::instance().dump(key, os, antn);
+            AnnotationRegistry::instance().dump(*i, os, antn);
     }
 }
 
-prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::key_t key)
+prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::key_type key)
 {
-    SENF_ASSERT( key<0, "complexAnnotation called with invalid key");
+    SENF_ASSERT( key < 0, "complexAnnotation called with invalid key");
 #ifdef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     return 0;
 #else
-    while (complexAnnotations_.size() < ComplexAnnotations::size_type(-key))
-        complexAnnotations_.push_back(0);
-    if (complexAnnotations_.is_null(-key-1))
-        return 0;
-    return complexAnnotations_[-key-1].get();
+    return (ComplexAnnotations::size_type(-key-1) >= complexAnnotations_.size()
+            || complexAnnotations_.is_null(-key-1))
+        ? 0 : complexAnnotations_[-key-1].get();
 #endif
 }
 
@@ -161,16 +161,18 @@ prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::k
 prefix_ void senf::detail::AnnotationRegistry::dumpRegistrations(std::ostream & os)
 {
 #ifdef SENF_DEBUG
-    boost::format fmt ("%4.4s  %-56.56s  %-7.7s  %5d\n");
+    boost::format fmt ("%-56.56s  %-4.4s  %-7.7s  %5d\n");
     os << "SENF_PACKET_ANNOTATION_SLOTS = " << SENF_PACKET_ANNOTATION_SLOTS << "\n"
        << "SENF_PACKET_ANNOTATION_SLOTSIZE = " << SENF_PACKET_ANNOTATION_SLOTSIZE << "\n";
-    os << fmt % "SLOT" % "TYPE" % "COMPLEX" % "SIZE";
-    for (key_t key (keyBegin()); key != keyEnd(); ++key) {
-        std::string nm (name(key));
+    os << fmt % "TYPE" % "FAST" % "COMPLEX" % "SIZE";
+
+    for (Index::const_iterator i (index_.begin()), i_end (index_.end()); i != i_end; ++i) {
+        key_type key (i->second);
+        std::string nm (i->first);
         if (nm.size() > 56) nm.erase(nm.begin(), nm.begin()+nm.size()-32);
         os << fmt
-            % (key >= 0 ? senf::str(key) : "")
             % nm
+            % (key >= 0 ? "yes" : "no")
             % (isComplex(key) ? "yes" : "no")
             % size(key);
     }
