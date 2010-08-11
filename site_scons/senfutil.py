@@ -114,11 +114,14 @@ Special command line parameters:
     env.Help(vars.GenerateHelpText(env))
     try                  : unknv = vars.UnknownVariables()
     except AttributeError: unknv = vars.UnknownOptions()
+    env.SetDefault(ARGUMENT_VARIABLES = {})
     for k,v in unknv.iteritems():
         if k.endswith('+'):
             env.Append(**{k[:-1]: v})
+            env.Append(ARGUMENT_VARIABLES = {k[:-1]:v})
         else:
             env.Replace(**{k: v})
+            env.Append(ARGUMENT_VARIABLES = {k:v})
 
 
 ###########################################################################
