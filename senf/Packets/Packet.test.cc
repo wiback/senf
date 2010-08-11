@@ -127,9 +127,12 @@ namespace {
 
     struct ComplexAnnotation : senf::ComplexAnnotation
     {
-        ComplexAnnotation() : s(), i() {}
+        ComplexAnnotation() : s("empty"), i(-1) {}
         std::string s;
         boost::int32_t i;
+        // padding so the size does not depend on the platform ...
+        struct _ {std::string s;boost::int32_t i;};
+        char __ [32-sizeof(_)];
     };
 
     std::ostream & operator<<(std::ostream & os, ComplexAnnotation const & v)
@@ -321,6 +324,10 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
     BarPacket::createAfter(packet);
 
     ComplexAnnotation & ca (packet.annotation<ComplexAnnotation>());
+
+    BOOST_CHECK_EQUAL( ca.s, "empty" );
+    BOOST_CHECK_EQUAL( ca.i, -1 );
+
     ca.s = "dead beef";
     ca.i = 0x12345678;
     SENF_CHECK_NO_THROW( packet.annotation<IntAnnotation>().value = 0xDEADBEEF );
@@ -345,7 +352,7 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
         "SENF_PACKET_ANNOTATION_SLOTS = 8\n"
         "SENF_PACKET_ANNOTATION_SLOTSIZE = 16\n"
         "TYPE                                                      FAST  COMPLEX   SIZE\n"
-        "(anonymous namespace)::ComplexAnnotation                  no    yes          8\n"
+        "(anonymous namespace)::ComplexAnnotation                  no    yes         32\n"
         "(anonymous namespace)::ComplexEmptyAnnotation             no    yes          1\n"
         "(anonymous namespace)::IntAnnotation                      yes   no           4\n"
         "(anonymous namespace)::LargeAnnotation                    no    no          32\n" );
