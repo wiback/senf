@@ -3,7 +3,6 @@
 import sys, os.path, fnmatch
 import SENFSCons, senfutil, senfconf
 
-
 ###########################################################################
 # Load utilities and setup libraries and configure build
 

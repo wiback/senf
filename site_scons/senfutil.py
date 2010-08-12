@@ -21,7 +21,7 @@ def parseLogOption(value):
     return '((%s,%s,%s))' % (stream,area,level)
 
 def expandLogOption(target, source, env, for_signature):
-    if env.get('LOGLEVELS'):
+    if env.subst('$LOGLEVELS'):
         return [ 'SENF_LOG_CONF="' + ''.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )+'"']
     else:
         return []
@@ -123,37 +123,110 @@ Special command line parameters:
             env.Replace(**{k: v})
             env.Append(ARGUMENT_VARIABLES = {k:v})
 
+def detect_senf(env,senf_path, try_flavors):
+    """Detect senf with flavor in 'try_flavors' somewhere in 'senf_path'.
 
-###########################################################################
-# This looks much more complicated than it is: We do three things here:
-# a) switch between final or debug options
-# b) parse the LOGLEVELS parameter into the correct SENF_LOG_CONF syntax
-# c) check for a local SENF, set options accordingly
-# d) check, wether the boost extensions are needed
+This function returns True, if senf is found, False otherwise.
+The environment 'env' is updated in the following way:
 
-def SetupForSENF(env, senf_path = []):
+    SENFSYSLAYOUT  set to True, if the install is a system installation,
+                   False otherwise
+
+    FLAVOR         set to the detected senf flavor
+
+    SENFDIR        set to the base directory of the senf installation.
+"""
     global senfutildir
-    senf_path.extend(('senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
+    senf_path.extend((os.path.dirname(senfutildir), '/usr/local', '/usr'))
+
+    for path in senf_path:
+        if not path.startswith('/') : sconspath = '#/%s' % path
+        else                        : sconspath = path
+        for flavor in try_flavors:
+            suffix = flavor and "_"+flavor or ""
+            local_path = os.path.join(path,"senf%s.conf" % suffix)
+            sys_path = os.path.join(path, "lib", "senf", "senf%s.conf" % suffix)
+            if os.path.exists(local_path):
+                env.SetDefault( SENFSYSLAYOUT = False )
+            elif os.path.exists(sys_path):
+                env.SetDefault( SENFSYSLAYOUT  = True )
+            else:
+                continue
+            env.SetDefault( FLAVOR = flavor, SENFDIR = sconspath )
+            return True
+    return False
+
+
+def SetupForSENF(env, senf_path = [], flavor=None):
+    try_flavors = [ '', 'g' ]
+    if flavor is not None:
+        try_flavors[0:0] = [ flavor ]
+        
+    res = detect_senf(env, senf_path, try_flavors)
+    if not env.GetOption('no_progress'):
+        if res:
+            print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} 'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
+        else:
+            print "scons: SENF library not found, trying to build anyway ..."
 
     loadTools(env)
 
+    # For a non-system installed senf, we add library and include search path here
+    if not env.get('SENFSYSLAYOUT', True):
+        env.Append(
+            CPPPATH       = [ '$SENFINCDIR' ],
+            LIBPATH       = [ '$SENFDIR' ],
+            )
+    
+    env.Replace(
+        _defines          = expandDefines,
+        expandLogOption   = expandLogOption,
+        )
+    env.SetDefault(
+        FLAVOR            = flavor,
+        LIBADDSUFFIX      = '${FLAVOR and "_$FLAVOR" or ""}',
+        OBJADDSUFFIX      = '${LIBADDSUFFIX}',
+        PROJECTNAME       = "Unnamed project",
+        DOCLINKS          = [],
+        PROJECTEMAIL      = "nobody@nowhere.org",
+        COPYRIGHT         = "nobody",
+        REVISION          = "unknown",
+        BUNDLEDIR         = '$SENFDIR${SENFSYSLAYOUT and "/lib/senf" or ""}',
+        SENFINCDIR        = '$SENFDIR${SENFSYSLAYOUT and "/include" or ""}',
+        )
     env.Append(
-        LIBS              = [ 'rt' ],
+        CPPPATH           = [ '${NEED_BOOST_EXT and "$SENFINCDIR/boost_ext" or None}' ],
+        CPPDEFINES        = [ '$expandLogOption' ],
+        CXXFLAGS          = [ '-Wno-long-long', '-fno-strict-aliasing' ],
+        LIBS              = [ 'senf$LIBADDSUFFIX', 'rt',
+                              '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ],
+        LINKFLAGS         = [ '-rdynamic' ],
+        )
         
-        CXXFLAGS          = [ '-Wno-long-long', '$CXXFLAGS_', '-fno-strict-aliasing' ],
+    try:
+        env.MergeFlags(file(env.File('$BUNDLEDIR/senf${LIBADDSUFFIX}.conf').abspath).read())
+    except IOError:
+        # Really should never happen since detect_senf looks for this file ...
+        pass
+
+def DefaultOptions(env):
+    env.Replace(
+        _defines          = expandDefines,
+        expandLogOption   = expandLogOption,
+        )
+    env.Append(
+        CXXFLAGS          = [ '$CXXFLAGS_' ],
         CXXFLAGS_         = BuildTypeOptions('CXXFLAGS'),
         
-        CPPDEFINES        = [ '$expandLogOption', '$CPPDEFINES_' ],
-        expandLogOption   = expandLogOption,
+        CPPDEFINES        = [ '$CPPDEFINES_' ],
         CPPDEFINES_       = BuildTypeOptions('CPPDEFINES'),
         
-        LINKFLAGS         = [ '-rdynamic', '$LINKFLAGS_' ],
+        LINKFLAGS         = [ '$LINKFLAGS_' ],
         LINKFLAGS_        = BuildTypeOptions('LINKFLAGS'),
 
         LOGLEVELS         = [ '$LOGLEVELS_' ],
         LOGLEVELS_        = BuildTypeOptions('LOGLEVELS'),
         )
-
     env.SetDefault( 
         CXXFLAGS_final    = [],
         CXXFLAGS_normal   = [],
@@ -170,15 +243,7 @@ def SetupForSENF(env, senf_path = []):
         LOGLEVELS_final   = [],
         LOGLEVELS_normal  = [],
         LOGLEVELS_debug   = [],
-
-        PROJECTNAME       = "Unnamed project",
-        DOCLINKS          = [],
-        PROJECTEMAIL      = "nobody@nowhere.org",
-        COPYRIGHT         = "nobody",
-        REVISION          = "unknown",
         )
-
-    env.Replace( _defines = expandDefines )
 
     # Interpret command line options
     parseArguments(
@@ -187,53 +252,7 @@ def SetupForSENF(env, senf_path = []):
         BoolVariable('debug', 'Link in debug symbols', False),
     )
 
-    # If we have a symbolic link (or directory) 'senf', we use it as our
-    # senf repository
-    for path in senf_path:
-        if not path.startswith('/') : sconspath = '#/%s' % path
-        else                        : sconspath = path
-        if os.path.exists(os.path.join(path,"senf/config.hh")):
-            if not env.GetOption('no_progress'):
-                print "\nUsing SENF in '%s'\n" \
-                    % ('/..' in sconspath and os.path.abspath(path) or sconspath)
-            env.Append( LIBPATH = [ sconspath ],
-                        CPPPATH = [ sconspath ],
-                        BUNDLEDIR = sconspath,
-                        SENFDIR = sconspath,
-                        SENFINCDIR = sconspath,
-                        SENFSYSLAYOUT = False)
-            try:
-                env.MergeFlags(file(os.path.join(path,"senf.conf")).read())
-            except IOError:
-                if not env.GetOption('no_progress'):
-                    print "(SENF configuration file 'senf.conf' not found, assuming non-final SENF)"
-                env.Append(CPPDEFINES = [ 'SENF_DEBUG' ])
-            break
-        elif os.path.exists(os.path.join(path,"include/senf/config.hh")):
-            if not env.GetOption('no_progress'):
-                print "\nUsing system SENF in '%s/'\n" % sconspath
-            env.Append(BUNDLEDIR = os.path.join(sconspath,"lib/senf"),
-                       SENFDIR = sconspath,
-                       SENFINCDIR = '%s/include' % sconspath,
-                       SENFSYSLAYOUT = True)
-            break
-    else:
-        if not env.GetOption('no_progress'):
-            print "\nSENF library not found .. trying build anyway !!\n"
-
-    Configure(env)
-
-    # Only add senf after all configure checks have run
-    env.Append(
-        CPPPATH = '${NEED_BOOST_EXT and "$SENFINCDIR/boost_ext" or None}',
-        LIBS = [ 'senf', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
-                 '$BOOSTFSLIB' ],
-        )
-
-    env.Alias('all', '#')
-
-
-def DefaultOptions(env):
+    # Set nice default options
     env.Append(
         CXXFLAGS         = [ '-Wall', '-Woverloaded-virtual' ],
         CXXFLAGS_final   = [ '-O3' ],
@@ -243,6 +262,8 @@ def DefaultOptions(env):
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],
     )
+
+    env.Alias('all', '#')
 
 
 def Glob(env, exclude=[], subdirs=[]):

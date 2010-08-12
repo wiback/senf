@@ -12,8 +12,12 @@ libsenf = env.Library("$LOCALLIBDIR/${LIBSENF}${LIBADDSUFFIX}", env['ALLOBJECTS'
 env.Default(libsenf)
 env.Install('$LIBINSTALLDIR', libsenf)
 
+env.SetDefault(
+    __NEED_BOOST_EXT_OPT = "-I$$SENFINCDIR/boost_ext",
+    _NEED_BOOST_EXT_OPT = "${NEED_BOOST_EXT and __NEED_BOOST_EXT_OPT or ''}")
+
 conf = env.CreateFile("${LOCALLIBDIR}/${LIBSENF}${LIBADDSUFFIX}.conf", 
-                      env.Value(env.subst("$_CPPDEFFLAGS")))
+                      env.Value(env.subst('$_NEED_BOOST_EXT_OPT $_CPPDEFFLAGS')))
 env.Default(conf)
 env.Install('$CONFINSTALLDIR', conf)
 
