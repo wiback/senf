@@ -2,6 +2,26 @@
 
 _configTests = {}
 
+# Fix for SCons 0.97 compatibility
+import SCons.SConf
+try: SCons.SConf.SConfBase.Define
+except AttributeError:
+    import string
+    def Define(self, name, value = None, comment = None):
+        lines = []
+        if comment:
+            comment_str = "/* %s */" % comment
+            lines.append(comment_str)
+        if value is not None:
+            define_str = "#define %s %s" % (name, value)
+        else:
+            define_str = "#define %s" % name
+        lines.append(define_str)
+        lines.append('')
+        self.config_h_text = self.config_h_text + string.join(lines, '\n')
+    SCons.SConf.SConfBase.Define = Define
+
+
 def Tests():
     global _configTests
     return _configTests
@@ -32,9 +52,11 @@ def CheckBoostVersion(context):
                          ".cc")[-1].strip()
     if not ret:
         context.Result("no boost includes found")
+        context.env.Replace( BOOST_VERSION = '' )
         return None
     else:
         context.Result(ret)
+        context.env.Replace( BOOST_VERSION = ret )
         return ret
 
 @Test
