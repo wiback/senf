@@ -48,7 +48,6 @@
 namespace senf {
 
     struct ComplexAnnotation;
-    void dumpPacketAnnotationRegistry(std::ostream & os);
 
 namespace detail {
 

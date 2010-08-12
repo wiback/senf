@@ -734,8 +734,8 @@
     }
     \endcode
 
-    Every annotation is automatically default-initialized, there is no way to query, whether a
-    packet holds a specific annotation -- every packet conceptually always holds all annotations.
+    Conceptually, all annotations always exist in every packet, there is no way to query, whether a
+    packet holds a specific annotation.
 
     You should use annotations economically: Every annotation type used in your program will
     allocate an annotation slot in \e all packet data structures. So don't use hundreds of different
@@ -745,7 +745,8 @@
     data together with the packet consider some other way (e.g. place the packet into another class
     which holds that data).
 
-    \see senf::Packet::annotation()
+    \see senf::Packet::annotation() \n
+        senf::dumpPacketAnnotationRegistry() for annotation debugging and optimization
  */
 
 /** \page packet_new Defining new Packet types
@@ -837,4 +838,3 @@
 // mode: auto-fill
 // compile-command: "scons -u doc"
 // End:
-

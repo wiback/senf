@@ -146,13 +146,9 @@ prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
 prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::key_type key)
 {
     SENF_ASSERT( key < 0, "complexAnnotation called with invalid key");
-#ifdef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
-    return 0;
-#else
     return (ComplexAnnotations::size_type(-key-1) >= complexAnnotations_.size()
             || complexAnnotations_.is_null(-key-1))
         ? 0 : complexAnnotations_[-key-1].get();
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////

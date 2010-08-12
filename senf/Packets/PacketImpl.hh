@@ -59,6 +59,43 @@ namespace senf {
      */
     struct ComplexAnnotation {};
 
+    /** \brief Dump annotation registry debug information
+
+        This function will dump debug information about all registered annotations to \a os. This
+        information may then be used to tune the following annotation parameters for optimal
+        performance:
+        \li \c SENF_PACKET_ANNOTATION_SLOTS (define, default 8) is the number of slots available for
+            fast annotations
+        \li \c SENF_PACKET_ANNOTATION_SLOTSIZE (define, default 16) is the maximum size of a fast
+            annotation in bytes
+
+        The output includes the current parameter and has the following columns:
+        \li \c NAME: Annotation type name
+        \li \c FAST: This is 'yes', if the annotation was allocated to a fast slot. Otherwise the
+            annotation is managed as a slow/complex annotation
+        \li \c COMPLEX: This is 'yes', if the annotation inherits from ComplexAnnotation
+        \li \c SIZE: Size of the annotation in bytes
+
+        Fast annotations are considerable faster than complex and slow annotations. However, only
+        annotations which do not need constructor or destructor calls and which may be
+        zero-initialized (on the memory level) are elegible as fast annotations.
+
+        It is thus desirable to eliminate any complex and slow annotations, if possible. To optimize
+        the annotation system, you may take the following steps:
+        \li If there are reasonably sized non-complex annotations which are larger than the current
+            \c SENF_PACKET_ANNOTATION_SLOTSIZE value, increase this value accordingly
+        \li If there are more non-complex annotations with a size less than
+            \c SENF_PACKET_ANNOTATION_SLOTSIZE than there are available slots, increase \c
+            SENF_PACKET_ANNOTATION_SLOTS accordingly
+        \li If all fast annotations are smaller than \c SENF_PACKET_ANNOTATION_SLOTSIZE, you may
+            decrease that value accordingly
+        \li If there are fewer than \c SENF_PACKET_ANNOTATION_SLOTS fast annotations, you may
+            decrease that value accordingly
+
+        \see \ref packet_usage_annotation
+     */
+    void dumpPacketAnnotationRegistry(std::ostream & os);
+
 namespace detail {
 
     /** \brief Internal: Packet data storage
@@ -170,9 +207,7 @@ namespace detail {
 
         typedef boost::ptr_vector< boost::nullable<AnnotationRegistry::EntryBase> >
             ComplexAnnotations;
-#       ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
-            ComplexAnnotations complexAnnotations_;
-#       endif
+        ComplexAnnotations complexAnnotations_;
 
         SimpleAnnotationSlot simpleAnnotations_[SENF_PACKET_ANNOTATION_SLOTS];
     };
