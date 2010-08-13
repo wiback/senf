@@ -103,7 +103,7 @@ env.Append(
     CXXFLAGS_debug         = [ '-O0', '-g' ],
 
     CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
-    CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'BOOST_NO_MT' ],
+    CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'BOOST_NO_MT', 'NDEBUG', 'BOOST_DISABLE_ASSERTS' ],
     CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
     CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
 

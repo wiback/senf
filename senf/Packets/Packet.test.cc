@@ -343,9 +343,7 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
     BOOST_CHECK( Reg::lookup<ComplexAnnotation>() < 0 );
     BOOST_CHECK( Reg::lookup<ComplexEmptyAnnotation>() < 0 );
 
-#ifdef SENF_DEBUG
     std::stringstream ss;
-
     senf::dumpPacketAnnotationRegistry(ss);
     BOOST_CHECK_EQUAL(
         ss.str(),
@@ -356,7 +354,6 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
         "(anonymous namespace)::ComplexEmptyAnnotation             no    yes          1\n"
         "(anonymous namespace)::IntAnnotation                      yes   no           4\n"
         "(anonymous namespace)::LargeAnnotation                    no    no          32\n" );
-#endif
 }
 
 #ifdef COMPILE_CHECK

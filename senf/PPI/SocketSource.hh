@@ -162,10 +162,10 @@ namespace module {
         connector::ActiveOutput<typename Reader::PacketType> output;
                                         ///< Output connector to which the data received is written
 
-        ActiveBurstSocketSource(unsigned max_burst);
-        explicit ActiveBurstSocketSource(Reader reader, unsigned max_burst);
-        explicit ActiveBurstSocketSource(Handle const & handle, unsigned max_burst);
-        ActiveBurstSocketSource(Handle const & handle, Reader reader, unsigned max_burst);
+        ActiveBurstSocketSource(unsigned max_burst=0);
+        explicit ActiveBurstSocketSource(Reader reader, unsigned max_burst=0);
+        explicit ActiveBurstSocketSource(Handle const & handle, unsigned max_burst=0);
+        ActiveBurstSocketSource(Handle const & handle, Reader reader, unsigned max_burst=0);
 
         Reader & reader();              ///< Access Reader helper
         Handle handle();                ///< Access handle

@@ -108,7 +108,7 @@ prefix_ void senf::detail::PacketImpl::updateIterators(PacketData * self, differ
     // b) 'self'
     // c) Those that come afterwards
     // For a), the change must be inside the packet since 'self' must be within those packets
-    // For b), the change must also be within since that's the packet we are changeing
+    // For b), the change must also be within since that's the packet we are changing
     // For c), the change must be outside the packet (we don't allow an upper packet to mess with
     // the the data owned by a packet further down the chain). It can be before or after the
     // packet.
@@ -123,7 +123,7 @@ prefix_ void senf::detail::PacketImpl::updateIterators(PacketData * self, differ
     interpreter_list::iterator const i_end (interpreters_.end());
     if (++i != i_end)
         if (pos <= difference_type(i->begin_))
-            // pos is before the packet, it must then be before all futher packets ...
+            // pos is before the packet, it must then be before all further packets ...
             for (; i != i_end; ++i) {
                 i->begin_ += n;
                 i->end_ += n;
@@ -156,7 +156,6 @@ prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::k
 
 prefix_ void senf::detail::AnnotationRegistry::dumpRegistrations(std::ostream & os)
 {
-#ifdef SENF_DEBUG
     boost::format fmt ("%-56.56s  %-4.4s  %-7.7s  %5d\n");
     os << "SENF_PACKET_ANNOTATION_SLOTS = " << SENF_PACKET_ANNOTATION_SLOTS << "\n"
        << "SENF_PACKET_ANNOTATION_SLOTSIZE = " << SENF_PACKET_ANNOTATION_SLOTSIZE << "\n";
@@ -172,7 +171,6 @@ prefix_ void senf::detail::AnnotationRegistry::dumpRegistrations(std::ostream & 
             % (isComplex(key) ? "yes" : "no")
             % size(key);
     }
-#endif
 }
 
 prefix_ void senf::dumpPacketAnnotationRegistry(std::ostream & os)
