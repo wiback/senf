@@ -1,8 +1,5 @@
-import os.path, glob, site_tools.Yaptu
+import os, os.path, site_tools.Yaptu, types, re, fnmatch
 from SCons.Script import *
-import SCons.Defaults, SCons.Util
-import senfconf
-import types, re
 
 senfutildir = os.path.dirname(__file__)
 
@@ -13,83 +10,8 @@ except NameError:
     Variables = Options
     BoolVariable = BoolOption
 
-def parseLogOption(value):
-    stream, area, level = ( x.strip() for x in value.strip().split('|') )
-    stream = ''.join('(%s)' % x for x in stream.split('::') )
-    if area : area = ''.join( '(%s)' % x for x in area.split('::') )
-    else    : area = '(_)'
-    return '((%s,%s,%s))' % (stream,area,level)
+###########################################################################
 
-def expandLogOption(target, source, env, for_signature):
-    if env.subst('$LOGLEVELS'):
-        return [ 'SENF_LOG_CONF="' + ''.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )+'"']
-    else:
-        return []
-
-class BuildTypeOptions:
-    def __init__(self, var):
-        self._var = var
-
-    def __call__(self, target, source, env, for_signature):
-        type = env['final'] and "final" or env['debug'] and "debug" or "normal"
-        return env[self._var + "_" + type]
-
-_DOLLAR_RE = re.compile(r'\$([a-zA-Z_][\.\w]*)|\${([^}]*)}')
-
-def _expandDefines(defs, target, source, env, for_signature):
-    rv = []
-    if SCons.Util.is_Dict(defs):
-        keys = defs.keys()
-        keys.sort()
-        defs = [ (k,defs[k]) for k in keys ]
-    elif not SCons.Util.is_List(defs):
-        defs = [ defs ]
-    for elt in defs:
-        if SCons.Util.is_String(elt):
-            m = _DOLLAR_RE.match(elt)
-            if m:
-                match = m.group(1) or m.group(2)
-                try: rv.extend(_expandDefines(eval(match, env.gvars(), env.lvars()),
-                                              target, source, env, for_signature))
-                except NameError: pass
-                except IndexError: pass
-            else:
-                rv.append(env.subst(elt))
-        elif callable(elt):
-            rv.extend(_expandDefines(elt(target, source, env, for_signature),
-                                     target, source, env, for_signature))
-        elif SCons.Util.is_Sequence(elt):
-            if len(elt)<2 or elt[1] is None:
-                rv.append(env.subst(elt[0]))
-            else:
-                rv.append(env.subst(elt[0]) + "=" + env.subst(elt[1]))
-        else:
-            rv.append(str(elt))
-    return rv
-
-def expandDefines(prefix, defs, suffix, env):
-    """Expand defines in <defs> using <env>. Calls SCons.Defaults._concat_ixes
-to append prefix/suffix before/after each define.
-
-    callable
-        Call the callable and replace it with the call result. If the result
-        is a list, the list is processed recursively. It the result is a
-        dictionary it is converted into a list of typles and processed
-        recursively.
-    '$<variable>' or '${<variable>}'
-        Replace the element with the variable expansion. If the result is a
-        list, the list is processed recursively. It the result is a
-        dictionary it is converted into a list of typles and processed
-        recursively.
-    '<any other string>'
-        Define a symbol with that (expanded!) name
-    iterable
-        The iteratble must have two elments. The first element defines the
-        symbol name, the second the symbol value."""
-
-    defs = _expandDefines(defs, None, None, env, False)
-    return SCons.Defaults._concat_ixes(prefix, defs, suffix, env)
-    
 def loadTools(env):
     global senfutildir
     tooldir = os.path.join(senfutildir, 'site_tools')
@@ -122,6 +44,32 @@ Special command line parameters:
         else:
             env.Replace(**{k: v})
             env.Append(ARGUMENT_VARIABLES = {k:v})
+
+def importProcessEnv(env):
+    env.Append( ENV = dict(( (k,v) 
+                             for pattern in env.get('IMPORT_ENV',[])
+                             for k,v in os.environ.iteritems()
+                             if fnmatch.fnmatchcase(k,pattern) )) )
+
+
+###########################################################################$
+# SENF log option parsing
+
+def parseLogOption(value):
+    stream, area, level = ( x.strip() for x in value.strip().split('|') )
+    stream = ''.join('(%s)' % x for x in stream.split('::') )
+    if area : area = ''.join( '(%s)' % x for x in area.split('::') )
+    else    : area = '(_)'
+    return '((%s,%s,%s))' % (stream,area,level)
+
+def expandLogOption(target, source, env, for_signature):
+    if env.subst('$LOGLEVELS'):
+        return [ 'SENF_LOG_CONF="' + ''.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )+'"']
+    else:
+        return []
+
+###########################################################################
+# client SENF detection/configuration
 
 def detect_senf(env,senf_path, try_flavors):
     """Detect senf with flavor in 'try_flavors' somewhere in 'senf_path'.
@@ -156,7 +104,6 @@ The environment 'env' is updated in the following way:
             return True
     return False
 
-
 def SetupForSENF(env, senf_path = [], flavor=None):
     try_flavors = [ '', 'g' ]
     if flavor is not None:
@@ -177,9 +124,14 @@ def SetupForSENF(env, senf_path = [], flavor=None):
             CPPPATH       = [ '$SENFINCDIR' ],
             LIBPATH       = [ '$SENFDIR' ],
             )
+
+    conf = env.Configure(clean=False, help=False)
+    if not conf.CheckBoostVersion():
+        conf.Fail("Boost includes not found")
+    conf.CheckBoostVariants()
+    conf.Finish()
     
     env.Replace(
-        _defines          = expandDefines,
         expandLogOption   = expandLogOption,
         )
     env.SetDefault(
@@ -198,34 +150,34 @@ def SetupForSENF(env, senf_path = [], flavor=None):
         CPPPATH           = [ '${NEED_BOOST_EXT and "$SENFINCDIR/boost_ext" or None}' ],
         CPPDEFINES        = [ '$expandLogOption' ],
         CXXFLAGS          = [ '-Wno-long-long', '-fno-strict-aliasing' ],
-        LIBS              = [ 'senf$LIBADDSUFFIX', 'rt',
-                              '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ],
         LINKFLAGS         = [ '-rdynamic' ],
+        LIBS              = [ 'senf$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', 
+                              '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ],
         )
         
     try:
-        env.MergeFlags(file(env.File('$BUNDLEDIR/senf${LIBADDSUFFIX}.conf').abspath).read())
+        path = env.File('$BUNDLEDIR/senf${LIBADDSUFFIX}.conf').abspath
+        env.MergeFlags(file(path).read())
     except IOError:
         # Really should never happen since detect_senf looks for this file ...
         pass
 
+###########################################################################
+# Helpers
+
 def DefaultOptions(env):
     env.Replace(
-        _defines          = expandDefines,
         expandLogOption   = expandLogOption,
+        CXXFLAGS_         = env.BuildTypeOptions('CXXFLAGS'),
+        CPPDEFINES_       = env.BuildTypeOptions('CPPDEFINES'),
+        LINKFLAGS_        = env.BuildTypeOptions('LINKFLAGS'),
+        LOGLEVELS_        = env.BuildTypeOptions('LOGLEVELS'),
         )
     env.Append(
         CXXFLAGS          = [ '$CXXFLAGS_' ],
-        CXXFLAGS_         = BuildTypeOptions('CXXFLAGS'),
-        
         CPPDEFINES        = [ '$CPPDEFINES_' ],
-        CPPDEFINES_       = BuildTypeOptions('CPPDEFINES'),
-        
         LINKFLAGS         = [ '$LINKFLAGS_' ],
-        LINKFLAGS_        = BuildTypeOptions('LINKFLAGS'),
-
         LOGLEVELS         = [ '$LOGLEVELS_' ],
-        LOGLEVELS_        = BuildTypeOptions('LOGLEVELS'),
         )
     env.SetDefault( 
         CXXFLAGS_final    = [],
@@ -279,88 +231,6 @@ def Glob(env, exclude=[], subdirs=[]):
     sources.sort()
     testSources.sort()
     return (sources, testSources)
-
-
-@senfconf.Test
-def CheckSTLCopyN(context):
-    context.Message("Checking for 'copy_n' implementation... ")
-    versions = [ ('<algorithm>',     'std::copy_n',       'STD'),
-                 ('<ext/algorithm>', '__gnu_cxx::copy_n', 'GNUCXX') ]
-    for include, name, define in versions:
-        ret = context.TryCompile("#include %s\n"
-                                 "int main(int,char**) { int *a,*b; %s(a,0,b); }\n"
-                                 % (include, name),
-                                 ".cc")
-        if ret:
-            context.Result(name)
-            context.sconf.Define("HAVE_%s_COPYN" % define,
-                                 1,
-                                 "Define one of " 
-                                 + ", ".join(("HAVE_%s_COPYN" % elt[2] for elt in versions)))
-            return ret
-
-    context.Result(False)
-    return False
-
-
-@senfconf.Test
-def CheckTempBufferStrategy(context):
-    context.Message("Checking for optimal temporary buffer strategy... ")
-
-    def check():
-      # locals
-      ret = context.TryCompile("void test(int n){int a[n];}",".cc")
-      if ret: return "locals"
-
-      # alloca
-      ret = context.TryCompile("#include <alloca.h>\n"
-                               "void test(int a){void *b(alloca(a));}"
-                               ".cc")
-      if ret: return "alloca"
-      
-      # fallback: new
-      return "new"
-
-    ret = check()
-    context.Result(ret)
-    context.sconf.Define("SENF_BUFFER_USE_%s" % ret.upper(),
-                         1,
-                         "Define one of SENF_BUFFER_USE_LOCALS, SENF_BUFFER_USE_ALLOCA, "
-                         "SENF_BUFFER_USE_NEW")
-    return ret
-
-
-def Fail(msg):
-    SCons.Util.display("scons: *** %s" % msg)
-    Exit(1)
-
-
-def Configure(env, customChecks=None):
-    conf = env.Configure(clean=False, 
-                         help=False, 
-                         custom_tests=senfconf.Tests(), 
-                         config_h="#/senf/autoconf.hh")
-
-    # Boost
-    if not conf.CheckBoostVersion():
-        Fail("Boost includes not found")
-    if not conf.env['ARGUMENT_VARIABLES'].has_key('BOOST_VARIANT'): conf.CheckBoostVariants( '', 'mt' )
-    conf.env.Replace(NEED_BOOST_EXT = not conf.CheckCXXHeader("boost/bimap.hpp"))
-    conf.CheckCXXHeader("boost/spirit/include/classic.hpp")
-        
-    # Compiler support
-    conf.CheckTempBufferStrategy()
-
-    # Standard library stuff
-    if not conf.CheckSTLCopyN():
-        Fail("No 'copy_n' implementation found")
-    conf.CheckFunc("timerfd_create")
-
-    # User checks
-    if customChecks:
-        customChecks(conf)
-
-    conf.Finish()
 
 tagfiles = None
 

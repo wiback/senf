@@ -6,6 +6,7 @@ import os
 import sys
 import tempfile
 import SCons.Scanner.C
+import CustomTests
 
 # ARGH ... Why do they put a '+' in the module name ????????
 SCons.Tool.cplusplus=getattr(__import__('SCons.Tool.c++', globals(), locals(), []).Tool, 'c++')
@@ -117,9 +118,57 @@ def NopAction(env, target, source):
     def nopstr(target, source, env) : return ''
     return env.Action(nop, nopstr)
 
+ConfTest = CustomTests.ConfTest()
+
+@ConfTest
+def CheckBoostVersion(context):
+    context.Message( "Checking boost version... " )
+    ret = context.TryRun("#include <boost/version.hpp>\n"
+                         "#include <iostream>\n"
+                         "int main(int, char **) { std::cout << BOOST_LIB_VERSION << std::endl; }",
+                         ".cc")[-1].strip()
+    if not ret:
+        context.Result("no boost includes found")
+        context.env.Replace( BOOST_VERSION = '' )
+        return None
+    else:
+        context.Result(ret)
+        context.env.Replace( BOOST_VERSION = ret )
+        return ret
+
+@ConfTest
+def CheckBoostVariants(context, *variants):
+    if not variants : variants = ('','mt')
+    useVariant = None
+    if context.env['BOOST_VARIANT'] is not None:
+        useVariant = context.env['BOOST_VARIANT']
+    try:
+        _env = context.env.Clone()
+        for variant in variants:
+            if variant : variantStr = "'%s'" % variant
+            else       : variantStr = "default"
+            context.Message( "Checking boost %s variant... " % variantStr )
+            context.env.Replace( BOOST_VARIANT=variant )
+            context.env.Append( _LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB  -Wl,-Bdynamic' )
+            ret = context.TryLink("#define BOOST_AUTO_TEST_MAIN\n"
+                                  "#include <boost/test/auto_unit_test.hpp>\n"
+                                  "#include <boost/test/test_tools.hpp>\n"
+                                  "BOOST_AUTO_TEST_CASE(test) { BOOST_CHECK(true); }\n",
+                                  ".cc")
+            context.Result( ret )
+            if ret and useVariant is None:
+                useVariant = variant
+    finally:
+        context.env.Replace(**_env.Dictionary())
+    if useVariant is not None and not context.env.GetOption('no_progress'):
+        print  "Using %s boost variant." % (
+            useVariant and "'%s'" % useVariant or "default")
+    context.env.Replace( BOOST_VARIANT = useVariant )
+    return useVariant
+
 def generate(env):
     env.SetDefault(
-        BOOST_VARIANT     = '',
+        BOOST_VARIANT     = None,
         _BOOST_VARIANT    = '${BOOST_VARIANT and "-" or None}$BOOST_VARIANT',
 
         BOOSTTESTLIB      = 'boost_unit_test_framework$_BOOST_VARIANT',
@@ -129,7 +178,10 @@ def generate(env):
         BOOSTSIGNALSLIB   = 'boost_signals$_BOOST_VARIANT',
 
         BOOSTTESTARGS     = [ '--build_info=yes', '--log_level=test_suite' ],
-    )
+        )
+    env.Append(
+        CUSTOM_TESTS      = ConfTest.tests,
+        )
 
     env['BUILDERS']['BoostUnitTest'] = BoostUnitTest
     env['BUILDERS']['FindAllBoostUnitTests'] = FindAllBoostUnitTests

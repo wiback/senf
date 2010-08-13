@@ -1,7 +1,7 @@
 # -*- python -*-
 
 import sys, os.path, fnmatch
-import SENFSCons, senfutil, senfconf
+import SENFSCons, senfutil
 
 ###########################################################################
 # Load utilities and setup libraries and configure build
@@ -57,81 +57,79 @@ SENF_ETH_TEST_INTERFACE
 Some unit tests will only run when executed to 'root'.
 """)
 
+env.Replace(
+    expandLogOption        = senfutil.expandLogOption,
+    CXXFLAGS_              = env.BuildTypeOptions('CXXFLAGS'),
+    CPPDEFINES_            = env.BuildTypeOptions('CPPDEFINES'),
+    LINKFLAGS_             = env.BuildTypeOptions('LINKFLAGS'),
+)
 env.Append(
-   IMPORT_ENV             = [ 'PATH', 'HOME', 'SSH_*', 'SENF*', 'CCACHE_*', 'DISTCC_*' ],
-
-   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*',
+    IMPORT_ENV             = [ 'PATH', 'HOME', 'SSH_*', 'SENF*', 'CCACHE_*', 'DISTCC_*' ],
+    
+    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*',
                               '.sconf_temp' ],
 
-   BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
-   CPPPATH                = [ '#', '$BUILDDIR',
-                              '${NEED_BOOST_EXT and "#/boost_ext" or None}' ],
-   LOCALLIBDIR            = '$BUILDDIR',
-   LIBPATH                = [ '$LOCALLIBDIR' ],
-   LIBS                   = [ '$EXTRA_LIBS' ],
-   EXTRA_LIBS             = [ 'rt' ],
-   TEST_EXTRA_LIBS        = [  ],
-   VALGRINDARGS           = [ '--num-callers=50' ],
+    CPPPATH                = [ '#', '$BUILDDIR',
+                               '${NEED_BOOST_EXT and "#/boost_ext" or None}' ],
+    LOCALLIBDIR            = '$BUILDDIR',
+    LIBPATH                = [ '$LOCALLIBDIR' ],
+    LIBS                   = [ '$EXTRA_LIBS' ],
+    EXTRA_LIBS             = [ 'rt' ],
+    TEST_EXTRA_LIBS        = [  ],
+    VALGRINDARGS           = [ '--num-callers=50' ],
 
-   PREFIX                 = '#/dist',
-   LIBINSTALLDIR          = '$PREFIX${syslayout and "/lib" or ""}',
-   BININSTALLDIR          = '$PREFIX${syslayout and "/bin" or ""}',
-   INCLUDEINSTALLDIR      = '$PREFIX${syslayout and "/include" or ""}',
-   CONFINSTALLDIR         = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
-   OBJINSTALLDIR          = '$CONFINSTALLDIR',
-   DOCINSTALLDIR          = '$PREFIX${syslayout and "/share/doc/senf" or "/manual"}',
-   SCONSINSTALLDIR        = '$CONFINSTALLDIR/site_scons',
+    CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
+    CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
 
-   CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
-   CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
+    # INLINE_OPTS_DEBUG are insane. Only useful for inline debugging. Need at least 1G free RAM
+    INLINE_OPTS_DEBUG      = [ '-finline-limit=20000', '-fvisibility-inlines-hidden', 
+                               '-fno-inline-functions', '-Winline' 
+                               '--param','large-function-growth=10000',
+                               '--param', 'large-function-insns=10000', 
+                               '--param','inline-unit-growth=10000' ],
+    INLINE_OPTS_NORMAL     = [ '-finline-limit=5000' ],
+    INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
+    CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
+                               '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing' ],
+    CXXFLAGS_final         = [ '-O3' ],
+    CXXFLAGS_normal        = [ '-O2', '-g' ],
+    CXXFLAGS_debug         = [ '-O0', '-g' ],
 
-   # These options are insane. Only useful for inline debugging. Need at least 1G free RAM
-   INLINE_OPTS_DEBUG      = [ '-finline-limit=20000', '-fvisibility-inlines-hidden', 
-                              '-fno-inline-functions', '-Winline' 
-                              '--param','large-function-growth=10000',
-                              '--param', 'large-function-insns=10000', 
-                              '--param','inline-unit-growth=10000' ],
-   INLINE_OPTS_NORMAL     = [ '-finline-limit=5000' ],
-   INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
-   CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
-                              '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing' ],
-   CXXFLAGS_              = senfutil.BuildTypeOptions('CXXFLAGS'),
-   CXXFLAGS_final         = [ '-O3' ],
-   CXXFLAGS_normal        = [ '-O2', '-g' ],
-   CXXFLAGS_debug         = [ '-O0', '-g' ],
+    CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
+    CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'BOOST_NO_MT' ],
+    CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
+    CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
 
-   CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
-   expandLogOption        = senfutil.expandLogOption,
-   CPPDEFINES_            = senfutil.BuildTypeOptions('CPPDEFINES'),
-   CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'BOOST_NO_MT' ],
-   CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
-   CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
-
-   LINKFLAGS              = [ '-rdynamic', '$LINKFLAGS_' ],
-   LINKFLAGS_             = senfutil.BuildTypeOptions('LINKFLAGS'),
-   LINKFLAGS_final        = [ ],
-   LINKFLAGS_normal       = [ '-Wl,-S' ],
-   LINKFLAGS_debug        = [ '-g' ],
+    LINKFLAGS              = [ '-rdynamic', '$LINKFLAGS_' ],
+    LINKFLAGS_final        = [ ],
+    LINKFLAGS_normal       = [ '-Wl,-S' ],
+    LINKFLAGS_debug        = [ '-g' ],
 )
-
 env.SetDefault(
-    LIBSENF           = "senf",
-    LCOV              = "lcov",
-    GENHTML           = "genhtml",
-    VALGRIND          = "valgrind",
-    SCONSBIN          = env.File("#/tools/scons"),
-    SCONSARGS         = ([ '-Q', '-j$CONCURRENCY_LEVEL' ] + 
-                         [ '%s=%s' % (k,v) for k,v in ARGUMENTS.iteritems() ]),
-    SCONS             = "@$SCONSBIN $SCONSARGS",
-    CONCURRENCY_LEVEL = env.GetOption('num_jobs') or 1,
-    TOPDIR            = env.Dir('#').abspath,
-    LIBADDSUFFIX      = '${FLAVOR and "_$FLAVOR" or ""}',
-    OBJADDSUFFIX      = '${LIBADDSUFFIX}',
-    FLAVOR            = '',
-)
+    PREFIX                 = '#/dist',
+    LIBINSTALLDIR          = '$PREFIX${syslayout and "/lib" or ""}',
+    BININSTALLDIR          = '$PREFIX${syslayout and "/bin" or ""}',
+    INCLUDEINSTALLDIR      = '$PREFIX${syslayout and "/include" or ""}',
+    CONFINSTALLDIR         = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
+    OBJINSTALLDIR          = '$CONFINSTALLDIR',
+    DOCINSTALLDIR          = '$PREFIX${syslayout and "/share/doc/senf" or "/manual"}',
+    SCONSINSTALLDIR        = '$CONFINSTALLDIR/site_scons',
 
-env.Replace(
-    _defines          = senfutil.expandDefines
+    BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
+
+    LIBSENF                = "senf",
+    LCOV                   = "lcov",
+    GENHTML                = "genhtml",
+    VALGRIND               = "valgrind",
+    SCONSBIN               = env.File("#/tools/scons"),
+    SCONSARGS              = ([ '-Q', '-j$CONCURRENCY_LEVEL' ] + 
+                              [ '%s=%s' % (k,v) for k,v in ARGUMENTS.iteritems() ]),
+    SCONS                  = "@$SCONSBIN $SCONSARGS",
+    CONCURRENCY_LEVEL      = env.GetOption('num_jobs') or 1,
+    TOPDIR                 = env.Dir('#').abspath,
+    LIBADDSUFFIX           = '${FLAVOR and "_$FLAVOR" or ""}',
+    OBJADDSUFFIX           = '${LIBADDSUFFIX}',
+    FLAVOR                 = '',
 )
 
 # Set variables from command line
@@ -144,43 +142,21 @@ senfutil.parseArguments(
 )
 
 # Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
-env.Append( ENV = dict(( (k,v) 
-                         for pattern in env['IMPORT_ENV']
-                         for k,v in os.environ.iteritems()
-                         if fnmatch.fnmatchcase(k,pattern) )) )
+senfutil.importProcessEnv(env)
 
+# Handle 'test_changes'
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
     import SparseTestHack
     env['only_tests'] = " ".join(x.abspath for x in SparseTestHack.findSCMChanges(env))
 
 if env.has_key('only_tests') : env['sparse_tests'] = True
+
 Export('env')
 
 ###########################################################################
 # Configure
 
-@senfconf.Test
-def CheckValgrind(context):
-    context.Message( "Checking for valgrind... " )
-    ret = context.TryAction(['$VALGRIND --version >$TARGET'])
-    context.Result( ret[1].strip() or False )
-    return ret[0]
-
-@senfconf.Test
-def CheckValgrindWildcards(context):
-    context.Message( "Checking whether valgrind supports '...' wildcards in suppressions... " )
-    ret = context.TryAction(['$VALGRIND --suppressions=$SOURCE /bin/true'],
-                            "{\n test_suppression\n Memcheck:Addr4\n ...\n fun:foo\n}\n",
-                            ".sup")
-    context.Result( ret[0] )
-    return ret[0]
-
-def customChecks(conf):
-    conf.env.Replace(
-        HAVE_VALGRIND  = conf.CheckValgrind() and conf.CheckValgrindWildcards()
-        )
-
-senfutil.Configure(env, customChecks)
+SConscript('SConfigure')
 
 # Only add this here, after all configure checks have run
 

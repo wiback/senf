@@ -1,0 +1,103 @@
+# -*- python -*-
+
+Import('env')
+
+###########################################################################
+# Custom configuration checks
+
+@env.ConfTest()
+def CheckSTLCopyN(context):
+    context.Message("Checking for 'copy_n' implementation... ")
+    versions = [ ('<algorithm>',     'std::copy_n',       'STD'),
+                 ('<ext/algorithm>', '__gnu_cxx::copy_n', 'GNUCXX') ]
+    for include, name, define in versions:
+        ret = context.TryCompile("#include %s\n"
+                                 "int main(int,char**) { int *a,*b; %s(a,0,b); }\n"
+                                 % (include, name),
+                                 ".cc")
+        if ret:
+            context.Result(name)
+            context.sconf.Define("HAVE_%s_COPYN" % define,
+                                 1,
+                                 "Define one of " 
+                                 + ", ".join(("HAVE_%s_COPYN" % elt[2] for elt in versions)))
+            return ret
+
+    context.Result(False)
+    return False
+
+
+@env.ConfTest()
+def CheckTempBufferStrategy(context):
+    context.Message("Checking for optimal temporary buffer strategy... ")
+
+    def check():
+      # locals
+      ret = context.TryCompile("void test(int n){int a[n];}",".cc")
+      if ret: return "locals"
+
+      # alloca
+      ret = context.TryCompile("#include <alloca.h>\n"
+                               "void test(int a){void *b(alloca(a));}"
+                               ".cc")
+      if ret: return "alloca"
+      
+      # fallback: new
+      return "new"
+
+    ret = check()
+    context.Result(ret)
+    context.sconf.Define("SENF_BUFFER_USE_%s" % ret.upper(),
+                         1,
+                         "Define one of SENF_BUFFER_USE_LOCALS, SENF_BUFFER_USE_ALLOCA, "
+                         "SENF_BUFFER_USE_NEW")
+    return ret
+
+@env.ConfTest()
+def CheckValgrind(context):
+    context.Message( "Checking for valgrind... " )
+    ret = context.TryAction(['$VALGRIND --version >$TARGET'])
+    context.Result( ret[1].strip() or False )
+    return ret[0]
+
+@env.ConfTest()
+def CheckValgrindWildcards(context):
+    context.Message( "Checking whether valgrind supports '...' wildcards in suppressions... " )
+    ret = context.TryAction(['$VALGRIND --suppressions=$SOURCE /bin/true'],
+                            "{\n test_suppression\n Memcheck:Addr4\n ...\n fun:foo\n}\n",
+                            ".sup")
+    context.Result( ret[0] )
+    return ret[0]
+
+###########################################################################
+
+conf = env.Configure(clean=False, 
+                     help=False, 
+                     config_h="#/senf/autoconf.hh")
+
+# Boost
+res = conf.CheckBoostVersion()
+if not res : conf.Fail("Boost includes not found")
+
+res = conf.CheckBoostVariants()
+
+res = conf.CheckCXXHeader("boost/bimap.hpp")
+conf.env.Replace(NEED_BOOST_EXT = not res)
+
+res = conf.CheckCXXHeader("boost/spirit/include/classic.hpp")
+    
+# Compiler support
+res = conf.CheckTempBufferStrategy()
+
+# Standard library stuff
+res = conf.CheckSTLCopyN()
+if not res : conf.Fail("No 'copy_n' implementation found")
+
+res = conf.CheckFunc("timerfd_create")
+
+# valgrind
+res = conf.CheckValgrind() \
+  and conf.CheckValgrindWildcards()
+conf.env.Replace(HAVE_VALGRIND = res)
+
+env = conf.Finish()
