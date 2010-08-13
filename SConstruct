@@ -275,3 +275,10 @@ for target in COMMAND_LINE_TARGETS:
             args.append('-u')
         env.PhonyTarget(target, [], [ "ssh $HOST scons $SCONSARGS -C $DIR $RTARGET" ],
                         HOST=host, RTARGET=realtarget, DIR=cwd, SCONSARGS=args)
+
+env.PhonyTarget('clean', [], [
+        lambda **args: sys.stderr.write(
+            "=================================================================\n"
+            "'clean' is not a valid target. Instead, use\n"
+            "    $ scons -c all\n"
+            "=================================================================\n") ])
