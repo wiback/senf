@@ -26,7 +26,8 @@ def parseArguments(env, *defs):
     env.Help("""
 Any construction environment variable may be set from the scons
 command line (see SConstruct file and SCons documentation for a list
-of variables) using
+of variables) usin
+g
 
    VARNAME=value    Assign new value
    VARNAME+=value   Append value at end
@@ -37,7 +38,8 @@ Special command line parameters:
     try                  : unknv = vars.UnknownVariables()
     except AttributeError: unknv = vars.UnknownOptions()
     env.SetDefault(ARGUMENT_VARIABLES = {})
-    for k,v in unknv.iteritems():
+    for k,v in ARGLIST:
+        if not unknv.has_key(k) : continue
         if k.endswith('+'):
             env.Append(**{k[:-1]: v})
             env.Append(ARGUMENT_VARIABLES = {k[:-1]:v})
