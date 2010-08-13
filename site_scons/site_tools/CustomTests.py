@@ -35,7 +35,7 @@ the decorator. This usage is primarily interesting for tool writers:
     from CustomTests import ConfTest
 
     MY_TESTS = {}
-    
+
     @ConfTest(MY_TESTS)
     def CheckMyFoo(context):
         pass
@@ -73,7 +73,7 @@ This usage is interesting for SConstruct and SConscript writers:
 
     env = Environment()
     env.Tool('CustomTests')
-    
+
     @env.ConfTest()
     def CheckMyFoo(context):
         pass
@@ -86,7 +86,7 @@ The new configuration test is automatically added to
 env['CUSTOM_TESTS'] and is thus automatically available to all
 configuration contexts created from the environment.
 """
-    
+
     def __init__(self, registry=None):
         if registry is None:
             self.tests = {}
@@ -99,17 +99,19 @@ configuration contexts created from the environment.
         self.tests[func.__name__] = func
         return func
 
-DefaultTest = ConfTest()
-
 def Configure(self, *args, **kw):
     try: kw['custom_tests'].update(self['CUSTOM_TESTS'])
     except KeyError: kw['custom_tests'] = dict(self['CUSTOM_TESTS'])
     return self._CustomTests_orig_Configure(*args, **kw)
 
-@DefaultTest
-def Fail(context, msg):
-    SCons.Util.display("scons: *** %s" % msg)
-    SCons.Script.Exit(1)
+def Fail(context, message, condition=True):
+    if condition:
+        SCons.Util.display("scons: *** %s" % message)
+        SCons.Script.Exit(1)
+
+DefaultTest = ConfTest()
+
+# Hmm .. no default tests for now ...
 
 def generate(env):
     env.Append( CUSTOM_TESTS = DefaultTest.tests )

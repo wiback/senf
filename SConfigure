@@ -19,7 +19,7 @@ def CheckSTLCopyN(context):
             context.Result(name)
             context.sconf.Define("HAVE_%s_COPYN" % define,
                                  1,
-                                 "Define one of " 
+                                 "Define one of "
                                  + ", ".join(("HAVE_%s_COPYN" % elt[2] for elt in versions)))
             return ret
 
@@ -41,7 +41,7 @@ def CheckTempBufferStrategy(context):
                                "void test(int a){void *b(alloca(a));}"
                                ".cc")
       if ret: return "alloca"
-      
+
       # fallback: new
       return "new"
 
@@ -71,33 +71,25 @@ def CheckValgrindWildcards(context):
 
 ###########################################################################
 
-conf = env.Configure(clean=False, 
-                     help=False, 
-                     config_h="#/senf/autoconf.hh")
+conf = env.Configure(clean=False, help=False, config_h="#/senf/autoconf.hh")
 
 # Boost
-res = conf.CheckBoostVersion()
-if not res : conf.Fail("Boost includes not found")
-
+res = conf.CheckBoostVersion(fail=True)
 res = conf.CheckBoostVariants()
-
-res = conf.CheckCXXHeader("boost/bimap.hpp")
-conf.env.Replace(NEED_BOOST_EXT = not res)
-
 res = conf.CheckCXXHeader("boost/spirit/include/classic.hpp")
-    
+res = conf.CheckCXXHeader("boost/bimap.hpp"); \
+    conf.env.Replace(NEED_BOOST_EXT = not res)
+
 # Compiler support
 res = conf.CheckTempBufferStrategy()
 
 # Standard library stuff
-res = conf.CheckSTLCopyN()
-if not res : conf.Fail("No 'copy_n' implementation found")
-
 res = conf.CheckFunc("timerfd_create")
+res = conf.CheckSTLCopyN(); \
+    conf.env.Fail(condition=not res, message="No 'copy_n' implementation found")
 
 # valgrind
-res = conf.CheckValgrind() \
-  and conf.CheckValgrindWildcards()
-conf.env.Replace(HAVE_VALGRIND = res)
+res = conf.CheckValgrind() and conf.CheckValgrindWildcards(); \
+    conf.env.Replace(HAVE_VALGRIND = res)
 
 env = conf.Finish()

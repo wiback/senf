@@ -51,7 +51,7 @@ def CompileCheck(target, source, env):
             print "Passed test '%s': %s" % (delay_name, message)
             delay_name = None
             continue
-            
+
         filename = os.path.abspath(filename)
         if filename != source[0].abspath : continue
 
@@ -87,7 +87,7 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
     binnode = target.dir.File('.' + target.name + '.bin')
     stampnode = target.dir.File('.' + target.name + '.stamp')
 
-    bin = env.Program(binnode, source, 
+    bin = env.Program(binnode, source,
                       LIBS = env['LIBS'] + [ '$TEST_EXTRA_LIBS' ],
                       _LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB -Wl,-Bdynamic ' + env['_LIBFLAGS'],
                       **kw)
@@ -98,7 +98,7 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
 
     alias = env.Command(env.File(target), stamp, [ env.NopAction() ] )
 
-    compileTests = [ src for src in source 
+    compileTests = [ src for src in source
                      if src.suffix in SCons.Tool.cplusplus.CXXSuffixes \
                          and src.exists() \
                          and 'COMPILE_CHECK' in file(str(src)).read() ]
@@ -106,7 +106,7 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
         env.Depends(alias, env.CompileCheck(source = compileTests))
 
     _ALL_TESTS.append(alias)
-        
+
     return alias
 
 def FindAllBoostUnitTests(env, target, source):
@@ -121,20 +121,50 @@ def NopAction(env, target, source):
 ConfTest = CustomTests.ConfTest()
 
 @ConfTest
-def CheckBoostVersion(context):
-    context.Message( "Checking boost version... " )
+def CheckBoostVersion(context,fail=False,min=None,max=None):
+    """Check for boost includes.
+
+Will place the boost version number (BOOST_LIB_VERSION) into the
+BOOST_VERSION environment variable.
+
+Options:
+
+    min/max   compare boost version against given range.
+
+    fail      if fail is set to True, the build will be terminated,
+              when no valid boost includes are found."""
+    if min and max:
+        msg = ' in range %s to %s' % (min,max)
+    elif min:
+        msg = ' at least %s' % min
+    elif max:
+        msg = ' at most %s' % max
+    else:
+        msg = ''
+    context.Message( "Checking boost version%s... " % msg )
     ret = context.TryRun("#include <boost/version.hpp>\n"
                          "#include <iostream>\n"
                          "int main(int, char **) { std::cout << BOOST_LIB_VERSION << std::endl; }",
                          ".cc")[-1].strip()
+
     if not ret:
-        context.Result("no boost includes found")
-        context.env.Replace( BOOST_VERSION = '' )
-        return None
+        msg = "no boost includes found"
+        context.env.Replace( BOOST_VERSION = None )
     else:
-        context.Result(ret)
         context.env.Replace( BOOST_VERSION = ret )
-        return ret
+        msg = ret
+        if min or max:
+            try: version = map(int,ret.split('_'))
+            except ValueError:
+                msg = "[%s] invalid version syntax" % ret
+                ret = None
+            else:
+                if min : ret = ret and (version>=map(int,min.split('_')))
+                if max : ret = ret and (version<=map(int,max.split('_')))
+                msg = '[%s] %s' % (msg, ret and "yes" or "no")
+    context.Result(msg)
+    if fail and not ret : context.env.Fail('No valid boost includes found')
+    return ret
 
 @ConfTest
 def CheckBoostVariants(context, *variants):

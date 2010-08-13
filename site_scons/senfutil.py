@@ -6,7 +6,7 @@ senfutildir = os.path.dirname(__file__)
 # Fix for SCons 0.97 compatibility
 try:
     Variables
-except NameError: 
+except NameError:
     Variables = Options
     BoolVariable = BoolOption
 
@@ -28,7 +28,7 @@ Any construction environment variable may be set from the scons
 command line (see SConstruct file and SCons documentation for a list
 of variables) using
 
-   VARNAME=value    Assign new value  
+   VARNAME=value    Assign new value
    VARNAME+=value   Append value at end
 
 Special command line parameters:
@@ -46,7 +46,7 @@ Special command line parameters:
             env.Append(ARGUMENT_VARIABLES = {k:v})
 
 def importProcessEnv(env):
-    env.Append( ENV = dict(( (k,v) 
+    env.Append( ENV = dict(( (k,v)
                              for pattern in env.get('IMPORT_ENV',[])
                              for k,v in os.environ.iteritems()
                              if fnmatch.fnmatchcase(k,pattern) )) )
@@ -108,13 +108,14 @@ def SetupForSENF(env, senf_path = [], flavor=None):
     try_flavors = [ '', 'g' ]
     if flavor is not None:
         try_flavors[0:0] = [ flavor ]
-        
+
     res = detect_senf(env, senf_path, try_flavors)
-    if not env.GetOption('no_progress'):
-        if res:
-            print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} 'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
-        else:
-            print "scons: SENF library not found, trying to build anyway ..."
+    if res:
+        if not env.GetOption('no_progress'):
+            print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} "
+                            "'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
+    else:
+        print "scons: SENF library not found, trying to build anyway ..."
 
     loadTools(env)
 
@@ -125,36 +126,35 @@ def SetupForSENF(env, senf_path = [], flavor=None):
             LIBPATH       = [ '$SENFDIR' ],
             )
 
-    conf = env.Configure(clean=False, help=False)
-    if not conf.CheckBoostVersion():
-        conf.Fail("Boost includes not found")
-    conf.CheckBoostVariants()
-    conf.Finish()
-    
+    if env['BOOST_VARIANT'] is None:
+        conf = env.Configure(clean=False, help=False)
+        conf.CheckBoostVersion(fail=True)
+        conf.CheckBoostVariants()
+        conf.Finish()
+
     env.Replace(
         expandLogOption   = expandLogOption,
         )
     env.SetDefault(
-        FLAVOR            = flavor,
         LIBADDSUFFIX      = '${FLAVOR and "_$FLAVOR" or ""}',
         OBJADDSUFFIX      = '${LIBADDSUFFIX}',
+        BUNDLEDIR         = '$SENFDIR${SENFSYSLAYOUT and "/lib/senf" or ""}',
+        SENFINCDIR        = '$SENFDIR${SENFSYSLAYOUT and "/include" or ""}',
+
         PROJECTNAME       = "Unnamed project",
         DOCLINKS          = [],
         PROJECTEMAIL      = "nobody@nowhere.org",
         COPYRIGHT         = "nobody",
         REVISION          = "unknown",
-        BUNDLEDIR         = '$SENFDIR${SENFSYSLAYOUT and "/lib/senf" or ""}',
-        SENFINCDIR        = '$SENFDIR${SENFSYSLAYOUT and "/include" or ""}',
         )
     env.Append(
-        CPPPATH           = [ '${NEED_BOOST_EXT and "$SENFINCDIR/boost_ext" or None}' ],
         CPPDEFINES        = [ '$expandLogOption' ],
         CXXFLAGS          = [ '-Wno-long-long', '-fno-strict-aliasing' ],
         LINKFLAGS         = [ '-rdynamic' ],
-        LIBS              = [ 'senf$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', 
+        LIBS              = [ 'senf$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB',
                               '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ],
         )
-        
+
     try:
         path = env.File('$BUNDLEDIR/senf${LIBADDSUFFIX}.conf').abspath
         env.MergeFlags(file(path).read())
@@ -179,7 +179,7 @@ def DefaultOptions(env):
         LINKFLAGS         = [ '$LINKFLAGS_' ],
         LOGLEVELS         = [ '$LOGLEVELS_' ],
         )
-    env.SetDefault( 
+    env.SetDefault(
         CXXFLAGS_final    = [],
         CXXFLAGS_normal   = [],
         CXXFLAGS_debug    = [],
@@ -199,7 +199,7 @@ def DefaultOptions(env):
 
     # Interpret command line options
     parseArguments(
-        env, 
+        env,
         BoolVariable('final', 'Build final (optimized) build', False),
         BoolVariable('debug', 'Link in debug symbols', False),
     )
@@ -220,12 +220,12 @@ def DefaultOptions(env):
 
 def Glob(env, exclude=[], subdirs=[]):
     testSources = env.Glob("*.test.cc", strings=True)
-    sources = [ x 
-                for x in env.Glob("*.cc", strings=True) 
+    sources = [ x
+                for x in env.Glob("*.cc", strings=True)
                 if x not in testSources and x not in exclude ]
     for subdir in subdirs:
         testSources += env.Glob(os.path.join(subdir,"*.test.cc"), strings=True)
-        sources += [ x 
+        sources += [ x
                      for x in env.Glob(os.path.join(subdir,"*.cc"), strings=True)
                      if x not in testSources and x not in exclude ]
     sources.sort()
@@ -242,7 +242,7 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
     global senfutildir
     global tagfiles
     libdir=os.path.join(senfutildir, 'lib')
-    
+
     if tagfiles is None:
         senfdocdir = None
         senfdoc_path.extend(('senfdoc', '$SENFDIR', '$SENFDIR/manual',
@@ -259,12 +259,12 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
         else:
             for dir, dirs, files in os.walk(senfdocdir):
                 tagfiles.extend([ os.path.join(dir,f) for f in files if f.endswith('.tag') ])
-                if dir.endswith('/doc') : 
+                if dir.endswith('/doc') :
                     try: dirs.remove('html')
                     except ValueError: pass
-                for d in dirs: 
+                for d in dirs:
                     if d.startswith('.') : dirs.remove(d)
-    
+
     if env.GetOption('clean'):
         env.Clean('doc', env.Dir('doc'))
         if not mydoxyfile:
@@ -272,7 +272,7 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
 
     if not mydoxyfile:
         # Create Doxyfile NOW
-        site_tools.Yaptu.yaptuAction("Doxyfile", 
+        site_tools.Yaptu.yaptuAction("Doxyfile",
                                      os.path.join(libdir, "Doxyfile.yap"),
                                      env)
 
@@ -283,7 +283,7 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
                   env.Value('$REVISION') ]
 
     # The other files are created using dependencies
-    if doxyheader: 
+    if doxyheader:
         doxyheader = env.CopyToDir(env.Dir("doc"), doxyheader)
     else:
         doxyheader = env.Yaptu("doc/doxyheader.html", os.path.join(libdir, "doxyheader.yap"), **kw)
@@ -308,7 +308,7 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
                                      'html_dir'   : 'html',
                                      'html'       : 'YES',
                                      'DOXYGEN'    : '$DOXYGEN' },
-                      TAGFILES   = tagfiles, 
+                      TAGFILES   = tagfiles,
                       DOCLIBDIR  = libdir,
                       DOXYGENCOM = "$DOCLIBDIR/doxygen.sh $DOXYOPTS $SOURCE")
 

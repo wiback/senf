@@ -38,7 +38,7 @@ by calling
 
     scons <target>@[<user>@]<host>
 
-Some more elaborate unit tests may be enabled by setting appropritate variables 
+Some more elaborate unit tests may be enabled by setting appropritate variables
 in the shell (unix) environment
 
 SENF_TIMING_CRITICAL_TESTS
@@ -65,7 +65,7 @@ env.Replace(
 )
 env.Append(
     IMPORT_ENV             = [ 'PATH', 'HOME', 'SSH_*', 'SENF*', 'CCACHE_*', 'DISTCC_*' ],
-    
+
     CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*',
                               '.sconf_temp' ],
 
@@ -82,10 +82,10 @@ env.Append(
     CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
 
     # INLINE_OPTS_DEBUG are insane. Only useful for inline debugging. Need at least 1G free RAM
-    INLINE_OPTS_DEBUG      = [ '-finline-limit=20000', '-fvisibility-inlines-hidden', 
-                               '-fno-inline-functions', '-Winline' 
+    INLINE_OPTS_DEBUG      = [ '-finline-limit=20000', '-fvisibility-inlines-hidden',
+                               '-fno-inline-functions', '-Winline'
                                '--param','large-function-growth=10000',
-                               '--param', 'large-function-insns=10000', 
+                               '--param', 'large-function-insns=10000',
                                '--param','inline-unit-growth=10000' ],
     INLINE_OPTS_NORMAL     = [ '-finline-limit=5000' ],
     INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
@@ -122,7 +122,7 @@ env.SetDefault(
     GENHTML                = "genhtml",
     VALGRIND               = "valgrind",
     SCONSBIN               = env.File("#/tools/scons"),
-    SCONSARGS              = ([ '-Q', '-j$CONCURRENCY_LEVEL' ] + 
+    SCONSARGS              = ([ '-Q', '-j$CONCURRENCY_LEVEL' ] +
                               [ '%s=%s' % (k,v) for k,v in ARGUMENTS.iteritems() ]),
     SCONS                  = "@$SCONSBIN $SCONSARGS",
     CONCURRENCY_LEVEL      = env.GetOption('num_jobs') or 1,
@@ -161,7 +161,7 @@ SConscript('SConfigure')
 # Only add this here, after all configure checks have run
 
 env.Append(LIBS = '$LIBSENF$LIBADDSUFFIX',
-           EXTRA_LIBS = [ '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', 
+           EXTRA_LIBS = [ '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
                           '$BOOSTFSLIB' ])
 
 ###########################################################################
@@ -221,9 +221,9 @@ env.PhonyTarget('prepare', [], [])
 env.Alias('all_valgrinds')
 if env['HAVE_VALGRIND']:
     for test in env.FindAllBoostUnitTests():
-        stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'), 
+        stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'),
                             [ test[0].dir.File('.test.bin'), 'tools/valgrind.sup' ],
-                            [ """$VALGRIND --tool=memcheck 
+                            [ """$VALGRIND --tool=memcheck
                                           --error-exitcode=1
                                           --suppressions=${SOURCES[1]}
                                           $VALGRINDARGS
@@ -240,13 +240,13 @@ env.PhonyTarget('lcov', [], [
         '$LCOV --output-file lcov.info --remove /tmp/senf_lcov.info "*/include/*" "*/boost/*" "*.test.*" ',
         '$GENHTML --output-directory doc/lcov --title all_tests lcov.info',
         'rm /tmp/senf_lcov.info' ])
-if env.GetOption('clean'): 
+if env.GetOption('clean'):
     env.Clean('lcov', [ os.path.join(path,f)
                         for path, subdirs, files in os.walk('.')
                         for pattern in ('*.gcno', '*.gcda', '*.gcov')
-                        for f in fnmatch.filter(files,pattern) ] + 
+                        for f in fnmatch.filter(files,pattern) ] +
                       [ 'lcov.info', env.Dir('doc/lcov'), env.Dir('build/lcov') ])
-    
+
 #### clean
 env.Clean('all', ('.prepare-stamp', env.Dir('dist'), env.Dir('build')))
 if env.GetOption('clean') : env.Depends('all', ('lcov', 'all_valgrinds'))

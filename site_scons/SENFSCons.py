@@ -5,12 +5,12 @@ from SCons.Script import *
 
 def Glob(env, exclude=[], subdirs=[]):
     testSources = env.Glob("*.test.cc",strings=True)
-    sources = [ x 
-                for x in env.Glob("*.cc",strings=True) 
+    sources = [ x
+                for x in env.Glob("*.cc",strings=True)
                 if x not in testSources and x not in exclude ]
     for subdir in subdirs:
         testSources += env.Glob(os.path.join(subdir,"*.test.cc"),strings=True)
-        sources += [ x 
+        sources += [ x
                      for x in env.Glob(os.path.join(subdir,"*.cc"),strings=True)
                      if x not in testSources and x not in exclude ]
     includes = []
@@ -63,7 +63,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
         tagfile = env.Doxygen(doxyfile, DOXYOPTS = opts + [ '--tagfile' ],
                               **vars(generate_tagfile='${OUTPUT_DIRECTORY}/${MODULE}.tag'))
         env.Append(ALL_TAGFILES = [ tagfile[0].abspath ])
-        env.Depends(tagfile, [ env.File('#/site_scons/lib/doxygen.sh'), 
+        env.Depends(tagfile, [ env.File('#/site_scons/lib/doxygen.sh'),
                                env.File('#/site_scons/lib/tag-munge.xsl') ])
 
         env.Install(env.Dir('$DOCINSTALLDIR').Dir(tagfile[0].dir.get_path(env.Dir('#'))),
@@ -100,7 +100,7 @@ def AllIncludesHH(env, exclude=[]):
                 if f.name not in exclude and not f.name.endswith('.test.hh') ]
     headers.sort(key=lambda x:x.name)
     target = env.File("all_includes.hh")
-    allinch = env.CreateFile(target, 
+    allinch = env.CreateFile(target,
                              env.Value("".join([ '#include <%s>\n' % f.srcnode().get_path(env.Dir('#'))
                                                  for f in headers ])))
     env.Default(allinch)
