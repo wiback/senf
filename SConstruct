@@ -33,10 +33,17 @@ fixlinks        Fix broken links in doxygen documentation
 all_valgrinds   Run all tests under valgrind/memcheck
 lcov            Generate test coverage output in doc/lcov and lcov.info
 
-You may execute targets on a remote host (if the directory layout is the same)
-by calling
+The following additional targets may be called within subdirectories, either
+using '$ scons -u <target>'  or '$ scons <directory>/<target>:
 
-    scons <target>@[<user>@]<host>
+test            Build and run unit test for this module
+doc             Build the documentation of this module
+valgrind        Run the unit test of this module under valgrind
+
+You may execute targets on a remote host via ssh (if the directory layout is the
+same) by calling
+
+    $ scons <target>@[<user>@]<host>
 
 Some more elaborate unit tests may be enabled by setting appropritate variables
 in the shell (unix) environment
@@ -219,7 +226,7 @@ env.PhonyTarget('prepare', [], [])
 
 #### valgrind
 env.Alias('all_valgrinds')
-if env['HAVE_VALGRIND']:
+if env.get('HAVE_VALGRIND'):
     for test in env.FindAllBoostUnitTests():
         stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'),
                             [ test[0].dir.File('.test.bin'), 'tools/valgrind.sup' ],
