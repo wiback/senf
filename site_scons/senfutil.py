@@ -1,4 +1,5 @@
 import os, os.path, site_tools.Yaptu, types, re, fnmatch
+import SCons.Util
 from SCons.Script import *
 
 senfutildir = os.path.dirname(__file__)
@@ -233,6 +234,18 @@ def Glob(env, exclude=[], subdirs=[]):
     sources.sort()
     testSources.sort()
     return (sources, testSources)
+
+def CleanGlob(env, targets, patterns):
+    if env.GetOption('clean'):
+        targets = SCons.Util.flatten(targets)
+        for target in targets:
+            if target in BUILD_TARGETS:
+                patterns = map(str,SCons.Util.flatten(env.subst_list(patterns)))
+                files = [ os.path.join(path,f)
+                          for path, subdirs, files in os.walk('.')
+                          for pattern in patterns
+                          for f in fnmatch.filter(files,pattern) ]
+                return env.Clean(target, files)
 
 tagfiles = None
 
