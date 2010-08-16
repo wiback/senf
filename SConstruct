@@ -138,7 +138,7 @@ env.SetDefault(
     VALGRIND               = "valgrind",
     SCONSBIN               = env.File("#/tools/scons"),
     SCONSARGS              = ([ '-Q', '-j$CONCURRENCY_LEVEL' ] +
-                              [ '%s=%s' % (k,v) for k,v in ARGUMENTS.iteritems() ]),
+                              [ '%s=%s' % (k,v) for k,v in ARGLIST ]),
     SCONS                  = "@$SCONSBIN $SCONSARGS",
     CONCURRENCY_LEVEL      = env.GetOption('num_jobs') or 1,
     TOPDIR                 = env.Dir('#').abspath,
@@ -216,7 +216,6 @@ if env['sparse_tests']:
 #### install_all, default, all_tests, all
 env.Install('${SCONSINSTALLDIR}', [ 'site_scons/__init__.py',
                                     'site_scons/senfutil.py',
-                                    'site_scons/senfconf.py',
                                     'site_scons/yaptu.py' ])
 env.InstallDir('${SCONSINSTALLDIR}', [ 'site_scons/site_tools', 'site_scons/lib' ],
                FILTER_SUFFIXES=[ '','.css','.pl','.py','.sh','.sty','.xml','.xsl','.yap' ])
@@ -229,7 +228,7 @@ env.Alias('all_tests', env.FindAllBoostUnitTests())
 env.Alias('test_changes', 'all_tests')
 env.Alias('all', [ 'default', 'all_tests', 'examples', 'all_docs' ])
 
-#### prepare
+#### prepare and -c some
 env.PhonyTarget('prepare', [], [])
 env.PhonyTarget('some', [], [])
 
@@ -305,6 +304,6 @@ for target in COMMAND_LINE_TARGETS:
 env.PhonyTarget('clean', [], [
         lambda **args: sys.stderr.write(
             "=================================================================\n"
-            "'clean' is not a valid target. Instead, use\n"
+            "'clean' is not a valid target, use the '-c' option instead:\n"
             "    $ scons -c all\n"
             "=================================================================\n") ])
