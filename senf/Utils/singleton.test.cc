@@ -95,8 +95,12 @@ namespace {
     AliveTest1::~AliveTest1()
     {
         if (test2Dead) {
-            assert( ! AliveTest2::alive() );
-            std::cerr << "singleton alive test ok\n";
+            if (! AliveTest2::alive() )
+                std::cerr << "singleton alive test ok\n";
+            else {
+                std::cerr << "singleton alive test 2 NOT ok!\n";
+                throw 1;
+            }
         }
         test1Dead = true;
     }
@@ -109,8 +113,12 @@ namespace {
     AliveTest2::~AliveTest2()
     {
         if (test1Dead) {
-            assert( ! AliveTest1::alive() );
-            std::cerr << "singleton alive test ok\n";
+            if (! AliveTest1::alive() )
+                std::cerr << "singleton alive test ok\n";
+            else {
+                std::cerr << "singleton alive test 1 NOT ok!\n";
+                throw 1;
+            }
         }
         test2Dead = true;
     }
