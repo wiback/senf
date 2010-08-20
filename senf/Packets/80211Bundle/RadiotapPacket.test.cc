@@ -31,6 +31,15 @@
 #include <boost/test/test_tools.hpp>
 
 ///////////////////////////////cc.p////////////////////////////////////////
+
+SENF_AUTO_UNIT_TEST(RadiotapPacket_fieldSizes)
+{
+    // This test only asserts, that nobody forgot to update the FIELD_SIZE table
+    // when chaning MAX_INDEX
+    BOOST_CHECK( senf::RadiotapPacketParser_Header::FIELD_SIZE[
+                     senf::RadiotapPacketParser_Header::MAX_INDEX] != 0 );
+}
+
 SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
 {
     /* used madwifi 0.9.4 */
@@ -112,66 +121,100 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
                        "  antenna noise (dBm)     : -96\n"
                        "  antenna                 : 2\n"
                        "  antenna signal (dB)     : 35\n"
-                       "  FCS (at end)            : 0\n" );
+                       "  fcs                     : 0\n" );
 }
 
-#if 0
 SENF_AUTO_UNIT_TEST(RadiotapPacket_create)
 {
-    unsigned char data[] = {
-            0x00 ,0x00 ,0x1a ,0x00, 0x6f, 0x18, 0x00, 0x00,
-            0x02, 0xe6, 0x8a, 0xdf, 0x12, 0x00, 0x00, 0x00,
-            0x02, 0x0c, 0xc8, 0x14, 0x40, 0x01, 0xc3, 0xa0,
-            0x02, 0x23
-    };
-
     senf::RadiotapPacket p (senf::RadiotapPacket::create());
 
-    SENF_CHECK_NO_THROW( p->init_tsft());
-    SENF_CHECK_NO_THROW( p->tsft()=81059833346uLL);
+    BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacketParser_Header::fixed_bytes+0 );
 
-    SENF_CHECK_NO_THROW( p->init_rate());
-    SENF_CHECK_NO_THROW( p->rate() = 12u);
-    SENF_CHECK_NO_THROW( p->init_dbmAntennaSignal());
-    SENF_CHECK_NO_THROW( p->dbmAntennaSignal() = -61);
-    SENF_CHECK_NO_THROW( p->init_dbmAntennaNoise());
-    SENF_CHECK_NO_THROW( p->dbmAntennaNoise() = -96);
-    SENF_CHECK_NO_THROW( p->init_antenna());
-    SENF_CHECK_NO_THROW( p->antenna() = 2u);
-    SENF_CHECK_NO_THROW( p->init_dbAntennaSignal());
-    SENF_CHECK_NO_THROW( p->dbAntennaSignal() = 35);
+    SENF_CHECK_NO_THROW( p->init_tsft()             = 81059833346uLL );
+    SENF_CHECK_NO_THROW( p->init_rate()             =          12u   );
+    SENF_CHECK_NO_THROW( p->init_dbmAntennaSignal() =         -61    );
+    SENF_CHECK_NO_THROW( p->init_dbmAntennaNoise()  =         -96    );
+    SENF_CHECK_NO_THROW( p->init_antenna()          =           2u   );
+    SENF_CHECK_NO_THROW( p->init_dbAntennaSignal()  =          35    );
 
     SENF_CHECK_NO_THROW( p->init_flags());
-    SENF_CHECK_NO_THROW( p->flags().cfp() = false);
     SENF_CHECK_NO_THROW( p->flags().shortPreamble() = true);
-    SENF_CHECK_NO_THROW( p->flags().wep() = false);
-    SENF_CHECK_NO_THROW( p->flags().fragmentation() = false);
-    // SENF_CHECK_NO_THROW( p->flags().fcsAtEnd() = true);
-    SENF_CHECK_NO_THROW( p->flags().padding() = false);
-    SENF_CHECK_NO_THROW( p->flags().badFCS() = false);
-    SENF_CHECK_NO_THROW( p->flags().shortGI() = false);
 
     SENF_CHECK_NO_THROW( p->init_channelOptions());
     SENF_CHECK_NO_THROW( p->channelOptions().freq() = 5320u)
     SENF_CHECK_NO_THROW( p->channelOptions().ofdm() = true);
-    SENF_CHECK_NO_THROW( p->channelOptions().turbo() = false);
-    SENF_CHECK_NO_THROW( p->channelOptions().cck() = false);
     SENF_CHECK_NO_THROW( p->channelOptions().flag5ghz() = true);
-    SENF_CHECK_NO_THROW( p->channelOptions().passive() = false);
-    SENF_CHECK_NO_THROW( p->channelOptions().cckOfdm() = false);
-    SENF_CHECK_NO_THROW( p->channelOptions().gfsk() = false);
-    SENF_CHECK_NO_THROW( p->channelOptions().gsm() = false);
-    SENF_CHECK_NO_THROW( p->channelOptions().staticTurbo() = false);
-    SENF_CHECK_NO_THROW( p->channelOptions().halfRateChannel() = false);
-    SENF_CHECK_NO_THROW( p->channelOptions().quarterRateChannel() = false);
+
+    SENF_CHECK_NO_THROW( p->init_fcs() );
 
     p.finalizeAll();
 
     BOOST_CHECK_EQUAL( p->length(), 26u );
-    BOOST_CHECK_EQUAL_COLLECTIONS( p.data().begin(), p.data().end(),
-                                   data, data+sizeof(data)/sizeof(data[0]) );
+    BOOST_CHECK_EQUAL( p.size(), 30u );
+
+    std::stringstream ss;
+    p.dump(ss);
+    BOOST_CHECK_EQUAL( ss.str(),
+                       "Radiotap:\n"
+                       "  version                 : 0\n"
+                       "  length                  : 26\n"
+                       "  MAC timestamp           : 81059833346\n"
+                       "  flags                   : FCSatEnd ShortPreamble \n"
+                       "  rate                    : 12\n"
+                       "  channel frequency       : 5320\n"
+                       "  channel flags           : OFDM 5GHz \n"
+                       "  antenna signal (dBm)    : -61\n"
+                       "  antenna noise (dBm)     : -96\n"
+                       "  antenna                 : 2\n"
+                       "  antenna signal (dB)     : 35\n"
+                       "  fcs                     : 0\n" );
+
+    {
+        unsigned char data[] = {
+            /*  0 */ 0x00,                                           // version
+            /*    */ 0x00,
+            /*  2 */ 0x1a, 0x00,                                     // length
+            /*  4 */ 0x6f, 0x18, 0x00, 0x00,                         // presentFlags
+            /*  8 */ 0x02, 0xe6, 0x8a, 0xdf, 0x12, 0x00, 0x00, 0x00, // tsft
+            /* 16 */ 0x12,                                           // flags
+            /* 17 */ 0x0c,                                           // rate
+            /* 18 */ 0xc8, 0x14,                                     // channel frequency
+            /* 20 */ 0x40, 0x01,                                     // channel flags
+            /* 22 */ 0xc3,                                           // dbmAntennaSignal
+            /* 23 */ 0xa0,                                           // dbmAntennaNoise
+            /* 24 */ 0x02,                                           // antenna
+            /* 25 */ 0x23,                                           // dbAntennaSignal
+            /* 26 */ 0x0, 0x0, 0x0, 0x0                              // FCS
+        };
+
+        BOOST_CHECK_EQUAL_COLLECTIONS( p.data().begin(), p.data().end(),
+                                       data, data+sizeof(data)/sizeof(data[0]) );
+    }
+
+    SENF_CHECK_NO_THROW( p->disable_flags() );
+    SENF_CHECK_NO_THROW( p->disable_dbmAntennaSignal() );
+
+    p.finalizeAll();
+
+    {
+        unsigned char data[] = {
+            /*  0 */ 0x00,                                           // version
+            /*    */ 0x00,
+            /*  2 */ 0x19, 0x00,                                     // length
+            /*  4 */ 0x4d, 0x18, 0x00, 0x00,                         // presentFlags
+            /*  8 */ 0x02, 0xe6, 0x8a, 0xdf, 0x12, 0x00, 0x00, 0x00, // tsft
+            /* 16 */ 0x0c,                                           // rate
+            /*    */ 0x00,
+            /* 18 */ 0xc8, 0x14,                                     // channel frequency
+            /* 20 */ 0x40, 0x01,                                     // channel flags
+            /* 22 */ 0xa0,                                           // dbmAntennaNoise
+            /* 23 */ 0x02,                                           // antenna
+            /* 24 */ 0x23                                            // dbAntennaSignal
+        };
+        BOOST_CHECK_EQUAL_COLLECTIONS( p.data().begin(), p.data().end(),
+                                       data, data+sizeof(data)/sizeof(data[0]) );
+    }
 }
-#endif
 
 SENF_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
 {

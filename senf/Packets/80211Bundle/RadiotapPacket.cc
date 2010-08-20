@@ -28,6 +28,7 @@
 // Custom includes
 #include "WLANPacket.hh"
 #include <boost/io/ios_state.hpp>
+#include <memory.h>
 
 extern "C" {
 #   include "radiotap/radiotap_iter.h"
@@ -36,38 +37,167 @@ extern "C" {
 #define prefix_
 ///////////////////////////////cc.p//////////////////////////////////////
 
-prefix_ void senf::RadiotapPacketParser::fillOffsetTable(boost::uint8_t * data, int maxLength,
-                                                         OffsetTable & table)
-{
-    memset(&table, 0, sizeof(table));
-    struct ieee80211_radiotap_iterator iter;
-    ieee80211_radiotap_iterator_init(&iter,
-                                     (struct ieee80211_radiotap_header *)data,
-                                     maxLength,
-                                     0);
-    while (ieee80211_radiotap_iterator_next(&iter)==0) {
-        if (iter.is_radiotap_ns &&
-            iter.this_arg_index <= int(senf::RadiotapPacketParser::MAX_INDEX))
-            table[iter.this_arg_index] = iter.this_arg - data;
-    }
-    table[MAX_INDEX+1] = iter.this_arg - data + iter.this_arg_size;
-}
+///////////////////////////////////////////////////////////////////////////
+// Offset table management
 
-prefix_ senf::RadiotapPacketParser::OffsetTable const &
+prefix_ senf::RadiotapPacketParser::OffsetTable &
 senf::RadiotapPacketParser::offsetTable(boost::uint32_t presentFlags)
 {
     typedef std::map<boost::uint32_t, OffsetTable> OffsetMap;
     static OffsetMap offsetMap;
 
     OffsetMap::iterator i (offsetMap.find(presentFlags));
-    if (i == offsetMap.end()) {
-        OffsetTable table;
-        fillOffsetTable(&(*data().begin()), data().size(), table);
-        i = offsetMap.insert(std::make_pair(presentFlags, table)).first;
-    }
+    if (i == offsetMap.end())
+        i = offsetMap.insert(std::make_pair(presentFlags, OffsetTable())).first;
     return i->second;
 }
 
+prefix_ void senf::RadiotapPacketParser::parseOffsetTable(boost::uint8_t * data, int maxLength,
+                                                          OffsetTable & table)
+{
+    struct ieee80211_radiotap_iterator iter;
+    ieee80211_radiotap_iterator_init(&iter,
+                                     (struct ieee80211_radiotap_header *)data,
+                                     maxLength,
+                                     0);
+    unsigned size (8u);
+    while (ieee80211_radiotap_iterator_next(&iter) == 0) {
+        if (iter.is_radiotap_ns &&
+            iter.this_arg_index <= int(senf::RadiotapPacketParser::MAX_INDEX))
+            table[iter.this_arg_index] = iter.this_arg - data;
+        // We need to set size here in the loop since the iter fields are only valid
+        // when at least one present bit is set ...
+        size = iter.this_arg - data + iter.this_arg_size;
+    }
+    table[MAX_INDEX+1] = size;
+}
+
+prefix_ void senf::RadiotapPacketParser::buildOffsetTable(boost::uint32_t presentFlags,
+                                                          OffsetTable & table)
+{
+    SENF_ASSERT(!(presentFlags & ( (1<<IEEE80211_RADIOTAP_RADIOTAP_NAMESPACE) |
+                                   (1<<IEEE80211_RADIOTAP_VENDOR_NAMESPACE) |
+                                   (1<<IEEE80211_RADIOTAP_EXT) )),
+                "Extended or vendor fields not supported");
+
+    struct ieee80211_radiotap_header header;
+    memset(&header, 0, sizeof(header));
+    // header.it_version = 0;
+
+    // Iterating this packet will generate invalid addresses but we don't care since neither
+    // radiotap.c nor we will ever dereference those pointers, we just calculate the offsets.
+    // This works, as long as we don't support extension headers ...
+    header.it_len = 0xFFFF;
+    header.it_present = presentFlags;
+
+    parseOffsetTable((boost::uint8_t*)&header, header.it_len, table);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::RadiotapPacketParser
+
+unsigned const senf::RadiotapPacketParser_Header::FIELD_SIZE[] = {
+    8, 1, 1, 4, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1 };
+
+prefix_ senf::UInt32Parser senf::RadiotapPacketParser::init_fcs()
+{
+    if (!has_fcs()) {
+        protect(), data().insert(data().end(), 4u, 0u);
+        init_flags().fcsAtEnd_() = true;
+    }
+    return fcs();
+}
+
+prefix_ void senf::RadiotapPacketParser::disable_fcs()
+{
+    if (has_fcs()) {
+        validate(RadiotapPacketParser_Header::fixed_bytes+4);
+        data().erase(data().end()-4, data().end());
+        flags().fcsAtEnd_() = false;
+    }
+}
+
+prefix_ senf::RadiotapPacketParser::OffsetTable const &
+senf::RadiotapPacketParser::currentTable()
+    const
+{
+    OffsetTable & table (offsetTable(presentFlags()));
+    if (! table[MAX_INDEX+1])
+        parseOffsetTable(&(*data().begin()), data().size(), table);
+    return table;
+}
+
+prefix_ senf::RadiotapPacketParser::OffsetTable const &
+senf::RadiotapPacketParser::getTable(boost::uint32_t presentFlags)
+    const
+{
+    OffsetTable & table(offsetTable(presentFlags));
+    if (! table[MAX_INDEX+1])
+        buildOffsetTable(presentFlags, table);
+    return table;
+}
+
+prefix_ void senf::RadiotapPacketParser::insertRemoveBytes(unsigned from , unsigned to, int bytes)
+{
+    data_iterator b (i() + from);
+    data_iterator e (i() + to);
+    if (bytes >= 0) {
+        // Insert some bytes cleaning the old bytes to 0 first
+        std::fill(b, e,  0u);
+        if (bytes > 0)
+            // need to protect the parser since data().insert() invalidates iterators
+            protect(), data().insert(e, bytes, 0u);
+    }
+    else { // bytes < 0
+        // Remove some bytes ...
+        // remember: bytes is negative ...
+        if (b < e + bytes)
+            std::fill(b, e + bytes, 0u);
+        data().erase(e + bytes, e);
+    }
+}
+
+prefix_ void senf::RadiotapPacketParser::updatePresentFlags(boost::uint32_t flags)
+{
+    if (flags == presentFlags())
+        return;
+    validate(bytes());
+
+    OffsetTable const & oldTable (currentTable());
+    OffsetTable const & newTable (getTable(flags));
+    unsigned b (RadiotapPacketParser_Header::fixed_bytes);
+    int cumulativeNewBytes (0);
+
+    for (unsigned index (0); index <= MAX_INDEX; ++index) {
+        // Skip any unchanged fields
+        for (; index <= MAX_INDEX+1
+                 && ((oldTable[index] == 0 && newTable[index] == 0)
+                     || (oldTable[index]+cumulativeNewBytes == newTable[index])); ++index)
+            if (newTable[index] != 0)
+                b = newTable[index] + FIELD_SIZE[index];
+        if (index > MAX_INDEX+1)
+            break;
+        // Now skip over all changed fields
+        // (The condition index <= MAX_INDEX is not needed here since the last
+        // table entry MAX_INDEX+1 is always != 0 in both tables)
+        for (; ! (oldTable[index]!=0 && newTable[index]!=0); ++index) ;
+        // index now either points to
+        // a) an entry set in both tables
+        // b) at the end of the table which contains the total length
+        // (remember: the table has a size of MAX_INDEX+2 entries !!)
+        // in both cases, the difference between the new and old size
+        // is found from the difference between the old and the new table
+        // entry
+        int newBytes (newTable[index] - oldTable[index] - cumulativeNewBytes);
+        insertRemoveBytes(b, oldTable[index] + cumulativeNewBytes, newBytes);
+        cumulativeNewBytes += newBytes;
+        b = newTable[index] + FIELD_SIZE[index];
+    }
+    presentFlags() = flags;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::RadiotapPacketType
 
 prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
@@ -76,69 +206,94 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
        << senf::fieldName("version") << unsigned(p->version()) << '\n'
        << senf::fieldName("length")  << unsigned(p->length()) << '\n';
 
-#   define DUMP_OPTIONAL_FIELD(name, sign, desc)                        \
+#   define FIELD(name, sign, desc)                                      \
         if (p->name ## Present())                                       \
             os << senf::fieldName(desc) << sign(p->name()) << '\n';
 
-    DUMP_OPTIONAL_FIELD( tsft, boost::uint64_t, "MAC timestamp" );
+#   define ENTER(name)                                                  \
+        if (p->name ## Present()) {                                     \
+            packet::Parser::name ## _t subparser (p->name());
 
-    if (p->flagsPresent()) {
-        os << senf::fieldName("flags");
+#   define SUBFIELD(name, sign, desc)                                   \
+        os << senf::fieldName(desc) << sign(subparser.name()) << '\n';
 
-#       define DUMP_FLAG(name,desc) if (p->flags().name()) os << desc " "
-        DUMP_FLAG(shortGI,            "ShortGI");
-        DUMP_FLAG(badFCS,             "BadFCS");
-        DUMP_FLAG(fcsAtEnd,           "FCSatEnd");
-        DUMP_FLAG(fragmentation,      "Frag");
-        DUMP_FLAG(wep,                "WEP");
-        DUMP_FLAG(shortPreamble,      "ShortPreamble");
-        DUMP_FLAG(cfp,                "CFP");
-#       undef DUMP_FLAG
+#   define LEAVE()                                                      \
+        }
 
+#   define START_FLAGS(desc)                                            \
+        os << senf::fieldName(desc);
+
+#   define FLAG(name, desc)                                             \
+        if (subparser.name()) os << desc " "
+
+#   define END_FLAGS()                                                  \
         os << '\n';
-    }
 
-    DUMP_OPTIONAL_FIELD( rate, unsigned, "rate" );
-
-    if (p->channelOptionsPresent()) {
-        os << senf::fieldName("channel frequency")
-           << unsigned(p->channelOptions().freq()) << '\n'
-           << senf::fieldName("channel flags");
-
-#       define DUMP_FLAG(name,desc) if (p->channelOptions().name()) os << desc " "
-        DUMP_FLAG(flag2ghz,           "2GHz");
-        DUMP_FLAG(ofdm,               "OFDM");
-        DUMP_FLAG(cck,                "CCK");
-        DUMP_FLAG(turbo,              "Turbo");
-        DUMP_FLAG(quarterRateChannel, "Rate/4");
-        DUMP_FLAG(halfRateChannel,    "Rate/2");
-        DUMP_FLAG(gsm,                "GSM");
-        DUMP_FLAG(staticTurbo,        "StaticTurbo");
-        DUMP_FLAG(gfsk,               "GFSK");
-        DUMP_FLAG(cckOfdm,            "CCKOFDM");
-        DUMP_FLAG(passive,            "Passive");
-        DUMP_FLAG(flag5ghz,           "5GHz");
-#       undef DUMP_FLAG
-
-        os << '\n';
-    }
-
-    DUMP_OPTIONAL_FIELD( fhss,              unsigned, "FHSS"                 );
-    DUMP_OPTIONAL_FIELD( dbmAntennaSignal,  signed,   "antenna signal (dBm)" );
-    DUMP_OPTIONAL_FIELD( dbmAntennaNoise,   signed,   "antenna noise (dBm)"  );
-    DUMP_OPTIONAL_FIELD( lockQuality,       unsigned, "lock quality"         );
-    DUMP_OPTIONAL_FIELD( txAttenuation,     unsigned, "tx attenuation"       );
-    DUMP_OPTIONAL_FIELD( dbTxAttenuation,   unsigned, "tx attenuation (dB)"  );
-    DUMP_OPTIONAL_FIELD( dbmTxAttenuation,  signed,   "tx attenuation (dBm)" );
-    DUMP_OPTIONAL_FIELD( antenna,           unsigned, "antenna"              );
-    DUMP_OPTIONAL_FIELD( dbAntennaSignal,   unsigned, "antenna signal (dB)"  );
-    DUMP_OPTIONAL_FIELD( dbAntennaNoise,    unsigned, "antenna noise (dB)"   );
-    DUMP_OPTIONAL_FIELD( headerFcs,         unsigned, "FCS (in header)"      );
+    FIELD           ( tsft,              boost::uint64_t, "MAC timestamp"        );
+    ENTER           ( flags                                                      );
+      START_FLAGS   (                                     "flags"                );
+        FLAG        (     shortGI,                            "ShortGI"          );
+        FLAG        (     badFCS,                             "BadFCS"           );
+        FLAG        (     fcsAtEnd,                           "FCSatEnd"         );
+        FLAG        (     fragmentation,                      "Frag"             );
+        FLAG        (     wep,                                "WEP"              );
+        FLAG        (     shortPreamble,                      "ShortPreamble"    );
+        FLAG        (     cfp,                                "CFP"              );
+      END_FLAGS     (                                                            );
+    LEAVE           (                                                            );
+    FIELD           ( rate,              unsigned,        "rate"                 );
+    ENTER           ( channelOptions                                             );
+      SUBFIELD      (     freq,          unsigned,        "channel frequency"    );
+      START_FLAGS   (                                     "channel flags"        );
+        FLAG        (     flag2ghz,                           "2GHz"             );
+        FLAG        (     ofdm,                               "OFDM"             );
+        FLAG        (     cck,                                "CCK"              );
+        FLAG        (     turbo,                              "Turbo"            );
+        FLAG        (     quarterRateChannel,                 "Rate/4"           );
+        FLAG        (     halfRateChannel,                    "Rate/2"           );
+        FLAG        (     gsm,                                "GSM"              );
+        FLAG        (     staticTurbo,                        "StaticTurbo"      );
+        FLAG        (     gfsk,                               "GFSK"             );
+        FLAG        (     cckOfdm,                            "CCK+OFDM"         );
+        FLAG        (     passive,                            "Passive"          );
+        FLAG        (     flag5ghz,                           "5GHz"             );
+      END_FLAGS     (                                                            );
+    LEAVE           (                                                            );
+    FIELD           ( fhss,              unsigned,        "FHSS"                 );
+    FIELD           ( dbmAntennaSignal,  signed,          "antenna signal (dBm)" );
+    FIELD           ( dbmAntennaNoise,   signed,          "antenna noise (dBm)"  );
+    FIELD           ( lockQuality,       unsigned,        "lock quality"         );
+    FIELD           ( txAttenuation,     unsigned,        "tx attenuation"       );
+    FIELD           ( dbTxAttenuation,   unsigned,        "tx attenuation (dB)"  );
+    FIELD           ( dbmTxAttenuation,  signed,          "tx attenuation (dBm)" );
+    FIELD           ( antenna,           unsigned,        "antenna"              );
+    FIELD           ( dbAntennaSignal,   unsigned,        "antenna signal (dB)"  );
+    FIELD           ( dbAntennaNoise,    unsigned,        "antenna noise (dB)"   );
+    ENTER           ( rxFlags                                                    );
+      START_FLAGS   (                                     "rx flags"             );
+        FLAG        (     badPlcp,                            "BadPLCP"          );
+      END_FLAGS     (                                                            );
+    LEAVE           (                                                            );
+    ENTER           ( txFlags                                                    );
+      START_FLAGS   (                                     "tx flags"             );
+        FLAG        (     fail,                               "Fail"             );
+        FLAG        (     txRts,                              "RTS"              );
+        FLAG        (     txCts,                              "CTS"              );
+      END_FLAGS     (                                                            );
+    LEAVE           (                                                            );
+    FIELD           ( rtsRetries,        unsigned,        "rts retries"          );
+    FIELD           ( dataRetries,       unsigned,        "data retries"         );
 
     if (p->flagsPresent() && p->flags().fcsAtEnd())
-        os << senf::fieldName("FCS (at end)") << unsigned(p->fcs()) << '\n';
+        os << senf::fieldName("fcs") << unsigned(p->fcs()) << '\n';
 
-#   undef DUMP_OPTIONAL_FIELD
+#   undef END_FLAGS
+#   undef FLAG
+#   undef START_FLAGS
+#   undef LEAVE
+#   undef SUBFIELD
+#   undef ENTER
+#   undef FIELD
 }
 
 
@@ -162,7 +317,7 @@ senf::RadiotapPacketType::nextPacketRange(packet p)
 {
     size_type h (senf::bytes(p.parser()));
     size_type t (p->flagsPresent() && p->flags().fcsAtEnd() ? 4 : 0);
-    return p.size() < h+t
+    return p.size() <= h+t
         ? no_range()
         : optional_range( range(p.data().begin() + h, p.data().end() - t) );
 }
