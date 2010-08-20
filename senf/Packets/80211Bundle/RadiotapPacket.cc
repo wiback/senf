@@ -39,6 +39,7 @@ extern "C" {
 prefix_ void senf::RadiotapPacketParser::fillOffsetTable(boost::uint8_t * data, int maxLength,
                                                          OffsetTable & table)
 {
+    memset(&table, 0, sizeof(table));
     struct ieee80211_radiotap_iterator iter;
     ieee80211_radiotap_iterator_init(&iter,
                                      (struct ieee80211_radiotap_header *)data,
@@ -46,13 +47,10 @@ prefix_ void senf::RadiotapPacketParser::fillOffsetTable(boost::uint8_t * data, 
                                      0);
     while (ieee80211_radiotap_iterator_next(&iter)==0) {
         if (iter.is_radiotap_ns &&
-            iter.this_arg_index <= int(senf::RadiotapPacketParser::MAX_INDEX)) {
+            iter.this_arg_index <= int(senf::RadiotapPacketParser::MAX_INDEX))
             table[iter.this_arg_index] = iter.this_arg - data;
-            std::cerr << ">> " << iter.this_arg_index << " " << table[iter.this_arg_index] << "\n";
-        }
     }
     table[MAX_INDEX+1] = iter.this_arg - data + iter.this_arg_size;
-    std::cerr << ">> size " << table[MAX_INDEX+1] << "\n";
 }
 
 prefix_ senf::RadiotapPacketParser::OffsetTable const &
@@ -71,20 +69,60 @@ senf::RadiotapPacketParser::offsetTable(boost::uint32_t presentFlags)
 }
 
 
-#define DUMP_OPTIONAL_FIELD(name, sign, desc)                           \
-    if (p->name ## Present())                                           \
-        os << senf::fieldName(desc) << sign(p->name())                  \
-           << std::endl;
-
 prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Radiotap:\n"
-       << senf::fieldName("version") << unsigned(p->version()) << "\n"
-       << senf::fieldName("length")  << unsigned(p->length()) << "\n";
-    // TODO: flags, channelOptions
-    DUMP_OPTIONAL_FIELD( tsft,              unsigned, "MAC timestamp"        );
-    DUMP_OPTIONAL_FIELD( rate,              unsigned, "rate"                 );
+       << senf::fieldName("version") << unsigned(p->version()) << '\n'
+       << senf::fieldName("length")  << unsigned(p->length()) << '\n';
+
+#   define DUMP_OPTIONAL_FIELD(name, sign, desc)                        \
+        if (p->name ## Present())                                       \
+            os << senf::fieldName(desc) << sign(p->name()) << '\n';
+
+    DUMP_OPTIONAL_FIELD( tsft, boost::uint64_t, "MAC timestamp" );
+
+    if (p->flagsPresent()) {
+        os << senf::fieldName("flags");
+
+#       define DUMP_FLAG(name,desc) if (p->flags().name()) os << desc " "
+        DUMP_FLAG(shortGI,            "ShortGI");
+        DUMP_FLAG(badFCS,             "BadFCS");
+        DUMP_FLAG(fcsAtEnd,           "FCSatEnd");
+        DUMP_FLAG(fragmentation,      "Frag");
+        DUMP_FLAG(wep,                "WEP");
+        DUMP_FLAG(shortPreamble,      "ShortPreamble");
+        DUMP_FLAG(cfp,                "CFP");
+#       undef DUMP_FLAG
+
+        os << '\n';
+    }
+
+    DUMP_OPTIONAL_FIELD( rate, unsigned, "rate" );
+
+    if (p->channelOptionsPresent()) {
+        os << senf::fieldName("channel frequency")
+           << unsigned(p->channelOptions().freq()) << '\n'
+           << senf::fieldName("channel flags");
+
+#       define DUMP_FLAG(name,desc) if (p->channelOptions().name()) os << desc " "
+        DUMP_FLAG(flag2ghz,           "2GHz");
+        DUMP_FLAG(ofdm,               "OFDM");
+        DUMP_FLAG(cck,                "CCK");
+        DUMP_FLAG(turbo,              "Turbo");
+        DUMP_FLAG(quarterRateChannel, "Rate/4");
+        DUMP_FLAG(halfRateChannel,    "Rate/2");
+        DUMP_FLAG(gsm,                "GSM");
+        DUMP_FLAG(staticTurbo,        "StaticTurbo");
+        DUMP_FLAG(gfsk,               "GFSK");
+        DUMP_FLAG(cckOfdm,            "CCKOFDM");
+        DUMP_FLAG(passive,            "Passive");
+        DUMP_FLAG(flag5ghz,           "5GHz");
+#       undef DUMP_FLAG
+
+        os << '\n';
+    }
+
     DUMP_OPTIONAL_FIELD( fhss,              unsigned, "FHSS"                 );
     DUMP_OPTIONAL_FIELD( dbmAntennaSignal,  signed,   "antenna signal (dBm)" );
     DUMP_OPTIONAL_FIELD( dbmAntennaNoise,   signed,   "antenna noise (dBm)"  );
@@ -96,14 +134,17 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
     DUMP_OPTIONAL_FIELD( dbAntennaSignal,   unsigned, "antenna signal (dB)"  );
     DUMP_OPTIONAL_FIELD( dbAntennaNoise,    unsigned, "antenna noise (dB)"   );
     DUMP_OPTIONAL_FIELD( headerFcs,         unsigned, "FCS (in header)"      );
+
     if (p->flagsPresent() && p->flags().fcsAtEnd())
-        os << senf::fieldName("FCS (at end)") << unsigned(p->fcs()) << "\n";
+        os << senf::fieldName("FCS (at end)") << unsigned(p->fcs()) << '\n';
+
+#   undef DUMP_OPTIONAL_FIELD
 }
 
-#undef DUMP_OPTIONAL_FIELD
 
 prefix_ void senf::RadiotapPacketType::finalize(packet p)
 {
+    ///\fixme Is this really correct ? shouldn't I use nextPacket.begin() - begin() here ?
     p->length() << p->calculateSize();
 }
 

@@ -24,6 +24,7 @@
     \brief RadiotapPacket unit tests */
 
 // Custom includes
+#include <sstream>
 #include "RadiotapPacket.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
@@ -95,8 +96,23 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
     BOOST_CHECK_EQUAL( p->channelOptions().halfRateChannel(), false);
     BOOST_CHECK_EQUAL( p->channelOptions().quarterRateChannel(), false);
 
-    std::ostringstream oss (std::ostringstream::out);
-    SENF_CHECK_NO_THROW( p.dump( oss));
+    /* dump */
+    std::stringstream ss;
+    p.dump(ss);
+    BOOST_CHECK_EQUAL( ss.str(),
+                       "Radiotap:\n"
+                       "  version                 : 0\n"
+                       "  length                  : 26\n"
+                       "  MAC timestamp           : 81059833346\n"
+                       "  flags                   : FCSatEnd ShortPreamble \n"
+                       "  rate                    : 12\n"
+                       "  channel frequency       : 5320\n"
+                       "  channel flags           : OFDM 5GHz \n"
+                       "  antenna signal (dBm)    : -61\n"
+                       "  antenna noise (dBm)     : -96\n"
+                       "  antenna                 : 2\n"
+                       "  antenna signal (dB)     : 35\n"
+                       "  FCS (at end)            : 0\n" );
 }
 
 #if 0
