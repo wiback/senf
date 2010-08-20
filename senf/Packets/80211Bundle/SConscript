@@ -7,5 +7,4 @@ import SENFSCons
 
 SConscript(env.Glob("*/SConscript"))
 
-SENFSCons.AutoPacketBundle(env, '80211Bundle',
-                           subdirs=['radiotap'], exclude=['radiotap/radiotap.c'])
+SENFSCons.AutoPacketBundle(env, '80211Bundle')

@@ -69,37 +69,6 @@ def CheckValgrindWildcards(context):
     context.Result( ret[0] )
     return ret[0]
 
-@env.ConfTest()
-def CheckExpression(context, name, expression, header="", language="C"):
-    import SCons.Conftest
-
-    lang, suffix, msg = SCons.Conftest._lang2suffix(language)
-    if msg:
-        context.Message("Cannot check for header file %s: \n" % header_name)
-        context.Result(msg)
-        return False
-
-    text = ("#include <assert.h>\n"
-            "%s\n"
-            "int main() {\n"
-            "%s;\n"
-            "return 0;\n"
-            "}\n") % (header, expression)
-
-    context.Message("Checking for valid %s expression %s... " % (lang, expression))
-    ret = context.TryLink(text, suffix)
-    context.Result(ret)
-    if ret:
-        import re
-        key = name.upper()
-        key = re.sub('[^A-Z0-9_]', '_', key)
-        context.sconf.Define("HAVE_%s" % key,
-                             1,
-                             "Define to 1 if the expression `%s' is valid on your system"
-                             % expression)
-
-    return ret
-
 ###########################################################################
 
 conf = env.Configure(clean=False, help=False, config_h="#/senf/autoconf.hh")
@@ -116,10 +85,11 @@ res = conf.CheckTempBufferStrategy()
 
 # Standard library stuff
 res = conf.CheckFunc("timerfd_create")
-res = conf.CheckExpression("le16toh", "le16toh(0)",
-                           "#include <senf/Packets/80211Bundle/radiotap/platform.h>")
-res = conf.CheckExpression("le32toh", "le32toh(0)",
-                           "#include <senf/Packets/80211Bundle/radiotap/platform.h>")
+res = conf.CheckSymbolWithExpression(
+    "le16toh", "le16toh(0)", "#include <senf/Packets/80211Bundle/radiotap/platform.h>")
+res = conf.CheckSymbolWithExpression(
+    "le32toh", "le32toh(0)", "#include <senf/Packets/80211Bundle/radiotap/platform.h>")
+res = conf.CheckByteorder()
 res = conf.CheckSTLCopyN(); \
     conf.env.Fail(condition=not res, message="No 'copy_n' implementation found")
 

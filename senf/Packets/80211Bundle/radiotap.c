@@ -22,12 +22,23 @@
 
 # include <senf/autoconf.hh>
 #
-# ifndef HAVE_LE16TOH
-#     define le16toh(x) (x)
-# endif
-#
-# ifndef HAVE_LE32TOH
-#     define le32toh(x) (x)
+# ifdef BYTEORDER_LITTLE_ENDIAN
+#     ifndef HAVE_LE16TOH
+#         define le16toh(x) (x)
+#     endif
+#     ifndef HAVE_LE32TOH
+#         define le32toh(x) (x)
+#     endif
+# else
+#     if !defined(HAVE_LE16TOH) || !defined(HAVE_LE32TOH)
+#         include <byteswap.h>
+#     endif
+#     ifndef HAVE_LE16TOH
+#         define le16toh(x) bswap_16(x)
+#     endif
+#     ifndef HAVE_LE32TOH
+#         define le32toh(x) bswap_32(x)
+#     endif
 # endif
 #
 # include "radiotap/radiotap.c"

@@ -1,5 +1,5 @@
-import SCons.Environment
-import SCons.Util, SCons.Script
+import SCons.Environment, SCons.Util, SCons.Script, SCons.Conftest
+import re
 
 # Fix for SCons 0.97 compatibility
 import SCons.SConf
@@ -111,7 +111,51 @@ def Fail(context, message, condition=True):
 
 DefaultTest = ConfTest()
 
-# Hmm .. no default tests for now ...
+@DefaultTest
+def CheckSymbolWithExpression(context, symbol, expression, header="", language="C"):
+    lang, suffix, msg = SCons.Conftest._lang2suffix(language)
+    if msg:
+        context.Message("Cannot check for %s: " % symbol)
+        context.Result(msg)
+        return False
+
+    text = ("#include <assert.h>\n"
+            "%s\n"
+            "int main() {\n"
+            "%s;\n"
+            "return 0;\n"
+            "}\n") % (header, expression)
+
+    context.Message("Checking for %s... " % symbol)
+    ret = context.TryLink(text, suffix)
+    context.Result(ret)
+    if ret:
+        key = symbol.upper()
+        key = re.sub('[^A-Z0-9_]', '_', key)
+        context.sconf.Define("HAVE_%s" % key, 1,
+                             "Define to 1 if you have `%s'" % symbol)
+
+    return ret
+
+@DefaultTest
+def CheckByteorder(context):
+    context.Message("Checking byteorder... ")
+    ret = context.TryRun('#include <stdio.h>\n'
+                         'union byteorder_test { int i; char b; };\n'
+                         'int main() {\n'
+                         '    union byteorder_test t; t.i=1;\n'
+                         '    printf(t.b ? "little\\n" : "big\\n");\n'
+                         '    return 0;\n'
+                         '}\n',
+                         ".c")[-1].strip()
+    if not ret:
+        context.Result("failed")
+        return False
+    else:
+        context.Result(ret+"-endian")
+        context.sconf.Define("BYTEORDER_%s_ENDIAN" % ret.upper(), 1,
+                             "Define BYTEORDER_LITTLE_ENDIAN or BYTEORDER_BIG_ENDIAN")
+        return ret
 
 def generate(env):
     env.Append( CUSTOM_TESTS = DefaultTest.tests )
