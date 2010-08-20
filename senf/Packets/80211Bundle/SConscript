@@ -5,4 +5,6 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.AutoPacketBundle(env, '80211Bundle')
+SConscript(env.Glob("*/SConscript"))
+
+SENFSCons.AutoPacketBundle(env, '80211Bundle', subdirs=['radiotap'])

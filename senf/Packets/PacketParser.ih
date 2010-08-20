@@ -38,12 +38,12 @@ namespace detail {
 
 #   ifndef DOXYGEN
 
-    // Use SFINAE to check, if Parser has an integer-valued fixed_bytes member. If not,
-    // 'Parser_TakeNum<Parser::fixed_bytes>' fails and the overload is removed from the overload
+    // Use SFINAE to check, if Parser has an integer-valued init_bytes member. If not,
+    // 'Parser_TakeNum<Parser::init_bytes>' fails and the overload is removed from the overload
     // set.
     template <class Parser>
     PacketParserBase::size_type packetParserSize(
-        Parser p, int, senf::mpl::take_uint<Parser::fixed_bytes> * = 0);
+        Parser p, int, senf::mpl::take_uint<Parser::init_bytes> * = 0);
 
     // An ellipsis is always the worst match. A call 'packetParserSize(p,0) will prefer above
     // overload if that is not disabled by SFINAE.

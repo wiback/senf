@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
+#include <boost/array.hpp>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
@@ -38,7 +39,7 @@ namespace senf {
      */
     struct RadiotapPacketParser_Flags : public PacketParserBase
     {
-    #   include SENF_FIXED_PARSER()
+#       include SENF_FIXED_PARSER()
 
         SENF_PARSER_BITFIELD ( shortGI,        1, bool );
         SENF_PARSER_BITFIELD ( badFCS,         1, bool );
@@ -58,7 +59,7 @@ namespace senf {
      */
     struct RadiotapPacketParser_ChannelOptions : public PacketParserBase
     {
-    #   include SENF_FIXED_PARSER()
+#       include SENF_FIXED_PARSER()
 
         SENF_PARSER_FIELD     ( freq,          UInt16LSBParser );
 
@@ -96,17 +97,20 @@ namespace senf {
 
         \todo extended present field (bit 31 of present field is set)
     */
-    struct RadiotapPacketParser : public PacketParserBase
+    struct RadiotapPacketParser_Header : public PacketParserBase
     {
-    #   include SENF_PARSER()
+#       include SENF_FIXED_PARSER()
 
         /*
          * mandatory fields
          */
         SENF_PARSER_FIELD ( version, UInt8Parser     );
         //padding bits, currently unused, it simply aligns the fields onto natural word boundaries.
-        SENF_PARSER_SKIP  ( 1,1                      );
+        SENF_PARSER_SKIP  ( 1                        );
         SENF_PARSER_FIELD ( length,  UInt16LSBParser );
+
+        SENF_PARSER_PRIVATE_FIELD ( presentFlags, UInt32LSBParser );
+        SENF_PARSER_GOTO( presentFlags );
 
         /*
          * present flags
@@ -130,74 +134,87 @@ namespace senf {
         SENF_PARSER_BITFIELD_RO ( txAttenuationPresent,    1, bool );
         SENF_PARSER_SKIP_BITS   ( 8                                ); //currently unused bits
         //if bit is set,another 32 bit present flag is attached (not implemented yet)
-        SENF_PARSER_BITFIELD    ( extendedBitmaskPresent,  1, bool );
+        SENF_PARSER_BITFIELD_RO ( extendedBitmaskPresent,  1, bool );
         SENF_PARSER_SKIP_BITS   ( 7                                ); //currently unused bits
 
-        SENF_PARSER_LABEL( headerEnd_ );
+        SENF_PARSER_FINALIZE ( RadiotapPacketParser_Header );
+    };
 
-        /*
-         * Radiotap data
-         * parsing data according to present flags
-         *
-         * PARSER_SKIP required to skip correct length of padding bits
-         */
+    struct RadiotapPacketParser_FrameType : public PacketParserBase
+    {
+#       include SENF_FIXED_PARSER()
 
-        /* macro to create required variant parser */
-        #define OPTIONAL_FIELD(name, parser) SENF_PARSER_VARIANT \
-            ( name##_, name##Present, \
-              ( novalue( disable_##name, VoidPacketParser )) \
-              (      id( name,           parser           )) )
+        SENF_PARSER_SKIP_BITS(4);
+        SENF_PARSER_BITFIELD_RO( frameType, 2, unsigned );
+        SENF_PARSER_SKIP_BITS(2);
 
-        /* macro to create padding parser */
-        #define SKIP_OPTIONAL_PADDING(cond, parser, size) \
-            SENF_PARSER_SKIP( \
-                    (cond ? (size - (parser##__offset() + \
-                            senf::bytes(parser##_())) % size) % size : 0) , 0  );
+        SENF_PARSER_FINALIZE(RadiotapPacketParser_FrameType);
+    };
 
-        OPTIONAL_FIELD        ( tsft,                     UInt64LSBParser                     );
-        OPTIONAL_FIELD        ( flags,                    RadiotapPacketParser_Flags          ); //<pkgdraw: size=8
-        OPTIONAL_FIELD        ( rate,                     UInt8Parser                         );
-        SKIP_OPTIONAL_PADDING ( channelOptionsPresent(),  rate, 2                             );
-        OPTIONAL_FIELD        ( channelOptions,           RadiotapPacketParser_ChannelOptions ); //<pkgdraw: size=32
-        SKIP_OPTIONAL_PADDING ( fhssPresent(),            channelOptions, 2                   );
-        OPTIONAL_FIELD        ( fhss,                     UInt16LSBParser                     );
-        OPTIONAL_FIELD        ( dbmAntennaSignal,         Int8Parser                          );
-        OPTIONAL_FIELD        ( dbmAntennaNoise,          Int8Parser                          );
-        SKIP_OPTIONAL_PADDING ( lockQualityPresent(),     dbmAntennaNoise, 2                  );
-        OPTIONAL_FIELD        ( lockQuality,              UInt16LSBParser                     );
-        SKIP_OPTIONAL_PADDING ( txAttenuationPresent(),   lockQuality, 2                      );
-        OPTIONAL_FIELD        ( txAttenuation,            UInt16LSBParser                     );
-        SKIP_OPTIONAL_PADDING ( dbTxAttenuationPresent(), txAttenuation, 2                    );
-        OPTIONAL_FIELD        ( dbTxAttenuation,          UInt16LSBParser                     );
-        OPTIONAL_FIELD        ( dbmTxAttenuation,         Int8Parser                          );
-        OPTIONAL_FIELD        ( antenna,                  UInt8Parser                         );
-        OPTIONAL_FIELD        ( dbAntennaSignal,          UInt8Parser                         );
-        OPTIONAL_FIELD        ( dbAntennaNoise,           UInt8Parser                         );
-        SKIP_OPTIONAL_PADDING ( headerFcsPresent(),       dbAntennaNoise, 4                   );
-        OPTIONAL_FIELD        ( headerFcs,                UInt32Parser                        );
+    struct RadiotapPacketParser : public RadiotapPacketParser_Header
+    {
+        RadiotapPacketParser(data_iterator i, state_type s) : RadiotapPacketParser_Header(i,s) {}
 
-        SENF_PARSER_LABEL( packetEnd_ );
+        static const size_type init_bytes = RadiotapPacketParser_Header::fixed_bytes;
 
-        size_type calculateSize() { return packetEnd__offset(); }
+        size_type bytes() const { return length(); }
 
-        // Ouch ... changing the flags().fcsAtEnd() field needs to resize the packet ... !!!
-        // Need to think, if I can do this with a variant parser ...
-        SENF_PARSER_CUSTOM_FIELD( fcs, senf::UInt32Parser, 0, 0 ) {
-            return parse<senf::UInt32Parser>(data().end()-4);
-        }
+        // ////////////////////////////////////////////////////////////////////////
 
-        SENF_PARSER_INIT() {
-            version() = 0;
-        }
+        UInt64LSBParser            tsft()
+            { return parseField<UInt64LSBParser>             (0); }
+        RadiotapPacketParser_Flags flags()
+            { return parseField<RadiotapPacketParser_Flags>  (1); }
+        UInt8Parser                rate()
+            { return parseField<UInt8Parser>                 (2); }
+        RadiotapPacketParser_ChannelOptions channelOptions()
+            { return parseField<RadiotapPacketParser_ChannelOptions>(3); }
+        UInt16LSBParser            fhss()
+            { return parseField<UInt16LSBParser>             (4); }
+        Int8Parser                 dbmAntennaSignal()
+            { return parseField<Int8Parser>                  (5); }
+        Int8Parser                 dbmAntennaNoise()
+            { return parseField<Int8Parser>                  (6); }
+        UInt16LSBParser            lockQuality()
+            { return parseField<UInt16LSBParser>             (7); }
+        UInt16LSBParser            txAttenuation()
+            { return parseField<UInt16LSBParser>             (8); }
+        UInt16LSBParser            dbTxAttenuation()
+            { return parseField<UInt16LSBParser>             (9); }
+        Int8Parser                 dbmTxAttenuation()
+            { return parseField<Int8Parser>                 (10); }
+        UInt8Parser                antenna()
+            { return parseField<UInt8Parser>                (11); }
+        UInt8Parser                dbAntennaSignal()
+            { return parseField<UInt8Parser>                (12); }
+        UInt8Parser                dbAntennaNoise()
+            { return parseField<UInt8Parser>                (13); }
+        UInt32Parser               headerFcs()
+            { return parseField<UInt32Parser>               (14); }
 
-        // The headers length is to be taken from the 'length' value
-        SENF_PARSER_GOTO_OFFSET( length(), headerEnd__init_bytes );
+        unsigned frameType()
+            { return parse<RadiotapPacketParser_FrameType>(length()).frameType(); }
 
-        SENF_PARSER_FINALIZE( RadiotapPacketParser );
+        UInt32Parser fcs()
+            { return parse<senf::UInt32Parser>(data().end()-4); }
 
-        SENF_PARSER_SKIP_BITS( 4 );
-        SENF_PARSER_BITFIELD_RO ( frameType, 2, unsigned );
-        SENF_PARSER_SKIP_BITS( 2 );
+    private:
+        static const size_type fixed_bytes = 0; // 'remove' this member ...
+        static const unsigned MAX_INDEX = 14;
+
+        typedef boost::array<size_type,MAX_INDEX+2> OffsetTable;
+
+        OffsetTable const & offsetTable(boost::uint32_t presentFlags);
+        static void fillOffsetTable(boost::uint8_t * data, int maxLength, OffsetTable & table);
+
+        template <class Parser>
+        Parser parseField(unsigned index)
+            { return parse<Parser>(offsetTable(presentFlags())[index]); }
+
+        size_type calculateSize()
+            { return offsetTable(presentFlags())[MAX_INDEX+1]; }
+
+        friend class RadiotapPacketType;
     };
 
     /** \brief Radiotap packet

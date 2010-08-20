@@ -29,22 +29,59 @@
 #include "WLANPacket.hh"
 #include <boost/io/ios_state.hpp>
 
+extern "C" {
+#   include "radiotap/radiotap_iter.h"
+}
+
 #define prefix_
 ///////////////////////////////cc.p//////////////////////////////////////
 
-namespace {
-    #define DUMP_OPTIONAL_FIELD(name, sign, desc)           \
-        if (p->has_##name())                                \
-            os << senf::fieldName(desc) << sign( p->name()) \
-               << std::endl;
+prefix_ void senf::RadiotapPacketParser::fillOffsetTable(boost::uint8_t * data, int maxLength,
+                                                         OffsetTable & table)
+{
+    struct ieee80211_radiotap_iterator iter;
+    ieee80211_radiotap_iterator_init(&iter,
+                                     (struct ieee80211_radiotap_header *)data,
+                                     maxLength,
+                                     0);
+    while (ieee80211_radiotap_iterator_next(&iter)==0) {
+        if (iter.is_radiotap_ns &&
+            iter.this_arg_index <= int(senf::RadiotapPacketParser::MAX_INDEX)) {
+            table[iter.this_arg_index] = iter.this_arg - data;
+            std::cerr << ">> " << iter.this_arg_index << " " << table[iter.this_arg_index] << "\n";
+        }
+    }
+    table[MAX_INDEX+1] = iter.this_arg - data + iter.this_arg_size;
+    std::cerr << ">> size " << table[MAX_INDEX+1] << "\n";
 }
+
+prefix_ senf::RadiotapPacketParser::OffsetTable const &
+senf::RadiotapPacketParser::offsetTable(boost::uint32_t presentFlags)
+{
+    typedef std::map<boost::uint32_t, OffsetTable> OffsetMap;
+    static OffsetMap offsetMap;
+
+    OffsetMap::iterator i (offsetMap.find(presentFlags));
+    if (i == offsetMap.end()) {
+        OffsetTable table;
+        fillOffsetTable(&(*data().begin()), data().size(), table);
+        i = offsetMap.insert(std::make_pair(presentFlags, table)).first;
+    }
+    return i->second;
+}
+
+
+#define DUMP_OPTIONAL_FIELD(name, sign, desc)                           \
+    if (p->name ## Present())                                           \
+        os << senf::fieldName(desc) << sign(p->name())                  \
+           << std::endl;
 
 prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Radiotap:\n"
-       << senf::fieldName("version") << unsigned( p->version()) << "\n"
-       << senf::fieldName("length")  << unsigned( p->length()) << "\n";
+       << senf::fieldName("version") << unsigned(p->version()) << "\n"
+       << senf::fieldName("length")  << unsigned(p->length()) << "\n";
     // TODO: flags, channelOptions
     DUMP_OPTIONAL_FIELD( tsft,              unsigned, "MAC timestamp"        );
     DUMP_OPTIONAL_FIELD( rate,              unsigned, "rate"                 );
@@ -58,9 +95,12 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
     DUMP_OPTIONAL_FIELD( antenna,           unsigned, "antenna"              );
     DUMP_OPTIONAL_FIELD( dbAntennaSignal,   unsigned, "antenna signal (dB)"  );
     DUMP_OPTIONAL_FIELD( dbAntennaNoise,    unsigned, "antenna noise (dB)"   );
-    if (p->has_headerFcs())
-        os << senf::fieldName("FCS")     << unsigned( p->fcs()) << "\n";
+    DUMP_OPTIONAL_FIELD( headerFcs,         unsigned, "FCS (in header)"      );
+    if (p->flagsPresent() && p->flags().fcsAtEnd())
+        os << senf::fieldName("FCS (at end)") << unsigned(p->fcs()) << "\n";
 }
+
+#undef DUMP_OPTIONAL_FIELD
 
 prefix_ void senf::RadiotapPacketType::finalize(packet p)
 {

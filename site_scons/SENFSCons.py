@@ -6,12 +6,14 @@ from SCons.Script import *
 def Glob(env, exclude=[], subdirs=[]):
     testSources = env.Glob("*.test.cc",strings=True)
     sources = [ x
-                for x in env.Glob("*.cc",strings=True)
+                for x in env.Glob("*.cc",strings=True) \
+                    + env.Glob("*.c",strings=True)
                 if x not in testSources and x not in exclude ]
     for subdir in subdirs:
         testSources += env.Glob(os.path.join(subdir,"*.test.cc"),strings=True)
         sources += [ x
-                     for x in env.Glob(os.path.join(subdir,"*.cc"),strings=True)
+                     for x in env.Glob(os.path.join(subdir,"*.cc"),strings=True) \
+                         + env.Glob(os.path.join(subdir,"*.c"),strings=True)
                      if x not in testSources and x not in exclude ]
     includes = []
     for d in [ '' ] + [ x+'/' for x in subdirs ]:

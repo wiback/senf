@@ -1,0 +1,20 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons
+
+env.SetDefault(
+    RADIOTAP_FILES = env.Glob("*.h") + env.Glob("*.c"),
+    RADIOTAP_URL = 'http://git.sipsolutions.net/radiotap.git',
+    )
+
+env.PhonyTarget(
+    'update-radiotap', [],
+    [ Delete('$GITDIR'),
+      'git clone $RADIOTAP_URL $GITDIR',
+      'cp $_RADIOTAP_FILES $HERE',
+      Delete('$GITDIR') ],
+    HERE            = env.Dir('.'),
+    GITDIR          = env.Dir('radiotap.git'),
+    _RADIOTAP_FILES = [ env.Dir('radiotap.git').File(f)
+                        for f in env.Flatten(env.subst_list('$RADIOTAP_FILES')) ])

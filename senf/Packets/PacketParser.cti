@@ -108,9 +108,9 @@ prefix_ Parser senf::operator<<(Parser target, Value const & value)
 
 template <class Parser>
 prefix_ senf::PacketParserBase::size_type
-senf::detail::packetParserSize(Parser p, int, senf::mpl::take_uint<Parser::fixed_bytes> *)
+senf::detail::packetParserSize(Parser p, int, senf::mpl::take_uint<Parser::init_bytes> *)
 {
-    return Parser::fixed_bytes;
+    return p.bytes();
 }
 
 

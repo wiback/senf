@@ -59,7 +59,7 @@ prefix_ Parser senf::operator<<(Parser target, Parser source)
 template <class Parser>
 prefix_ senf::PacketParserBase::size_type senf::detail::packetParserSize(Parser p, ...)
 {
-    return p.bytes();
+    return Parser::fixed_bytes;
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
