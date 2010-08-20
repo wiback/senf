@@ -35,7 +35,12 @@
 
 prefix_ senf::RadiotapPacketParser::RadiotapPacketParser(data_iterator i, state_type s)
     : RadiotapPacketParser_Header(i,s)
-{}
+{
+    OffsetTable & table (offsetTable(presentFlags()));
+    if (! table[MAX_INDEX+1])
+        parseOffsetTable(&(*data().begin()), data().size(), table);
+    currentTable_ = &table;
+}
 
 prefix_ senf::RadiotapPacketParser::size_type senf::RadiotapPacketParser::bytes()
     const
@@ -75,6 +80,13 @@ prefix_ senf::RadiotapPacketParser::size_type senf::RadiotapPacketParser::calcul
     const
 {
     return currentTable()[MAX_INDEX+1];
+}
+
+prefix_ senf::RadiotapPacketParser::OffsetTable const &
+senf::RadiotapPacketParser::currentTable()
+    const
+{
+    return *currentTable_;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

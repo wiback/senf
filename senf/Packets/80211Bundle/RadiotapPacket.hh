@@ -135,41 +135,6 @@ namespace senf {
         SENF_PARSER_FIELD ( length,  UInt16LSBParser );
 
         SENF_PARSER_PRIVATE_FIELD ( presentFlags, UInt32LSBParser );
-        SENF_PARSER_GOTO( presentFlags );
-
-        // present flags indicate which data fields are contained in the packet
-        // BEWARE: LSB-first bit-order !!
-
-        // index: 7 - 0
-        SENF_PARSER_BITFIELD_RO ( lockQualityPresent,      1, bool );
-        SENF_PARSER_BITFIELD_RO ( dbmAntennaNoisePresent,  1, bool );
-        SENF_PARSER_BITFIELD_RO ( dbmAntennaSignalPresent, 1, bool );
-        SENF_PARSER_BITFIELD_RO ( fhssPresent,             1, bool );
-        SENF_PARSER_BITFIELD_RO ( channelOptionsPresent,   1, bool );
-        SENF_PARSER_BITFIELD_RO ( ratePresent,             1, bool );
-        SENF_PARSER_BITFIELD_RO ( flagsPresent,            1, bool );
-        SENF_PARSER_BITFIELD_RO ( tsftPresent,             1, bool );
-
-        // index: 15 - 8
-        SENF_PARSER_BITFIELD_RO ( txFlagsPresent,          1, bool );
-        SENF_PARSER_BITFIELD_RO ( rxFlagsPresent,          1, bool );
-        SENF_PARSER_BITFIELD_RO ( dbAntennaNoisePresent,   1, bool );
-        SENF_PARSER_BITFIELD_RO ( dbAntennaSignalPresent,  1, bool );
-        SENF_PARSER_BITFIELD_RO ( antennaPresent,          1, bool );
-        SENF_PARSER_BITFIELD_RO ( dbmTxAttenuationPresent, 1, bool );
-        SENF_PARSER_BITFIELD_RO ( dbTxAttenuationPresent,  1, bool );
-        SENF_PARSER_BITFIELD_RO ( txAttenuationPresent,    1, bool );
-
-        // index: 23 - 16
-        SENF_PARSER_SKIP_BITS   ( 6                                );
-        SENF_PARSER_BITFIELD_RO ( dataRetriesPresent,      1, bool );
-        SENF_PARSER_BITFIELD_RO ( rtsRetriesPresent,       1, bool );
-
-        // index: 31 - 24
-        SENF_PARSER_BITFIELD_RO ( extendedBitmaskPresent,  1, bool );
-        SENF_PARSER_BITFIELD_RO ( vendorNamespacePresent,  1, bool );
-        SENF_PARSER_BITFIELD_RO ( resetRadiotapNamespace,  1, bool )
-        SENF_PARSER_SKIP_BITS   ( 5                                );
 
         SENF_PARSER_FINALIZE ( RadiotapPacketParser_Header );
 
@@ -195,7 +160,11 @@ namespace senf {
             RTS_RETRIES_INDEX       = 16,
             DATA_RETRIES_INDEX      = 17,
 
-            MAX_INDEX               = 17
+            MAX_INDEX               = 17,
+
+            RADIOTOP_NS_INDEX       = 29,
+            VENDOR_NS_INDEX         = 30,
+            EXTENDED_BITMASK_INDEX  = 31
         };
 
         enum PresentFlag {
@@ -216,7 +185,11 @@ namespace senf {
             RX_FLAGS_FLAG           = (1<<RX_FLAGS_INDEX),
             TX_FLAGS_FLAG           = (1<<TX_FLAGS_INDEX),
             RTS_RETRIES_FLAG        = (1<<RTS_RETRIES_INDEX),
-            DATA_RETRIES_FLAG       = (1<<DATA_RETRIES_INDEX)
+            DATA_RETRIES_FLAG       = (1<<DATA_RETRIES_INDEX),
+
+            RADIOTOP_NS_FLAG        = (1<<RADIOTOP_NS_INDEX),
+            VENDOR_NS_FLAG          = (1<<VENDOR_NS_INDEX),
+            EXTENDED_BITMASK_FLAG   = (1<<EXTENDED_BITMASK_INDEX)
         };
 
         static unsigned const FIELD_SIZE[MAX_INDEX+2];
@@ -246,7 +219,8 @@ namespace senf {
 #       define FIELD(name,type,index)                                   \
             typedef type name ## _t;                                    \
             type name() { return parseField<type>(index); }             \
-            bool has_ ## name() { return name ## Present(); }           \
+            bool has_ ## name() { return currentTable()[index]; }       \
+            bool name ## Present() { return has_ ## name(); }           \
             type init_ ## name() { initField(index); return name(); }   \
             void disable_ ## name() { disableField(index); }
 
@@ -255,7 +229,8 @@ namespace senf {
         // flags is special: disabling 'flags' must also disable the 'fcs' field
         typedef RadiotapPacketParser_Flags flags_t;
         flags_t flags() { return parseField<flags_t>(FLAGS_INDEX); }
-        bool has_flags() { return flagsPresent(); }
+        bool has_flags() { return currentTable()[FLAGS_INDEX]; }
+        bool flagsPresent() { return has_flags(); }
         flags_t init_flags() { initField(FLAGS_INDEX); return flags(); }
         void disable_flags() { disable_fcs(); disableField(FLAGS_INDEX); }
 
@@ -314,6 +289,8 @@ namespace senf {
 
         void updatePresentFlags(boost::uint32_t flags);
         void insertRemoveBytes(unsigned from, unsigned to, int bytes);
+
+        OffsetTable const * currentTable_;
 
         friend class RadiotapPacketType;
     };

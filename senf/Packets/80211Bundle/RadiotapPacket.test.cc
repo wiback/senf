@@ -59,7 +59,7 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
     /* present flags */
     BOOST_CHECK_EQUAL( p->tsftPresent(), true);
     BOOST_CHECK_EQUAL( p->flagsPresent(), true);
-    BOOST_CHECK_EQUAL( p->extendedBitmaskPresent(), false);
+    // BOOST_CHECK_EQUAL( p->extendedBitmaskPresent(), false);
     BOOST_CHECK_EQUAL( p->ratePresent(), true);
     BOOST_CHECK_EQUAL( p->channelOptionsPresent(), true);
     BOOST_CHECK_EQUAL( p->fhssPresent(), false);

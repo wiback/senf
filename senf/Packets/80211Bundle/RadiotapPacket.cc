@@ -118,16 +118,6 @@ prefix_ void senf::RadiotapPacketParser::disable_fcs()
 }
 
 prefix_ senf::RadiotapPacketParser::OffsetTable const &
-senf::RadiotapPacketParser::currentTable()
-    const
-{
-    OffsetTable & table (offsetTable(presentFlags()));
-    if (! table[MAX_INDEX+1])
-        parseOffsetTable(&(*data().begin()), data().size(), table);
-    return table;
-}
-
-prefix_ senf::RadiotapPacketParser::OffsetTable const &
 senf::RadiotapPacketParser::getTable(boost::uint32_t presentFlags)
     const
 {
@@ -194,6 +184,7 @@ prefix_ void senf::RadiotapPacketParser::updatePresentFlags(boost::uint32_t flag
         b = newTable[index] + FIELD_SIZE[index];
     }
     presentFlags() = flags;
+    currentTable_ = &newTable;
 }
 
 ///////////////////////////////////////////////////////////////////////////
