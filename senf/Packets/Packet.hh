@@ -495,8 +495,8 @@ namespace senf {
         PacketInterpreterBase::ptr const & ptr() const;
 
     private:
-        Packet checkNext() const;
-        Packet checkLast() const;
+        Packet getNext() const;
+        Packet getLast() const;
 
         PacketInterpreterBase::ptr packet_;
 

@@ -197,26 +197,35 @@ namespace senf
 
         SENF_PARSER_INHERIT(WLANPacketParser);
 
-        SENF_PARSER_GOTO(subtype);
-        SENF_PARSER_SKIP_BITS(14);                                //<pkgdraw: hide
-        SENF_PARSER_PRIVATE_BITFIELD ( dsBits,  2,  unsigned   ); //<pkgdraw: hide
-        SENF_PARSER_SKIP             ( 2, 2                    ); //<pkgdraw: hide
+    protected:
+        typedef UIntFieldParser<6, 6+2> dsBits_t;
+        dsBits_t::value_type dsBits() const { return parse<dsBits_t>( 1); }
 
-        SENF_PARSER_PRIVATE_FIELD    ( addr1, MACAddressParser );
-        SENF_PARSER_PRIVATE_FIELD    ( addr2, MACAddressParser );
-        SENF_PARSER_PRIVATE_FIELD    ( addr3, MACAddressParser );
+        MACAddressParser addr1() const { return parse<MACAddressParser>(  4); }
+        MACAddressParser addr2() const { return parse<MACAddressParser>( 10); }
+        MACAddressParser addr3() const { return parse<MACAddressParser>( 16); }
 
         //sequence Number and fragment number
         //shift bits manually due to LSB
-        SENF_PARSER_PRIVATE_BITFIELD ( seqNumber_1,    4, unsigned );
-        SENF_PARSER_BITFIELD         ( fragmentNumber, 4, unsigned );
-        SENF_PARSER_PRIVATE_FIELD    ( seqNumber_2,    UInt8Parser );
 
+        typedef UIntFieldParser<0, 0+4> seqNumber_1_t;
+        seqNumber_1_t seqNumber_1() const { return parse<seqNumber_1_t>( 22); }
+
+    public:
+        typedef UIntFieldParser<4, 4+4> fragmentNumber_t;
+        fragmentNumber_t fragmentNumber() const { return parse<fragmentNumber_t>( 22); }
+
+    protected:
+        UInt8Parser seqNumber_2() const { return parse<UInt8Parser>( 23); }
+
+    public:
         boost::uint16_t sequenceNumber() const {
             return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
         };
 
         void sequenceNumber(boost::uint16_t sn);
+
+        SENF_PARSER_GOTO_OFFSET( 24, 24);
 
         // TODO fourth address field in case of WDS
         // SENF_PARSER_PRIVATE_VARIANT (wds_, dsBits,

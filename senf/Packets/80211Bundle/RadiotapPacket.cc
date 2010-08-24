@@ -4,6 +4,7 @@
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Christian Niephaus <cni@berlios.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -306,8 +307,9 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::RadiotapPacketType::nextPac
 prefix_ senf::RadiotapPacketType::optional_range
 senf::RadiotapPacketType::nextPacketRange(packet p)
 {
-    size_type h (senf::bytes(p.parser()));
-    size_type t (p->flagsPresent() && p->flags().fcsAtEnd() ? 4 : 0);
+    parser rtParser (p.parser());
+    size_type h (senf::bytes(rtParser));
+    size_type t (rtParser.flagsPresent() && rtParser.flags().fcsAtEnd() ? 4 : 0);
     return p.size() <= h+t
         ? no_range()
         : optional_range( range(p.data().begin() + h, p.data().end() - t) );

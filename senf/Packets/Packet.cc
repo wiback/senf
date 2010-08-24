@@ -32,21 +32,17 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::Packet senf::Packet::checkNext()
+prefix_ senf::Packet senf::Packet::getNext()
     const
 {
-    PacketInterpreterBase::optional_range r (ptr()->nextPacketRange());
-    if (r && ! r->empty()) {
-        factory_t factory (ptr()->nextPacketType());
-        if (factory)
-            return parseNextAs(factory);
-        else
-            return parseNextAs<DataPacket>();
-    }
-    return Packet();
+    factory_t factory (ptr()->nextPacketType());
+    if (factory)
+        return parseNextAs(factory);
+    else
+        return parseNextAs<DataPacket>();
 }
 
-prefix_ senf::Packet senf::Packet::checkLast()
+prefix_ senf::Packet senf::Packet::getLast()
     const
 {
     Packet p (*this);
