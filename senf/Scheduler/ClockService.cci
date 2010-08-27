@@ -49,7 +49,7 @@ namespace senf { namespace scheduler { ClockService::clock_type now(); } }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type time)
 {
-    if (senf::scheduler::now() - baseClock_ > 1000000000ll)
+    if (scheduler::now() - baseClock_ > 1000000000ll)
         restart_m();
     boost::posix_time::time_duration delta (time - baseAbstime_);
     return baseClock_ + clock_type( delta.ticks() )
@@ -60,7 +60,7 @@ prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_typ
 {
     if (clock == 0)
         return abstime_type();
-    if (senf::scheduler::now() - baseClock_ > 1000000000ll)
+    if (scheduler::now() - baseClock_ > 1000000000ll)
         restart_m();
 #ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
     return baseAbstime_ + boost::posix_time::nanoseconds(clock-baseClock_);
@@ -178,7 +178,7 @@ prefix_ senf::ClockService::clock_type senf::ClockService::in_days(int64_type v)
 
 prefix_ senf::ClockService::clock_type senf::ClockService::from_timeval(timeval const & time)
 {
-    return from_time_t(time.tv_sec) + ClockService::microseconds(time.tv_usec);
+    return from_time_t(time.tv_sec) + microseconds(time.tv_usec);
 }
 
 prefix_ void senf::ClockService::restart()

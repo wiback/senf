@@ -224,11 +224,11 @@ prefix_ senf::scheduler::detail::FIFORunner::TaskList::iterator
 senf::scheduler::detail::FIFORunner::priorityEnd(TaskInfo::Priority p)
 {
     switch (p) {
-    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_LOW :
+    case TaskInfo::PRIORITY_LOW :
         return tasks_.end();
-    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_NORMAL :
+    case TaskInfo::PRIORITY_NORMAL :
         return TaskList::current(normalPriorityEnd_);
-    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_HIGH :
+    case TaskInfo::PRIORITY_HIGH :
         return TaskList::current(highPriorityEnd_);
     }
     return tasks_.begin();

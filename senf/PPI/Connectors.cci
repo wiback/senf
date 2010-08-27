@@ -82,27 +82,14 @@ prefix_ bool senf::ppi::connector::Connector::connected()
     return peer_;
 }
 
-prefix_ void senf::ppi::connector::Connector::unregisterConnector()
-{
-    if (module_)
-        module_->unregisterConnector(*this);
-}
-
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::ppi::connector::Connector::setModule(module::Module & module)
-{
-    module_ = &module;
-}
-
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector
 
 prefix_ senf::ppi::connector::ActiveConnector & senf::ppi::connector::PassiveConnector::peer()
     const
 {
-    return dynamic_cast<ActiveConnector&>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ bool senf::ppi::connector::PassiveConnector::throttled()
@@ -191,7 +178,8 @@ prefix_ void senf::ppi::connector::PassiveConnector::emit()
 prefix_ senf::ppi::connector::PassiveConnector & senf::ppi::connector::ActiveConnector::peer()
     const
 {
-    return dynamic_cast<PassiveConnector&>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ void senf::ppi::connector::ActiveConnector::onThrottle()
@@ -228,7 +216,8 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::read()
 prefix_ senf::ppi::connector::OutputConnector & senf::ppi::connector::InputConnector::peer()
     const
 {
-    return dynamic_cast<OutputConnector &>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ senf::ppi::connector::InputConnector::queue_iterator
@@ -288,7 +277,8 @@ prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
 prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConnector::peer()
     const
 {
-    return dynamic_cast<InputConnector&>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet const & p)
@@ -319,7 +309,8 @@ prefix_ senf::ppi::connector::GenericPassiveInput::GenericPassiveInput()
 prefix_ senf::ppi::connector::GenericActiveOutput & senf::ppi::connector::GenericPassiveInput::peer()
     const
 {
-    return dynamic_cast<GenericActiveOutput&>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ bool senf::ppi::connector::GenericPassiveInput::boolean_test()
@@ -334,7 +325,8 @@ prefix_ bool senf::ppi::connector::GenericPassiveInput::boolean_test()
 prefix_ senf::ppi::connector::GenericActiveInput & senf::ppi::connector::GenericPassiveOutput::peer()
     const
 {
-    return dynamic_cast<GenericActiveInput&>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ bool senf::ppi::connector::GenericPassiveOutput::boolean_test()
@@ -357,7 +349,8 @@ prefix_ senf::ppi::connector::GenericPassiveOutput::GenericPassiveOutput()
 prefix_ senf::ppi::connector::GenericPassiveOutput & senf::ppi::connector::GenericActiveInput::peer()
     const
 {
-    return dynamic_cast<GenericPassiveOutput&>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ bool senf::ppi::connector::GenericActiveInput::boolean_test()
@@ -381,7 +374,9 @@ prefix_ senf::ppi::connector::GenericActiveInput::GenericActiveInput()
 prefix_ senf::ppi::connector::GenericPassiveInput & senf::ppi::connector::GenericActiveOutput::peer()
     const
 {
-    return dynamic_cast<GenericPassiveInput&>(Connector::peer());
+//    return dynamic_cast<GenericPassiveInput&>(Connector::peer());
+    SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
+    return *peer_;
 }
 
 prefix_ bool senf::ppi::connector::GenericActiveOutput::boolean_test()

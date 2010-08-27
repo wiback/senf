@@ -35,8 +35,8 @@
 
 template <class Module, class Connector>
 prefix_ void senf::ppi::module::detail::MultiConnectorWrapper<Module, Connector>::v_disconnected()
-    const
 {
+    Connector::v_disconnected();
     static_cast<Module&>(this->module()).disconnected(*this);
 }
 

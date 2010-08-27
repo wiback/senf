@@ -56,7 +56,7 @@ namespace detail {
         : public Connector
     {
     private:
-        virtual void v_disconnected() const;
+        virtual void v_disconnected();
     };
 
 #ifndef DOXYGEN

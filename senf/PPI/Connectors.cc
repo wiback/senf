@@ -84,6 +84,10 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
         enqueueInitializable();
     if (! peer().initializationScheduled())
         peer().enqueueInitializable();
+
+    v_connected();
+    peer_->v_connected();
+
 }
 
 senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::traceState_ (
@@ -201,8 +205,21 @@ prefix_ std::type_info const & senf::ppi::connector::Connector::packetTypeID()
     return typeid(void);
 }
 
+prefix_ void senf::ppi::connector::Connector::unregisterConnector()
+{
+    if (module_)
+        module_->unregisterConnector(*this);
+}
+
+prefix_ void senf::ppi::connector::Connector::setModule(module::Module & module)
+{
+    module_ = &module;
+}
+
 prefix_ void senf::ppi::connector::Connector::v_disconnected()
-    const
+{}
+
+prefix_ void senf::ppi::connector::Connector::v_connected()
 {}
 
 ///////////////////////////////////////////////////////////////////////////
@@ -212,6 +229,18 @@ prefix_ senf::ppi::connector::PassiveConnector::~PassiveConnector()
 {
     // Must be here and NOT in base so it is called before destructing the routes_ member
     unregisterConnector();
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::v_disconnected()
+{
+    Connector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::v_connected()
+{
+    Connector::v_connected();
+    peer_ = & dynamic_cast<ActiveConnector&>(Connector::peer());
 }
 
 ////////////////////////////////////////
@@ -265,6 +294,18 @@ prefix_ senf::ppi::connector::ActiveConnector::~ActiveConnector()
 {
     // Must be here and NOT in base so it is called before destructing the routes_ member
     unregisterConnector();
+}
+
+prefix_ void senf::ppi::connector::ActiveConnector::v_disconnected()
+{
+    Connector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::ActiveConnector::v_connected()
+{
+    Connector::v_connected();
+    peer_ = & dynamic_cast<PassiveConnector&>(Connector::peer());
 }
 
 ////////////////////////////////////////
@@ -335,6 +376,18 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
     }
 }
 
+prefix_ void senf::ppi::connector::InputConnector::v_disconnected()
+{
+    Connector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::InputConnector::v_connected()
+{
+    Connector::v_connected();
+    peer_ = & dynamic_cast<OutputConnector&>(Connector::peer());
+}
+
 ////////////////////////////////////////
 // private members
 
@@ -346,6 +399,21 @@ prefix_ void senf::ppi::connector::InputConnector::v_enqueueEvent()
 
 prefix_ void senf::ppi::connector::InputConnector::v_dequeueEvent()
 {}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::OutputConnector
+
+prefix_ void senf::ppi::connector::OutputConnector::v_disconnected()
+{
+    Connector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::OutputConnector::v_connected()
+{
+    Connector::v_connected();
+    peer_ = & dynamic_cast<InputConnector&>(Connector::peer());
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::GenericActiveInput
@@ -360,6 +428,20 @@ prefix_ void senf::ppi::connector::GenericActiveInput::v_requestEvent()
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::GenericPassiveInput
+
+prefix_ void senf::ppi::connector::GenericPassiveInput::v_disconnected()
+{
+    PassiveConnector::v_disconnected();
+    InputConnector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::GenericPassiveInput::v_connected()
+{
+    PassiveConnector::v_connected();
+    InputConnector::v_connected();
+    peer_ = & dynamic_cast<GenericActiveOutput&>(Connector::peer());
+}
 
 ////////////////////////////////////////
 // private members
@@ -393,6 +475,58 @@ prefix_ void senf::ppi::connector::GenericPassiveInput::v_unthrottleEvent()
         n = nn;
     }
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::GenericPassiveOutput
+
+prefix_ void senf::ppi::connector::GenericPassiveOutput::v_disconnected()
+{
+    PassiveConnector::v_disconnected();
+    OutputConnector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::GenericPassiveOutput::v_connected()
+{
+    PassiveConnector::v_connected();
+    OutputConnector::v_connected();
+    peer_ = & dynamic_cast<GenericActiveInput&>(Connector::peer());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::GenericActiveInput
+
+prefix_ void senf::ppi::connector::GenericActiveInput::v_disconnected()
+{
+    ActiveConnector::v_disconnected();
+    InputConnector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::GenericActiveInput::v_connected()
+{
+    ActiveConnector::v_connected();
+    InputConnector::v_connected();
+    peer_ = & dynamic_cast<GenericPassiveOutput&>(Connector::peer());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::GenericActiveOutput
+
+prefix_ void senf::ppi::connector::GenericActiveOutput::v_disconnected()
+{
+    ActiveConnector::v_disconnected();
+    OutputConnector::v_disconnected();
+    peer_ = 0;
+}
+
+prefix_ void senf::ppi::connector::GenericActiveOutput::v_connected()
+{
+    ActiveConnector::v_connected();
+    OutputConnector::v_connected();
+    peer_ = & dynamic_cast<GenericPassiveInput&>(Connector::peer());
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

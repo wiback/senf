@@ -187,10 +187,11 @@ namespace connector {
 
         void unregisterConnector();
 
+        virtual void v_disconnected();
+        virtual void v_connected();
+
     private:
         virtual std::type_info const & packetTypeID();
-
-        virtual void v_disconnected() const;
 
         void setModule(module::Module & module);
 
@@ -251,6 +252,9 @@ namespace connector {
 
         void emit();
 
+        virtual void v_disconnected();
+        virtual void v_connected();
+
     private:
         virtual void v_init();
 
@@ -269,11 +273,14 @@ namespace connector {
         void registerRoute(ForwardingRoute & route);
         void unregisterRoute(ForwardingRoute & route);
 
+        ActiveConnector * peer_;
+
         typedef ppi::detail::Callback<>::type Callback;
         Callback callback_;
 
         bool remoteThrottled_;
         bool nativeThrottled_;
+        ActiveConnector * myPeer_;
 
         typedef std::vector<ForwardingRoute*> Routes;
         Routes routes_;
@@ -331,6 +338,9 @@ namespace connector {
     protected:
         ActiveConnector();
 
+        virtual void v_disconnected();
+        virtual void v_connected();
+
     private:
         virtual void v_init();
 
@@ -341,6 +351,8 @@ namespace connector {
         // called by ForwardingRoute to register a new route
         void registerRoute(ForwardingRoute & route);
         void unregisterRoute(ForwardingRoute & route);
+
+        PassiveConnector * peer_;
 
         Callback throttleCallback_;
         Callback unthrottleCallback_;
@@ -406,6 +418,9 @@ namespace connector {
     protected:
         InputConnector();
 
+        virtual void v_disconnected();
+        virtual void v_connected();
+
     private:
         void enqueue(Packet const & p);
 
@@ -413,6 +428,7 @@ namespace connector {
         virtual void v_enqueueEvent();
         virtual void v_dequeueEvent();
 
+        OutputConnector * peer_;
         Queue queue_;
 
         friend class OutputConnector;
@@ -436,6 +452,12 @@ namespace connector {
 
     protected:
         OutputConnector();
+
+        virtual void v_disconnected();
+        virtual void v_connected();
+
+    private:
+        InputConnector * peer_;
     };
 
     /** \brief Combination of PassiveConnector and InputConnector
@@ -465,15 +487,18 @@ namespace connector {
         void qdisc(QueueingDiscipline::None_t);
                                         ///< Disable queueing discipline
 
-
     protected:
         GenericPassiveInput();
+
+        virtual void v_disconnected();
+        virtual void v_connected();
 
     private:
         void v_enqueueEvent();
         void v_dequeueEvent();
         void v_unthrottleEvent();
 
+        GenericActiveOutput * peer_;
         boost::scoped_ptr<QueueingDiscipline> qdisc_;
     };
 
@@ -495,6 +520,11 @@ namespace connector {
     protected:
         GenericPassiveOutput();
 
+        virtual void v_disconnected();
+        virtual void v_connected();
+
+    private:
+        GenericActiveInput * peer_;
     };
 
     /** \brief Combination of ActiveConnector and InputConnector
@@ -513,8 +543,13 @@ namespace connector {
     protected:
         GenericActiveInput();
 
+        virtual void v_disconnected();
+        virtual void v_connected();
+
     private:
         void v_requestEvent();
+
+        GenericPassiveOutput * peer_;
     };
 
     /** \brief Combination of ActiveConnector and OutputConnector
@@ -533,7 +568,13 @@ namespace connector {
     protected:
         GenericActiveOutput();
 
+        virtual void v_disconnected();
+        virtual void v_connected();
+
+    private:
+        GenericPassiveInput * peer_;
     };
+
 
 #ifndef DOXYGEN
 

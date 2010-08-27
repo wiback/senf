@@ -78,7 +78,8 @@ prefix_ OtherPacket senf::Packet::next(NoThrow_t)
     const
 {
     Packet p (next(nothrow));
-    return p && p.is<OtherPacket>() ? p.as<OtherPacket>() : OtherPacket();
+    return p && p.is<OtherPacket>() ?
+            OtherPacket(p.ptr()->as<typename OtherPacket::type>()) : OtherPacket();
 }
 
 template <class OtherPacket>
