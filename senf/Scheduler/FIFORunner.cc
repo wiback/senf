@@ -215,11 +215,11 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
                 ++ next_;
         }
         watchdogCount_ = 0;
-        next_ = 0;
+        next_ = l;
     }
     catch (...) {
         watchdogCount_ = 0;
-        next_ = 0;
+        next_ = l;
         throw;
     }
 }
