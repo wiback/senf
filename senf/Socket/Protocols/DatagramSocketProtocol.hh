@@ -45,6 +45,8 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
+        ClockService::clock_type timestamp_system() const; ///< Return packet timestamp of last packet
+
         ClockService::clock_type timestamp() const; ///< Return packet timestamp of last packet
                                         /**< The returned timestamp represents the time, at which
                                              the last network packet passed to the user has been

@@ -44,6 +44,16 @@ prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp()
     return ClockService::from_timeval(tv);
 }
 
+prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp_system()
+    const
+{
+    struct timeval tv;
+    if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("");
+    return tv.tv_sec * 1000000000LL + tv.tv_usec * 1000;
+}
+
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "DatagramSocketProtocol.mpp"
