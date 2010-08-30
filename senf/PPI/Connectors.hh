@@ -280,7 +280,6 @@ namespace connector {
 
         bool remoteThrottled_;
         bool nativeThrottled_;
-        ActiveConnector * myPeer_;
 
         typedef std::vector<ForwardingRoute*> Routes;
         Routes routes_;

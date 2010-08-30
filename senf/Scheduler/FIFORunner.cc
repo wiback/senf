@@ -29,6 +29,7 @@
 // Custom includes
 #include <signal.h>
 #include <time.h>
+#include <cassert>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/senfassert.hh>
 #ifdef SENF_DEBUG
@@ -112,7 +113,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::stopWatchdog()
 // At the moment, the FIFORunner is not very efficient with many non-runnable tasks since the
 // complete list of tasks is traversed on each run().
 //
-// To optimize this, we woould need a way to find the relative ordering of two tasks in O(1) (at the
+// To optimize this, we would need a way to find the relative ordering of two tasks in O(1) (at the
 // moment, this is an O(N) operation by traversing the list).
 //
 // One idea is, to give each task an 'order' value. Whenever a task is added at the end, it's order

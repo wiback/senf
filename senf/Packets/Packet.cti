@@ -67,6 +67,14 @@ prefix_ OtherPacket senf::Packet::as()
 }
 
 template <class OtherPacket>
+prefix_ OtherPacket senf::Packet::as(NoThrow_t)
+    const
+{
+    SENF_ASSERT( is<OtherPacket>(), "Bad cast, called packet::as(nothrow) with wrong PacketType");
+    return OtherPacket(ptr()->as<typename OtherPacket::type>());
+}
+
+template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::next()
     const
 {
@@ -103,7 +111,8 @@ prefix_ OtherPacket senf::Packet::prev(NoThrow_t)
     const
 {
     Packet p (prev(nothrow));
-    return p && p.is<OtherPacket>() ? p.as<OtherPacket>() : OtherPacket();
+    return p && p.is<OtherPacket>() ?
+            OtherPacket(p.ptr()->as<typename OtherPacket::type>()) : OtherPacket();
 }
 
 template <class OtherPacket>

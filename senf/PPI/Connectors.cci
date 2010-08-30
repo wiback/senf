@@ -374,7 +374,6 @@ prefix_ senf::ppi::connector::GenericActiveInput::GenericActiveInput()
 prefix_ senf::ppi::connector::GenericPassiveInput & senf::ppi::connector::GenericActiveOutput::peer()
     const
 {
-//    return dynamic_cast<GenericPassiveInput&>(Connector::peer());
     SENF_ASSERT(peer_, "senf::ppi::connect() call missing");
     return *peer_;
 }

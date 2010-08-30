@@ -197,10 +197,9 @@ namespace senf {
                                                  exists */
         template <class OtherPacket> OtherPacket next(NoThrow_t) const;
                                         ///< Get next packet in chain and cast to \a OtherPacket
-                                        /**< \throws std::bad_cast if the next() packet is not of
-                                             type \a OtherPacket
-                                             \returns in - valid() packet if no next packet
-                                                 exists */
+                                        /**< \returns in - valid() packet if no next packet
+                                                 exists or if next() packet is not of
+                                                 type \a OtherPacket */
         template <class OtherPacket> OtherPacket find() const;
                                         ///< Search chain forward for packet of type \a OtherPacket
                                         /**< The search will start with the current packet.
@@ -226,10 +225,9 @@ namespace senf {
                                                  packet exists */
         template <class OtherPacket> OtherPacket prev(NoThrow_t) const;
                                         ///< Get previous packet in chain and cast to \a OtherPacket
-                                        /**< \throws std::bad_cast, if the previous packet is not of
-                                             type \a OtherPacket
-                                             \returns in - valid() packet if no previous packet
-                                                 exists */
+                                        /**< \returns in - valid() packet if no previous packet
+                                                 exists or if the previous packet is not of
+                                                 type \a OtherPacket */
         template <class OtherPacket> OtherPacket rfind() const;
                                         ///< Search chain backwards for packet of type \a OtherPacket
                                         /**< The search will start with the current packet.
@@ -290,6 +288,15 @@ namespace senf {
                                              before.
                                              \throws std::bad_cast if the current packet is not of
                                                  type \a OtherPacket */
+        template <class OtherPacket> OtherPacket as(NoThrow_t) const;
+                                        ///< Cast current packet to the given type
+                                        /**< This operations returns a handle to the same packet
+                                             header/interpreter however upcast to the given
+                                             ConcretePacket type which have been instantiated
+                                             before.
+                                             \warning You must make absolutely sure that the packet
+                                             is of the given type. If not, calling this member
+                                             crashes your program in a unkindly way. */
 
         Packet append(Packet const & packet) const; ///< Append the given packet to \c this packet
                                         /**< This operation will replace the payload section of \c
