@@ -142,10 +142,14 @@ Options:
     else:
         msg = ''
     context.Message( "Checking boost version%s... " % msg )
-    ret = context.TryRun("#include <boost/version.hpp>\n"
-                         "#include <iostream>\n"
-                         "int main(int, char **) { std::cout << BOOST_LIB_VERSION << std::endl; }",
-                         ".cc")[-1].strip()
+    if context.env.has_key('BOOST_VERSION'):
+        ret = context.env['BOOST_VERSION']
+    else:
+        ret = context.TryRun("#include <boost/version.hpp>\n"
+                             "#include <iostream>\n"
+                             "int main(int, char **)\n"
+                             "{ std::cout << BOOST_LIB_VERSION << std::endl; }",
+                             ".cc")[-1].strip()
 
     if not ret:
         msg = "no boost includes found"
