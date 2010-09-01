@@ -150,10 +150,10 @@ namespace detail {
                                                  boost_spirit::rule<Scanner>,
                                                  boost_spirit::rule<Scanner> >
         {
-            boost_spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
-                punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin,
-                skip, statement, relpath, abspath, arguments, group_start, group_close,
-                statement_end, opt_path;
+            boost_spirit::rule<Scanner> command, path, argument, word, string, hexstring,
+                word_or_string, token, punctuation, hexbyte, balanced_tokens, simple_argument,
+                complex_argument, builtin, skip, statement, relpath, abspath, arguments,
+                group_start, group_close, statement_end, opt_path;
 
             definition(CommandGrammar const & self)
             {
@@ -307,7 +307,7 @@ namespace detail {
                     ;
 
                 relpath
-                    =    (   word                 [ push_back(path_, token_) ]
+                    =    (   word_or_string       [ push_back(path_, token_) ]
                            % +ch_p('/') )
                       >> ( ! (+ch_p('/') )        [ push_back(path_, construct_<Token>()) ] )
                     ;
@@ -373,6 +373,11 @@ namespace detail {
                                                         Token::Word,
                                                         str_,
                                                         pos_) ]
+                    ;
+
+                word_or_string
+                    =    word
+                    |    string
                     ;
 
                 hexbyte

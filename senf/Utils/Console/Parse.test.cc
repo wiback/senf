@@ -128,10 +128,10 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
     {
         ss.str("");
         BOOST_CHECK( senf::console::detail::boost_spirit::parse(
-                         "ls //foo/bar;",
+                         "ls //foo/\"bar\";",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
-        BOOST_CHECK_EQUAL( ss.str(), "builtin_ls( None('')/Word('foo')/Word('bar') )\n" );
+        BOOST_CHECK_EQUAL( ss.str(), "builtin_ls( None('')/Word('foo')/BasicString('bar') )\n" );
     }
 
     {
@@ -164,11 +164,11 @@ SENF_AUTO_UNIT_TEST(commandGrammar)
     {
         ss.str("");
         BOOST_CHECK( senf::console::detail::boost_spirit::parse(
-                         "foo/bar// {",
+                         "foo/\"bar baz\"// {",
                          grammar.use_parser<Grammar::CommandParser>(),
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(),
-                           "beginCommand( Word('foo')/Word('bar')/None('') )\n"
+                           "beginCommand( Word('foo')/BasicString('bar baz')/None('') )\n"
                            "pushDirectory()\n"
                            "endCommand()\n" );
     }
@@ -355,7 +355,7 @@ SENF_AUTO_UNIT_TEST(parseExceptions)
     CheckParseEx( "/foo/bar;\n  ()", "path expected\nat <unknown>:2:3" );
     CheckParseEx( "cd /foo/bar foo/bar", "end of statement expected\nat <unknown>:1:13" );
     CheckParseEx( "/foo/bar foo /", "end of statement expected\nat <unknown>:1:14" );
-    CheckParseEx( "cd \"foo\"", "path expected\nat <unknown>:1:4" );
+    CheckParseEx( "cd (foo)", "path expected\nat <unknown>:1:4" );
     CheckParseEx( "/foo/bar \"string", "'\"' expected\nat <unknown>:1:17" );
     CheckParseEx( "/foo/bar x\"hi\"", "'\"' expected\nat <unknown>:1:12" );
     CheckParseEx( "/foo/bar (", "')' expected\nat <unknown>:1:11" );
