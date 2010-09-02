@@ -59,9 +59,9 @@ SENF_AUTO_UNIT_TEST(packetImpl_mem)
     // refcount ..
 
 
-    p->add_ref(2);
-    BOOST_CHECK_EQUAL(p->refcount(), 3);
-    p->release(2);
+    p->add_ref();
+    BOOST_CHECK_EQUAL(p->refcount(), 2);
+    p->release();
     BOOST_CHECK_EQUAL(p->refcount(), 1);
 
     {
@@ -75,7 +75,7 @@ SENF_AUTO_UNIT_TEST(packetImpl_mem)
             senf::pool_alloc_mixin< senf::PacketInterpreter<VoidPacket> >::allocCounter(), 1u);
 #endif
         senf::PacketInterpreterBase::ptr pi2 (pi);
-        BOOST_CHECK_EQUAL(p->refcount(), 3);
+        BOOST_CHECK_EQUAL(p->refcount(), 2);
     }
     BOOST_CHECK_EQUAL(p->refcount(),1);
 

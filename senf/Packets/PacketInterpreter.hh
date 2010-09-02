@@ -226,7 +226,13 @@ namespace senf {
         template <class PacketType> friend class PacketInterpreter;
         friend class detail::packet::test::TestDriver;
         friend class PacketParserBase;
+
+        friend void senf::intrusive_ptr_add_ref(PacketInterpreterBase const *);
+        friend void senf::intrusive_ptr_release(PacketInterpreterBase const *);
     };
+
+    void intrusive_ptr_add_ref(PacketInterpreterBase const * p);
+    void intrusive_ptr_release(PacketInterpreterBase const * p);
 
     /** \brief Internal: Concrete packet interpreter
 

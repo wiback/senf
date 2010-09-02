@@ -143,45 +143,45 @@ senf::PacketInterpreterBase::appendClone(detail::PacketImpl * impl, range r)
 ////////////////////////////////////////
 // private members
 
-// reference/memory management
-
-prefix_ void senf::PacketInterpreterBase::add_ref()
-{
-    intrusive_refcount_t<PacketInterpreterBase>::add_ref();
-    if (impl_)
-        impl_->add_ref();
-}
-
-prefix_ bool senf::PacketInterpreterBase::release()
-{
-    if (impl_)
-        // This call will set impl_ to 0 if we just removed the last reference ...
-        impl_->release();
-    return intrusive_refcount_t<PacketInterpreterBase>::release() && !impl_;
-}
-
 // containment management. Only to be called by PacketImpl.
 
 prefix_ void senf::PacketInterpreterBase::assignImpl(detail::PacketImpl * impl)
 {
     SENF_ASSERT(!impl_, "Internal failure: PacketInterpreter added to two Packets");
     impl_ = impl;
-    impl_->add_ref(refcount());
+    if (refcount())
+        impl_->add_ref();
 }
 
 prefix_ void senf::PacketInterpreterBase::releaseImpl()
 {
     SENF_ASSERT(impl_, "Internal failure: release of lone PacketInterpreter");
-    refcount_t refc (refcount());
-    if (refc) {
-        impl_->release(refc);
+    if (refcount()) {
+        detail::PacketImpl * i (impl_);
         impl_ = 0;
+        // This call might delete this ...
+        i->release();
     } else {
         impl_ = 0;
         delete this;
     }
 }
 
+prefix_ void senf::intrusive_ptr_add_ref(PacketInterpreterBase const * p)
+{
+    if (! p->refcount())
+        const_cast<PacketInterpreterBase *>(p)->add_ref();
+    else
+        const_cast<PacketInterpreterBase *>(p)->intrusive_refcount_base::add_ref();
+}
+
+prefix_ void senf::intrusive_ptr_release(PacketInterpreterBase const * p)
+{
+    if (p->refcount() <= 1)
+        const_cast<PacketInterpreterBase *>(p)->release();
+    else
+        const_cast<PacketInterpreterBase *>(p)->intrusive_refcount_base::release();
+}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

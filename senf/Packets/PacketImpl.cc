@@ -47,6 +47,19 @@ prefix_ senf::detail::PacketImpl::~PacketImpl()
     eraseInterpreters(interpreters_.begin(), interpreters_.end());
 }
 
+prefix_ void senf::detail::PacketImpl::release()
+{
+    SENF_ASSERT(refcount_ >= 1, "Internal failure: Releasing dead PacketImpl ??");
+    // uah ... we need to be extremely careful here. If refcount_ is 1, we want to commit suicide,
+    // however the destructor will remove all PacketInterpreters from the list and will thereby
+    // decrement refcount -> only decrement refcount_ when *not* calling delete (otherwise
+    // the assert above will fail)
+    if (refcount_ == 1)
+        delete this;
+    else
+        -- refcount_;
+}
+
 // interpreter chain
 
 prefix_ void senf::detail::PacketImpl::appendInterpreter(PacketInterpreterBase * p)

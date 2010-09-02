@@ -101,6 +101,24 @@ prefix_ void senf::PacketInterpreterBase::finalizeTo(ptr other)
     finalizeThis();
 }
 
+// reference/memory management
+
+prefix_ void senf::PacketInterpreterBase::add_ref()
+{
+    if (impl_ && !refcount())
+        impl_->add_ref();
+    intrusive_refcount_t<PacketInterpreterBase>::add_ref();
+}
+
+prefix_ bool senf::PacketInterpreterBase::release()
+{
+    if (impl_ && refcount()==1)
+        // This call will set impl_ to 0 if we just removed the last reference ...
+        impl_->release();
+    if (intrusive_refcount_t<PacketInterpreterBase>::release() && !impl_)
+        delete this;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::PacketInterpreterBase::Factory
 

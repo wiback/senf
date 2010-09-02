@@ -32,11 +32,13 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 prefix_ senf::intrusive_refcount_base::refcount_t senf::intrusive_refcount_base::refcount()
+    const
 {
     return refcount_;
 }
 
 prefix_ bool senf::intrusive_refcount_base::is_shared()
+    const
 {
     return refcount()>1;
 }

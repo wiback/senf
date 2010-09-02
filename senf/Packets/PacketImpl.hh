@@ -131,8 +131,8 @@ namespace detail {
 
         // rerference/memory management
 
-        void add_ref(refcount_t n=1);
-        void release(refcount_t n=1);
+        void add_ref();
+        void release();
         refcount_t refcount() const;
 
         // Interpreter chain

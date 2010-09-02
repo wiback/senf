@@ -49,8 +49,8 @@ namespace senf {
 
         virtual ~intrusive_refcount_base();
 
-        refcount_t refcount();          ///< current refcount
-        bool is_shared();               ///< return \c true if refcount() > 1
+        refcount_t refcount() const;    ///< current refcount
+        bool is_shared() const;         ///< return \c true if refcount() > 1
 
     protected:
         intrusive_refcount_base();
