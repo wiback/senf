@@ -40,7 +40,7 @@ prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string co
 template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::timerEvent()
 {
-    ClockService::clock_type now = ClockService::now();
+    ClockService::clock_type now = senf::scheduler::now();
     typename EntrySetByTimeout_t::iterator it = entrySetByTimeout.begin();
     while (it != entrySetByTimeout.end() && it->timeout <= now) {
         Entry item (*it);
