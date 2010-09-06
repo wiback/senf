@@ -670,8 +670,8 @@ namespace connector {
     class ActiveOutput : public GenericActiveOutput
     {
     public:
-        operator()(PacketType packet);  ///< Send out a packet
-        void write(PacketType packet);  ///< Alias for operator()
+        void operator()(PacketType packet); ///< Send out a packet
+        void write(PacketType packet);      ///< Alias for operator()
     };
 
     /** \brief Connector passively providing packets
@@ -690,8 +690,8 @@ namespace connector {
     class PassiveOutput : public GenericPassiveOutput
     {
     public:
-        operator()(PacketType packet);  ///< Send out a packet
-        void write(PacketType packet);  ///< Alias for operator()
+        void operator()(PacketType packet); ///< Send out a packet
+        void write(PacketType packet);      ///< Alias for operator()
     };
 
 #endif

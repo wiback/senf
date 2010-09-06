@@ -214,7 +214,7 @@ namespace senf {
         // reference/memory management. Only to be called by intrusive_refcount_t.
 
         void add_ref();
-        bool release();
+        void release();
 
         // containment management. Only to be called by PacketImpl.
 

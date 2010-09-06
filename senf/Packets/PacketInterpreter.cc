@@ -110,7 +110,7 @@ prefix_ void senf::PacketInterpreterBase::add_ref()
     intrusive_refcount_t<PacketInterpreterBase>::add_ref();
 }
 
-prefix_ bool senf::PacketInterpreterBase::release()
+prefix_ void senf::PacketInterpreterBase::release()
 {
     if (impl_ && refcount()==1)
         // This call will set impl_ to 0 if we just removed the last reference ...

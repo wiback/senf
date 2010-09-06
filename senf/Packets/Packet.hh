@@ -405,7 +405,7 @@ namespace senf {
                                              when using a packet in a boolean context. */
 
         void finalizeThis();            ///< Update calculated fields
-                                        /**< The finalize() fammily of members will update
+                                        /**< The finalize() family of members will update
                                              calculated packet fields: checksums, size fields and so
                                              on. This includes any field, which can be set from
                                              other information in the packet. Each concrete packet
@@ -420,7 +420,7 @@ namespace senf {
 
         template <class Other>
         void finalizeTo();              ///< Update calculated fields
-                                        /**< The finalize() fammily of members will update
+                                        /**< The finalize() family of members will update
                                              calculated packet fields: checksums, size fields and so
                                              on. This includes any field, which can be set from
                                              other information in the packet. Each concrete packet
@@ -439,7 +439,7 @@ namespace senf {
                                              \endcode */
 
         void finalizeTo(Packet const & other);  ///< Update calculated fields
-                                        /**< The finalize() fammily of members will update
+                                        /**< The finalize() family of members will update
                                              calculated packet fields: checksums, size fields and so
                                              on. This includes any field, which can be set from
                                              other information in the packet. Each concrete packet
@@ -762,7 +762,7 @@ namespace senf {
 
         ConcretePacket(typename interpreter::ptr const & packet_);
 
-        typename interpreter::ptr ptr() const;
+        interpreter * ptr() const;
 
         friend class Packet;
         friend class PacketInterpreter<PacketType>;

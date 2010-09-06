@@ -167,6 +167,18 @@ prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::k
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::AnnotationRegistry
 
+prefix_ void senf::detail::AnnotationRegistry::dump(key_type key, std::ostream & os,
+                                                    void * annotation)
+    const
+{
+    Registry::const_iterator i (registry_.find(key));
+    if (i != registry_.end()) {
+        os << fieldName(i->second->v_name());
+        i->second->v_dump(os, annotation);
+        os << "\n";
+    }
+}
+
 prefix_ void senf::detail::AnnotationRegistry::dumpRegistrations(std::ostream & os)
 {
     boost::format fmt ("%-56.56s  %-4.4s  %-7.7s  %5d\n");

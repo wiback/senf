@@ -327,11 +327,10 @@ prefix_ senf::ConcretePacket<PacketType>::ConcretePacket(typename interpreter::p
 {}
 
 template <class PacketType>
-prefix_ typename senf::ConcretePacket<PacketType>::interpreter::ptr
-senf::ConcretePacket<PacketType>::ptr()
+prefix_ typename senf::ConcretePacket<PacketType>::interpreter * senf::ConcretePacket<PacketType>::ptr()
     const
 {
-    return boost::static_pointer_cast< PacketInterpreter<PacketType> >(Packet::ptr());
+    return static_cast< PacketInterpreter<PacketType> *>( Packet::ptr().get());
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////
