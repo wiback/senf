@@ -492,7 +492,11 @@ namespace senf {
 
         unsigned long id() const;       ///< Unique packet id
                                         /**< Get a unique packet id. If two packets have the same
-                                             id, they share the internal data representation.. */
+                                             id, they share the internal data representation. */
+
+        bool is_shared() const;         ///< check if this packet shares data with any another packet handle.
+                                        /**< This method returns true if there is any other packet
+                                             handle pointing to any header in the packet chain. */
 
         ///@}
 

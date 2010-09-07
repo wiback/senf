@@ -178,8 +178,18 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( packet.first() == packet );
     BOOST_CHECK( packet.last() == packet.next() );
 
+    BOOST_CHECK( ! packet.is_shared() );
+    {
+        senf::Packet p2 (packet);
+        BOOST_CHECK( packet.is_shared() );
+        BOOST_CHECK( p2.is_shared() );
+    }
+    BOOST_CHECK( ! packet.is_shared() );
+
     senf::Packet p2 (packet.next());
     BOOST_CHECK( p2 );
+    BOOST_CHECK( packet.is_shared() );
+    BOOST_CHECK( p2.is_shared() );
     packet.parseNextAs<FooPacket>();
     BOOST_CHECK_EQUAL( packet.size(), 12u );
     BOOST_CHECK_EQUAL( packet.next().size(), 8u );
@@ -188,6 +198,7 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( packet.next().as<FooPacket>() );
 
     p2 = packet.next().clone();
+    BOOST_CHECK( ! packet.is_shared() );
     BOOST_REQUIRE( p2 );
     packet.next().append( p2 );
     BOOST_REQUIRE( packet.next().next() );

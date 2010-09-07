@@ -191,6 +191,12 @@ prefix_ bool senf::Packet::valid()
     return *this;
 }
 
+prefix_ bool senf::Packet::is_shared()
+    const
+{
+    return ptr()->is_shared() || (ptr()->impl().refcount() > 1);
+}
+
 template <class PacketType, class Parser>
 prefix_ Parser senf::operator<<(Parser target, ConcretePacket<PacketType> const & packet)
 {
