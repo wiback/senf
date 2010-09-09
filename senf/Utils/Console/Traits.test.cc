@@ -52,6 +52,11 @@ namespace {
         static MemberEnum test (MemberEnum value) { return value; }
     };
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( TestClass, MemberEnum, (MemberFoo)(MemberBar) );
+
+    enum TestEnumKey { ONE, TWO, THREE };
+    SENF_CONSOLE_REGISTER_ENUM( TestEnumKey, (key("1s",ONE))(key("2",TWO))(key("three",THREE)) );
+
+    TestEnumKey testKey (TestEnumKey value) { return value; }
 }
 
 SENF_AUTO_UNIT_TEST(charTraits)
@@ -147,6 +152,7 @@ SENF_AUTO_UNIT_TEST(enumSupport)
     senf::console::root().add("test", dir);
 
     dir.add("test",fty::Command(&test));
+    dir.add("testKey",fty::Command(&testKey));
 
     std::stringstream ss;
     SENF_CHECK_NO_THROW(
@@ -201,6 +207,24 @@ SENF_AUTO_UNIT_TEST(enumSupport)
         parser.parse("test/test foo",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/testKey 1S",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "1s\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/testKey 2",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "2\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/testKey ThrEE",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "three\n" );
 }
 
 SENF_AUTO_UNIT_TEST(singleToken)

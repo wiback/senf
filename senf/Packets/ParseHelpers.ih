@@ -30,6 +30,7 @@
 # include <boost/preprocessor/expand.hpp>
 # include <boost/preprocessor/facilities/is_empty.hpp>
 # include <boost/preprocessor/punctuation/comma.hpp>
+# include "../Utils/preprocessor.hh"
 # include "../Utils/mpl.hh"
 #
 # ////////////////////////////////ih.p///////////////////////////////////////
@@ -505,14 +506,6 @@
 # define SENF_PARSER_COLLECTION_TAG_EXPAND__packetSize() senf::detail::auxtag::bytes
 # define SENF_PARSER_COLLECTION_TAG_GETAUX__packetSize() _
 # define SENF_PARSER_COLLECTION_TAG_AUXTYPE__packetSize() packetSize
-#
-# // No recursive call so we need some more of theese ... ARGH !!!
-# define SENF_CAT_RECURS1(a, b) SENF_CAT_RECURS1_I(a,b)
-# define SENF_CAT_RECURS1_I(a, b) a ## b
-# define SENF_CAT_RECURS2(a, b) SENF_CAT_RECURS2_I(a,b)
-# define SENF_CAT_RECURS2_I(a, b) a ## b
-# define SENF_CAT_RECURS3(a, b) SENF_CAT_RECURS3_I(a,b)
-# define SENF_CAT_RECURS3_I(a, b) a ## b
 #
 # define SENF_PARSER_COLLECTION_TAG_EXPAND__none() senf::detail::auxtag::none
 #

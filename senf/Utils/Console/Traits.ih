@@ -82,8 +82,29 @@ namespace detail {
     long parseEnum(EnumTable const & table, ParseCommandInfo::TokensRange const & tokens);
     std::string formatEnum(EnumTable const & table, long value);
 
-#   define SENF_CONSOLE_REGISTER_ENUM_ELT(r,d,e) \
-        ( BOOST_PP_STRINGIZE(e), static_cast<long>(d e) )
+#   define SENF_CONSOLE_REGISTER_ENUM_ELT(r,d,e)                        \
+        BOOST_PP_IF( SENF_CONSOLE_REGISTER_ENUM_HASKEY(e),              \
+                     SENF_CONSOLE_REGISTER_ENUM_WITHKEY,                \
+                     SENF_CONSOLE_REGISTER_ENUM_NOKEY )(d, e)
+
+#   define SENF_CONSOLE_REGISTER_ENUM_GOBBLE__key(k,e)
+#   define SENF_CONSOLE_REGISTER_ENUM_GET_KEY__key(k,e) k
+#   define SENF_CONSOLE_REGISTER_ENUM_GET_ENUM__key(k,e) e
+#   define SENF_CONSOLE_REGISTER_ENUM_HASKEY(e)                         \
+        BOOST_PP_IS_EMPTY( SENF_CAT_RECURS1(SENF_CONSOLE_REGISTER_ENUM_GOBBLE__, e) )
+
+#   define SENF_CONSOLE_REGISTER_ENUM_KEY_GETENUM(e)                    \
+        SENF_CAT_RECURS2(SENF_CONSOLE_REGISTER_ENUM_GET_ENUM__, e)
+#   define SENF_CONSOLE_REGISTER_ENUM_KEY_GETKEY(e)                     \
+        SENF_CAT_RECURS3(SENF_CONSOLE_REGISTER_ENUM_GET_KEY__, e)
+
+#   define SENF_CONSOLE_REGISTER_ENUM_NOKEY(prefix, e)                  \
+        ( BOOST_PP_STRINGIZE(e), static_cast<long>(prefix e) )
+
+#   define SENF_CONSOLE_REGISTER_ENUM_WITHKEY(prefix, e)                \
+        ( SENF_CONSOLE_REGISTER_ENUM_KEY_GETKEY(e),                     \
+          static_cast<long>(prefix SENF_CONSOLE_REGISTER_ENUM_KEY_GETENUM(e)) )
+
 
 #   define SENF_CONSOLE_REGISTER_ENUM_(Prefix, Type, Values)                                      \
         inline senf::console::detail::EnumTable & senf_console_enum_table(Prefix Type)            \
