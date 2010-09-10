@@ -40,7 +40,13 @@
 prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::TaskInfo(std::string const & name,
                                                                 Priority priority)
     : Event(name), runnable_ (false), priority_ (priority)
-{}
+{
+#ifdef SENF_DEBUG
+    std::stringstream ss;
+    backtrace(ss, 32);
+    backtrace_ = ss.str();
+#endif
+}
 
 prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::~TaskInfo()
 {}
@@ -103,11 +109,6 @@ prefix_ std::string senf::scheduler::detail::FIFORunner::NullTask::v_info()
 prefix_ void senf::scheduler::detail::FIFORunner::enqueue(TaskInfo * task)
 {
     tasks_.insert(priorityEnd(task->priority_), *task);
-#ifdef SENF_DEBUG
-    std::stringstream ss;
-    backtrace(ss, 32);
-    task->backtrace_ = ss.str();
-#endif
 }
 
 prefix_ void senf::scheduler::detail::FIFORunner::taskTimeout(unsigned ms)
