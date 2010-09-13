@@ -205,6 +205,7 @@ def DefaultOptions(env):
         env,
         BoolVariable('final', 'Build final (optimized) build', False),
         BoolVariable('debug', 'Link in debug symbols', False),
+        BoolVariable('profile', 'compile and link with the profiling enabled option', False),
     )
 
     # Set nice default options
@@ -216,6 +217,11 @@ def DefaultOptions(env):
 
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],
+    )
+    if env['profile']:
+        env.Append(
+            LINKFLAGS   = [ '-pg' ],
+            CXXFLAGS    = [ '-pg' ],
     )
 
     env.Alias('all', '#')

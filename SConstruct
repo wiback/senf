@@ -152,9 +152,18 @@ senfutil.parseArguments(
     env,
     BoolVariable('final', 'Build final (optimized) build', False),
     BoolVariable('debug', 'Link in debug symbols', False),
+    BoolVariable('profile', 'compile and link with the profiling enabled option', False),
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
     BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False)
 )
+
+# gprof
+if env['profile']:
+    env.Append(
+        LINKFLAGS          = [ '-pg' ],
+        CXXFLAGS           = [ '-pg' ],
+    )
+
 
 # Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
 senfutil.importProcessEnv(env)
