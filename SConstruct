@@ -101,7 +101,7 @@ env.Append(
                                '--param','large-function-growth=10000',
                                '--param', 'large-function-insns=10000',
                                '--param','inline-unit-growth=10000' ],
-    INLINE_OPTS_NORMAL     = [ '-finline-limit=5000' ],
+    INLINE_OPTS_NORMAL     = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
     CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
                                '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing' ],

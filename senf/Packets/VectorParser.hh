@@ -27,9 +27,6 @@
 #define HH_SENF_Packets_VectorParser_ 1
 
 // Custom includes
-#include <boost/iterator/iterator_facade.hpp>
-#include <boost/utility.hpp>
-#include <boost/range.hpp>
 #include <boost/type_traits.hpp>
 #include "PacketParser.hh"
 #include "ArrayParser.hh" // for ArrayParser_iterator

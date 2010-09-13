@@ -309,6 +309,10 @@ namespace senf {
                                                  after \c this in the packet/header/interpreter
                                                  chain. */
 
+        void reparse() const;           ///< Reparse the payload the packet
+                                        /**< This member will throw away the packet chain after the
+                                             current packet. The payload will be reparsed
+                                             automatically when calling next() */
         ///@}
 
         ///\name Data access
@@ -319,7 +323,6 @@ namespace senf {
                                         /**< This size does \e not include the size of any preceding
                                              headers/packets/interpreters. It does however include
                                              \c this packets payload. */
-
         ///@}
 
         ///\name Annotations
@@ -382,11 +385,16 @@ namespace senf {
                                                  considering that the packetimpl itself uses a pool.
                                           */
 
-        ///@}
-
         template <class Annotation>
         Annotation const & annotation() const; ///< Get packet annotation
                                         /**< \see annotation() */
+
+        void clearAnnotations();        ///< Clear all packet annotations
+                                        /**< All packet annotations will be cleared. Afterwards
+                                             the annotations equates to a new created %packet.
+                                             \warning all references to existing complex
+                                             annotations become invalid. */
+        ///@}
 
         ///\name Other methods
         ///@{
@@ -750,14 +758,14 @@ namespace senf {
                                              access. The parser class may have any member which is
                                              needed for full packet access (e.g. checksum validation
                                              / recreation ...)
-                                             \see \ref packetparser for the parser interface. */
+                                             \see \ref packetparser for the %parser interface. */
 
         Parser parser() const;          ///< Access packet field parser directly
                                         /**< Access the parser of the packet. This is the same
                                              object returned by the operator->() operator. The
                                              operator however does not allow to access this object
                                              itself, only it's members.
-                                             \see \ref packetparser for the parser interface */
+                                             \see \ref packetparser for the %parser interface */
 
     protected:
 

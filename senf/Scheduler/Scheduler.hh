@@ -60,7 +60,7 @@ namespace senf {
     The Scheduler is based on the RAII principle: Every event is represented by a class
     instance. The event is registered in the constructor and removed by the destructor of that
     instance. This implementation automatically links the lifetime of an event with the lifetime of
-    the object resposible for it's creation.
+    the object responsible for it's creation.
 
     Every event registration is represented by an instance of an event specific class:
 

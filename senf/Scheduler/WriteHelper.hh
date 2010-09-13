@@ -36,7 +36,7 @@
 
 namespace senf {
 
-    /** \brief Asyncronous writing helper
+    /** \brief Asynchronous writing helper
 
         This class provides a simple asynchronous writing facility. This helper will register with
         the Scheduler to write the requested data. It will stay registered until the data has been

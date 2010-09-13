@@ -153,6 +153,8 @@ namespace senf {
 
         ptr append(ptr packet);
 
+        void reparse();
+
         ///@}
 
         ///\name Data access
@@ -168,6 +170,8 @@ namespace senf {
 
         template <class Annotation>
         Annotation & annotation();
+
+        void clearAnnotations();
 
         ///@}
 

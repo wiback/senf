@@ -156,6 +156,12 @@ prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
     }
 }
 
+prefix_ void senf::detail::PacketImpl::clearAnnotations()
+{
+    ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+    complexAnnotations_.clear();
+}
+
 prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::key_type key)
 {
     SENF_ASSERT( key < 0, "complexAnnotation called with invalid key");

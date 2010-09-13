@@ -130,7 +130,6 @@ prefix_ senf::Packet::size_type senf::Packet::size()
     return data().size();
 }
 
-
 // Other methods
 
 prefix_ bool senf::Packet::operator==(Packet const & other)
@@ -195,6 +194,17 @@ prefix_ bool senf::Packet::is_shared()
     const
 {
     return ptr()->is_shared() || (ptr()->impl().refcount() > 1);
+}
+
+prefix_ void senf::Packet::reparse()
+    const
+{
+    return ptr()->reparse();
+}
+
+prefix_ void senf::Packet::clearAnnotations()
+{
+    return ptr()->clearAnnotations();
 }
 
 template <class PacketType, class Parser>

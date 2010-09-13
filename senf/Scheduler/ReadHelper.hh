@@ -39,7 +39,7 @@
 namespace senf {
 
 
-    /** \brief Asyncronous reading helper
+    /** \brief Asynchronous reading helper
 
         This class provides a simple asynchronous reading facility. This helper will register with
         the Scheduler and read incoming data. It will collect the data until a specific number of

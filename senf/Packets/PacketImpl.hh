@@ -171,6 +171,7 @@ namespace detail {
         template <class Annotation>
         Annotation & annotation();
 
+        void clearAnnotations();
         void dumpAnnotations(std::ostream & os);
 
         /** \brief Internal: Keep PacketImpl instance alive

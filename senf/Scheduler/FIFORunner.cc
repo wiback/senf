@@ -253,10 +253,6 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdog(int, siginfo_t * si, 
 
 prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
 {
-    static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                                'a', 'b', 'c', 'd', 'e', 'f' };
-    static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
-
     // We don't care if the write commands below fail, we just give our best to inform the user
     senf::IGNORE( write(1, "\n\n*** Scheduler task hanging (pid ",34) );
     static char pid[7];
@@ -267,6 +263,9 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
     senf::IGNORE( write(1, " at\n ", 3) );
 #ifdef SENF_DEBUG
+    static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                                'a', 'b', 'c', 'd', 'e', 'f' };
+    static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
     unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
     for (unsigned i (0); i < nEntries; ++i) {
         senf::IGNORE( write(1, " 0x", 3) );

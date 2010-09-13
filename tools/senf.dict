@@ -103,6 +103,7 @@ ct
 cti
 CXXFLAGS
 daemonization
+datagram
 DatagramSection
 DataPacket
 datarate
@@ -111,12 +112,14 @@ de
 DEBUGINFO
 DebugModules
 decapsulated
+decorator
 DefaultArea
 DefaultBundle
 defaultInit
 defgroup
 deinitEmulationInterface
 deque
+destructor
 dia
 dil
 dir
@@ -329,6 +332,7 @@ mac
 MACAddress
 MACAddressParser
 mainpage
+malformed
 manualparse
 maxTxPowerIndex
 Mbit
@@ -338,6 +342,7 @@ mcDropMembership
 mcLoop
 mem
 memberfn
+membind
 Mhz
 min
 mixin
@@ -376,6 +381,8 @@ namespace
 nbar
 nc
 nChannels
+neighbour
+neighbours
 netcat
 NetEmu
 NETwork
@@ -471,6 +478,7 @@ PassiveQueue
 PassiveSink
 PassiveSocketWriter
 PassiveSource
+payload
 pencolor
 png
 POPD
@@ -503,6 +511,7 @@ ReadInfo
 receiveModule
 ReceiverDecorator
 receiverJack
+ref
 refcount
 regex
 registerEvent
@@ -510,6 +519,7 @@ registerPacket
 registerPacketType
 registerSomePacket
 RegistrationProxy
+registry
 ReportPacket
 repos
 rerference
@@ -683,6 +693,7 @@ Ver
 vlanId
 VLanId
 VoidPacketParser
+watchdog
 WiredInterface
 WiredReceiver
 WiredTransmitter

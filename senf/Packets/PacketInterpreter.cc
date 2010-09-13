@@ -70,6 +70,12 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::append(ptr
     return rv;
 }
 
+prefix_ void senf::PacketInterpreterBase::reparse()
+{
+    if (next())
+        impl().truncateInterpreters(next().get());
+}
+
 // Access to the abstract interface
 
 prefix_ void senf::PacketInterpreterBase::dump(std::ostream & os)

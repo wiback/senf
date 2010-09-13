@@ -98,6 +98,11 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::PacketInterpreterBase::next
     return v_nextPacketType();
 }
 
+prefix_ void senf::PacketInterpreterBase::clearAnnotations()
+{
+    return impl().clearAnnotations();
+}
+
 ////////////////////////////////////////
 // protected members
 
