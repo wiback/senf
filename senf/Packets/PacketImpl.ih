@@ -154,7 +154,15 @@ namespace detail {
         virtual ~EntryBase() {}
 
         virtual void * get() = 0;
+
+        typedef EntryBase * ptr;
+        virtual ptr clone() const = 0;
     };
+
+    inline AnnotationRegistry::EntryBase::ptr new_clone( AnnotationRegistry::EntryBase const & entry)
+    {
+        return entry.clone();
+    }
 
     template <class Annotation>
     class AnnotationRegistry::Entry
@@ -168,6 +176,7 @@ namespace detail {
             { senf::IGNORE(&proxy_); return key_; }
 
         virtual void * get() { return & annotation_; }
+        virtual EntryBase::ptr clone() const { return new Entry<Annotation>( *this); }
 
     private:
         Annotation annotation_;

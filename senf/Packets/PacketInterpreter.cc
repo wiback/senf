@@ -46,6 +46,7 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::clone()
     ptr pi (appendClone(p.p,begin(),p.p->begin()));
     for (ptr i (next()); i; i = i->next())
         i->appendClone(p.p,begin(),p.p->begin());
+    pi->impl().assignAnnotations( impl());
     return pi;
 }
 

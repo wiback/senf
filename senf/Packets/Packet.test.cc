@@ -349,10 +349,16 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().s, "dead beef" );
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().i, 0x12345678 );
 
+    senf::Packet pClone (packet.clone());
+
     p2.clearAnnotations();
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().s, "empty" );
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().i, -1 );
     BOOST_CHECK_EQUAL( p2.annotation<IntAnnotation>().value, 0 );
+
+    BOOST_CHECK_EQUAL( pClone.annotation<IntAnnotation>().value, 0xDEADBEEFu );
+    BOOST_CHECK_EQUAL( pClone.annotation<ComplexAnnotation>().s, "dead beef" );
+    BOOST_CHECK_EQUAL( pClone.annotation<ComplexAnnotation>().i, 0x12345678 );
 
     BOOST_CHECK( Reg::lookup<IntAnnotation>() >= 0 );
     BOOST_CHECK( Reg::lookup<LargeAnnotation>() < 0 );

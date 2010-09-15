@@ -164,9 +164,9 @@ namespace senf {
                                              validity. */
         Packet clone() const;           ///< Create copy packet
                                         /**< clone() will create a complete copy of \c this
-                                             packet. The returned packet will have the same data and
-                                             packet chain. It does however not share any data with
-                                             the original packet. */
+                                             packet. The returned packet will have the same data,
+                                             annotations and packet chain. It does however not
+                                             share any data with the original packet. */
 
         // conversion constructors
 

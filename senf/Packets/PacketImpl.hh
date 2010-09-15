@@ -172,6 +172,7 @@ namespace detail {
         Annotation & annotation();
 
         void clearAnnotations();
+        void assignAnnotations(PacketImpl const & other);
         void dumpAnnotations(std::ostream & os);
 
         /** \brief Internal: Keep PacketImpl instance alive

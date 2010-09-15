@@ -162,6 +162,14 @@ prefix_ void senf::detail::PacketImpl::clearAnnotations()
     complexAnnotations_.clear();
 }
 
+prefix_ void senf::detail::PacketImpl::assignAnnotations(PacketImpl const & other)
+{
+    std::copy(&other.simpleAnnotations_[0], &other.simpleAnnotations_[0] +
+            sizeof(simpleAnnotations_)/sizeof(simpleAnnotations_[0]), simpleAnnotations_);
+    complexAnnotations_.assign(
+            other.complexAnnotations_.begin(), other.complexAnnotations_.end());
+}
+
 prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::key_type key)
 {
     SENF_ASSERT( key < 0, "complexAnnotation called with invalid key");
