@@ -30,6 +30,7 @@
 #include <boost/iostreams/concepts.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <set>
+#include <senf/Utils/Logger/SenfLog.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -93,6 +94,8 @@ namespace detail {
     class ClientReader
     {
     public:
+        SENF_LOG_CLASS_AREA();
+
         typedef ServerHandle::ClientHandle ClientHandle;
 
         virtual ~ClientReader() = 0;

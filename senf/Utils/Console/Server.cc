@@ -173,7 +173,7 @@ prefix_ void senf::console::detail::DumbClientReader::showPrompt()
     prompt += " ";
 
     stream() << std::flush;
-    handle().write(prompt);
+    v_write(prompt);
     promptLen_ = prompt.size();
     promptActive_ = true;
 }
@@ -194,7 +194,17 @@ prefix_ void senf::console::detail::DumbClientReader::v_enablePrompt()
 
 prefix_ void senf::console::detail::DumbClientReader::v_write(std::string const & data)
 {
-    handle().write(data);
+    try {
+        handle().write(data);
+    }
+    catch (std::exception & ex) {
+        SENF_LOG(("unexpected failure writing to socket:" << ex.what()));
+        stopClient(); // SUICIDE
+    }
+    catch (...) {
+        SENF_LOG(("unexpected failure writing to socket: unknown exception"));
+        stopClient(); // SUICIDE
+    }
 }
 
 prefix_ unsigned senf::console::detail::DumbClientReader::v_width()
@@ -222,7 +232,17 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_enablePrompt()
 
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_write(std::string const & data)
 {
-    handle().write(data);
+    try {
+        handle().write(data);
+    }
+    catch (std::exception & ex) {
+        SENF_LOG(("unexpected failure writing to socket:" << ex.what()));
+        stopClient(); // SUICIDE
+    }
+    catch (...) {
+        SENF_LOG(("unexpected failure writing to socket: unknown exception"));
+        stopClient(); // SUICIDE
+    }
 }
 
 prefix_ unsigned senf::console::detail::NoninteractiveClientReader::v_width()
