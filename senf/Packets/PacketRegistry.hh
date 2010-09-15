@@ -32,6 +32,7 @@
 #include <boost/optional.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/singleton.hh>
 #include "Packet.hh"
 
 #include "PacketRegistry.ih"
@@ -86,6 +87,7 @@ namespace senf {
      */
     template <class Tag>
     class PacketRegistry
+        : private senf::singleton< PacketRegistry<Tag> >
     {
     public:
         typedef typename detail::PacketRegistryImpl<typename Tag::key_t>::iterator iterator;
@@ -219,8 +221,16 @@ namespace senf {
         static iterator end();
 
     private:
+        using singleton<PacketRegistry>::instance;
+        using singleton<PacketRegistry>::alive;
+
+        PacketRegistry();
+
         typedef detail::PacketRegistryImpl<typename Tag::key_t> Registry;
         static Registry & registry();
+        Registry registry_;
+
+        friend class senf::singleton< PacketRegistry >;
     };
 
     /** \brief Statically add an entry to a packet registry

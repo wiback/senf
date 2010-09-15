@@ -86,17 +86,6 @@ senf::detail::PacketRegistryImpl<KeyType>::EntryImpl<PacketType>::type()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::PacketRegistry<Tag>
-
-template <class Tag>
-prefix_ typename senf::PacketRegistry<Tag>::Registry &
-senf::PacketRegistry<Tag>::registry()
-{
-    static Registry registry (prettyName(typeid(Tag)));
-    return registry;
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketRegistryImpl<KeyType>:
 
 template <class KeyType>

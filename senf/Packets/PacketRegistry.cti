@@ -66,13 +66,15 @@ template <class Tag>
 template <class PacketType>
 prefix_ void senf::PacketRegistry<Tag>::unregisterPacket()
 {
-    registry().unregisterPacket<PacketType>();
+    if (alive())
+        registry().unregisterPacket<PacketType>();
 }
 
 template <class Tag>
 prefix_ void senf::PacketRegistry<Tag>::unregisterPacket(typename Tag::key_t key, int priority)
 {
-    registry().unregisterPacket(key, priority);
+    if (alive())
+        registry().unregisterPacket(key, priority);
 }
 
 template <class Tag>
@@ -126,6 +128,18 @@ template <class Tag>
 prefix_ typename senf::PacketRegistry<Tag>::iterator senf::PacketRegistry<Tag>::end()
 {
     return registry().end();
+}
+
+template <class Tag>
+prefix_ senf::PacketRegistry<Tag>::PacketRegistry()
+    : registry_ (prettyName(typeid(Tag)))
+{}
+
+template <class Tag>
+prefix_ typename senf::PacketRegistry<Tag>::Registry &
+senf::PacketRegistry<Tag>::registry()
+{
+    return instance().registry_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
