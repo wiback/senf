@@ -104,7 +104,8 @@ env.Append(
     INLINE_OPTS_NORMAL     = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
     CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
-                               '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing' ],
+                               '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
+                               "${profile and '-pg' or None}" ],
     CXXFLAGS_final         = [ '-O3' ],
     CXXFLAGS_normal        = [ '-O2', '-g' ],
     CXXFLAGS_debug         = [ '-O0', '-g' ],
@@ -114,7 +115,7 @@ env.Append(
     CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
     CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
 
-    LINKFLAGS              = [ '-rdynamic', '$LINKFLAGS_' ],
+    LINKFLAGS              = [ '-rdynamic', '$LINKFLAGS_', "${profile and '-pg' or None}" ],
     LINKFLAGS_final        = [ ],
     LINKFLAGS_normal       = [ '-Wl,-S' ],
     LINKFLAGS_debug        = [ '-g' ],
@@ -156,14 +157,6 @@ senfutil.parseArguments(
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
     BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False)
 )
-
-# gprof
-if env['profile']:
-    env.Append(
-        LINKFLAGS          = [ '-pg' ],
-        CXXFLAGS           = [ '-pg' ],
-    )
-
 
 # Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
 senfutil.importProcessEnv(env)

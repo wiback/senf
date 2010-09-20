@@ -29,21 +29,12 @@
 // Custom includes
 #include <senf/Packets/Packets.hh>
 #include "TLVParser.hh"
+#include "MIHMessageRegistry.hh"
 
 //#include "MIHPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
-    struct MIHMessageRegistry {
-        // MIH messages registry
-        typedef boost::uint16_t key_t;
-    };
-
-#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packet )                    \
-        SENF_PACKET_REGISTRY_REGISTER(                                    \
-            senf::MIHMessageRegistry, packet::type::MESSAGE_ID, packet )
-
 
     /** \brief Parse a MIH packet
 
