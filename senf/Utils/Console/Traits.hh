@@ -171,7 +171,17 @@ namespace console {
         This macro will register an enum type and it's enumerators defined at namespace scope. See
         \ref SENF_CONSOLE_REGISTER_ENUM_MEMBER to register a member enum type.
 
-        \note All enumerator values must be unique ignoring case.
+        By default, the keys used to represent the enumerator values in the console are identical to
+        the enumerator names in C++ (In the example above \c Foo1 and \c Foo2). You may however
+        override this default key using the
+        '<tt>key(&quot;</tt><i>key</i><tt>&quot;, </tt><i>enumerator</i><tt>)</tt>' modifier:
+        \code
+        enum Foo { Foo1, Foo2 };
+        SENF_CONSOLE_REGISTER_ENUM( Foo, (key("1", Foo1), Foo2) );
+        \endcode
+        This will register the first enumerator \c Foo1 under the name '\c 1'.
+
+        \note All enumerator keys must be unique ignoring case.
 
         The enum parser will accept any unique initial substring ignoring case as valid enum value.
 
