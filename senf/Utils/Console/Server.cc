@@ -66,9 +66,7 @@ prefix_ std::streamsize senf::console::detail::NonblockingSocketSink::write(cons
             client_.write(data);
         }
     }
-    catch (SystemException & ex) {
-        ;
-    }
+    catch (...) {}
     return n;
 }
 
@@ -126,7 +124,7 @@ prefix_ void senf::console::Server::removeClient(Client & client)
                     log << client.handle().peer();
                 }
                 catch (senf::SystemException ex) {
-                    log << "(unknown)";
+                    log << "(dead socket)";
                 }
             }));
     // THIS DELETES THE CLIENT INSTANCE !!
@@ -173,9 +171,9 @@ prefix_ void senf::console::detail::DumbClientReader::showPrompt()
     prompt += " ";
 
     stream() << std::flush;
-    v_write(prompt);
     promptLen_ = prompt.size();
     promptActive_ = true;
+    v_write(prompt);
 }
 
 prefix_ void senf::console::detail::DumbClientReader::v_disablePrompt()
@@ -197,13 +195,20 @@ prefix_ void senf::console::detail::DumbClientReader::v_write(std::string const 
     try {
         handle().write(data);
     }
+    catch (senf::ExceptionMixin & ex) {
+        SENF_LOG(("unexpected failure writing to socket:" << ex.message()));
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
+    }
     catch (std::exception & ex) {
         SENF_LOG(("unexpected failure writing to socket:" << ex.what()));
-        stopClient(); // SUICIDE
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
     }
     catch (...) {
         SENF_LOG(("unexpected failure writing to socket: unknown exception"));
-        stopClient(); // SUICIDE
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
     }
 }
 
@@ -235,13 +240,20 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_write(std::str
     try {
         handle().write(data);
     }
+    catch (senf::ExceptionMixin & ex) {
+        SENF_LOG(("unexpected failure writing to socket:" << ex.message()));
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
+    }
     catch (std::exception & ex) {
         SENF_LOG(("unexpected failure writing to socket:" << ex.what()));
-        stopClient(); // SUICIDE
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
     }
     catch (...) {
         SENF_LOG(("unexpected failure writing to socket: unknown exception"));
-        stopClient(); // SUICIDE
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
     }
 }
 
@@ -338,7 +350,8 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
         // handled gracefully by the ClientReader. We cannot call stop() here, since we are called
         // from the client reader callback and that will continue executing after stop() has been
         // called. stop() however will delete *this instance ... BANG ...
-        handle_.facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD);
+        try { handle_.facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
     }
     catch (std::exception & ex) {
         std::string msg (ex.what());
