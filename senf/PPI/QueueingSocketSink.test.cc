@@ -124,7 +124,7 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
 
     udpSink.writer().throttled = false;
 
-    runPPI( senf::ClockService::milliseconds(200));
+    runPPI( senf::ClockService::milliseconds(250));
 
     inputSocket.blocking(false);
     while (true) {
@@ -132,6 +132,8 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
         if (input.empty()) break;
         BOOST_CHECK_EQUAL( data, input );
     }
+
+    runPPI( senf::ClockService::milliseconds(250));
     BOOST_CHECK_EQUAL( udpSink.qAlgorithm().size(), 0);
 }
 
