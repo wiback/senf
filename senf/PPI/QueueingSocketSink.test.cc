@@ -84,7 +84,7 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
 {
-    senf::ConnectedUDPv4ClientSocketHandle os(senf::noinit); 
+    senf::ConnectedUDPv4ClientSocketHandle os (senf::noinit);
 
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
             senf::INet4SocketAddress( localhost4str(0)));
@@ -116,7 +116,7 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
     source.submit(p);
     BOOST_CHECK_EQUAL( udpSink.qAlgorithm().size(), 1);
 
-    for( int n = 0; n < 100; n++){
+    for( int n = 0; n < 100; n++) {
         source.submit(p);
     }
     // queue default size is 64
@@ -126,8 +126,12 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
 
     runPPI( senf::ClockService::milliseconds(200));
 
-    input = inputSocket.read();
-    BOOST_CHECK_EQUAL( data, input );
+    inputSocket.blocking(false);
+    while (true) {
+        input = inputSocket.read();
+        if (input.empty()) break;
+        BOOST_CHECK_EQUAL( data, input );
+    }
     BOOST_CHECK_EQUAL( udpSink.qAlgorithm().size(), 0);
 }
 

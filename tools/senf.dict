@@ -636,6 +636,7 @@ SystemException
 TapSocketHandle
 TargetInterface
 td
+telnet
 templated
 thorsten
 ThresholdQueueing
