@@ -1,5 +1,5 @@
 import SCons.Environment, SCons.Util, SCons.Script, SCons.Conftest
-import re
+import re, os.path
 
 # Fix for SCons 0.97 compatibility
 import SCons.SConf
@@ -140,14 +140,17 @@ def CheckSymbolWithExpression(context, symbol, expression, header="", language="
 @DefaultTest
 def CheckByteorder(context):
     context.Message("Checking byteorder... ")
-    ret = context.TryRun('#include <stdio.h>\n'
-                         'union byteorder_test { int i; char b; };\n'
-                         'int main() {\n'
-                         '    union byteorder_test t; t.i=1;\n'
-                         '    printf(t.b ? "little\\n" : "big\\n");\n'
-                         '    return 0;\n'
-                         '}\n',
-                         ".c")[-1].strip()
+    if context.env.has_key("BYTEORDER"):
+        ret = context.env["BYTEORDER"]
+    else:
+        ret = context.TryRun('#include <stdio.h>\n'
+                             'union byteorder_test { int i; char b; };\n'
+                             'int main() {\n'
+                             '    union byteorder_test t; t.i=1;\n'
+                             '    printf(t.b ? "little\\n" : "big\\n");\n'
+                             '    return 0;\n'
+                             '}\n',
+                             ".c")[-1].strip()
     if not ret:
         context.Result("failed")
         return False
@@ -156,6 +159,23 @@ def CheckByteorder(context):
         context.sconf.Define("BYTEORDER_%s_ENDIAN" % ret.upper(), 1,
                              "Define BYTEORDER_LITTLE_ENDIAN or BYTEORDER_BIG_ENDIAN")
         return ret
+
+@DefaultTest
+def FindCHeader(context, name, dirs):
+    defn = name.upper()
+    defn = re.sub('[^A-Z0-9_]', '_', defn)
+    defn += "_PATH"
+
+    context.Message("Checking for %s... " % name)
+    for dir in dirs:
+        path = os.path.join(dir, name);
+        ret = context.TryCompile("#include <%s>" % path, ".c");
+        if ret:
+            context.Result(path)
+            context.sconf.Define(defn, "<%s>" % path,
+                                 "Define %s as <path/to/%s>" % (defn, name))
+            return ret
+    return False
 
 def generate(env):
     env.Append( CUSTOM_TESTS = DefaultTest.tests )

@@ -84,6 +84,7 @@ res = conf.CheckCXXHeader("boost/bimap.hpp"); \
 res = conf.CheckTempBufferStrategy()
 
 # Standard library stuff
+res = conf.FindCHeader("timerfd.h", [ 'sys', 'linux' ])
 res = conf.CheckFunc("timerfd_create")
 res = conf.CheckSymbolWithExpression(
     "le16toh", "le16toh(0)", "#include <senf/Packets/80211Bundle/radiotap/platform.h>")

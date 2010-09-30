@@ -29,7 +29,7 @@
 // Custom includes
 #include "IdleEvent.hh"
 #ifdef HAVE_TIMERFD_CREATE
-#include <sys/timerfd.h>
+#include TIMERFD_H_PATH
 #endif
 #include "senf/Utils/IgnoreValue.hh"
 
