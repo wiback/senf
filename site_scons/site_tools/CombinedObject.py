@@ -9,7 +9,10 @@ def generate(env):
 
     env['BUILDERS']['CombinedObject'] = builder
 
-    env.SetDefault(LDCOMBINECOM = 'ld -r -o')
+    env.SetDefault(
+        LD = 'ld',
+        LDCOMBINECOM = '$LD -r -o',
+        )
 
 def exists(env):
     return True
