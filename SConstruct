@@ -146,6 +146,8 @@ env.SetDefault(
     LIBADDSUFFIX           = '${FLAVOR and "_$FLAVOR" or ""}',
     OBJADDSUFFIX           = '${LIBADDSUFFIX}',
     FLAVOR                 = '',
+
+    PARSEFLAGS             = '',
 )
 
 # Set variables from command line
@@ -157,6 +159,9 @@ senfutil.parseArguments(
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
     BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False)
 )
+
+if env['PARSEFLAGS']:
+    env.MergeFlags(env['PARSEFLAGS'])
 
 # Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
 senfutil.importProcessEnv(env)
