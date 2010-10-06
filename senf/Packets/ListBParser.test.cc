@@ -47,6 +47,21 @@ namespace {
         SENF_PARSER_VECTOR( vec, size, senf::UInt16Parser );
 
         SENF_PARSER_FINALIZE(VectorParser);
+
+        typedef std::vector<boost::uint16_t> value_type;
+
+        value_type value() const {
+            value_type v (vec().begin(), vec().end());
+            return v;
+        }
+        void value(value_type const & v) {
+            vec_t::container container (vec());
+            container.clear();
+            for (value_type::const_iterator i=v.begin(); i!=v.end(); ++i)
+                container.push_back( *i);
+        }
+        operator value_type() const { return value(); }
+        VectorParser const & operator= (value_type const & other) { value(other); return *this; }
     };
 
     typedef senf::ListParser<
@@ -171,6 +186,20 @@ namespace {
         SENF_PARSER_FINALIZE(TestListParser);
     };
 
+    struct TestListPacketType
+        : public senf::PacketTypeBase,
+          public senf::PacketTypeMixin<TestListPacketType>
+    {
+        typedef senf::PacketTypeMixin<TestListPacketType> mixin;
+        typedef senf::ConcretePacket<TestListPacketType> packet;
+        typedef TestListParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::initSize;
+        using mixin::init;
+    };
+    typedef senf::ConcretePacket<TestListPacketType> TestListPacket;
+
 }
 
 SENF_AUTO_UNIT_TEST(listBytesMacro)
@@ -249,8 +278,6 @@ namespace {
 
         SENF_PARSER_FINALIZE(TestPacketSizeList);
     };
-
-
 }
 
 SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
@@ -339,6 +366,17 @@ SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
         ++ i;
         BOOST_CHECK( i == c.end() );
     }
+}
+
+SENF_AUTO_UNIT_TEST(listBytesMacro_stress)
+{
+    TestListPacket testListPacket (TestListPacket::create());
+    for (unsigned i=0; i<12; ++i) {
+        VectorParser::value_type vec( 4, 42);
+        testListPacket->list2().push_back( vec);
+    }
+    BOOST_CHECK_EQUAL( testListPacket->list2().size(), 12u );
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

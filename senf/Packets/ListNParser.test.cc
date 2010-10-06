@@ -48,6 +48,21 @@ namespace {
         SENF_PARSER_VECTOR( vec, size, senf::UInt16Parser );
 
         SENF_PARSER_FINALIZE(MyVec);
+
+        typedef std::vector<boost::uint16_t> value_type;
+
+        value_type value() const {
+            value_type v (vec().begin(), vec().end());
+            return v;
+        }
+        void value(value_type const & v) {
+            vec_t::container container (vec());
+            container.clear();
+            for (value_type::const_iterator i=v.begin(); i!=v.end(); ++i)
+                container.push_back( *i);
+        }
+        operator value_type() const { return value(); }
+        MyVec const & operator= (value_type const & other) { value(other); return *this; }
     };
 
     typedef senf::ListParser<
@@ -151,19 +166,43 @@ namespace {
         static unsigned set(unsigned v) { return 2*v; }
     };
 
-    struct TestListParser
+    struct TestListParserBase
         : public senf::PacketParserBase
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_PRIVATE_FIELD ( size1 , senf::UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
-        SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
-        SENF_PARSER_LIST          ( list1  , transform(TestTransform, size1) , MyVec );
-        SENF_PARSER_LIST          ( list2  , size2 , MyVec );
+        SENF_PARSER_FIELD_RO ( size1 , senf::UInt8Parser );
+        SENF_PARSER_FIELD_RO ( size2 , senf::UInt8Parser );
+
+        SENF_PARSER_FINALIZE(TestListParserBase);
+    };
+
+    struct TestListParser
+        : public TestListParserBase
+    {
+#       include SENF_PARSER()
+        SENF_PARSER_INHERIT ( TestListParserBase );
+
+        SENF_PARSER_FIELD   ( dummy , senf::UInt32Parser );
+        SENF_PARSER_LIST    ( list1  , transform(TestTransform, size1) , MyVec );
+        SENF_PARSER_LIST    ( list2  , size2 , MyVec );
 
         SENF_PARSER_FINALIZE(TestListParser);
     };
+
+    struct TestListPacketType
+        : public senf::PacketTypeBase,
+          public senf::PacketTypeMixin<TestListPacketType>
+    {
+        typedef senf::PacketTypeMixin<TestListPacketType> mixin;
+        typedef senf::ConcretePacket<TestListPacketType> packet;
+        typedef TestListParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::initSize;
+        using mixin::init;
+    };
+    typedef senf::ConcretePacket<TestListPacketType> TestListPacket;
 
 }
 
@@ -229,6 +268,16 @@ SENF_AUTO_UNIT_TEST(listMacro)
         ++i;
         BOOST_CHECK( i == list.end() );
     }
+}
+
+SENF_AUTO_UNIT_TEST(listMacro_stress)
+{
+    TestListPacket testListPacket (TestListPacket::create());
+    for (unsigned i=0; i<42; ++i) {
+        MyVec::value_type vec( 4, 42);
+        testListPacket->list2().push_back( vec);
+    }
+    BOOST_CHECK_EQUAL( testListPacket->list2().size(), 42u );
 
 }
 
