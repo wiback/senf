@@ -79,7 +79,7 @@ senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::byt
                                                                                    state_type s)
     const
 {
-    return AuxPolicy::aux(i,s) + AuxPolicy::aux_bytes;
+    return AuxPolicy::WrapperPolicy::aux(i,s) + AuxPolicy::aux_bytes;
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -97,7 +97,7 @@ init(data_iterator i, state_type s)
 {
     n_ = 0;
     container_size_ = s->size();
-    AuxPolicy::aux(0,i,s);
+    AuxPolicy::WrapperPolicy::aux(0,i,s);
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -119,7 +119,8 @@ prefix_ void senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::containe
 erase(container_type & c, data_iterator p)
 {
     size_type b (senf::bytes(ElementParser(p,c.state())));
-    AuxPolicy::aux( AuxPolicy::aux(c.i(), c.state())-b, c.i(), c.state());
+    AuxPolicy::WrapperPolicy::aux(
+        AuxPolicy::WrapperPolicy::aux(c.i(), c.state())-b, c.i(), c.state());
     --n_;
     // The container will be reduced by b bytes directly after this call
     container_size_ = c.data().size()-b;
@@ -131,7 +132,8 @@ senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
 insert(container_type & c, data_iterator p)
 {
     size_type b (senf::bytes(ElementParser(p,c.state())));
-    AuxPolicy::aux( AuxPolicy::aux(c.i(), c.state())+b, c.i(), c.state());
+    AuxPolicy::WrapperPolicy::aux(
+        AuxPolicy::WrapperPolicy::aux(c.i(), c.state())+b, c.i(), c.state());
     ++n_;
     container_size_ = c.data().size();
 }
@@ -145,7 +147,7 @@ update(container_type const & c)
     if (container_size_ == c.data().size())
         return;
 #if 1
-    data_iterator i (AuxPolicy::adjust(c.i(), c.state()));
+    data_iterator i (AuxPolicy::WrapperPolicy::adjust(c.i(), c.state()));
     data_iterator j (i);
     for (size_type n (n_); n; --n, std::advance(j,senf::bytes(ElementParser(j,c.state())))) ;
     aux( std::distance(i,j), c.i(), c.state() );
@@ -161,7 +163,7 @@ senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
 setBegin(container_type const & c, iterator_data & d)
     const
 {
-    return AuxPolicy::adjust(c.i(), c.state());
+    return AuxPolicy::WrapperPolicy::adjust(c.i(), c.state());
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -170,7 +172,7 @@ senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
 setEnd(container_type const & c, iterator_data & d)
     const
 {
-    return boost::next(AuxPolicy::adjust(c.i(), c.state()),aux(c.i(),c.state()));
+    return boost::next(AuxPolicy::WrapperPolicy::adjust(c.i(), c.state()),aux(c.i(),c.state()));
 }
 
 template <class ElementParser, class AuxPolicy>

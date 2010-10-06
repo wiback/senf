@@ -35,6 +35,12 @@ prefix_ senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::ListNParser_P
 {}
 
 template <class ElementParser, class AuxPolicy>
+prefix_ senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::
+ListNParser_Policy(parser_policy const & policy)
+  : AuxPolicy(policy)
+{}
+
+template <class ElementParser, class AuxPolicy>
 template <class Arg>
 prefix_
 senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::ListNParser_Policy(Arg const & aux)

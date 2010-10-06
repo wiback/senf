@@ -42,17 +42,22 @@ namespace detail {
     struct ListNParser_Policy
         : public AuxPolicy
     {
+        typedef ListNParser_Policy<
+            ElementParser, typename AuxPolicy::ParserPolicy> parser_policy;
+        typedef ListNParser_Policy<
+            ElementParser, typename AuxPolicy::WrapperPolicy> container_policy;
         typedef PacketParserBase::data_iterator data_iterator;
         typedef PacketParserBase::state_type state_type;
         typedef PacketParserBase::size_type size_type;
         typedef ElementParser element_type;
-        typedef ListParser< ListNParser_Policy > parser_type;
-        typedef ListParser_Container< ListNParser_Policy > container_type;
+        typedef ListParser<parser_policy> parser_type;
+        typedef ListParser_Container<container_policy> container_type;
 
         static const size_type init_bytes = AuxPolicy::aux_bytes;
 
         ListNParser_Policy();
         template <class Arg> ListNParser_Policy(Arg const & aux);
+        ListNParser_Policy(parser_policy const & policy);
 
         size_type bytes  (data_iterator i, state_type s) const;
         size_type size   (data_iterator i, state_type s) const;

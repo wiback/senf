@@ -37,12 +37,12 @@ template <class ElementParser, class AuxPolicy>
 prefix_
 senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
 container_policy(parser_policy const & p)
-    : AuxPolicy (p)
+    : AuxPolicy::WrapperPolicy (p)
 {
     parser_type selfp (parser_type::get(p));
     size_type totalsz (selfp.bytes());
     data_iterator const e (selfp.i(totalsz));
-    data_iterator i (AuxPolicy::adjust(selfp.i(), selfp.state()));
+    data_iterator i (AuxPolicy::WrapperPolicy::adjust(selfp.i(), selfp.state()));
     n_ = 0;
     while (i!=e) {
         ElementParser p (i,selfp.state());
