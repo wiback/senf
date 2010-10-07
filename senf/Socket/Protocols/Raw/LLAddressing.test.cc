@@ -86,7 +86,7 @@ SENF_AUTO_UNIT_TEST(llAddress)
 
     {
         BOOST_CHECK_THROW( LLSocketAddress addr("SENF_TEST_INVALID_INTERFACENAME"),
-                senf::AddressSyntaxException );
+                senf::UnknownInterfaceException );
 
         LLSocketAddress addr ("lo");
 
