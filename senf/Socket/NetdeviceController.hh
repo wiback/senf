@@ -30,9 +30,6 @@
 // Custom includes
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
-#include <senf/Socket/Protocols/Raw/MACAddress.hh>
-
 
 //#include "NetdeviceController.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -40,6 +37,9 @@
 struct ifreq;
 
 namespace senf {
+
+    class MACAddress;
+
 
     /** \brief Netdevice Controller
 
@@ -58,7 +58,7 @@ namespace senf {
         int interfaceIndex() const;     ///< return the interface index
         MACAddress hardwareAddress() const;
                                         ///< return hardware address
-        void hardwareAddress(const MACAddress &newAddress);
+        void hardwareAddress(MACAddress const & newAddress);
                                         ///< set hardware address
                                         /**< Changes the hardware address of the interface.
                                              Note, that setting the hardware address is a privileged
@@ -67,7 +67,7 @@ namespace senf {
                                              SystemException to be thrown. */
         std::string interfaceName() const;
                                         ///< return interface name
-        void interfaceName(const std::string &newName);
+        void interfaceName(std::string const & newName);
                                         ///< set interface name
                                         /**< Changes the name of the interface.
                                              Note, that setting the name is a privileged operation.
@@ -106,8 +106,7 @@ namespace senf {
         static SockFd::ptr sockfd();
 
     private:
-        void doIoctl(ifreq& ifr, int request) const;
-        void ifrName(ifreq& ifr) const;
+        void ifrName(ifreq & ifr) const;
         SockFd::ptr sockfd_;
         int ifindex_;
     };

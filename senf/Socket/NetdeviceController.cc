@@ -31,10 +31,17 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+#include <boost/weak_ptr.hpp>
 #include <senf/Utils/Exception.hh>
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+#define doIoctl(ifr, request, errorMsg)                                                         \
+    if ( ::ioctl( sockfd_->fd, request, &ifr ) < 0 )                                            \
+        SENF_THROW_SYSTEM_EXCEPTION("NetdeviceController: " errorMsg)
+
 
 prefix_ senf::NetdeviceController::NetdeviceController(std::string const & interface_name)
     : sockfd_ (sockfd())
@@ -42,7 +49,7 @@ prefix_ senf::NetdeviceController::NetdeviceController(std::string const & inter
     struct ifreq ifr;
     ::memset( &ifr, 0, sizeof(ifr));
     interface_name.copy( ifr.ifr_name, IFNAMSIZ);
-    doIoctl( ifr, SIOCGIFINDEX);
+    doIoctl(ifr, SIOCGIFINDEX, "Could not discover the index of interface \"" + interface_name + "\"");
     ifindex_ = ifr.ifr_ifindex;
 }
 
@@ -60,18 +67,13 @@ prefix_ std::string senf::NetdeviceController::interfaceName()
     return std::string( ifr.ifr_name);
 }
 
-prefix_ void senf::NetdeviceController::interfaceName(const std::string & newname)
+prefix_ void senf::NetdeviceController::interfaceName(std::string const & newname)
 {
     if (sizeof(newname) <= IFNAMSIZ) {
         struct ifreq ifr;
         ifrName(ifr);
         strncpy(ifr. ifr_newname, newname.c_str(), IFNAMSIZ);
-        try {
-            doIoctl(ifr, SIOCSIFNAME);
-        } catch (senf::SystemException e) {
-            e << "Could not change the interface name. Is the interface really down?";
-            throw ;
-        }
+        doIoctl(ifr, SIOCSIFNAME, "Could not change the interface name. Is the interface really down?");
     }
     return;
 }
@@ -81,21 +83,16 @@ prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
 {
     struct ifreq ifr;
     ifrName( ifr);
-    doIoctl( ifr, SIOCGIFHWADDR);
-    return senf::MACAddress::from_data( ifr.ifr_hwaddr.sa_data);
+    doIoctl( ifr, SIOCGIFHWADDR, "Could not discover hardwareAddress");
+    return MACAddress::from_data( ifr.ifr_hwaddr.sa_data);
 }
 
-prefix_ void senf::NetdeviceController::hardwareAddress(const MACAddress &newAddress) {
+prefix_ void senf::NetdeviceController::hardwareAddress(MACAddress const & newAddress) {
     struct ifreq ifr;
     ifrName( ifr);
     ifr.ifr_hwaddr.sa_family = 1; // TODO: lookup named constant; PF_LOCAL ???
     std::copy(newAddress.begin(), newAddress.end(), ifr.ifr_hwaddr.sa_data);
-    try {
-        doIoctl(ifr, SIOCSIFHWADDR);
-    } catch (senf::SystemException e) {
-        e << "Could not change the interface MAC address. Is the interface really down?";
-        throw ;
-    }
+    doIoctl(ifr, SIOCSIFHWADDR, "Could not change the interface MAC address. Is the interface really down?");
 }
 
 prefix_ int senf::NetdeviceController::mtu()
@@ -103,7 +100,7 @@ prefix_ int senf::NetdeviceController::mtu()
 {
     struct ifreq ifr;
     ifrName( ifr);
-    doIoctl( ifr, SIOCGIFMTU);
+    doIoctl( ifr, SIOCGIFMTU, "Could not discover mtu");
     return ifr.ifr_mtu;
 }
 
@@ -112,7 +109,7 @@ prefix_ void senf::NetdeviceController::mtu(int new_mtu)
     struct ifreq ifr;
     ifrName( ifr);
     ifr.ifr_mtu = new_mtu;
-    doIoctl( ifr, SIOCSIFMTU);
+    doIoctl( ifr, SIOCSIFMTU, "Could not set mtu");
 }
 
 prefix_ int senf::NetdeviceController::txqueuelen()
@@ -120,7 +117,7 @@ prefix_ int senf::NetdeviceController::txqueuelen()
 {
     struct ifreq ifr;
     ifrName( ifr);
-    doIoctl( ifr, SIOCGIFTXQLEN);
+    doIoctl( ifr, SIOCGIFTXQLEN, "Could not discover txqueuelen");
     return ifr.ifr_qlen;
 }
 
@@ -129,7 +126,7 @@ prefix_ void senf::NetdeviceController::txqueuelen(int new_txqueuelen)
     struct ifreq ifr;
     ifrName( ifr);
     ifr.ifr_qlen = new_txqueuelen;
-    doIoctl( ifr, SIOCSIFTXQLEN);
+    doIoctl( ifr, SIOCSIFTXQLEN, "Could not set txqueuelen");
 }
 
 
@@ -138,7 +135,7 @@ prefix_ bool senf::NetdeviceController::promisc()
 {
     struct ifreq ifr;
     ifrName( ifr);
-    doIoctl( ifr, SIOCGIFFLAGS);
+    doIoctl( ifr, SIOCGIFFLAGS, "Could not discover promisc mode");
     return ifr.ifr_flags & IFF_PROMISC;
 }
 
@@ -146,12 +143,12 @@ prefix_ void senf::NetdeviceController::promisc(bool mode)
 {
     struct ifreq ifr;
     ifrName( ifr);
-    doIoctl( ifr, SIOCGIFFLAGS);
+    doIoctl( ifr, SIOCGIFFLAGS, "Could not set promisc mode");
     if (mode)
         ifr.ifr_flags |= IFF_PROMISC;
     else
         ifr.ifr_flags &= ~IFF_PROMISC;
-    doIoctl( ifr, SIOCSIFFLAGS);
+    doIoctl( ifr, SIOCSIFFLAGS, "Could not set promisc mode");
 }
 
 prefix_ bool senf::NetdeviceController::isUp()
@@ -159,7 +156,7 @@ prefix_ bool senf::NetdeviceController::isUp()
 {
     struct ifreq ifr;
     ifrName(ifr);
-    doIoctl(ifr, SIOCGIFFLAGS);
+    doIoctl(ifr, SIOCGIFFLAGS, "Could not discover interface status");
     return ifr.ifr_flags & IFF_UP;
 }
 
@@ -167,18 +164,18 @@ prefix_ void senf::NetdeviceController::up()
 {
     struct ifreq ifr;
     ifrName(ifr);
-    doIoctl(ifr, SIOCGIFFLAGS);
+    doIoctl(ifr, SIOCGIFFLAGS, "Could not set interface status");
     ifr.ifr_flags |= IFF_UP;
-    doIoctl(ifr, SIOCSIFFLAGS);
+    doIoctl(ifr, SIOCSIFFLAGS, "Could not set interface status");
 }
 
 prefix_ void senf::NetdeviceController::down()
 {
     struct ifreq ifr;
     ifrName(ifr);
-    doIoctl(ifr, SIOCGIFFLAGS);
+    doIoctl(ifr, SIOCGIFFLAGS, "Could not set interface status");
     ifr.ifr_flags &= ~IFF_UP;
-    doIoctl(ifr, SIOCSIFFLAGS);
+    doIoctl(ifr, SIOCSIFFLAGS, "Could not set interface status");
 }
 
 prefix_ int senf::NetdeviceController::interfaceIndex()
@@ -187,7 +184,7 @@ prefix_ int senf::NetdeviceController::interfaceIndex()
     return ifindex_;
 }
 
-prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
+prefix_ void senf::NetdeviceController::ifrName(ifreq & ifr)
     const
 {
     ::memset( &ifr, 0, sizeof(ifr));
@@ -197,12 +194,7 @@ prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
         << " could not discover the name of the interface with index " << ifindex_ << ".";
 }
 
-prefix_ void senf::NetdeviceController::doIoctl(ifreq& ifr, int request)
-    const
-{
-    if ( ::ioctl( sockfd_->fd, request, &ifr ) < 0 )
-        SENF_THROW_SYSTEM_EXCEPTION("NetdeviceController::doIoctl failed.");
-}
+#undef doIoctl
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::NetdeviceController::SockFd
