@@ -46,7 +46,7 @@ namespace senf {
     struct AddressSyntaxException : public AddressException
     {
         AddressSyntaxException() : AddressException("invalid address syntax") {}
-        AddressSyntaxException(const std::string &addr)
+        AddressSyntaxException(std::string const & addr)
             : AddressException("Invalid address syntax (\"" + addr + "\")") {}
     };
 
@@ -54,8 +54,16 @@ namespace senf {
     struct UnknownHostnameException : public AddressException
     {
         UnknownHostnameException() : AddressException("failed to resolve hostname") {}
-        UnknownHostnameException(const std::string &hostname)
+        UnknownHostnameException(std::string const & hostname)
             : AddressException("Failed to resolve hostname (\"" + hostname + "\")") {}
+    };
+
+    /** \brief Unknown interface */
+    struct UnknownInterfaceException : public AddressException
+    {
+        UnknownInterfaceException() : AddressException("Unknown interface") {}
+        UnknownInterfaceException(std::string const & interface)
+            : AddressException("Unknown interface (\"" + interface + "\")") {}
     };
 
 }

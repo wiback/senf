@@ -82,11 +82,13 @@ namespace senf {
                                              PacketSocketHandle::bind() with.
                                              \param[in] proto Protocol (Ethertype) to listen for
                                              \param[in] iface Interface name to bind to */
-        explicit LLSocketAddress(std::string const &iface);
+        explicit LLSocketAddress(std::string const & iface);
                                         ///< Create address for \c bind()
                                         /**< This constructs an LLSocketAddress valid for calling
                                              \c PacketSocketHandle::bind() with.
-                                             \param[in] iface Interface name to bind to */
+                                             \param[in] iface Interface name to bind to
+                                             \throws UnknownInterfaceException if \a iface is not
+                                                 a valid interface name. */
 
         // This constructor is for sending packets
         explicit LLSocketAddress(MACAddress const & addr, std::string const & iface="");
@@ -95,7 +97,9 @@ namespace senf {
                                              use with \c PacketSocketHandle::sendto() on a \c
                                              SOCK_DGRAM packet socket.
                                              \param addr Address to send data to
-                                             \param iface Interface to send packet from */
+                                             \param iface Interface to send packet from
+                                             \throws UnknownInterfaceException if \a iface is not
+                                                 a valid interface name. */
 
         LLSocketAddress(const LLSocketAddress& other);
         LLSocketAddress& operator=(const LLSocketAddress& other);
@@ -115,6 +119,8 @@ namespace senf {
 
         void address(MACAddress const & addr); ///< Change address
         void interface(std::string const & iface); ///< Change interface
+                                                   /**< \throws UnknownInterfaceException if \a iface
+                                                             is not a valid interface name. */
         void protocol(unsigned prot);   ///< Change protocol
 
         using BSDSocketAddress::sockaddr_p;

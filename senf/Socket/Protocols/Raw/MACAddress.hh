@@ -111,7 +111,7 @@ namespace senf {
                                              to a MAC address. This conversion is only possible, if
                                              the EUI-64 is MAC compatible: the 4th/5th byte (in
                                              transmission order) must be 0xFFFE.
-                                             \throws AddressSyntaxException if \a v is not a MAC
+                                             \throws AddressSyntaxException if \a eui is not a MAC
                                                  compatible EUI-64. */
 
         bool local() const;             ///< \c true, if address is locally administered

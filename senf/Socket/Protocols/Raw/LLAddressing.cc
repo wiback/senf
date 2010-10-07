@@ -48,7 +48,7 @@ prefix_ std::string senf::LLSocketAddress::interface()
     char name[IFNAMSIZ];
     ::bzero(name, IFNAMSIZ);
     if (! ::if_indextoname(addr_.sll_ifindex, name))
-        throw AddressSyntaxException();
+        throw UnknownInterfaceException();
     return std::string(name);
 }
 
@@ -59,7 +59,7 @@ prefix_ void senf::LLSocketAddress::interface(std::string const & iface)
     else {
         addr_.sll_ifindex = if_nametoindex(iface.c_str());
         if (addr_.sll_ifindex == 0)
-            throw AddressSyntaxException();
+            throw UnknownInterfaceException(iface);
     }
 }
 
