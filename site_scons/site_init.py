@@ -1,5 +1,6 @@
 import os.path, SCons
 import inspect
+import sys
 
 # SCons is at     #/tools/scons-<v>/engine/SCons/__init__.py
 # site_init is at #/site_scons/site_init.py
@@ -48,4 +49,5 @@ if os.path.dirname(os.path.dirname(os.path.abspath(SCons.__file__))) != sconseng
     elif cdir != '.' and not cdir.startswith('/'):
         os.chdir('/'.join(('..' for _ in cdir.split('/'))))
     os.environ['SCONS_LIB_DIR'] = sconsengine
-    os.execv(sconsscript, sys.argv)
+    os.execv(sys.executable, [sconsscript] + sys.argv)
+
