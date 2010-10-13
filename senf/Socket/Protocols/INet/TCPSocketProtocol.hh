@@ -38,7 +38,7 @@ namespace senf {
     /// \addtogroup protocol_facets_group
     /// @{
 
-    /** \brief Protocol facat to support TCP operations
+    /** \brief Protocol facet to support TCP operations
 
         This protocol facet provides all those protocol functions,
         which are available on any TCP socket.
@@ -52,7 +52,7 @@ namespace senf {
                                         /**< Enabling \c SO_NODELAY will disable the NAGLE
                                              algorithm (which aggregates multiple writes into a
                                              single network packet). Enabling nodelay() optimizes
-                                             the repsonse time at the expense of the bandwidth
+                                             the response time at the expense of the bandwidth
                                              efficiency.
                                              \param[in] value \c SO_NODELAY state */
 

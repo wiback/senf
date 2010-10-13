@@ -162,7 +162,7 @@
     metafunction which simplifies building SocketPolicy instantiations. It takes any number (ok, up
     to a maximum of 6) of policy classes as an argument (in any order). It will sort these arguments
     into the SocketPolicy template arguments. If for some axis no class is specified, it's slot will
-    be filled with \c Unspecified \e Axis. Additionally, the first Argument may optionally be ab
+    be filled with \c Unspecified \e Axis. Additionally, the first Argument may optionally be an
     arbitrary SocketPolicy. It will provide default values for unspecified axis</dd>
 
     <dt>\c template \c SocketPolicyIsBaseOf < \e base, \e derived ></dt> <dd>This template

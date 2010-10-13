@@ -55,7 +55,7 @@ namespace senf {
         API. It however affects the semantics of the read and write
         operations. On a datagram socket, each read() or write() call
         we read or write a single datagram. Datagram boundaries are
-        kept intact accross the network.
+        kept intact across the network.
      */
     struct DatagramFramingPolicy : public FramingPolicyBase
     {};

@@ -190,6 +190,7 @@ ExampleVectorPolicy
 EXC
 ExceptionMixin
 ExtendedParser
+failbit
 fbipList
 FBIPList
 fbips
@@ -238,6 +239,7 @@ HardwareInterface
 HardwareWLANInterface
 headport
 Helvetica
+hexadecimal
 hh
 hideinitializer
 Hmm
@@ -408,6 +410,8 @@ nUsing
 NyInputGroup
 ob
 ObjectDirectory
+octet
+octets
 offene
 ok
 onChange
@@ -594,6 +598,7 @@ SiteScope
 SizeParser
 skipline
 SNR
+sockaddr
 SocketAddress
 SocketHandle
 SocketProtocol
@@ -624,6 +629,7 @@ STL
 strerror
 struct
 structors
+subnet
 subsubsection
 svn
 svnbook

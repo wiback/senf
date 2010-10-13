@@ -97,7 +97,7 @@ namespace senf {
         static EUI64 from_string(std::string const & s);
                                         ///< Construct EUI-64 from string representation
                                         /**< The string representation consists of 8 octets in
-                                             hexadecimal notation spearated by ':' or '-'
+                                             hexadecimal notation separated by ':' or '-'
                                              \throws senf::AddressSyntaxException */
         template <class InputIterator>
         static EUI64 from_data(InputIterator i);
@@ -117,7 +117,7 @@ namespace senf {
                                           */
         bool group() const;             ///< \c true if the \e group bit is set, \c false otherwise
                                         /**< The \e group bit is the least significant bit of the
-                                             first octed (bit 7 in standard RFC bit numbering). */
+                                             first octet (bit 7 in standard RFC bit numbering). */
         bool boolean_test() const;      ///< \c true, if EUI64 is != 0, \c false otherwise
         boost::uint64_t uint64() const; ///< Return EUI64 as integer number
     };

@@ -141,7 +141,7 @@ namespace senf {
 
         ConnectedRawV6SocketProtocol provides an internet protocol raw socket based on IPv6
         addressing which is connected to certain peer.  This socket will put data written to it onto
-        the IPv6 layer: if you call writeto don't inlude the header!  On the other hand `read` will
+        the IPv6 layer: if you call writeto don't include the header!  On the other hand `read` will
         return the packet data on top of the IPv6 layer, excluding the IP header.  Note: This
         behaviour is differs from the behaviour of IPv4 RAW sockets.
 

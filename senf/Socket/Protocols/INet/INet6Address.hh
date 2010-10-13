@@ -86,7 +86,7 @@ namespace senf {
         <tr><td><tt>ff00::/8</tt></td>       <td>Multicast</td>                           <td>RFC4291</td>     <td></td></tr>
         <tr><td><tt>ff00::/12</tt></td>      <td>Globally allocated multicast</td>        <td>RFC4291</td>     <td></td></tr>
         <tr><td><tt>ff10::/12</tt></td>      <td>Locally allocated multicast</td>         <td>RFC4291</td>     <td></td></tr>
-        <tr><td><tt>ff30::/12</tt></td>      <td>Unicast prefic based multicast</td>      <td>RFC3306</td>     <td></td></tr>
+        <tr><td><tt>ff30::/12</tt></td>      <td>Unicast prefix based multicast</td>      <td>RFC3306</td>     <td></td></tr>
         <tr><td><tt>ff70::/12</tt></td>      <td>Multicast address with embedded RP</td>  <td>RFC3956</td>     <td></td></tr>
         </table>
         \endhtmlonly
@@ -176,12 +176,14 @@ namespace senf {
                                         ///< Convert string to address
                                         /**< This member will try to convert the given string into
                                              an IP address. from_string() supports all standard IP
-                                             literal representations as well es hostnames.
+                                             literal representations as well as hostnames.
                                              \attention This call may block if \a s represents a
                                                  hostname which must be looked up via some network
                                                  protocol like DNS or NIS
                                              \throws AddressSyntaxException if the address cannot be
                                                  converted for some reason
+                                             \throws UnknownHostnameException if the hostname cannot
+                                                 be resolved
                                              \param[in] s Address literal or hostname
                                              \param[in] resolve If this is set to \c ResolveINet4,
                                                  the call will additionally try to interpret \a s as
@@ -216,7 +218,7 @@ namespace senf {
                                         /**< This will construct a link local address of the form
                                              <tt>fe80::xxxx:xxxx:xxxx:xxxx</tt>. */
 
-        in6_addr toin6_addr() const;    ///< get the linux in6_addr struct (convinience only)
+        in6_addr toin6_addr() const;    ///< get the linux in6_addr struct (convenience only)
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////

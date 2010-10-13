@@ -31,7 +31,7 @@ namespace senf {
     /// \addtogroup protocol_facets_group
     /// @{
 
-    /** \brief Protocol facat to support RAW operations upon IPv4/6
+    /** \brief Protocol facet to support RAW operations upon IPv4/6
 
         This protocol facet provides all those protocol functions,
         which are available on a PF_INET[6]/RAW socket.

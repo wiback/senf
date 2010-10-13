@@ -38,7 +38,7 @@ namespace senf {
     /// \addtogroup protocol_facets_group
     /// @{
 
-    /** \brief Protocol facat to support UDP operations
+    /** \brief Protocol facet to support UDP operations
 
         This protocol facet provides all those protocol functions,
         which are available on any UDP socket.

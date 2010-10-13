@@ -111,7 +111,7 @@ namespace senf {
         std::string interface() const;  ///< Return interface name
         unsigned protocol() const;      ///< Return address protocol (ethertype)
 
-        unsigned arptype() const;       ///< Return the hatype field (ARP hardware type)
+        unsigned arptype() const;       ///< Return the arptype field (ARP hardware type)
         PktType pkttype() const;        ///< Return type of packet
 
         // The mutating interface is purposely restricted to allow only

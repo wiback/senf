@@ -119,6 +119,8 @@ namespace senf {
                                                  protocol like DNS or NIS
                                              \throws AddressSyntaxException if the address cannot be
                                                  converted for some reason
+                                             \throws UnknownHostnameException if the hostname cannot
+                                                 be resolved
                                              \param[in] s Address literal or hostname */
 
         template <class InputIterator>
@@ -179,7 +181,7 @@ namespace senf {
      */
     std::istream & operator>>(std::istream & os, INet4Address & addr);
 
-    /** \brief CHeck INet4Address against a fixed network prefix
+    /** \brief Check INet4Address against a fixed network prefix
 
         This helper allows to easily and efficiently check an INet4Address against an arbitrary but
         constant network prefix. The network prefix is represented by

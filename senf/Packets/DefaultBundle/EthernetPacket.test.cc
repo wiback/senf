@@ -74,6 +74,9 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
     BOOST_CHECK_EQUAL( v->type(), 0xabcd );
     BOOST_CHECK( v.next().is<senf::DataPacket>() );
     BOOST_CHECK_EQUAL( *v.next().data().begin(), 0xf0 );
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 SENF_AUTO_UNIT_TEST(ethernetPacket_create)
