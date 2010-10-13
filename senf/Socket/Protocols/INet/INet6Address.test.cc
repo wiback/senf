@@ -85,7 +85,6 @@ SENF_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( INet6Address::from_string("1.2.3.4", INet6Address::ResolveINet4),
                            INet6Address::from_string("::ffff:1.2.3.4") );
     }
-
     {
         INet6Address addr (INet6Address::from_string("2001:dead:beef::1002:3004"));
         BOOST_CHECK_EQUAL( addr.network(), senf::INet6Network(
@@ -133,7 +132,6 @@ SENF_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK( INet6Address::Loopback );
         BOOST_CHECK( ! INet6Address::None );
     }
-
     {
         std::stringstream str;
         INet6Address addr;
@@ -155,13 +153,21 @@ SENF_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK( ! str.fail());
         BOOST_CHECK_EQUAL(addr, INet6Address::from_string("2001:dead:beef::1002:3004"));
     }
-
     {
         INet6Address addr;
         addr.network(0x2000010203040506ull);
         BOOST_CHECK_EQUAL( addr, INet6Address(0x2000u,0x0102u,0x0304u,0x0506u) );
         addr.id(1u);
         BOOST_CHECK_EQUAL( addr, INet6Address(0x2000u,0x0102u,0x0304u,0x0506u,0u,0u,0u,1u) );
+    }
+    {
+        using senf::MACAddress;
+        BOOST_CHECK_EQUAL(
+                INet6Address::from_mac( MACAddress::from_string("00-0C-29-C2-52-FF")),
+                INet6Address::from_string("fe80::20c:29ff:fec2:52ff") );
+        BOOST_CHECK_EQUAL(
+                INet6Address::from_eui64( senf::EUI64::from_mac( MACAddress::from_string("a4:ba:db:fd:b8:76"))),
+                INet6Address::from_string("fe80::a6ba:dbff:fefd:b876") );
     }
 }
 

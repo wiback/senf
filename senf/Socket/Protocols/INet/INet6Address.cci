@@ -77,7 +77,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_mac(senf::MACAddress const &
     INet6Address addr;
     addr[0] = 0xfe;
     addr[1] = 0x80;
-    addr[8] = mac[0];
+    addr[8] = mac[0] ^ 0x2;  // invert the "u" (universal/local) bit; see RFC 4291 Appx. A
     addr[9] = mac[1];
     addr[10] = mac[2];
     addr[11] = 0xff;
@@ -93,7 +93,8 @@ prefix_ senf::INet6Address senf::INet6Address::from_eui64(senf::EUI64 const & eu
     INet6Address addr;
     addr[0] = 0xfe;
     addr[1] = 0x80;
-    std::copy(eui.begin(), eui.end(), addr.begin()+8);
+    addr[8] = eui[0] ^ 0x2;  // invert the "u" (universal/local) bit; see RFC 4291 Appx. A
+    std::copy(eui.begin()+1, eui.end(), addr.begin()+9);
     return addr;
 }
 
