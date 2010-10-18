@@ -30,13 +30,13 @@
 #include "DVBFrontendHandle.hh"
 #include "DVBDemuxHandles.hh"
 #include "DVBConfigParser.hh"
-#include "DVBProtocolWrapper.hh"
-#include <senf/Scheduler/Scheduler.hh>
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Scheduler/FdEvent.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
+
+///////////////////////////////hh.p////////////////////////////////////////
+namespace senf {
 
 #define MPE_TABLEID 62
-
-namespace senf {
 
 /** \brief Helperclass for configuration and controlling DVB devices.
 
@@ -53,14 +53,11 @@ namespace senf {
      You have to find out which parts of these functionality are implemented by your preferred
      device driver by your own.
 */
-
-
-
 class DVBSocketController : boost::noncopyable
 {
 public:
 
-    senf::console::ScopedDirectory<DVBSocketController> dir;
+    console::ScopedDirectory<DVBSocketController> dir;
 
     typedef boost::function<void (const struct dvb_frontend_event & )> Callback;
                                         ///< Callback which is called when an asynchronous tuning succeeds.
@@ -68,10 +65,10 @@ public:
     DVBSocketController(DVBFrontendHandle frontendHandle_ = DVBFrontendHandle(0,0), const Callback & cb = NULL);
     ~DVBSocketController();
 
-    senf::DVBDemuxSectionHandle createDVBDemuxSectionHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
-    senf::DVBDemuxPESHandle createDVBDemuxPESHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
+    DVBDemuxSectionHandle createDVBDemuxSectionHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
+    DVBDemuxPESHandle createDVBDemuxPESHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
 
-    void addToConsole(senf::DVBDemuxSectionHandle sh);
+    void addToConsole(DVBDemuxSectionHandle sh);
                                         ///< Adds an DVBDemuxSectionHandle to the console
                                         /**< Allocates the functionality of DVBDemuxSectionProtocol
                                              into the folder of the DVBSocketController. If the
@@ -79,7 +76,7 @@ public:
                                              console support will automatically removed.
                                              \param[in] sh handle of a protocol*/
 
-    void addToConsole(senf::DVBDemuxPESHandle sh);
+    void addToConsole(DVBDemuxPESHandle sh);
                                         ///< Adds an DVBDemuxPESHandle to the console
                                         /**< Allocates the functionality of DVBDemuxPESProtocol into
                                              the folder of the DVBSocketController. If the protocol
@@ -87,7 +84,7 @@ public:
                                              support will automatically removed.
                                              \param[in] sh handle of a protocol*/
 
-    void tuneToCMD( const std::string & input, const std::string & mode = "async");
+    void tuneToCMD(std::string const & input, std::string const & mode = "async");
                                         ///< Tunes a DVB device given by the type of the DVBFrontendHandle
                                         /**< Tunes a DVB device by a channel name or complete
                                              configuration line. This method was created for use
@@ -97,7 +94,7 @@ public:
                                                it would be searched in the config file.
                                              \param[in] mode The mode in which it will tune
                                                "sync" or "async"*/
-    void tuneTo(const std::string & channel);
+    void tuneTo(std::string const & channel);
                                         ///< Tunes a DVB device to a channel
                                         /**< Tunes a DVB device to a channel whose parameters
                                              are stored in a config file. The method determines
@@ -129,7 +126,7 @@ public:
                                         /**< Tunes a DVB-C device in asynchronous mode and calls
                                              the callback if existing. Needs full configuration. */
 
-    dvb_frontend_event tuneTo_sync( const std::string & channel );
+    dvb_frontend_event tuneTo_sync(std::string const & channel );
                                         ///< Tunes a DVB device given by the type of the DVBFrontendHandle
                                         /**< Tunes a DVB device, given by the type of the
                                              DVBFrontendHandle, by a channel name in synchronous mode
@@ -139,7 +136,7 @@ public:
                                              \note The member "dvb_frontend_event.status" should be
                                                correct by the most device driver implementations.
                                                But "dvb_frontend_event.parameters" maybe not and is
-                                               definitly not set by: Cinergy T� (2.6.27),
+                                               definitely not set by: Cinergy T� (2.6.27),
                                                Terratec Cinergy DT USB XS Diversity (2.6.27) */
 
     dvb_frontend_event tuneDVB_S_sync(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate);
@@ -149,7 +146,7 @@ public:
                                              \note The member "dvb_frontend_event.status" should be
                                                correct by the most device driver implementations.
                                                But "dvb_frontend_event.parameters" maybe not and is
-                                               definitly not set by: Cinergy T� (2.6.27),
+                                               definitely not set by: Cinergy T� (2.6.27),
                                                Terratec Cinergy DT USB XS Diversity (2.6.27) */
 
     dvb_frontend_event tuneDVB_T_sync(unsigned int frequency,
@@ -167,7 +164,7 @@ public:
                                              \note The member "dvb_frontend_event.status" should be
                                                correct by the most device driver implementations.
                                                But "dvb_frontend_event.parameters" maybe not and is
-                                               definitly not set by: Cinergy T� (2.6.27),
+                                               definitely not set by: Cinergy T� (2.6.27),
                                                Terratec Cinergy DT USB XS Diversity (2.6.27) */
 
     dvb_frontend_event tuneDVB_C_sync(unsigned int frequency,
@@ -179,7 +176,7 @@ public:
                                              \note The member "dvb_frontend_event.status" should be
                                                correct by the most device driver implementations.
                                                But "dvb_frontend_event.parameters" maybe not and is
-                                               definitly not set by: Cinergy T� (2.6.27),
+                                               definitely not set by: Cinergy T� (2.6.27),
                                                Terratec Cinergy DT USB XS Diversity (2.6.27) */
 
     fe_type_t getType();                ///< Returns the type of the card. The type is defined in frontend.h
@@ -216,10 +213,10 @@ public:
     std::string getTuneInfo(const std::string & conf ="Ssbuf");
                                         ///< Returns a string which shows actual tuning status
                                         /**< <br>"S" prints signal strength (in hex)
-                                             <br>"s" prints singal to noise ration (in hex)
+                                             <br>"s" prints signal to noise ration (in hex)
                                              <br>"b" prints bit error rate (in hex)
                                              <br>"u" prints uncorrected blocks (in hex)
-                                             <br>"f" prints readable overal status e.g. "Has Lock"<br>
+                                             <br>"f" prints readable overall status e.g. "Has Lock"<br>
                                              These characters can be used to form the output. Be
                                              aware, some features may not be supported be your
                                              current driver implementation and could end in throwing
@@ -232,10 +229,15 @@ private:
     static unsigned int controllerNr;
     unsigned int sectionNr;
     unsigned int pesNr;
-    senf::scheduler::FdEvent event;
+    scheduler::FdEvent event;
     void readEvent(int i);
     void initConsole();
 };
 
 }
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "DVBSocketController.cci"
+//#include "DVBSocketController.ct"
+//#include "DVBSocketController.cti"
 #endif

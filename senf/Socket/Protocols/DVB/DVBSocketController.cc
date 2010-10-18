@@ -30,12 +30,12 @@
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/Logger/Logger.hh>
 #include <senf/Utils/membind.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
 #include <boost/shared_ptr.hpp>
+#include "DVBProtocolWrapper.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-using namespace std;
 
 unsigned int senf::DVBSocketController::controllerNr(0);
 
@@ -96,12 +96,12 @@ prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxPESHandle sh)
     pesNr++;
 }
 
-prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const string & mode)
+prefix_ void senf::DVBSocketController::tuneToCMD(std::string const & input, std::string const & mode)
 {
     struct dvb_frontend_parameters frontend;
 
     // no valid configline, so it will be treaten like a channel name
-    if (input.find(":")==string::npos)
+    if (input.find(":") == std::string::npos)
     {
         if (mode.c_str()[0]=='a')
             tuneTo(input);
@@ -155,11 +155,11 @@ prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const st
     }
 }
 
-prefix_ void senf::DVBSocketController::tuneTo(const string & channel)
+prefix_ void senf::DVBSocketController::tuneTo(std::string const & channel)
 {
     struct dvb_frontend_parameters frontend;
 
-    string configLine = parser.getConfigLine(channel);
+    std::string configLine = parser.getConfigLine(channel);
 
     frontend = parser.getFrontendParam(configLine);
     switch (type) {
@@ -244,11 +244,11 @@ prefix_ void senf::DVBSocketController::tuneDVB_C(unsigned int frequency,
     frontendHandle.protocol().tuneDVB_C(frequency, inversion, symbol_rate, fec_inner, modulation);
 }
 
-prefix_ dvb_frontend_event senf::DVBSocketController::tuneTo_sync(const string & channel)
+prefix_ dvb_frontend_event senf::DVBSocketController::tuneTo_sync(std::string const & channel)
 {
     struct dvb_frontend_parameters frontend;
     dvb_frontend_event ev;
-    string configLine = parser.getConfigLine(channel);
+    std::string configLine = parser.getConfigLine(channel);
 
     frontend = parser.getFrontendParam(configLine);
     switch (type) {
@@ -351,7 +351,7 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_C_sync(unsigned in
 }
 
 
-prefix_ string senf::DVBSocketController::getTypeString()
+prefix_ std::string senf::DVBSocketController::getTypeString()
 {
     switch (type) {
         case FE_QPSK:
@@ -380,10 +380,10 @@ prefix_ unsigned int senf::DVBSocketController::signalStrength()
     return frontendHandle.protocol().signalStrength();
 }
 
-prefix_ string senf::DVBSocketController::getTuneInfo(const string & conf)
+prefix_ std::string senf::DVBSocketController::getTuneInfo(std::string const & conf)
 {
     const char* cConf = conf.c_str();
-    stringstream info;
+    std::stringstream info;
 
     fe_status_t status;
     frontendHandle.protocol().setNonBlock(false);
@@ -395,7 +395,7 @@ prefix_ string senf::DVBSocketController::getTuneInfo(const string & conf)
     ber = frontendHandle.protocol().bitErrorRate();
     uncorrected_blocks = frontendHandle.protocol().uncorrectedBlocks();
 
-    info << hex;
+    info << std::hex;
 
     for (unsigned int i = 0; i < conf.size(); ++i) {
         if (i>0)
@@ -423,9 +423,9 @@ prefix_ string senf::DVBSocketController::getTuneInfo(const string & conf)
     return info.str();
 }
 
-prefix_ string senf::DVBSocketController::status2String(fe_status_t status)
+prefix_ std::string senf::DVBSocketController::status2String(fe_status_t status)
 {
-    string s("");
+    std::string s("");
     if (status & FE_HAS_LOCK)
         return s += "HAS LOCK";
     if (status & FE_HAS_CARRIER)
@@ -443,8 +443,6 @@ prefix_ string senf::DVBSocketController::status2String(fe_status_t status)
 
     return s;
 }
-
-
 
 prefix_ fe_type_t senf::DVBSocketController::getType()
 {

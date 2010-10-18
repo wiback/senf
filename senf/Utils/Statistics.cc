@@ -30,7 +30,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <sstream>
-#include <senf/Utils/Console/Console.hh>
 #include <senf/Utils/Format.hh>
 #include "StatisticsTargets.hh"
 

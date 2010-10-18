@@ -29,7 +29,7 @@
 // Custom includes
 #include <queue>
 #include "SocketSink.hh"
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
 
 //#include "QueueingSocketSink.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

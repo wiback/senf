@@ -25,6 +25,7 @@
     \brief TimerEventProxy non-inline template implementation */
 
 // Custom includes
+#include <senf/Utils/membind.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

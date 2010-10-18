@@ -30,6 +30,8 @@
 #include "INet6Address.hh"
 #include <senf/Utils/String.hh>
 #include <senf/Socket/Protocols/AddressExceptions.hh>
+#include <senf/Socket/Protocols/Raw/EUI64.hh>
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

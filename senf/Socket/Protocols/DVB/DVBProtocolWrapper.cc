@@ -26,6 +26,8 @@
 #include "DVBProtocolWrapper.hh"
 
 // Custom includes
+#include <senf/Utils/Console/ParsedCommand.hh>
+#include <senf/Utils/Console/Utility.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

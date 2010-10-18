@@ -25,7 +25,8 @@
 #define HH_SENF_Socket_Protocols_DVB_DVBProtocolWrapper_ 1
 
 // Custom includes
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
+#include <senf/Utils/Console/Traits.hh>
 #include "DVBDemuxHandles.hh"
 
 ///////////////////////////////hh.p////////////////////////////////////////

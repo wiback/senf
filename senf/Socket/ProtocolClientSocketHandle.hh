@@ -88,10 +88,9 @@ namespace senf {
 
         /** \brief Create uninitialized socket variable
 
-            This special constructor is called when passing
-            ProtocolClientSocketHandle::Uninitialized as only argument to the constructor. This will
-            create an in-\ref valid() socket handle which can however be assigned later with another
-            socket instance.
+            This special constructor is called when passing \c senf::noinit as only argument to
+            the constructor. This will create an in-\ref valid() socket handle which can however
+            be assigned later with another socket instance.
 
             \implementation The socket handle will have no \c body allocated.
          */
@@ -100,11 +99,11 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        Protocol  & protocol();         ///< Access the protocol interface
+        Protocol & protocol();          ///< Access the protocol interface
                                         /**< The returned protocol class reference gives access to
-                                           the complete protocol interface as defined by that
-                                           class. See the respective protocol class documentation.
-                                           \returns \a Protocol class reference */
+                                             the complete protocol interface as defined by that
+                                             class. See the respective protocol class documentation.
+                                             \returns \a Protocol class reference */
 
         static ProtocolClientSocketHandle cast_static(FileHandle handle);
         static ProtocolClientSocketHandle cast_dynamic(FileHandle handle);

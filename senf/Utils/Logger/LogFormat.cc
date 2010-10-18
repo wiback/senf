@@ -32,7 +32,8 @@
 #include <locale>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <senf/Scheduler/ClockService.hh>
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
 
 //#include "LogFormat.mpp"
 #define prefix_

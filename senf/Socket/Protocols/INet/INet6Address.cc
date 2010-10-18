@@ -34,6 +34,8 @@
 #include <netdb.h>
 #include <boost/lexical_cast.hpp>
 #include <senf/Socket/Protocols/AddressExceptions.hh>
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
+#include <senf/Socket/Protocols/Raw/EUI64.hh>
 
 //#include "INet6Address.mpp"
 #define prefix_
@@ -90,6 +92,38 @@ prefix_ in6_addr senf:: INet6Address::toin6_addr() const {
     ::in6_addr ina;
     std::copy((*this).begin(), (*this).end(), &ina.s6_addr[0]);
     return ina;
+}
+
+prefix_ senf::INet6Address senf::INet6Address::from_mac(MACAddress const & mac)
+{
+    INet6Address addr;
+    addr[0] = 0xfe;
+    addr[1] = 0x80;
+    addr[8] = mac[0] ^ 0x2;  // invert the "u" (universal/local) bit; see RFC 4291 Appx. A
+    addr[9] = mac[1];
+    addr[10] = mac[2];
+    addr[11] = 0xff;
+    addr[12] = 0xfe;
+    addr[13] = mac[3];
+    addr[14] = mac[4];
+    addr[15] = mac[5];
+    return addr;
+}
+
+prefix_ senf::INet6Address senf::INet6Address::from_eui64(EUI64 const & eui)
+{
+    INet6Address addr;
+    addr[0] = 0xfe;
+    addr[1] = 0x80;
+    addr[8] = eui[0] ^ 0x2;  // invert the "u" (universal/local) bit; see RFC 4291 Appx. A
+    std::copy(eui.begin()+1, eui.end(), addr.begin()+9);
+    return addr;
+}
+
+prefix_ senf::EUI64 senf::INet6Address::id()
+    const
+{
+    return EUI64::from_data(begin()+8);
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & addr)

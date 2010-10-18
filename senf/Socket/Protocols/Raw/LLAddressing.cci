@@ -31,19 +31,9 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::LLSocketAddress::address(MACAddress const & addr)
-{
-    std::copy(addr.begin(), addr.end(),&addr_.sll_addr[0]);
-}
-
 prefix_ senf::LLSocketAddress::LLSocketAddress()
     : BSDSocketAddress (sizeof(sockaddr_ll), AF_PACKET)
 {}
-
-prefix_ void senf::LLSocketAddress::protocol(unsigned prot)
-{
-    addr_.sll_protocol = htons(prot);
-}
 
 prefix_ senf::LLSocketAddress::LLSocketAddress(unsigned prot, std::string const & iface)
     : BSDSocketAddress (sizeof(sockaddr_ll), AF_PACKET)
@@ -82,6 +72,11 @@ prefix_ unsigned senf::LLSocketAddress::protocol()
     return ntohs(addr_.sll_protocol);
 }
 
+prefix_ void senf::LLSocketAddress::protocol(unsigned prot)
+{
+    addr_.sll_protocol = htons(prot);
+}
+
 prefix_ unsigned senf::LLSocketAddress::arptype()
     const
 {
@@ -98,6 +93,11 @@ prefix_ senf::MACAddress senf::LLSocketAddress::address()
     const
 {
     return MACAddress::from_data(&addr_.sll_addr[0]);
+}
+
+prefix_ void senf::LLSocketAddress::address(MACAddress const & addr)
+{
+    std::copy(addr.begin(), addr.end(), &addr_.sll_addr[0]);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

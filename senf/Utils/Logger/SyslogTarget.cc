@@ -27,7 +27,9 @@
 //#include "SyslogTarget.ih"
 
 // Custom includes
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
+#include <senf/Utils/Console/Traits.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
 
 //#include "SyslogTarget.mpp"
 #define prefix_

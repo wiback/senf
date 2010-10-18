@@ -30,7 +30,8 @@
 #include <senf/Scheduler/Scheduler.hh>
 #include <senf/Utils/membind.hh>
 #include "Module.hh"
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
+#include <senf/Utils/Console/Sysdir.hh>
 
 //#include "ModuleManager.mpp"
 #define prefix_

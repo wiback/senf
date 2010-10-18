@@ -27,10 +27,8 @@
 #include "Connectors.ih"
 
 // Custom includes
-#include "Route.hh"
-#include "Module.hh"
 #include "ModuleManager.hh"
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
 
 //#include "Connectors.mpp"
 #define prefix_

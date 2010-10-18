@@ -101,8 +101,8 @@ namespace senf {
                                              \throws UnknownInterfaceException if \a iface is not
                                                  a valid interface name. */
 
-        LLSocketAddress(const LLSocketAddress& other);
-        LLSocketAddress& operator=(const LLSocketAddress& other);
+        LLSocketAddress(LLSocketAddress const & other);
+        LLSocketAddress& operator=(LLSocketAddress const & other);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////

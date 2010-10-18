@@ -34,7 +34,6 @@
 
 #include <senf/Scheduler/ClockService.hh>
 #include <senf/Scheduler/TimerEvent.hh>
-#include <senf/Utils/Console/Console.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {

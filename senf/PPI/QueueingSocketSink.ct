@@ -26,6 +26,7 @@
 //#include "QueueingSocketSink.ih"
 
 // Custom includes
+#include <senf/Utils/Console/ParsedCommand.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -73,6 +74,15 @@ prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSoc
     noroute(input);
     input.onRequest( &PassiveQueueingSocketSink::write);
     input.qdisc( QueueingDiscipline::NONE);
+    checkThrottle();
+}
+
+template <class Writer>
+prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::handle(Handle const & handle)
+{
+    handle_ = handle;
+    event_.set( handle_, IOEvent::Write);
+    qAlgo_->clear();
     checkThrottle();
 }
 

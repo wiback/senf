@@ -29,7 +29,9 @@
 // Custom includes
 #include <boost/format.hpp>
 #include <senf/Utils/membind.hh>
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
+#include <senf/Utils/Console/Sysdir.hh>
 #include "FIFORunner.hh"
 
 //#include "EventManager.mpp"

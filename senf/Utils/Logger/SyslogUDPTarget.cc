@@ -30,7 +30,9 @@
 #include <sstream>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
+#include <senf/Utils/Console/Traits.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
 
 //#include "SyslogUDPTarget.mpp"
 #define prefix_

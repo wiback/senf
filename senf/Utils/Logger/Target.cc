@@ -31,8 +31,6 @@
 #include <boost/format.hpp>
 #include "ConsoleTarget.hh"
 #include <senf/Utils/Console/Console.hh>
-#include <senf/Utils/Console/Sysdir.hh>
-#include <senf/Utils/membind.hh>
 
 //#include "Target.mpp"
 #define prefix_

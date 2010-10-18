@@ -36,8 +36,6 @@
 #include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Tags.hh>
 #include "INet4Address.hh"
-#include <senf/Socket/Protocols/Raw/MACAddress.hh>
-#include <senf/Socket/Protocols/Raw/EUI64.hh>
 
 //#include "INet6Address.mpp"
 #include "INet6Address.ih"
@@ -45,6 +43,8 @@
 
 namespace senf {
 
+    class EUI64;
+    class MACAddress;
     class INet6Network;
 
     /** \brief INet6 network address
@@ -208,12 +208,12 @@ namespace senf {
                                              \par
                                              INet4 compatible INet6 addresses are not directly
                                              supported, they are deprecated in the RFC. */
-        static INet6Address from_mac(senf::MACAddress const & mac);
+        static INet6Address from_mac(MACAddress const & mac);
                                         ///< Construct a link-local INet6 address
                                         /**< This will construct a link local address of the form
                                              <tt>fe80::xxxx:xxff:fexx:xxxx</tt>. */
 
-        static INet6Address from_eui64(senf::EUI64 const & eui);
+        static INet6Address from_eui64(EUI64 const & eui);
                                         ///< Construct link-local INet6 address
                                         /**< This will construct a link local address of the form
                                              <tt>fe80::xxxx:xxxx:xxxx:xxxx</tt>. */

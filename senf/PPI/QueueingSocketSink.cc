@@ -28,6 +28,7 @@
 //#include "QueueingSocketSink.ih"
 
 // Custom includes
+#include <senf/Utils/Console/Variables.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
