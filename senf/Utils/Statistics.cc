@@ -62,6 +62,15 @@ prefix_ senf::Collector & senf::StatisticsBase::operator[](unsigned rank)
     return i->second;
 }
 
+prefix_ senf::Collector const & senf::StatisticsBase::operator[](unsigned rank)
+    const
+{
+    Children::const_iterator i (children_.find(rank));
+    if (i == children_.end())
+        throw InvalidRankException();
+    return i->second;
+}
+
 prefix_ senf::Collector & senf::StatisticsBase::collect(unsigned rank)
 {
     std::pair<Children::iterator, bool> state (

@@ -172,6 +172,14 @@ namespace senf {
                                                  collector collects into each combined value.
                                              \throws InvalidRankException if \a rank is not a valid
                                                  registered rank value. */
+        Collector const & operator[](unsigned rank) const;
+                                        ///< Get child collector
+                                        /**< This member will return a const reference to the
+                                             collector collecting \a rank values.
+                                             \param[in] rank Number of values the requested
+                                                 collector collects into each combined value.
+                                             \throws InvalidRankException if \a rank is not a valid
+                                                 registered rank value. */
         CollectorRange collectors();    ///< List all child collectors
                                         /**< \returns iterator range of child collector
                                              references */
