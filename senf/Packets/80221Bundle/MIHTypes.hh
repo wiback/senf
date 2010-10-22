@@ -47,10 +47,9 @@ namespace senf {
     {
     public:
         static MIHFId const Multicast; ///< The multicast (empty) MIHF Id
-        static MIHFId const None; ///< The multicast (empty) MIHF Id
-        enum Type { Empty, MACAddress, INet4Address, INet6Address, String, EUI64 };
+        enum Type { MulticastType, MACAddress, INet4Address, INet6Address, String, EUI64 };
 
-        MIHFId();                                   ///< Create empty instance.
+        MIHFId();                                   ///< Create multicast id.
         MIHFId(senf::MACAddress const & addr);      ///< Construct id with given MACAddress
         MIHFId(senf::INet4Address const & addr);    ///< Construct id with given INet4Address
         MIHFId(senf::INet6Address const & addr);    ///< Construct id with given INet6Address
@@ -63,7 +62,7 @@ namespace senf {
 
     private:
         struct GetTypeVisitor : public boost::static_visitor<Type> {
-            Type operator()(boost::blank const &) const { return Empty; }
+            Type operator()(boost::blank const &) const { return MulticastType; }
             Type operator()(senf::MACAddress const &) const { return MACAddress; }
             Type operator()(senf::INet4Address const &) const { return INet4Address; }
             Type operator()(senf::INet6Address const &) const { return INet6Address; }

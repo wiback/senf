@@ -139,7 +139,7 @@ prefix_ senf::MIHFId senf::MIHFIdTLVParser::valueAs(MIHFId::Type type)
 {
     if (length() == 0) return MIHFId();
     switch (type) {
-    case MIHFId::Empty:
+    case MIHFId::MulticastType:
         return MIHFId();
     case MIHFId::MACAddress:
         return MIHFId( valueAsMACAddress());
