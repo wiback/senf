@@ -75,7 +75,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
         .add("route", fty::Command(&Target::consoleRoute, this)
              .arg("index", "index at which to insert new rule")
              .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
-                  "              and log level. You may specify any combination of these parameterse\n"
+                  "              and log level. You may specify any combination of these parameters\n"
                   "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
                   "              to list all valid streams and areas. Valid log levels are:\n"
                   "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
@@ -415,7 +415,7 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
     consoleDir_()
         .add("message", fty::Command(&TargetRegistry::consoleWrite, this)
              .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
-                  "              and log level. You may specify any combination of these parameterse\n"
+                  "              and log level. You may specify any combination of these parameters\n"
                   "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
                   "              to list all valid streams and areas. Valid log levels are:\n"
                   "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL",

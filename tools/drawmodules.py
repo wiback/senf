@@ -32,19 +32,24 @@ for line in sys.stdin:
     else:
         connectorid, type = line.split(' ',1);
         connectorid = connectorid[1:]
-	
-	packet = type.rsplit('<',1)[1];
-	packet = packet.rsplit('::',1)[-1];
-	packet = packet.split('>',1)[0];
-		
-	elts = type.rsplit(' ',1);
+
+        packet = type.rsplit('<',1)[1]
+        packet = packet.rsplit('::',1)[-1]
+        packet = packet.split('>',1)[0]
+
+        throttled = False
+        elts = type.rsplit(' ', 1);
         if elts[-1].startswith('0x'):
-            type, peerid = elts
-            peerid = peerid[1:]
+            type, peerid = elts[0], elts[1][1:]
         else:
-            peerid = None
+            if elts[-1] == ('throttled'):
+                throttled = True
+                elts = elts[0].rsplit(' ', 1)
+                type, peerid = elts[0], elts[1][1:]
+            else: 
+                peerid = None
         modules[moduleid][1].append((connectorid, type, peerid, packet))
-        connectors[connectorid] = moduleid
+        connectors[connectorid] = (moduleid, throttled)
 
 for moduleid, (module, cs) in modules.iteritems():
     module = module.split('<',1)[0]
@@ -59,12 +64,12 @@ for moduleid, (module, cs) in modules.iteritems():
     module = module.rsplit('::',1)[-1]
     inputs = []
     outputs = []
-    for connectorid, type, peerid,packet in cs:
+    for connectorid, type, peerid, packet in cs:
         if 'Input' in type: inputs.append("<%s>%s" % (connectorid,connectorid))
         else:               outputs.append("<%s>%s" % (connectorid,connectorid))
     rows = []
     if inputs: rows.append("{%s}" % "|".join(inputs))
-    rows.append("%s (%s)" % (module, moduleid))
+    rows.append("%s" % (module))
     if outputs: rows.append("{%s}" % "|".join(outputs))
     sys.stdout.write('%s [label="{%s}" style="filled" fillcolor="/%s/%s"  ]\n'
                              % (moduleid, "|".join(rows),COLOR_SCHEME, color ))
@@ -75,15 +80,22 @@ for moduleid, (type, cs) in modules.iteritems():
     for connectorid, type, peerid, packet in cs:
         opts = []
         if "Passive" in type: opts.append("arrowtail=odot");
+        if "Output" in type and peerid is not None:
+            if "Active" in type and connectors[peerid][1]:
+                opts.append("arrowhead=tee")
+                opts.append('headlabel="!"')                 
+            if "Passive" in type and connectors[connectorid][1]:
+                opts.append("arrowtail=tee")
+                opts.append('taillabel="!"')
         opts = ",".join(opts)
         if opts: opts = " [%s]" % opts
         if "Output" in type and peerid is not None:
-	    if "Packet" in packet and p is 1:
-            	sys.stdout.write('%s:%s -> %s:%s%s [label=" %s", fontsize=8, fontname="Helvetica"]\n' 
-                             % (moduleid, connectorid, connectors[peerid], peerid, opts,packet))
-	    else:
-		sys.stdout.write('%s:%s -> %s:%s%s\n' 
-                             % (moduleid, connectorid, connectors[peerid], peerid, opts))
+            if "Packet" in packet and p is 1:
+                sys.stdout.write('%s:%s -> %s:%s%s [label=" %s", fontsize=8, fontname="Helvetica"]\n' 
+                             % (moduleid, connectorid, connectors[peerid][0], peerid, opts,packet))
+            else:
+                sys.stdout.write('%s:%s -> %s:%s%s\n' 
+                             % (moduleid, connectorid, connectors[peerid][0], peerid, opts))
         elif peerid is None:
             sys.stdout.write('anon%d [label="", shape=point, height=.05];\n' % anonid)
             if "Output" in type:

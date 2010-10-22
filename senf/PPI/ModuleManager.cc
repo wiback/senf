@@ -84,15 +84,16 @@ prefix_ senf::ppi::ModuleManager::ModuleManager()
                   "The dump will contain one paragraph for each module. The first line gives module\n"
                   "information, additional lines list all connectors and their peers (if connected).\n"
                   "\n"
-                  "This information can be processed by 'PPI/drawmodules.py' and 'dot' (from the\n"
+                  "This information can be processed by 'tools/drawmodules.py' and 'dot' (from the\n"
                   "graphviz package) to generate a graphic representation of the module structure:\n"
                   "\n"
                   "    $ echo /sys/ppi/dump | nc -q1 <host> <port> \\\n"
-                  "          | python PPI/drawmodules.py | dot -Tpng /dev/fd/0 >modules.png\n")
+                  "          | python tools/drawmodules.py | dot -Tpng /dev/fd/0 >modules.png\n")
             );
 }
 
 prefix_ void senf::ppi::ModuleManager::dumpModules(std::ostream & os)
+    const
 {
     for (ModuleRegistry::const_iterator i (moduleRegistry_.begin()), i_end (moduleRegistry_.end());
          i != i_end; ++i) {
@@ -100,8 +101,12 @@ prefix_ void senf::ppi::ModuleManager::dumpModules(std::ostream & os)
         for (module::Module::ConnectorRegistry::iterator j ((*i)->connectorRegistry_.begin()),
                  j_end ((*i)->connectorRegistry_.end()); j != j_end; ++j) {
             os << "  " << *j << " " << prettyName(typeid(**j));
-            if ((**j).connected())
+            if ((**j).connected()) {
                 os << " " << & (*j)->peer();
+                connector::PassiveConnector * pc (dynamic_cast<connector::PassiveConnector *>(*j));
+                if (pc && pc->throttled())
+                    os << " throttled";
+            }
             os << "\n";
         }
         os << "\n";

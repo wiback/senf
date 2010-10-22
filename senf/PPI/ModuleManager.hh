@@ -95,7 +95,7 @@ namespace ppi {
         void unregisterInitializable(Initializable & i);
         bool initializableRegistered(Initializable const & i) const;
 
-        void dumpModules(std::ostream & os);
+        void dumpModules(std::ostream & os) const;
 
         typedef std::vector<module::Module *> ModuleRegistry;
         typedef std::deque<Initializable *> InitQueue;
