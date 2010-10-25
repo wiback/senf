@@ -331,16 +331,18 @@ SENF_AUTO_UNIT_TEST(Test_MIHFIdTLV)
 {
     unsigned char data[] = {
             // MIH header
-            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x00,
+            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x06,
             // source MIHF_ID TLV:
-            0x01, 0x00, // type, length
+            0x01, 0x01, // type, length
+            0x00,       // value-length
             // destination MIHF_ID TLV:
-            0x02, 0x00, // type, length
-            0x0c        // value-length
+            0x02, 0x01, // type, length
+            0x00        // value-length
     };
 
     MIHPacket mihPacket (MIHPacket::create(data));
     BOOST_CHECK( mihPacket->src_mihfId().valueEquals( MIHFId::Multicast) );
+    BOOST_CHECK( mihPacket->dst_mihfId().valueEquals( MIHFId::Multicast) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
