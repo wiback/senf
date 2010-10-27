@@ -47,10 +47,11 @@ prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp()
 prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp_system()
     const
 {
+    // we use gettimeofday() here, since on some boxes the above ioctl() return bogus values.
+    // this may reduce the precision, but we only care about +/- 1ms, for now 
     struct timeval tv;
-    if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
-    return tv.tv_sec * 1000000000LL + tv.tv_usec * 1000;
+    ::gettimeofday( &tv, NULL);
+    return tv.tv_sec * 1000000000LL + tv.tv_usec * 1000LL;
 }
 
 
