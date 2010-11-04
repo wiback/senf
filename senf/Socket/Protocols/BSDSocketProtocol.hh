@@ -31,12 +31,12 @@
 #include <boost/cstdint.hpp>
 
 //#include "BSDSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup protocol_facets_group
-    /// @{
+    //\{
 
     /** \brief Protocol facet providing basic BSD socket functionality
 
@@ -114,12 +114,12 @@ namespace senf {
                                              \param[in] value new \c SO_REUSEADDR state */
     };
 
-    /// @}
+    //\}
 
 }
 
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "BSDSocketProtocol.cci"
 //#include "BSDSocketProtocol.ct"
 //#include "BSDSocketProtocol.cti"

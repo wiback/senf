@@ -55,7 +55,7 @@
 #include <boost/function.hpp>
 #include <senf/config.hh>
 
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** \brief Get function pointer
 
@@ -159,7 +159,7 @@ namespace senf {
 #ifdef DOXYGEN
 
     /// \addtogroup membind
-    /// @{
+    //\{
 
     /** \brief Build bound member function object
 
@@ -174,13 +174,13 @@ namespace senf {
     template <typename R, typename T, typename Args>
     boost::function<R (Args)> membind(R (T::* fn)( Args ), T * ob);
 
-    /// @}
+    //\}
 
 #endif
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "membind.cci"
 //#include "membind.ct"
 //#include "membind.cti"

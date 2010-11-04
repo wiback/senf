@@ -34,12 +34,12 @@
 #include <senf/Socket/ProtocolClientSocketHandle.hh>
 
 
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup concrete_protocol_group
-    /// @{
+    //\{
 
     typedef MakeSocketPolicy<
         INet4AddressingPolicy,
@@ -88,11 +88,11 @@ namespace senf {
           public AddressableBSDSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client() const;       ///< Create unconnected client socket for IPPROTO_RAW
                                         /**< \note This member is implicitly called from the
@@ -109,7 +109,7 @@ namespace senf {
                                                  send
                                              \param[in] address local address to connect to */
 
-        ///@}
+        //\}
     };
 
     typedef ProtocolClientSocketHandle<ConnectedRawV4SocketProtocol>
@@ -118,7 +118,7 @@ namespace senf {
 
 
 
-//////////////////////////////////////////////// Raw IPv6 Socket ////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
     typedef MakeSocketPolicy<
         INet6AddressingPolicy,
         DatagramFramingPolicy,
@@ -164,11 +164,11 @@ namespace senf {
           public AddressableBSDSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client() const;       ///< Create unconnected client socket for IPPROTO_RAW
                                         /**< \note This member is implicitly called from the
@@ -189,13 +189,13 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor (??) */
 
-        ///@}
+        //\}
     };
 
     typedef ProtocolClientSocketHandle<ConnectedRawV6SocketProtocol>
         ConnectedRawV6ClientSocketHandle;
 
-    /// @}
+    //\}
 
 }
 

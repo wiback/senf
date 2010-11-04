@@ -39,7 +39,7 @@
 
 //#include "INet6Address.mpp"
 #include "INet6Address.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -131,7 +131,7 @@ namespace senf {
           public comparable_safe_bool<INet6Address>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         static INet6Address const None;        ///< The empty (::0) address
@@ -160,9 +160,9 @@ namespace senf {
             , UnassignedScope   =  6    /**< Unassigned scope, may be defined locally */
         };
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         explicit INet6Address(senf::NoInit_t); ///< Construct uninitialized (!) address
         explicit INet6Address(boost::uint16_t a0=0u, boost::uint16_t a1=0u, boost::uint16_t a2=0u,
@@ -220,10 +220,10 @@ namespace senf {
 
         in6_addr toin6_addr() const;    ///< get the linux in6_addr struct (convenience only)
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Accessors
-        ///@{
+        //\{
 
         INet6Network network() const; ///< Return <tt>/64</tt> Network of this address
         bool hasEUI64() const;          ///< \c true, if address is based on an EUID-64
@@ -279,14 +279,14 @@ namespace senf {
 
         bool boolean_test() const;      ///< \c true, if address != '::' (None)
 
-        ///@}
+        //\}
         ///\name Mutators
-        ///@{
+        //\{
 
         void network(boost::uint64_t net); ///< Set network part of address
         void id(boost::uint64_t id);    ///< Set interface id part of address
 
-        ///@}
+        //\}
 
     };
 
@@ -347,17 +347,17 @@ namespace senf {
           public comparable_safe_bool<INet6Network>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         INet6Network();                 ///< Construct empty (::/0) network
         INet6Network(INet6Address const & address, unsigned prefix_len);
                                         ///< Construct network from given address and prefix length
         explicit INet6Network(std::string const & s); ///< Construct network from CIDR notation
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         INet6Address const & address() const; ///< Get the network address
         unsigned prefix_len() const;    ///< Get the network prefix length
@@ -407,7 +407,7 @@ namespace senf {
     std::istream & operator>>(std::istream & is, INet6Network & addr);
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "INet6Address.cci"
 #include "INet6Address.ct"
 #include "INet6Address.cti"

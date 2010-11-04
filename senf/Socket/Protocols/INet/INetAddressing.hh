@@ -36,7 +36,7 @@
 #include "INet6Address.hh"
 
 //#include "INetAddressing.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -56,9 +56,9 @@ namespace senf {
     public:
         static short const addressFamily = AF_INET;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         INet4SocketAddress();
         explicit INet4SocketAddress(std::string const & addr); ///< Set address and port
@@ -84,8 +84,8 @@ namespace senf {
         INet4SocketAddress(const INet4SocketAddress& other);
         INet4SocketAddress& operator=(const INet4SocketAddress& other);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         INet4Address address() const;   ///< Return address
         unsigned port() const;          ///< Return port number
@@ -144,9 +144,9 @@ namespace senf {
     public:
         static short const addressFamily = AF_INET6;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         INet6SocketAddress();           ///< Create empty instance
         explicit INet6SocketAddress(std::string const & addr,
@@ -174,8 +174,8 @@ namespace senf {
         INet6SocketAddress(const INet6SocketAddress& other);
         INet6SocketAddress& operator=(const INet6SocketAddress& other);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         INet6Address address() const;    ///< Get printable address representation
         void address(INet6Address const & addr); ///< Change address
@@ -206,7 +206,7 @@ namespace senf {
     std::istream & operator>>(std::istream & is, INet6SocketAddress & addr);
 
     /// \addtogroup policy_impl_group
-    /// @{
+    //\{
 
     /** \brief Addressing policy supporting IPv4 addressing
 
@@ -256,11 +256,11 @@ namespace senf {
         using BSDAddressingPolicyMixin<INet6SocketAddress>::bind;
     };
 
-    /// @}
+    //\}
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "INetAddressing.cci"
 //#include "INetAddressing.ct"
 //#include "INetAddressing.cti"

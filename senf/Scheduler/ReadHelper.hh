@@ -34,7 +34,7 @@
 #include "FdEvent.hh"
 
 //#include "ReadHelper.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -70,15 +70,15 @@ namespace senf {
         : public senf::intrusive_refcount
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::intrusive_ptr<ReadHelper> ptr; ///< Smart pointer type for this class
         typedef boost::function<void (ptr)> Callback; ///< Callback type
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         static ptr dispatch(Handle handle, std::string::size_type maxSize,
                             Callback callback); ///< Register new ReadHandler instance
@@ -109,8 +109,8 @@ namespace senf {
                                              \param[in] callback callback
                                              \returns smart pointer to new ReadHelper instance */
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         Handle handle() const;          ///< Access the handle object
         std::string::size_type maxSize() const; ///< Return maximum number of bytes to be read
@@ -165,7 +165,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "ReadHelper.cci"
 #include "ReadHelper.ct"
 #include "ReadHelper.cti"

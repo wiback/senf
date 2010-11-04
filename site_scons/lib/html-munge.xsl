@@ -273,7 +273,7 @@
 
   <!-- Add grouping to all-members page -->
 
-  <xsl:template match="table[preceding-sibling::h1[1][contains(text(),'Member List')]]">
+  <xsl:template match="table[preceding::h1[1][contains(text(),'Member List')]]">
     <table class="allmembers">
 
       <!-- We need to filter the table rows by looking for indications on the object type       -->
@@ -370,6 +370,18 @@
 
   <!-- Remove the automatically inserted search form (we build our own) -->
   <xsl:template match="li[form]"> 
+  </xsl:template>
+  
+  <xsl:template match="li[@id='searchli']">
+  </xsl:template>
+
+  <xsl:template match="div[@id='MSearchSelectWindow']">
+  </xsl:template>
+
+  <xsl:template match="div[@id='MSearchResultsWindow']">
+  </xsl:template>
+
+  <xsl:template match="script">
   </xsl:template>
 
   <!-- Add CSS class to alphabetical class index table -->
@@ -492,7 +504,7 @@
   </xsl:template>
 
   <!-- Add CSS class to the brief documentation paragraph of the member documentation -->
-  <xsl:template match="div[@class='memdoc']/p[1][not(contains(.,'Definition at line'))]">
+  <xsl:template match="div[@class='memdoc']/p[1][not(contains(.,'Definition at line'))][not(contains(.,'Reimplemented in'))][not(contains(.,'References '))][not(contains(.,'Referenced by '))][not(contains(.,'Reimplemented from '))]">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">memtitle</xsl:with-param>
     </xsl:call-template>

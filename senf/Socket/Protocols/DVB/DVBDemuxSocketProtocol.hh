@@ -32,12 +32,12 @@
 #include <senf/Socket/SocketProtocol.hh>
 
 //#include "DVBSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup protocol_facets_group
-    /// @{
+    //\{
 
     /** \todo Document me!
      */
@@ -55,17 +55,17 @@ namespace senf {
         void stopFiltering() const;
 
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         bool eof() const;
 
-        ///@}
+        //\}
     };
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "DVBDemuxSocketProtocol.cci"
 //#include "DVBDemuxSocketProtocol.ct"
 //#include "DVBDemuxSocketProtocol.cti"

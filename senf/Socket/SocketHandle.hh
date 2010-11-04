@@ -35,12 +35,12 @@
 #include "FileHandle.hh"
 #include "SocketPolicy.hh"
 
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup handle_group
-    /// @{
+    //\{
 
     /** \brief basic SocketHandle supporting protocol and policy abstraction
 
@@ -70,7 +70,7 @@ namespace senf {
         : public FileHandle
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef SPolicy Policy;
@@ -86,9 +86,9 @@ namespace senf {
             : public boost::enable_if< SocketPolicyIsBaseOf<Policy,OtherPolicy>, SocketHandle >
         {};
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // default default constructor
         // default copy constructor
@@ -106,8 +106,8 @@ namespace senf {
                                         ///< Convert from other socket handle checking policy
                                         ///< compatibility
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         template <class OtherPolicy>
         typename IsCompatible<OtherPolicy>::type const & operator=(SocketHandle<OtherPolicy> other);
@@ -259,10 +259,10 @@ namespace senf {
     template <class Target, class Source>
     bool check_socket_cast(Source handle);
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "SocketHandle.cci"
 #include "SocketHandle.ct"
 #include "SocketHandle.cti"

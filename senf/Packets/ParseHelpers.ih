@@ -33,9 +33,9 @@
 # include "../Utils/preprocessor.hh"
 # include "../Utils/mpl.hh"
 #
-# ////////////////////////////////ih.p///////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_INITIALIZE
 #
 # define SENF_PARSER_INITIALIZE  BOOST_PP_CAT( SENF_PARSER_INITIALIZE_ , SENF_PARSER_TYPE )
@@ -60,7 +60,7 @@
         size_type field_offset_(senf::mpl::rv<0>*) const { return 0; }                            \
     public:
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_INHERIT_*
 #
 # define SENF_PARSER_INHERIT_var(name)                                                            \
@@ -86,7 +86,7 @@
         }                                                                                         \
     public:
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_FIELD*
 # // SENF_PARSER_P_FIELD_*
 #
@@ -116,7 +116,7 @@
             BOOST_PP_CAT(SENF_PARSER_I_ISVAR_, ofstype) (name, type),                             \
             access )
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_I_FIELD_INTRO
 #
 # define SENF_PARSER_I_FIELD_INTRO(name, type, access)                                            \
@@ -126,7 +126,7 @@
         SENF_MPL_SLOT_SET(index, BOOST_PP_CAT(name,_index));                                      \
     access:
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_I_FIELD_INIT_*
 #
 # define SENF_PARSER_I_FIELD_INIT_rw(name, type, access)                                          \
@@ -144,7 +144,7 @@
         }                                                                                         \
     access:
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_I_FIELD_OFS_*
 #
 # define SENF_PARSER_I_FIELD_OFS_var(name, type, access)                                          \
@@ -162,7 +162,7 @@
             SENF_MPL_SLOT_GET(offset);                                                            \
     private:
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_I_ADVANCE_OFS_*
 #
 # define SENF_PARSER_I_SIZE_var(name, type) senf::bytes(BOOST_PP_CAT(name, _)())
@@ -198,7 +198,7 @@
         SENF_MPL_SLOT_SET(offset, BOOST_PP_CAT(name, _next_offset));                              \
     access:
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_I_FIELD_VAL_*
 #
 # define SENF_PARSER_I_FIELD_VAL_rw(name, type, access)                                           \
@@ -221,7 +221,7 @@
             return BOOST_PP_CAT(name,_)();                                                        \
         }
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_CUSTOM_FIELD_*
 #
 # define SENF_PARSER_CUSTOM_FIELD_var(name, type, size, isize)                                    \
@@ -237,7 +237,7 @@
         BOOST_PP_CAT(SENF_PARSER_I_ADVANCE_OFS_, ofstype) (name, type, size, isize, 1, public)    \
         BOOST_PP_CAT(name, _t) name() const
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_BITFIELD_*
 # // SENF_PARSER_P_BITFIELD_*
 #
@@ -255,7 +255,7 @@
 # define SENF_PARSER_P_BITFIELD_fix(name, bits, type)                                             \
       SENF_PARSER_BITFIELD_I(name, bits, type, fix, rw, protected)
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_BITFIELD_I
 #
 # define SENF_PARSER_BITFIELD_TYPE_signed(start, bits)   senf::IntFieldParser<start, start+bits>
@@ -288,7 +288,7 @@
          BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, access)                      \
     public:
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_I_BITFIELD_OFS_*
 #
 # define SENF_PARSER_I_BITFIELD_OFS_var(name, type, access)                                       \
@@ -303,14 +303,14 @@
         static size_type const BOOST_PP_CAT(name, _offset) =                                      \
             SENF_MPL_SLOT_GET(offset) - SENF_MPL_SLOT_GET(bitfield_size);
 #
-# ////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_I_BITFIELD_RESET
 #
 # define SENF_PARSER_I_BITFIELD_RESET()                                                           \
         SENF_MPL_SLOT_SET(bit, 0);                                                                \
         SENF_MPL_SLOT_SET(bitfield_size, 0);
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_SKIP_*
 #
 # define SENF_PARSER_SKIP_var(bytes, ibytes)                                                      \
@@ -329,7 +329,7 @@
                                                              private)                             \
     public:
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_SKIP_BITS_*
 #
 # define SENF_PARSER_SKIP_BITS_var(bits) SENF_PARSER_I_SKIP_BITS(bits, var)
@@ -340,7 +340,7 @@
           SENF_MPL_SLOT_SET(bit, SENF_MPL_SLOT_GET(bit) + bits);                                  \
       public:
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_GOTO_*
 #
 # define SENF_PARSER_GOTO_var(name)                                                               \
@@ -378,7 +378,7 @@
 # define SENF_PARSER_I_GOTO_SET_OFS_fix(name, offs, initsize)                                     \
           SENF_MPL_SLOT_SET(offset, offs);
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_LABEL_*
 #
 # define SENF_PARSER_LABEL_var(name) SENF_PARSER_I_LABEL( name, var, public )
@@ -393,25 +393,25 @@
           BOOST_PP_CAT(SENF_PARSER_I_ADVANCE_OFS_, ofstype) (name, void, 0, 0, 0, access)         \
       public:
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_OFFSET_*
 #
 # define SENF_PARSER_OFFSET_fix(name) BOOST_PP_CAT(name, _offset)
 # define SENF_PARSER_OFFSET_var(name) BOOST_PP_CAT(name, _offset)()
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_FIXED_OFFSET_*
 #
 # define SENF_PARSER_FIXED_OFFSET_fix(name) BOOST_PP_CAT(name, _offset)
 # define SENF_PARSER_FIXED_OFFSET_var(name) BOOST_PP_CAT(name, _init_bytes)
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_CURRENT_FIXED_OFFSET_*
 #
 # define SENF_PARSER_CURRENT_FIXED_OFFSET_fix() SENF_MPL_SLOT_GET(offset)
 # define SENF_PARSER_CURRENT_FIXED_OFFSET_var() SENF_MPL_SLOT_GET(init_bytes)
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_FINALIZE_*
 #
 # define SENF_PARSER_FINALIZE_var(name)                                                           \
@@ -435,7 +435,7 @@
     public:                                                                                       \
          void init() const { init(0); }
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_REQUIRE_VAR
 #
 # define SENF_PARSER_REQUIRE_VAR(description) \
@@ -448,7 +448,7 @@
                             BOOST_PP_CAT(description, _not_allowed_in_fixed_parser) )             \
           BOOST_PP_CAT(errsym_, __LINE__);
 #
-# ///////////////////////////////////////////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_COLLECTION_I
 #
 # ifndef DOXYGEN
@@ -641,7 +641,7 @@
           BOOST_PP_CAT(name, _t) name() const                                                     \
           { return BOOST_PP_CAT(name, _)(); }
 #
-# ////////////////////////////////ih.e///////////////////////////////////////
+# //-///////////////////////////////////////////////////////////////////////////////////////////////
 # endif
 #
 #

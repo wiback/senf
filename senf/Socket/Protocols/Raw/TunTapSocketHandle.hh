@@ -38,12 +38,12 @@
 
 //#include "TunTapSocketHandle.mpp"
 //#include "TunTapSocketHandle.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup concrete_protocol_group
-    /// @{
+    //\{
 
     typedef MakeSocketPolicy<
         NoAddressingPolicy,
@@ -80,7 +80,7 @@ namespace senf {
     {
     public:
         ///\name Constructors
-        ///@{
+        //\{
         void init_client() const;       ///< Open tap socket and create new tap interface
                                         /**< Opens the tun/tap socket and create a new tap interface
                                              Use \ref ifaceName() to get the actual name of the newly
@@ -109,10 +109,10 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
 
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         unsigned available() const;
         bool eof() const;               ///< returns always false.
@@ -121,17 +121,17 @@ namespace senf {
 
     private:
         mutable unsigned int ifaceIndex_;
-        ///@}
+        //\}
     };
 
     typedef ProtocolClientSocketHandle<TapSocketProtocol> TapSocketHandle;
                                         ///< SocketHandle of TapSocketProtocol
                                         /**< \related TapSocketProtocol */
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "TunTapSocketHandle.cci"
 //#include "TunTapSocketHandle.ct"
 //#include "TunTapSocketHandle.cti"

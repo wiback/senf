@@ -32,7 +32,7 @@
 #include "MIHTypes.hh"
 
 //#include "TLVParser.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -192,7 +192,7 @@ namespace senf {
 
     public:
         ///\name Value setters
-        ///@{
+        //\{
         void value( MIHFId const & id);
 
         void value( std::string        const & id  );
@@ -200,10 +200,10 @@ namespace senf {
         void value( senf::INet4Address const & addr);
         void value( senf::INet6Address const & addr);
         void value( senf::EUI64        const & addr);
-        ///@}
+        //\}
 
         ///\name Value getters
-        ///@{
+        //\{
         MIHFId valueAs( MIHFId::Type type) const;
 
         std::string        valueAsString()       const;
@@ -211,10 +211,10 @@ namespace senf {
         senf::INet4Address valueAsINet4Address() const;
         senf::INet6Address valueAsINet6Address() const;
         senf::EUI64        valueAsEUI64()        const;
-        ///@}
+        //\}
 
         ///\name Value comparisons
-        ///@{
+        //\{
         bool valueEquals( MIHFId const & id) const;
 
         bool valueEquals( std::string        const & id  ) const;
@@ -222,7 +222,7 @@ namespace senf {
         bool valueEquals( senf::INet4Address const & addr) const;
         bool valueEquals( senf::INet6Address const & addr) const;
         bool valueEquals( senf::EUI64        const & addr) const;
-        ///@}
+        //\}
 
         void dump(std::ostream & os) const;
         void maxIdLength(boost::uint8_t maxl) const;
@@ -367,7 +367,7 @@ namespace senf {
 }
 
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "TLVParser.cci"
 #include "TLVParser.ct"
 #include "TLVParser.cti"

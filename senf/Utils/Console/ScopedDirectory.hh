@@ -33,7 +33,7 @@
 #include "LazyDirectory.hh" // For ScopedDirectory template default arg
 
 //#include "ScopedDirectory.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace console {
@@ -48,9 +48,9 @@ namespace console {
         DirectoryNode & node() const;   ///< Access the proxied DirectoryNode
         operator DirectoryNode & () const; ///< Access the proxied DirectoryNode
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Proxied members (see DirectoryNode)
-        ///\{
+        //\{
 
         GenericNode::ptr remove(std::string const & name);
         bool hasChild(std::string const & name) const;
@@ -70,7 +70,7 @@ namespace console {
         void help(std::ostream & output) const;
         std::string shorthelp() const;
 
-        ///\}
+        //\}
 
     protected:
         ScopedDirectoryBase();
@@ -118,19 +118,19 @@ namespace console {
     class ScopedDirectory : public ScopedDirectoryBase
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef Owner owner;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         explicit ScopedDirectory(Owner * owner);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         template <class NodeType>
         NodeType & add(std::string const & name, boost::shared_ptr<NodeType> node);
@@ -171,7 +171,7 @@ namespace console {
 
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "ScopedDirectory.cci"
 //#include "ScopedDirectory.ct"
 #include "ScopedDirectory.cti"

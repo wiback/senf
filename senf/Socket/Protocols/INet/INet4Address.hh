@@ -36,7 +36,7 @@
 #include <senf/Utils/Tags.hh>
 
 //#include "INet4Address.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -90,7 +90,7 @@ namespace senf {
           public comparable_safe_bool<INet4Address>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef uint32_t address_type;  ///< Address representation as number in host byte order
@@ -100,9 +100,9 @@ namespace senf {
         static INet4Address const Loopback; ///< The loopback (127.0.0.1) address
         static INet4Address const Broadcast; ////< The global broadcast (255.255.255.255) address
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         INet4Address();                 ///< Construct an empty address
         explicit INet4Address(senf::NoInit_t); ///< Construct uninitialized (!) address
@@ -135,10 +135,10 @@ namespace senf {
                                              code to convert a network byte order address in an
                                              integer number into an INet4Address. */
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Accessors
-        ///@{
+        //\{
 
         bool local() const;             ///< \c true, if address is locally administered
                                         /**< This call checks, if the address is within one of the
@@ -160,7 +160,7 @@ namespace senf {
                                         /**< This member returns the address as an integer number in
                                              host byte order. This representation allows simple
                                              network math operations. */
-        ////@}
+        //-/////////////////////////////////////////////////////////////////////////////////////////
 
     private:
         enum InAddr_t { IsInAddr };
@@ -220,17 +220,17 @@ namespace senf {
           public comparable_safe_bool<INet4Network>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         INet4Network();                 ///< Construct empty (0.0.0.0/0) network
         INet4Network(INet4Address const & address, unsigned prefix_len);
                                         ///< Construct network from given address and prefix length
         explicit INet4Network(std::string const & s); ///< Construct network from CIDR notation
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         INet4Address const & address() const; ///< Get the networks address
         unsigned prefix_len() const;    ///< Get the networks prefix length
@@ -288,7 +288,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "INet4Address.cci"
 #include "INet4Address.ct"
 #include "INet4Address.cti"

@@ -37,12 +37,12 @@
 #include "BSDSocketAddress.hh"
 
 //#include "BSDAddressingPolicy.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup policy_impl_group
-    /// @{
+    //\{
 
     /** \brief Non-template implementation class of BSDAddressingPolicyMixin template
 
@@ -124,7 +124,7 @@ namespace senf {
                                              \param[in] addr local socket address */
     };
 
-    /// @}
+    //\}
 
     struct BSDAddressingPolicy
         : public AddressingPolicyBase,
@@ -140,7 +140,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "BSDAddressingPolicy.cci"
 //#include "BSDAddressingPolicy.ct"
 #include "BSDAddressingPolicy.cti"

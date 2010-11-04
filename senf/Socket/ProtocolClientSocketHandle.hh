@@ -33,12 +33,12 @@
 #include <senf/Utils/Tags.hh>
 
 #include "ProtocolClientSocketHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup handle_group
-    /// @{
+    //\{
 
     template <class Protocol> class ProtocolServerSocketHandle;
 
@@ -63,14 +63,14 @@ namespace senf {
         : public ClientSocketHandle<typename SocketProtocol::Policy>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef SocketProtocol Protocol; ///< The sockets protocol
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         /** \brief Create new client socket
 
@@ -96,8 +96,8 @@ namespace senf {
          */
         ProtocolClientSocketHandle(senf::NoInit_t);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         Protocol & protocol();          ///< Access the protocol interface
                                         /**< The returned protocol class reference gives access to
@@ -118,10 +118,10 @@ namespace senf {
         friend class ProtocolServerSocketHandle<Protocol>;
     };
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "ProtocolClientSocketHandle.cci"
 //#include "ProtocolClientSocketHandle.ct"
 #include "ProtocolClientSocketHandle.cti"

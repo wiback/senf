@@ -34,7 +34,7 @@
 #include "PacketParser.hh"
 
 //#include "IntParser.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "IntParser.ih"
 
 namespace senf {
@@ -76,7 +76,7 @@ namespace senf {
     {
         Int8Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::int8_t value_type;
         static size_type const fixed_bytes = 1;
@@ -103,7 +103,7 @@ namespace senf {
     {
         UInt8Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint8_t value_type;
         static size_type const fixed_bytes = 1;
@@ -130,7 +130,7 @@ namespace senf {
     {
         Int16Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::int16_t value_type;
         static size_type const fixed_bytes = 2;
@@ -158,7 +158,7 @@ namespace senf {
     {
         Int16LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::int16_t value_type;
         static size_type const fixed_bytes = 2;
@@ -186,7 +186,7 @@ namespace senf {
     {
         UInt16Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint16_t value_type;
         static size_type const fixed_bytes = 2;
@@ -213,7 +213,7 @@ namespace senf {
     {
         UInt16LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint16_t value_type;
         static size_type const fixed_bytes = 2;
@@ -240,7 +240,7 @@ namespace senf {
     {
         Int24Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::int32_t value_type;
         static size_type const fixed_bytes = 3;
@@ -268,7 +268,7 @@ namespace senf {
     {
         UInt24Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
         static size_type const fixed_bytes = 3;
@@ -295,7 +295,7 @@ namespace senf {
     {
         Int32Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::int32_t value_type;
         static size_type const fixed_bytes = 4;
@@ -322,7 +322,7 @@ namespace senf {
     {
         UInt32Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
         static size_type const fixed_bytes = 4;
@@ -345,7 +345,7 @@ namespace senf {
     {
         UInt32LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
         static size_type const fixed_bytes = 4;
@@ -375,7 +375,7 @@ namespace senf {
     {
         Int64Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::int64_t value_type;
         static size_type const fixed_bytes = 8;
@@ -401,7 +401,7 @@ namespace senf {
     {
         UInt64Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint64_t value_type;
         static size_type const fixed_bytes = 8;
@@ -426,7 +426,7 @@ namespace senf {
     {
         UInt64LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint64_t value_type;
         static size_type const fixed_bytes = 8;
@@ -470,7 +470,7 @@ namespace senf {
     {
         IntFieldParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::int32_t value_type;
         static size_type const start_bit = Start;
@@ -528,7 +528,7 @@ namespace senf {
     {
         UIntFieldParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
         static size_type const start_bit = Start;
@@ -573,7 +573,7 @@ namespace senf {
     {
         FlagParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         typedef bool value_type;
         static size_type const bit = Bit;
@@ -597,7 +597,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_IntParser_i_)
 #define HH_SENF_Packets_IntParser_i_

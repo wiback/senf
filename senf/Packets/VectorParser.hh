@@ -33,7 +33,7 @@
 #include "AuxParser.hh" // for the AuxPolicies
 
 //#include "VectorParser.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -79,7 +79,7 @@ namespace senf {
 
         static const size_type init_bytes = AuxPolicy::aux_bytes;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Container interface
 
         typedef ElementParser value_type;
@@ -138,7 +138,7 @@ namespace senf {
         : private AuxPolicy::WrapperPolicy
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef VectorParser<ElementParser,AuxPolicy> parser_type;
@@ -150,9 +150,9 @@ namespace senf {
         typedef iterator const_iterator;
         typedef PacketParserBase::state_type state_type;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // no default constructor
         // default copy
@@ -161,11 +161,11 @@ namespace senf {
 
         VectorParser_Container(parser_type const & vector);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         ///\name Accessors
-        ///@{
+        //\{
 
         size_type size() const;
         bool empty() const;
@@ -177,9 +177,9 @@ namespace senf {
         value_type front() const;
         value_type back() const;
 
-        ///@}
+        //\}
         ///\name Mutators
-        ///@{
+        //\{
 
         iterator shift(iterator pos, size_type n=1);
         template <class Value>
@@ -206,10 +206,10 @@ namespace senf {
         void                        resize           (size_type n);
         template <class Value> void resize           (size_type n, Value value);
 
-        ///@}
+        //\}
 
         ///\name Parser interface
-        ///@{
+        //\{
 
         parser_type parser() const;
         data_iterator i() const;
@@ -219,7 +219,7 @@ namespace senf {
         size_type bytes() const;
         void init() const;
 
-        ///@}
+        //\}
 
     protected:
 
@@ -304,7 +304,7 @@ namespace senf {
         SENF_PARSER_VECTOR_I(protected, name, size, elt_type)
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_VectorParser_i_)
 #define HH_SENF_Packets_VectorParser_i_

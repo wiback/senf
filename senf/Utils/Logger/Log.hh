@@ -35,7 +35,7 @@
 
 //#include "Log.mpp"
 #include "Log.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** \defgroup logging Logging commands
 
@@ -93,10 +93,10 @@
  */
 
 ///\addtogroup logging
-///\{
+//\{
 
 ///\name Generating log messages
-///\{
+//\{
 
 /** \brief Write log message
 
@@ -150,10 +150,10 @@
     SENF_LOG_BLOCK_TPL_( SENF_LOG_MERGE_PARAMETERS_TPL(BOOST_PP_SEQ_POP_BACK(args)),              \
                          BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args))
 
-///\}
-///\}
+//\}
+//\}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "Log.cci"
 //#include "Log.ct"
 //#include "Log.cti"

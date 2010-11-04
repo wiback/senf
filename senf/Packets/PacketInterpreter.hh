@@ -37,7 +37,7 @@
 #include <senf/Utils/TypeIdValue.hh>
 
 //#include "PacketInterpreter.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -56,7 +56,7 @@ namespace senf {
           public intrusive_refcount_t<PacketInterpreterBase>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef senf::detail::packet::smart_pointer<
@@ -121,9 +121,9 @@ namespace senf {
 
         typedef Factory const * factory_t;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // protected constructors
         // no copy
@@ -135,11 +135,11 @@ namespace senf {
 
         ptr clone();
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         ///\name Interpreter chain access
-        ///@{
+        //\{
 
         ptr next();
         ptr prev();
@@ -155,28 +155,28 @@ namespace senf {
 
         void reparse();
 
-        ///@}
+        //\}
 
         ///\name Data access
-        ///@{
+        //\{
 
         using PacketData::valid;
         PacketData & data();
 
-        ///@}
+        //\}
 
         ///\name Annotations
-        ///@{
+        //\{
 
         template <class Annotation>
         Annotation & annotation();
 
         void clearAnnotations();
 
-        ///@}
+        //\}
 
         ///\name Access to the abstract interface
-        ///@{
+        //\{
 
         optional_range nextPacketRange();
         void finalizeThis();
@@ -186,7 +186,7 @@ namespace senf {
         factory_t factory();
         factory_t nextPacketType();
 
-        ///@}
+        //\}
 
     protected:
         // protected structors
@@ -254,7 +254,7 @@ namespace senf {
           public pool_alloc_mixin< PacketInterpreter<PacketType> >
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef typename senf::detail::packet::smart_pointer<
@@ -262,9 +262,9 @@ namespace senf {
         typedef PacketType type;
         typedef typename type::parser parser;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // private constructors
         // no copy
@@ -303,8 +303,8 @@ namespace senf {
 
         ptr clone();
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         // Packet field access
 
@@ -410,7 +410,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketInterpreter_i_)
 #define HH_SENF_Packets_PacketInterpreter_i_

@@ -31,12 +31,12 @@
 #include "INetSocketProtocol.hh"
 
 //#include "TCPSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup protocol_facets_group
-    /// @{
+    //\{
 
     /** \brief Protocol facet to support TCP operations
 
@@ -63,19 +63,19 @@ namespace senf {
         void shutdown(ShutType type) const;
 
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         void close();
         unsigned available() const;
         bool eof() const;
 
-        ///@}
+        //\}
     };
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "TCPSocketProtocol.cci"
 //#include "TCPSocketProtocol.ct"
 //#include "TCPSocketProtocol.cti"

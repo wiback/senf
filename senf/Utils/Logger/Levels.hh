@@ -30,7 +30,7 @@
 
 //#include "Levels.mpp"
 #include "Levels.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace log {
@@ -73,7 +73,7 @@ namespace log {
             simpler to parse them if they are all of the same type.
      */
 
-    ///\{
+    //\{
 
     /** \brief Log level %VERBOSE
         \see loglevels */
@@ -107,14 +107,14 @@ namespace log {
         \see loglevels */
     struct NONE      : public detail::LevelBase { static unsigned const value = 0; };
 
-    ///\}
+    //\}
 
     static char const * const LEVELNAMES[8] = {
         "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
 
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "Levels.cci"
 //#include "Levels.ct"
 //#include "Levels.cti"

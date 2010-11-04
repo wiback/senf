@@ -32,7 +32,7 @@
 
 //#include "ProgramOptions.mpp"
 #include "ProgramOptions.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace console {
@@ -68,9 +68,9 @@ namespace console {
         : public detail::BundleMixin
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         ProgramOptions(int argc, char const ** argv, DirectoryNode & root = root());
                                         ///< Create ProgramOptions parser for given options
@@ -78,8 +78,8 @@ namespace console {
                                              the operating system. Especially argv[0] is \e not an
                                              option and is ignored. */
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         template <class Container>
         ProgramOptions & nonOptions(Container & container);
@@ -125,7 +125,7 @@ namespace console {
     detail::ProgramOptionsSource::ptr OptionsConfig(int argc, char const ** argv);
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "ProgramOptions.cci"
 //#include "ProgramOptions.ct"
 #include "ProgramOptions.cti"

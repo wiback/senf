@@ -40,7 +40,7 @@
 #include <senf/Utils/Console/Console.hh>
 
 //#include "Statistics.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -78,7 +78,7 @@ namespace senf {
         struct OutputEntry;
 
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::iterator_range<ValueIterator> CollectorRange;
@@ -146,9 +146,9 @@ namespace senf {
             template <class OtherOwner> friend class OutputProxy;
         };
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Accessing the current value
-        ///\{
+        //\{
 
         float min() const;              ///< Last min value entered
         float avg() const;              ///< Last avg value entered
@@ -159,10 +159,10 @@ namespace senf {
                                         /**< \returns number of basic values collected into each new
                                              value by this collector. */
 
-        ///\}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Child collectors
-        ///\{
+        //\{
 
         Collector & operator[](unsigned rank);
                                         ///< Get child collector
@@ -204,8 +204,8 @@ namespace senf {
                                              is empty, otherwise it is built by joining the
                                              collector ranks. */
 
-        ///\}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Result generation
 
         OutputProxy<StatisticsBase> output(unsigned n = 1u);
@@ -221,8 +221,8 @@ namespace senf {
                                              \endcode
                                              \param[in] n size of sliding average window */
 
-        ///\}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
         // Exceptions
 
         struct InvalidRankException : public senf::Exception
@@ -509,7 +509,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Statistics.cci"
 //#include "Statistics.ct"
 #include "Statistics.cti"

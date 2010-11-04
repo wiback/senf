@@ -37,12 +37,12 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup concrete_protocol_group
-    /// @{
+    //\{
 
     typedef MakeSocketPolicy<
         NoAddressingPolicy,
@@ -89,24 +89,24 @@ public:
     {
 
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client(unsigned short adapter=0, unsigned short device=0) const;       ///< xxx
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         unsigned available() const;
 
-        ///@}
+        //\}
 
         void setSectionFilter(unsigned short int pid,
                 unsigned char filter= 0x3e,
@@ -129,24 +129,24 @@ public:
           public DVBSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client(unsigned short adapter=0, unsigned short device=0) const;       ///< xxx
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         unsigned available() const;
 
-        ///@}
+        //\}
 
         void setPESFilter(unsigned short int pid, dmx_input_t input, dmx_output_t output, dmx_pes_type_t pesType, unsigned int flags)const;
     };
@@ -164,33 +164,33 @@ public:
           public DVBDemuxSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client(unsigned short adapter=0, unsigned short device=0) const;       ///< xxx
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         unsigned available() const;
 
-        ///@}
+        //\}
      };
 
      typedef ProtocolClientSocketHandle<DVBDvrSocketProtocol> DVBDvrHandle;
 
-    ///@}
+    //\}
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "DVBDemuxHandles.cci"
 //#include "DVBDemuxHandles.ct"
 //#include "DVBDemuxHandles.cti"

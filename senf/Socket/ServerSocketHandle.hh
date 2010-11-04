@@ -32,12 +32,12 @@
 #include "SocketHandle.hh"
 
 //#include "ServerSocketHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup handle_group
-    /// @{
+    //\{
 
     template <class SPolicy> class ClientSocketHandle;
 
@@ -74,7 +74,7 @@ namespace senf {
         : public SocketHandle<SPolicy>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         /// Address type from the addressing policy
@@ -89,9 +89,9 @@ namespace senf {
         /// Corresponding client socket handle with the same policy
         typedef ClientSocketHandle<SPolicy> ClientHandle;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // default default constructor
         // default copy constructor
@@ -110,12 +110,12 @@ namespace senf {
         typename SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type const &
         operator=(ServerSocketHandle<OtherPolicy> other);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Server socket interface
-        ///@{
+        //\{
 
         /** \brief Set local address
 
@@ -184,7 +184,7 @@ namespace senf {
                                            \returns handle of new client connection
                                            \see \ref accept() */
 
-        ///@}
+        //\}
 
         static ServerSocketHandle cast_static(FileHandle handle);
         static ServerSocketHandle cast_dynamic(FileHandle handle);
@@ -201,10 +201,10 @@ namespace senf {
 
     };
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "ServerSocketHandle.cci"
 //#include "ServerSocketHandle.ct"
 #include "ServerSocketHandle.cti"

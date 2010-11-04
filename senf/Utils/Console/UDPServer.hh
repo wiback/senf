@@ -35,7 +35,7 @@
 #include "Executor.hh"
 
 //#include "UDPServer.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace console {
@@ -60,24 +60,24 @@ namespace console {
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL(senf::log::NOTICE);
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef senf::ClientSocketHandle<
             senf::MakeSocketPolicy<senf::UDPv4SocketProtocol::Policy,
                                    senf::BSDAddressingPolicy>::policy > Handle;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         explicit UDPServer(senf::INet4SocketAddress const & address);
                                         ///< Open UDP server on \a address
         explicit UDPServer(senf::INet6SocketAddress const & address);
                                         ///< Open UDP server on \a address
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         UDPServer & replies(bool enable); ///< Enable or disable reply packets
                                         /** \e Default: enabled */
@@ -115,7 +115,7 @@ namespace console {
 
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "UDPServer.cci"
 //#include "UDPServer.ct"
 //#include "UDPServer.cti"

@@ -35,7 +35,7 @@
 #include "PacketInterpreter.hh"
 
 //#include "Packet.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -96,7 +96,7 @@ namespace senf {
     template <class PackeType> class ConcretePacket;
 
     ///\addtogroup packet_module
-    ///@{
+    //\{
 
     /** \brief Main %Packet class
 
@@ -142,7 +142,7 @@ namespace senf {
           public boost::equality_comparable<Packet>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef void type;              ///< Type of the packet.
@@ -150,9 +150,9 @@ namespace senf {
         ///< Unsigned type to represent packet size
         typedef PacketInterpreterBase::factory_t factory_t; ///< Packet factory type (see below)
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // default copy constructor
         // default copy assignment
@@ -177,11 +177,11 @@ namespace senf {
                                              ConcretePacket into a general Packet, loosing the
                                              protocol specific interface. */
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         ///\name Interpreter chain access
-        ///@{
+        //\{
 
         Packet      next() const;       ///< Get next packet in chain
                                         /**< \throws InvalidPacketChainException if no next packet
@@ -313,20 +313,20 @@ namespace senf {
                                         /**< This member will throw away the packet chain after the
                                              current packet. The payload will be reparsed
                                              automatically when calling next() */
-        ///@}
+        //\}
 
         ///\name Data access
-        ///@{
+        //\{
 
         PacketData & data() const;      ///< Access the packets raw data container
         size_type size() const;         ///< Return size of packet in bytes
                                         /**< This size does \e not include the size of any preceding
                                              headers/packets/interpreters. It does however include
                                              \c this packets payload. */
-        ///@}
+        //\}
 
         ///\name Annotations
-        ///@{
+        //\{
 
         template <class Annotation>
         Annotation & annotation();      ///< Get packet annotation
@@ -394,10 +394,10 @@ namespace senf {
                                              the annotations equates to a new created %packet.
                                              \warning all references to existing complex
                                              annotations become invalid. */
-        ///@}
+        //\}
 
         ///\name Other methods
-        ///@{
+        //\{
 
         bool operator==(Packet const & other) const; ///< Check for packet identity
                                         /**< Two packet handles compare equal if they really are the
@@ -506,7 +506,7 @@ namespace senf {
                                         /**< This method returns true if there is any other packet
                                              handle pointing to any header in the packet chain. */
 
-        ///@}
+        //\}
 
     protected:
         explicit Packet(PacketInterpreterBase::ptr const & packet);
@@ -566,15 +566,15 @@ namespace senf {
         : public Packet
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef PacketType type;
         typedef typename PacketType::parser Parser;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // default copy constructor
         // default copy assignment
@@ -736,8 +736,8 @@ namespace senf {
 
         ConcretePacket clone() const;
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         // Field access
 
@@ -789,11 +789,11 @@ namespace senf {
     template <class PacketType, class Parser>
     Parser operator<<(Parser target, ConcretePacket<PacketType> const & packet);
 
-    ///@}
+    //\}
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_Packet_i_)
 #define HH_SENF_Packets_Packet_i_

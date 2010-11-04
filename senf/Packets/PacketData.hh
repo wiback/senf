@@ -32,7 +32,7 @@
 #include <senf/Utils/Exception.hh>
 
 //#include "PacketData.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -68,7 +68,7 @@ namespace senf {
         : boost::noncopyable
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef senf::detail::packet::iterator iterator;
@@ -82,18 +82,18 @@ namespace senf {
         typedef byte * pointer;
         typedef byte const * const_pointer;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // no public constructors
         // no conversion constructors
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         ///\name Sequence interface to raw data
-        ///@{
+        //\{
 
         iterator begin() const; ///< Return iterator to beginning
                                 /**< Returns an <em>random access iterator</em> referring to the
@@ -134,7 +134,7 @@ namespace senf {
         void reserve(size_type n);
         size_type capacity() const;
 
-        ///@}
+        //\}
 
     protected:
         PacketData(size_type b, size_type e);
@@ -165,7 +165,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketData_i_)
 #define HH_SENF_Packets_PacketData_i_

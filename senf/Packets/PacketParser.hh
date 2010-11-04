@@ -164,7 +164,7 @@
 #include "SafeIterator.hh"
 
 //#include "PacketParser.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -213,7 +213,7 @@ namespace senf {
               // created data object. The default implementation just does nothing.
               void init() const;
 
-              // ////////////////////////////////////////////////////////////////////////
+              //-////////////////////////////////////////////////////////////////////////
 
               // Add here members returning (sub-)parsers for the fields. The 'parse' member is
               // used to construct the sub-parsers. This member either takes an iterator to the
@@ -238,7 +238,7 @@ namespace senf {
     class PacketParserBase
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef detail::packet::iterator data_iterator; ///< Raw data iterator type
@@ -248,17 +248,17 @@ namespace senf {
         typedef PacketData * state_type; ///< Type of the 'state' parameter
         typedef PacketParserBase parser_base_type; ///< Base type of the next parser
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // no default constructor
         // default copy
         // default destructor
         // no conversion constructors
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         data_iterator i() const;        ///< Return beginning of data to parse
                                         /**< The parser is expected to interpret the data beginning
@@ -536,7 +536,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketParser_i_)
 #define HH_SENF_Packets_PacketParser_i_

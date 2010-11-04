@@ -36,7 +36,7 @@
 #include <senf/Socket/ProtocolClientSocketHandle.hh>
 
 //#include "UNDatagramSocketHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -49,7 +49,7 @@ namespace senf {
         >::policy ConnectedUNDatagramSocket_Policy;   ///< Socket Policy of the Unix Domain Datagram Protocol (connected)
 
     /// \ingroup concrete_protocol_group
-    /// \{
+    //\{
 
     /** \brief Unix Domain Datagram Socket Protocol (connected)
 
@@ -77,11 +77,11 @@ namespace senf {
           public AddressableBSDSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client() const;       ///< Create unconnected client socket
                                         /**< \note This member is implicitly called from the
@@ -96,16 +96,16 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
     };
 
     typedef ProtocolClientSocketHandle<ConnectedUNDatagramSocketProtocol> ConnectedUNDatagramClientSocketHandle;
 
-    ///\}
+    //\}
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "ConnectedUNDatagramSocketHandle.cci"
 //#include "ConnectedUNDatagramSocketHandle.ct"
 //#include "ConnectedUNDatagramSocketHandle.cti"

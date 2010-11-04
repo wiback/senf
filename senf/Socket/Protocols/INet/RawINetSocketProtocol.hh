@@ -29,7 +29,7 @@
 namespace senf {
 
     /// \addtogroup protocol_facets_group
-    /// @{
+    //\{
 
     /** \brief Protocol facet to support RAW operations upon IPv4/6
 
@@ -42,15 +42,15 @@ namespace senf {
     {
     public:
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         unsigned available() const;
         bool eof() const;
 
-        ///@}
+        //\}
     };
 
-    /// @}
+    //\}
 }
 
 #endif /*HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_*/

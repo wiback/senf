@@ -31,7 +31,7 @@
 
 //#include "ConfigFile.mpp"
 #include "ConfigFile.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace console {
@@ -61,9 +61,9 @@ namespace console {
         : public detail::BundleMixin
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         explicit ConfigFile(std::string const & filename, DirectoryNode & root = root());
                                         ///< Create ConfigFile object for \a filename
@@ -71,8 +71,8 @@ namespace console {
                                              parse() calls. All configuration statements will be
                                              interpreted relative to \a root as root node. */
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         void ignoreMissing();           ///< Call to ignore missing files
 
@@ -102,7 +102,7 @@ namespace console {
 
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "ConfigFile.cci"
 //#include "ConfigFile.ct"
 //#include "ConfigFile.cti"

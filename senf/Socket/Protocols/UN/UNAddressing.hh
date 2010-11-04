@@ -35,7 +35,7 @@
 #include <senf/Socket/Protocols/BSDSocketAddress.hh>
 
 //#include "UNAddressing.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -79,7 +79,7 @@ namespace senf {
     std::ostream & operator<<(std::ostream & os, UNSocketAddress const & addr);
 
     /// \addtogroup policy_impl_group
-    /// @{
+    //\{
 
     /** \brief Addressing policy supporting unix domain addressing
 
@@ -105,10 +105,10 @@ namespace senf {
         using BSDAddressingPolicyMixin<UNSocketAddress>::bind;
     };
 
-    ///@}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "UNAddressing.cci"
 //#include "UNAddressing.ct"
 //#include "UNAddressing.cti"

@@ -35,7 +35,7 @@
 #include <iostream>
 
 //#include "BSDSocketAddress.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -99,15 +99,15 @@ namespace senf {
                                              each typed derived class
                                              (e.g. INet4Address::addressFamily) */
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Generic sockaddr interface
-        ///\{
+        //\{
 
         struct sockaddr const * sockaddr_p() const;
         socklen_t socklen() const;
         socklen_t const * socklen_p() const;
 
-        ///\}
+        //\}
 
     protected:
         BSDSocketAddress(socklen_t len, short family);
@@ -173,9 +173,9 @@ namespace senf {
         : public BSDSocketAddress
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         GenericBSDSocketAddress();
         GenericBSDSocketAddress(BSDSocketAddress const & other);
@@ -184,17 +184,17 @@ namespace senf {
         GenericBSDSocketAddress(const GenericBSDSocketAddress& other);
         GenericBSDSocketAddress& operator=(const GenericBSDSocketAddress& other);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Generic sockaddr interface
-        ///\{
+        //\{
 
         struct sockaddr const * sockaddr_p() const;
         struct sockaddr * sockaddr_p();
 
         using BSDSocketAddress::socklen_p;
 
-        ///\}
+        //\}
 
     protected:
 
@@ -204,7 +204,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "BSDSocketAddress.cci"
 //#include "BSDSocketAddress.ct"
 //#include "BSDSocketAddress.cti"

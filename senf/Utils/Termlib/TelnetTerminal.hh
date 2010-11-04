@@ -32,7 +32,7 @@
 #include <senf/Utils/Logger.hh>
 
 //#include "TelnetTerminal.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace term {
@@ -59,13 +59,13 @@ namespace term {
         TelnetTerminal();
 
         ///\name AbstractTerminal interface implementation
-        ///\{
+        //\{
         virtual void setCallbacks(AbstractTerminal::Callbacks & cb);
         virtual std::string terminalType();
         virtual unsigned width() const;
         virtual unsigned height() const;
         virtual void write(char ch);
-        ///\}
+        //\}
 
     protected:
 
@@ -85,7 +85,7 @@ namespace term {
 
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "TelnetTerminal.cci"
 //#include "TelnetTerminal.ct"
 //#include "TelnetTerminal.cti"

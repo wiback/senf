@@ -31,20 +31,21 @@
 #include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "Daemon.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /** \brief %Daemon process
 
-        The %Daemon class provides simple management for daemon processes. Specifically, it implements
+        The %Daemon class provides simple management for daemon processes. Specifically, it
+        implements
         \li <i>Safe startup.</i> If the startup fails, the foreground process which launches the
             daemon will terminate with an appropriate error exit code.
         \li <i>Straight forward application initialization.</i> The daemon process is forked before
-            even initializing the application. The initialization procedure must not cater for a
-            later fork().
-        \li <i>Automatic pid file management.</i> The daemon will not be started, if a valid pid file is
-            found. Stale pid files are automatically removed.
+            even initializing the application. The initialization procedure doesn't need to cater
+            for a later fork().
+        \li <i>Automatic pid file management.</i> The daemon will not be started, if a valid pid
+            file is found. Stale pid files are automatically removed.
         \li <i>Console log management.</i> It is possible, to redirect standard output and error to
             one or two log files. Messages pertaining to application initialization will be written
             to both the console and the log file whereas later messages will be directed to the log
@@ -105,7 +106,7 @@ namespace senf {
     public:
         SENF_LOG_CLASS_AREA();
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-/////////////////////////////////////////////////////////////////////////
         // Types
 
         /// Select standard stream to redirect
@@ -115,15 +116,15 @@ namespace senf {
         ,   Both    /** Both, standard output and error stream */
         };
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-/////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///\{
+        //\{
 
         virtual ~Daemon();
 
-        ///\}
+        //\}
         ///\name Parameters
-        ///\{
+        //\{
 
         void daemonize(bool);           ///< Configure whether to run in fore- or background
         bool daemon();                  ///< \c true, if running as daemon
@@ -143,9 +144,9 @@ namespace senf {
                                              daemon startup. If another running instance of the
                                              daemon is detected, starting the daemon will fail. */
 
-        ///\}
+        //\}
         ///\name Auxiliary helpers
-        ///\{
+        //\{
 
         void detach();                  ///< Detach into background now
                                         /**< This is \e not the same as forking. The process will
@@ -165,7 +166,7 @@ namespace senf {
                                         /**< This is used when rotating the logs. By default,
                                              SIGHUP calls logReopen. */
 
-        ///\}
+        //\}
 
         int start(int argc, char const ** argv); ///< Called from main() to launch daemon.
                                         /**< Normally not called directly but from the
@@ -241,7 +242,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Daemon.cci"
 //#include "Daemon.ct"
 //#include "Daemon.cti"

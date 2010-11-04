@@ -34,7 +34,7 @@
 
 //#include "ParseHelpers.mpp"
 #include "ParseHelpers.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** \defgroup packetparsermacros Helper macros for defining new packet parsers
 
@@ -279,10 +279,10 @@
     \ingroup packetparser
  */
 ///\addtogroup packetparsermacros
-///\{
+//\{
 
 ///\name Control information
-///@{
+//\{
 
 /** \brief Define fixed size parser
 
@@ -386,10 +386,10 @@
  */
 #define SENF_PARSER_FINALIZE(name)
 
-///@}
+//\}
 
 ///\name Parser fields
-///@{
+//\{
 
 /** \brief Define normal parser field
 
@@ -482,10 +482,10 @@
  */
 #define SENF_PARSER_CUSTOM_FIELD(name, type, size)
 
-///@}
+//\}
 
 ///\name Bit fields
-///@{
+//\{
 
 /** \brief Define bit-field
 
@@ -533,10 +533,10 @@
  */
 #define SENF_PARSER_PRIVATE_BITFIELD(name, bits, type)
 
-///@}
+//\}
 
 ///\name Current offset
-///@{
+//\{
 
 /** \brief Skip bytes
 
@@ -662,7 +662,7 @@
  */
 #define SENF_PARSER_CURRENT_FIXED_OFFSET()
 
-///@}
+//\}
 
 #else
 
@@ -691,9 +691,9 @@
 
 #endif
 
-///\}
+//\}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_ParseHelpers_i_)
 #define HH_SENF_Packets_ParseHelpers_i_

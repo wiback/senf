@@ -31,7 +31,7 @@
 #include "PacketParser.hh"
 
 //#include "ListParser.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -89,7 +89,7 @@ namespace senf {
 
         static const size_type init_bytes = ListPolicy::init_bytes;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Container interface
 
         typedef typename ListPolicy::element_type value_type;
@@ -138,7 +138,7 @@ namespace senf {
         : private ListPolicy
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef ListPolicy policy;
@@ -151,9 +151,9 @@ namespace senf {
         typedef iterator const_iterator;
         typedef PacketParserBase::state_type state_type;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // no default constructor
         // default copy
@@ -163,11 +163,11 @@ namespace senf {
         ListParser_Container(parser_type const & list);
         ~ListParser_Container();
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         ///\name Accessors
-        ///@{
+        //\{
 
         size_type size() const;
         bool empty() const;
@@ -178,9 +178,9 @@ namespace senf {
         value_type front() const;
         value_type back() const;
 
-        ///@}
+        //\}
         ///\name Mutators
-        ///@{
+        //\{
 
         // All these operations can be quite inefficient depending on the list type
         value_type shift(iterator pos, size_type n=1);
@@ -207,10 +207,10 @@ namespace senf {
         void                        resize           (size_type n);
         template <class Value> void resize           (size_type n, Value value);
 
-        ///@}
+        //\}
 
         ///\name Parser interface
-        ///@{
+        //\{
 
         parser_type parser() const;
         data_iterator i() const;
@@ -220,7 +220,7 @@ namespace senf {
         size_type bytes() const;
         void init() const;
 
-        ///@}
+        //\}
 
     private:
         friend class detail::ListParser_Iterator<ListParser_Container>;
@@ -320,7 +320,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_ListParser_i_)
 #define HH_SENF_Packets_ListParser_i_

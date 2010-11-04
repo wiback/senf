@@ -39,7 +39,7 @@
 #include "PacketParser.hh"
 
 //#include "VariantParser.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -84,7 +84,7 @@ namespace senf {
 
     public:
         ///\name Parser interface
-        ///\{
+        //\{
 
         VariantParser(data_iterator i, state_type s);
         VariantParser(AuxPolicy policy, data_iterator i, state_type s);
@@ -96,8 +96,8 @@ namespace senf {
             typename boost::mpl::at<parsers, boost::mpl::int_<0> >::type>::value
                 + AuxPolicy::aux_bytes;
 
-        ///\}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         unsigned variant() const;       ///< Get current variant
                                         /**< Get the currently selected variant index. The returned
@@ -255,7 +255,7 @@ namespace senf {
         SENF_PARSER_VARIANT_I(protected, name, chooser, types)
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_VariantParser_i_)
 #define HH_SENF_Packets_VariantParser_i_

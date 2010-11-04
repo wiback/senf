@@ -36,12 +36,12 @@
 #include <senf/Socket/ProtocolClientSocketHandle.hh>
 
 //#include "UNDatagramSocketHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup concrete_protocol_group
-    /// @{
+    //\{
 
     typedef MakeSocketPolicy<
         UNAddressingPolicy,
@@ -77,11 +77,11 @@ namespace senf {
           public AddressableBSDSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client() const;       ///< Create unconnected client socket
                                         /**< \note This member is implicitly called from the
@@ -96,15 +96,15 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
     };
 
     typedef ProtocolClientSocketHandle<UNDatagramSocketProtocol> UNDatagramClientSocketHandle;
 
-    ///@}
+    //\}
 
 }
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "UNDatagramSocketHandle.cci"
 //#include "UNDatagramSocketHandle.ct"
 //#include "UNDatagramSocketHandle.cti"

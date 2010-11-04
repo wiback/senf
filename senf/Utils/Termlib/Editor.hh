@@ -36,7 +36,7 @@
 #include "Terminfo.hh"
 
 //#include "Editor.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace term {
@@ -212,7 +212,7 @@ namespace term {
         : public BaseEditor
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::function<void (LineEditor&)> KeyBinding; ///< Type of a key binding function
@@ -221,7 +221,7 @@ namespace term {
 
         static unsigned const MAX_HISTORY_SIZE = 1024u;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         LineEditor(AbstractTerminal & terminal, AcceptCallback cb);
                                         ///< Create a LineEditor
@@ -229,10 +229,10 @@ namespace term {
                                              \param[in] cb callback to call for complete input
                                                  line */
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         ///\name Overall edit control
-        ///\{
+        //\{
 
         void show();                    ///< Enable editor widget
         void hide();                    ///< Disable editor widget
@@ -242,18 +242,18 @@ namespace term {
         void forceRedisplay();          ///< Redisplay the editor buffer \e now
         void prompt(std::string const & text); ///< Set prompt string
 
-        ///\}
+        //\}
 
         ///\name Cursor and display movement
-        ///\{
+        //\{
 
         void gotoChar(unsigned n);      ///< Move cursor to position \a n
         void scrollTo(unsigned n);      ///< Move positon \n to beginning of display line
 
-        ///\}
+        //\}
 
         ///\name Text manipulation
-        ///\{
+        //\{
 
         void deleteChar(unsigned n=1);  ///< Delete \a n characters at point
         void insert(char ch);           ///< Insert \a ch at point
@@ -264,46 +264,46 @@ namespace term {
                                              text. The cursor will be placed at position \a pos
                                              within this text. */
 
-        ///\}
+        //\}
 
         ///\name History
-        ///\{
+        //\{
 
         void pushHistory(std::string const & text, bool accept = false);
                                         ///< Add string \a text to history
         void prevHistory();             ///< Switch to previous history entry
         void nextHistory();             ///< Switch to next history entry
 
-        ///\}
+        //\}
 
         ///\name Aux Display
-        ///\{
+        //\{
 
         void auxDisplay(unsigned line, std::string const & text);
                                         ///< Display \a text on aux display line \a lilne
         unsigned maxAuxDisplayHeight(); ///< Get maximum height of the aux display area
         void clearAuxDisplay();         ///< Clear the aux display area
 
-        ///\}
+        //\}
 
         ///\name Get information
-        ///\{
+        //\{
 
         std::string const & text();     ///< Get current editor buffer contents
         unsigned point();               ///< Get current cursor position
         unsigned displayPos();          ///< Get current display position
         keycode_t lastKey();            ///< Get last key code received
 
-        ///\}
+        //\}
 
         ///\name Key bindings
-        ///\{
+        //\{
 
         void defineKey(keycode_t key, KeyBinding binding);
                                         ///< Bind key \a key to \a binding
         void unsetKey(keycode_t key);   ///< Remove all bindings for \a key
 
-        ///\}
+        //\}
 
     private:
         virtual bool cb_init();
@@ -364,7 +364,7 @@ namespace bindings {
 
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "Editor.cci"
 //#include "Editor.ct"
 //#include "Editor.cti"

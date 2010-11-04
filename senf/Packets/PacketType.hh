@@ -34,7 +34,7 @@
 #include "Packet.hh"
 
 //#include "PacketType.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -331,14 +331,14 @@ namespace senf {
                                              no_factory() will be returned. */
 
         ///\name PacketType interface implementation
-        ///@{
+        //\{
 
         static PacketInterpreterBase::optional_range nextPacketRange (ConcretePacket<Self> const & p);
         static PacketInterpreterBase::factory_t      nextPacketType  (ConcretePacket<Self> const & p);
         static PacketInterpreterBase::size_type      initSize        ();
         static void                                  init            (ConcretePacket<Self> const & p);
 
-        ///@}
+        //\}
     };
 
 #   ifndef DOXYGEN
@@ -356,7 +356,7 @@ namespace senf {
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketType_i_)
 #define HH_SENF_Packets_PacketType_i_

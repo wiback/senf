@@ -33,12 +33,12 @@
 #include <senf/Utils/Tags.hh>
 
 #include "ProtocolServerSocketHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup handle_group
-    /// @{
+    //\{
 
     template <class Protocol> class ProtocolClientSocketHandle;
 
@@ -67,14 +67,14 @@ namespace senf {
         : public ServerSocketHandle<typename SocketProtocol::Policy>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef SocketProtocol Protocol; ///< The socket protocol
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         /** \brief Create new server socket
 
@@ -101,8 +101,8 @@ namespace senf {
             \implementation The socket handle will have no \c body allocated.
          */
         ProtocolServerSocketHandle(senf::NoInit_t);
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         Protocol & protocol();          ///< Access the protocol interface
                                         /**< The returned protocol class reference gives access to
@@ -125,10 +125,10 @@ namespace senf {
 
     };
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "ProtocolServerSocketHandle.cci"
 //#include "ProtocolServerSocketHandle.ct"
 #include "ProtocolServerSocketHandle.cti"

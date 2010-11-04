@@ -36,12 +36,12 @@
 
 //#include "LLAddressing.mpp"
 //#include "LLAddressing.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup addr_group
-    /// @{
+    //\{
 
     /** \brief Link local address
 
@@ -71,9 +71,9 @@ namespace senf {
                      , Outgoing  = PACKET_OUTGOING  /**< Packet sent out from this host */
         };
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         LLSocketAddress();              ///< Create empty address
         explicit LLSocketAddress(unsigned proto, std::string const & iface="");
@@ -104,8 +104,8 @@ namespace senf {
         LLSocketAddress(LLSocketAddress const & other);
         LLSocketAddress& operator=(LLSocketAddress const & other);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         MACAddress address() const;     ///< Return address
         std::string interface() const;  ///< Return interface name
@@ -130,10 +130,10 @@ namespace senf {
         struct ::sockaddr_ll addr_;
     };
 
-    /// @}
+    //\}
 
     /// \addtogroup policy_impl_group
-    /// @{
+    //\{
 
     /** \brief Addressing policy supporting link-local addressing
 
@@ -158,7 +158,7 @@ namespace senf {
         using BSDAddressingPolicyMixin<LLSocketAddress>::bind;
     };
 
-    /// @}
+    //\}
 
     /** \brief Write link layer address
         \related LLSocketAddress
@@ -166,7 +166,7 @@ namespace senf {
     std::ostream & operator<<(std::ostream & os, LLSocketAddress const & llAddr);
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "LLAddressing.cci"
 //#include "LLAddressing.ct"
 //#include "LLAddressing.cti"

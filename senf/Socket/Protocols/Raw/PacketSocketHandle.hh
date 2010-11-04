@@ -40,12 +40,12 @@
 
 //#include "PacketSocketHandle.mpp"
 //#include "PacketSocketHandle.ih"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup concrete_protocol_group
-    /// @{
+    //\{
 
     typedef MakeSocketPolicy<
         LLAddressingPolicy,
@@ -84,7 +84,7 @@ namespace senf {
                                         ///< Socket types
 
         ///\name Constructors
-        ///@{
+        //\{
         void init_client(SocketType type = RawSocket, int protocol = -1) const;
                                         ///< Create packet socket
                                         /**< The new socket will receive all packets of the given
@@ -105,10 +105,10 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        ///@}
+        //\}
 
         ///\name Protocol Interface
-        ///@{
+        //\{
 
         void mcAdd(std::string const & interface, MACAddress const & address) const;
                                         ///< Enable reception of a multicast group
@@ -125,25 +125,25 @@ namespace senf {
         void promisc(std::string const & interface, bool mode) const;
                                         ///< enable/disable promiscuous mode
 
-        ///@}
+        //\}
 
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         unsigned available() const;
         bool eof() const;
 
-        ///@}
+        //\}
     };
 
     typedef ProtocolClientSocketHandle<PacketSocketProtocol> PacketSocketHandle;
                                         ///< SocketHandle of the PacketSocketProtocol
                                         /**< \related PacketPrototol */
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "PacketSocketHandle.cci"
 //#include "PacketSocketHandle.ct"
 //#include "PacketSocketHandle.cti"

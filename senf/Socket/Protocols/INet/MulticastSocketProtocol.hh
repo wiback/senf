@@ -32,12 +32,12 @@
 #include "INet6Address.hh"
 
 //#include "MulticastSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     ///\addtogroup protocol_facets_group
-    ///\{
+    //\{
 
     /** \brief Generic addressing type independent multicast protocol facet
 
@@ -224,10 +224,10 @@ namespace senf {
                                              \param[in] iface interface to leave the group on */
     };
 
-    ///\}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "MulticastSocketProtocol.cci"
 //#include "MulticastSocketProtocol.ct"
 //#include "MulticastSocketProtocol.cti"

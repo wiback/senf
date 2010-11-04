@@ -42,12 +42,12 @@
 #include <senf/Socket/ProtocolClientSocketHandle.hh>
 
 //#include "UDPSocketHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup concrete_protocol_group
-    /// @{
+    //\{
 
     typedef MakeSocketPolicy<
         INet4AddressingPolicy,
@@ -86,11 +86,11 @@ namespace senf {
           public AddressableBSDSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client() const;       ///< Create unconnected client socket
                                         /**< \note This member is implicitly called from the
@@ -105,7 +105,7 @@ namespace senf {
                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
 
     };
 
@@ -145,11 +145,11 @@ namespace senf {
           public AddressableBSDSocketProtocol
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
 
         void init_client() const;       ///< Create unconnected client socket
                                         /**< \note This member is implicitly called from the
@@ -164,16 +164,16 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
     };
 
     typedef ProtocolClientSocketHandle<UDPv6SocketProtocol> UDPv6ClientSocketHandle;
 
-    /// @}
+    //\}
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "UDPSocketHandle.cci"
 //#include "UDPSocketHandle.ct"
 //#include "UDPSocketHandle.cti"

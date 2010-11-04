@@ -31,7 +31,7 @@
 #include <senf/Packets/Packets.hh>
 #include <boost/array.hpp>
 
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf {
 
     /** \brief Parse Flag field in Radiotap header
@@ -215,7 +215,7 @@ namespace senf {
 
         size_type bytes() const;
 
-        // ////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
 #       define FIELD(name,type,index)                                   \
             typedef type name ## _t;                                    \
@@ -267,7 +267,7 @@ namespace senf {
 
         typedef boost::array<size_type,MAX_INDEX+2> OffsetTable;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Offset table handling
 
         static OffsetTable & offsetTable(boost::uint32_t presentFlags);
@@ -276,7 +276,7 @@ namespace senf {
         // Generate an offset table just from the present flags
         static void buildOffsetTable(boost::uint32_t presentFlags, OffsetTable & table);
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         OffsetTable const & currentTable() const;
         OffsetTable const & getTable(boost::uint32_t presentFlags) const;
@@ -329,7 +329,7 @@ namespace senf {
     typedef ConcretePacket<RadiotapPacketType> RadiotapPacket;
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "RadiotapPacket.cci"
 //#include "RadiotapPacket.ct"
 #include "RadiotapPacket.cti"

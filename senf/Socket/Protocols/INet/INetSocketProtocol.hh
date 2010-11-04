@@ -37,12 +37,12 @@
 #include <senf/Socket/SocketProtocol.hh>
 
 //#include "INetSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup protocol_facets_group
-    /// @{
+    //\{
 
     /** \brief Generic addressing type independent INet protocol facet
      */
@@ -68,11 +68,11 @@ namespace senf {
                                              \returns Bound interface name */
     };
 
-    /// @}
+    //\}
 
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "INetSocketProtocol.cci"
 //#include "INetSocketProtocol.ct"
 //#include "INetSocketProtocol.cti"

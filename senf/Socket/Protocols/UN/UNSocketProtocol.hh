@@ -30,12 +30,12 @@
 #include <senf/Socket/SocketProtocol.hh>
 
 //#include "UNSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup protocol_facets_group
-    /// @{
+    //\{
 
     /** \brief Protocol facet providing Unix Domain Addressing related API
 
@@ -57,7 +57,7 @@ namespace senf {
                                            block. Like the overriden method, this member will ignore
                                            failures and will never throw. It therefore safe to be
                                            called from a destructor. */        ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
          unsigned available() const;
          bool eof() const;
@@ -68,10 +68,10 @@ namespace senf {
         std::string path_;
     };
 
-    ///@}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "UNSocketProtocol.cci"
 //#include "UNSocketProtocol.ct"
 //#include "UNSocketProtocol.cti"

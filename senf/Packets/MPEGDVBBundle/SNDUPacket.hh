@@ -33,7 +33,7 @@
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 //#include "SNDUPacket.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
@@ -58,16 +58,16 @@ namespace senf {
 
         SENF_PARSER_FINALIZE( SNDUPacketParser );
 
-        MACAddressParser destination()         /// Only defined if d_bit() == \c false
+        MACAddressParser destination()  ///< Only defined if d_bit() == \c false
             { return destination_().get<0>(); }
 
-        bool d_bit()                    /// Destination absent bit
+        bool d_bit()                    ///< Destination absent bit
             { return d_bit_(); }
 
-        void withDestination()          /// Clear destination absent bit
+        void withDestination()          ///< Clear destination absent bit
             { destination_().init<0>(); }
 
-        void withoutDestination()       /// Set destination absent bit
+        void withoutDestination()       ///< Set destination absent bit
             { destination_().init<1>(); }
 
         UInt32Parser crc()
@@ -133,7 +133,7 @@ namespace senf {
 }
 
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "SNDUPacket.cci"
 //#include "SNDUPacket.ct"
 //#include "SNDUPacket.cti"

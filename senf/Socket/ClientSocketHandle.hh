@@ -35,12 +35,12 @@
 #include "SocketHandle.hh"
 
 //#include "ClientSocketHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup handle_group
-    /// @{
+    //\{
 
     template <class SPolicy> class ServerSocketHandle;
 
@@ -90,7 +90,7 @@ namespace senf {
         : public SocketHandle<SPolicy>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         /// Address type from the addressing policy
@@ -108,9 +108,9 @@ namespace senf {
             NoAddressingPolicy. */
         typedef ServerSocketHandle<SPolicy> ServerHandle;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         // default default constructor
         // default copy constructor
@@ -138,12 +138,12 @@ namespace senf {
         ClientSocketHandle<OtherPolicy> const & operator=(ClientSocketHandle<OtherPolicy> other);
 #       endif
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Reading and Writing
-        ///@{
+        //\{
 
         /** \brief Read data from socket
 
@@ -360,9 +360,9 @@ namespace senf {
                                              \see \ref writeto() \n
                                                   <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>  */
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Addressing
-        ///@{
+        //\{
 
         /** \brief Connect to remote peer
 
@@ -418,7 +418,7 @@ namespace senf {
                                         ///< Query local address
                                         /**< \see \ref local() */
 
-        ///@}
+        //\}
 
         static ClientSocketHandle cast_static(FileHandle handle);
         static ClientSocketHandle cast_dynamic(FileHandle handle);
@@ -437,10 +437,10 @@ namespace senf {
         friend class senf::ServerSocketHandle<SPolicy>;
     };
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "ClientSocketHandle.cci"
 #include "ClientSocketHandle.ct"
 #include "ClientSocketHandle.cti"

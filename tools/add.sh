@@ -33,8 +33,9 @@ EOF
 fi
 
 base="`dirname "$0"`"; base="`cd "$base/_templates"; pwd`"
+root="`cd "$base/../.."; pwd`"
 
-if [ "$1" == "-f" ]; then
+if [ "$1" = "-f" ]; then
     force=1
     shift
 fi
@@ -57,7 +58,14 @@ if [ -z "$force" -a -r "$1" ] ; then
     exit 1
 fi
 
-sed -e "s/@NAME@/$name/g" -e "s/@AUTHOR@/${SENF_AUTHOR:-@AUTHOR@}/g" \
+path="`dirname "$1"`"; path="`cd "$path"; pwd`"
+path="$path/${name%%.*}"
+path="${path#$root}"
+path="$(echo "${path#/}" | tr / _)"
+
+sed -e "s/@NAME@/$name/g" \
+    -e "s/@PATH@/$path/g" \
+    -e "s/@AUTHOR@/${SENF_AUTHOR:-@AUTHOR@}/g" \
     < "$base/Example$type" \
     > "$1"
 

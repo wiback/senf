@@ -39,12 +39,12 @@
 #include <senf/Socket/SocketProtocol.hh>
 #include <fcntl.h>
 //#include "DVBFrontendHandle.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup concrete_protocol_group
-    /// @{
+    //\{
 
     typedef MakeSocketPolicy<
         NoAddressingPolicy,
@@ -76,18 +76,18 @@ namespace senf {
     public:
 
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // internal interface
 
         ///\name Constructors
-        ///@{
+        //\{
         void init_client(unsigned short adapter = 0, unsigned short device = 0, int flags = (O_RDWR | O_NONBLOCK) ) const;
                                         ///< Opens the specified frontend device in read-only mode.
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
-        ///@}
+        //\}
 
         void setNonBlock(bool on = true) const;
 
@@ -120,7 +120,7 @@ namespace senf {
                                                                         /**< Returns dvb_frontend_parameters struct, which contains the actual
                                                                              configuration of the device.*/
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         dvb_frontend_event getEvent() const;
 
@@ -132,7 +132,7 @@ namespace senf {
                                         /**< Returns always <tt>false</tt>, since the DVB frontend
                                              socket does not support the notion of EOF. */
 
-        ///@}
+        //\}
 
         int16_t signalStrength() const; ///< Returns current signal strength
                                         /**< Returns the signal strength value for the signal
@@ -167,11 +167,11 @@ namespace senf {
 
     typedef ProtocolClientSocketHandle<DVBFrontendSocketProtocol> DVBFrontendHandle;
 
-    ///@}
+    //\}
 }
 
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "DVBFrontendHandle.cci"
 //#include "DVBFrontendHandle.ct"
 //#include "DVBFrontendHandle.cti"

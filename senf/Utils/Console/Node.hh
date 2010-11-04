@@ -212,7 +212,7 @@
 #include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "Node.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace console {
@@ -258,14 +258,14 @@ namespace console {
     {
         SENF_LOG_CLASS_AREA();
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::shared_ptr<GenericNode> ptr;
         typedef boost::shared_ptr<GenericNode const> cptr;
         typedef boost::weak_ptr<GenericNode> weak_ptr;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         virtual ~GenericNode();
 
@@ -349,23 +349,23 @@ namespace console {
         : public GenericNode
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::shared_ptr<LinkNode> ptr;
         typedef boost::shared_ptr<LinkNode const> cptr;
         typedef boost::weak_ptr<LinkNode> weak_ptr;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///@{
+        //\{
 
         static ptr create(GenericNode & node); ///< Create new link node.
                                         /**< You should normally use DirectoryNode::link() to
                                              create a link node. */
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         GenericNode & follow() const;   ///< Access the referenced node
 
@@ -408,7 +408,7 @@ namespace console {
         SENF_LOG_CLASS_AREA();
         typedef std::map<std::string, GenericNode::ptr> ChildMap;
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::shared_ptr<DirectoryNode> ptr;
@@ -421,19 +421,19 @@ namespace console {
         typedef DirectoryNode node_type;
         typedef DirectoryNode & return_type;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///\{
+        //\{
 
         static ptr create();            ///< Create node object.
                                         /**< You should normally use either mkdir() or
                                              ScopedDirectory instead of create() */
         ~DirectoryNode();
 
-        ///\}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Children
-        ///\{
+        //\{
 
         template <class NodeType>
         NodeType & add(std::string const & name, boost::shared_ptr<NodeType> node);
@@ -514,8 +514,8 @@ namespace console {
                                         ///< Return iterator range of completions for \a s
                                         /**< The returned range is sorted by child name. */
 
-        ///\}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         DirectoryNode & doc(std::string const & doc); ///< Set node documentation
         DirectoryNode & shortdoc(std::string const & doc); ///< Set node short documentation
@@ -558,14 +558,14 @@ namespace console {
     {
         SENF_LOG_CLASS_AREA();
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::shared_ptr<CommandNode> ptr;
         typedef boost::shared_ptr<CommandNode const> cptr;
         typedef boost::weak_ptr<CommandNode> weak_ptr;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
 
         void execute(std::ostream & output, ParseCommandInfo const & command) const;
                                         ///< Execute the command
@@ -630,7 +630,7 @@ namespace console {
     {
         SENF_LOG_CLASS_AREA();
     public:
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         // Types
 
         typedef boost::shared_ptr<SimpleCommandNode> ptr;
@@ -642,14 +642,14 @@ namespace console {
         typedef SimpleCommandNode node_type;
         typedef SimpleCommandNode & return_type;
 
-        ///////////////////////////////////////////////////////////////////////////
+        //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
-        ///\{
+        //\{
 
         static ptr create(Function const & fn);
 
-        ///\}
-        ///////////////////////////////////////////////////////////////////////////
+        //\}
+        //-////////////////////////////////////////////////////////////////////////
 
         ptr thisptr();
         cptr thisptr() const;
@@ -808,7 +808,7 @@ namespace factory {
 
 }}
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Node.cci"
 //#include "Node.ct"
 #include "Node.cti"

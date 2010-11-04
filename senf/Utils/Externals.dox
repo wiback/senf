@@ -1,6 +1,6 @@
 /**\defgroup externals External objects referenced from within SENF */
 ///\addtogroup externals
-///\{
+//\{
 namespace boost { class array {}; }
 namespace boost { class base_from_member {}; }
 namespace boost { class enable_if {}; }
@@ -17,4 +17,4 @@ namespace boost { namespace spirit { class grammar_def {}; } }
 namespace boost { namespace iostreams { class sink {}; } }
 namespace std { class exception {}; }
 namespace std { class string {}; }
-///\}
+//\}

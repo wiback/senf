@@ -31,12 +31,12 @@
 #include "INetSocketProtocol.hh"
 
 //#include "UDPSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
     /// \addtogroup protocol_facets_group
-    /// @{
+    //\{
 
     /** \brief Protocol facet to support UDP operations
 
@@ -48,18 +48,18 @@ namespace senf {
     {
     public:
         ///\name Abstract Interface Implementation
-        ///@{
+        //\{
 
         unsigned available() const;
         bool eof() const;
 
-        ///@}
+        //\}
     };
 
-    /// @}
+    //\}
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "UDPSocketProtocol.cci"
 //#include "UDPSocketProtocol.ct"
 //#include "UDPSocketProtocol.cti"
