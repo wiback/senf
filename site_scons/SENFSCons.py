@@ -150,7 +150,6 @@ def AutoRules(env, exclude=[], subdirs=[], doc_extra_sources = []):
     sources, tests, includes = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
     subscripts               = sorted(env.Glob("*/SConscript", strings=True))
     doxyfile                 = env.Glob("Doxyfile")
-    objects                  = []
 
     if sources               : env.Append(ALLOBJECTS = env.Object(sources))
     if tests                 : env.BoostUnitTest('test', tests)
@@ -166,10 +165,10 @@ def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
     subscripts               = sorted(env.Glob("*/SConscript", strings=True))
     doxyfile                 = env.Glob("Doxyfile")
 
-    objects = env.Object(sources)
-    cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', objects, NAME=((name)))
-    sobundle = env.SharedLibrary('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', sources, NAME=((name)),
-                                 LIBS=[], SHLIBPREFIX='')
+    objects  = env.Object         (sources)
+    cobject  = env.CombinedObject ('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', objects, NAME=((name)))
+    sobundle = env.SharedLibrary  ('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', sources, NAME=((name)),
+                                   LIBS=[], SHLIBPREFIX='')
 
     env.Default(cobject)
     env.Default(sobundle)

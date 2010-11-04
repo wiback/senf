@@ -101,6 +101,7 @@ cref
 CRON
 ct
 cti
+Ctrl
 CXXFLAGS
 daemonization
 datagram
@@ -137,6 +138,7 @@ DSMCCSection
 dt
 DTCP
 DTCPHelloPacket
+dumpPacket
 dumpPacketInfo
 DVB
 ElementParser
@@ -194,6 +196,7 @@ failbit
 fbipList
 FBIPList
 fbips
+FdEvent
 FFFF
 FileBody
 filebody
@@ -240,6 +243,7 @@ HardwareWLANInterface
 headport
 Helvetica
 hexadecimal
+hexdump
 hh
 hideinitializer
 Hmm
@@ -454,6 +458,7 @@ PacketTypeMixin
 PacketTypeNotRegistered
 param
 parameterIndex
+parseable
 ParseArray
 parsecollection
 ParseCommandInfo
@@ -490,6 +495,7 @@ POSIX
 powerIndexValue
 ppi
 pre
+prettyName
 prev
 PriorityJoin
 protocolbundle
@@ -641,9 +647,11 @@ SyslogTarget
 SystemException
 TapSocketHandle
 TargetInterface
+tcpdump
 td
 telnet
 templated
+tethereal
 thorsten
 ThresholdQueueing
 ThrottleBarrier

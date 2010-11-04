@@ -39,8 +39,8 @@
     < Hit Ctrl-C when you've seen enough >
     </pre>
 
-    We will now look at the code which is found in \c Sniffer.cc in the \c %Sniffer directory. The
-    code starts out by including the necessary headers
+    We will now look at the code which is found in \c Sniffer.cc in the <tt>Examples/%Sniffer</tt>
+    directory. The code starts out by including the necessary headers
 
     \skip // Custom includes
     \until #include <senf/Scheduler/Scheduler.hh>
@@ -72,9 +72,10 @@
     the application, it might be better to let the exception \c abort the execution so you can get a
     backtrace of the exception origin in the debugger.
 
-    We now create a packet socket and bind it to the interface given as second command line argument.
-    A packet socket is a linux specific type of socket which returns ethernet packets directly from
-    the network wire. By uncommenting the last line, you may switch the interface into promiscuous mode.
+    We create a packet socket and bind it to the interface given as second command line argument.  A
+    packet socket is a linux specific type of socket which returns ethernet packets directly from
+    the network wire. By uncommenting the last line, you may switch the interface into promiscuous
+    mode.
 
     \until //
 
@@ -87,15 +88,17 @@
 
     \until sock.read
 
-    \doc the following section is obsolete!
+    There are several ways to read and parse a packet with different tradeoffs between efficiency
+    and simplicity. The Version we use here is already quite efficient.
 
-    Lets digest this line step by step: We declare a variable named \c packet as a smart pointer to
-    an \c EthernetPacket instance. \c ptr is a typedef member of all Packet classes for the
-    corresponding smart pointer type. We then initialize this pointer with a call to the static \c
-    create member of the \c Packet class. This member takes the type of Packet to parse as a
-    template argument. We pass \c EthernetPacket here. The function takes an iterator range as an
-    argument, and we pass it the complete packet just read by giving the range \c begin() to \c
-    end() of our just read \c data string.
+    We begin by pre-declaring an uninitialized senf::EthernetPacket instance. By uninitialized we
+    mean, that the instance is not parseable and has a length of 0 bytes. This differs from a
+    default-constructed packet instance which may have initial content and \e is parseable.
+
+    We then tell the socket to read as much data as is available into the packet. The second arg to
+    read specifies the maximum number of bytes to read or 0 to read as much as possible. We pass
+    <tt>packet.data()</tt> to <tt>socket.read</tt> which is an STL compatible container holding the
+    data bytes of our previously created senf::EthernetPacket instance (which is currently empty).
 
     The next step is to write out the packet to the standard output
 
@@ -120,28 +123,27 @@
 
     The \c prettyName function from the \c Utils library is used, to get a nice, printable
     representation of the \e dynamic type of the exception instance. It is an interface to the g++
-    demangler. This is necessary since the \c name member of the C++ \c type_info instance is a
+    de-mangler. This is necessary since the \c name member of the C++ \c type_info instance is a
     mangled name in \c g++.
 
     That's it for the simple blocking implementation.
 
     \section example_scheduler Using the Scheduler
 
-    However, we have another one which uses the Scheduler. We do this as it will be most of the
-    time: We define a class which manages reading the packets and dumping them out.
+    However, we have another one which uses the Scheduler.
 
     \until }
 
     The class constructor binds the socket defined as a data member to the correct interface. To
     tell the scheduler to call us back whenever data is available on the socket, we add a
-    senf::scheduler::FdEvent isntance to out class.
+    senf::scheduler::FdEvent instance to out class.
 
     The senf::scheduler::FdEvent constructor takes several arguments:
     \li a string describing the event.
     \li the callback to call whenever the event occurs.  The callback is specified as a <a
         href="http://www.boost.org/doc/libs/release/doc/html/function.html">Boost.Function</a>
         object. We use the \c senf::membind helper from the Utils library to build such a
-        function object. This helper takes an arbitrary class member and binds it to a specific 
+        function object. This helper takes an arbitrary class member and binds it to a specific
         instance.
     \li the handle or file descriptor to monitor.
     \li and the events to watch for.
@@ -150,7 +152,7 @@
 
     The public \c run() member is called to run the sniffer.  Here we just forward the call to the
     scheduler. Calling the Schedulers \c process() method will start the event loop. This call does
-    not return (ok, it does return in special cases if \c senf::scheduler::terminate() is called
+    not return (ok, that's a lie. It does return when \c senf::scheduler::terminate() is called
     which does not apply here).
 
     \until {
@@ -165,13 +167,12 @@
     implementation. However, the scheduler guarantees, that a read on the socket will not block if
     the socket is triggered to be readable (even if the socket is not set to non-blocking mode).
 
-    We now only need to provide the \c scheduler_main() function to run this code
+    What's left is the \c scheduler_main() function to utilize this code
 
     \until 0;
     \until }
 
-    This function is straight forward. The exception handling is the same as in \c loop_main(). The
-    code then just creates a \c Sniffer instance and calls it's \c run() member.
+    This function is straight forward. The exception handling is the same as in \c loop_main().
 
     \see \ref senf_components \n
          \ref senf_build \n
@@ -189,6 +190,5 @@
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u doc"
-// mode: flyspell
 // mode: auto-fill
 // End:
