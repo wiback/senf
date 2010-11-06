@@ -58,7 +58,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
                  };
     opts = [ '--tagfile-name', '"${MODULE}.tag"',
              '--output-dir', '$OUTPUT_DIRECTORY' ]
-
+    
     # Rule to generate tagfile
     # (need to exclude the 'clean' case, otherwise we'll have duplicate nodes)
     if not env.GetOption('clean'):

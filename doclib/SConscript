@@ -2,39 +2,39 @@
 #
 # The documentation generation process is tightly integrated with the
 # scons build framework:
-# 
+#
 # * SCons analyzes the Doxyfile's to find all the documentation
 #   dependencies. This happens in the doxygen builder in
 #   senfscons/Doxygen.py.
 #
 # * the doclib/doxy-header.html and/or doclib/doxy-footer.html files
 #   are regenerated
-# 
+#
 # * If any documentation is out-of-date with respect to it's source
 #   files, the documentation is regenerated.
-# 
+#
 # * To fix some link errors, the additional 'linklint' and 'fixlinks'
 #   targets are used
 #
-# 
+#
 # 1. Scanning the Doxyfile's
-# 
+#
 # The doxygen builder scans all documentation source files which have
 # the text 'doxyfile' in any case in their name. It understands
 # @INCLUDE directives and will find all the dependencies of the
 # documentation:
-# 
+#
 # * All the source files as selected by INPUT, INPUT_PATTERN,
 #   RECURSIVE and so on.
-# 
+#
 # * Any referenced tag-files
-# 
+#
 # * Documentation header and/or footer
-# 
+#
 # * The INPUT_FILTER program
-# 
+#
 # * Any included doxygen configuration files
-# 
+#
 #
 # 2. Regenerating header and/or footer
 #
@@ -43,9 +43,9 @@
 # using a simple python based templating system called yaptu which is
 # included in site_scons/lib/.
 #
-# 
+#
 # 3. Calling doxygen
-# 
+#
 # The doxygen call itself is quite complex since there is some pre-
 # and post-processing going on. We can separate this step into two
 # steps
@@ -65,7 +65,7 @@
 # 3.2. The main doxygen build (Doxygen builder)
 #
 # The Doxygen builder will call the doxygen command to build the
-# documentation. 
+# documentation.
 #
 # The doxygen command is configured as 'site_scon/lib/doxygen.sh' which
 # does some additional processing in addition to calling doxygen
@@ -74,7 +74,7 @@
 # * it sets environment variables depending on command line arguments.
 #   These variables are then used in the Doxyfile's
 #
-# * after doxygen is finished, 'installdox' is called to resolve 
+# * after doxygen is finished, 'installdox' is called to resolve
 #   tag file references.
 #
 # * the HTML documentation is post-processed using some sed, tidy, and
@@ -136,13 +136,13 @@ def modules():
     pathbase = env.Dir('#/senf').abspath
     pathbasel = len(pathbase)+1
     for module in env.Alias('all_docs')[0].sources:
-        if module.name != 'html.stamp' : continue 
+        if module.name != 'html.stamp' : continue
         if not module.dir.dir.dir.abspath.startswith(pathbase): continue
         mods[module.dir.dir.dir.abspath] = [ module.dir.dir.dir.abspath[pathbasel:].replace('/','_'),
                                              module.dir.dir.dir.name,
                                              module.dir.abspath[pathbasel:],
                                              0 ]
-        
+
     rv = []
     keys = mods.keys()
     keys.sort()
@@ -197,7 +197,7 @@ div.tabs li.$projectname a { background-color: #EDE497; }
     <div id="title2">
       <div id="search">
         <form action="@TOPDIR@/doclib/search.php" method="get">
-          Search: <input type="text" name="query" size="20" accesskey="s"/> 
+          Search: <input type="text" name="query" size="20" accesskey="s"/>
         </form>
       </div>
       <h1>SENF Extensible Network Framework</h1>
@@ -269,14 +269,10 @@ env.Append( ENV = {
 env.PhonyTarget('linklint', [], [
     'rm -rf doc/linklint',
     'linklint -doc doc/linklint -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
-    '[ ! -r doc/linklint/errorX.html ] || python doclib/linklint_addnames.py <doc/linklint/errorX.html >doc/linklint/errorX.html.new',
-    '[ ! -r doc/linklint/errorX.html.new ] || mv doc/linklint/errorX.html.new doc/linklint/errorX.html',
-    '[ ! -r doc/linklint/errorAX.html ] || python doclib/linklint_addnames.py <doc/linklint/errorAX.html >doc/linklint/errorAX.html.new',
-    '[ ! -r doc/linklint/errorAX.html.new ] || mv doc/linklint/errorAX.html.new doc/linklint/errorAX.html',
 ])
 
 env.PhonyTarget('fixlinks', [], [
-    'python doclib/fix-links.py -v -s .svn -s linklint -s debian doc/linklint/errorX.txt doc/linklint/errorAX.txt',
+    'python doclib/fix-links.py -v -s .svn -s linklint -s debian -s doclib -s search',
 ])
 
 header = env.Command('doxy-header.html', 'SConscript', writeTemplate,

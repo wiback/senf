@@ -6,6 +6,8 @@ do_html_cleanup()
 	| tidy -ascii -q --wrap 0 --show-warnings no --fix-uri no \
 	| sed -e 's/name="\([^"]*\)"\([^>]*\) id="\1"/name="\1"\2/g' \
               -e 's/id="\([^"]*\)"\([^>]*\) name="\1"/name="\1"\2/g' \
+              -e 's/\(<area shape="rect"\) id="[^"]*"/\1/g' \
+              -e 's/<a name="member-group"><\/a>//g' \
 	| xsltproc --novalid --nonet --html --stringparam topdir "$reltopdir" \
 	      "$base/html-munge.xsl" -
 }
