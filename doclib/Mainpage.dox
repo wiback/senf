@@ -41,9 +41,10 @@
 
     To get started using this library, begin by checking out the code from the <a
     href="http://developer.berlios.de/svn/?group_id=7489">BerliOS SVN repository</a>. You may find
-    help on using the library at '\ref senf_usage'. If you are interested in SENF, feel free to subscribe
-    to the <a href="http://developer.berlios.de/mail/?group_id=7489">SENF mailing lists</a>. If you
-    want to contribute, read the docs and \e please adhere to the \ref senf_conventions.
+    help on using the library at '\ref senf_usage'. If you are interested in SENF, feel free to
+    subscribe to the <a href="http://developer.berlios.de/mail/?group_id=7489">SENF mailing
+    lists</a>. If you want to contribute, read the docs and \e please adhere to the \ref
+    senf_conventions.
 
     \see \ref senf_usage\n
          <a href="../../Examples/doc/html/index.html">Examples</a>
@@ -59,6 +60,95 @@
 /** \page senf_senfutil SENF SCons build utility (senfutil.py)
 
     \autotoc
+
+    \c senfutil helps setting up projects which utilize SENF. It will configure all necessary
+    compiler and linker options and additionally sets up some useful defaults and utilities.
+
+    \c senfutil really serves three roles
+
+    \li detect SENF and configure the build accordingly
+    \li make some SCons extensions used within SENF available to other projects
+    \li set default compilation options in the same way, they are set when compiling SENF proper.
+
+    The last two points are of course optional.
+
+    \section senfutil_tutorial Tutorial
+
+    To utilize \c senfutil you need to do two things:
+    \li Update your \c SConstruct file
+    \li add a bootstrap \c senfutil.py to \c site_scons
+
+    Lets start with the \c SConstruct file
+    \code
+    import senfutil
+
+    env = Environment()
+    senfutil.SetupForSENF(env)
+    senfutil.DefaultOptions(env)
+
+    env.SetDefault(
+        PROJECTNAME      = 'Example project',
+        PROJECTEMAIL     = 'developer@domain.com',
+        DOCLINKS         = [ ('Homepage', 'http://www.domain.com') ]
+    )
+
+    sources, tests = senfutil.Glob(env, exclude=['main.cc'])
+
+    objects = env.Object(sources)
+    example = env.Program('example', objects + ['main.cc'])
+    test    = env.BoostUnitTest('test', objects + tests)
+
+    env.Default(example)
+
+    senfutil.Doxygen(env)
+
+    senfutil.CleanGlob('all', [ '*~', '#*#' ])
+    \endcode
+
+    This simple sample already enables a lot of functionality:
+    \li support for different \e SENF flavors (debug/normal/final)
+    \li support for different \e build flavors (debug/normal/final)
+    \li sensible default compile options for the different flavors
+    \li support for extended command-line variables
+    \li building documentation with an auto-generated Doxyfile
+    \li running unit-tests
+    \li cleaning backup and temporary files
+
+    Here a very quick rundown of the important scons commands:
+    \li Build default target:
+        <pre>
+        $ scons
+        </pre>
+    \li Build documentation and unit-tests:
+        <pre>
+        $ scons doc test
+        </pre>
+    \li clean up everything
+        <pre>
+        $ scons -c all
+        </pre>
+    \li Pass custom options on the command-line
+        <pre>
+        $ scons CXXFLAGS+=-Wextra
+        </pre>
+
+    Since \c senfutil.py is not on the standard \c python or \c SCons path, some extra steps are
+    needed to find it.
+    \li Either add the possible directories to <tt>sys.path</tt> before importing \c senfutil:
+        \code
+        import sys
+        sys.path.extend(('/usr/local/lib/senf/site_scons', '/usr/lib/senf/site_scons'))
+        import senfutil
+        \endcode
+    \li Alternatively, install the following utility script as <tt>site_scons/senfutil.py</tt> into
+        your project. This script will search for <tt>site_scons/senfutil.py</tt> in a list of
+        directories and then load the real \c senfutil.py on top of itself. The directories searched
+        include: the current directory and all parents, subdirectories named <tt>senf/</tt>,
+        <tt>Senf/</tt> or <tt>SENF/</tt> thereof, and <tt>/usr/local/lib/senf/</tt> and
+        <tt>/usr/lib/senf/</tt>
+        \include senfutil.py
+
+    \section senfutil_features
 
     The \c senfutil utility for SCons helps setting up a project to compile against SENF:
 

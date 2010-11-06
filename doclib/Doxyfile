@@ -5,3 +5,4 @@ INPUT = .
 PROJECT_NAME = Overview
 PROJECT_NUMBER = "$(REVISION)"
 GENERATE_XML = NO
+EXAMPLE_PATH = "$(TOPDIR)/Examples/Sniffer/site_scons"

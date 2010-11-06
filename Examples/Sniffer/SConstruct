@@ -1,12 +1,7 @@
 # -*- python -*-
-import sys, os, os.path
-try: sys.path.append(((_ for _ in (os.path.join(os.path.sep.join(('..' for _ in range(_))),d,
-     'site_scons') for d in ('','senf','Senf') for _ in range(len(os.getcwd().split('/'))))
-     if os.path.exists(_))).next())
-except: sys.path.append('/usr/lib/senf/site_scons')
-import senfutil
+import senfutil, os
 
-env = Environment()
+env = Environment(ENV = os.environ)
 senfutil.SetupForSENF(env)
 senfutil.DefaultOptions(env)
 

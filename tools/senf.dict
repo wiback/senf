@@ -337,6 +337,7 @@ LPR
 mac
 MACAddress
 MACAddressParser
+mainloop
 mainpage
 malformed
 manualparse
@@ -517,6 +518,7 @@ ratestuffer
 RawINetProtocol
 RawV
 rdynamic
+readFromClient
 ReadInfo
 receiveModule
 ReceiverDecorator
@@ -558,6 +560,7 @@ senfscons
 SENFSCons
 ServerLog
 serverlog
+serverSock
 ServerSocketHandle
 setBegin
 setEnd
@@ -630,6 +633,7 @@ src
 ssi
 std
 stderr
+stdout
 stefan
 STL
 strerror
@@ -675,8 +679,12 @@ TypedInterfaceDecorator
 typeField
 UDLR
 udp
+udpClient
+UDPclientApplication
 UDPPacket
 udpReader
+udpServer
+UDPserverApplication
 UDPv
 udpWriter
 UInt
