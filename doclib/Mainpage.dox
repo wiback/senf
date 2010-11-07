@@ -459,12 +459,6 @@
     When building against a self-built SENF which will probably be in debug mode, the '-DSENF_DEBUG'
     option must be added to the compile command.
 
-    The most simple way to build using SENF is to use a very simple SCons helper which automatically
-    supports debug and final builds, uses SENF either centrally installed or locally built and has
-    some other nice features. See <a
-    href="../../senfscons/doc/html/index.html#senfutil_overview">Building Projects using SENF</a>
-    for more info and an example for this utility.
-
     \see \ref senf_components \n
          \ref senf_overview
  */
@@ -482,7 +476,7 @@
     oriented network applications. The library provides a large set of pre-defined modules as well
     as the necessary helpers to implement application specific processing modules.
 
-    \see <a href="../../PPI/doc/html/index.html">libPPI API reference</a>
+    \see <a href="../../senf/PPI/doc/html/index.html">libPPI API reference</a>
 
     \section libSocket libSocket: C++ abstraction of the BSD socket API
 
@@ -490,7 +484,7 @@
     API. It utilizes a flexible and extensible policy based design. The library provides predefined
     types for the important socket types (UDP and TCP sockets etc) including raw and packet sockets.
 
-    \see <a href="../../Socket/doc/html/index.html">libSocket API reference</a>
+    \see <a href="../../senf/Socket/doc/html/index.html">libSocket API reference</a>
 
     \section libPackets libPackets: Network packet manipulation
 
@@ -498,7 +492,7 @@
     packetized network data. Included is a library of several protocol parsers covering the basic
     IPv4 and IPv6 network protocols down to the Ethernet layer.
 
-    \see <a href="../../Packets/doc/html/index.html">libPackets API reference</a>
+    \see <a href="../../senf/Packets/doc/html/index.html">libPackets API reference</a>
 
     \section libScheduler libScheduler: Asynchronous event handling
 
@@ -506,7 +500,7 @@
     event dispatcher. It is based on the high performance \c epoll system call. It provides support
     for read/write events as well as simple timer based events.
 
-    \see <a href="../../Scheduler/doc/html/index.html">libScheduler API reference</a>
+    \see <a href="../../senf/Scheduler/doc/html/index.html">libScheduler API reference</a>
 
     \section libUtils libUtils: Collection of arbitrary utilities
 
@@ -521,7 +515,7 @@
     \li An interface to the \c g++ de-mangler integrated with type_info
     \li Typedefs and rudimentary methods to simplify handling high-resolution time values
 
-    \see <a href="../../Utils/doc/html/index.html">libUtils API reference</a>
+    \see <a href="../../senf/Utils/doc/html/index.html">libUtils API reference</a>
 
     \section senfscons SENFSCons, the SENF build environment
 
@@ -552,23 +546,24 @@
     \section senf_startup Getting starting developing with SENF
 
     To introduce the framework and it's general structure, a simple example application is provided
-    in the SENF repository in the \c Sniffer module. Peruse this example to get a first look at how
+    in the SENF repository in the \c %Sniffer module. Peruse this example to get a first look at how
     to make use of SENF.
 
     When building a network Application with SENF, you will use several modules:
 
-    \li Use the <a href="../../Socket/doc/html/index.html">Socket library</a> for network
+    \li Use the <a href="../../senf/Socket/doc/html/index.html">Socket library</a> for network
         communication needs. This library includes support for raw and packet sockets to allow low
         level network access.
-    \li Use the <a href="../../Scheduler/doc/html/index.html">Scheduler library</a> to coordinate
-        the asynchronous event processing. This drastically reduces the number of threads needed in
-        your application and will greatly enhance the overall responsiveness.
+    \li Use the <a href="../../senf/Scheduler/doc/html/index.html">Scheduler library</a> to
+        coordinate the asynchronous event processing. This drastically reduces the number of threads
+        needed in your application and will greatly enhance the overall responsiveness.
     \li To interpret low level network packets, use the <a
-        href="../../Packets/doc/html/index.html">Packets library</a>. This library will provide
+        href="../../senf/Packets/doc/html/index.html">Packets library</a>. This library will provide
         efficient and convenient access to all protocol fields. It supports parsing as well as
         modifying and creating packets. It has default support for the most important Internet
         protocols and is highly extensible with new protocols.
-    \li Go over the <a href="../../Utils/doc/html/index.html">Utils library</a>. It contains small
+    \li Go over the <a href="../../senf/Utils/doc/html/index.html">Utils library</a>. It contains
+        small
         helpers to simplify tasks like daemonization, exception handling, debugging and so on.
 
     The simplest way to get started is: copy the Sniffer application and start to modify it.

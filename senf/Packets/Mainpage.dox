@@ -758,7 +758,7 @@
 
     \autotoc
 
-    \see <a href="../../../HowTos/NewPacket/doc/html/index.html">NewPacket HowTo</a>
+    \see <a href="../../../../HowTos/NewPacket/doc/html/index.html">NewPacket HowTo</a>
 
     \section packet_new_parser The protocol parser
 

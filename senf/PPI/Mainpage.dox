@@ -64,10 +64,10 @@
 
     \section ppi_packets Packets
 
-    The PPI processes packets and uses the <a href="@TOPDIR@/Packets/doc/html/index.html">Packet
-    library</a> to handle them. All packets are internally passed around as generic \ref
-    senf::Packet references, however connectors may optionally be defined as sending or receiving
-    packets of a specific type only.
+    The PPI processes packets and uses the <a
+    href="@TOPDIR@/senf/Packets/doc/html/index.html">Packet library</a> to handle them. All packets
+    are internally passed around as generic \ref senf::Packet references, however connectors may
+    optionally be defined as sending or receiving packets of a specific type only.
 
     \section ppi_modules Modules
 
@@ -324,7 +324,7 @@
 
     The PPI really is not concerned, how the events are called and what information is needed to
     perform the call. This is handled by the <a
-    href="@TOPDIR@/Scheduler/doc/html/index.html">Scheduler</a>, which is wrapped by the event
+    href="@TOPDIR@/senf/Scheduler/doc/html/index.html">Scheduler</a>, which is wrapped by the event
     classes.
 
     All events are derived from senf::ppi::EventDescriptor. The base class allows to enable and

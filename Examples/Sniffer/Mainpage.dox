@@ -176,9 +176,9 @@
 
     \see \ref senf_components \n
          \ref senf_build \n
-         <a href="../../../../Socket/doc/html/index.html"><b>libSocket API reference</b></a> \n
-         <a href="../../../../Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
-         <a href="../../../../Utils/doc/html/index.html"><b>libUtils API reference</b></a>
+         <a href="../../../../senf/Socket/doc/html/index.html"><b>libSocket API reference</b></a> \n
+         <a href="../../../../senf/Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
+         <a href="../../../../senf/Utils/doc/html/index.html"><b>libUtils API reference</b></a>
  */
 
 
