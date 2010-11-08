@@ -39,22 +39,18 @@
 
     \section start Getting started
 
-    To get started using this library, begin by checking out the code from the <a
-    href="http://developer.berlios.de/svn/?group_id=7489">BerliOS SVN repository</a>. You may find
-    help on using the library at '\ref senf_usage'. If you are interested in SENF, feel free to
-    subscribe to the <a href="http://developer.berlios.de/mail/?group_id=7489">SENF mailing
-    lists</a>. If you want to contribute, read the docs and \e please adhere to the \ref
-    senf_conventions.
+    You may check the Downloads section for binary library releases. However, in all probability you
+    will have to compile SENF for yourself.
 
-    \see \ref senf_usage\n
-         <a href="../../Examples/doc/html/index.html">Examples</a>
+    If you are interested in SENF, feel free to subscribe to the <a
+    href="http://developer.berlios.de/mail/?group_id=7489">SENF mailing lists</a>. If you want to
+    contribute, read the docs and \e please adhere to the \ref senf_conventions.
 
-    \section senfutil_overview Building Projects using SENF
-
-    When building projects using %senf, SENFSCons has a very simple helper module
-    \ref senf_senfutil "senfutil.py" to make the building of libraries utilizing %senf simpler.
-
-    \see \ref senf_senfutil
+    \see
+        \ref senf_introduction \n
+        \ref senf_build \n
+        \ref senf_senfutil for linking against the SENF library\n
+        <a href="../../Examples/doc/html/index.html">Examples</a>
 */
 
 /** \page senf_senfutil SENF SCons build utility (senfutil.py)
@@ -66,7 +62,7 @@
 
     \c senfutil really serves three roles
 
-    \li detect SENF and configure the build accordingly
+    \li detect the SENF library and configure the build accordingly
     \li make some SCons extensions used within SENF available to other projects
     \li set default compilation options in the same way, they are set when compiling SENF proper.
 
@@ -340,22 +336,61 @@
     using '+='.
  */
 
-/** \page senf_usage Using the SENF framework
+/** \page senf_introduction Introduction to the framework
 
-    The SENF Framework is a collection of loosely coupled modules. The libraries are heavily object
-    oriented and template based. For compatibility reasons, the libraries are therefore built
-    together with every project making use of the framework.
+    The SENF framework is relatively complex and makes use of advanced features of the C++
+    language. To make the most efficient use of the framework, you should have at least a basic
+    understanding of C++ templates and the standard library concepts.
 
-    When starting a new project based on the SENF framework, it is advisable, to make use of the
-    SENFSCons build environment and use SVN to manage the code repository. This is the
-    configuration, described in this documentation.
+    The library implementation at places makes heavy use of advanced template techniques and relies
+    on some very advanced template libraries from Boost. The aim was however for the \e external
+    interface of the library to be as simple as possible without sacrificing important functionality
+    or adversely impacting the runtime performance.
 
-    \see \ref senf_build \n
-         \ref senf_setup \n
-         \ref senf_components \n
-         \ref senf_overview
+    As already mentioned several times, the library relies on Boost (http://www.boost.org) as a
+    generic library of high quality reusable C++ components. It also makes frequent use of the
+    standard library. It is designed, to integrate well into both libraries and to use the same
+    concepts and ideas.
 
-    \section senf_preliminaries Preliminaries
+    \section senf_startup Getting starting developing with SENF
+
+    To introduce the framework and it's general structure, some simple example applications are
+    provided in the SENF repository. Peruse those examples to get a first look at how to make use of
+    SENF.
+
+    When building a network Application with SENF, you will use several modules:
+
+    \li One of the central SENF libraries is the <a
+        href="../../senf/PPI/doc/html/index.html">Packet Processing Infrastructure (PPI)</a>. Using
+        this library, it is very simple to develop flexible packet networks of interconnected
+        modules.
+    \li Use the <a href="../../senf/Socket/doc/html/index.html">Socket library</a> for network
+        communication needs. This library includes support for raw and packet sockets to allow low
+        level network access.
+    \li Use the <a href="../../senf/Scheduler/doc/html/index.html">Scheduler library</a> to
+        coordinate the asynchronous event processing. This drastically reduces the number of threads
+        needed in your application and will greatly enhance the overall responsiveness.
+    \li To interpret low level network packets, use the <a
+        href="../../senf/Packets/doc/html/index.html">Packets library</a>. This library will provide
+        efficient and convenient access to all protocol fields. It supports parsing as well as
+        modifying and creating packets. It has default support for the most important Internet
+        protocols and is highly extensible with new protocols.
+    \li Go over the <a href="../../senf/Utils/doc/html/index.html">Utils library</a>. It contains
+        small helpers to simplify tasks like daemonization, exception handling, debugging and so
+        on. Additionally, %Utils contains several larger supplementary modules for <a
+        href="../../senf/Utils/Logger/doc/html/index.html">Logging</a>, <a
+        href="../../senf/Utils/Console/doc/html/index.html">Configuration</a> (including interactive
+        configuration via a network terminal) and <a
+        href="../../senf/Utils/Daemon/doc/html/index.html">Daemon management</a>.
+
+    The simplest way to get started is: copy the Sniffer application and start to modify it.
+
+    \see <a href="../../Examples/doc/html/index.html">Examples</a> \n
+        \ref senf_components \n
+        \ref senf_senfutil \n
+        \ref senf_build
+
+    \section senf_dependencies Dependencies
 
     Before starting the development, make sure to fulfill the following requirements:
 
@@ -371,33 +406,15 @@
     \li The \c xsltproc XSLT processor (http://xmlsoft.org/XSLT/xsltproc2.html)
     \li The \c graphviz library (http://www.graphviz.org)
 
-    The library is only tested with gcc-3.4 and 4.0 on Linux. On other POSIX platforms with a BSD
-    Socket API, the library should be usable, possibly with some tweaking (except for the Scheduler,
-    which relies on \c epoll)
-
-    \section senf_compiler_options Compiler and Linker Options
-
-    If SENF is compiled in debug mode (SENF_DEBUG is defined), exception messages will automatically
-    include a stack backtrace. For this to work, you need to add the -rdynamic option to all link
-    commands. This feature depends on gcc and the GNU-libc.
-
-    It is <B>very important</B> that both the SENF library and the application using it are compiled
-    \e both either with or without this compiler switch (-DSENF_DEBUG). Otherwise, the compiler will
-    emit error messages which might be hard to debug.
+    The library is tested and developed on Linux. It should be relatively simple to port SENF to
+    other POSIX platforms.
  */
 
 /** \page senf_build Building the SENF framework
 
-    This procedure will test building the complete framework including the unit tests and the
-    Sniffer test application. This build is \e not needed to use the framework since every project
-    will include the full SENF source code itself (via Subversion).
-
-    After you have successfully built the library tests, you can continue to setup your own project
-    using SENF.
-
-    \see \ref senf_setup \n
-         \ref senf_components \n
-         \ref senf_overview
+    This procedure will build the complete framework including the unit tests and the example
+    applications. After you have successfully built the library tests, you can continue to setup
+    your own project linking against SENF.
 
     \section senf_checkout Getting the code
 
@@ -413,54 +430,18 @@
     http://subversion.tigris.org. A very good introduction and reference to subversion is available
     at http://svnbook.red-bean.com.
 
+    Additionally ensure, you have installed all necessary \ref senf_dependencies.
+
     \section senf_compile Building
 
-    To build the library, execute all unit tests and build the Sniffer test application, use
-
+    To build the library, execute all unit tests and build all examples applications, use
     <pre>
-    $ scons
-    $ scons all_tests
+    $ scons default examples all_tests
     </pre>
-
-    in the \c %senf directory. This assumes, that you want to build the library with your default
-    gcc and requires the boost libraries to be available in the system include paths. If this is
-    not the case, you can take a look at <tt>SConfig.template</tt> file. Copy this file to
-    <tt>SConfig</tt> and comment out all the variables you don't want to change (The \e values in
-    the template file are just arbitrary examples).
- */
-
-/** \page senf_setup Setting up a new project using SENF
-
-    The most simple way to use SENF for now is to checkout the svn repository and build SENF
-    yourselves. After you have built SENF, reference your SENF build directory from your build
-    environment. The most flexible way to do this, is to use a symbolic link to your SENF build.
-
-    Here an example \c SConstruct file for a project using SENF. This script expects SENF to be
-    found in the <tt>%senf</tt> sub-directory of the directory, where the \c SConstruct file is
-    found. This may either be a SENF checkout (if managing your project via subversion, you can use
-    <tt>svn:externals</tt> for this) or a symbolic link to your SENF checkout.
-
-    \code
-    import glob
-
-    env = Environment(
-
-        LIBS     = [ 'senf', 'boost_regex', 'boost_iostreams' ],
-        CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ],
-
-    )
-
-    env.Program(
-        target = 'mytarget',
-        source = glob.glob('*.cc'),
-    );
-    \endcode
-
-    When building against a self-built SENF which will probably be in debug mode, the '-DSENF_DEBUG'
-    option must be added to the compile command.
-
-    \see \ref senf_components \n
-         \ref senf_overview
+    This assumes, that you want to build the library with your default gcc and requires the boost
+    libraries to be available in the system include paths. If this is not the case take a look a the
+    \c SConstruct file for configuration variables. You may either specify the variables on the
+    command line or place them into a \c SConscript.local file.
  */
 
 /** \page senf_components The SENF modules
@@ -516,63 +497,9 @@
     \li Typedefs and rudimentary methods to simplify handling high-resolution time values
 
     \see <a href="../../senf/Utils/doc/html/index.html">libUtils API reference</a>
-
-    \section senfscons SENFSCons, the SENF build environment
-
-    SENF relies on SCons (http://www.scons.org) to build. To further simplify the common tasks, SENF
-    includes a library of custom routines and builders comprising a very concise build
-    environment. Included are a number of templates to help bootstrapping a new project or
-    component.
-
-    \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a>
  */
 
-/** \page senf_overview Introduction to the framework
-
-    The SENF framework is relatively complex and makes use of advanced features of the C++
-    language. To make the most efficient use of the framework, you should have at least a basic
-    understanding of C++ templates and the standard library concepts.
-
-    The library implementation at places makes heavy use of advanced template techniques and relies
-    on some very advanced template libraries from Boost. The aim was however for the \e external
-    interface of the library to be as simple as possible without sacrificing important functionality
-    or adversely impacting the runtime performance.
-
-    As already mentioned several times, the library relies on Boost (http://www.boost.org) as a
-    generic library of high quality reusable C++ components. It also makes frequent use of the
-    standard library. It is designed, to integrate well into both libraries and to use the same
-    concepts and ideas.
-
-    \section senf_startup Getting starting developing with SENF
-
-    To introduce the framework and it's general structure, a simple example application is provided
-    in the SENF repository in the \c %Sniffer module. Peruse this example to get a first look at how
-    to make use of SENF.
-
-    When building a network Application with SENF, you will use several modules:
-
-    \li Use the <a href="../../senf/Socket/doc/html/index.html">Socket library</a> for network
-        communication needs. This library includes support for raw and packet sockets to allow low
-        level network access.
-    \li Use the <a href="../../senf/Scheduler/doc/html/index.html">Scheduler library</a> to
-        coordinate the asynchronous event processing. This drastically reduces the number of threads
-        needed in your application and will greatly enhance the overall responsiveness.
-    \li To interpret low level network packets, use the <a
-        href="../../senf/Packets/doc/html/index.html">Packets library</a>. This library will provide
-        efficient and convenient access to all protocol fields. It supports parsing as well as
-        modifying and creating packets. It has default support for the most important Internet
-        protocols and is highly extensible with new protocols.
-    \li Go over the <a href="../../senf/Utils/doc/html/index.html">Utils library</a>. It contains
-        small
-        helpers to simplify tasks like daemonization, exception handling, debugging and so on.
-
-    The simplest way to get started is: copy the Sniffer application and start to modify it.
-
-    \see <a href="../../Examples/doc/html/index.html">Examples</a> \n
-         \ref senf_components \n
-         \ref senf_setup
-
-    \section senf_conventions Coding Conventions
+/** \page senf_conventions Coding Conventions
 
     Here we have laid down the coding conventions used throughout the SENF framework. Please ad here
     to these conventions when changing or adding code. If you use emacs, you can use the C++ IDE for

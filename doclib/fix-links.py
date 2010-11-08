@@ -179,6 +179,8 @@ class LinkFixer:
                     newTarget = self.anchorLookup(anchor)
                 if newTarget is None:
                     newTarget = self.fileLookup(target)
+                    if newTarget and anchor:
+                        newTarget = '%s#%s' % (newTarget, anchor)
                 if newTarget:
                     attrs[ix] = (attrs[ix][0], '/'.join((self._topdir, newTarget)))
             self.emit_starttag(tag, attrs)
