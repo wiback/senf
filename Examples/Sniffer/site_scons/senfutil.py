@@ -1,22 +1,22 @@
-import sys, os
 
 def findsenf(sysdirs = ('/usr/local/lib/senf','/usr/lib/senf'),
              subdirs = ('', 'senf', 'Senf', 'SENF')):
-    from os.path import join, sep, exists, normpath
-    from itertools import starmap, product, chain
+    import os, itertools
 
-    def joinpaths(*p): return starmap(join, product(*p))
-    def existing(l):   return (e for e in l if exists(e))
-    def ancestors(d): p = d.split(sep); return (join(p[0]+sep,*p[1:i]) for i in range(len(p),0,-1))
-    def butfirst(l):
-        i = iter(l); i.next()
-        for e in i : yield e
+    def ancestors(d):
+        p = d.split(os.path.sep)
+        return (os.path.join(p[0]+os.path.sep,*p[1:i]) for i in range(len(p),0,-1))
 
-    try: return normpath(existing(butfirst(joinpaths(
-                    chain(ancestors(os.getcwd()),sysdirs),
-                    subdirs,('site_scons/senfutil.py',)))).next())
-    except StopIteration: raise ImportError, 'senfutil not found'
+    for d in itertools.chain(ancestors(os.getcwd()),sysdirs):
+        for s in subdirs:
+            py = os.path.join(d,s,'site_scons/senfutil.py')
+            if os.path.exists(py) and not os.path.samefile(py,__file__): return py
 
-__file__ = findsenf(); del findsenf
+    raise ImportError, 'senfutil not found'
+
+# replace module with real senfutil
+import sys, os
+__file__ = findsenf()
 sys.path.append(os.path.dirname(__file__))
+del sys, os, findsenf
 execfile(__file__, locals(), globals())

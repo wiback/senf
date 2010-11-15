@@ -1,10 +1,14 @@
 #!/bin/sh -e
 
+print="-print"
 cond=""
-if [ "$1" = "-c" ]; then
-    shift
-    cond='( -name *.h -o -name *.hh -o -name *.ih -o -name *.c -o -name *.cc -o -name *.cci -o -name *.ct -o -name *.cti -o -name *.mpp -o -name *.dox )'
-fi
+while true ; do
+    case "$1" in
+        -n) print=""; shift ;;
+        -c) cond='( -name *.h -o -name *.hh -o -name *.ih -o -name *.c -o -name *.cc -o -name *.cci -o -name *.ct -o -name *.cti -o -name *.mpp -o -name *.dox )'; shift ;;
+        *) break ;;
+    esac
+done
 
 set -f
 
@@ -30,4 +34,4 @@ find . \
     -name ".sconsign*" -o \
     -name "semantic.cache" -o \
     -name "all_includes.hh" -o \
-    -type f $cond \( "$@" -print \)
+    -type f $cond \( "$@" $print \)
