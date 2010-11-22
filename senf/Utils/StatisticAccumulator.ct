@@ -1,0 +1,93 @@
+// $Id$
+//
+// Copyright (C) 2010
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief StatisticAccumulator non-inline template implementation  */
+
+// Custom includes
+
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::StatisticAccumulator<T>
+
+template <class T>
+prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator( T defaultvalue)
+    : defaultvalue_(defaultvalue),
+      sum_squared_(defaultvalue*defaultvalue),
+      sum_(defaultvalue),
+      min_(defaultvalue),
+      max_(defaultvalue),
+      last_avg_(float(defaultvalue)),
+      count_(0)
+{
+}
+
+//template <class T>
+//prefix_ senf::StatisticAccumulator<T>::~StatisticAccumulator()
+//{ }
+
+template <class T>
+prefix_ float senf::StatisticAccumulator<T>::stddev()
+    const
+{
+    if (count_ == 0) {
+        return NAN;
+    }
+    else if (count_ == 1) {
+        return 0.0;
+    }
+    float _avg (avg());
+    return sqrt( ( float(sum_squared_) / float( count_) ) - (_avg * _avg) );
+}
+
+template <class T>
+prefix_ void senf::StatisticAccumulator<T>::accumulate( T value)
+{
+    if (count_ == 0) {
+        min_ = max_ = sum_ = value;
+        sum_squared_ = value * value;
+        count_++;
+        return;
+    }
+    sum_ += value;
+    sum_squared_ += value * value;
+    count_++;
+    if (value < min_)
+        min_ = value;
+    else if (value > max_)
+        max_ = value;
+}
+
+template <class T>
+prefix_ void senf::StatisticAccumulator<T>::clear()
+{
+    last_avg_ = avg();
+    count_ = 0;
+    sum_squared_ = defaultvalue_*defaultvalue_;
+    sum_ = min_ = max_ = defaultvalue_;
+}
+
+
+///////////////////////////////ct.e////////////////////////////////////////
+#undef prefix_

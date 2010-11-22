@@ -38,6 +38,7 @@
 #include "Exception.hh"
 #include <senf/Utils/Logger/Logger.hh>
 #include <senf/Utils/Console/Console.hh>
+#include "StatisticAccumulator.hh"
 
 //#include "Statistics.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,6 +50,7 @@ namespace senf {
         The statistics functionality has two parts:
 
         \li the senf::Statistics class
+        \li the senf::StatisticsAccumulator class
         \li statistics sources
 
         Each senf::Statistics instance collects information about a single parameter. Which
@@ -463,6 +465,14 @@ namespace senf {
                                         ///< Same as operator() with \a min == \a avg == \a max
                                         /**< Provided so a Statistics instance can be directly used
                                              as a signal target. */
+        template <class Value>
+        void operator()(unsigned n, StatisticAccumulator<Value> & sa);
+                                        ///< Same as operator() gathers values from StatisticAccumulator
+                                        /**< Provided so a Statistics instance can be directly used
+                                             as a signal target. Caution: Clears values in
+                                             StatisticAccumulator afterwards
+                                             \param[in] n number of time-slices
+                                             \param[in] sa StatisticAccumulator*/
 
         StatisticsBase::OutputProxy<Statistics> output(unsigned n = 1u);
 

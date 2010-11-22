@@ -85,6 +85,17 @@ prefix_ senf::console::ScopedDirectory<> & senf::StatisticsBase::OutputProxy<Own
     return entry_->dir;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::Statistics
+
+template <class Value>
+prefix_ void senf::Statistics::operator()(unsigned n, StatisticAccumulator<Value> & sa)
+{
+    enter(n, float(sa.min()), sa.avg(), float(sa.max()), sa.stddev());
+    sa.clear();
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

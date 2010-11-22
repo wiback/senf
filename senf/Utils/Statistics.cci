@@ -186,6 +186,7 @@ prefix_ void senf::Statistics::operator()(float value, float dev)
     enter(1, value, value, value, dev);
 }
 
+
 prefix_ senf::StatisticsBase::OutputProxy<senf::Statistics>
 senf::Statistics::output(unsigned n)
 {
