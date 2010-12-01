@@ -317,11 +317,10 @@ namespace senf {
         typedef ConcretePacket<RadiotapPacketType> packet;
         typedef RadiotapPacketParser parser;
 
-        using mixin::init;
         using mixin::initSize;
 
+        static void init(packet p);
         static void dump(packet p, std::ostream &os);
-        static void finalize(packet p);
         static factory_t nextPacketType(packet p);
         static optional_range nextPacketRange(packet p);
     };

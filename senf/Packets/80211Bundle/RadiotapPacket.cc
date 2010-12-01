@@ -184,6 +184,7 @@ prefix_ void senf::RadiotapPacketParser::updatePresentFlags(boost::uint32_t flag
         cumulativeNewBytes += newBytes;
         b = newTable[index] + FIELD_SIZE[index];
     }
+    length() += cumulativeNewBytes;
     presentFlags() = flags;
     currentTable_ = &newTable;
 }
@@ -288,11 +289,9 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 #   undef FIELD
 }
 
-
-prefix_ void senf::RadiotapPacketType::finalize(packet p)
+prefix_ void senf::RadiotapPacketType::init(packet p)
 {
-    ///\fixme Is this really correct ? shouldn't I use nextPacket.begin() - begin() here ?
-    p->length() << p->calculateSize();
+    p->length() << RadiotapPacketParser_Header::fixed_bytes;
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::RadiotapPacketType::nextPacketType(packet p)

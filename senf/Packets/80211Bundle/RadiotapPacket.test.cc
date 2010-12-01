@@ -244,6 +244,76 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
     BOOST_CHECK_EQUAL( p->antenna(), 0u);
 }
 
+SENF_AUTO_UNIT_TEST(RadiotapPacket_parsetest)
+{
+    unsigned char data[] = {
+        '\x00', '\x00', '\x20', '\x00', '\x2f', '\x48', '\x00', '\x00',
+        '\xbe', '\xa5', '\xaf', '\x00', '\x00', '\x00', '\x00', '\x00',
+        '\x10', '\x04', '\x6c', '\x09', '\xa0', '\x00', '\xb6', '\x01',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+        '\x80', '\x00', '\x00', '\x00', '\xff', '\xff', '\xff', '\xff',
+        '\xff', '\xff', '\x00', '\x0b', '\x0e', '\x26', '\xab', '\xc0',
+        '\x00', '\x0b', '\x0e', '\x26', '\xab', '\xc0', '\xe0', '\xec',
+        '\x81', '\x31', '\x0d', '\x1c', '\x72', '\x0a', '\x00', '\x00',
+        '\x64', '\x00', '\x31', '\x04', '\x00', '\x05', '\x46', '\x4f',
+        '\x4b', '\x55', '\x53', '\x01', '\x08', '\x82', '\x84', '\x8b',
+        '\x0c', '\x12', '\x96', '\x18', '\x24', '\x03', '\x01', '\x01',
+        '\x05', '\x04', '\x00', '\x01', '\x00', '\x00', '\x07', '\x06',
+        '\x44', '\x45', '\x20', '\x01', '\x0d', '\x12', '\x0b', '\x05',
+        '\x01', '\x00', '\x07', '\x00', '\x00', '\x43', '\x02', '\x00',
+        '\x00', '\x2a', '\x01', '\x00', '\x30', '\x14', '\x01', '\x00',
+        '\x00', '\x0f', '\xac', '\x04', '\x01', '\x00', '\x00', '\x0f',
+        '\xac', '\x04', '\x01', '\x00', '\x00', '\x0f', '\xac', '\x02',
+        '\x00', '\x00', '\x32', '\x04', '\x30', '\x48', '\x60', '\x6c',
+        '\xdd', '\x05', '\x00', '\x0b', '\x0e', '\x04', '\x00', '\xdd',
+        '\x22', '\x00', '\x0b', '\x0e', '\x02', '\x00', '\x00', '\x00',
+        '\x00', '\x12', '\x0c', '\x02', '\xa1', '\x04', '\xa2', '\x0b',
+        '\xa3', '\x0c', '\xa5', '\x12', '\xa6', '\x16', '\xa6', '\x18',
+        '\xa7', '\x24', '\xa8', '\x30', '\xab', '\x48', '\xae', '\x60',
+        '\xb5', '\x6c', '\xb8', '\xdd', '\x2e', '\x00', '\x0b', '\x0e',
+        '\x03', '\x00', '\xad', '\x67', '\x20', '\xc2', '\xc2', '\x14',
+        '\x0e', '\x36', '\xde', '\x3f', '\xbb', '\x2e', '\x4e', '\x02',
+        '\x70', '\x8a', '\x5b', '\x66', '\x59', '\x3c', '\xdb', '\xbb',
+        '\xc9', '\x65', '\x16', '\x99', '\x16', '\x84', '\x43', '\xaa',
+        '\x00', '\xa2', '\x45', '\xbc', '\xbc', '\x58', '\x9b', '\xd4',
+        '\x3e', '\xef', '\xca', '\xdd', '\x07', '\x00', '\x50', '\xf2',
+        '\x02', '\x00', '\x01', '\x01', '\xdd', '\x18', '\x00', '\x50',
+        '\xf2', '\x02', '\x01', '\x01', '\x01', '\x00', '\x03', '\xa4',
+        '\x00', '\x00', '\x27', '\xa4', '\x00', '\x00', '\x42', '\x43',
+        '\x5e', '\x00', '\x62', '\x32', '\x2f', '\x00', '\x0e', '\x58',
+        '\xcd', '\xa0'
+    };
+    senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
+
+    std::stringstream ss;
+    p.dump(ss);
+
+    BOOST_CHECK_EQUAL(ss.str(),
+                      "Radiotap:\n"
+                      "  version                 : 0\n"
+                      "  length                  : 32\n"
+                      "  MAC timestamp           : 11511230\n"
+                      "  flags                   : FCSatEnd \n"
+                      "  rate                    : 4\n"
+                      "  channel frequency       : 2412\n"
+                      "  channel flags           : 2GHz CCK \n"
+                      "  antenna signal (dBm)    : -74\n"
+                      "  antenna                 : 1\n"
+                      "  rx flags                : \n"
+                      "  fcs                     : 240700832\n"
+                      "802.11 MAC Mangement Frame:\n"
+                      "  version                 : 0\n"
+                      "  type                    : 0\n"
+                      "  subtype                 : 8\n"
+                      "  flags                   : none\n"
+                      "  duration                : 0\n"
+                      "  destination             : ff:ff:ff:ff:ff:ff\n"
+                      "  source                  : 00:0b:0e:26:ab:c0\n"
+                      "  bss id                  : 00:0b:0e:26:ab:c0\n"
+                      "  sequence number         : 3790\n"
+                      "  fragment number         : 0\n");
+}
+
 
 
 // Local Variables:
