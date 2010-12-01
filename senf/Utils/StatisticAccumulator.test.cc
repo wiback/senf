@@ -29,7 +29,8 @@
 #include "Statistics.hh"
 #include "auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <math.h>
+//#include <boost/math/special_functions/fpclassify.hpp>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -56,9 +57,10 @@ SENF_AUTO_UNIT_TEST(StatisticAccumulator)
 
     BOOST_CHECK_EQUAL( sa.max(), 0);
     BOOST_CHECK_EQUAL( sa.min(), 0);
-    BOOST_CHECK( (boost::math::isnan)( sa.avg()));
+//    BOOST_CHECK( (boost::math::isnan)( sa.avg()));
+    BOOST_CHECK( ::isnan( sa.avg()) != 0);
     BOOST_CHECK_EQUAL( sa.last_avg(), 5.0);
-    BOOST_CHECK( (boost::math::isnan)( sa.stddev()));
+    BOOST_CHECK( ::isnan( sa.stddev()));
     BOOST_CHECK_EQUAL( sa.count(), 0);
 
 

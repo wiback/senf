@@ -32,13 +32,12 @@
 // senf::StatisticAccumulator<T>
 
 template <class T>
-prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator( T defaultvalue)
-    : defaultvalue_(defaultvalue),
-      sum_squared_(defaultvalue*defaultvalue),
-      sum_(defaultvalue),
-      min_(defaultvalue),
-      max_(defaultvalue),
-      last_avg_(float(defaultvalue)),
+prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator( )
+    : sum_squared_(0),
+      sum_(0),
+      min_(0),
+      max_(0),
+      last_avg_(0),
       count_(0)
 {
 }
@@ -84,8 +83,8 @@ prefix_ void senf::StatisticAccumulator<T>::clear()
 {
     last_avg_ = avg();
     count_ = 0;
-    sum_squared_ = defaultvalue_*defaultvalue_;
-    sum_ = min_ = max_ = defaultvalue_;
+    sum_squared_ = 0;
+    sum_ = min_ = max_ = 0;
 }
 
 

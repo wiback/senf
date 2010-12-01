@@ -50,13 +50,12 @@ namespace senf {
     class StatisticAccumulator
     {
     public:
-        StatisticAccumulator( T defaultvalue = 0);
+        StatisticAccumulator();
 //        virtual ~StatisticAccumulator();
 
         void clear();
         ///< Reset accumulated values.
-        /**< This member reset all avg/min/max values to the given \a
-             defaultvalue and the count to zero. */
+        /**< This member reset all values. */
         void accumulate(T value);
         ///< Gather value to be accumulated.
         /**< This method accumulate a value.
@@ -83,7 +82,6 @@ namespace senf {
         /**< This method returns count of accumulated values of the current accumulation.*/
 
     private:
-        T defaultvalue_;
         T sum_squared_;
         T sum_;
         T min_;
