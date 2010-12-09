@@ -27,10 +27,8 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
-#include "IPv6Packet.hh"
-#include "ICMPv6Packet.hh"
-#include "ListOptionTypeParser.hh"
 #include "NDPOptions.hh"
+#include "ICMPv6Packet.hh"
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf {
@@ -136,10 +134,7 @@ namespace senf {
                     4 - Port unreachable
                     5 - Source address failed ingress/egress policy
                     6 - Reject route to destination   */
-        void setErrCode(int code) {
-            ICMPv6Packet icmpv6 (senf::Packet().rfind<ICMPv6Packet>(senf::nothrow));
-            icmpv6->code() = code;
-        }
+        void setErrCode(int code);
 
         SENF_PARSER_FINALIZE ( ICMPv6ErrDestUnreachableParser );
     };
@@ -227,11 +222,7 @@ namespace senf {
         SENF_PARSER_FIELD    ( unused, UInt32Parser );
         /*  Code    0 - Hop limit exceeded in transit
                     1 - Fragment reassembly time exceeded   */
-        void setErrCode(int code)
-        {
-            ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
-            icmpv6->code() = code;
-        }
+        void setErrCode(int code);
 
         SENF_PARSER_FINALIZE ( ICMPv6ErrTimeExceededParser );
     };
@@ -275,11 +266,8 @@ namespace senf {
                     1 - Unrecognized Next Header type encountered
                     2 - Unrecognized IPv6 option encountered          */
 
-        void setErrCode(int code)
-        {
-            ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
-            icmpv6->code() = code;
-        }
+        void setErrCode(int code);
+
         SENF_PARSER_FINALIZE ( ICMPv6ErrParamProblemParser );
     };
 

@@ -27,9 +27,7 @@
 #define HH_SENF_Packets_DefaultBundle_LlcSnapPacket_ 1
 
 // Custom includes
-#include <algorithm>
 #include "EthernetPacket.hh"
-#include <senf/Packets/Packets.hh>
 
 //#include "LlcSnapPacket.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

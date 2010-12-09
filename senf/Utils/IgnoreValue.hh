@@ -35,7 +35,7 @@ namespace senf {
 
     /** \brief Explicitly ignore a value
 
-        To explicitly ingore a value (e.g. the return value of a function), pass that value to
+        To explicitly ignore a value (e.g. the return value of a function), pass that value to
         senf::IGNORE(). This has the added benefit of silencing \em any warnings about ignored
         values by g++.
      */

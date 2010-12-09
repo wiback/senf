@@ -27,7 +27,6 @@
 #define HH_SENF_Packets_MPEGDVBBundle_SNDUPacket_ 1
 
 // Custom includes
-#include <algorithm>
 #include <boost/crc.hpp>
 #include <senf/Packets/Packets.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>

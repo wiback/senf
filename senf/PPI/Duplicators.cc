@@ -32,8 +32,13 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ void
-senf::ppi::module::ActiveDuplicator::connectorSetup(ActiveDuplicator::ConnectorType & conn)
+prefix_ senf::ppi::module::ActiveDuplicator::ActiveDuplicator()
+{
+    noroute(input);
+    input.onRequest(&ActiveDuplicator::request);
+}
+
+prefix_ void senf::ppi::module::ActiveDuplicator::connectorSetup(ConnectorType & conn)
 {
     route(input, conn);
 }
@@ -41,8 +46,8 @@ senf::ppi::module::ActiveDuplicator::connectorSetup(ActiveDuplicator::ConnectorT
 prefix_ void senf::ppi::module::ActiveDuplicator::request()
 {
     Packet p (input());
-    ActiveDuplicator::ContainerType::iterator i (connectors().begin());
-    ActiveDuplicator::ContainerType::iterator const i_end (connectors().end());
+    ContainerType::iterator i (connectors().begin());
+    ContainerType::iterator const i_end (connectors().end());
     for (; i != i_end; ++i)
         (*i)(p);
 }

@@ -22,10 +22,9 @@
 
 // Definition of non-inline non-template functions
 
-// Custom includes
-#include <senf/Packets/Packets.hh>
-#include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
+
+// Custom includes
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,6 +43,24 @@ namespace {
     SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 136, senf::NDPNeighborAdvertisementMessage);
     SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 137, senf::NDPRedirectMessage             );
     SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 143, senf::MLDv2ListenerReport            );
+}
+
+prefix_ void senf::ICMPv6ErrDestUnreachableParser::setErrCode(int code)
+{
+    ICMPv6Packet icmpv6 (Packet().rfind<ICMPv6Packet>(senf::nothrow));
+    icmpv6->code() = code;
+}
+
+prefix_ void senf::ICMPv6ErrParamProblemParser::setErrCode(int code)
+{
+    ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
+    icmpv6->code() = code;
+}
+
+prefix_ void senf::ICMPv6ErrTimeExceededParser::setErrCode(int code)
+{
+    ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
+    icmpv6->code() = code;
 }
 
 prefix_ void senf::ICMPv6EchoRequestType::dump(packet p, std::ostream & os)
@@ -94,8 +111,8 @@ prefix_ void senf::MLDv2ListenerQueryType::dump(packet p, std::ostream & os)
        << senf::fieldName("Querier's Robustness Variable") << unsigned(p->qrv()) << "\n"
        << senf::fieldName("Querier's Query Interval Code") << unsigned(p->qqic()) << "\n"
        << "  Source Addresses:\n";
-    senf::MLDv2ListenerQuery::Parser::srcAddresses_t::container c (p->srcAddresses());
-    senf::MLDv2ListenerQuery::Parser::srcAddresses_t::container::iterator i (c.begin());
+    parser::srcAddresses_t::container c (p->srcAddresses());
+    parser::srcAddresses_t::container::iterator i (c.begin());
     for (unsigned int nr =1; i != c.end(); ++i, ++nr)
         os << "    " << nr << ".) " << *i << "\n";
     os << "\n";
@@ -129,10 +146,10 @@ prefix_ void senf::NDPRouterSolicitationMessageType::dump(packet p, std::ostream
 {
     os << "ICMPv6 Neighbor Discovery Router Solicitation Message:\n"
        << senf::fieldName("Reserved(32Bit)")           << unsigned(p->reserved()) << "\n";
-    senf::NDPRouterSolicitationMessage::Parser::options_t::container optC(p->options() );
-    senf::NDPRouterSolicitationMessage::Parser::options_t::container::const_iterator listIter (optC.begin());
+    parser::options_t::container optC (p->options());
+    parser::options_t::container::const_iterator listIter (optC.begin());
     for (; listIter != optC.end(); ++listIter) {
-      listIter->dump(os);
+        listIter->dump(os);
     }
 }
 
@@ -146,8 +163,8 @@ prefix_ void senf::NDPRouterAdvertisementMessageType::dump(packet p, std::ostrea
        << senf::fieldName("Router Lifetime")               << unsigned(p->routerLifetime()) << "\n"
        << senf::fieldName("Reachable Time")                << unsigned(p->reachableTime()) << "\n"
        << senf::fieldName("Retrans Timer")                 << unsigned(p->retransTimer()) << "\n";
-    senf::NDPRouterAdvertisementMessage::Parser::options_t::container optC(p->options() );
-    senf::NDPRouterAdvertisementMessage::Parser::options_t::container::const_iterator listIter (optC.begin());
+    parser::options_t::container optC (p->options());
+    parser::options_t::container::const_iterator listIter (optC.begin());
     for (; listIter != optC.end(); ++listIter) {
       listIter->dump(os);
     }
@@ -158,8 +175,8 @@ prefix_ void senf::NDPNeighborSolicitationMessageType::dump(packet p, std::ostre
     os << "ICMPv6 Neighbor Discovery Neighbor Solicitation Message:\n"
        << senf::fieldName("Reserved(32Bit)")          << unsigned(p->reserved()) << "\n"
        << senf::fieldName("Target Address")           << p->target() << "\n";
-    senf::NDPNeighborSolicitationMessage::Parser::options_t::container optC(p->options() );
-    senf::NDPNeighborSolicitationMessage::Parser::options_t::container::const_iterator listIter (optC.begin());
+    parser::options_t::container optC (p->options());
+    parser::options_t::container::const_iterator listIter (optC.begin());
     for (; listIter != optC.end(); ++listIter) {
         listIter->dump(os);
     }
@@ -173,8 +190,8 @@ prefix_ void senf::NDPNeighborAdvertisementMessageType::dump(packet p, std::ostr
        << senf::fieldName("Override Flag")         << unsigned(p->o()) << "\n"
        << senf::fieldName("Reserved(29Bit)")       << unsigned(p->reserved()) << "\n"
        << senf::fieldName("Target Address")        << p->target() << "\n";
-    senf::NDPNeighborAdvertisementMessage::Parser::options_t::container optC(p->options() );
-    senf::NDPNeighborAdvertisementMessage::Parser::options_t::container::const_iterator listIter (optC.begin());
+    parser::options_t::container optC(p->options() );
+    parser::options_t::container::const_iterator listIter (optC.begin());
     for (; listIter != optC.end(); ++listIter) {
        listIter->dump(os);
     }
@@ -186,10 +203,10 @@ prefix_ void senf::NDPRedirectMessageType::dump(packet p, std::ostream & os)
        << senf::fieldName("Reserved(32Bit)")       << unsigned(p->reserved()) << "\n"
        << senf::fieldName("Target Address")        << p->target() << "\n"
        << senf::fieldName("Destination Address")   << p->destination() << "\n";
-    senf::NDPRedirectMessage::Parser::options_t::container optC(p->options() );
-    senf::NDPRedirectMessage::Parser::options_t::container::const_iterator listIter (optC.begin());
+    parser::options_t::container optC(p->options() );
+    parser::options_t::container::const_iterator listIter (optC.begin());
     for (; listIter != optC.end(); ++listIter) {
-      listIter->dump(os);
+        listIter->dump(os);
     }
 }
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

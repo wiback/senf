@@ -27,7 +27,6 @@
 #define HH_SENF_Packets_80221Bundle_TLVParser_ 1
 
 // Custom includes
-#include <algorithm>
 #include <senf/Packets/Packets.hh>
 #include "MIHTypes.hh"
 

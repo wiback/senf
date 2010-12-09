@@ -24,12 +24,12 @@
     \brief RTPPacket non-inline non-template implementation */
 
 #include "RTPPacket.hh"
-//#include "UDPPacket.ih"
 
 // Custom includes
 #include <boost/io/ios_state.hpp>
 
 #define prefix_
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace
 {
@@ -61,7 +61,7 @@ namespace
     }
 }
 
-prefix_ void senf::RTPPacketType::dump(packet p, std::ostream &os)
+prefix_ void senf::RTPPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Real Time Protocol:\n"
@@ -77,4 +77,5 @@ prefix_ void senf::RTPPacketType::dump(packet p, std::ostream &os)
        << senf::fieldName("sync source id")        << p->synSourceId() << "\n";
 }
 
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

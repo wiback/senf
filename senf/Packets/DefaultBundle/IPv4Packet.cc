@@ -28,9 +28,6 @@
 
 // Custom includes
 #include <iomanip>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <boost/io/ios_state.hpp>
 #include <senf/Utils/IpChecksum.hh>
 #include "EthernetPacket.hh"

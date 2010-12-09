@@ -23,14 +23,13 @@
 /** \file
     \brief RTPPacket public header */
 
-// Custom includes
 #ifndef HH_SENF_Packets_DefaultBundle_RTPPacket_
-#define HH_SENF_Packets_DefaultBundle_RTPPacket_
+#define HH_SENF_Packets_DefaultBundle_RTPPacket_ 1
 
+// Custom includes
 #include <senf/Packets/Packets.hh>
-#include <senf/Socket/Protocols/INet/INet6Address.hh>
 
-
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf {
 
     struct RTPPacketParser : public PacketParserBase
@@ -43,12 +42,13 @@ namespace senf {
         SENF_PARSER_BITFIELD  ( marker,         1, bool         );      //Marker M=1, used to signal speech silent compression; further use in combination with PT to be defined
         SENF_PARSER_BITFIELD  ( payloadType,    7, unsigned     );      //Payload Type; e.g. PCM=8 (RFC 3550)
         SENF_PARSER_FIELD     ( seqNumber,      UInt16Parser );   //random number to identify initial segment of  a stream, increment by 1 used to resequence segments at receiver
-        SENF_PARSER_FIELD     ( timeStamp,      UInt32Parser );   //signals sampling time of 1st byte of payload; initialised; used to calculate Jitter between segments
-        SENF_PARSER_FIELD     ( synSourceId,    UInt32Parser );   //Synchronisation source identifier; identifier of RFTP stream source (random number) in case of conferencing identifier of mixer
+        SENF_PARSER_FIELD     ( timeStamp,      UInt32Parser );   //signals sampling time of 1st byte of payload; initialized; used to calculate Jitter between segments
+        SENF_PARSER_FIELD     ( synSourceId,    UInt32Parser );   //Synchronization source identifier; identifier of RFTP stream source (random number) in case of conferencing identifier of mixer
         SENF_PARSER_VECTOR    (csrcOpt, csrcCount, UInt32Parser );
 
-        bool valid() const {return version() == 2;}
         SENF_PARSER_FINALIZE(RTPPacketParser);
+
+        bool valid() const { return version() == 2; }
     };
 
     struct RTPPacketType
@@ -69,4 +69,6 @@ namespace senf {
     typedef RTPPacketType::packet RTPPacket;
 
 }
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif

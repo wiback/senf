@@ -31,8 +31,6 @@
 #include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/mpl/if.hpp>
-#include "Connectors.hh"
-#include "Setup.hh"
 
 #ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
 #define SENF_MULTI_CONNECTOR_MAX_ARGS 3

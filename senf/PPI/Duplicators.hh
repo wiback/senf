@@ -27,8 +27,6 @@
 #define HH_SENF_PPI_Duplicators_ 1
 
 // Custom includes
-#include <boost/ptr_container/ptr_vector.hpp>
-#include "predecl.hh"
 #include "Connectors.hh"
 #include "Module.hh"
 #include "MultiConnectorMixin.hh"
@@ -43,17 +41,6 @@ namespace module {
     /** \brief Copy every incoming packet to each output
 
         ActiveDuplicator will take every received packet and push it out to each connected output.
-
-        Since ActiveDuplicator allows any number of incoming packet streams, the input connectors
-        are dynamically managed. A special senf::ppi::connect() overload is used to dynamically
-        create the needed input connectors. This hides this extra functionality from the user.
-        \code
-        senf::ppi::module::ActiveDuplicator dup;
-
-        senf::ppi::connect(sourceModule, dup);
-        senf::ppi::connect(dup, targetModule1);
-        senf::ppi::connect(dup, targetModule2.some_input);
-        \endcode
 
         \ingroup routing_modules
      */
@@ -79,7 +66,7 @@ namespace module {
 
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#include "Duplicators.cci"
+//#include "Duplicators.cci"
 //#include "Duplicators.ct"
 //#include "Duplicators.cti"
 #endif

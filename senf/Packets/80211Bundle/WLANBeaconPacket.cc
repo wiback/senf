@@ -23,10 +23,9 @@
 
 // Definition of 802.11 WLAN Beacon Packet non-inline non-template functions
 
-// Custom includes
 #include "WLANBeaconPacket.hh"
 
-#include <senf/Packets/Packets.hh>
+// Custom includes
 #include <boost/io/ios_state.hpp>
 
 #define prefix_

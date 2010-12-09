@@ -68,7 +68,7 @@ namespace module {
 }}}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#include "ActiveFeeder.cci"
+//#include "ActiveFeeder.cci"
 //#include "ActiveFeeder.ct"
 //#include "ActiveFeeder.cti"
 #endif

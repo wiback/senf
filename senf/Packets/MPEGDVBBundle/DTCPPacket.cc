@@ -23,11 +23,10 @@
 /** \file
     \brief DTCPPacket non-inline non-template implementation */
 
-//#include "DTCPPacket.hh"
+#include "DTCPPacket.hh"
 //#include "DTCPPacket.ih"
 
 // Custom includes
-#include "DTCPPacket.hh"
 #include <boost/io/ios_state.hpp>
 #include <iomanip>
 

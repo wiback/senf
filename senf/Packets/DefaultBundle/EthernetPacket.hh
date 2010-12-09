@@ -27,7 +27,6 @@
 #define HH_SENF_Packets_DefaultBundle_EthernetPacket_ 1
 
 // Custom includes
-#include <algorithm>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
 #include <senf/Packets/Packets.hh>
 

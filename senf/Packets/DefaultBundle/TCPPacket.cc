@@ -29,9 +29,7 @@
 // Custom includes
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
-#include <senf/Packets/Packets.hh>
 #include <senf/Utils/IpChecksum.hh>
-#include "IPv4Packet.hh"
 #include "IPv6Packet.hh"
 
 #define prefix_

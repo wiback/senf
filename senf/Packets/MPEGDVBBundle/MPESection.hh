@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <boost/crc.hpp>
-#include <algorithm>
 #include <senf/Packets/Packets.hh>
 
 //#include "MPESection.mpp"

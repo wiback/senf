@@ -28,7 +28,6 @@
 //#include "IPv6Extensions.ih"
 
 // Custom includes
-#include <senf/Utils/hexdump.hh>
 
 //#include "IPv6Extensions.mpp"
 #define prefix_

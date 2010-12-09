@@ -35,8 +35,12 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::ActiveFeeder
 
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// private members
+prefix_ senf::ppi::module::ActiveFeeder::ActiveFeeder()
+{
+    route(input,idle_);
+    route(idle_,output);
+    registerEvent(idle_, &ActiveFeeder::request);
+}
 
 prefix_ void senf::ppi::module::ActiveFeeder::request()
 {

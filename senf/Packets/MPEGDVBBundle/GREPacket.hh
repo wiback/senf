@@ -23,12 +23,10 @@
 /** \file
     \brief GREPacket public header */
 
-#ifndef HH_GREPacket
-#define HH_GREPacket 1
+#ifndef HH_SENF_Packets_MPEGDVBBundle_GREPacket_
+#define HH_SENF_Packets_MPEGDVBBundle_GREPacket_ 1
 
 // Custom includes
-#include <algorithm>
-#include <senf/Packets/Packets.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 //#include "GREPacket.mpp"
