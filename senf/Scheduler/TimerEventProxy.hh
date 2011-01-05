@@ -41,7 +41,7 @@ namespace scheduler {
 
     /** \brief Deadline timer proxy
 
-        The TimerEventProxy is meant to host long term deadline timers to reduce the load of the
+        The TimerEventProxy is meant to host long %term deadline timers to reduce the load of the
         Scheduler with a huge count of TimerEvent items. It registers deadline timer callbacks which
         will be called when the timer expires.
 
