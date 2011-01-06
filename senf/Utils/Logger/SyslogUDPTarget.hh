@@ -27,8 +27,9 @@
 #define HH_SENF_Utils_Logger_SyslogUDPTarget_ 1
 
 // Custom includes
-#include "SyslogTarget.hh"
+#include <syslog.h>
 #include "LogFormat.hh"
+#include "Target.hh"
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
 #include <senf/Socket/ClientSocketHandle.hh>
 #include <senf/Socket/FramingPolicy.hh>
@@ -47,9 +48,9 @@ namespace log {
         host should have a syslog daemon or relay running. The protocol is defined in <a
         href="http://tools.ietf.org/html/rfc3164">RFC-3164</a>.
 
-        This log target has some important benefits:
+        This %log target has some important benefits:
 
-        \li It will never block. It may however lose log messages.
+        \li It will never block. It may however lose %log messages.
         \li It does \e not add timestamp information locally.
 
         These are \e advantages since this makes SyslogUDPTarget a very reliable high-performance

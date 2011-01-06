@@ -30,7 +30,6 @@
 #include <senf/Utils/Console/ParsedCommand.hh>
 #include <senf/Utils/Console/Variables.hh>
 #include <senf/Utils/Console/ScopedDirectory.hh>
-#include <senf/Utils/Exception.hh>
 #include <boost/filesystem/path.hpp>
 
 //#include "FileTarget.mpp"

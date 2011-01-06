@@ -28,10 +28,8 @@
 
 // Custom includes
 #include <map>
-#include <functional>
 #include <ext/functional>
 #include <boost/iterator/transform_iterator.hpp>
-#include "Levels.hh"
 #include <senf/Utils/singleton.hh>
 
 //#include "StreamRegistry.mpp"

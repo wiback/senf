@@ -27,8 +27,6 @@
 #define HH_SENF_Utils_Logger_IOStreamTarget_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
-#include <boost/scoped_ptr.hpp>
 #include "Target.hh"
 #include "LogFormat.hh"
 

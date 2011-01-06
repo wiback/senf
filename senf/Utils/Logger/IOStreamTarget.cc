@@ -27,8 +27,6 @@
 //#include "IOStreamTarget.ih"
 
 // Custom includes
-#include <locale>
-#include <sstream>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
 

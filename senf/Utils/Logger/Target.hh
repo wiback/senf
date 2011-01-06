@@ -27,16 +27,12 @@
 #define HH_SENF_Utils_Logger_Target_ 1
 
 // Custom includes
-#include <set>
 #include <vector>
 #include <boost/utility.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <senf/Utils/singleton.hh>
-#include <senf/Utils/mpl.hh>
-#include "StreamRegistry.hh"
 #include <senf/Utils/Exception.hh>
-#include "TimeSource.hh"
 #include <senf/Utils/Console/LazyDirectory.hh>
+#include "TimeSource.hh"
+#include "Levels.hh"
 
 //#include "Target.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +53,7 @@ namespace log {
     namespace detail { class TargetRegistry; }
     namespace detail { class AreaBase; }
     namespace detail { struct LogParameters; }
+    namespace detail { struct StreamBase; }
 
     /** \brief Logging target base class
 

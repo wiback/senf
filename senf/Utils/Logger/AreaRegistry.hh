@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <map>
-#include <functional>
 #include <boost/iterator/transform_iterator.hpp>
 #include <senf/Utils/singleton.hh>
 

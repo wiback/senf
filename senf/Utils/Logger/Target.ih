@@ -27,10 +27,13 @@
 #define IH_SENF_Utils_Logger_Target_ 1
 
 // Custom includes
+#include <set>
 #include <memory>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/shared_ptr.hpp>
+#include <senf/Utils/singleton.hh>
+#include <senf/Utils/mpl.hh>
 #include <senf/Utils/Console/LazyDirectory.hh>
 #include <senf/Utils/Console/Parse.hh>
 
