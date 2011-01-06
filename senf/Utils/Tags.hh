@@ -46,7 +46,7 @@
     \endcode
 
     Of course, this only works with objects which explicitly declare, that they take an optional
-    senf::NoThrow_t type aprameter.
+    senf::NoThrow_t type parameter.
  */
 
 namespace senf {

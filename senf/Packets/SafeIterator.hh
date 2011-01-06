@@ -69,7 +69,7 @@ namespace senf {
                                              position. */
 
         safe_data_iterator & operator=(PacketData::iterator i); ///< Assign iterator
-                                        /**< The iteator \a i must be from the container wo which \c
+                                        /**< The iterator \a i must be from the container which \c
                                              this iterator has been initialized. */
         safe_data_iterator & operator=(PacketParserBase const & parser);
                                         ///< Assign iterator from parser

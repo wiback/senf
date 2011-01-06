@@ -459,7 +459,7 @@ namespace senf {
                                              backwards towards outer packets up to \c this. */
 
         void finalizeAll();             ///< Update calculated fields
-                                        /**< The finalize() fammily of members will update
+                                        /**< The finalize() family of members will update
                                              calculated packet fields: checksums, size fields and so
                                              on. This includes any field, which can be set from
                                              other information in the packet. Each concrete packet
@@ -727,7 +727,7 @@ namespace senf {
                                                  packet */
         static ConcretePacket createInsertBefore(Packet const & packet, senf::NoInit_t);
                                         ///< Insert uninitialized empty packet before \a packet
-                                        /**< Inserts a completely empty and unitialized packet
+                                        /**< Inserts a completely empty and uninitialized packet
                                              before \a packet into the header/interpreter chain.
                                              \param[in] packet Packet before which to insert the new
                                                  packet */

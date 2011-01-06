@@ -108,7 +108,7 @@ namespace console {
 
     /** \brief Parse command line options
 
-        The command line otpions in \a argc / \a argv will be parsed, interpreting all node's
+        The command line options in \a argc / \a argv will be parsed, interpreting all node's
         relative to \a root as root node.
 
         \related ProgramOptions
@@ -117,7 +117,7 @@ namespace console {
 
     /** \brief ConfigBundle source reading command line options
 
-        This cosntructor is used to create aconfig source parsing the given command line options to
+        This constructor is used to create a config source parsing the given command line options to
         add to a ConfigBundle.
 
         \related ProgramOptions

@@ -49,7 +49,7 @@ namespace senf {
         This class provides the client side policy interface of the socket
         abstraction. ClientSocketHandle defines the complete policy interface. It does not implement
         any functionality itself however. The following table shows, to which policy members each
-        group of ClientSocketHandle members is forwardd. The last collumn shows, on which other
+        group of ClientSocketHandle members is forwarded. The last column shows, on which other
         policies this member-group depends <em>in the default policy classes</em>. If you define
         your own policy classes, the dependencies are up to you.
 
@@ -79,7 +79,7 @@ namespace senf {
 
         \idea Give SocketHandle (and therefore ClientSocketHandle and ServerSocketHandle) a \c
         protocol() template member and an additional template arg \c Policies. This arg should be a
-        typelist of Poclicy classes which can be accessed. You use protocol<ProtocolClass>() to
+        typelist of policy classes which can be accessed. You use protocol<ProtocolClass>() to
         access a protocol class. \c Policies can of course be underspecified or even empty.
 
         \see \ref policy_group \n

@@ -156,7 +156,7 @@ namespace term {
         functions.
 
 
-        \section editor_complete Completion suppoprt
+        \section editor_complete Completion support
 
         Completion support is provided by senf::term::bindings::complete(). To use the completer,
         you need to implement a completion function and pass it as second argument to
@@ -248,7 +248,7 @@ namespace term {
         //\{
 
         void gotoChar(unsigned n);      ///< Move cursor to position \a n
-        void scrollTo(unsigned n);      ///< Move positon \n to beginning of display line
+        void scrollTo(unsigned n);      ///< Move position \n to beginning of display line
 
         //\}
 
@@ -280,7 +280,7 @@ namespace term {
         //\{
 
         void auxDisplay(unsigned line, std::string const & text);
-                                        ///< Display \a text on aux display line \a lilne
+                                        ///< Display \a text on aux display line \a line
         unsigned maxAuxDisplayHeight(); ///< Get maximum height of the aux display area
         void clearAuxDisplay();         ///< Clear the aux display area
 

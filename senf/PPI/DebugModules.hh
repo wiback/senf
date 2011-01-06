@@ -192,12 +192,12 @@ namespace debug {
 
     /** \brief Active, queue-based packet source
 
-        The ActiveFeederSource contains a packet queue containing the packets to be precessed. These
+        The ActiveFeederSource contains a packet queue containing the packets to be processed. These
         packets are actively fed into the network when it is run with senf::ppi::run() until it is
         empty, when senf::ppi::run() will return.
 
         \note senf::ppi::run will return as soon as no events are active. If want you want is to
-            precess a set of packets placed into the ActiveFeederSource queue you must make sure,
+            Process a set of packets placed into the ActiveFeederSource queue you must make sure,
             that eventually all events in the module are disabled by throttling or other
             activities. Otherwise, senf::ppi::run() will \e not return.
 
@@ -263,7 +263,7 @@ namespace debug {
 
     /** \brief Log received packets
 
-        This module will log all packets sent to it's input using SENF_LOG to the given log
+        This module will %log all packets sent to it's input using SENF_LOG to the given %log
         \a Stream, \a Area and \a Level.
      */
     template < class Stream = log::Debug,

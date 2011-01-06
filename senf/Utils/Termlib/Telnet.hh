@@ -365,7 +365,7 @@ namespace telnethandler {
     /** \brief Implement TERMINAL_TYPE option
 
         This telnet handler implements the TERMINAL_TYPE option. The handler automatically requests
-        the first terminal type during initialization. Further terminal types may then be reqeusted
+        the first terminal type during initialization. Further terminal types may then be requested
         by calling nextTerminalType().
 
         The last received terminal type will be returned by the terminalType() member.

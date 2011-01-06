@@ -104,7 +104,7 @@ namespace console {
                   description = "numeric id of task to check, -1 for the current task."
                   default_value = -1 ) );
         senf::console::root()
-            .add("taskStatus", fty::Commande(static_cast<std::string (*)(std::string const &)>(
+            .add("taskStatus", fty::Command(static_cast<std::string (*)(std::string const &)>(
                                                  &taskStatus))
             .overloadDoc("Query status by name")
             .arg( name = "name",

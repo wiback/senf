@@ -337,7 +337,7 @@ namespace scheduler {
 
     /** \brief %scheduler specific time source for Utils/Logger framework
 
-        This time source may be used to provide timing information for log messages within the
+        This time source may be used to provide timing information for %log messages within the
         Utils/Logger framework. This time source will use Scheduler::eventTime() to provide timing
         information.
 

@@ -120,7 +120,7 @@ namespace senf {
         This is the container wrapper used for vector parsers. The container wrapper will stay valid
         after changing the collection. However the container still depends on the packet and will be
         invalidated if the Packet is deallocated or if the packet size is changed from without the
-        container wrapper (more precisely, it is invalided if the insertion/deletion happens before
+        container wrapper (more precisely, it is invalidated if the insertion/deletion happens before
         the vector in the packet data).
 
         The vector container wrapper provides a complete STL random-access sequence interface.

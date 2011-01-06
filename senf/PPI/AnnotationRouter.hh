@@ -51,7 +51,7 @@ namespace module {
         The \a AnnotationType template parameter defines the routing key. This annotation must
         support the following operations:
         \li Comparison with '<' (\c LessThanComparable concept)
-        \li Copy construction and copy assignment (\c Copyable und \c Assignable concepts)
+        \li Copy construction and copy assignment (\c Copyable and \c Assignable concepts)
             (e.g. via compiler synthesized copy constructor and assignment operator)
         \li Output streaming to an ostream via '\c <<' (for error description purposes) (\c
             OutputStreamable concept)

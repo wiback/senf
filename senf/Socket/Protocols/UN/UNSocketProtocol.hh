@@ -56,11 +56,15 @@ namespace senf {
                                            disable SO_LINGER to ensure, that v_terminate will not
                                            block. Like the overriden method, this member will ignore
                                            failures and will never throw. It therefore safe to be
-                                           called from a destructor. */        ///\name Abstract Interface Implementation
+                                           called from a destructor. */
+
+        ///\name Abstract Interface Implementation
         //\{
 
-         unsigned available() const;
-         bool eof() const;
+        unsigned available() const;
+        bool eof() const;
+
+        //\}
 
     private:
         void check_and_unlink() const;
@@ -68,7 +72,6 @@ namespace senf {
         std::string path_;
     };
 
-    //\}
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
