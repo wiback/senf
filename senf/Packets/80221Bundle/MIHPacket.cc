@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/io/ios_state.hpp>
+#include <senf/Utils/String.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 #define prefix_
@@ -75,6 +76,19 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketTy
     PacketRegistry<MIHMessageRegistry>::Entry const * e (
         PacketRegistry<MIHMessageRegistry>::lookup( p->messageId(), nothrow ));
     return e ? e->factory() : MIHGenericPayloadPacket::factory();
+}
+
+prefix_ std::pair<bool, std::string> senf::MIHPacketType::validate(packet p)
+{
+    if (p.data().size() < initSize())
+        return std::make_pair(false, "truncated MIH message");
+    if (p->version() != 1)
+        return std::make_pair(false, "invalid MIH version: " + senf::str(p->version()) );
+    if (p->payloadLength() != p.size()-8)
+        return std::make_pair(false, "wrong MIH length: " + senf::str(p->payloadLength()) );
+    if (p.next(senf::nothrow))
+        return MIHMessageRegistry::instance().validate( p->messageId(), p.next());
+    return std::make_pair(true, "");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -343,6 +343,7 @@ namespace senf {
         }
         static type_t::value_type const typeId = 11;
         void dump(std::ostream & os) const; ///< dump string representation to given stream
+        std::pair<bool, std::string> validate() const;
 
         enum RequestCode { Registration, ReRegistration };
     };
@@ -361,6 +362,7 @@ namespace senf {
         }
         static type_t::value_type const typeId = 12;
         void dump(std::ostream & os) const; ///< dump string representation to given stream
+        std::pair<bool, std::string> validate() const;
     };
 
 }

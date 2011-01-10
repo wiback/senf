@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009
+// Copyright (C) 2010
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Thorsten Horstmann <tho@berlios.de>
@@ -27,27 +27,96 @@
 #define HH_SENF_Packets_80221Bundle_MIHMessageRegistry_ 1
 
 // Custom includes
+#include <boost/ptr_container/ptr_map.hpp>
+#include <senf/Utils/singleton.hh>
 #include <senf/Packets/Packets.hh>
 
-//#include "MIHPacket.mpp"
+//#include "MIHMessageRegistry.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
-    struct MIHMessageRegistry {
-        // MIH messages registry
+    namespace detail {
+
+        template<class T, typename Signature>
+        struct has_static_validate_member
+        {
+            template<Signature *>
+            struct helper;
+
+            template<class U>
+            static char test(helper<&U::validate> *);
+
+            template<class U>
+            static char (&test(...))[2];
+
+            static const bool value = sizeof(test<T>(0))==1;
+        };
+
+        struct MIHMessageRegistry_EntryBase {
+            virtual ~MIHMessageRegistry_EntryBase() {}
+            virtual std::pair<bool, std::string> validate(senf::Packet message) const = 0;
+        };
+
+        template <class MIHPacket,
+            bool use_validate_member = has_static_validate_member<typename MIHPacket::type, std::pair<bool, std::string>(MIHPacket)>::value>
+        struct MIHMessageRegistryEntry : MIHMessageRegistry_EntryBase
+        {
+            virtual std::pair<bool, std::string> validate(senf::Packet message) const {
+                return std::make_pair(true, "");
+            }
+        };
+
+        template <class MIHPacket>
+        struct MIHMessageRegistryEntry<MIHPacket, true> : MIHMessageRegistry_EntryBase
+        {
+            virtual std::pair<bool, std::string> validate(senf::Packet message) const {
+                return MIHPacket::type::validate(message.as<MIHPacket>());
+            }
+        };
+    }
+
+
+    class MIHMessageRegistry
+        : public senf::singleton<MIHMessageRegistry>
+    {
+    public:
         typedef boost::uint16_t key_t;
+
+        using senf::singleton<MIHMessageRegistry>::instance;
+        friend class senf::singleton<MIHMessageRegistry>;
+
+        template <typename MIHPacket>
+        struct RegistrationProxy {
+            RegistrationProxy();
+        };
+
+        template <typename MIHPacket>
+        void registerMessageType();
+
+        std::pair<bool, std::string> validate(key_t messageId, senf::Packet message);
+
+    private:
+        typedef boost::ptr_map<key_t, detail::MIHMessageRegistry_EntryBase > Map;
+        Map map_;
+
+        MIHMessageRegistry() {};
     };
 
-#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packet )                    \
-        SENF_PACKET_REGISTRY_REGISTER(                                    \
-            senf::MIHMessageRegistry, packet::type::MESSAGE_ID, packet )
+
+#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packet )                      \
+        SENF_PACKET_REGISTRY_REGISTER(                                      \
+            senf::MIHMessageRegistry, packet::type::MESSAGE_ID, packet )    \
+        namespace {                                                         \
+            senf::MIHMessageRegistry::RegistrationProxy< packet >           \
+            BOOST_PP_CAT(mihPacketRegistration_, __LINE__);                 \
+        }
 
 }
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "MIHPacket.cci"
-//#include "MIHPacket.ct"
-//#include "MIHPacket.cti"
+//#include "MIHMessageRegistry.cci"
+#include "MIHMessageRegistry.ct"
+//#include "MIHMessageRegistry.cti"
 #endif
 
 

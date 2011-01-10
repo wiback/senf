@@ -27,8 +27,6 @@
 #define HH_SENF_Packets_PacketRegistry_ 1
 
 // Custom includes
-#include <map>
-#include <boost/utility.hpp> // for boost::noncopyable
 #include <boost/optional.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <senf/Utils/Exception.hh>

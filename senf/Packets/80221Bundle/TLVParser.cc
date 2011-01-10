@@ -30,6 +30,7 @@
 #include <iomanip>
 #include <senf/Utils/hexdump.hh>
 #include <senf/Utils/Format.hh>
+#include <senf/Utils/String.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -233,6 +234,14 @@ prefix_ void senf::MIHRegisterReqCodeTLVParser::dump(std::ostream & os)
     os << " (???; invalid value!)" << std::endl;
 }
 
+prefix_ std::pair<bool, std::string> senf::MIHRegisterReqCodeTLVParser::validate()
+    const
+{
+    if (length() != 1) return std::make_pair(false, "invalid length in MIHRegisterReqCodeTLV " + senf::str(length()));
+    if (value()  >= 2) return std::make_pair(false, "invalid value in MIHRegisterReqCodeTLV " + senf::str(value()));
+    return std::make_pair(true, "");
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHValidTimeIntervalTLVParser
 
@@ -246,6 +255,13 @@ prefix_ void senf::MIHValidTimeIntervalTLVParser::dump(std::ostream & os)
        << indent <<   "length: " << unsigned( length()) << " byte(s)" << std::endl
        << indent <<   "value:  " << unsigned( value())
        << ( value()==0 ? " (infinite)" : " seconds") << std::endl;
+}
+
+prefix_ std::pair<bool, std::string> senf::MIHValidTimeIntervalTLVParser::validate()
+    const
+{
+    if (length() != 4) return std::make_pair(false, "invalid length in MIHValidTimeIntervalTLV " + senf::str(length()));
+    return std::make_pair(true, "");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

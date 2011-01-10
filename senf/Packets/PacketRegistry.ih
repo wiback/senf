@@ -27,7 +27,6 @@
 #define IH_SENF_Packets_PacketRegistry_ 1
 
 // Custom includes
-#include <ext/functional>
 #include <limits>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -35,7 +34,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/intrusive_ptr.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <boost/utility.hpp> // for boost::noncopyable
 #include <senf/Utils/TypeIdValue.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

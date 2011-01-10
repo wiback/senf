@@ -97,9 +97,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<MIHPacketType, MIHMessageRegistry>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<MIHPacketType, MIHMessageRegistry> mixin;
-#endif
         typedef ConcretePacket<MIHPacketType> packet; ///< MIH packet typedef
         typedef MIHPacketParser parser;               ///< typedef to the parser of MIH packet
 
@@ -111,6 +109,8 @@ namespace senf {
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
+
+        static std::pair<bool, std::string> validate(packet p);
     };
 
     /** \brief MIH packet typedef
@@ -130,9 +130,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<MIHGenericPayloadPacketType>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<MIHGenericPayloadPacketType> mixin;
-#endif
         typedef ConcretePacket<MIHGenericPayloadPacketType> packet; ///< MIH Payload packet typedef
         typedef MIHGenericPayloadPacketParser parser; ///< typedef to the parser of MIH Payload packet
 
