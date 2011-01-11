@@ -46,6 +46,14 @@ namespace senf {
         \ingroup senf_statistics
         */
 
+  struct StatisticsData{
+    float min;
+    float max;
+    float avg;
+    float stddev;
+    boost::uint32_t count;
+  };
+
     template <class T>
     class StatisticAccumulator
     {
@@ -80,6 +88,9 @@ namespace senf {
         boost::uint32_t count() const;
         ///< Returns count of accumulated values.
         /**< This method returns count of accumulated values of the current accumulation.*/
+        void data( StatisticsData & data_) const;
+        ///< Returns the accumulated data as a tuple
+        /**< This method returns the accumulated information as a tuple.*/  
 
     private:
         T sum_squared_;
@@ -95,7 +106,6 @@ namespace senf {
 
     typedef StatisticAccumulator<int> StatisticAccumulatorInt;
     typedef StatisticAccumulator<float> StatisticAccumulatorFloat;
-
 
 }
 ///////////////////////////////hh.e////////////////////////////////////////

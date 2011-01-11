@@ -465,6 +465,10 @@ namespace senf {
                                         ///< Same as operator() with \a min == \a avg == \a max
                                         /**< Provided so a Statistics instance can be directly used
                                              as a signal target. */
+        void operator()(StatisticsData const & data);
+                                        ///< Same as operator(), but imports statistics data from a StatisticsData object
+                                        /**< Provided so a Statistics instance can be directly used
+                                             as a signal target. */
         template <class Value>
         void operator()(unsigned n, StatisticAccumulator<Value> & sa);
                                         ///< Same as operator() gathers values from StatisticAccumulator

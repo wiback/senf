@@ -181,6 +181,11 @@ prefix_ void senf::Statistics::operator()(float min, float avg, float max, float
     enter(1, min, avg, max, dev);
 }
 
+prefix_ void senf::Statistics::operator()(StatisticsData const & data)
+{
+  enter(1, data.min, data.avg, data.max, data.stddev);
+}
+
 prefix_ void senf::Statistics::operator()(float value, float dev)
 {
     enter(1, value, value, value, dev);
