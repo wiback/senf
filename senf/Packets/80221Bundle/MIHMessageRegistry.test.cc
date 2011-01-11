@@ -35,9 +35,12 @@
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-using namespace senf;
 
-namespace {
+// we cannot put these test classes into the anonymous namespace because of a g++ bug
+// see https://svn.boost.org/trac/boost/ticket/3729
+
+namespace senf {
+namespace test {
 
     class TestMessagePacketParser
         : public senf::PacketParserBase
@@ -78,7 +81,7 @@ namespace {
         static const boost::uint16_t MESSAGE_ID;
 
         static std::pair<bool, std::string> validate(packet message) {
-            return std::make_pair(message->registerRequestCodeTLV().value() == 1, "");
+            return message->registerRequestCodeTLV().validate();
         }
     };
 
@@ -87,10 +90,13 @@ namespace {
 
     const boost::uint16_t TestMessagePacketType::MESSAGE_ID = 42;
     const boost::uint16_t ValidatedTestMessagePacketType::MESSAGE_ID = 43;
-
-    SENF_MIH_PACKET_REGISTRY_REGISTER( TestMessagePacket );
-    SENF_MIH_PACKET_REGISTRY_REGISTER( ValidatedTestMessagePacket );
 }
+}
+
+using namespace senf;
+
+SENF_MIH_PACKET_REGISTRY_REGISTER( test::TestMessagePacket );
+SENF_MIH_PACKET_REGISTRY_REGISTER( test::ValidatedTestMessagePacket );
 
 
 SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
@@ -106,13 +112,14 @@ SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
     BOOST_CHECK( MIHPacketType::validate( mihPacket).first);
 
     {
-        TestMessagePacket testMessage (TestMessagePacket::createAfter(mihPacket));
+        test::TestMessagePacket testMessage (test::TestMessagePacket::createAfter(mihPacket));
         mihPacket.finalizeAll();
         BOOST_CHECK( MIHPacketType::validate( mihPacket).first);
     }
     {
-        ValidatedTestMessagePacket testMessage (ValidatedTestMessagePacket::createAfter(mihPacket));
+        test::ValidatedTestMessagePacket testMessage (test::ValidatedTestMessagePacket::createAfter(mihPacket));
         mihPacket.finalizeAll();
+        testMessage->registerRequestCodeTLV().value() << 3;
         BOOST_CHECK(! MIHPacketType::validate( mihPacket).first);
         testMessage->registerRequestCodeTLV().value() << 1;
         BOOST_CHECK( MIHPacketType::validate( mihPacket).first);

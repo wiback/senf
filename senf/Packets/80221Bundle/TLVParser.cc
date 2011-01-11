@@ -27,7 +27,6 @@
 //#include "TLVParser.ih"
 
 // Custom includes
-#include <iomanip>
 #include <senf/Utils/hexdump.hh>
 #include <senf/Utils/Format.hh>
 #include <senf/Utils/String.hh>
@@ -41,6 +40,21 @@ SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHStatusTLVParser );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHValidTimeIntervalTLVParser );
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// MIHBaseTLVParser
+
+prefix_ std::pair<bool, std::string> senf::MIHBaseTLVParser::validateTL(boost::uint8_t expectedType, MIHTLVLengthParser::value_type expectedLength)
+    const
+{
+    if (! check( 1 + senf::bytes(length_()) + length()) )
+        return std::make_pair(false, "truncated TLV. Type: " + senf::str(type()));
+    if (type() != expectedType)
+        return std::make_pair(false, "invalid TLV type: " + senf::str(type()));
+    if (length() != expectedLength)
+        return std::make_pair(false, "invalid length in TLV. Type: " + senf::str(type()));
+    return std::make_pair(true, "");
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHBaseListTLVParser
 
 prefix_ void senf::MIHBaseListTLVParser::maxListSize(MIHTLVLengthParser::value_type maxl)
@@ -49,6 +63,7 @@ prefix_ void senf::MIHBaseListTLVParser::maxListSize(MIHTLVLengthParser::value_t
     protect(), listSize_().capacity( maxl);
     maxLength( maxl + senf::bytes(listSize_()));
 }
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHFIdTLVParser
@@ -168,6 +183,17 @@ prefix_ void senf::MIHFSrcIdTLVParser::dump(std::ostream & os)
     MIHFIdTLVParser::dump(os);
 }
 
+prefix_ std::pair<bool, std::string> senf::MIHFSrcIdTLVParser::validate()
+    const
+{
+    if (! check( 1 + senf::bytes(length_()) + length()) )
+        return std::make_pair(false, "truncated TLV. Type: " + senf::str(type()));
+    if (type() != typeId)
+        return std::make_pair(false, "invalid TLV type: " + senf::str(type()));
+    return std::make_pair(true, "");
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHFDstIdTLVParser
 
@@ -177,6 +203,16 @@ prefix_ void senf::MIHFDstIdTLVParser::dump(std::ostream & os)
     senf::format::IndentHelper indent;
     os << indent << "destination MIHF_Id TLV:\n";
     MIHFIdTLVParser::dump(os);
+}
+
+prefix_ std::pair<bool, std::string> senf::MIHFDstIdTLVParser::validate()
+    const
+{
+    if (! check( 1 + senf::bytes(length_()) + length()) )
+        return std::make_pair(false, "truncated TLV. Type: " + senf::str(type()));
+    if (type() != typeId)
+        return std::make_pair(false, "invalid TLV type: " + senf::str(type()));
+    return std::make_pair(true, "");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,6 +247,16 @@ prefix_ void senf::MIHStatusTLVParser::dump(std::ostream & os)
     os << " (???; invalid value!)" << std::endl;
 }
 
+prefix_ std::pair<bool, std::string> senf::MIHStatusTLVParser::validate()
+    const
+{
+    if (! validateTL( typeId, 1).first)
+        return validateTL( typeId, 1);
+    if (value() >= 4)
+        return std::make_pair(false, "invalid value in MIHStatusTLV " + senf::str(value()));
+    return std::make_pair(true, "");
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHRegisterReqCodeTLVParser
 
@@ -237,8 +283,10 @@ prefix_ void senf::MIHRegisterReqCodeTLVParser::dump(std::ostream & os)
 prefix_ std::pair<bool, std::string> senf::MIHRegisterReqCodeTLVParser::validate()
     const
 {
-    if (length() != 1) return std::make_pair(false, "invalid length in MIHRegisterReqCodeTLV " + senf::str(length()));
-    if (value()  >= 2) return std::make_pair(false, "invalid value in MIHRegisterReqCodeTLV " + senf::str(value()));
+    if (! validateTL( typeId, 1).first)
+        return validateTL( typeId, 1);
+    if (value() >= 2)
+        return std::make_pair(false, "invalid value in MIHRegisterReqCodeTLV " + senf::str(value()));
     return std::make_pair(true, "");
 }
 
@@ -260,7 +308,7 @@ prefix_ void senf::MIHValidTimeIntervalTLVParser::dump(std::ostream & os)
 prefix_ std::pair<bool, std::string> senf::MIHValidTimeIntervalTLVParser::validate()
     const
 {
-    if (length() != 4) return std::make_pair(false, "invalid length in MIHValidTimeIntervalTLV " + senf::str(length()));
+    if (! validateTL( typeId, 4).first) return validateTL( typeId, 4);
     return std::make_pair(true, "");
 }
 

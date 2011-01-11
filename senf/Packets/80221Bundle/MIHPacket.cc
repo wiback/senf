@@ -80,14 +80,18 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketTy
 
 prefix_ std::pair<bool, std::string> senf::MIHPacketType::validate(packet p)
 {
-    if (p.data().size() < initSize())
+    try {
+        if (p.data().size() < initSize())
+            return std::make_pair(false, "truncated MIH message");
+        if (p->version() != 1)
+            return std::make_pair(false, "invalid MIH version: " + senf::str(p->version()) );
+        if (p->payloadLength() != p.size()-8)
+            return std::make_pair(false, "wrong MIH length: " + senf::str(p->payloadLength()) );
+        if (p.next(senf::nothrow))
+            return MIHMessageRegistry::instance().validate( p->messageId(), p.next());
+    } catch (senf::TruncatedPacketException e) {
         return std::make_pair(false, "truncated MIH message");
-    if (p->version() != 1)
-        return std::make_pair(false, "invalid MIH version: " + senf::str(p->version()) );
-    if (p->payloadLength() != p.size()-8)
-        return std::make_pair(false, "wrong MIH length: " + senf::str(p->payloadLength()) );
-    if (p.next(senf::nothrow))
-        return MIHMessageRegistry::instance().validate( p->messageId(), p.next());
+    }
     return std::make_pair(true, "");
 }
 

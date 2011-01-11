@@ -127,6 +127,8 @@ namespace senf {
             \param v maximum value of length field
          */
         void maxLength(MIHTLVLengthParser::value_type maxl) const;
+
+        std::pair<bool, std::string> validateTL(boost::uint8_t type, MIHTLVLengthParser::value_type length) const;
     };
 
 
@@ -292,6 +294,7 @@ namespace senf {
         }
         static type_t::value_type const typeId = 1;
         void dump(std::ostream & os) const;
+        std::pair<bool, std::string> validate() const;
     };
 
     /** \brief Parser for 802.21 destination MIHF_ID TLV
@@ -306,6 +309,7 @@ namespace senf {
         }
         static type_t::value_type const typeId = 2;
         void dump(std::ostream & os) const;
+        std::pair<bool, std::string> validate() const;
     };
 
     /** \brief Parser for 802.21 Status TLV
@@ -324,6 +328,7 @@ namespace senf {
         }
         static type_t::value_type const typeId = 3;
         void dump(std::ostream & os) const; ///< dump string representation to given stream
+        std::pair<bool, std::string> validate() const;
 
         enum StatusCode {
             Success, UnspecifiedFailure, Rejected, AuthorizationFailure, NetworkError };
