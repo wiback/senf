@@ -38,12 +38,11 @@
 #   define PTRMAP_GET_CONTENTS(v) (*(v).second)
 #endif
 
-prefix_ std::pair<bool, std::string> senf::MIHMessageRegistry::validate(key_t messageId, senf::Packet message)
+prefix_ void senf::MIHMessageRegistry::validate(key_t messageId, senf::Packet message)
 {
     Map::const_iterator i (map_.find( messageId));
     if (i != map_.end())
-        return PTRMAP_GET_CONTENTS(*i).validate( message);
-    return std::make_pair(true, "");
+        PTRMAP_GET_CONTENTS(*i).validate( message);
 }
 
 #undef PTRMAP_GET_CONTENTS

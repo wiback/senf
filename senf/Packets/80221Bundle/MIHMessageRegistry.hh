@@ -55,23 +55,21 @@ namespace senf {
 
         struct MIHMessageRegistry_EntryBase {
             virtual ~MIHMessageRegistry_EntryBase() {}
-            virtual std::pair<bool, std::string> validate(senf::Packet message) const = 0;
+            virtual void validate(senf::Packet message) const = 0;
         };
 
         template <class MIHPacket,
-            bool use_validate_member = has_static_validate_member<typename MIHPacket::type, std::pair<bool, std::string>(MIHPacket)>::value>
+            bool use_validate_member = has_static_validate_member<typename MIHPacket::type, void(MIHPacket)>::value>
         struct MIHMessageRegistryEntry : MIHMessageRegistry_EntryBase
         {
-            virtual std::pair<bool, std::string> validate(senf::Packet message) const {
-                return std::make_pair(true, "");
-            }
+            virtual void validate(senf::Packet message) const {}
         };
 
         template <class MIHPacket>
         struct MIHMessageRegistryEntry<MIHPacket, true> : MIHMessageRegistry_EntryBase
         {
-            virtual std::pair<bool, std::string> validate(senf::Packet message) const {
-                return MIHPacket::type::validate(message.as<MIHPacket>());
+            virtual void validate(senf::Packet message) const {
+                MIHPacket::type::validate(message.as<MIHPacket>());
             }
         };
     }
@@ -94,7 +92,7 @@ namespace senf {
         template <typename MIHPacket>
         void registerMessageType();
 
-        std::pair<bool, std::string> validate(key_t messageId, senf::Packet message);
+        void validate(key_t messageId, senf::Packet message);
 
     private:
         typedef boost::ptr_map<key_t, detail::MIHMessageRegistry_EntryBase > Map;

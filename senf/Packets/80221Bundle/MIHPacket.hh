@@ -109,8 +109,7 @@ namespace senf {
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
-
-        static std::pair<bool, std::string> validate(packet p);
+        static void validate(packet p);
     };
 
     /** \brief MIH packet typedef

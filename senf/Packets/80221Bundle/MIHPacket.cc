@@ -78,21 +78,20 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketTy
     return e ? e->factory() : MIHGenericPayloadPacket::factory();
 }
 
-prefix_ std::pair<bool, std::string> senf::MIHPacketType::validate(packet p)
+prefix_ void senf::MIHPacketType::validate(packet p)
 {
     try {
         if (p.data().size() < initSize())
-            return std::make_pair(false, "truncated MIH message");
+            throw InvalidMIHPacketException("truncated MIH message");
         if (p->version() != 1)
-            return std::make_pair(false, "invalid MIH version: " + senf::str(p->version()) );
+            throw InvalidMIHPacketException("invalid MIH version: ") << senf::str(p->version());
         if (p->payloadLength() != p.size()-8)
-            return std::make_pair(false, "wrong MIH length: " + senf::str(p->payloadLength()) );
+            throw InvalidMIHPacketException("wrong MIH length: ") << senf::str(p->payloadLength());
         if (p.next(senf::nothrow))
-            return MIHMessageRegistry::instance().validate( p->messageId(), p.next());
+            MIHMessageRegistry::instance().validate( p->messageId(), p.next());
     } catch (senf::TruncatedPacketException e) {
-        return std::make_pair(false, "truncated MIH message");
+        throw InvalidMIHPacketException("truncated MIH message");
     }
-    return std::make_pair(true, "");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

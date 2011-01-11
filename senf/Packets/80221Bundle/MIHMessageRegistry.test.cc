@@ -80,7 +80,7 @@ namespace test {
 
         static const boost::uint16_t MESSAGE_ID;
 
-        static std::pair<bool, std::string> validate(packet message) {
+        static void validate(packet message) {
             return message->registerRequestCodeTLV().validate();
         }
     };
@@ -106,23 +106,23 @@ SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
     mihPacket->src_mihfId().value( "senf@berlios.de");
     mihPacket->dst_mihfId().value( "test");
 
-    BOOST_CHECK(! MIHPacketType::validate( mihPacket).first);
+    BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
 
     mihPacket.finalizeThis();
-    BOOST_CHECK( MIHPacketType::validate( mihPacket).first);
+    BOOST_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
 
     {
         test::TestMessagePacket testMessage (test::TestMessagePacket::createAfter(mihPacket));
         mihPacket.finalizeAll();
-        BOOST_CHECK( MIHPacketType::validate( mihPacket).first);
+        BOOST_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
     }
     {
         test::ValidatedTestMessagePacket testMessage (test::ValidatedTestMessagePacket::createAfter(mihPacket));
         mihPacket.finalizeAll();
         testMessage->registerRequestCodeTLV().value() << 3;
-        BOOST_CHECK(! MIHPacketType::validate( mihPacket).first);
+        BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
         testMessage->registerRequestCodeTLV().value() << 1;
-        BOOST_CHECK( MIHPacketType::validate( mihPacket).first);
+        BOOST_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
     }
 }
 
