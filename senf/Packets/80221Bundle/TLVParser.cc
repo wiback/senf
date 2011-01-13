@@ -29,7 +29,6 @@
 // Custom includes
 #include <senf/Utils/hexdump.hh>
 #include <senf/Utils/Format.hh>
-#include <senf/Utils/String.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,17 +45,17 @@ prefix_ void senf::MIHBaseTLVParser::validateType(boost::uint8_t expectedType)
     const
 {
     if (! check( 1 + senf::bytes(length_()) + length()) )
-        throw InvalidMIHPacketException("truncated TLV.") << " Type: " << senf::str(type());
+        throw InvalidMIHPacketException("truncated TLV.") << " Type: " << unsigned(type());
     if (type() != expectedType)
-        throw InvalidMIHPacketException("invalid TLV type: ") << senf::str(type());
+        throw InvalidMIHPacketException("wrong TLV type. expected ") << unsigned(expectedType) << " got " << unsigned(type());
 }
 
 prefix_ void senf::MIHBaseTLVParser::validateTypeLength(boost::uint8_t expectedType, MIHTLVLengthParser::value_type expectedLength)
     const
 {
-    validateType( expectedLength);
+    validateType( expectedType);
     if (length() != expectedLength)
-        throw InvalidMIHPacketException("invalid length in TLV.") << " Type: " << senf::str(type());
+        throw InvalidMIHPacketException("invalid length in TLV.") << " Type: " << unsigned(type());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -190,10 +189,7 @@ prefix_ void senf::MIHFSrcIdTLVParser::dump(std::ostream & os)
 prefix_ void senf::MIHFSrcIdTLVParser::validate()
     const
 {
-    if (! check( 1 + senf::bytes(length_()) + length()) )
-        throw InvalidMIHPacketException("truncated TLV.") << " Type: " << senf::str(type());
-    if (type() != typeId)
-        throw InvalidMIHPacketException("invalid TLV type: ") << senf::str(type());
+    validateType( typeId);
 }
 
 
@@ -211,10 +207,7 @@ prefix_ void senf::MIHFDstIdTLVParser::dump(std::ostream & os)
 prefix_ void senf::MIHFDstIdTLVParser::validate()
     const
 {
-    if (! check( 1 + senf::bytes(length_()) + length()) )
-        throw InvalidMIHPacketException("truncated TLV.") << " Type: " << senf::str(type());
-    if (type() != typeId)
-        throw InvalidMIHPacketException("invalid TLV type: ") << senf::str(type());
+    validateType( typeId);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,7 +247,7 @@ prefix_ void senf::MIHStatusTLVParser::validate()
 {
     validateTypeLength( typeId, 1);
     if (value() >= 4)
-        throw InvalidMIHPacketException("invalid value in MIHStatusTLV ") << senf::str(value());
+        throw InvalidMIHPacketException("invalid value in MIHStatusTLV ") << unsigned( value());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,7 +278,7 @@ prefix_ void senf::MIHRegisterReqCodeTLVParser::validate()
 {
     validateTypeLength( typeId, 1);
     if (value() >= 2)
-        throw InvalidMIHPacketException("invalid value in MIHRegisterReqCodeTLV ") << senf::str(value());
+        throw InvalidMIHPacketException("invalid value in MIHRegisterReqCodeTLV ") << unsigned( value());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
