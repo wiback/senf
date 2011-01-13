@@ -33,6 +33,47 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::Module
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)
+{
+    if (std::find(connectorRegistry_.begin(), connectorRegistry_.end(), &connector)
+        == connectorRegistry_.end()) {
+        connectorRegistry_.push_back(&connector);
+        connector.setModule(*this);
+    }
+}
+
+prefix_ void senf::ppi::module::Module::unregisterConnector(connector::Connector & connector)
+{
+    ConnectorRegistry::iterator i (std::find(connectorRegistry_.begin(), connectorRegistry_.end(),
+                                             &connector));
+    if (i != connectorRegistry_.end())
+        connectorRegistry_.erase(i);
+
+    routes_.erase_if(boost::bind(&RouteBase::hasConnector, _1, boost::cref(connector)));
+}
+
+prefix_ senf::ppi::RouteBase &
+senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
+{
+    routes_.push_back(route.release());
+    return routes_.back();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// protected members
+
+prefix_ void senf::ppi::module::Module::noroute(connector::Connector & connector)
+{
+    registerConnector(connector);
+    connector.setModule(*this);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 //#include "Module.mpp"
 

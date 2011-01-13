@@ -42,13 +42,19 @@ SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHValidTimeIntervalTLVParser );
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // MIHBaseTLVParser
 
-prefix_ void senf::MIHBaseTLVParser::validateTL(boost::uint8_t expectedType, MIHTLVLengthParser::value_type expectedLength)
+prefix_ void senf::MIHBaseTLVParser::validateType(boost::uint8_t expectedType)
     const
 {
     if (! check( 1 + senf::bytes(length_()) + length()) )
         throw InvalidMIHPacketException("truncated TLV.") << " Type: " << senf::str(type());
     if (type() != expectedType)
-        throw InvalidMIHPacketException("invalid TLV type") << " Type: " << senf::str(type());
+        throw InvalidMIHPacketException("invalid TLV type: ") << senf::str(type());
+}
+
+prefix_ void senf::MIHBaseTLVParser::validateTypeLength(boost::uint8_t expectedType, MIHTLVLengthParser::value_type expectedLength)
+    const
+{
+    validateType( expectedLength);
     if (length() != expectedLength)
         throw InvalidMIHPacketException("invalid length in TLV.") << " Type: " << senf::str(type());
 }
@@ -62,7 +68,6 @@ prefix_ void senf::MIHBaseListTLVParser::maxListSize(MIHTLVLengthParser::value_t
     protect(), listSize_().capacity( maxl);
     maxLength( maxl + senf::bytes(listSize_()));
 }
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHFIdTLVParser
@@ -247,7 +252,7 @@ prefix_ void senf::MIHStatusTLVParser::dump(std::ostream & os)
 prefix_ void senf::MIHStatusTLVParser::validate()
     const
 {
-    validateTL( typeId, 1);
+    validateTypeLength( typeId, 1);
     if (value() >= 4)
         throw InvalidMIHPacketException("invalid value in MIHStatusTLV ") << senf::str(value());
 }
@@ -278,7 +283,7 @@ prefix_ void senf::MIHRegisterReqCodeTLVParser::dump(std::ostream & os)
 prefix_ void senf::MIHRegisterReqCodeTLVParser::validate()
     const
 {
-    validateTL( typeId, 1);
+    validateTypeLength( typeId, 1);
     if (value() >= 2)
         throw InvalidMIHPacketException("invalid value in MIHRegisterReqCodeTLV ") << senf::str(value());
 }
@@ -301,7 +306,7 @@ prefix_ void senf::MIHValidTimeIntervalTLVParser::dump(std::ostream & os)
 prefix_ void senf::MIHValidTimeIntervalTLVParser::validate()
     const
 {
-    validateTL( typeId, 4);
+    validateTypeLength( typeId, 4);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

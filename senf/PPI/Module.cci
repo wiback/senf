@@ -56,35 +56,9 @@ prefix_ senf::ppi::ModuleManager & senf::ppi::module::Module::moduleManager()
     return ModuleManager::instance();
 }
 
-prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)
-{
-    if (std::find(connectorRegistry_.begin(), connectorRegistry_.end(), &connector)
-        == connectorRegistry_.end()) {
-        connectorRegistry_.push_back(&connector);
-        connector.setModule(*this);
-    }
-}
-
-prefix_ void senf::ppi::module::Module::unregisterConnector(connector::Connector & connector)
-{
-    ConnectorRegistry::iterator i (std::find(connectorRegistry_.begin(), connectorRegistry_.end(),
-                                             &connector));
-    if (i != connectorRegistry_.end())
-        connectorRegistry_.erase(i);
-
-    routes_.erase_if(boost::bind(&RouteBase::hasConnector, _1, boost::cref(connector)));
-}
-
 prefix_ void senf::ppi::module::Module::unregisterEvent(EventDescriptor & event)
 {
     routes_.erase_if(boost::bind(&RouteBase::hasEvent, _1, boost::cref(event)));
-}
-
-prefix_ senf::ppi::RouteBase &
-senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
-{
-    routes_.push_back(route.release());
-    return routes_.back();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,12 +92,6 @@ prefix_ senf::ClockService::clock_type senf::ppi::module::Module::now()
 prefix_ senf::ppi::module::Module::Module()
 {
     moduleManager().registerModule(*this);
-}
-
-prefix_ void senf::ppi::module::Module::noroute(connector::Connector & connector)
-{
-    registerConnector(connector);
-    connector.setModule(*this);
 }
 
 prefix_ void senf::ppi::module::Module::destroy()

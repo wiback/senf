@@ -133,7 +133,8 @@ namespace senf {
          */
         void maxLength(MIHTLVLengthParser::value_type maxl) const;
 
-        void validateTL(boost::uint8_t type, MIHTLVLengthParser::value_type length) const;
+        void validateType(boost::uint8_t type) const;
+        void validateTypeLength(boost::uint8_t type, MIHTLVLengthParser::value_type length) const;
     };
 
 

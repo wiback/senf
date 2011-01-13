@@ -54,6 +54,13 @@ prefix_ senf::Packet senf::Packet::getLast()
     return p;
 }
 
+prefix_ void senf::Packet::dump(std::ostream & os)
+    const
+{
+    last(); // Make sure the packet is complete
+    ptr()->dump(os);
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 //#include "Packet.mpp"

@@ -150,6 +150,17 @@ prefix_ void senf::StatisticsBase::generateOutput()
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::StatisticsBase::OutputEntry
+
+prefix_ void senf::StatisticsBase::OutputEntry::consoleList(std::ostream & os)
+{
+    for (boost::ptr_vector<TargetBase>::iterator i (targets_.begin());
+         i != targets_.end(); ++i)
+        if (! i->label.empty())
+            os << i->label << "\n";
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::Statistics
 
 prefix_ senf::Statistics::Statistics()

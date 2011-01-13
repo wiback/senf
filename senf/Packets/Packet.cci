@@ -153,13 +153,6 @@ prefix_ void senf::Packet::finalizeAll()
     ptr()->finalizeTo(last().ptr());
 }
 
-prefix_ void senf::Packet::dump(std::ostream & os)
-    const
-{
-    last(); // Make sure the packet is complete
-    ptr()->dump(os);
-}
-
 prefix_ senf::TypeIdValue senf::Packet::typeId()
     const
 {

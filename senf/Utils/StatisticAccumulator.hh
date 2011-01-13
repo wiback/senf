@@ -31,29 +31,30 @@
 #include <boost/cstdint.hpp>
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
-    /** \brief Accumulate measurement values
 
-        The accumulator mainly do the prelimenary work for the senf::Statistic class.
-        It accumulates certain values with in an interval to be used by senf::Statistics
+     struct StatisticsData
+     {
+         float min;
+         float max;
+         float avg;
+         float stddev;
+         boost::uint32_t count;
+     };
 
-        \li the senf::Statistics class
-        \li statistics sources
+     /** \brief Accumulate measurement values
 
-        This class provides the average, standard deviation, min, max values over one
-        interval, means until clear() is called. It rather directly calculates the results
-        then collection all single values provided by calling accumulate().
-        \see senf::Statistics to process accumulated values
-        \ingroup senf_statistics
-        */
+         The accumulator mainly do the prelimenary work for the senf::Statistic class.
+         It accumulates certain values with in an interval to be used by senf::Statistics
 
-  struct StatisticsData{
-    float min;
-    float max;
-    float avg;
-    float stddev;
-    boost::uint32_t count;
-  };
+         \li the senf::Statistics class
+         \li statistics sources
 
+         This class provides the average, standard deviation, min, max values over one
+         interval, means until clear() is called. It rather directly calculates the results
+         then collection all single values provided by calling accumulate().
+         \see senf::Statistics to process accumulated values
+         \ingroup senf_statistics
+      */
     template <class T>
     class StatisticAccumulator
     {
