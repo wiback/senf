@@ -88,7 +88,7 @@ prefix_ void senf::StatisticAccumulator<T>::clear()
 }
 
 template <class T>
-prefix_ void senf::StatisticAccumulator<T>::data( StatisticsData &data_) const
+prefix_ void senf::StatisticAccumulator<T>::data( StatisticsData &data_)
 {
     data_.min = (float) min_;
     data_.avg = avg();

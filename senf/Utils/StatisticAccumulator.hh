@@ -89,7 +89,7 @@ namespace senf {
         boost::uint32_t count() const;
         ///< Returns count of accumulated values.
         /**< This method returns count of accumulated values of the current accumulation.*/
-        void data( StatisticsData & data_) const;
+        void data( StatisticsData & data_);
         ///< Returns the accumulated data as a tuple
         /**< This method returns the accumulated information as a tuple.*/  
 
