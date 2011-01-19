@@ -301,7 +301,7 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_parsetest)
                       "  antenna                 : 1\n"
                       "  rx flags                : \n"
                       "  fcs                     : 240700832\n"
-                      "802.11 MAC Mangement Frame:\n"
+                      "802.11 MAC Management Frame:\n"
                       "  version                 : 0\n"
                       "  type                    : 0\n"
                       "  subtype                 : 8\n"

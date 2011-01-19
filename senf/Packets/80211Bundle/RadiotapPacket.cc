@@ -291,7 +291,9 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 
 prefix_ void senf::RadiotapPacketType::init(packet p)
 {
-    p->length() << RadiotapPacketParser_Header::fixed_bytes;
+    // ?? Why the heck do we need the +0? Otherwise we get an
+    // 'undefined reference to 'RadiotapPacketParser_Header::fixed_bytes'
+    p->length() << RadiotapPacketParser_Header::fixed_bytes+0;
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::RadiotapPacketType::nextPacketType(packet p)

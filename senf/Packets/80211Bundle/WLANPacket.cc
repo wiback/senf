@@ -64,7 +64,7 @@ prefix_ void senf::WLANPacket_MgtFrameParser::sequenceNumber(boost::uint16_t sn)
 prefix_ void senf::WLANPacket_MgtFrameType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
-    os << "802.11 MAC Mangement Frame:\n";
+    os << "802.11 MAC Management Frame:\n";
     dumpBase(p.parser(), os);
     os << senf::fieldName("destination")           << p->destinationAddress() << "\n"
        << senf::fieldName("source")                << p->sourceAddress() << "\n"
