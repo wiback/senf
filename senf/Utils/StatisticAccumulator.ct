@@ -81,20 +81,29 @@ prefix_ void senf::StatisticAccumulator<T>::accumulate( T value)
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::clear()
 {
-    last_avg_ = avg();
-    count_ = 0;
-    sum_squared_ = 0;
-    sum_ = min_ = max_ = 0;
+    if( count_ > 0){
+      last_avg_ = avg();
+      count_ = 0;
+      sum_squared_ = 0;
+      sum_ = min_ = max_ = 0;
+    }
 }
 
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::data( StatisticsData &data_) const
 {
-    data_.min = (float) min_;
-    data_.avg = avg();
-    data_.max = (float) max_;
-    data_.stddev = stddev();
-    data_.count = count_;
+    if( count_ == 0){
+    	data_.min = data_.avg = data_.max = last_avg_;
+	data_.stddev = 0.0;
+	data_.count = 0;
+    }
+    else{
+      data_.min = (float) min_;
+      data_.avg = avg();	
+      data_.max = (float) max_;
+      data_.stddev = stddev();
+      data_.count = count_;
+  }
 }
 
 
