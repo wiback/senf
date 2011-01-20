@@ -59,8 +59,15 @@ template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::add(
         ClockService::clock_type timeout, IdType const & id, Callback cb)
 {
-    // insert new entry
-    entrySetByTimeout.insert( Entry(timeout, id, cb));
+    // insert new entry or replace the timeout of an entry already indexed
+    typename EntrySetById_t::iterator i = entrySetById.find(id);
+    if(i == entrySetById.end())
+    	entrySetByTimeout.insert( Entry(timeout, id, cb));
+   	else{
+   		Entry tmp = *i;
+   		tmp.timeout = timeout;
+   		entrySetById.replace(i,tmp);
+   	}
     // the scheduler time to the first earliest timeout (ordered index)
     timer.timeout( entrySetByTimeout.begin()->timeout);
 }
