@@ -66,6 +66,7 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
     SENF_ASSERT( ! target.peer_,
                  "senf::ppi::connector::Connector::connect(): (target) "
                  "duplicate connection" );
+
     if (! (packetTypeID() == typeid(void) ||
            target.packetTypeID() == typeid(void) ||
            packetTypeID() == target.packetTypeID()) )

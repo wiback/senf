@@ -42,16 +42,6 @@ senf::ppi::connector::GenericActiveInputJack::connector()
     return *input_;
 }
 
-prefix_ void senf::ppi::connector::GenericActiveInputJack::reset(GenericActiveInput & input)
-{
-    if (input_->connected()) {
-        GenericPassiveOutput & peer (input_->peer());
-        input_->disconnect();
-        connect(peer, input);
-    }
-    input_ = & input;
-}
-
 prefix_ senf::ppi::connector::GenericActiveOutputJack::
 GenericActiveOutputJack(GenericActiveOutput & output)
     : output_ (&output)
@@ -61,16 +51,6 @@ prefix_ senf::ppi::connector::GenericActiveOutput &
 senf::ppi::connector::GenericActiveOutputJack::connector()
 {
     return *output_;
-}
-
-prefix_ void senf::ppi::connector::GenericActiveOutputJack::reset(GenericActiveOutput & output)
-{
-    if (output_->connected()) {
-        GenericPassiveInput & peer (output_->peer());
-        output_->disconnect();
-        connect(output, peer);
-    }
-    output_ = & output;
 }
 
 prefix_ senf::ppi::connector::GenericPassiveInputJack::
@@ -84,16 +64,6 @@ senf::ppi::connector::GenericPassiveInputJack::connector()
     return *input_;
 }
 
-prefix_ void senf::ppi::connector::GenericPassiveInputJack::reset(GenericPassiveInput & input)
-{
-    if (input_->connected()) {
-        GenericActiveOutput & peer (input_->peer());
-        input_->disconnect();
-        connect(peer, input);
-    }
-    input_ = & input;
-}
-
 prefix_ senf::ppi::connector::GenericPassiveOutputJack::
 GenericPassiveOutputJack(GenericPassiveOutput & output)
     : output_ (&output)
@@ -103,17 +73,6 @@ prefix_ senf::ppi::connector::GenericPassiveOutput &
 senf::ppi::connector::GenericPassiveOutputJack::connector()
 {
     return *output_;
-}
-
-prefix_ void
-senf::ppi::connector::GenericPassiveOutputJack::reset(GenericPassiveOutput & output)
-{
-    if (output_->connected()) {
-        GenericActiveInput & peer (output_->peer());
-        output_->disconnect();
-        connect(output, peer);
-    }
-    output_ = & output;
 }
 
 prefix_ senf::ppi::connector::ActiveInputJack<senf::Packet>::

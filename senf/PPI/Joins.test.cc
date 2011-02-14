@@ -143,6 +143,45 @@ SENF_AUTO_UNIT_TEST(priorityJoin)
     BOOST_CHECK( ! sink );
 }
 
+namespace {
+    struct ActiveJackSource
+    {
+        senf::ppi::connector::ActiveOutputJack<> output;
+
+        debug::ActiveSource source1;
+        debug::ActiveSource source2;
+
+        ActiveJackSource()
+            : output (source1.output) {}
+
+        void flip() {
+            output.reset( source2.output);
+        }
+    };
+}
+
+//SENF_AUTO_UNIT_TEST(jack_passiveJoin)
+//{
+//    ActiveJackSource jackSource;
+//    PassiveJoin join;
+//    debug::PassiveSink sink;
+//
+//    ppi::connect(jackSource, join);
+//    ppi::connect(join, sink);
+//    ppi::init();
+//
+//    senf::Packet p1 (senf::DataPacket::create());
+//    senf::Packet p2 (senf::DataPacket::create());
+//
+//    jackSource.source1.submit( p1);
+//    BOOST_CHECK_EQUAL( sink.pop_front(), p1);
+//
+//    jackSource.flip();
+//
+//    jackSource.source2.submit( p2);
+//    BOOST_CHECK_EQUAL( sink.pop_front(), p2);
+//}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
