@@ -35,7 +35,7 @@
 // senf::MACAddress
 
 template <class InputIterator>
-prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_data(InputIterator i)
+prefix_ senf::MACAddress senf::MACAddress::from_data(InputIterator i)
 {
     MACAddress mac (senf::noinit);
     senf::config::copy_n(i, 6, mac.begin());

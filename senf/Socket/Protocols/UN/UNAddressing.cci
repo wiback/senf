@@ -43,11 +43,11 @@ prefix_ senf::UNSocketAddress::UNSocketAddress(std::string const & p)
     path(p);
 }
 
-prefix_ senf::UNSocketAddress::UNSocketAddress(const UNSocketAddress& other)
+prefix_ senf::UNSocketAddress::UNSocketAddress(UNSocketAddress const & other)
     : BSDSocketAddress (other)
 {}
 
-prefix_ senf::UNSocketAddress& senf::UNSocketAddress::operator=(const UNSocketAddress& other)
+prefix_ senf::UNSocketAddress& senf::UNSocketAddress::operator=(UNSocketAddress const & other)
 {
     BSDSocketAddress::operator=(other);
     return *this;
@@ -59,8 +59,7 @@ prefix_ std::string senf::UNSocketAddress::path()
     return std::string(addr_.sun_path, socklen()-sizeof(short));
 }
 
-prefix_ std::ostream & senf::operator<<(std::ostream & os,
-                                  senf::UNSocketAddress::UNSocketAddress const & addr)
+prefix_ std::ostream & senf::operator<<(std::ostream & os, UNSocketAddress const & addr)
 {
     os << addr.path();
     return os;

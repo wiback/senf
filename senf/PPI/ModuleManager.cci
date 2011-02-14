@@ -116,8 +116,7 @@ prefix_ bool senf::ppi::ModuleManager::Initializable::initializationScheduled()
     return moduleManager().initializableRegistered(*this);
 }
 
-prefix_ senf::ppi::ModuleManager::ModuleManager &
-senf::ppi::ModuleManager::Initializable::moduleManager()
+prefix_ senf::ppi::ModuleManager & senf::ppi::ModuleManager::Initializable::moduleManager()
     const
 {
     return ModuleManager::instance();

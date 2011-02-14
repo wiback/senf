@@ -36,19 +36,21 @@
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+using namespace senf;
+
 namespace {
 
     int mask = 0;
 
-    void handler( senf::ClockService::clock_type time, int const &id)
+    void handler(ClockService::clock_type time, int const &id)
     {
         mask = mask + id;
     }
 
-    void run(senf::ClockService::clock_type t) {
-        senf::scheduler::TimerEvent timeout(
-                "test-timeout", &senf::scheduler::terminate, senf::scheduler::now() + t);
-        senf::scheduler::process();
+    void run(ClockService::clock_type t) {
+        scheduler::TimerEvent timeout(
+                "test-timeout", &scheduler::terminate, scheduler::now() + t);
+        scheduler::process();
     }
 
 }
@@ -56,30 +58,31 @@ namespace {
 SENF_AUTO_UNIT_TEST(timerEventProxy)
 {
 //    // abort on watchdog timeout
-//    senf::scheduler::watchdogAbort( true);
-//    senf::scheduler::watchdogTimeout(5000);
+//    scheduler::watchdogAbort( true);
+//    scheduler::watchdogTimeout(5000);
 
-    senf::ClockService::clock_type t (senf::ClockService::now());
+    ClockService::clock_type now (ClockService::now());
     {
-        senf::scheduler::TimerEventProxy<int> timers ("unit-test");
+        scheduler::TimerEventProxy<int> timers ("unit-test");
 
-//        timers.add( t + senf::ClockService::milliseconds(10000), 0 , &handler);
-        timers.add( t + senf::ClockService::milliseconds(800), 4, &handler);
-        timers.add( t + senf::ClockService::milliseconds(200), 1, &handler);
+//        timers.add( t + ClockService::milliseconds(10000), 0 , &handler);
+        timers.add( now + ClockService::milliseconds(800), 4, &handler);
+        timers.add( now + ClockService::milliseconds(200), 1, &handler);
         BOOST_CHECK( timers.remove( 4));
         BOOST_CHECK(! timers.remove( 4));
-        timers.add( t + senf::ClockService::milliseconds(700), 2, &handler);
-
-        BOOST_CHECK_EQUAL( timers.timeout(1), t + senf::ClockService::milliseconds(200));
-        BOOST_CHECK_EQUAL( timers.timeout(2), t + senf::ClockService::milliseconds(700));
-
-        timers.add( t + senf::ClockService::milliseconds(800), 2, &handler);
-        BOOST_CHECK_EQUAL( timers.timeout(2), t + senf::ClockService::milliseconds(800));
         BOOST_CHECK_EQUAL( timers.timeout(4), 0);
+        timers.add( now + ClockService::milliseconds(700), 2, &handler);
 
-        run( senf::ClockService::milliseconds( 2000));
+        BOOST_CHECK_EQUAL( timers.timeout(1), now + ClockService::milliseconds(200));
+        BOOST_CHECK_EQUAL( timers.timeout(2), now + ClockService::milliseconds(700));
 
-        BOOST_CHECK( mask == 3);
+        timers.add( now + ClockService::milliseconds(800), 2, &handler);
+        BOOST_CHECK_EQUAL( timers.timeout(2), now + ClockService::milliseconds(800));
+        timers.add( now, 4, &handler);
+
+        run( ClockService::milliseconds( 2000));
+
+        BOOST_CHECK( mask == 7);
     }
 }
 

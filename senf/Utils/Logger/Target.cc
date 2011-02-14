@@ -499,8 +499,7 @@ prefix_ void senf::log::detail::LogParameters::setDefaults()
         level = MESSAGE::value;
 }
 
-prefix_ senf::log::detail::LogParameters::LogParameters
-senf::log::detail::LogParameters::defaultParameters()
+prefix_ senf::log::detail::LogParameters senf::log::detail::LogParameters::defaultParameters()
 {
     LogParameters pm;
     pm.clear();

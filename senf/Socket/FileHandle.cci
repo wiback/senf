@@ -227,8 +227,7 @@ prefix_ senf::FileBody & senf::FileHandle::body(FileHandle & handle)
     return handle.body();
 }
 
-prefix_ senf::FileBody const &
-senf::FileHandle::body(FileHandle const & handle)
+prefix_ senf::FileBody const & senf::FileHandle::body(FileHandle const & handle)
 {
     return handle.body();
 }
@@ -238,14 +237,12 @@ prefix_ void senf::FileHandle::fd(int fd)
     body().fd(fd);
 }
 
-prefix_ senf::FileHandle::FileHandle
-senf::FileHandle::cast_static(FileHandle handle)
+prefix_ senf::FileHandle senf::FileHandle::cast_static(FileHandle handle)
 {
     return handle;
 }
 
-prefix_ senf::FileHandle
-senf::FileHandle::cast_dynamic(FileHandle handle)
+prefix_ senf::FileHandle senf::FileHandle::cast_dynamic(FileHandle handle)
 {
     return handle;
 }

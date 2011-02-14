@@ -42,7 +42,7 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MACAddress
 
-prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_string(std::string const & s)
+prefix_ senf::MACAddress senf::MACAddress::from_string(std::string const & s)
 {
     MACAddress mac (senf::noinit);
     detail::parseHexString(s, ":-", mac.begin(), mac.end());
