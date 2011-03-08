@@ -42,7 +42,7 @@ namespace log {
 
     /** \brief Log target writing to the syslog
 
-        The SyslogTarget will send all log messages to the syslog at the given facility.
+        The SyslogTarget will send all %log messages to the syslog at the given facility.
 
         \code
         senf::log::SyslogTarget syslog;

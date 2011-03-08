@@ -6,7 +6,7 @@ import SCons.Node, SCons.Node.FS, SCons.Util, SCons.Errors, os
 # files needed explicitly.
 #
 # This works by building a list of all children (recursively) of the
-# test sources. For each child we check, wether a file with the same
+# test sources. For each child we check, whether a file with the same
 # name but an $OBJSUFFIX extension exists as a build target. In that
 # case, we add it to the list of needed objects (AND recursively scan
 # that objects children).

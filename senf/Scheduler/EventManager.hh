@@ -32,7 +32,6 @@
 #include <senf/boost_intrusive/ilist.hpp>
 #include <senf/boost_intrusive/ilist_hook.hpp>
 #include <senf/Utils/singleton.hh>
-#include <senf/Utils/Console/LazyDirectory.hh>
 
 //#include "EventManager.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,10 +114,6 @@ namespace detail {
         EventList events_;
 
         friend class singleton<EventManager>;
-
-#ifndef SENF_DISABLE_CONSOLE
-        console::LazyDirectory consoleDir_;
-#endif
     };
 
 }}}

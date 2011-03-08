@@ -69,7 +69,7 @@ prefix_ senf::Daemon::~Daemon()
     if (pidfileCreated_) {
         try {
             LIBC_CALL( ::unlink, (pidfile_.c_str()) );
-        } catch (Exception e) {
+        } catch (Exception & e) {
             // e << "; could not unlink " << pidfile_.c_str();
             // throw;
         }

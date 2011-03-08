@@ -31,7 +31,7 @@
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include <senf/Utils/Console/ParsedCommand.hh>
-#include <senf/Utils/Console/Sysdir.hh>
+#include "ConsoleDir.hh"
 #include "FIFORunner.hh"
 
 //#include "EventManager.mpp"
@@ -41,8 +41,8 @@
 prefix_ senf::scheduler::detail::EventManager::EventManager()
 {
 #ifndef SENF_DISABLE_CONSOLE
-    consoleDir_().add("events", senf::console::factory::Command(
-                          senf::membind(&EventManager::listEvents, this))
+    consoleDir().add("events", console::factory::Command(
+            membind(&EventManager::listEvents, this))
         .doc("List all scheduler events sorted by priority\n"
              "\n"
              "Columns:\n"
@@ -60,8 +60,6 @@ prefix_ senf::scheduler::detail::EventManager::EventManager()
              "              -  event disabled\n"
              "    INFO    further event specific information")
         );
-
-    senf::console::sysdir().add("scheduler", consoleDir_());
 #endif
 }
 

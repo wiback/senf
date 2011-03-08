@@ -30,15 +30,18 @@
 #include <signal.h>
 #include <time.h>
 #include <cassert>
-#include <senf/Utils/Exception.hh>
-#include <senf/Utils/senfassert.hh>
 #ifdef SENF_DEBUG
     #include <execinfo.h>
 #endif
 #include <senf/config.hh>
 #include <stdint.h>
 #include <stdio.h>
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/senfassert.hh>
 #include "senf/Utils/IgnoreValue.hh"
+#include <senf/Utils/Console/ScopedDirectory.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
+#include "ConsoleDir.hh"
 
 //#include "FIFORunner.mpp"
 #define prefix_
@@ -71,12 +74,38 @@ prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
 
     tasks_.push_back(highPriorityEnd_);
     tasks_.push_back(normalPriorityEnd_);
+
+#ifndef SENF_DISABLE_CONSOLE
+    namespace fty = console::factory;
+    consoleDir().add("abortOnWatchdocTimeout", fty::Command(
+            SENF_MEMBINDFNP( bool, FIFORunner, abortOnTimeout, () const ))
+        .doc("Get current watchdog abort on event status.") );
+    consoleDir().add("abortOnWatchdocTimeout", fty::Command(
+                SENF_MEMBINDFNP( void, FIFORunner, abortOnTimeout, (bool) ))
+        .doc("Enable/disable abort on watchdog event.") );
+    consoleDir().add("watchdogTimeout", fty::Command(
+            SENF_MEMBINDFNP( unsigned, FIFORunner, taskTimeout, () const ))
+        .doc("Get current watchdog timeout in milliseconds") );
+    consoleDir().add("watchdogTimeout", fty::Command(
+            SENF_MEMBINDFNP( void, FIFORunner, taskTimeout, (unsigned) ))
+        .doc("Set watchdog timeout to in milliseconds\n"
+                "Setting the watchdog timeout to 0 will disable the watchdog.") );
+    consoleDir().add("watchdogEvents", fty::Command(membind( &FIFORunner::hangCount, this))
+        .doc("Get number of occurred watchdog events.\n"
+                "Calling this method will reset the counter to 0") );
+#endif
 }
 
 prefix_ senf::scheduler::detail::FIFORunner::~FIFORunner()
 {
     timer_delete(watchdogId_);
     signal(SIGURG, SIG_DFL);
+
+#ifndef SENF_DISABLE_CONSOLE
+    consoleDir().remove("abortOnWatchdocTimeout");
+    consoleDir().remove("watchdogTimeout");
+    consoleDir().remove("watchdogEvents");
+#endif
 }
 
 prefix_ void senf::scheduler::detail::FIFORunner::startWatchdog()

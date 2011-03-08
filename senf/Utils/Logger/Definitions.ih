@@ -33,7 +33,7 @@
 // Implementation details concerning SENF_LOG_CLASS_AREA
 //
 // The SENF_LOG_CLASS_AREA statement shall declare the containing class as it's own default area. Of
-// course, we cannot make the containing class into an area. Therefor we need to trick around a bit:
+// course, we cannot make the containing class into an area. Therefore we need to trick around a bit:
 //
 // We begin by defining an area SENFLogArea with in the class. This area however is hacked, so that
 // it's name() member will return the name of the containing class (which is simple: just cut of the

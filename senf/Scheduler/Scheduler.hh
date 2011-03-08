@@ -69,8 +69,8 @@ namespace senf {
     \li senf::scheduler::SignalEvent for UNIX signal events
     \li senf::scheduler::EventHook for a special event hook
 
-    These instance are owned and managed by the user of the scheduler \e not by the scheduler so the
-    RAII concept can be used.
+    These instance are owned and managed by the user of the %scheduler \e not by the %scheduler so
+    the RAII concept can be used.
 
     \code
     class SomeServer
@@ -95,7 +95,7 @@ namespace senf {
     The event is defined as a class member variable. When the event member is initialized in the
     constructor, the event is automatically registered (except if the optional \a initiallyEnabled
     flag argument is set to \c false). The Destructor will automatically remove the event from the
-    scheduler and ensure, that no dead code is called accidentally.
+    %scheduler and ensure, that no dead code is called accidentally.
 
     The process is the same for the other event types or when registering multiple events. For
     detailed information on the constructor arguments and other features see the event class
@@ -141,7 +141,7 @@ namespace senf {
 
     \section sched_exec Executing the Scheduler
 
-    To enter the scheduler main-loop, call
+    To enter the %scheduler main-loop, call
 
     \code
     senf::scheduler::process();
@@ -202,7 +202,7 @@ namespace senf {
 
     To secure against blocking callbacks, the %scheduler implementation includes a watchdog
     timer. This timer will produce a warning message on the standard error stream when a single
-    callback is executing for more than the watchdog timeout value. Since the scheduler
+    callback is executing for more than the watchdog timeout value. Since the %scheduler
     implementation is completely single threaded, we cannot terminate the callback but at least we
     can produce an informative message and optionally the program can be aborted.
 
