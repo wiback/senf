@@ -24,8 +24,6 @@
     \brief Events inline non-template implementation */
 
 // Custom includes
-#include <senf/Utils/senfassert.hh>
-#include <senf/PPI/detail/EventBinding.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

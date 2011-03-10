@@ -62,7 +62,10 @@ prefix_ OtherPacket senf::Packet::as()
     const
 {
     if (!is<OtherPacket>())
-        throw WrapException<std::bad_cast>(std::bad_cast());
+        throw WrapException<std::bad_cast>(std::bad_cast())
+            << ": called packet::as() with wrong PacketType: "
+            << (valid() ? typeId().prettyName() : "invalid packet")
+            << " != " << prettyName(typeid(OtherPacket));
     return OtherPacket(ptr()->as<typename OtherPacket::type>());
 }
 

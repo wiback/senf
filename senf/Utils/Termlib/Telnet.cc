@@ -38,15 +38,15 @@
 prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol(Handle handle)
     : handle_ (handle), charState_ (NORMAL), command_ (CMD_NONE), option_ (0),
       inputEvent_ ("senf::term::BaseTelnetProtocol::input",
-                   senf::membind(&BaseTelnetProtocol::readHandler, this), handle,
-                   senf::scheduler::FdEvent::EV_READ),
+                   membind(&BaseTelnetProtocol::readHandler, this), handle,
+                   scheduler::FdEvent::EV_READ),
       outputEvent_ ("senf::term::BaseTelnetProtocol::output",
-                    senf::membind(&BaseTelnetProtocol::writeHandler, this), handle,
-                    senf::scheduler::FdEvent::EV_WRITE, false),
+                    membind(&BaseTelnetProtocol::writeHandler, this), handle,
+                    scheduler::FdEvent::EV_WRITE, false),
       pendingRequests_ (0u),
       requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
       timeout_ ("senf::term::BaseTelnetProtocol::configTimeout",
-                senf::membind(&BaseTelnetProtocol::timeout, this))
+                membind(&BaseTelnetProtocol::timeout, this))
 {}
 
 prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol()
@@ -334,7 +334,7 @@ prefix_ void senf::term::BaseTelnetProtocol::transmit(char c)
 
 prefix_ void senf::term::BaseTelnetProtocol::readHandler(int state)
 {
-    if (state != senf::scheduler::FdEvent::EV_READ || handle_.eof()) {
+    if (state != scheduler::FdEvent::EV_READ || handle_.eof()) {
         inputEvent_.disable();
         v_eof();
         return;
@@ -347,7 +347,7 @@ prefix_ void senf::term::BaseTelnetProtocol::readHandler(int state)
 
 prefix_ void senf::term::BaseTelnetProtocol::writeHandler(int state)
 {
-    if (state != senf::scheduler::FdEvent::EV_WRITE) {
+    if (state != scheduler::FdEvent::EV_WRITE) {
         outputEvent_.disable();
         inputEvent_.disable();
         v_eof();

@@ -41,8 +41,8 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
     out = 0;
     std::string value;
     {
-        senf::console::CheckedArgumentIteratorWrapper arg (tokens);
-        senf::console::parse( *(arg++), value );
+        console::CheckedArgumentIteratorWrapper arg (tokens);
+        console::parse( *(arg++), value );
     }
     static boost::sregex_iterator::regex_type rx ("[mun]?[dhms]");
     boost::sregex_iterator i (value.begin(), value.end(), rx);
@@ -73,11 +73,11 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
         case 'm': v *= 60.0;
         case 's': v *= 1000000000.0;
         }
-        out += senf::ClockService::nanoseconds(senf::ClockService::int64_type(v));
+        out += ClockService::nanoseconds(ClockService::int64_type(v));
         j = match.second;
     }
     if (j != value.end())
-        throw senf::console::SyntaxErrorException();
+        throw console::SyntaxErrorException();
 }
 
 prefix_ void senf::formatClockServiceInterval(ClockService::clock_type interval,

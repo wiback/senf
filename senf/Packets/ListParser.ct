@@ -42,7 +42,7 @@ prefix_ void senf::ListParser<ListPolicy>::init()
     container c (*this);
     typename container::iterator i (c.begin());
     typename container::iterator const e (c.end());
-    for(; i!=e; ++i)
+    for (; i!=e; ++i)
         i->init();
 }
 

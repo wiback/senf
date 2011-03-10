@@ -116,7 +116,7 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
     source.submit(p);
     BOOST_CHECK_EQUAL( udpSink.qAlgorithm().size(), 1);
 
-    for( int n = 0; n < 100; n++) {
+    for (int n = 0; n < 100; n++) {
         source.submit(p);
     }
     // queue default size is 64

@@ -63,7 +63,7 @@ namespace senf {
         using mixin::init;
         using mixin::initSize;
 
-        static void dump(packet p, std::ostream &os);
+        static void dump(packet p, std::ostream & os);
     };
 
     typedef RTPPacketType::packet RTPPacket;

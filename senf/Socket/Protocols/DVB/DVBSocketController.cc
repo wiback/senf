@@ -457,8 +457,8 @@ prefix_ void senf::DVBSocketController::readEvent(int event)
 
 prefix_ void senf::DVBSocketController::initConsole()
 {
-    namespace fty = senf::console::factory;
-    namespace kw = senf::console::kw;
+    namespace fty = console::factory;
+    namespace kw = console::kw;
 
     dir.doc("DVB Controller " + controllerNr);
     ++controllerNr;

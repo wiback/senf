@@ -31,7 +31,7 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream &os)
+prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "WLAN beacon frame:\n"

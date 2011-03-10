@@ -53,8 +53,8 @@ namespace detail {
 
 prefix_ senf::log::Target::Target(std::string const & name)
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     detail::TargetRegistry::instance().registerTarget(this, name);
     consoleDir_()
@@ -286,7 +286,7 @@ prefix_ void senf::log::Target::updateRoutingCache(detail::StreamBase const * st
     unsigned limit (DISABLED::value);
     RIB::iterator i (rib_.begin());
     RIB::iterator const i_end (rib_.end());
-    for(; i != i_end; ++i)
+    for (; i != i_end; ++i)
         if ( (! i->stream_ || i->stream_ == stream) &&
              (! i->area_ || i->area_ == area) &&
              i->action_ == ACCEPT ) {
@@ -364,7 +364,7 @@ prefix_ void senf::log::Target::consoleUnroute(detail::LogParameters const & pm,
 
 prefix_ void senf::log::detail::TargetRegistry::dynamicTarget(std::auto_ptr<Target> target)
 {
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
     target->consoleDir()
         .add("remove", fty::Command<void ()>(
@@ -402,8 +402,8 @@ prefix_ void senf::log::detail::TargetRegistry::consoleRemoveTarget(Target * tar
 prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
     : fallbackRouting_(true)
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     console::sysdir().add("log", consoleDir_());
     consoleDir_()

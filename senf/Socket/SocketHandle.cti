@@ -67,7 +67,7 @@ template <class SPolicy>
 prefix_ senf::SocketHandle<SPolicy>::SocketHandle(FileHandle other, bool isChecked)
     : FileHandle(other)
 {
-    SENF_ASSERT( isChecked, "Inrernal failure: Wrong overload called !!" );
+    SENF_ASSERT( isChecked, "Internal failure: Wrong overload called !!" );
     SENF_ASSERT( ! valid() || dynamic_cast<SocketBody *>(&FileHandle::body()),
                  "Internal failure: Replacing or re-assigning non-empty incompatible handle");
 }

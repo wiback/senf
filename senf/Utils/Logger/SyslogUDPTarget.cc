@@ -40,8 +40,8 @@
 
 prefix_ void senf::log::SyslogUDPTarget::init()
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     consoleDir().remove("format");
     consoleDir()
@@ -71,7 +71,7 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
     // or message will not inadvertently be interpreted as date or hostname by a receiving syslog
     // daemon or proxy
     if (syslogFormat_)
-        prfstream << '<' << (facility_ | senf::log::SyslogTarget::LEVELMAP[level]) << "> ";
+        prfstream << '<' << (facility_ | SyslogTarget::LEVELMAP[level]) << "> ";
     prfstream << prefix(timestamp, stream, area, level);
     std::string const & prf (prfstream.str());
 
@@ -110,12 +110,12 @@ namespace log {
 
 prefix_ senf::log::SyslogUDPTarget::RegisterConsole::RegisterConsole()
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     detail::TargetRegistry::instance().consoleDir()
         .add("udp-target",
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4SocketAddress const &,
+             fty::Command<console::DirectoryNode::ptr (*)(INet4SocketAddress const &,
                                                                 LogFacility)
              >(&RegisterConsole::create)
              .arg("address", "target address to send log messages to")
@@ -140,29 +140,26 @@ prefix_ senf::log::SyslogUDPTarget::RegisterConsole::RegisterConsole()
                   "    }\n") );
     detail::TargetRegistry::instance().consoleDir()
         .add("udp-target",
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet4Address const &,
-                                                                LogFacility)
+             fty::Command<console::DirectoryNode::ptr (*)(INet4Address const &, LogFacility)
              >(&RegisterConsole::create)
              .arg("address")
              .arg("facility", kw::default_value = USER) );
     detail::TargetRegistry::instance().consoleDir()
         .add("udp-target",
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6SocketAddress const &,
-                                                                LogFacility)
+             fty::Command<console::DirectoryNode::ptr (*)(INet6SocketAddress const &, LogFacility)
              >(&RegisterConsole::create)
              .arg("address")
              .arg("facility", kw::default_value = USER) );
     detail::TargetRegistry::instance().consoleDir()
         .add("udp-target",
-             fty::Command<senf::console::DirectoryNode::ptr (*)(INet6Address const &,
-                                                                LogFacility)
+             fty::Command<console::DirectoryNode::ptr (*)(INet6Address const &, LogFacility)
              >(&RegisterConsole::create)
              .arg("address")
              .arg("facility", kw::default_value = USER) );
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>
-senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet4SocketAddress const & target,
+senf::log::SyslogUDPTarget::RegisterConsole::create(INet4SocketAddress const & target,
                                                     LogFacility facility)
 {
     std::auto_ptr<Target> tp (new SyslogUDPTarget(target, facility));
@@ -172,7 +169,7 @@ senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet4SocketAddress con
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>
-senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet4Address const & target,
+senf::log::SyslogUDPTarget::RegisterConsole::create(INet4Address const & target,
                                                     LogFacility facility)
 {
     std::auto_ptr<Target> tp (new SyslogUDPTarget(target, facility));
@@ -182,7 +179,7 @@ senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet4Address const & t
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>
-senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet6SocketAddress const & target,
+senf::log::SyslogUDPTarget::RegisterConsole::create(INet6SocketAddress const & target,
                                                     LogFacility facility)
 {
     std::auto_ptr<Target> tp (new SyslogUDPTarget(target, facility));
@@ -192,7 +189,7 @@ senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet6SocketAddress con
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>
-senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet6Address const & target,
+senf::log::SyslogUDPTarget::RegisterConsole::create(INet6Address const & target,
                                                     LogFacility facility)
 {
     std::auto_ptr<Target> tp (new SyslogUDPTarget(target, facility));

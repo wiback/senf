@@ -42,10 +42,14 @@
 namespace ppi = senf::ppi;
 namespace module = ppi::module;
 namespace debug = module::debug;
+namespace scheduler = senf::scheduler;
 
 namespace {
-    void timeout() {
-        senf::scheduler::terminate();
+    void runPPI(senf::ClockService::clock_type t)
+    {
+        scheduler::TimerEvent timeout(
+                "socketSource test timer", &scheduler::terminate, scheduler::now() + t);
+        ppi::run();
     }
 
     int base_pid = 0;
@@ -81,10 +85,7 @@ SENF_AUTO_UNIT_TEST(socketSource)
 
     senf::UDPv4ClientSocketHandle outputSocket;
     outputSocket.writeto(senf::INet4SocketAddress(localhost4str(0)),data);
-    senf::scheduler::TimerEvent timer (
-        "socketSource test timer", &timeout,
-        senf::ClockService::now() + senf::ClockService::milliseconds(100));
-    senf::ppi::run();
+    runPPI( senf::ClockService::milliseconds(100));
 
     BOOST_REQUIRE( ! sink.empty() );
     BOOST_CHECK_EQUAL( sink.front().data().size(), data.size() );

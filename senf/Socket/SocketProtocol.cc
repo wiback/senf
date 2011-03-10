@@ -24,11 +24,11 @@
     \brief SocketProtocol and ConcreteSocketProtocol non-inline non-template implementation
  */
 
-#include <sys/socket.h>
 #include "SocketProtocol.hh"
 //#include "SocketProtocol.ih"
 
 // Custom includes
+#include <sys/socket.h>
 
 //#include "SocketProtocol.mpp"
 #define prefix_

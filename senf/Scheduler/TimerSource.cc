@@ -51,8 +51,7 @@ prefix_ senf::scheduler::detail::POSIXTimerSource::POSIXTimerSource()
 {
     if (pipe(timerPipe_) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("pipe()");
-    senf::scheduler::detail::FdManager::instance().set(
-        timerPipe_[0], detail::FdManager::EV_READ, this);
+    FdManager::instance().set( timerPipe_[0], FdManager::EV_READ, this);
 
     sigemptyset(&sigSet_);
     sigaddset(&sigSet_, SIGALRM);
@@ -79,7 +78,7 @@ prefix_ senf::scheduler::detail::POSIXTimerSource::~POSIXTimerSource()
     timer_delete(timerId_);
     ::signal(SIGALRM, SIG_IGN);
     sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
-    senf::scheduler::detail::FdManager::instance().remove(timerPipe_[0]);
+    FdManager::instance().remove(timerPipe_[0]);
     close(timerPipe_[0]);
     close(timerPipe_[1]);
 }
@@ -185,13 +184,12 @@ prefix_ senf::scheduler::detail::TimerFDTimerSource::TimerFDTimerSource()
     timerfd_ = timerfd_create(CLOCK_MONOTONIC, 0);
     if (timerfd_ < 0)
         SENF_THROW_SYSTEM_EXCEPTION("timerfd_create()");
-    senf::scheduler::detail::FdManager::instance().set(
-        timerfd_, detail::FdManager::EV_READ, this);
+    FdManager::instance().set( timerfd_, FdManager::EV_READ, this);
 }
 
 prefix_ senf::scheduler::detail::TimerFDTimerSource::~TimerFDTimerSource()
 {
-    senf::scheduler::detail::FdManager::instance().remove(timerfd_);
+    FdManager::instance().remove(timerfd_);
     close(timerfd_);
 }
 

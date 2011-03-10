@@ -51,7 +51,7 @@ prefix_ void senf::scheduler::terminate()
 
 prefix_ void senf::scheduler::yield()
 {
-    senf::scheduler::detail::FIFORunner::instance().yield();
+    detail::FIFORunner::instance().yield();
 }
 
 prefix_ bool senf::scheduler::running()
@@ -165,7 +165,7 @@ prefix_ void senf::scheduler::hiresTimers()
 prefix_ senf::log::time_type senf::scheduler::LogTimeSource::operator()()
     const
 {
-    return senf::scheduler::now();
+    return scheduler::now();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

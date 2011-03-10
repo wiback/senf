@@ -71,7 +71,7 @@ namespace senf {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( WLANInfoElementParser               );
         // we just skip the value here. If somebody needs the information he has to implement
-        // this strange information element hisself.
+        // this strange information element himself.
         SENF_PARSER_SKIP     ( length(), 0                         );
         SENF_PARSER_FINALIZE ( WLANSupportedRatesInfoElementParser );
 

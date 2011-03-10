@@ -29,7 +29,6 @@
 
 // Custom includes
 #include <sstream>
-#include <sys/socket.h>
 #include <senf/Utils/TypeInfo.hh>
 
 //#include "SocketHandle.mpp"
@@ -45,7 +44,7 @@ prefix_ void senf::SocketBody::state(SocketStateMap & map, unsigned lod)
     map["file.refcount"]   << refcount();
     map["socket.server"]   << isServer();
     map["socket.protocol"] << v_protocolName();
-    map["socket.protocol.policy"]   << prettyName(typeid(protocol().policy()));
+    map["socket.protocol.policy"] << prettyName(typeid(protocol().policy()));
     protocol().state(map,lod);
 }
 

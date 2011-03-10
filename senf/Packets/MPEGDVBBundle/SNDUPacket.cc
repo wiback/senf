@@ -55,7 +55,7 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::SNDUPacketType::nextPacketT
 {
     if (p.data().size() < 8)
         return no_factory();
-    senf::PacketInterpreterBase::factory_t f (no_factory());
+    PacketInterpreterBase::factory_t f (no_factory());
     if (p->type() < 1536) {
         PacketRegistry<senf::ULEExtHeaderTypes>::Entry const * e (
             PacketRegistry<senf::ULEExtHeaderTypes>::lookup( p->type(), nothrow ));

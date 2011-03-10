@@ -31,8 +31,8 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::IdleEvent
 
-prefix_ senf::ppi::IdleEvent::IdleEvent()
-    : timer_ ("senf::ppi::IdleEvent", boost::bind(&IdleEvent::cb,this))
+prefix_ senf::ppi::IdleEvent::IdleEvent(std::string const & name)
+    : timer_ (name.empty() ? "senf::ppi::IdleEvent" : name, boost::bind(&IdleEvent::cb,this))
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -46,9 +46,7 @@ namespace ppi {
         : public EventImplementation<>
     {
     public:
-        IdleEvent();
-
-    protected:
+        IdleEvent(std::string const & name = "");
 
     private:
         virtual void v_enable();

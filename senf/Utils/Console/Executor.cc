@@ -261,7 +261,7 @@ prefix_ void senf::console::Executor::ll(std::ostream & output,
 {
 #   define HELP_COLUMN 28
 
-    unsigned width (senf::console::Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1));
+    unsigned width (Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1));
     Path dir (cwd_);
     traverseDirectory(path, dir);
     DirectoryNode & node (*dir.back().lock());
@@ -332,7 +332,7 @@ prefix_ void senf::console::Executor::lr(std::ostream & output,
     traverseDirectory(path, dir);
     DirectoryNode & node (*dir.back().lock());
     NodesMap nodes;
-    dolr(output, senf::console::Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1),
+    dolr(output, Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1),
          nodes, "", 0, node);
 }
 

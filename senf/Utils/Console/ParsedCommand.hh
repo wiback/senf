@@ -503,14 +503,12 @@ namespace console {
                                              present, if there is an argument at the current
                                              index. */
 
-#ifndef DOXYVEN
-
+#ifndef DOXYGEN
 #       define BOOST_PP_ITERATION_PARAMS_1                                                        \
             (4, (1, BOOST_PARAMETER_MAX_ARITY,                                                    \
                  SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp),                     \
                  5))
 #       include BOOST_PP_ITERATE()
-
 #endif
 
     private:

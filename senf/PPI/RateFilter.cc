@@ -32,7 +32,7 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-senf::ppi::module::RateFilter::RateFilter(senf::ClockService::clock_type interval)
+prefix_ senf::ppi::module::RateFilter::RateFilter(ClockService::clock_type interval)
     : timer_(interval)
 {
     route(input, timer_);
@@ -40,18 +40,18 @@ senf::ppi::module::RateFilter::RateFilter(senf::ClockService::clock_type interva
     registerEvent(timer_, &RateFilter::timeout);
 }
 
-void senf::ppi::module::RateFilter::timeout()
+prefix_ void senf::ppi::module::RateFilter::timeout()
 {
     output(input());
 }
 
-senf::ClockService::clock_type senf::ppi::module::RateFilter::interval()
+prefix_ senf::ClockService::clock_type senf::ppi::module::RateFilter::interval()
     const
 {
     return timer_.interval().first;
 }
 
-void senf::ppi::module::RateFilter::interval(senf::ClockService::clock_type interval)
+prefix_ void senf::ppi::module::RateFilter::interval(ClockService::clock_type interval)
 {
     timer_.interval(interval);
 }

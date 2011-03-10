@@ -343,7 +343,7 @@ prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator npb, Iterator 
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
     detail::boost_spirit::parse_info<PositionIterator> result;
 
-    for(;;) {
+    for (;;) {
         result = detail::boost_spirit::parse(
             b, e, * impl().grammar.use_parser<Impl::Grammar::SkipParser>());
         b = result.stop;

@@ -39,9 +39,8 @@
 // senf::detail::StatisticsLoggerRegistry
 
 prefix_ void
-senf::detail::StatisticsLoggerRegistry::apply(senf::StatisticsBase & stats,
-                                              unsigned rank,
-                                              senf::console::DirectoryNode & dir)
+senf::detail::StatisticsLoggerRegistry::apply(StatisticsBase & stats,
+                                              unsigned rank, console::DirectoryNode & dir)
 {
     Adders::const_iterator i (adders_.begin());
     Adders::const_iterator const i_end (adders_.end());
@@ -58,12 +57,10 @@ namespace {
         RegisterStatisticsLogger();
 
         static void adder(senf::StatisticsBase & stats,
-                          unsigned rank,
-                          senf::console::DirectoryNode & dir);
+                          unsigned rank, senf::console::DirectoryNode & dir);
 
         static void consoleCreate(senf::StatisticsBase & stats,
-                                  unsigned rank,
-                                  std::string const & prefix);
+                                  unsigned rank, std::string const & prefix);
     };
 
     RegisterStatisticsLogger registerStatisticsLogger;
@@ -75,12 +72,10 @@ prefix_ RegisterStatisticsLogger::RegisterStatisticsLogger()
 }
 
 prefix_ void RegisterStatisticsLogger::adder(senf::StatisticsBase & stats,
-                                             unsigned rank,
-                                             senf::console::DirectoryNode & dir)
+                                             unsigned rank, senf::console::DirectoryNode & dir)
 {
     namespace kw = senf::console::kw;
     namespace fty = senf::console::factory;
-
     dir.add("logger", fty::Command<void (std::string const &)>(
                 boost::bind(&consoleCreate, boost::ref(stats), rank, _1))
             .arg("prefix","Optional prefix string to add to each log message",
@@ -89,8 +84,7 @@ prefix_ void RegisterStatisticsLogger::adder(senf::StatisticsBase & stats,
 }
 
 prefix_ void RegisterStatisticsLogger::consoleCreate(senf::StatisticsBase & stats,
-                                                     unsigned rank,
-                                                     std::string const & prefix)
+                                                     unsigned rank, std::string const & prefix)
 {
     stats.output(rank).connect(senf::StatisticsLogger(prefix),
                                "senf::StatisticsLogger(\"" + prefix + "\")");

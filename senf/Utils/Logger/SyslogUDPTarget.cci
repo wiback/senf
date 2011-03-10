@@ -32,37 +32,33 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4Address const & target,
-                                                    int facility)
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(INet4Address const & target, int facility)
     : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
-      handle_ ( senf::ConnectedUDPv4ClientSocketHandle(senf::INet4SocketAddress(target, 514u)) ),
+      handle_ ( ConnectedUDPv4ClientSocketHandle(INet4SocketAddress(target, 514u)) ),
       syslogFormat_ (true)
 {
     init();
 }
 
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4SocketAddress const & target,
-                                                    int facility)
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(INet4SocketAddress const & target, int facility)
     : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
-      handle_ ( senf::ConnectedUDPv4ClientSocketHandle(target) ),
+      handle_ ( ConnectedUDPv4ClientSocketHandle(target) ),
       syslogFormat_ (true)
 {
     init();
 }
 
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6Address const & target,
-                                                    int facility)
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(INet6Address const & target, int facility)
     : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
-      handle_ ( senf::ConnectedUDPv6ClientSocketHandle(senf::INet6SocketAddress(target, 514u)) ),
+      handle_ ( ConnectedUDPv6ClientSocketHandle(INet6SocketAddress(target, 514u)) ),
       syslogFormat_ (true)
 {
     init();
 }
 
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6SocketAddress const & target,
-                                                    int facility)
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(INet6SocketAddress const & target, int facility)
     : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
-      handle_ ( senf::ConnectedUDPv6ClientSocketHandle(target) ),
+      handle_ ( ConnectedUDPv6ClientSocketHandle(target) ),
       syslogFormat_ (true)
 {
     init();

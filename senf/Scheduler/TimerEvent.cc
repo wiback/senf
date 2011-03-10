@@ -42,13 +42,13 @@ prefix_ senf::scheduler::detail::TimerDispatcher::~TimerDispatcher()
     TimerSet::iterator i (timers_.begin());
     TimerSet::iterator const i_end (timers_.end());
     for (; i != i_end; ++i)
-        senf::scheduler::detail::FIFORunner::instance().dequeue(&(*i));
+        FIFORunner::instance().dequeue(&(*i));
 }
 
 void senf::scheduler::detail::TimerDispatcher::add(TimerEvent & event)
 {
     TimerSet::iterator i (timers_.insert(event));
-    senf::scheduler::detail::FIFORunner::instance().enqueue(&(*i));
+    FIFORunner::instance().enqueue(&(*i));
 }
 
 prefix_ void senf::scheduler::detail::TimerDispatcher::remove(TimerEvent & event)
@@ -56,7 +56,7 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::remove(TimerEvent & event
     TimerSet::iterator i (TimerSet::current(event));
     if (i == timers_.end())
         return;
-    senf::scheduler::detail::FIFORunner::instance().dequeue(&(*i));
+    FIFORunner::instance().dequeue(&(*i));
     timers_.erase(i);
 }
 
@@ -64,7 +64,7 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::prepareRun()
 {
     TimerSet::iterator i (timers_.begin());
     TimerSet::iterator const i_end (timers_.end());
-    ClockService::clock_type now (senf::scheduler::detail::FdManager::instance().eventTime());
+    ClockService::clock_type now (FdManager::instance().eventTime());
     for (; i != i_end && i->timeout_ <= now ; ++i)
         i->setRunnable();
 }

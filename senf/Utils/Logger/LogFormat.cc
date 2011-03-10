@@ -50,8 +50,8 @@ prefix_ senf::log::detail::LogFormat::LogFormat(console::ScopedDirectory<> & dir
     : tag_ (detail::getDefaultTag()), noformat_ (false), showTime_ (true),
       showStream_ (false), showLevel_ (true), showArea_ (true), timeBase_ (-1)
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     timeFormat("%Y-%m-%d %H:%M:%S.%f-0000");
 

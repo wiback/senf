@@ -55,7 +55,7 @@ namespace senf {
         optional \a label string may be specified which will be added as prefix to all log entries.
 
         The log stream defaults to senf::StatisticsStream, the level defaults to
-        senf::log::MESSAGE and the are defaults to senf::log::DefaultArea.
+        senf::log::MESSAGE and the area defaults to senf::log::DefaultArea.
 
         \code
         // Connect with default parameters

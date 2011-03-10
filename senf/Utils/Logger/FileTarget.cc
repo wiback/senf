@@ -53,7 +53,7 @@ prefix_ senf::log::FileTarget::FileTarget(std::string const & filename,
       IOStreamTarget (getNodename(filename, nodename), ofstream_t::member),
       file_ (filename)
 {
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
     if (! ofstream_t::member)
         SENF_THROW_SYSTEM_EXCEPTION("logfile open") << ": " << filename;
@@ -95,8 +95,8 @@ prefix_ std::string const & senf::log::FileTarget::filename()
 
 prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     detail::TargetRegistry::instance().consoleDir()
         .add("file-target", fty::Command(&RegisterConsole::create)

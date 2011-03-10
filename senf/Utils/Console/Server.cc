@@ -405,7 +405,7 @@ prefix_ unsigned senf::console::Client::getWidth(std::ostream & os, unsigned def
 
 prefix_ senf::console::Client::SysBacktrace::SysBacktrace()
 {
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
     sysdir().add("backtrace", fty::Command(&SysBacktrace::backtrace)
                  .doc("Display the backtrace of the last error / exception in this console") );

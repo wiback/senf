@@ -36,9 +36,9 @@
 
 prefix_ senf::term::BaseEditor::BaseEditor(AbstractTerminal & terminal)
     : terminal_ (&terminal),
-      keyTimeout_ (senf::ClockService::milliseconds(DEFAULT_KEY_TIMEOUT_MS)),
+      keyTimeout_ (ClockService::milliseconds(DEFAULT_KEY_TIMEOUT_MS)),
       timer_ ("senf::term::BaseEditor::keySequenceTimeout",
-              senf::membind(&BaseEditor::keySequenceTimeout, this)),
+              membind(&BaseEditor::keySequenceTimeout, this)),
       column_ (0u), displayHeight_ (1u), line_ (0u)
 {
     terminal_->setCallbacks(*this);
@@ -220,7 +220,7 @@ prefix_ bool senf::term::BaseEditor::cb_init()
 prefix_ void senf::term::BaseEditor::cb_charReceived(char c)
 {
     inputBuffer_ += c;
-    timer_.timeout(senf::scheduler::eventTime() + keyTimeout_);
+    timer_.timeout(scheduler::eventTime() + keyTimeout_);
     processKeys();
 }
 
@@ -242,9 +242,9 @@ prefix_ void senf::term::BaseEditor::keySequenceTimeout()
 prefix_ void senf::term::BaseEditor::processKeys()
 {
     do {
-        std::pair<senf::term::KeyParser::keycode_t, std::string::size_type> result
+        std::pair<KeyParser::keycode_t, std::string::size_type> result
             (keyParser_.lookup(inputBuffer_));
-        if (result.first == senf::term::KeyParser::Incomplete)
+        if (result.first == KeyParser::Incomplete)
             return;
         v_keyReceived(result.first);
         inputBuffer_.erase(0, result.second);

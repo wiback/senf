@@ -38,12 +38,11 @@ prefix_ senf::ppi::module::RateAnalyzer::RateAnalyzer()
     registerEvent(timer_, &RateAnalyzer::tick);
 }
 
-prefix_ void senf::ppi::module::RateAnalyzer::startStatistics(senf::ClockService::clock_type interval)
+prefix_ void senf::ppi::module::RateAnalyzer::startStatistics(ClockService::clock_type interval)
 {
     timer_.interval(interval);
-    factor_ = double(senf::ClockService::in_nanoseconds(interval)) /
-        double(senf::ClockService::in_nanoseconds(
-                   senf::ClockService::seconds(1)));
+    factor_ = double(ClockService::in_nanoseconds(interval)) /
+        double(ClockService::in_nanoseconds(ClockService::seconds(1)));
 }
 
 prefix_ void senf::ppi::module::RateAnalyzer::v_handlePacket(Packet const & p)

@@ -54,9 +54,9 @@ namespace senf {
                                         /**< This override will automatically \c shutdown() the
                                            socket whenever it is called. Additionally it will
                                            disable SO_LINGER to ensure, that v_terminate will not
-                                           block. Like the overriden method, this member will ignore
-                                           failures and will never throw. It therefore safe to be
-                                           called from a destructor. */
+                                           block. Like the overridden method, this member will
+                                           ignore failures and will never throw. It therefore
+                                           safe to be called from a destructor. */
 
         ///\name Abstract Interface Implementation
         //\{

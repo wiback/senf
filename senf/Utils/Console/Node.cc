@@ -35,7 +35,7 @@
 
 prefix_ senf::console::DirectoryNode & senf::console::root()
 {
-    static DirectoryNode::ptr rootNode(new DirectoryNode());
+    static DirectoryNode::ptr rootNode (new DirectoryNode());
     return *rootNode;
 }
 

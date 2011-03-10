@@ -35,8 +35,8 @@
 prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh)
     : protocol(sh.protocol()), dir(this)
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     dir.add("buffersize", fty::Command(&DVBSectionProtocolWrapper::setBufferSize, this)
             .doc("Set the size of the circular buffer used for filtered data.")
@@ -82,8 +82,8 @@ prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemu
 prefix_ senf::DVBPESProtocolWrapper::DVBPESProtocolWrapper(senf::DVBDemuxPESHandle sh)
     : protocol(sh.protocol()), dir(this)
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     dir.add("filter",
             fty::Command<void (unsigned short int,

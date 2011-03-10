@@ -49,20 +49,20 @@ prefix_ senf::scheduler::TimerEvent::TimerEvent(std::string const & name, Callba
 
 prefix_ senf::scheduler::TimerEvent::~TimerEvent()
 {
-    if (senf::scheduler::detail::TimerDispatcher::alive())
+    if (detail::TimerDispatcher::alive())
         disable();
 }
 
 prefix_ void senf::scheduler::TimerEvent::enable()
 {
     if (! detail::TimerSetBase::linked())
-        senf::scheduler::detail::TimerDispatcher::instance().add(*this);
+        detail::TimerDispatcher::instance().add(*this);
 }
 
 prefix_ void senf::scheduler::TimerEvent::disable()
 {
     if (detail::TimerSetBase::linked())
-        senf::scheduler::detail::TimerDispatcher::instance().remove(*this);
+        detail::TimerDispatcher::instance().remove(*this);
 }
 
 prefix_ void senf::scheduler::TimerEvent::action(Callback const & cb)

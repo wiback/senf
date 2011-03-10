@@ -57,7 +57,7 @@
 /** \defgroup concrete_protocol_group Protocol Implementations (Concrete Protocol Classes)
     \ingroup protocol_group
 
-    Theese protocol classes define concrete and complete protocol implementations. They inherit from
+    These protocol classes define concrete and complete protocol implementations. They inherit from
     ConcreteSocketProtocol and are used with the ProtocolClientSocketHandle and
     ProtocolServerSocketHandle templates to instantiate socket handles. Appropriate typedefs are
     always provided.
@@ -166,9 +166,9 @@ namespace senf {
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is called. Additionally it will
                                              disable SO_LINGER to ensure, that v_terminate will not
-                                             block. Like the overriden method, this member will ignore
-                                             failures and will never throw. It is therefore safe to be
-                                             called from a destructor.
+                                             block. Like the overridden method, this member will
+                                             ignore failures and will never throw. It is therefore
+                                             safe to be called from a destructor.
                                              \fixme Move into (at least) BSDSocketProtocol */
 
         virtual void state(SocketStateMap & map, unsigned lod) const;

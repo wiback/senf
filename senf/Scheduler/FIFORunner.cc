@@ -171,7 +171,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
 
 prefix_ void senf::scheduler::detail::FIFORunner::run()
 {
-    for(;;) {
+    for (;;) {
         TaskList::iterator f (tasks_.begin());
         TaskList::iterator l (TaskList::current(highPriorityEnd_));
         run(f, l);

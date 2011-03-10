@@ -45,7 +45,7 @@ namespace scheduler = senf::scheduler;
 
 namespace {
     void run(senf::ClockService::clock_type t) {
-        scheduler::TimerEvent timeout(
+        scheduler::TimerEvent timeout (
                 "test-timeout", &scheduler::terminate, scheduler::now() + t);
         ppi::run();
     }

@@ -49,7 +49,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
 {
     struct in6_addr ina;
     if (::inet_pton(AF_INET6,s.c_str(),&ina) > 0)
-        return senf::INet6Address::from_data(&ina.s6_addr[0]);
+        return INet6Address::from_data(&ina.s6_addr[0]);
 
     if (s.empty())
         throw AddressSyntaxException() << ": empty string";
@@ -79,7 +79,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
 
     if (ent && ent->h_addrtype == AF_INET6)
         // We are only interested in the first address ...
-        return senf::INet6Address::from_data(
+        return INet6Address::from_data(
             &reinterpret_cast<in6_addr*>(*(ent->h_addr_list))->s6_addr[0]);
 
     if (resolve == ResolveINet4)

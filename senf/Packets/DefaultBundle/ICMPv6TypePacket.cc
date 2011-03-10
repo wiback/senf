@@ -124,19 +124,19 @@ prefix_ void senf::MLDv2ListenerReportType::dump(packet p, std::ostream & os)
        << senf::fieldName("Reserved")              << unsigned(p->reserved() )
        <<"\n  Multicast Address Records:\n";
 
-    senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container cAddrR (p->mcastAddrRecords() );
-    senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container::iterator iAddrR (cAddrR.begin() );
+    MLDv2ListenerReport::Parser::mcastAddrRecords_t::container cAddrR (p->mcastAddrRecords() );
+    MLDv2ListenerReport::Parser::mcastAddrRecords_t::container::iterator iAddrR (cAddrR.begin() );
     for (; iAddrR != cAddrR.end(); ++iAddrR) {
         os << senf::fieldName("  Record Type")         << unsigned(iAddrR->recordType()) << "\n"
            << senf::fieldName("  Multicast Address")   << iAddrR->mcAddress() << "\n"
            << "    Source Addresses\n:";
-        senf::MLDv2AddressRecordParser::srcAddresses_t::container cSrcAddr (iAddrR->srcAddresses());
-        senf::MLDv2AddressRecordParser::srcAddresses_t::container::iterator iSrcAddr (cSrcAddr.begin());
+        MLDv2AddressRecordParser::srcAddresses_t::container cSrcAddr (iAddrR->srcAddresses());
+        MLDv2AddressRecordParser::srcAddresses_t::container::iterator iSrcAddr (cSrcAddr.begin());
         for (;iSrcAddr != cSrcAddr.end();++iSrcAddr)
             os << "      " << *iSrcAddr << "\n";
         os << "    Auxiliary Data:\n";
-        senf::MLDv2AddressRecordParser::auxData_t::container cAuxD ( iAddrR->auxData() );
-        senf::MLDv2AddressRecordParser::auxData_t::container::iterator iAuxD (cAuxD.begin() );
+        MLDv2AddressRecordParser::auxData_t::container cAuxD ( iAddrR->auxData() );
+        MLDv2AddressRecordParser::auxData_t::container::iterator iAuxD (cAuxD.begin() );
         for (;iAuxD != cAuxD.end(); ++iAuxD)
             os << "      " << *iAuxD << "\n";
     }

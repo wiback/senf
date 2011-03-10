@@ -40,7 +40,7 @@ SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8917, senf::MIHPacket);
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // MIHPacketType
 
-prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
+prefix_ void senf::MIHPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Packet:\n"
@@ -89,7 +89,7 @@ prefix_ void senf::MIHPacketType::validate(packet p)
             throw InvalidMIHPacketException("wrong MIH length: ") << senf::str(p->payloadLength());
         if (p.next(senf::nothrow))
             MIHMessageRegistry::instance().validate( p->messageId(), p.next());
-    } catch (senf::TruncatedPacketException e) {
+    } catch (TruncatedPacketException & e) {
         throw InvalidMIHPacketException("truncated MIH message");
     }
 }
@@ -97,7 +97,7 @@ prefix_ void senf::MIHPacketType::validate(packet p)
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // MIHGenericPayloadPacketType
 
-prefix_ void senf::MIHGenericPayloadPacketType::dump(packet p, std::ostream &os)
+prefix_ void senf::MIHGenericPayloadPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Payload (service specific TLVs):\n";

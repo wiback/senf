@@ -160,6 +160,9 @@ SENF_AUTO_UNIT_TEST(packet)
     senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);
 
+    BOOST_CHECK_THROW( senf::Packet().as<BarPacket>(), senf::WrapException<std::bad_cast> );
+    BOOST_CHECK_THROW( packet.as<BarPacket>(), senf::WrapException<std::bad_cast> );
+
     BOOST_REQUIRE( packet );
     BOOST_CHECK( packet.next() );
     BOOST_CHECK( ! packet.next().next(senf::nothrow) );

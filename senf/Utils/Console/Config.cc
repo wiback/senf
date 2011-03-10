@@ -141,7 +141,7 @@ RestrictGuard(RestrictedExecutor & executor)
     // This MUST BE root() not chroot() since restriction does NOT follow symlinks.
     // Therefore, if chroot() is a directory of symlinks, restricting to it will
     // execute NOTHING.
-    executor_.restrict_ = senf::console::root().thisptr();
+    executor_.restrict_ = console::root().thisptr();
 }
 
 prefix_ senf::console::detail::RestrictedExecutor::RestrictGuard::
@@ -155,7 +155,7 @@ prefix_ senf::console::detail::RestrictedExecutor::RestrictGuard::~RestrictGuard
 {
     if (! std::uncaught_exception())
         executor_.insertParsedNode( *executor_.restrict_ );
-    executor_.restrict_ = senf::console::root().thisptr();
+    executor_.restrict_ = console::root().thisptr();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

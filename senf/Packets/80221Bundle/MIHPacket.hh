@@ -106,7 +106,7 @@ namespace senf {
         using mixin::initSize;
 
         /** \brief Dump given MIH packet in readable form to given output stream */
-        static void dump(packet p, std::ostream &os);
+        static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
         static void validate(packet p);
@@ -138,7 +138,7 @@ namespace senf {
         using mixin::initSize;
 
         /** \brief Dump given MIHGenericPayload in readable form to given output stream */
-        static void dump(packet p, std::ostream &os);
+        static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
     };
 

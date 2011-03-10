@@ -27,7 +27,6 @@
 #include "SocketHandle.ih"
 
 // Custom includes
-#include <senf/Utils/senfassert.hh>
 #include "SocketProtocol.hh"
 
 #define prefix_ inline

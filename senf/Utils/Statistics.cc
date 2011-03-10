@@ -169,7 +169,7 @@ prefix_ senf::Statistics::Statistics()
 #endif
 {
 #ifndef SENF_DISABLE_CONSOLE
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
     dir.add("list", fty::Command(&Statistics::consoleList, this)
             .doc("List statistics collection intervals and current values.\n"
@@ -222,7 +222,7 @@ prefix_ senf::Statistics::Statistics()
                  "the last 5 minutes.")
             .arg("rank","Rank chain selecting the value to generate output for")
             .arg("window","Optional size of sliding average window",
-                 senf::console::kw::default_value = 1u) );
+                 console::kw::default_value = 1u) );
 #endif
 }
 

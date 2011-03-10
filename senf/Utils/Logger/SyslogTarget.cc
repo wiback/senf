@@ -60,8 +60,8 @@ namespace log {
 
 prefix_ senf::log::SyslogTarget::RegisterConsole::RegisterConsole()
 {
-    namespace kw = senf::console::kw;
-    namespace fty = senf::console::factory;
+    namespace kw = console::kw;
+    namespace fty = console::factory;
 
     detail::TargetRegistry::instance().consoleDir()
         .add("syslog-target",fty::Command(&RegisterConsole::create)

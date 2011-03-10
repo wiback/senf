@@ -32,19 +32,19 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-senf::ppi::module::CloneSource::CloneSource(senf::Packet const & packet)
+prefix_ senf::ppi::module::CloneSource::CloneSource(senf::Packet const & packet)
     : packet_(packet)
 {
     noroute(output);
     output.onRequest(&CloneSource::request);
 }
 
-void senf::ppi::module::CloneSource::request()
+prefix_ void senf::ppi::module::CloneSource::request()
 {
     output(packet_.clone());
 }
 
-void senf::ppi::module::CloneSource::replacePacket(senf::Packet const & packet)
+prefix_ void senf::ppi::module::CloneSource::replacePacket(senf::Packet const & packet)
 {
     packet_ = packet;
 }

@@ -41,8 +41,8 @@ template <class Base>
 template <class Parser>
 prefix_ Parser senf::GenericTLVParserBase<Base>::init()
 {
-    senf::PacketParserBase::size_type oldSize (bytes() );
-    senf::PacketParserBase::size_type newParserSize ( senf::init_bytes<Parser>::value );
+    PacketParserBase::size_type oldSize (bytes() );
+    PacketParserBase::size_type newParserSize ( senf::init_bytes<Parser>::value );
     this->resize(  oldSize, newParserSize);
     std::fill(this->i(), boost::next(this->i(), newParserSize), 0u);
     Parser concreteParser = Parser(this->i(), this->state() );
@@ -60,8 +60,8 @@ prefix_  void senf::GenericTLVParserBase<Base>::dump(std::ostream & os)
     } else {
         boost::io::ios_all_saver ias(os);
         os << "  GenericTLVParser<" << prettyName(typeid(Base)) << ">\n"
-           << "    type:   " << senf::format::dumpint(this->type()) << "\n"
-           << "    length: " << senf::format::dumpint(this->length()) << "\n"
+           << "    type:   " << format::dumpint(this->type()) << "\n"
+           << "    length: " << format::dumpint(this->length()) << "\n"
            << "    value:\n";
         hexdump(value().begin(), value().end(), os);
     }
@@ -71,7 +71,7 @@ template <class Base>
 prefix_  senf::PacketInterpreterBase::range senf::GenericTLVParserBase<Base>::value()
     const
 {
-    senf::PacketData::iterator begin ( boost::next(this->i(), senf::bytes( self())) );
+    PacketData::iterator begin ( boost::next(this->i(), senf::bytes( self())) );
     return PacketInterpreterBase::range(begin, boost::next( begin, this->length()) );
 }
 

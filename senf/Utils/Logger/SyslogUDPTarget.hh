@@ -101,10 +101,10 @@ namespace log {
         ///\name Structors and default members
         //\{
 
-        explicit SyslogUDPTarget(senf::INet4Address const & target, int facility = LOG_USER);
-        explicit SyslogUDPTarget(senf::INet4SocketAddress const & target, int facility = LOG_USER);
-        explicit SyslogUDPTarget(senf::INet6Address const & target, int facility = LOG_USER);
-        explicit SyslogUDPTarget(senf::INet6SocketAddress const & target, int facility = LOG_USER);
+        explicit SyslogUDPTarget(INet4Address const & target, int facility = LOG_USER);
+        explicit SyslogUDPTarget(INet4SocketAddress const & target, int facility = LOG_USER);
+        explicit SyslogUDPTarget(INet6Address const & target, int facility = LOG_USER);
+        explicit SyslogUDPTarget(INet6SocketAddress const & target, int facility = LOG_USER);
 
         //\}
         //-////////////////////////////////////////////////////////////////////////
@@ -165,14 +165,14 @@ namespace log {
 
         struct RegisterConsole {
             RegisterConsole();
-            static boost::shared_ptr<senf::console::DirectoryNode> create(
-                senf::INet4SocketAddress const & target, LogFacility facility = USER);
-            static boost::shared_ptr<senf::console::DirectoryNode> create(
-                senf::INet4Address const & target, LogFacility facility = USER);
-            static boost::shared_ptr<senf::console::DirectoryNode> create(
-                senf::INet6SocketAddress const & target, LogFacility facility = USER);
-            static boost::shared_ptr<senf::console::DirectoryNode> create(
-                senf::INet6Address const & target, LogFacility facility = USER);
+            static boost::shared_ptr<console::DirectoryNode> create(
+                INet4SocketAddress const & target, LogFacility facility = USER);
+            static boost::shared_ptr<console::DirectoryNode> create(
+                INet4Address const & target, LogFacility facility = USER);
+            static boost::shared_ptr<console::DirectoryNode> create(
+                INet6SocketAddress const & target, LogFacility facility = USER);
+            static boost::shared_ptr<console::DirectoryNode> create(
+                INet6Address const & target, LogFacility facility = USER);
             static RegisterConsole instance;
         };
     };

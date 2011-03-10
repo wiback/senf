@@ -44,9 +44,9 @@ class RateFilter
     SENF_PPI_MODULE(RateFilter);
 
 public:
-    RateFilter(senf::ClockService::clock_type interval);
-    void interval(senf::ClockService::clock_type interval);
-    senf::ClockService::clock_type interval() const;
+    RateFilter(ClockService::clock_type interval);
+    void interval(ClockService::clock_type interval);
+    ClockService::clock_type interval() const;
 
     connector::ActiveInput<> input;
     connector::ActiveOutput<> output;

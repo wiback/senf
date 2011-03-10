@@ -120,7 +120,7 @@ namespace senf
         using mixin::initSize;
         using PacketTypeBase::nextPacketRange;
 
-        static void dump(packet p, std::ostream &os);
+        static void dump(packet p, std::ostream & os);
     };
 
     /** \brief WLAN Management frame packet typedef
@@ -178,7 +178,7 @@ namespace senf
         using mixin::initSize;
         using PacketTypeBase::nextPacketRange;
 
-        static void dump(packet p, std::ostream &os);
+        static void dump(packet p, std::ostream & os);
     };
 
     /** \brief WLAN Control frame packet typedef
@@ -282,7 +282,7 @@ namespace senf
                 : no_factory();
         }
 
-        static void dump(packet p, std::ostream &os);
+        static void dump(packet p, std::ostream & os);
     };
 
     /** \brief WLAN Data frame packet typedef

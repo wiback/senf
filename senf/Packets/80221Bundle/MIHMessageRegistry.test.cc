@@ -81,7 +81,7 @@ namespace test {
         static const boost::uint16_t MESSAGE_ID;
 
         static void validate(packet message) {
-            return message->registerRequestCodeTLV().validate();
+            message->registerRequestCodeTLV().validate();
         }
     };
 

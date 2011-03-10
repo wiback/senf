@@ -47,7 +47,7 @@
  */
 #define SENF_PP_SEQ_BACK(seq) BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(seq)),seq)
 
-# // No recursive call so we need some more of theese ... ARGH !!!
+# // No recursive call so we need some more of these ... ARGH !!!
 # define SENF_CAT_RECURS1(a, b) SENF_CAT_RECURS1_I(a,b)
 # define SENF_CAT_RECURS1_I(a, b) a ## b
 # define SENF_CAT_RECURS2(a, b) SENF_CAT_RECURS2_I(a,b)

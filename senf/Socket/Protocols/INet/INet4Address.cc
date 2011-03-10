@@ -52,7 +52,7 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
 {
     struct in_addr ina;
     if (::inet_pton(AF_INET,s.c_str(),&ina) > 0)
-        return senf::INet4Address::from_inaddr(ina.s_addr);
+        return INet4Address::from_inaddr(ina.s_addr);
 
     if  (s.empty())
         throw AddressSyntaxException() << ": empty string";
@@ -86,7 +86,7 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
         throw UnknownHostnameException(s);
 
     // We are only interested in the first address ...
-    return senf::INet4Address::from_inaddr(
+    return INet4Address::from_inaddr(
         reinterpret_cast<in_addr*>(*(ent->h_addr_list))->s_addr);
 }
 

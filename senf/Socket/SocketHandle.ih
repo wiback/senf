@@ -60,7 +60,7 @@ namespace senf {
 
             template <class T>
             StreamableString & operator<<(T const & other);
-                                        ///< Value assigment
+                                        ///< Value assignment
                                         /**< This operator will assign the string from any
                                              arbitrary type. It will use boost::lexical_cast to
                                              convert the argument to its string representation.
@@ -139,12 +139,12 @@ namespace senf {
                                            socket whenever it is closed.
                                            \throws senf::SystemException */
         virtual void v_terminate();     ///< Forcibly close socket
-                                        /**< This override will automatically \c shutfown() the
+                                        /**< This override will automatically \c shutdown() the
                                            socket whenever it is called. Additionally it will
                                            disable SO_LINGER to ensure, that v_terminate will not
-                                           block. Like the overriden method, this member will ignore
-                                           failures and will never throw. It therefore safe to be
-                                           called from a destructor. */
+                                           block. Like the overridden method, this member will
+                                           ignore failures and will never throw. It therefore
+                                           safe to be called from a destructor. */
         virtual bool v_eof() const;     ///< Check for eof condition
                                         /**< Since the eof check for sockets is very protocol
                                            dependent, this member will forward the call to

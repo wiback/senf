@@ -29,7 +29,6 @@
 // Custom includes
 #include <deque>
 #include <senf/Utils/safe_bool.hh>
-#include <senf/Packets/Packets.hh>
 #include "MonitorModule.hh"
 #include "ActiveFeeder.hh"
 #include <senf/Utils/Logger/SenfLog.hh>

@@ -122,7 +122,7 @@ namespace log {
     private:
         struct RegisterConsole {
             RegisterConsole();
-            static boost::shared_ptr<senf::console::DirectoryNode> create(
+            static boost::shared_ptr<console::DirectoryNode> create(
                 LogFacility facility);
             static RegisterConsole instance;
         };

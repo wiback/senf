@@ -41,7 +41,7 @@ prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_ty
       maxSize_(maxSize), predicate_(predicate), callback_(cb), errno_(0), complete_(false)
 {
     // Here we add a *static* member taking a *smart* pointer as first
-    // argumnet instead of a simple bound-member as callback to the
+    // argument instead of a simple bound-member as callback to the
     // scheduler. This ensures, that the refcount is at least 1 as
     // long as the helper is registered with the scheduler.
 }
@@ -60,7 +60,7 @@ senf::ReadHelper<Handle>::dispatchProcess(ptr helper, Handle handle, int event)
 {
     // since we have a 'ptr' argument, the instance cannot be deleted
     // before this method returns
-    return helper->process(handle,event);
+    helper->process(handle,event);
 }
 
 template <class Handle>

@@ -73,7 +73,7 @@ namespace senf {
         using mixin::initSize;
         using PacketTypeBase::nextPacketRange;
 
-        static void dump(packet p, std::ostream &os);
+        static void dump(packet p, std::ostream & os);
     };
 
     /** \brief WLAN Beacon frame packet typedef

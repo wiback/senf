@@ -64,7 +64,7 @@ prefix_ void senf::RadiotapPacketParser::parseOffsetTable(boost::uint8_t * data,
     unsigned size (8u);
     while (ieee80211_radiotap_iterator_next(&iter) == 0) {
         if (iter.is_radiotap_ns &&
-            iter.this_arg_index <= int(senf::RadiotapPacketParser::MAX_INDEX))
+            iter.this_arg_index <= int(RadiotapPacketParser::MAX_INDEX))
             table[iter.this_arg_index] = iter.this_arg - data;
         // We need to set size here in the loop since the iter fields are only valid
         // when at least one present bit is set ...
@@ -192,7 +192,7 @@ prefix_ void senf::RadiotapPacketParser::updatePresentFlags(boost::uint32_t flag
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::RadiotapPacketType
 
-prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
+prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Radiotap:\n"

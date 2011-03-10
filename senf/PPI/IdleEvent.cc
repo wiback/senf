@@ -27,8 +27,6 @@
 //#include "IdleEvent.ih"
 
 // Custom includes
-#include <senf/Scheduler/Scheduler.hh>
-#include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "IdleEvent.mpp"
 #define prefix_
