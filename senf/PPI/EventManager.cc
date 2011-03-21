@@ -57,7 +57,9 @@ prefix_ void senf::ppi::EventManager::destroyEvent(EventDescriptor & event)
         std::find_if(registrations_.begin(), registrations_.end(),
                      l::bind(&detail::EventBindingBase::descriptor_,_1) == &event)
         == registrations_.end(),
-        "Internal failure: registrations still active while destroying event ??");
+        "Internal failure: registrations still active while destroying event."
+        "Maybe you've put the SENF_PPI_MODULE macro in a superclass instead of"
+        "in the subclass?");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

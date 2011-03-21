@@ -71,7 +71,7 @@ namespace ppi {
     public:
         virtual ~EventDescriptor();
 
-        bool enabled(); ///< Check, whether the event is currently enabled
+        bool enabled() const; ///< Check, whether the event is currently enabled
         void enabled(bool v); ///< Enable or disable the event
 
     protected:

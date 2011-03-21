@@ -32,6 +32,7 @@
 // senf::ppi::EventDescriptor
 
 prefix_ bool senf::ppi::EventDescriptor::enabled()
+    const
 {
     return enabled_;
 }
