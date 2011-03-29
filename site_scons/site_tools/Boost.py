@@ -88,7 +88,7 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
     stampnode = target.dir.File('.' + target.name + '.stamp')
 
     bin = env.Program(binnode, source,
-                      LIBS = env['LIBS'] + [ '$TEST_EXTRA_LIBS' ],
+                      LIBS = env['LIBS'] + kw.pop('TEST_EXTRA_LIBS', ['$TEST_EXTRA_LIBS']),
                       _LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB -Wl,-Bdynamic ' + env['_LIBFLAGS'],
                       **kw)
 
