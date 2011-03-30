@@ -200,7 +200,7 @@ prefix_ dvb_frontend_event senf::DVBFrontendSocketProtocol::getEvent() const{
     struct dvb_frontend_event ev ;
 
     ::memset(&ev, 0, sizeof(struct dvb_frontend_event));
-
+std::cerr<<"DVBFrontendSocketProtocol::getEvent\n";
     if (::ioctl(fd(), FE_GET_EVENT, &ev)) {
         switch(errno) {
             case EBADF:
@@ -208,6 +208,9 @@ prefix_ dvb_frontend_event senf::DVBFrontendSocketProtocol::getEvent() const{
                 break;
             case EWOULDBLOCK:
                 SENF_THROW_SYSTEM_EXCEPTION( "No event pending and device is in nonblocking mode." );
+                break;
+            case EINTR:
+                // TODO: ignore EINTR. which might be caused by watchdog signals. This is possibly not the solution, but should work
                 break;
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("Errno: ") << errno;
