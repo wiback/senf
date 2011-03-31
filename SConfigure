@@ -38,7 +38,7 @@ def CheckTempBufferStrategy(context):
 
       # alloca
       ret = context.TryCompile("#include <alloca.h>\n"
-                               "void test(int a){void *b(alloca(a));}"
+                               "void test(int a){void *b(alloca(a));}",
                                ".cc")
       if ret: return "alloca"
 
