@@ -59,7 +59,7 @@ Special command line parameters:
         else:
             env.Replace(**{k: v})
             env.Append(ARGUMENT_VARIABLES = {k:v})
-    if env['PARSEFLAGS']:
+    if env.get('PARSEFLAGS', None):
         env.MergeFlags(env['PARSEFLAGS'])
 
 def importProcessEnv(env):
