@@ -10,7 +10,7 @@ sconscripts = sorted(glob.glob("*/SConscript"))
 if sconscripts:
     SENFSCons.IndexPage(env, 'Mainpage.dox', title="Extensions",
                         text="""This folder contains additional SENF extensions which are built
-                                into the senf libarary but are not part of senf proper.""")
+                                into the senf library but are not part of senf proper.""")
 
     SConscript(sconscripts)
 

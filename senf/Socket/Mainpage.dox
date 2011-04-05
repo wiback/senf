@@ -40,7 +40,7 @@ namespace senf {
         it's functionality
     \li The rest of the socket API is accessible using a classic inheritance hierarchy of \link
         protocol_group protocol classes \endlink
-    \li There is a family of auxilliary \ref addr_group to supplement the socket library
+    \li There is a family of auxiliary \ref addr_group to supplement the socket library
 
 
     \section socket_handle Socket Handles
@@ -68,10 +68,10 @@ namespace senf {
 
 
     The protocol interface provides further protocol dependent and (possibly) polymorphic access to
-    further socket funcitonality. On the other hand, this type of interface is not as flexible,
+    further socket functionality. On the other hand, this type of interface is not as flexible,
     generic and fast as the policy interface.
 
-    \section socket_addr Auxilliary Addressing classes
+    \section socket_addr Auxiliary Addressing classes
     \seechapter \ref addr_group
 
     To supplement the socket library, there are a multitude of addressing classes. These come in two
@@ -164,7 +164,7 @@ namespace senf {
     of the socket (which generic handles don't). This allows to access to the complete protocol
     interface.
 
-    \section over_impl Implementation of the Socket Libarary Structure
+    \section over_impl Implementation of the Socket Library Structure
 
     In the Implementation, the socket policy is identified by an instance of the senf::SocketPolicy
     template. The Socket representation is internally represented in a senf::SocketBody which is not

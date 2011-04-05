@@ -1,4 +1,4 @@
-import os, os.path, site_tools.Yaptu, types, re, fnmatch
+import os, os.path, site_tools.Yaptu, types, re, fnmatch, sys
 import SCons.Util
 from SCons.Script import *
 
@@ -10,6 +10,19 @@ try:
 except NameError:
     Variables = Options
     BoolVariable = BoolOption
+
+###########################################################################
+extdir = os.path.join(senfutildir, '../senf/Ext')
+sys.path.append(extdir)
+
+for ext in os.listdir(extdir):
+    if not os.path.isdir( os.path.join(extdir, ext)): continue
+    if ext.startswith('.'): continue
+    try:
+        setattr( sys.modules[__name__], ext, 
+                __import__('%s.site_scons' % ext, fromlist=['senfutil']).senfutil )
+    except ImportError:
+        pass
 
 ###########################################################################
 
@@ -27,8 +40,7 @@ def parseArguments(env, *defs):
     env.Help("""
 Any construction environment variable may be set from the scons
 command line (see SConstruct file and SCons documentation for a list
-of variables) usin
-g
+of variables) using
 
    VARNAME=value    Assign new value
    VARNAME+=value   Append value at end
@@ -42,11 +54,13 @@ Special command line parameters:
     for k,v in ARGLIST:
         if not unknv.has_key(k) : continue
         if k.endswith('+'):
-            env.Append(**{k[:-1]: v})
-            env.Append(ARGUMENT_VARIABLES = {k[:-1]:v})
+            env.Append(**{k[:-1]: [v]})
+            env.Append(ARGUMENT_VARIABLES = {k[:-1]:[v]})
         else:
             env.Replace(**{k: v})
             env.Append(ARGUMENT_VARIABLES = {k:v})
+    if env['PARSEFLAGS']:
+        env.MergeFlags(env['PARSEFLAGS'])
 
 def importProcessEnv(env):
     env.Append( ENV = dict(( (k,v)

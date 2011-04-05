@@ -1,5 +1,7 @@
 # -*- python -*-
 
+import glob
+
 Import('env')
 
 ###########################################################################
@@ -98,4 +100,16 @@ res = conf.CheckSTLCopyN(); \
 res = conf.CheckValgrind() and conf.CheckValgrindWildcards(); \
     conf.env.Replace(HAVE_VALGRIND = res)
 
+###########################################################################
+
+# run configure scripts from external modules 
+Export('conf')
+
+sconscripts = sorted(glob.glob("senf/Ext/*/SConfigure"))
+if sconscripts:
+    SConscript(sconscripts)
+
+###########################################################################
+
 env = conf.Finish()
+
