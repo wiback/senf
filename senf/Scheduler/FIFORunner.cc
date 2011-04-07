@@ -33,7 +33,6 @@
 #ifdef SENF_BACKTRACE
     #include <execinfo.h>
 #endif
-#include <senf/config.hh>
 #include <stdint.h>
 #include <stdio.h>
 #include <senf/Utils/Exception.hh>

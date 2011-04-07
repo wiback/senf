@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <signal.h>
+#include <senf/config.hh>
 #include <boost/utility.hpp>
 #include <senf/boost_intrusive/ilist.hpp>
 #include <senf/boost_intrusive/ilist_hook.hpp>

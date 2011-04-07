@@ -35,6 +35,7 @@
 #include <boost/preprocessor/cat.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <senf/config.hh>
 
 //#include "Exception.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

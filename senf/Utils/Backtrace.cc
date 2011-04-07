@@ -27,6 +27,7 @@
 //#include "Backtrace.ih"
 
 // Custom includes
+#include <senf/config.hh>
 #ifdef SENF_BACKTRACE
     #include <execinfo.h>
 #endif

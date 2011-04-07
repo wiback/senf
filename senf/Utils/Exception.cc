@@ -27,11 +27,11 @@
 //#include "Exception.ih"
 
 // Custom includes
+#include <senf/config.hh>
 #ifdef SENF_BACKTRACE
    #include <execinfo.h>
 #endif
 #include <sstream>
-#include <senf/config.hh>
 #include "Backtrace.hh"
 
 #define prefix_
