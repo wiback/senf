@@ -96,7 +96,11 @@ namespace config {
 #     define SENF_PACKET_ANNOTATION_SLOTSIZE 16
 # endif
 #
-
+# ifdef SENF_DEBUG
+#     ifdef HAVE_EXECINFO_H
+#          define SENF_BACKTRACE
+#     endif
+# endif
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 

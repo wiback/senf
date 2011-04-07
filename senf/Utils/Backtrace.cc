@@ -27,7 +27,7 @@
 //#include "Backtrace.ih"
 
 // Custom includes
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
     #include <execinfo.h>
 #endif
 #include <cxxabi.h>
@@ -40,7 +40,7 @@
 
 prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigned numEntries)
 {
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
     char ** symbols (::backtrace_symbols(backtrace, numEntries));
 
     static boost::regex const backtraceRx
@@ -83,7 +83,7 @@ prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigne
 
 prefix_ void senf::backtrace(std::ostream & os, unsigned numEntries)
 {
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
    SENF_SCOPED_BUFFER( void*, entries, numEntries);
    unsigned n ( ::backtrace(entries, numEntries) );
    senf::formatBacktrace(os, entries, n);

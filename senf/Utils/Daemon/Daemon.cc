@@ -35,7 +35,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
    #include <execinfo.h>
 #endif
 #include <sstream>
@@ -520,7 +520,7 @@ namespace {
 
         if (sig == SIGSEGV)
             std::cerr << "Invalid memory access at " << info->si_addr << "\n";
-
+#ifdef SENF_BACKTRACE
         static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
         unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
 
@@ -530,7 +530,7 @@ namespace {
         std::cerr << "Backtrace:\n";
         senf::formatBacktrace(std::cerr, entries, nEntries);
         std::cerr << "-- \n";
-
+#endif //SENF_BACKTRACE
         if (sig != SIGUSR2) {
             ::signal(sig, SIG_DFL);
             ::kill(::getpid(), sig);
@@ -539,7 +539,7 @@ namespace {
 
 }
 
-#endif
+#endif // SENF_DEBUG
 
 namespace {
     void sighupHandler(int sig)

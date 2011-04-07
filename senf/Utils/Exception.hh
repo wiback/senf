@@ -156,8 +156,10 @@ namespace senf {
 
         std::string what_;
     private:
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
         void addBacktrace();
+#endif
+#ifdef SENF_DEBUG
         std::string::size_type excLen_;
 #endif
     };

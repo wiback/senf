@@ -86,6 +86,7 @@ res = conf.CheckCXXHeader("boost/bimap.hpp"); \
 res = conf.CheckTempBufferStrategy()
 
 # Standard library stuff
+res = conf.CheckCHeader("execinfo.h")
 res = conf.FindCHeader("timerfd.h", [ 'sys', 'linux' ])
 res = conf.CheckFunc("timerfd_create")
 res = conf.CheckSymbolWithExpression(

@@ -79,7 +79,7 @@ namespace detail {
 
             bool runnable_;
             Priority priority_;
-#       ifdef SENF_DEBUG
+#       ifdef SENF_BACKTRACE
             std::string backtrace_;
 #       endif
 

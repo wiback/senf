@@ -30,7 +30,7 @@
 #include <signal.h>
 #include <time.h>
 #include <cassert>
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
     #include <execinfo.h>
 #endif
 #include <senf/config.hh>
@@ -229,9 +229,9 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
             if (task.runnable_) {
                 task.runnable_ = false;
                 runningName_ = task.name();
-    #       ifdef SENF_DEBUG
+# ifdef SENF_BACKTRACE
                 runningBacktrace_ = task.backtrace_;
-    #       endif
+# endif
                 TaskList::iterator i (next_);
                 ++ next_;
                 tasks_.splice(l, tasks_, i);
@@ -291,7 +291,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     senf::IGNORE( write(1, "): ", 3) );
     senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
     senf::IGNORE( write(1, " at\n ", 3) );
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
     static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                                 'a', 'b', 'c', 'd', 'e', 'f' };
     static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
