@@ -54,8 +54,8 @@ Special command line parameters:
     for k,v in ARGLIST:
         if not unknv.has_key(k) : continue
         if k.endswith('+'):
-            env.Append(**{k[:-1]: [v]})
-            env.Append(ARGUMENT_VARIABLES = {k[:-1]:[v]})
+            env.Append(**{k[:-1]: v})
+            env.Append(ARGUMENT_VARIABLES = {k[:-1]:v})
         else:
             env.Replace(**{k: v})
             env.Append(ARGUMENT_VARIABLES = {k:v})
