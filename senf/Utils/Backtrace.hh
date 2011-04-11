@@ -35,7 +35,7 @@
 namespace senf {
     /** \defgroup backtraces Backtrace formatting and parsing
 
-        These functions help format and barse backtrace information as returned by the glibc
+        These functions help format and parse backtrace information as returned by the glibc
         ::backtrace function.
      */
 

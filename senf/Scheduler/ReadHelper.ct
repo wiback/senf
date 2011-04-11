@@ -24,10 +24,8 @@
 #include "ReadHelper.ih"
 
 // Custom includes
-#include <errno.h>
 #include <boost/bind.hpp>
 #include <senf/Utils/Exception.hh>
-#include "Scheduler.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +35,7 @@ prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_ty
                                                     InternalPredicate * predicate, Callback cb)
     : handle_(handle),
       fde_("senf::ReadHelper", boost::bind(&ReadHelper::dispatchProcess,ptr(this), handle, _1),
-           handle, senf::scheduler::FdEvent::EV_READ),
+           handle, scheduler::FdEvent::EV_READ),
       maxSize_(maxSize), predicate_(predicate), callback_(cb), errno_(0), complete_(false)
 {
     // Here we add a *static* member taking a *smart* pointer as first
@@ -67,7 +65,7 @@ template <class Handle>
 prefix_ void senf::ReadHelper<Handle>::process(Handle handle,int event)
 {
     try {
-        if (event != senf::scheduler::FdEvent::EV_READ)
+        if (event != scheduler::FdEvent::EV_READ)
             throw SystemException(EPIPE SENF_EXC_DEBUGINFO);
         std::string rcv;
         handle.read(rcv, maxSize_ - data_.size());

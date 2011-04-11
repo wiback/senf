@@ -34,8 +34,8 @@
 #include <boost/preprocessor/stringize.hpp>
 #include <senf/Utils/senfassert.hh>
 #include <senf/Utils/Range.hh>
-#include "Server.hh"
 #include "senf/Utils/IgnoreValue.hh"
+#include "Server.hh"
 
 //#include "Executor.mpp"
 #define prefix_

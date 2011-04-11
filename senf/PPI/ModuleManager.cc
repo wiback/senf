@@ -27,11 +27,10 @@
 //#include "ModuleManager.ih"
 
 // Custom includes
-#include <senf/Scheduler/Scheduler.hh>
 #include <senf/Utils/membind.hh>
-#include "Module.hh"
 #include <senf/Utils/Console/ParsedCommand.hh>
 #include <senf/Utils/Console/Sysdir.hh>
+#include "Module.hh"
 
 //#include "ModuleManager.mpp"
 #define prefix_
@@ -75,10 +74,10 @@ prefix_ senf::ppi::ModuleManager::ModuleManager()
       initRunner_ ("senf::ppi::init", membind(&ModuleManager::init, this),
                    scheduler::EventHook::PRE, false)
 {
-    senf::console::sysdir().add("ppi", consoleDir_);
+    console::sysdir().add("ppi", consoleDir_);
 
     consoleDir_
-        .add("dump", senf::console::factory::Command(
+        .add("dump", console::factory::Command(
                  senf::membind(&ModuleManager::dumpModules, this))
              .doc("Dump complete PPI structure\n"
                   "The dump will contain one paragraph for each module. The first line gives module\n"

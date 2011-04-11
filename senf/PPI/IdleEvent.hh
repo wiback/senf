@@ -27,6 +27,7 @@
 #define HH_SENF_PPI_IdleEvent_ 1
 
 // Custom includes
+#include <senf/Scheduler/TimerEvent.hh>
 #include "Events.hh"
 
 //#include "IdleEvent.mpp"

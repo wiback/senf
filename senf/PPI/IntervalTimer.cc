@@ -27,7 +27,6 @@
 //#include "IntervalTimer.ih"
 
 // Custom includes
-#include <senf/Scheduler/Scheduler.hh>
 #include "EventManager.hh"
 
 //#include "IntervalTimer.mpp"

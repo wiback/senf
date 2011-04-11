@@ -27,9 +27,9 @@
 #define HH_SENF_PPI_IOEvent_ 1
 
 // Custom includes
-#include <senf/Scheduler/Scheduler.hh>
-#include "Events.hh"
+#include <senf/Scheduler/FdEvent.hh>
 #include <senf/Utils/Exception.hh>
+#include "Events.hh"
 
 //#include "IOEvent.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,8 +107,6 @@ namespace ppi {
         struct HangupException : public senf::Exception
         { HangupException() : senf::Exception("senf::ppi::IOEvent::HangupException") {} };
 
-    protected:
-
     private:
         virtual void v_enable();
         virtual void v_disable();
@@ -118,7 +116,6 @@ namespace ppi {
         int fd_;
         scheduler::FdEvent event_;
     };
-
 
 }}
 

@@ -30,13 +30,13 @@
 #include <signal.h>
 #include <time.h>
 #include <cassert>
+#include <senf/config.hh>
 #ifdef SENF_BACKTRACE
     #include <execinfo.h>
 #endif
 #include <stdint.h>
 #include <stdio.h>
 #include <senf/Utils/Exception.hh>
-#include <senf/Utils/senfassert.hh>
 #include "senf/Utils/IgnoreValue.hh"
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include <senf/Utils/Console/ParsedCommand.hh>

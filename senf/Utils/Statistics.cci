@@ -27,6 +27,7 @@
 
 // Custom includes
 #include <float.h>
+#include <senf/Utils/Console/ParsedCommand.hh>
 #include "Range.hh"
 
 #define prefix_ inline
@@ -65,8 +66,7 @@ prefix_ senf::StatisticsBase::OutputEntry::OutputEntry(const OutputEntry& other)
 
 prefix_ void senf::StatisticsBase::OutputEntry::initDir()
 {
-    namespace fty = console::factory;
-    dir.add("list", fty::Command(&OutputEntry::consoleList, this)
+    dir.add("list", console::factory::Command(&OutputEntry::consoleList, this)
             .doc("List all known connected targets. This list might not be complete.") );
 }
 

@@ -26,12 +26,11 @@
 #include "PacketRegistry.ih"
 
 // Custom includes
-#include <senf/Utils/senfassert.hh>
 #include <iostream>
 #include <iomanip>
-#include <cmath>
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/Format.hh>
+#include <senf/Utils/senfassert.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

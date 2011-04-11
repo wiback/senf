@@ -24,10 +24,8 @@
 //#include "WriteHelper.ih"
 
 // Custom includes
-#include <errno.h>
 #include <boost/bind.hpp>
 #include <senf/Utils/Exception.hh>
-#include "Scheduler.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,20 +60,20 @@ prefix_ void senf::WriteHelper<Handle>::revoke()
 
 template <class Handle>
 prefix_ void senf::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
-                                                        senf::scheduler::FdEvent::Events event)
+                                                        scheduler::FdEvent::Events event)
 {
     // since we have a 'ptr' argument, the instance cannot be deleted
     // before this method returns
-    return helper->process(handle,event);
+    helper->process(handle, event);
 }
 
 template <class Handle>
 prefix_ void senf::WriteHelper<Handle>::process(Handle handle,
-                                                senf::scheduler::FdEvent::Events event)
+                                                scheduler::FdEvent::Events event)
 {
     bool complete_ (false);
     try {
-        if (event != senf::scheduler::FdEvent::EV_WRITE)
+        if (event != scheduler::FdEvent::EV_WRITE)
             throw SystemException(EPIPE SENF_EXC_DEBUGINFO);
         offset_ = handle.write(std::make_pair(offset_,data_.end()));
         if (offset_ == data_.end()) {

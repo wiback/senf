@@ -119,6 +119,7 @@ int main(int, char **)
         .name("testServer");
 
     senf::scheduler::process();
+    return 0;
 }
 
 

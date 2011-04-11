@@ -27,7 +27,6 @@
 //#include "Exception.ih"
 
 // Custom includes
-#include <senf/config.hh>
 #ifdef SENF_BACKTRACE
    #include <execinfo.h>
 #endif
@@ -44,7 +43,7 @@
 prefix_ void senf::ExceptionMixin::addBacktrace()
 {
     void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
-    unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
+    unsigned nEntries (::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS));
 
     std::stringstream ss;
     ss << "\nException at\n";

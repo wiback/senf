@@ -30,16 +30,12 @@
 #include <set>
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <senf/Utils/intrusive_refcount.hh>
-#include <senf/Socket/Protocols/INet/TCPSocketHandle.hh>
-#include <senf/Socket/ServerSocketHandle.hh>
-#include <senf/Scheduler/Scheduler.hh>
-#include <senf/Scheduler/ReadHelper.hh>
-#include "Parse.hh"
-#include "Executor.hh"
+#include <senf/Scheduler/FdEvent.hh>
+#include <senf/Scheduler/TimerEvent.hh>
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
 #include <senf/Utils/Logger.hh>
+#include <senf/Utils/intrusive_refcount.hh>
+#include "Executor.hh"
 
 //#include "Server.mpp"
 #include "Server.ih"

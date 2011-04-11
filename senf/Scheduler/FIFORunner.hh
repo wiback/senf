@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <signal.h>
-#include <senf/config.hh>
 #include <boost/utility.hpp>
 #include <senf/boost_intrusive/ilist.hpp>
 #include <senf/boost_intrusive/ilist_hook.hpp>
@@ -80,9 +79,7 @@ namespace detail {
 
             bool runnable_;
             Priority priority_;
-#       ifdef SENF_BACKTRACE
-            std::string backtrace_;
-#       endif
+            std::string backtrace_; // only used if SENF_BACKTRACE is defined.
 
             friend class FIFORunner;
         };

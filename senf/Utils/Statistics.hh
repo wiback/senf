@@ -35,10 +35,10 @@
 #include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/signals.hpp>
-#include "Exception.hh"
 #include <senf/Utils/Logger/Logger.hh>
-#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
 #include "StatisticAccumulator.hh"
+#include "Exception.hh"
 
 //#include "Statistics.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -95,7 +95,7 @@ namespace console {
     /** \brief Value range
 
         A value range may be represented in the console either by a single value (setting both \a
-        low and \a high to the same value) or as a lower and upper bound seperated by a colon.
+        low and \a high to the same value) or as a lower and upper bound separated by a colon.
 
         \ingroup senf_console_utilities
      */

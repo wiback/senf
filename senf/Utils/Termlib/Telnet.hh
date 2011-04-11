@@ -29,7 +29,6 @@
 // Custom includes
 #include <vector>
 #include <map>
-#include <senf/Socket.hh>
 #include <senf/Scheduler/Scheduler.hh>
 #include <senf/Scheduler/ClockService.hh>
 
@@ -320,8 +319,8 @@ namespace term {
         option_type option_;
         std::string data_;
 
-        senf::scheduler::FdEvent inputEvent_;
-        senf::scheduler::FdEvent outputEvent_;
+        scheduler::FdEvent inputEvent_;
+        scheduler::FdEvent outputEvent_;
 
         unsigned pendingRequests_;
 

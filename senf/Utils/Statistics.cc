@@ -31,6 +31,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <senf/Utils/Format.hh>
+#include <senf/Utils/Console/STLSupport.hh>
 #include "StatisticsTargets.hh"
 
 //#include "Statistics.mpp"

@@ -26,8 +26,6 @@
 #include "PacketParser.ih"
 
 // Custom includes
-#include <senf/Utils/senfassert.hh>
-#include "PacketData.hh"
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

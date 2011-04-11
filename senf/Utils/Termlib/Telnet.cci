@@ -82,7 +82,7 @@ prefix_ senf::term::BaseTelnetProtocol::Handle senf::term::BaseTelnetProtocol::h
 prefix_ void senf::term::BaseTelnetProtocol::incrementRequestCounter()
 {
     ++ pendingRequests_;
-    timeout_.timeout(senf::scheduler::eventTime() + requestTimeout_);
+    timeout_.timeout(scheduler::eventTime() + requestTimeout_);
 }
 
 prefix_ bool senf::term::BaseTelnetProtocol::requestsPending()

@@ -24,16 +24,11 @@
     \brief Server non-inline non-template implementation */
 
 #include "Server.hh"
-#include "Server.ih"
+//#include "Server.ih"
 
 // Custom includes
-#include <errno.h>
-#include <iostream>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/iostreams/device/file_descriptor.hpp>
-#include <boost/iostreams/stream.hpp>
 #include <boost/bind.hpp>
-#include <senf/Utils/senfassert.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Logger/SenfLog.hh>
 #include <senf/Version.hh>
@@ -132,7 +127,7 @@ prefix_ void senf::console::Server::removeClient(Client & client)
                 try {
                     log << client.handle().peer();
                 }
-                catch (senf::SystemException ex) {
+                catch (senf::SystemException & ex) {
                     log << "(dead socket)";
                 }
             }));
@@ -165,7 +160,7 @@ senf::console::detail::DumbClientReader::clientData(senf::ReadHelper<ClientHandl
 
     std::string data (tail_ + helper->data());
     tail_ = helper->tail();
-    boost::trim(data);                  // Gets rid of superfluous  \r or \n characters
+    boost::trim(data); // Gets rid of superfluous  \r or \n characters
     handleInput(data);
 
     showPrompt();
@@ -405,9 +400,7 @@ prefix_ unsigned senf::console::Client::getWidth(std::ostream & os, unsigned def
 
 prefix_ senf::console::Client::SysBacktrace::SysBacktrace()
 {
-    namespace fty = console::factory;
-
-    sysdir().add("backtrace", fty::Command(&SysBacktrace::backtrace)
+    sysdir().add("backtrace", factory::Command(&SysBacktrace::backtrace)
                  .doc("Display the backtrace of the last error / exception in this console") );
 }
 

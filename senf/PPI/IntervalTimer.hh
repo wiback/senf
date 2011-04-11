@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <senf/Scheduler/ClockService.hh>
+#include <senf/Scheduler/TimerEvent.hh>
 #include "Events.hh"
 
 //#include "IntervalTimer.mpp"

@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <sstream>
-#include <senf/Utils/senfassert.hh>
 
 //#include "FdEvent.mpp"
 #define prefix_

@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "Console.hh"
+#include <senf/Scheduler/Scheduler.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

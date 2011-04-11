@@ -28,7 +28,6 @@
 // Custom includes
 #include <unistd.h>
 #include <senf/Utils/signalnames.hh>
-#include <senf/Utils/senfassert.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

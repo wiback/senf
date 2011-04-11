@@ -33,7 +33,6 @@
 #include <boost/utility.hpp>
 #include <boost/function.hpp>
 #include <senf/Scheduler/Scheduler.hh>
-#include <senf/Scheduler/FdEvent.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
