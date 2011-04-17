@@ -61,6 +61,12 @@ prefix_ float senf::StatisticAccumulator<T>::stddev()
 }
 
 template <class T>
+prefix_ void senf::StatisticAccumulator<T>::setLastAvg( T value)
+{
+    last_avg_ = value;        
+}
+
+template <class T>
 prefix_ void senf::StatisticAccumulator<T>::accumulate( T value)
 {
     if (count_ == 0) {

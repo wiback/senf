@@ -67,8 +67,12 @@ namespace senf {
         /**< This member reset all values. */
         void accumulate(T value);
         ///< Gather value to be accumulated.
-        /**< This method accumulate a value.
+        /**< This method accumulates a value.
              \param[in] value to be accumulated value*/
+        void setLastAvg(T value);
+        ///< If no real data was collected, this method specifies the min/avg/max value to be returned.
+        /**< This method specifies the the min/avg/max value to be returned if no real data was colelcted
+             \param[in] value to be returned*/
 
     public:
         T     min() const;
