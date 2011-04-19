@@ -49,6 +49,9 @@ namespace senf {
                  senf::comparable_safe_bool< RestrictedInt<Base,Tag> > > > > >
     {
     public:
+        typedef Base base_type;
+        typedef Tag tag_type;
+
         explicit RestrictedInt(Base value) : value_ (value) {}
         RestrictedInt() : value_ () {}
 
