@@ -69,6 +69,9 @@ namespace scheduler {
         ClockService::clock_type timeout(IdType const & id) const;
                                         ///< Returns timeout for given id
                                         /**< if no timer for this id is registered \a 0 is returned. */
+
+        unsigned numEvents() const;  ///< Returns the number of pending timer events 
+        
     private:
 #ifndef DOXYGEN
         struct Entry {

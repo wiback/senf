@@ -105,6 +105,13 @@ prefix_ std::vector<std::pair<senf::ClockService::clock_type, IdType> > senf::sc
     return tmp;
 }
 
+template<typename IdType>
+prefix_ unsigned senf::scheduler::TimerEventProxy<IdType>::numEvents()
+  const
+{
+  return entrySetByTimeout.size();
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
