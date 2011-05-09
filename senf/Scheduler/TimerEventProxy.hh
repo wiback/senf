@@ -71,6 +71,8 @@ namespace scheduler {
                                         /**< if no timer for this id is registered \a 0 is returned. */
 
         unsigned numEvents() const;  ///< Returns the number of pending timer events 
+
+        void clear(); ///< Clears all pending timer events
         
     private:
 #ifndef DOXYGEN

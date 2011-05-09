@@ -109,7 +109,13 @@ template<typename IdType>
 prefix_ unsigned senf::scheduler::TimerEventProxy<IdType>::numEvents()
   const
 {
-  return entrySetByTimeout.size();
+    return entrySetByTimeout.size();
+}
+
+template<typename IdType>
+prefix_ void senf::scheduler::TimerEventProxy<IdType>::clear()
+{
+    entrySetByTimeout.clear();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
