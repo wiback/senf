@@ -41,7 +41,8 @@ namespace senf {
           : senf::Exception("MIHTLVLengthException") {}
     };
 
-    struct InvalidMIHPacketException : public senf::Exception {
+    struct InvalidMIHPacketException : public senf::Exception
+    {
         InvalidMIHPacketException(std::string const & description)
             : senf::Exception("Invalid MIH message: ") { append(description); }
     };

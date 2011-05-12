@@ -110,6 +110,8 @@ namespace senf {
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
         static void validate(packet p);
+
+        static const boost::uint16_t etherType = 0x8917;
     };
 
     /** \brief MIH packet typedef
