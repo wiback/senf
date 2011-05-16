@@ -34,9 +34,19 @@ namespace senf {
 
      struct StatisticsData
      {
+	 StatisticsData( float min_, float avg_, float max_, float stddev_, boost::uint32_t count_)
+	     : min(min_), avg(avg_), max(max_), stddev(stddev_), count(count_){
+	 };
+	 StatisticsData( StatisticsData const & other)
+	     : min(other.min), avg(other.avg), max(other.max), stddev(other.stddev), count(other.count){
+	 };
+	 StatisticsData()
+	     : min(0.0), avg(0.0), max(0.0), stddev(0.0), count(0){
+	 };
+
          float min;
-         float max;
          float avg;
+         float max;
          float stddev;
          boost::uint32_t count;
      };
