@@ -51,7 +51,7 @@
 namespace {
     senf::console::SysInfo::Proxy addSysInfo (
             "SENF: The Simple and Extensible Network Framework\n"
-            "  © 2006-2010 Fraunhofer Institute for Open Communication Systems, Network Research\n"
+            "  © 2006-2011 Fraunhofer Institute for Open Communication Systems, Network Research\n"
             "  Contact: senf-dev@lists.berlios.de\n"
             "  Version: " SENF_LIB_VERSION " Revision number: " SENF_REVISION "\n"
             "  Build-type: " BUILD_TYPE ", SenfLog compile time limit: " +

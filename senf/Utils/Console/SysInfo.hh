@@ -38,8 +38,11 @@ namespace console {
         : public singleton<SysInfo>
     {
     public:
+        friend class singleton<SysInfo>;
         using singleton<SysInfo>::instance;
+
         void addEntry(std::string const & descr, unsigned pos=-1);
+        void dump(std::ostream & os) const;
 
         struct Proxy {
             Proxy(std::string const & descr, unsigned pos=-1);
@@ -49,9 +52,6 @@ namespace console {
         std::list<std::string> descr_;
 
         SysInfo();
-        void dump(std::ostream & os) const;
-
-        friend class singleton<SysInfo>;
     };
 
 }}

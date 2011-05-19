@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2011
+// Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Thorsten Horstmann <tho@berlios.de>
@@ -20,49 +20,41 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief MIH Message-Registry non-inline template implementation */
+#ifndef HH_SENF_Packets_80221Bundle_Exceptions_
+#define HH_SENF_Packets_80221Bundle_Exceptions_ 1
 
 // Custom includes
-#include "Exceptions.hh"
-
-#define prefix_
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::MIHMessageRegistry
-
-template <typename MIHPacket>
-prefix_ void senf::MIHMessageRegistry::registerMessageType()
-{
-    key_t key (MIHPacket::type::MESSAGE_ID+0);
-    map_.insert(key, new detail::MIHMessageRegistryEntry<MIHPacket>() );
-}
-
-template <typename MIHPacket>
-prefix_ senf::MIHMessageRegistry::RegistrationProxy<MIHPacket>::RegistrationProxy()
-{
-    MIHMessageRegistry::instance().registerMessageType<MIHPacket>();
-}
-
-template <typename MIHPacket>
-prefix_ void senf::detail::MIHMessageRegistryEntry<MIHPacket, true>::validate(senf::Packet message)
-    const
-{
-    if (! message.is<MIHPacket>())
-        throw InvalidMIHPacketException("invalid packet chain");
-    MIHPacket::type::validate(message.as<MIHPacket>());
-}
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#undef prefix_
+
+namespace senf {
+
+    struct MIHTLVLengthException : public senf::Exception
+    {
+        MIHTLVLengthException()
+          : senf::Exception("MIHTLVLengthException") {}
+    };
+
+    struct InvalidMIHPacketException : public senf::Exception
+    {
+        InvalidMIHPacketException(std::string const & description)
+            : senf::Exception("Invalid MIH message: ") { append(description); }
+    };
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+//#include "Exceptions.cci"
+//#include "Exceptions.ct"
+//#include "Exceptions.cti"
+#endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
-// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

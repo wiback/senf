@@ -27,8 +27,9 @@
 //#include "TLVParser.test.ih"
 
 // Custom includes
-#include "TLVParser.hh"
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include "TLVParser.hh"
+#include "Exceptions.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

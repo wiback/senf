@@ -31,49 +31,9 @@
 #include <senf/Utils/singleton.hh>
 #include <senf/Packets/Packets.hh>
 
-//#include "MIHMessageRegistry.mpp"
+#include "MIHMessageRegistry.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-
 namespace senf {
-
-    namespace detail {
-
-        template<class T, typename Signature>
-        struct has_static_validate_member
-        {
-            template<Signature *>
-            struct helper;
-
-            template<class U>
-            static char test(helper<&U::validate> *);
-
-            template<class U>
-            static char (&test(...))[2];
-
-            static const bool value = sizeof(test<T>(0))==1;
-        };
-
-        struct MIHMessageRegistry_EntryBase {
-            virtual ~MIHMessageRegistry_EntryBase() {}
-            virtual void validate(senf::Packet message) const = 0;
-        };
-
-        template <class MIHPacket,
-            bool use_validate_member = has_static_validate_member<typename MIHPacket::type, void(MIHPacket)>::value>
-        struct MIHMessageRegistryEntry : MIHMessageRegistry_EntryBase
-        {
-            virtual void validate(senf::Packet message) const {}
-        };
-
-        template <class MIHPacket>
-        struct MIHMessageRegistryEntry<MIHPacket, true> : MIHMessageRegistry_EntryBase
-        {
-            virtual void validate(senf::Packet message) const {
-                MIHPacket::type::validate(message.as<MIHPacket>());
-            }
-        };
-    }
-
 
     class MIHMessageRegistry
         : public senf::singleton<MIHMessageRegistry>
