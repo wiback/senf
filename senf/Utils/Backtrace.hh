@@ -46,7 +46,7 @@ namespace senf {
 
         \ingroup backtraces
      */
-    void formatBacktrace(std::ostream & os, void ** backtrace, unsigned numEntries);
+    void formatBacktrace(std::ostream & os, void ** backtrace, int numEntries);
 
     /** \brief Write a backtrace to \a os
 
@@ -54,7 +54,7 @@ namespace senf {
 
         \ingroup backtraces
      */
-    void backtrace(std::ostream & os, unsigned numEntries);
+    void backtrace(std::ostream & os, int numEntries);
 
 }
 

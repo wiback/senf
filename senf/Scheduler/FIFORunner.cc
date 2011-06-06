@@ -294,8 +294,8 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                                 'a', 'b', 'c', 'd', 'e', 'f' };
     static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
-    unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
-    for (unsigned i (0); i < nEntries; ++i) {
+    int nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
+    for (int i=0; i < nEntries; ++i) {
         senf::IGNORE( write(1, " 0x", 3) );
         for (unsigned j (sizeof(void*)); j > 0; --j) {
             uintptr_t v ( reinterpret_cast<uintptr_t>(entries[i]) >> (8*(j-1)) );
@@ -306,7 +306,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
 #endif
     senf::IGNORE( write(1, "\n", 1) );
 
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
     senf::IGNORE( write(1, "Task was initialized at\n", 24) );
     senf::IGNORE( write(1, runningBacktrace_.c_str(), runningBacktrace_.size()) );
 #endif

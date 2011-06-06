@@ -30,6 +30,7 @@
 #include <senf/config.hh>
 #ifdef SENF_BACKTRACE
     #include <execinfo.h>
+    #include <errno.h>
 #endif
 #include <cxxabi.h>
 #include <boost/regex.hpp>
@@ -39,10 +40,14 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigned numEntries)
+prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, int numEntries)
 {
 #ifdef SENF_BACKTRACE
     char ** symbols (::backtrace_symbols(backtrace, numEntries));
+    if (symbols == NULL) {
+        os << "error on translating backtrace addresses with ::backtrace_symbols: " << std::strerror(errno);
+        return;
+    }
 
     static boost::regex const backtraceRx
         ("(.*)\\((.*)\\+(0x[0-9a-f]+)\\) \\[(0x[0-9a-f]+)\\]");
@@ -51,7 +56,7 @@ prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigne
            Offset = 3,
            Address = 4 };
 
-    for (unsigned i=0; i<numEntries; ++i) {
+    for (int i=0; i<numEntries; ++i) {
         std::string sym (symbols[i]);
         boost::smatch match;
         if (regex_match(sym, match, backtraceRx)) {
@@ -82,11 +87,11 @@ prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigne
 
 }
 
-prefix_ void senf::backtrace(std::ostream & os, unsigned numEntries)
+prefix_ void senf::backtrace(std::ostream & os, int numEntries)
 {
 #ifdef SENF_BACKTRACE
    SENF_SCOPED_BUFFER( void*, entries, numEntries);
-   unsigned n ( ::backtrace(entries, numEntries) );
+   int n ( ::backtrace(entries, numEntries) );
    senf::formatBacktrace(os, entries, n);
 #endif
 }

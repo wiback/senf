@@ -522,7 +522,7 @@ namespace {
             std::cerr << "Invalid memory access at " << info->si_addr << "\n";
 #ifdef SENF_BACKTRACE
         static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
-        unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
+        int nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
 
         // Hack the callers address into the backtrace
         // entries[1] = reinterpret_cast<void *>(ucontext->uc_mcontext.gregs[REG_EIP]);
