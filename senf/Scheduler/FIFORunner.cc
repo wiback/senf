@@ -289,7 +289,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     senf::IGNORE( write(1, pid, 6) );
     senf::IGNORE( write(1, "): ", 3) );
     senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
-    senf::IGNORE( write(1, " at\n ", 3) );
+/*    senf::IGNORE( write(1, " at\n ", 3) );
 #ifdef SENF_BACKTRACE
     static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                                 'a', 'b', 'c', 'd', 'e', 'f' };
@@ -303,7 +303,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
             senf::IGNORE( write(1, &(hex[ (v     ) & 0x0f ]), 1) );
         }
     }
-#endif
+#endif*/
     senf::IGNORE( write(1, "\n", 1) );
 
 #ifdef SENF_BACKTRACE
