@@ -124,7 +124,7 @@ prefix_ void senf::TCPPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("fin flag")                  << p->finf() << "\n"
        << senf::fieldName("window size")               << p->window() << "\n"
        << senf::fieldName("checksum")
-       << "0x" << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << "\n"
+       << "0x" << std::hex << std::setw(4) << std::setfill('0') << std::right << p->checksum() << "\n"
        << senf::fieldName("urgent pointer")            << p->urgentpointer() << "\n";
 }
 

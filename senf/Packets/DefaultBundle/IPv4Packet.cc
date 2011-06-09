@@ -71,7 +71,7 @@ prefix_ void senf::IPv4PacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("ttl")                       << unsigned(p->ttl()) << "\n"
        << senf::fieldName("protocol")                  << unsigned(p->protocol()) << "\n"
        << senf::fieldName("checksum")
-       << "0x" << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << std::dec << "\n"
+       << "0x" << std::hex << std::setw(4) << std::setfill('0') << std::right << p->checksum() << std::dec << "\n"
        << senf::fieldName("source")                    << p->source() << "\n"
        << senf::fieldName("destination")               << p->destination() << "\n";
 }

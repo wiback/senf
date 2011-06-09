@@ -37,7 +37,7 @@ prefix_ void senf::LlcSnapPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "LLC/SNAP:\n"
-       << std::hex << std::setfill('0')
+       << std::hex << std::setfill('0') << std::right
        << "  LLC\n"
        << senf::fieldName("  dsap")                    << "0x" << unsigned(p->dsap()) << "\n"
        << senf::fieldName("  ssap")                    << "0x" << unsigned(p->ssap()) << "\n"

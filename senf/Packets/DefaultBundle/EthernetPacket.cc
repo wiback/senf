@@ -85,7 +85,7 @@ prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("cfi")                       << p->cfi() << "\n"
        << senf::fieldName("vlan-ID")                   << p->vlanId() << "\n"
        << senf::fieldName("ethertype")
-       << " 0x" << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
+       << " 0x" << std::hex << std::setw(4) << std::setfill('0') << std::right << p->type() << "\n";
 }
 
 prefix_ void senf::EthVLanPacketType::finalize(packet p)

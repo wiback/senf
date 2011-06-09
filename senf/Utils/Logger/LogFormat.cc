@@ -126,10 +126,9 @@ prefix_ std::string senf::log::detail::LogFormat::prefix(time_type timestamp,
         if (noformat_) {
             if (timeBase_ == -1) timeBase_ = timestamp;
             time_type delta (timestamp - timeBase_);
-            datestream_ << std::setfill('0') << std::setw(10)
-                        << (delta / 1000000000ll) << '.'
-                        << std::setfill('0') << std::setw(9)
-                        << (delta % 1000000000ll);
+            datestream_ << std::setfill('0')  << std::right
+                        << std::setw(10) << (delta / 1000000000ll) << '.'
+                        << std::setw(9) << (delta % 1000000000ll);
         }
         else
             datestream_ << senf::ClockService::abstime(timestamp);

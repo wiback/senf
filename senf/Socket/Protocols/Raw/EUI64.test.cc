@@ -85,6 +85,16 @@ SENF_AUTO_UNIT_TEST(eui64)
     }
 }
 
+SENF_AUTO_UNIT_TEST(eui64_fillRight)
+{
+    std::string eui64Str ("01:02:03:ff-fe:04:05:06");
+    senf::EUI64 eui64 (senf::EUI64::from_string( eui64Str));
+
+    std::stringstream ss;
+    ss << std::left << eui64;
+    BOOST_CHECK_EQUAL( ss.str(), eui64Str);
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

@@ -47,7 +47,7 @@ prefix_ senf::EUI64 senf::EUI64::from_string(std::string const & s)
 prefix_ std::ostream & senf::operator<<(std::ostream & os, EUI64 const & eui)
 {
     boost::io::ios_all_saver ias(os);
-    os << std::hex << std::setfill('0')
+    os << std::hex << std::setfill('0') << std::right
        << std::setw(2) << unsigned(eui[0]) << ":"
        << std::setw(2) << unsigned(eui[1]) << ":"
        << std::setw(2) << unsigned(eui[2]) << ":"

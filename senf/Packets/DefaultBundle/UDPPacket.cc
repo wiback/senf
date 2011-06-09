@@ -101,7 +101,7 @@ prefix_ void senf::UDPPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("dest port")                 << p->destination() << "\n"
        << senf::fieldName("length")                    << p->length() << "\n"
        << senf::fieldName("checksum")
-       << "0x" << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << "\n";
+       << "0x" << std::hex << std::setw(4) << std::setfill('0') << std::right << p->checksum() << "\n";
 }
 
 prefix_ void senf::UDPPacketType::finalize(packet p)

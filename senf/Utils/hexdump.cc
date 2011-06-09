@@ -42,7 +42,7 @@ prefix_ void senf::detail::HexDumper::operator()(unsigned char ch)
             ascii_ = "";
         }
         os_ << "  "
-               << std::hex << std::setw(4) << std::setfill('0')
+               << std::hex << std::setw(4) << std::setfill('0')  << std::right
                << offset_ << ' ';
     } else if ((offset_ % block_size_) == block_size_/2) {
         os_ << " ";

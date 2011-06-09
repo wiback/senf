@@ -71,7 +71,7 @@ senf::MACAddress const senf::MACAddress::None;
 prefix_ std::ostream & senf::operator<<(std::ostream & os, MACAddress const & mac)
 {
     boost::io::ios_all_saver ias (os);
-    os << std::hex << std::setfill('0');
+    os << std::hex << std::setfill('0') << std::right;
     for (MACAddress::const_iterator i (mac.begin()); i != mac.end(); ++i) {
         if (i != mac.begin())
             os << ':';
