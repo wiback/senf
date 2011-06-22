@@ -32,6 +32,7 @@
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 #include <boost/assign.hpp>
+#include <boost/foreach.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -259,6 +260,7 @@ SENF_AUTO_UNIT_TEST(vectorMacro_parse)
     BOOST_CHECK_EQUAL( parser.vec1()[2], 0x090Au );
     BOOST_CHECK_EQUAL( parser.vec2()[0], 0x0B0Cu );
     BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
+
 }
 
 SENF_AUTO_UNIT_TEST(vectorMacro_create)
@@ -307,7 +309,7 @@ namespace {
 
         SENF_PARSER_INHERIT(TestVectorBaseParser);
 
-        SENF_PARSER_VECTOR        ( vec1  , transform(TestTransform, size1) , senf::UInt16Parser );
+        SENF_PARSER_VECTOR        ( vec1  , transform(TestTransform, size1) , senf::UInt8Parser );
         SENF_PARSER_VECTOR        ( vec2  , bytes(size2) , senf::UInt16Parser );
 
         SENF_PARSER_FINALIZE( TestVectorDerivedParser );
@@ -317,26 +319,27 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(vectorMacro_inherit)
 {
-    unsigned char data[] = { 0x05,                   // size1
+    unsigned char data[] = { 0x08,                   // size1
                              0x04,                   // size2
                              0x01, 0x02, 0x03, 0x04, // dummy
-                             0x05, 0x06,             // vec1[0]
-                             0x07, 0x08,             // vec1[1]
-                             0x09, 0x0A,             // vec1[2]
+                             0x05, 0x06,             // vec1[0], vec1[1]
+                             0x07, 0x08,             // vec1[2], vec1[3]
+                             0x09, 0x0A,             // vec1[4], vec1[5]
                              0x0B, 0x0C,             // vec2[0]
                              0x0D, 0x0E };           // vec2[1]
 
     senf::DataPacket p (senf::DataPacket::create(data));
     TestVectorDerivedParser parser (p.data().begin(), &p.data());
 
-    BOOST_CHECK_EQUAL( parser.vec1().size(), 3u );
+    BOOST_CHECK_EQUAL( parser.vec1().size(), 6u );
     BOOST_CHECK_EQUAL( parser.vec2().size(), 2u );
     BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
-    BOOST_CHECK_EQUAL( parser.vec1()[0], 0x0506u );
-    BOOST_CHECK_EQUAL( parser.vec1()[1], 0x0708u );
-    BOOST_CHECK_EQUAL( parser.vec1()[2], 0x090Au );
     BOOST_CHECK_EQUAL( parser.vec2()[0], 0x0B0Cu );
     BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
+    boost::uint8_t c = 0x05;
+    BOOST_FOREACH( boost::uint8_t v, parser.vec1() ) {
+        BOOST_CHECK_EQUAL( v, c++ );
+    }
 }
 
 namespace {

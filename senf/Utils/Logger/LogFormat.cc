@@ -27,7 +27,6 @@
 //#include "LogFormat.ih"
 
 // Custom includes
-#include <errno.h>
 #include <unistd.h>
 #include <locale>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -63,7 +62,7 @@ prefix_ senf::log::detail::LogFormat::LogFormat(console::ScopedDirectory<> & dir
     dir.add("showStream", fty::Command(&LogFormat::showStream, this)
             .arg("flag","whether to display the stream in log messages",
                  kw::default_value = true)
-            .doc("Set strean display in log messages.") );
+            .doc("Set stream display in log messages.") );
     dir.add("showLevel", fty::Command(&LogFormat::showLevel, this)
             .arg("flag","whether to display the log level in log messages",
                  kw::default_value = true)
@@ -106,7 +105,7 @@ prefix_ void senf::log::detail::LogFormat::timeFormat(std::string const & format
     timeFormat_ = format;
     if (format.empty()) {
         noformat_ = true;
-        timeBase_ = -1;
+        timeBase_ = ClockService::now();
     } else {
         noformat_ = false;
         std::locale const & loc (datestream_.getloc());
@@ -124,7 +123,6 @@ prefix_ std::string senf::log::detail::LogFormat::prefix(time_type timestamp,
 
     if (showTime_) {
         if (noformat_) {
-            if (timeBase_ == -1) timeBase_ = timestamp;
             time_type delta (timestamp - timeBase_);
             datestream_ << std::setfill('0')  << std::right
                         << std::setw(10) << (delta / 1000000000ll) << '.'
