@@ -33,6 +33,7 @@
 // Custom includes
 #include <math.h>
 #include <boost/cstdint.hpp>
+#include <senf/Utils/Format.hh>
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
@@ -54,6 +55,8 @@ namespace senf {
          float stddev;
          boost::uint32_t count;
      };
+
+     std::ostream & operator<<(std::ostream & os, StatisticsData const & _data);
 
      /** \brief Accumulate measurement values
 
