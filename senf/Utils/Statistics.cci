@@ -142,6 +142,11 @@ prefix_ std::string senf::StatisticsBase::path()
     return v_path();
 }
 
+prefix_ senf::StatisticsData senf::StatisticsBase::data()
+{
+    return StatisticsData(min_, avg_, max_, dev_, 0);
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::Collector
 

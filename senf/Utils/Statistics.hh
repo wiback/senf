@@ -229,6 +229,12 @@ namespace senf {
                                              \param[in] n size of sliding average window */
 
         //\}
+        StatisticsData data();      ///< Get the Statistics data as senf::StatisticsData
+                                    /**< Return a Statistic Data object containing values
+                                         from this instance.
+                                     */
+
+
         //-////////////////////////////////////////////////////////////////////////
         // Exceptions
 
