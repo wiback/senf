@@ -34,7 +34,7 @@
 
 // Custom includes
 #include <sys/socket.h>
-#include <netpacket/packet.h>
+#include <linux/if_packet.h>
 #include <senf/Socket/Protocols/BSDAddressingPolicy.hh>
 #include <senf/Socket/Protocols/BSDSocketAddress.hh>
 #include "MACAddress.hh"

@@ -35,7 +35,7 @@
 // Custom includes
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netpacket/packet.h>
+#include <linux/if_packet.h>
 #include <net/ethernet.h>
 #include <netinet/in.h>
 #include <net/if.h>

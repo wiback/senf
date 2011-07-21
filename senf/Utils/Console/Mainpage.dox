@@ -60,7 +60,7 @@
     library. See above links for more:
 
     \code
-    #include <senf/Console.hh>
+    #include <senf/Utils/Console.hh>
 
     // Define callback function.
     void mycommand(std::ostream & os, int foo, int bar)
