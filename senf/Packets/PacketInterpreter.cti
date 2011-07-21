@@ -43,14 +43,16 @@
 template <class Type>
 prefix_ bool senf::PacketInterpreterBase::is()
 {
-    { static void const * const _ ((void*)&Type::dump); (void) _; }
+    // ensure that the template argument is included in the corresponding object file when linking:
+    { static typename PacketInterpreter<Type>::factory_t _ (PacketInterpreter<Type>::factory()); (void) _;}
     return dynamic_cast< PacketInterpreter<Type>* >(this);
 }
 
 template <class Type>
 prefix_ typename senf::PacketInterpreter<Type>::ptr senf::PacketInterpreterBase::as()
 {
-    { static void const * const _ ((void*)&Type::dump); (void) _; }
+    // ensure that the template argument is included in the corresponding object file when linking:
+    { static typename PacketInterpreter<Type>::factory_t _ (PacketInterpreter<Type>::factory()); (void) _;}
     return typename PacketInterpreter<Type>::ptr(
         static_cast< PacketInterpreter<Type>* >(this));
 }
