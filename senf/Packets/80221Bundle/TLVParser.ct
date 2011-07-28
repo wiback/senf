@@ -45,6 +45,7 @@ prefix_ void senf::MIHListTLVParserMixin<Self>::finalize()
             senf::bytes(self->listSize_()) + senf::bytes(self->value()));
     self->maxLength( size);
     self->length_() << size;
+    self->length_().finalize();
 }
 
 
