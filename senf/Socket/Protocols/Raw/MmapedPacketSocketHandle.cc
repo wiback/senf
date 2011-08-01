@@ -79,7 +79,7 @@ prefix_ void senf::MmapedPacketSocketProtocol::init_client(SocketType type, int 
 prefix_ unsigned senf::MmapedPacketSocketProtocol::available()
     const
 {
-
+    return 0;
 }
 
 prefix_ bool senf::MmapedPacketSocketProtocol::eof()

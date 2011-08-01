@@ -39,8 +39,6 @@
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <senf/config.hh>
-#include "senfassert.hh"
-
 
 //#include "Exception.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,9 +316,7 @@ namespace senf {
 #       define SENF_EXC_DEBUGINFO
 #   endif
 
-#   define SENF_THROW_SYSTEM_EXCEPTION(desc)                        \
-        SENF_STATIC_ASSERT( sizeof(desc) > 1,                       \
-            EMPTY_DESCRIPTION_FOR_SYSTEM_EXCEPTION_NOT_ALLOWED);    \
+#   define SENF_THROW_SYSTEM_EXCEPTION(desc)                    \
         throw senf::SystemException(desc SENF_EXC_DEBUGINFO)
 
 }
