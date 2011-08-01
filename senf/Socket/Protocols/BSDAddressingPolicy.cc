@@ -46,7 +46,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_local(FileHandle const & han
                                                                  socklen_t * len)
 {
     if (::getsockname(handle.fd(),addr,len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get sockname");
 }
 
 prefix_ void senf::BSDAddressingPolicyMixinBase::do_peer(FileHandle const & handle,
@@ -54,7 +54,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_peer(FileHandle const & hand
                                                                 socklen_t * len)
 {
     if (::getpeername(handle.fd(),addr,len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get peername");
 }
 
 prefix_ void senf::BSDAddressingPolicyMixinBase::do_bind(FileHandle const & handle,
@@ -62,7 +62,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_bind(FileHandle const & hand
                                                                 socklen_t len)
 {
     if (::bind(handle.fd(),addr,len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not bind");
 }
 
 prefix_ void senf::BSDAddressingPolicyMixinBase::do_connect(FileHandle const & handle,
@@ -77,7 +77,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_connect(FileHandle const & h
                 int err = 0;
                 socklen_t len = sizeof(err);
                 if (::getsockopt(handle.fd(),SOL_SOCKET,SO_ERROR,&err,&len) < 0)
-                    SENF_THROW_SYSTEM_EXCEPTION("");
+                    SENF_THROW_SYSTEM_EXCEPTION("::getsockopt(SO_ERROR)");
                 if (err != 0)
                     throw SystemException(err SENF_EXC_DEBUGINFO);
                 return;
@@ -85,7 +85,7 @@ prefix_ void senf::BSDAddressingPolicyMixinBase::do_connect(FileHandle const & h
             case EINTR:
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION("could not ::connect");
             }
         else
             return;

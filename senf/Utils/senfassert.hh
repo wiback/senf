@@ -49,6 +49,41 @@
 
 #endif
 
+
+/* Lifted direct from:
+   Modern C++ Design: Generic Programming and Design Patterns Applied Section 2.1
+   by Andrei Alexandrescu
+*/
+namespace senf {
+namespace detail {
+    template<bool> class compile_time_check
+    {
+    public:
+        compile_time_check(...) {}
+    };
+
+    template<> class compile_time_check<false>
+    {
+    };
+}}
+
+    /*
+    SENF_STATIC_ASSERT is only in operation when SENF_DEBUG is defined. It will test its first
+    argument at compile time and on failure report the error message of the second argument,
+    which must be a valid c++ classname. i.e. no spaces, punctuation or reserved keywords.
+    */
+#ifdef SENF_DEBUG
+#   define SENF_STATIC_ASSERT(expr, msg)                                    \
+    do {                                                                    \
+        struct STATIC_ASSERT_FAILED_##msg {};                               \
+        typedef senf::detail::compile_time_check< (expr) != 0 > tmplimpl;   \
+        tmplimpl aTemp = tmplimpl(STATIC_ASSERT_FAILED_##msg());            \
+        (void)sizeof(aTemp);                                                      \
+    } while (0)
+#else
+#   define SENF_STATIC_ASSERT(expr, msg)
+#endif
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "senfassert.cci"
 //#include "senfassert.ct"

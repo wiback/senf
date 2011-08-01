@@ -135,8 +135,8 @@ prefix_ void senf::Daemon::openLog()
     if (! stdoutLog_.empty()) {
         fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
         if (fd < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("")
-                  << " Could not open \"" << stdoutLog_ << "\" for redirecting stdout.";
+            SENF_THROW_SYSTEM_EXCEPTION(
+                  " Could not open \"" + stdoutLog_ + "\" for redirecting stdout.");
         stdout_ = fd;
     }
     if (! stderrLog_.empty()) {
@@ -148,8 +148,8 @@ prefix_ void senf::Daemon::openLog()
         else {
             fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
             if (fd < 0)
-                SENF_THROW_SYSTEM_EXCEPTION("")
-                    << " Could not open \"" << stderrLog_ << "\" for redirecting stderr.";
+                SENF_THROW_SYSTEM_EXCEPTION(
+                    " Could not open \"" + stderrLog_ + "\" for redirecting stderr.");
             stderr_ = fd;
         }
     }
@@ -445,17 +445,15 @@ prefix_ bool senf::Daemon::pidfileCreate()
         {
             std::ofstream pidf (tempname.c_str());
             if (! pidf)
-                SENF_THROW_SYSTEM_EXCEPTION("")
-                      << " Could not open pidfile \"" << tempname << "\" for output.";
+                SENF_THROW_SYSTEM_EXCEPTION(" Could not open pidfile \"" + tempname + "\" for output.");
             pidf << ::getpid() << std::endl;
             if (! pidf)
-                SENF_THROW_SYSTEM_EXCEPTION("")
-                      << " Could not write to pidfile \"" << tempname << "\".";
+                SENF_THROW_SYSTEM_EXCEPTION(" Could not write to pidfile \"" + tempname + "\".");
         }
 
         if (::link(tempname.c_str(), pidfile_.c_str()) < 0) {
             if (errno != EEXIST)
-                SENF_THROW_SYSTEM_EXCEPTION("") << linkErrorFormat % pidfile_ % tempname;
+                SENF_THROW_SYSTEM_EXCEPTION((linkErrorFormat % pidfile_ % tempname).str());
         }
         else {
             struct ::stat s;
@@ -488,7 +486,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
         LIBC_CALL( ::unlink, (tempname.c_str() ));
         if (::link(pidfile_.c_str(), tempname.c_str()) < 0) {
             if (errno != ENOENT)
-                SENF_THROW_SYSTEM_EXCEPTION("") << linkErrorFormat % tempname % pidfile_;
+                SENF_THROW_SYSTEM_EXCEPTION( (linkErrorFormat % tempname % pidfile_).str());
             // Hmm ... the pidfile mysteriously disappeared ... try again.
             continue;
         }

@@ -38,7 +38,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-
 //#include "ReadWritePolicy.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +57,7 @@ prefix_ unsigned senf::ReadablePolicy::read(FileHandle & handle, char * buffer,
                 rv = 0;
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION(":::read");
             }
     } while (rv<0);
     return rv;
@@ -79,7 +78,7 @@ prefix_ unsigned senf::ReadablePolicy::do_readfrom(FileHandle & handle, char * b
                 rv = 0;
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION("::recvfrom");
             }
     } while (rv<0);
     return rv;
@@ -108,7 +107,7 @@ prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle & handle, char const
                 rv = 0;
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION("::write");
             }
     } while (rv<0);
     return rv;
@@ -132,7 +131,7 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle & handle,
                 rv = 0;
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION("::sendto");
             }
     } while (rv<0);
     return rv;

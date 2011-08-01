@@ -51,7 +51,7 @@ prefix_ void senf::UDPv4SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET,SOCK_DGRAM,0);
     if (sock < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not open UDPv4Socket");
     fd(sock);
 }
 
@@ -72,7 +72,7 @@ prefix_ void senf::UDPv6SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET6,SOCK_DGRAM,0);
     if (sock < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not open UDPv6Socket");
     fd(sock);
 }
 

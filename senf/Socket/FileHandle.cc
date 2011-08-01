@@ -76,7 +76,7 @@ prefix_ void senf::FileBody::destroyClose()
 prefix_ void senf::FileBody::v_close()
 {
     if (::close(fd_) != 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not ::close FileBody fd");
 }
 
 prefix_ void senf::FileBody::v_terminate()
@@ -100,17 +100,17 @@ prefix_ bool senf::FileBody::blocking()
     const
 {
     int flags = ::fcntl(fd(),F_GETFL);
-    if (flags < 0) SENF_THROW_SYSTEM_EXCEPTION("");
+    if (flags < 0) SENF_THROW_SYSTEM_EXCEPTION("::fcntl(F_GETFL)");
     return ! (flags & O_NONBLOCK);
 }
 
 prefix_ void senf::FileBody::blocking(bool status)
 {
     int flags = ::fcntl(fd(),F_GETFL);
-    if (flags < 0) SENF_THROW_SYSTEM_EXCEPTION("");
+    if (flags < 0) SENF_THROW_SYSTEM_EXCEPTION("::fcntl(F_GETFL)");
     if (status) flags &= ~O_NONBLOCK;
     else        flags |= O_NONBLOCK;
-    if (::fcntl(fd(), F_SETFL, flags) < 0) SENF_THROW_SYSTEM_EXCEPTION("");
+    if (::fcntl(fd(), F_SETFL, flags) < 0) SENF_THROW_SYSTEM_EXCEPTION("::fcntl(F_SETFL)");
 }
 
 /* We don't take POLLIN/POLLOUT as argument to avoid having to include
@@ -131,7 +131,7 @@ prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, int timeout, bool 
             case EINTR:
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION("could not check ::poll");
             }
     } while (rv<0);
     return rv>0;

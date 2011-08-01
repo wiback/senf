@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2011
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
@@ -26,55 +26,36 @@
 //   Thorsten Horstmann <tho@berlios.de>
 
 /** \file
-    \brief DVBDemuxSocketProtocol non-inline non-template implementation */
+    \brief MmapedPacketSocketHandle unit tests */
 
-#include "DVBDemuxSocketProtocol.hh"
-//#include "DVBDemuxSocketProtocol.ih"
 
 // Custom includes
-#include <sys/socket.h>
-#include <iostream>
-#include <string>
-#include <sys/ioctl.h>
-#include <linux/sockios.h>
-#include <senf/Socket/SocketHandle.hh>
+#include "MmapedPacketSocketHandle.hh"
 
-//#include "DVBDemuxSocketProtocol.mpp"
+#include <senf/Utils/auto_unit_test.hh>
+#include <boost/test/test_tools.hpp>
+
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ void senf::DVBDemuxSocketProtocol::setBufferSize(unsigned long size)
-    const
+SENF_AUTO_UNIT_TEST(mmapedPacketSocketHandle)
 {
-    if (::ioctl(fd(), DMX_SET_BUFFER_SIZE, size) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION(
-                "Could not set the size of the buffer on DVB adapter. requested size: ")
-                << size << ".";
-}
+    // packet sockets are only allowed for root
+    if (getuid() != 0) {
+        BOOST_WARN_MESSAGE(false, "Cannot test senf::MmapedPacketSocketHandle as non-root user");
+        BOOST_CHECK( true );
+        return;
+    }
 
-prefix_ void senf::DVBDemuxSocketProtocol::startFiltering()
-    const
-{
-    if (::ioctl(fd(), DMX_START) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("Could not start filtering operation on DVB adapter.");
-}
+    {
+        senf::MmapedPacketSocketHandle sock;
 
-prefix_ void senf::DVBDemuxSocketProtocol::stopFiltering()
-    const
-{
-    if (::ioctl(fd(), DMX_STOP) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("Could not stop filtering operation on DVB adapter.");
-}
-
-prefix_ bool senf::DVBDemuxSocketProtocol::eof()
-    const
-{
-    return false;
+        BOOST_CHECK( ! sock.eof() );
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "DVBDemuxSocketProtocol.mpp"
 
 
 // Local Variables:

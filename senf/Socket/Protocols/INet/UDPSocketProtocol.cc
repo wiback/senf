@@ -45,7 +45,7 @@ prefix_ unsigned senf::UDPSocketProtocol::available()
 {
     int n;
     if (::ioctl(fd(),SIOCINQ,&n) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not call ::ioctl(SIOCINQ) in UDPSocketProtocol::available()");
     return n;
 }
 

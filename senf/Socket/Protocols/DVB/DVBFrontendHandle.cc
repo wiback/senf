@@ -53,7 +53,7 @@ prefix_ void senf::DVBFrontendSocketProtocol::init_client(unsigned short adapter
     string devFrontend = str( boost::format("/dev/dvb/adapter%d/frontend%d") % adapter % device);
     int f = open(devFrontend.c_str(), flags);
     if (f < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("")<< "Could not open frontend device of DVB adapter " << devFrontend << ".";
+        SENF_THROW_SYSTEM_EXCEPTION("Could not open frontend device of DVB adapter ") << devFrontend << ".";
     fd(f);
 }
 
@@ -74,7 +74,7 @@ prefix_ void senf::DVBFrontendSocketProtocol::tune(const struct dvb_frontend_par
 {
     // tuning
     if (::ioctl(fd(), FE_SET_FRONTEND, &frontend) )
-        SENF_THROW_SYSTEM_EXCEPTION("") << "ioctl FE_SET_FRONTEND failed. Socket should initialized with r/w permissions.";;
+        SENF_THROW_SYSTEM_EXCEPTION("ioctl FE_SET_FRONTEND failed. Socket should initialized with r/w permissions.");
 }
 
 prefix_ void senf::DVBFrontendSocketProtocol::tuneDVB_T(unsigned int frequency,
@@ -173,7 +173,7 @@ prefix_ dvb_frontend_info senf::DVBFrontendSocketProtocol::getInfo()
     ::memset(&info, 0, sizeof(struct dvb_frontend_info));
 
     if (::ioctl(fd(), FE_GET_INFO, &info)) {
-        SENF_THROW_SYSTEM_EXCEPTION("") << "Could not read on fildescriptor.";
+        SENF_THROW_SYSTEM_EXCEPTION("Could not read on fildescriptor.");
     }
     return info;
 }

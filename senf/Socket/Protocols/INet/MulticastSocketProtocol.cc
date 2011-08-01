@@ -68,7 +68,7 @@ prefix_ bool senf::MulticastSocketProtocol::mcLoop()
     int value (0);
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_IP,IP_MULTICAST_LOOP,&value,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::getsockopt(IP_MULTICAST_LOOP)");
     return value;
 }
 
@@ -77,7 +77,7 @@ prefix_ void senf::MulticastSocketProtocol::mcLoop(bool value)
 {
     int ivalue (value);
     if (::setsockopt(fd(),SOL_IP,IP_MULTICAST_LOOP,&ivalue,sizeof(ivalue)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::getsockopt(IP_MULTICAST_LOOP)");
 }
 
 prefix_ void senf::MulticastSocketProtocol::mcIface(std::string const & iface)
@@ -91,7 +91,7 @@ prefix_ void senf::MulticastSocketProtocol::mcIface(std::string const & iface)
             throw SystemException(EINVAL SENF_EXC_DEBUGINFO);
     }
     if (::setsockopt(fd(),SOL_IP,IP_MULTICAST_IF,&mreqn,sizeof(mreqn)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::getsockopt(IP_MULTICAST_IF)");
 }
 
 prefix_ unsigned senf::MulticastSocketProtocol::mcTTL()
@@ -100,7 +100,7 @@ prefix_ unsigned senf::MulticastSocketProtocol::mcTTL()
     int value (0);
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_IP,IP_MULTICAST_TTL,&value,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::getsockopt(IP_MULTICAST_TTL)");
     return value;
 }
 
@@ -108,7 +108,7 @@ prefix_ void senf::MulticastSocketProtocol::mcTTL(unsigned value)
     const
 {
     if (::setsockopt(fd(),SOL_IP,IP_MULTICAST_TTL,&value,sizeof(value)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::getsockopt(IP_MULTICAST_TTL");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address c
     mreqn.imr_address.s_addr = htons(INADDR_ANY);
     mreqn.imr_ifindex = 0;
     if (::setsockopt(fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IP_DROP_MEMBERSHIP");
 }
 
 prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address const & mcAddr,
@@ -171,7 +171,7 @@ prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address c
     mreqn.imr_address.s_addr = localAddr.inaddr();
     mreqn.imr_ifindex = 0;
     if (::setsockopt(fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IP_DROP_MEMBERSHIP");
 }
 
 prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address const & mcAddr,
@@ -185,7 +185,7 @@ prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address c
     if (mreqn.imr_ifindex == 0)
         throw SystemException("::if_nametoindex()",ENOENT SENF_EXC_DEBUGINFO);
     if (::setsockopt(fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IP_DROP_MEMBERSHIP");
 }
 
 namespace {
@@ -279,14 +279,14 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address c
         mreqn.imr_address.s_addr = htons(INADDR_ANY);
         mreqn.imr_ifindex = 0;
         if (::setsockopt(fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("");
+            SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IP_DROP_MEMBERSHIP");
     }
     else {
         struct ipv6_mreq mreqn;
         std::copy(mcAddr.begin(), mcAddr.end(), mreqn.ipv6mr_multiaddr.s6_addr);
         mreqn.ipv6mr_interface = 0;
         if (::setsockopt(fd(),SOL_IPV6,IPV6_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("");
+            SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IPV6_DROP_MEMBERSHIP");
     }
 }
 
@@ -303,7 +303,7 @@ senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address const & mcAddr
         if (mreqn.imr_ifindex == 0)
             throw SystemException("::if_nametoindex()",ENOENT SENF_EXC_DEBUGINFO);
         if (::setsockopt(fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("");
+            SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IP_DROP_MEMBERSHIP");
     }
     else {
         struct ipv6_mreq mreqn;
@@ -312,7 +312,7 @@ senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address const & mcAddr
         if (mreqn.ipv6mr_interface == 0)
             throw SystemException("::if_nametoindex()",ENOENT SENF_EXC_DEBUGINFO);
         if (::setsockopt(fd(),SOL_IPV6,IPV6_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("");
+            SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IPV6_DROP_MEMBERSHIP");
     }
 }
 

@@ -45,7 +45,7 @@ prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp()
 {
     struct timeval tv;
     if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get timestamp in DatagramSocketProtocol");
     return ClockService::from_timeval(tv);
 }
 

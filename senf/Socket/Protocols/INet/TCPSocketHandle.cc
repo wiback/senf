@@ -51,7 +51,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET,SOCK_STREAM,0);
     if (sock < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv4Socket");
     fd(sock);
 }
 
@@ -68,7 +68,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_server()
 {
     int sock = ::socket(PF_INET,SOCK_STREAM,0);
     if (sock < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv4Socket");
     fd(sock);
 }
 
@@ -80,7 +80,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_server(INet4SocketAddress const & a
     reuseaddr(true);
     serverHandle().bind(address);
     if (::listen(fd(),backlog) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not listen on TCPv4Socket");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET6,SOCK_STREAM,0);
     if (sock < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv6Socket");
     fd(sock);
 }
 
@@ -108,7 +108,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_server()
 {
     int sock = ::socket(PF_INET6,SOCK_STREAM,0);
     if (sock < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv6Socket");
     fd(sock);
 }
 
@@ -120,7 +120,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_server(INet6SocketAddress const & a
     serverHandle().bind(address);
     reuseaddr(true);
     if (::listen(fd(),backlog) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not listen on TCPv6Socket");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

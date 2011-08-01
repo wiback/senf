@@ -47,7 +47,7 @@ prefix_ std::pair<bool,unsigned> senf::BSDSocketProtocol::linger()
     socklen_t len = sizeof(ling);
     ::memset(&ling, 0, sizeof(ling));
     if (::getsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get socketopt SO_LINGER");
     return std::make_pair(ling.l_onoff, ling.l_linger);
 }
 
@@ -58,7 +58,7 @@ prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
     ling.l_onoff = enable;
     ling.l_linger = timeout;
     if (::setsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_LINGER");
 }
 
 prefix_ boost::uint8_t senf::BSDSocketProtocol::priority()
@@ -67,7 +67,7 @@ prefix_ boost::uint8_t senf::BSDSocketProtocol::priority()
     int value;
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_SOCKET,SO_PRIORITY,&value,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get socketopt SO_PRIORITY");
     return value;
 }
 
@@ -76,7 +76,7 @@ prefix_ void senf::BSDSocketProtocol::priority(boost::uint8_t value)
 {
     int ivalue (value);
     if (::setsockopt(fd(),SOL_SOCKET,SO_PRIORITY,&ivalue,sizeof(ivalue)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_PRIORITY");
 }
 
 prefix_ int senf::BSDSocketProtocol::error()
@@ -85,7 +85,7 @@ prefix_ int senf::BSDSocketProtocol::error()
     int err;
     socklen_t len (sizeof(err));
     if (::getsockopt(fd(),SOL_SOCKET,SO_ERROR,&err,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get socketopt SO_ERROR");
     return err;
 }
 
@@ -95,7 +95,7 @@ prefix_ unsigned senf::BSDSocketProtocol::rcvbuf()
     unsigned size;
     socklen_t len (sizeof(size));
     if (::getsockopt(fd(),SOL_SOCKET,SO_RCVBUF,&size,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get socketopt SO_RCVBUF");
     // Linux doubles the bufer size on setting the RCVBUF to cater for internal
     // headers. We fix this up here .. (see lkml FAQ)
     return size/2;
@@ -105,7 +105,7 @@ prefix_ void senf::BSDSocketProtocol::rcvbuf(unsigned size)
     const
 {
     if (::setsockopt(fd(),SOL_SOCKET,SO_RCVBUF,&size,sizeof(size)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_RCVBUF");
 }
 
 prefix_ unsigned senf::BSDSocketProtocol::sndbuf()
@@ -114,7 +114,7 @@ prefix_ unsigned senf::BSDSocketProtocol::sndbuf()
     unsigned size;
     socklen_t len (sizeof(size));
     if (::getsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get socketopt SO_SNDBUF");
     // Linux doubles the bufer size on setting the SNDBUF to cater for internal
     // headers. We fix this up here .. (see lkml FAQ)
     return size/2;
@@ -124,7 +124,7 @@ prefix_ void senf::BSDSocketProtocol::sndbuf(unsigned size)
     const
 {
     if (::setsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_SNDBUF");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ prefix_ bool senf::AddressableBSDSocketProtocol::reuseaddr()
     int value;
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_SOCKET,SO_REUSEADDR,&value,&len) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not get socketopt SO_REUSEADDR");
     return value;
 }
 
@@ -144,7 +144,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
 {
     int ivalue (value);
     if (::setsockopt(fd(),SOL_SOCKET,SO_REUSEADDR,&ivalue,sizeof(ivalue)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_REUSEADDR");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
