@@ -30,6 +30,8 @@
  */
 
 #include "ReadWritePolicy.hh"
+#include "senf/Utils/hexdump.hh"
+#include "senf/Utils/String.hh"
 //#include "ReadWritePolicy.ih"
 
 // Custom includes
@@ -131,7 +133,10 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle & handle,
                 rv = 0;
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION("::sendto");
+	        std::stringstream a, b;
+                senf::hexdump( (char*) addr , ((char*) addr) + len , a);
+		senf::hexdump( (char*) buffer , ((char*) buffer) + size , b);
+                SENF_THROW_SYSTEM_EXCEPTION("::sendto(" + senf::str(b) + ") to " + senf::str(a));
             }
     } while (rv<0);
     return rv;
