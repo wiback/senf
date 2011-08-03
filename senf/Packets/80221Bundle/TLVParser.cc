@@ -51,7 +51,9 @@ prefix_ void senf::MIHBaseTLVParser::validateType(boost::uint8_t expectedType)
     const
 {
     if (! check( 1 + senf::bytes(length_()) + length()) )
-        throw InvalidMIHPacketException("truncated TLV.") << " Type: " << unsigned(type());
+        throw InvalidMIHPacketException("truncated TLV.") << " Type: " << unsigned(type())
+            << ", size:" << 1 + senf::bytes(length_()) + length()
+            << ", available: " << std::distance(i(), data().end());
     if (type() != expectedType)
         throw InvalidMIHPacketException("wrong TLV type. expected ") << unsigned(expectedType) << " got " << unsigned(type());
 }
