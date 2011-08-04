@@ -84,6 +84,10 @@ namespace log {
      */
 #   define SENF_LOG_DEFINE_AREA(area) SENF_LOG_DEFINE_AREA_I(area, ; )
 
+#   define SENF_LOG_DEFINE_NAMED_AREA(area, name)                                                 \
+        SENF_LOG_DEFINE_AREA_I(area,                                                              \
+            std::string v_name() const { return name; } );
+
     /** \brief Define new default log area for the class
 
         This command declares the containing class to be it's own default log area. It is such like
