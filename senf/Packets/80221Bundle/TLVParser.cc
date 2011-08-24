@@ -58,7 +58,7 @@ prefix_ void senf::MIHBaseTLVParser::validateType(boost::uint8_t expectedType)
         throw InvalidMIHPacketException("wrong TLV type. expected ") << unsigned(expectedType) << " got " << unsigned(type());
 }
 
-prefix_ void senf::MIHBaseTLVParser::validateTypeLength(boost::uint8_t expectedType, MIHTLVLengthParser::value_type expectedLength)
+prefix_ void senf::MIHBaseTLVParser::validateTypeLength(boost::uint8_t expectedType, MIHLengthParser::value_type expectedLength)
     const
 {
     validateType( expectedType);
@@ -70,7 +70,7 @@ prefix_ void senf::MIHBaseTLVParser::validateTypeLength(boost::uint8_t expectedT
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHBaseListTLVParser
 
-prefix_ void senf::MIHBaseListTLVParser::maxListSize(MIHTLVLengthParser::value_type maxl)
+prefix_ void senf::MIHBaseListTLVParser::maxListSize(MIHLengthParser::value_type maxl)
     const
 {
     protect(), listSize_().capacity( maxl);
@@ -109,9 +109,9 @@ prefix_ void senf::MIHFIdTLVParser::maxIdLength(boost::uint8_t maxl)
 }
 
 prefix_ senf::safe_data_iterator senf::MIHFIdTLVParser::resizeValueField(
-        MIHTLVLengthParser::value_type size)
+        MIHLengthParser::value_type size)
 {
-    MIHTLVLengthParser::value_type current_length ( idLength());
+    MIHLengthParser::value_type current_length ( idLength());
     idLength_() << size;
     length_() << size + idLength_().bytes();
 
@@ -312,9 +312,9 @@ prefix_ void senf::MIHValidTimeIntervalTLVParser::validate()
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::MIHTLVLengthParser
+// senf::MIHLengthParser
 
-prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() const
+prefix_ senf::MIHLengthParser::value_type senf::MIHLengthParser::value() const
 {
     switch (bytes() ) {
     case 1:
@@ -328,39 +328,39 @@ prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::value() c
     case 5:
         return parse<UInt32Parser>( 1 ).value() + (underflow_flag() ? 0 : 128u);
     default:
-        throw( MIHTLVLengthException());
+        throw( MIHLengthException());
     };
 }
 
-prefix_ void senf::MIHTLVLengthParser::value(value_type const & v)
+prefix_ void senf::MIHLengthParser::value(value_type const & v)
 {
     switch (bytes() ) {
     case 1:
-        if (v > 128) throw( MIHTLVLengthException());
+        if (v > 128) throw( MIHLengthException());
         length_field() = v;
         return;
     case 2:
-        if (v > UInt8Parser::max_value + 128) throw( MIHTLVLengthException());
+        if (v > UInt8Parser::max_value + 128) throw( MIHLengthException());
         parse<UInt8Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     case 3:
-        if (v > UInt16Parser::max_value + 128) throw( MIHTLVLengthException());
+        if (v > UInt16Parser::max_value + 128) throw( MIHLengthException());
         parse<UInt16Parser>(1) = v - (v>128 ? 128 : 0);
         break;;
     case 4:
-        if (v > UInt24Parser::max_value + 128) throw( MIHTLVLengthException());
+        if (v > UInt24Parser::max_value + 128) throw( MIHLengthException());
         parse<UInt24Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     case 5:
         parse<UInt32Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     default:
-        throw( MIHTLVLengthException());
+        throw( MIHLengthException());
     };
     underflow_flag() = (v <= 128);
 }
 
-prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::capacity()
+prefix_ senf::MIHLengthParser::value_type senf::MIHLengthParser::capacity()
     const
 {
     switch (bytes() ) {
@@ -375,23 +375,23 @@ prefix_ senf::MIHTLVLengthParser::value_type senf::MIHTLVLengthParser::capacity(
     case 5:
         return UInt32Parser::max_value;
     default:
-        throw( MIHTLVLengthException());
+        throw( MIHLengthException());
     };
 }
 
-prefix_ senf::MIHTLVLengthParser const & senf::MIHTLVLengthParser::operator= (value_type other)
+prefix_ senf::MIHLengthParser const & senf::MIHLengthParser::operator= (value_type other)
 {
     value(other);
     return *this;
 }
 
-prefix_ void senf::MIHTLVLengthParser::init() const
+prefix_ void senf::MIHLengthParser::init() const
 {
     defaultInit();
     extended_length_flag() = false;
 }
 
-prefix_ void senf::MIHTLVLengthParser::finalize()
+prefix_ void senf::MIHLengthParser::finalize()
 {
     value_type v = value();
     size_type b = bytes();
@@ -414,7 +414,7 @@ prefix_ void senf::MIHTLVLengthParser::finalize()
     if (b != 5) resize_(5);
 }
 
-prefix_ void senf::MIHTLVLengthParser::capacity(MIHTLVLengthParser::value_type v)
+prefix_ void senf::MIHLengthParser::capacity(MIHLengthParser::value_type v)
 {
     if (v <= 128)
         return;
@@ -434,7 +434,7 @@ prefix_ void senf::MIHTLVLengthParser::capacity(MIHTLVLengthParser::value_type v
     if (b < 5) resize_(5);
 }
 
-prefix_ void senf::MIHTLVLengthParser::resize_(size_type size)
+prefix_ void senf::MIHLengthParser::resize_(size_type size)
 {
     value_type v = value();
     resize(bytes(), size);

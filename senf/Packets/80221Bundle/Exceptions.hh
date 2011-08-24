@@ -35,10 +35,10 @@
 
 namespace senf {
 
-    struct MIHTLVLengthException : public senf::Exception
+    struct MIHLengthException : public senf::Exception
     {
-        MIHTLVLengthException()
-          : senf::Exception("MIHTLVLengthException") {}
+        MIHLengthException()
+          : senf::Exception("MIHLengthException") {}
     };
 
     struct InvalidMIHPacketException : public senf::Exception

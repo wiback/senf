@@ -40,12 +40,12 @@
 
 namespace senf {
 
-    class MIHTLVLengthParser
-        : public detail::packet::IntParserOps<MIHTLVLengthParser, boost::uint32_t>,
+    class MIHLengthParser
+        : public detail::packet::IntParserOps<MIHLengthParser, boost::uint32_t>,
           public PacketParserBase
     {
     public:
-        MIHTLVLengthParser(data_iterator i, state_type s) : PacketParserBase(i,s) {}
+        MIHLengthParser(data_iterator i, state_type s) : PacketParserBase(i,s) {}
 
         typedef boost::uint32_t value_type;
         static const size_type init_bytes = 1;
@@ -55,7 +55,7 @@ namespace senf {
         value_type value() const;
         void value(value_type const & v);
 
-        MIHTLVLengthParser const & operator= (value_type other);
+        MIHLengthParser const & operator= (value_type other);
         size_type bytes() const;
         void init() const;
 
@@ -79,7 +79,7 @@ namespace senf {
 
          MIHBaseTLVParser is the abstract base class for MIH TLV parsers. It defines the
          \ref type() field as an \ref senf::UInt8Parser and the \ref length() field as a
-         MIHTLVLengthParser. The length field is read-only.
+         MIHLengthParser. The length field is read-only.
 
          To create your own \c TLVParser you have to inherit from MIHBaseTLVParser (don't
          forget \ref SENF_PARSER_INHERIT) and define the \c value field. In the following example
@@ -98,7 +98,7 @@ namespace senf {
          example adding more than 21 MACAddresses to the vector will throw a TLVLengthException
          if you don't call \c maxLength( \e some_value) before.
 
-         \see MIHTLVLengthParser \n
+         \see MIHLengthParser \n
            MIHGenericTLVParser \n
      */
     class MIHBaseTLVParser : public PacketParserBase
@@ -106,7 +106,7 @@ namespace senf {
     public:
 #       include SENF_PARSER()
         SENF_PARSER_FIELD    ( type,   UInt8Parser        );
-        SENF_PARSER_FIELD_RO ( length, MIHTLVLengthParser );
+        SENF_PARSER_FIELD_RO ( length, MIHLengthParser );
         SENF_PARSER_FINALIZE ( MIHBaseTLVParser           );
 
         /** \brief shrink size of the TLV length field to minimum
@@ -124,10 +124,10 @@ namespace senf {
             The size of the length field will be increased if necessary.
             \param v maximum value of length field
          */
-        void maxLength(MIHTLVLengthParser::value_type maxl) const;
+        void maxLength(MIHLengthParser::value_type maxl) const;
 
         void validateType(boost::uint8_t type) const;
-        void validateTypeLength(boost::uint8_t type, MIHTLVLengthParser::value_type length) const;
+        void validateTypeLength(boost::uint8_t type, MIHLengthParser::value_type length) const;
     };
 
 
@@ -142,7 +142,7 @@ namespace senf {
 
         void init() const {
             defaultInit();
-            maxLength( MIHTLVLengthParser::max_value);
+            maxLength( MIHLengthParser::max_value);
         }
 
         using base::init;
@@ -157,10 +157,10 @@ namespace senf {
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_FIELD_RO ( listSize, MIHTLVLengthParser );
+        SENF_PARSER_FIELD_RO ( listSize, MIHLengthParser );
         SENF_PARSER_FINALIZE ( MIHBaseListTLVParser );
 
-        void maxListSize(MIHTLVLengthParser::value_type maxl) const;
+        void maxListSize(MIHLengthParser::value_type maxl) const;
     };
 
     template <class Self>
@@ -185,7 +185,7 @@ namespace senf {
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_FIELD_RO ( idLength, MIHTLVLengthParser );
+        SENF_PARSER_FIELD_RO ( idLength, MIHLengthParser );
         SENF_PARSER_LABEL    ( idValue          );
         SENF_PARSER_SKIP     ( idLength(), 0    );
         SENF_PARSER_FINALIZE ( MIHFIdTLVParser  );
@@ -230,7 +230,7 @@ namespace senf {
 
     private:
         /// resize the packet after the length field to given size
-        senf::safe_data_iterator resizeValueField(MIHTLVLengthParser::value_type size);
+        senf::safe_data_iterator resizeValueField(MIHLengthParser::value_type size);
 
         data_iterator valueBegin() const;
         data_iterator valueEnd() const;

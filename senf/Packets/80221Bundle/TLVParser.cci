@@ -36,9 +36,9 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// MIHTLVLengthParser
+// MIHLengthParser
 
-prefix_ senf::MIHTLVLengthParser::size_type senf::MIHTLVLengthParser::bytes() const
+prefix_ senf::MIHLengthParser::size_type senf::MIHLengthParser::bytes() const
 {
     return 1 + ( length_field()<=128 ? 0 : fixed_length_field());
 }
@@ -149,7 +149,7 @@ prefix_ bool senf::MIHFIdTLVParser::valueEquals( MIHFId const & id)
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // MIHBaseTLVParser
 
-prefix_ void senf::MIHBaseTLVParser::maxLength(MIHTLVLengthParser::value_type maxl)
+prefix_ void senf::MIHBaseTLVParser::maxLength(MIHLengthParser::value_type maxl)
     const
 {
     protect(), length_().capacity(maxl);
