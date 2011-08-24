@@ -166,7 +166,10 @@ namespace senf {
         byte. If the packet has been implemented correctly, this signals a malformed packet.
      */
     struct TruncatedPacketException : public senf::Exception
-    { TruncatedPacketException() : senf::Exception("truncated packet") {} };
+    {
+        TruncatedPacketException(std::string const & description = "")
+            : senf::Exception("truncated packet") { append( description); }
+    };
 
 }
 

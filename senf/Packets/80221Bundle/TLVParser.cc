@@ -63,7 +63,8 @@ prefix_ void senf::MIHBaseTLVParser::validateTypeLength(boost::uint8_t expectedT
 {
     validateType( expectedType);
     if (length() != expectedLength)
-        throw InvalidMIHPacketException("invalid length in TLV.") << " Type: " << unsigned(type());
+        throw InvalidMIHPacketException("invalid length in TLV.") << " Type: " << unsigned(type())
+                << ", expected length: " << expectedLength << " got " << length();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -120,6 +120,8 @@ SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
         test::TestMessagePacket testMessage (test::TestMessagePacket::createAfter(mihPacket));
         mihPacket.finalizeAll();
         BOOST_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
+        mihPacket->messageId() = test::ValidatedTestMessagePacketType::MESSAGE_ID;
+        BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
     }
     {
         test::ValidatedTestMessagePacket testMessage (test::ValidatedTestMessagePacket::createAfter(mihPacket));
