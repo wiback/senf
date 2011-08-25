@@ -160,7 +160,7 @@ namespace senf {
         SENF_PARSER_FIELD_RO ( listSize, MIHLengthParser );
         SENF_PARSER_FINALIZE ( MIHBaseListTLVParser );
 
-        void maxListSize(MIHLengthParser::value_type maxl) const;
+        void maxListSize(MIHLengthParser::value_type maxl = MIHLengthParser::max_value) const;
     };
 
     template <class Self>
