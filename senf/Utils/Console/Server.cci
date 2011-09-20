@@ -55,13 +55,13 @@ prefix_ senf::console::detail::ServerManager & senf::console::detail::ServerMana
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::console::detail::NonblockingSocketSink
+// senf::console::detail::SocketStreamSink
 
-prefix_ senf::console::detail::NonblockingSocketSink::NonblockingSocketSink(Client & client)
+prefix_ senf::console::detail::SocketStreamSink::SocketStreamSink(Client & client)
     : client_ (client)
 {}
 
-prefix_ senf::console::Client & senf::console::detail::NonblockingSocketSink::client()
+prefix_ senf::console::Client & senf::console::detail::SocketStreamSink::client()
     const
 {
     return client_;
@@ -176,7 +176,7 @@ prefix_ unsigned senf::console::Client::width()
 
 prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
 {
-    return dynamic_cast<detail::NonblockingSocketOStream&>(os)->client();
+    return dynamic_cast<detail::SocketStreamOStream&>(os)->client();
 }
 
 prefix_ senf::console::Client::ClientHandle senf::console::Client::handle()

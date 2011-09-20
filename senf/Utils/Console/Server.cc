@@ -64,16 +64,17 @@ namespace {
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::console::detail::NonBlockingSocketSink
+// senf::console::detail::SocketStreamSink
 
-prefix_ std::streamsize senf::console::detail::NonblockingSocketSink::write(const char * s,
+prefix_ std::streamsize senf::console::detail::SocketStreamSink::write(const char * s,
                                                                             std::streamsize n)
 {
+// since handle is now non blocking we done check for writeable
     try {
-        if (client_.handle().writeable()) {
+//        if (client_.handle().writeable()) {
             std::string data (s, n);
             client_.write(data);
-        }
+//        }
     }
     catch (...) {}
     return n;
@@ -232,10 +233,13 @@ prefix_ unsigned senf::console::detail::DumbClientReader::v_width()
 
 prefix_
 senf::console::detail::NoninteractiveClientReader::NoninteractiveClientReader(Client & client)
-    : ClientReader (client),
+    : ClientReader (client), streamBufferMaxSize_( 1024*1024),
       readevent_ ("senf::console::detail::NoninteractiveClientReader",
                   senf::membind(&NoninteractiveClientReader::newData, this),
-                  handle(), senf::scheduler::FdEvent::EV_READ)
+                  handle(), senf::scheduler::FdEvent::EV_READ),
+      writeevent_ ("senf::console::detail::NoninteractiveClientReader",
+                  membind(&NoninteractiveClientReader::writeHandler, this), handle(),
+                  scheduler::FdEvent::EV_WRITE, false)
 {}
 
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_disablePrompt()
@@ -244,26 +248,27 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_disablePrompt(
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_enablePrompt()
 {}
 
+prefix_ void senf::console::detail::NoninteractiveClientReader::streamBufferMaxSize(SendQueue::size_type size)
+{
+    streamBufferMaxSize_ = size;
+}
+
+prefix_ senf::console::detail::NoninteractiveClientReader::SendQueue::size_type
+senf::console::detail::NoninteractiveClientReader::streamBufferMaxSize()
+    const
+{
+    return streamBufferMaxSize_;
+}
+
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_write(std::string const & data)
 {
-    try {
-        handle().write(data);
-    }
-    catch (senf::ExceptionMixin & ex) {
-        SENF_LOG(("unexpected failure writing to socket:" << ex.message()));
-        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
-        catch (...) {}
-    }
-    catch (std::exception & ex) {
-        SENF_LOG(("unexpected failure writing to socket:" << ex.what()));
-        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
-        catch (...) {}
-    }
-    catch (...) {
-        SENF_LOG(("unexpected failure writing to socket: unknown exception"));
-        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
-        catch (...) {}
-    }
+    if( sendQueue_.size() > streamBufferMaxSize_)
+        return;
+    sendQueue_.insert( sendQueue_.end(), data.begin(), data.end());
+    writeHandler(scheduler::FdEvent::EV_WRITE);
+    if (! sendQueue_.empty())
+        writeevent_.enable();
+
 }
 
 prefix_ unsigned senf::console::detail::NoninteractiveClientReader::v_width()
@@ -290,6 +295,40 @@ senf::console::detail::NoninteractiveClientReader::newData(int event)
     stream() << std::flush;
 }
 
+prefix_ void
+senf::console::detail::NoninteractiveClientReader::writeHandler(int event)
+{
+    if (event != senf::scheduler::FdEvent::EV_WRITE) {
+        writeevent_.disable();
+        readevent_.disable();
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
+        return;
+    }
+    try {
+        sendQueue_.erase(sendQueue_.begin(),
+                handle().write(boost::make_iterator_range(sendQueue_.begin(), sendQueue_.end())));
+    }
+    catch (senf::ExceptionMixin & ex) {
+        SENF_LOG(("unexpected failure writing to socket:" << ex.message()));
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
+    }
+    catch (std::exception & ex) {
+        SENF_LOG(("unexpected failure writing to socket:" << ex.what()));
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
+    }
+    catch (...) {
+        SENF_LOG(("unexpected failure writing to socket: unknown exception"));
+        try { handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD); }
+        catch (...) {}
+    }
+    if (sendQueue_.empty())
+        writeevent_.disable();
+
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::Client
 
@@ -307,6 +346,7 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
       name_ (server.name()), reader_ (), mode_ (server.mode())
 {
     handle_.facet<senf::TCPSocketProtocol>().nodelay();
+    handle_.blocking(false);
     executor_.chroot(root());
     switch (mode_) {
     case Server::Interactive :
@@ -336,7 +376,14 @@ prefix_ void senf::console::Client::setNoninteractive()
     readevent_.disable();
     timer_.disable();
     mode_ = Server::Noninteractive;
-    reader_.reset(new detail::NoninteractiveClientReader(*this));
+    detail::NoninteractiveClientReader * newReader (new detail::NoninteractiveClientReader(*this));
+    reader_.reset( newReader);
+    consoleDir().add( "streamBuffer", senf::console::factory::Command( senf::membind(
+            SENF_MEMFNP( detail::NoninteractiveClientReader::SendQueue::size_type, detail::NoninteractiveClientReader, streamBufferMaxSize, () const ),
+            newReader )));
+    consoleDir().add( "streamBuffer", senf::console::factory::Command( senf::membind(
+            SENF_MEMFNP( void, detail::NoninteractiveClientReader, streamBufferMaxSize, (detail::NoninteractiveClientReader::SendQueue::size_type) ),
+            newReader )));
 }
 
 prefix_ std::string::size_type senf::console::Client::handleInput(std::string data,
@@ -369,7 +416,7 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
             backtrace_ = msg.substr(0,i);
             msg = msg.substr(i+4);
         } else
-            backtrace_.clear();
+
         stream() << msg << std::endl;
     }
     catch (...) {
@@ -402,7 +449,6 @@ prefix_ unsigned senf::console::Client::getWidth(std::ostream & os, unsigned def
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::Client::SysBacktrace
-
 prefix_ senf::console::Client::SysBacktrace::SysBacktrace()
 {
     sysdir().add("backtrace", factory::Command(&SysBacktrace::backtrace)

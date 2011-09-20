@@ -73,11 +73,11 @@ namespace detail {
 
         \fixme Don't throw exceptions ... set stream error indicator (if at all)
      */
-    class NonblockingSocketSink
+    class SocketStreamSink
         : public boost::iostreams::sink
     {
     public:
-        NonblockingSocketSink(Client & client);
+        SocketStreamSink(Client & client);
         std::streamsize write(const char * s, std::streamsize n);
 
         Client & client() const;
@@ -86,7 +86,7 @@ namespace detail {
         Client & client_;
     };
 
-    typedef boost::iostreams::stream<NonblockingSocketSink> NonblockingSocketOStream;
+    typedef boost::iostreams::stream<SocketStreamSink> SocketStreamOStream;
 
     typedef senf::ServerSocketHandle<
         senf::MakeSocketPolicy< senf::TCPv4SocketProtocol::Policy,
@@ -173,6 +173,11 @@ namespace detail {
     public:
         NoninteractiveClientReader(Client & client);
 
+        typedef std::vector<char> SendQueue;
+
+        void streamBufferMaxSize(SendQueue::size_type size);
+        SendQueue::size_type streamBufferMaxSize() const;
+
     private:
         virtual void v_disablePrompt();
         virtual void v_enablePrompt();
@@ -180,8 +185,12 @@ namespace detail {
         virtual unsigned v_width() const;
 
         void newData(int event);
+        void writeHandler( int event);
 
+        SendQueue::size_type streamBufferMaxSize_;
+        SendQueue sendQueue_;
         scheduler::FdEvent readevent_;
+        scheduler::FdEvent writeevent_;
         std::string buffer_;
     };
 

@@ -151,10 +151,10 @@ namespace console {
      */
     class Client
         : public senf::intrusive_refcount,
-          private boost::base_from_member< detail::NonblockingSocketOStream >,
+          private boost::base_from_member< detail::SocketStreamOStream >,
           public senf::log::IOStreamTarget
     {
-        typedef boost::base_from_member< detail::NonblockingSocketOStream > out_t;
+        typedef boost::base_from_member< detail::SocketStreamOStream > out_t;
 
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
@@ -241,7 +241,7 @@ namespace console {
 
         friend class Server;
         friend class detail::ClientReader;
-        friend class detail::NonblockingSocketSink;
+        friend class detail::SocketStreamSink;
 
         class SysBacktrace
         {
