@@ -152,6 +152,8 @@ senf::PacketRegistry<Tag>::registry()
 
 template <class KeyType>
 prefix_ senf::detail::PacketRegistryImpl<KeyType>::PacketRegistryImpl(std::string const & name)
+    : registryByKey_( registry_.template get<ByKey>()),
+      registryByType_( registry_.template get<ByType>())
 {
     registries()[name] = this;
 }

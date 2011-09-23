@@ -102,9 +102,9 @@ template <typename Parser>
 prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::registerParser()
 {
     Keytype key (Parser::typeId+0);
-    typename Map::iterator i (map_.find( key ));
-    if (i == map_.end() )
-        map_.insert(key, new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>() );
+    SENF_ASSERT_EXPRESSION(
+            map_.insert( key, new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>()).second == true,
+        "Duplicate TLV registration");
 }
 
 // Wow ... this is stupid .. Boost 1.33 ptr_map API is broken ...

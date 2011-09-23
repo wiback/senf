@@ -106,7 +106,7 @@ template <class KeyType>
 template <class PacketType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::unregisterPacket()
 {
-    registry_.template get<ByType>().erase(typeid(PacketType));
+    registryByType_.erase(typeid(PacketType));
 }
 
 template <class KeyType>
@@ -133,10 +133,8 @@ template <class KeyType>
 prefix_ boost::optional<typename senf::detail::PacketRegistryImpl<KeyType>::key_t>
 senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type, bool)
 {
-    typedef typename Registry::template index<ByType>::type TypeIndex;
-    TypeIndex const & typeIndex (registry_.template get<ByType>());
-    typename TypeIndex::const_iterator i (typeIndex.find(type.id()));
-    if (i == typeIndex.end())
+    typename RegistryByType::const_iterator i (registryByType_.find(type.id()));
+    if (i == registryByType_.end())
         return boost::optional<key_t>();
     return (*i)->key;
 }
@@ -144,6 +142,7 @@ senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type, b
 template <class KeyType>
 prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::Entry const &
 senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key)
+    const
 {
     Entry const * e (lookup(key, true));
     if (!e)
@@ -154,11 +153,10 @@ senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key)
 template <class KeyType>
 prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::Entry const *
 senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key, bool)
+    const
 {
-    typedef typename Registry::template index<ByKey>::type KeyIndex;
-    KeyIndex const & keyIndex (registry_.template get<ByKey>());
-    typename KeyIndex::const_iterator i (keyIndex.lower_bound(key));
-    if (i == keyIndex.end() || (*i)->key != key)
+    typename RegistryByKey::const_iterator i (registryByKey_.lower_bound(key));
+    if (i == registryByKey_.end() || (*i)->key != key)
         return 0;
     return i->get();
 }
@@ -174,10 +172,7 @@ template <class KeyType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::v_dump(std::ostream & os)
     const
 {
-    typedef typename Registry::template index<ByKey>::type KeyIndex;
-    KeyIndex const & keyIndex (registry_.template get<ByKey>());
-    for (typename KeyIndex::iterator i (keyIndex.begin()), i_end (keyIndex.end());
-         i != i_end; ++i) {
+    for (typename RegistryByKey::const_iterator i (registryByKey_.begin()), i_end (registryByKey_.end()); i != i_end; ++i) {
         std::string n ((*i)->name());
         senf::detail::DumpKey<KeyType>::dump((*i)->key, os);
         os << ' ' << std::setw(6) << (*i)->priority << ' ' << n.substr(21,n.size()-22) << '\n';

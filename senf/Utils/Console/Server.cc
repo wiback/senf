@@ -345,7 +345,7 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
               false),
       name_ (server.name()), reader_ (), mode_ (server.mode())
 {
-    handle_.facet<senf::TCPSocketProtocol>().nodelay();
+    handle_.facet<senf::TCPSocketProtocol>().nodelay(true);
     handle_.blocking(false);
     executor_.chroot(root());
     switch (mode_) {

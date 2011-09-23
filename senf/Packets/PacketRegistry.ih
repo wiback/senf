@@ -125,6 +125,8 @@ namespace detail {
         {};
 
         typedef boost::multi_index_container<typename Entry::ptr, RegistryIndices> Registry;
+        typedef typename Registry::template index<ByKey>::type RegistryByKey;
+        typedef typename Registry::template index<ByType>::type RegistryByType;
 
         template <class PacketType>
         struct EntryImpl : public Entry
@@ -161,8 +163,8 @@ namespace detail {
         key_t key(senf::TypeIdValue const & type);
         boost::optional<key_t> key(senf::TypeIdValue const & type, bool);
 
-        Entry const & lookup(key_t key);
-        Entry const * lookup(key_t key, bool);
+        Entry const & lookup(key_t key) const;
+        Entry const * lookup(key_t key, bool) const;
 
         iterator begin() const;
         iterator end() const;
@@ -175,6 +177,8 @@ namespace detail {
         virtual void v_clear();
 
         Registry registry_;
+        RegistryByKey & registryByKey_;
+        RegistryByType & registryByType_;
     };
 
     template <class KeyType, bool is_integral=std::numeric_limits<KeyType>::is_integer>

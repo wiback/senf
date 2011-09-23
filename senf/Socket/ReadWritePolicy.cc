@@ -133,9 +133,9 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle & handle,
                 rv = 0;
                 break;
             default:
-	        std::stringstream a, b;
+                std::stringstream a, b;
                 senf::hexdump( (char*) addr , ((char*) addr) + len , a);
-		senf::hexdump( (char*) buffer , ((char*) buffer) + size , b);
+                senf::hexdump( (char*) buffer , ((char*) buffer) + size , b);
                 SENF_THROW_SYSTEM_EXCEPTION("::sendto(" + b.str() + ") to " + a.str());
             }
     } while (rv<0);
