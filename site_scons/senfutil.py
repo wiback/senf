@@ -169,7 +169,7 @@ def SetupForSENF(env, senf_path = [], flavor=None):
         CXXFLAGS          = [ '-Wno-long-long', '-fno-strict-aliasing' ],
         LINKFLAGS         = [ '-rdynamic' ],
         LIBS              = [ 'senf$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB',
-                              '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ],
+                              '$BOOSTSIGNALSLIB', '$BOOSTFSLIB', '$BOOSTSYSTEMLIB' ],
         )
 
     try:

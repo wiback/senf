@@ -198,7 +198,9 @@ def CheckBoostVariants(context, *variants):
         print  "Using %s boost variant." % (
             useVariant and "'%s'" % useVariant or "default")
     context.env.Replace( BOOST_VARIANT = useVariant )
+    context.env.Append( HAS_BOOST_SYSTEM = context.sconf.CheckLib('boost_system', language='c++', autoadd=False)) 
     return useVariant
+
 
 def generate(env):
     env.SetDefault(
@@ -210,6 +212,9 @@ def generate(env):
         BOOSTFSLIB        = 'boost_filesystem$_BOOST_VARIANT',
         BOOSTIOSTREAMSLIB = 'boost_iostreams$_BOOST_VARIANT',
         BOOSTSIGNALSLIB   = 'boost_signals$_BOOST_VARIANT',
+        
+        _BOOSTSYSTEMLIB   = '${HAS_BOOST_SYSTEM and "boost_system" or ""}',
+        BOOSTSYSTEMLIB    = '$_BOOSTSYSTEMLIB',
 
         BOOSTTESTARGS     = [ '--build_info=yes', '--log_level=test_suite' ],
         )

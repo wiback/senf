@@ -360,6 +360,8 @@ namespace senf {
             Implements the abstract factory interface for \a PacketType
          */
         struct FactoryImpl : public Factory {
+            FactoryImpl() {}
+
             // Create completely new packet
 
             virtual PacketInterpreterBase::ptr create() const;

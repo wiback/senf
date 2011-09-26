@@ -372,18 +372,18 @@ prefix_ std::string senf::term::Terminfo::findTerminfo(std::string const & name)
         char const * tivar (::getenv("TERMINFO"));
         if (tivar) {
             tientry = boost::filesystem::path(tivar) / subdir;
-            if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
+            if (boost::filesystem::exists(tientry)) return tientry.string();
         }
     }
 
     tientry = boost::filesystem::path("/etc/terminfo") / subdir;
-    if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
+    if (boost::filesystem::exists(tientry)) return tientry.string();
 
     tientry = boost::filesystem::path("/lib/terminfo")  / subdir;
-    if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
+    if (boost::filesystem::exists(tientry)) return tientry.string();
 
     tientry = boost::filesystem::path("/usr/share/terminfo") / subdir;
-    if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
+    if (boost::filesystem::exists(tientry)) return tientry.string();
 
     return "";
 }

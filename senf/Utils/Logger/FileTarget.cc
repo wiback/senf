@@ -36,6 +36,7 @@
 #include <senf/Utils/Console/Variables.hh>
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include <boost/filesystem/path.hpp>
+#include <boost/version.hpp>
 
 //#include "FileTarget.mpp"
 #define prefix_
@@ -47,7 +48,11 @@ namespace {
     {
         if (! nodename.empty())
             return nodename;
+#if BOOST_VERSION >= 104600
+        return boost::filesystem::path(filename).leaf().string();
+#else
         return boost::filesystem::path(filename).leaf();
+#endif
     }
 
 }
