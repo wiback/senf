@@ -415,7 +415,9 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
         if (i != std::string::npos) {
             backtrace_ = msg.substr(0,i);
             msg = msg.substr(i+4);
-        } else
+        } else {
+            backtrace_.clear();
+        }
 
         stream() << msg << std::endl;
     }
