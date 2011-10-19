@@ -146,6 +146,7 @@ namespace module {
                                         ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new, valid handle is assigned. */
+
     private:
         Handle handle_;
         IOEvent event_;
@@ -181,6 +182,8 @@ namespace module {
 
         unsigned maxBurst() const;
         void maxBurst(unsigned max_burst);
+
+        void flush();
 
     private:
         Handle handle_;
