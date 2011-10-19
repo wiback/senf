@@ -364,19 +364,28 @@ prefix_ void senf::ppi::connector::ActiveConnector::unregisterRoute(ForwardingRo
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::InputConnector
 
-prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
+prefix_ senf::Packet const & senf::ppi::connector::InputConnector::operator()()
 {
+    static Packet nullPacket;
+
     if (empty())
         v_requestEvent();
-    if (! empty()) {
-        Packet p ( queue_.back());
+    if (fastPacket_) {
+        Packet const * p = fastPacket_;
+        fastPacket_ = NULL;
+        v_dequeueEvent();
+        SENF_PPI_TRACE(*p, "IN ");
+        return *p;
+    }
+    if (! queue_.empty()) {
+        slowPacket_ = queue_.back();
         queue_.pop_back();
         v_dequeueEvent();
-        SENF_PPI_TRACE(p, "IN ");
-        return p;
+        SENF_PPI_TRACE(slowPacket_, "IN ");
+        return slowPacket_;
     } else {
-        SENF_PPI_TRACE(Packet(), "IN ");
-        return Packet();
+        SENF_PPI_TRACE(nullPacket, "IN ");
+        return nullPacket;
     }
 }
 

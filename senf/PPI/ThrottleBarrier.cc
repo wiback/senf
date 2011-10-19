@@ -45,7 +45,7 @@ prefix_ senf::ppi::module::ThrottleBarrier::ThrottleBarrier()
 
 prefix_ void senf::ppi::module::ThrottleBarrier::request()
 {
-    Packet p (input());
+    Packet const & p (input());
     if (output)
         output(p);
 }

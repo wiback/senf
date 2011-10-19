@@ -142,7 +142,6 @@ SENF_AUTO_UNIT_TEST(inputConnector)
 
     BOOST_CHECK_EQUAL ( & target.input.peer(), & source.output );
 
-    BOOST_CHECK( target.input.begin() == target.input.end() );
     BOOST_CHECK_EQUAL( target.input.queueSize(), 0u );
     BOOST_CHECK( target.input.empty() );
 }

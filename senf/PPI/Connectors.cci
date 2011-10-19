@@ -213,7 +213,7 @@ prefix_ senf::ppi::connector::ActiveConnector::ActiveConnector()
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::InputConnector
 
-prefix_ senf::Packet senf::ppi::connector::InputConnector::read()
+prefix_ senf::Packet const & senf::ppi::connector::InputConnector::read()
 {
     return operator()();
 }
@@ -225,46 +225,24 @@ prefix_ senf::ppi::connector::OutputConnector & senf::ppi::connector::InputConne
     return *peer_;
 }
 
-prefix_ senf::ppi::connector::InputConnector::queue_iterator
-senf::ppi::connector::InputConnector::begin()
-    const
-{
-    return queue_.begin();
-}
-
-prefix_ senf::ppi::connector::InputConnector::queue_iterator
-senf::ppi::connector::InputConnector::end()
-    const
-{
-    return queue_.end();
-}
-
-prefix_ senf::Packet senf::ppi::connector::InputConnector::peek()
-    const
-{
-    // Cannot peek() head of empty queue
-    SENF_ASSERT( ! queue_.empty(),
-                 "senf::ppi::connector::InputConnector: cannot call peek() on empty queue" );
-    return queue_.back();
-}
-
 prefix_ senf::ppi::connector::InputConnector::size_type
 senf::ppi::connector::InputConnector::queueSize()
     const
 {
-    return queue_.size();
+    return queue_.size() + (fastPacket_ ? 1 : 0);
 }
 
 prefix_ bool senf::ppi::connector::InputConnector::empty()
     const
 {
-    return queue_.empty();
+    return fastPacket_ == NULL && queue_.empty();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // protected members
 
 prefix_ senf::ppi::connector::InputConnector::InputConnector()
+    : fastPacket_(NULL)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,8 +250,22 @@ prefix_ senf::ppi::connector::InputConnector::InputConnector()
 
 prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
 {
-    queue_.push_front(p);
-    v_enqueueEvent();
+    if (queue_.empty()) {
+        fastPacket_ = &p;
+        try {
+            v_enqueueEvent();
+        } catch (Exception & e) {
+            queue_.push_front(p);
+            throw e;
+        }
+        if (fastPacket_) {
+            queue_.push_front(p);
+            fastPacket_ = NULL;
+        }
+    } else {
+        queue_.push_front(p);
+        v_enqueueEvent();
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

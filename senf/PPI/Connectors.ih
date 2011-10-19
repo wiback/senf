@@ -56,8 +56,8 @@ namespace detail {
     public:
         typedef PacketType Type;
 
-        void operator()(Type p);
-        void write(Type p);
+        void operator()(Type const & p);
+        void write(Type const & p);
     };
 
 }}}}

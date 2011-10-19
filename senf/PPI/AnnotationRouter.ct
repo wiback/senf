@@ -56,7 +56,7 @@ connectorSetup(connector::ActiveOutput<> & conn, AnnotationType const & key)
 template <class AnnotationType>
 prefix_ void senf::ppi::module::AnnotationRouter<AnnotationType>::request()
 {
-    Packet p (input());
+    Packet const & p (input());
     typename AnnotationRouter::ContainerType::iterator i (
         this->connectors().find(p.annotation<AnnotationType>()));
     if (i == this->connectors().end())

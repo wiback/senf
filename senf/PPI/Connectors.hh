@@ -399,7 +399,7 @@ namespace connector {
         typedef Queue::size_type size_type; ///< Unsigned type for counting queue elements
 
 
-        Packet operator()();            ///< Get a packet
+        Packet const & operator()();    ///< Get a packet
                                         /**< This member is the primary method to access received
                                              data. On passive connectors, this operator will just
                                              dequeue a packet from the packet queue. If the
@@ -408,13 +408,9 @@ namespace connector {
                                              request cannot be fulfilled an in-valid Packet is
                                              returned. */
 
-        Packet read();                  ///< Alias for operator()()
+        Packet const & read();          ///< Alias for operator()()
 
         OutputConnector & peer() const;
-
-        queue_iterator begin() const;   ///< Access queue begin (head)
-        queue_iterator end() const;     ///< Access queue past-the-end (tail)
-        Packet peek() const;            ///< Return head element from the queue
 
         size_type queueSize() const;    ///< Return number of elements in the queue
         bool empty() const;             ///< Return queueSize() == 0
@@ -434,6 +430,8 @@ namespace connector {
 
         OutputConnector * peer_;
         Queue queue_;
+        Packet const * fastPacket_;
+        Packet slowPacket_;
 
         friend class OutputConnector;
     };
