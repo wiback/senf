@@ -44,7 +44,7 @@
 
 prefix_ senf::ppi::EventDescriptor::~EventDescriptor()
 {
-    if (binding_)
+    if (binding_ && EventManager::alive())
         binding_->manager().destroyEvent(*this);
 }
 

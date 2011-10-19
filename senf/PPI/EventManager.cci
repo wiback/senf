@@ -38,6 +38,11 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::EventManager
 
+prefix_ bool senf::ppi::EventManager::alive()
+{
+    return alive_;
+}
+
 prefix_ senf::ppi::EventManager & senf::ppi::EventManager::instance()
 {
     static EventManager manager;
@@ -56,6 +61,16 @@ prefix_ senf::ClockService::clock_type senf::ppi::EventManager::time()
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
+
+prefix_ senf::ppi::EventManager::EventManager()
+{
+    alive_ = true;
+}
+
+prefix_ senf::ppi::EventManager::~EventManager()
+{
+    alive_ = false;
+}
 
 prefix_ void senf::ppi::EventManager::eventTime(ClockService::clock_type time)
 {

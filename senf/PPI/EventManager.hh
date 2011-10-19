@@ -32,6 +32,7 @@
 #define HH_SENF_PPI_EventManager_ 1
 
 // Custom includes
+#include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <senf/Scheduler/ClockService.hh>
 #include "predecl.hh"
@@ -51,6 +52,7 @@ namespace ppi {
         responsibility of an external component (the Scheduler)
       */
     class EventManager
+        : boost::noncopyable
     {
     public:
         //-////////////////////////////////////////////////////////////////////////
@@ -69,6 +71,7 @@ namespace ppi {
         //\{
 
         static EventManager & instance();
+        static bool alive();
 
         // default default constructor
         // default copy constructor
@@ -86,6 +89,9 @@ namespace ppi {
     protected:
 
     private:
+        EventManager();
+        ~EventManager();
+
         template <class Descriptor>
         void registerEvent(module::Module & module,
                            typename Callback<Descriptor>::type callback,
@@ -100,6 +106,8 @@ namespace ppi {
         void eventTime(ClockService::clock_type time);
 
         ClockService::clock_type eventTime_;
+
+        static bool alive_;
 
         friend class detail::EventBindingBase;
         friend class module::Module;

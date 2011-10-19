@@ -100,7 +100,8 @@ prefix_ senf::ppi::module::Module::Module()
 
 prefix_ void senf::ppi::module::Module::destroy()
 {
-    eventManager().destroyModule(*this);
+    if (EventManager::alive())
+        eventManager().destroyModule(*this);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

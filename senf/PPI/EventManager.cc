@@ -45,6 +45,8 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
 
+bool senf::ppi::EventManager::alive_ (false);
+
 prefix_ void senf::ppi::EventManager::destroyModule(module::Module & module)
 {
     using boost::lambda::_1;
