@@ -327,7 +327,7 @@ namespace senf {
         static void init(packet p);
         static void dump(packet p, std::ostream & os);
         static factory_t nextPacketType(packet p);
-        static optional_range nextPacketRange(packet p);
+        static optional_range nextPacketRange(packet const & p);
     };
 
     typedef ConcretePacket<RadiotapPacketType> RadiotapPacket;

@@ -518,10 +518,11 @@ namespace senf {
 
         PacketInterpreterBase::ptr const & ptr() const;
 
-    private:
-        Packet getNext() const;
+        Packet parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range) const;
+        Packet getNext(PacketInterpreterBase::optional_range const & range) const;
         Packet getLast() const;
 
+    private:
         PacketInterpreterBase::ptr packet_;
 
         template <class PacketType>
@@ -772,7 +773,11 @@ namespace senf {
                                              itself, only it's members.
                                              \see \ref packetparser for the %parser interface */
 
-    protected:
+#ifndef DOXYGEN
+        using Packet::next;
+
+        Packet next(NoThrow_t) const;
+#endif
 
     private:
         typedef PacketInterpreter<PacketType> interpreter;

@@ -327,6 +327,16 @@ senf::ConcretePacket<PacketType>::operator->()
     return ParserProxy(parser());
 }
 
+template <class PacketType>
+prefix_ senf::Packet senf::ConcretePacket<PacketType>::next(NoThrow_t)
+    const
+{
+    PacketInterpreterBase::ptr p (Packet::ptr()->next());
+    if (p) return Packet(p);
+    PacketInterpreterBase::optional_range r (type::nextPacketRange(*this));
+    return (r && ! r->empty()) ? getNext(r) : Packet();
+}
+
 // private members
 
 template <class PacketType>

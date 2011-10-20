@@ -74,7 +74,7 @@ namespace senf {
         typedef senf::detail::packet::byte byte;
 
         typedef boost::iterator_range<iterator> range;
-        typedef boost::optional< boost::iterator_range<iterator> > optional_range;
+        typedef boost::optional<range> optional_range;
         typedef optional_range no_range;
 
         enum Append_t { Append };
@@ -121,7 +121,7 @@ namespace senf {
 
             // Parse next packet in chain
 
-            virtual ptr parseNext(ptr packet) const = 0;
+            virtual ptr parseNext(ptr packet, PacketInterpreterBase::optional_range const & range) const = 0;
         };
 
         typedef Factory const * factory_t;
@@ -152,7 +152,7 @@ namespace senf {
         ptr last();
 
         template <class Type> typename PacketInterpreter<Type>::ptr parseNextAs();
-                                       ptr                          parseNextAs(factory_t factory);
+                                       ptr                          parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range);
         template <class Type>          bool                         is();
         template <class Type> typename PacketInterpreter<Type>::ptr as();
 
@@ -396,7 +396,7 @@ namespace senf {
 
             // Parse next packet in chain
 
-            virtual PacketInterpreterBase::ptr parseNext(PacketInterpreterBase::ptr packet)
+            virtual PacketInterpreterBase::ptr parseNext(PacketInterpreterBase::ptr packet, PacketInterpreterBase::optional_range const & range)
                 const;
         };
 

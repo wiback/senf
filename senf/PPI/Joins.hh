@@ -32,8 +32,6 @@
 #define HH_SENF_PPI_Joins_ 1
 
 // Custom includes
-#include <boost/ptr_container/ptr_vector.hpp>
-#include "predecl.hh"
 #include "Connectors.hh"
 #include "Module.hh"
 #include "MultiConnectorMixin.hh"

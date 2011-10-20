@@ -378,17 +378,16 @@ createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
-senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBase::ptr packet)
+senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBase::ptr packet, PacketInterpreterBase::optional_range const & range)
     const
 {
-    optional_range r (packet->nextPacketRange());
-    if (!r)
+    if (!range)
         throw InvalidPacketChainException();
 
     if (packet->next())
         packet->impl().truncateInterpreters(packet->next().get());
 
-    return senf::PacketInterpreter<PacketType>::create(&packet->impl(),r->begin(),r->end(),Append);
+    return senf::PacketInterpreter<PacketType>::create(&packet->impl(),range->begin(),range->end(),Append);
 }
 
 template <class PacketType>

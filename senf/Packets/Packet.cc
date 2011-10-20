@@ -37,12 +37,12 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ senf::Packet senf::Packet::getNext()
+prefix_ senf::Packet senf::Packet::getNext(PacketInterpreterBase::optional_range const & range)
     const
 {
     factory_t factory (ptr()->nextPacketType());
     if (factory)
-        return parseNextAs(factory);
+        return parseNextAs(factory, range);
     else
         return parseNextAs<DataPacket>();
 }

@@ -68,7 +68,7 @@ SENF_AUTO_UNIT_TEST(packetInterpreterBase)
         BOOST_CHECK( ! pi1->prev() );
         BOOST_CHECK( pi2->is<VoidPacket>() );
         BOOST_CHECK( pi2->as<VoidPacket>() == pi2 );
-        BOOST_CHECK( pi2->parseNextAs(senf::PacketInterpreter<VoidPacket>::factory()) );
+        BOOST_CHECK( pi2->parseNextAs(senf::PacketInterpreter<VoidPacket>::factory(), pi2->nextPacketRange()) );
         BOOST_CHECK( pi2->typeId() == pi1->typeId() );
 
         pi1->data().insert(pi1->data().begin(),2,0x01u);
@@ -302,7 +302,7 @@ SENF_AUTO_UNIT_TEST(packetInterpreter_factory)
         senf::PacketInterpreter<VoidPacket>::ptr p
             (senf::PacketInterpreter<VoidPacket>::create(size_type(12u)));
 
-        senf::PacketInterpreterBase::ptr p2 (p->parseNextAs(factory));
+        senf::PacketInterpreterBase::ptr p2 (p->parseNextAs(factory, p->nextPacketRange()));
         BOOST_CHECK( p2->is<OtherPacket>() );
         BOOST_CHECK( ! p2->is<VoidPacket>() );
         BOOST_CHECK_EQUAL( unsigned(boost::size(*p2->nextPacketRange())), 4u );

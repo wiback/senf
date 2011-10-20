@@ -71,7 +71,7 @@ prefix_ senf::Packet senf::Packet::next(NoThrow_t)
     PacketInterpreterBase::ptr p (ptr()->next());
     if (p) return Packet(p);
     PacketInterpreterBase::optional_range r (ptr()->nextPacketRange());
-    return (r && ! r->empty()) ? getNext() : Packet();
+    return (r && ! r->empty()) ? getNext(r) : Packet();
 }
 
 prefix_ senf::Packet senf::Packet::next()
@@ -112,7 +112,13 @@ prefix_ senf::Packet senf::Packet::last()
 prefix_ senf::Packet senf::Packet::parseNextAs(factory_t factory)
     const
 {
-    return Packet(ptr()->parseNextAs(factory));
+    return Packet(ptr()->parseNextAs(factory, ptr()->nextPacketRange()));
+}
+
+prefix_ senf::Packet senf::Packet::parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range)
+    const
+{
+    return Packet(ptr()->parseNextAs(factory, range));
 }
 
 prefix_ senf::Packet senf::Packet::append(Packet const & packet)

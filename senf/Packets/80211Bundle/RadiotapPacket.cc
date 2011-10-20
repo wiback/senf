@@ -312,7 +312,7 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::RadiotapPacketType::nextPac
 }
 
 prefix_ senf::RadiotapPacketType::optional_range
-senf::RadiotapPacketType::nextPacketRange(packet p)
+senf::RadiotapPacketType::nextPacketRange(packet const & p)
 {
     parser rtParser (p.parser());
     size_type h (senf::bytes(rtParser));

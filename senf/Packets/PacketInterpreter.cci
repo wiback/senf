@@ -68,9 +68,9 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::last()
 }
 
 prefix_ senf::PacketInterpreterBase::ptr
-senf::PacketInterpreterBase::parseNextAs(factory_t factory)
+senf::PacketInterpreterBase::parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range)
 {
-    return factory->parseNext(ptr(this));
+    return factory->parseNext(ptr(this), range);
 }
 
 // Data access
