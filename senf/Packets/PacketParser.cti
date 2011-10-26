@@ -70,7 +70,7 @@ prefix_ Parser senf::PacketParserBase::parse(Arg const & arg, size_type n)
 // namespace members
 
 template <class Parser>
-prefix_ senf::PacketParserBase::size_type senf::bytes(Parser p)
+prefix_ senf::PacketParserBase::size_type senf::bytes(Parser const & p)
 {
     return detail::packetParserSize(p,0);
 }
@@ -111,7 +111,7 @@ prefix_ Parser senf::operator<<(Parser target, Value const & value)
 
 template <class Parser>
 prefix_ senf::PacketParserBase::size_type
-senf::detail::packetParserSize(Parser p, int, senf::mpl::take_uint<Parser::init_bytes> *)
+senf::detail::packetParserSize(Parser const & p, int, senf::mpl::take_uint<Parser::init_bytes> *)
 {
     return p.bytes();
 }

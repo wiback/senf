@@ -36,6 +36,9 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+prefix_ senf::intrusive_refcount_base::~intrusive_refcount_base()
+{}
+
 prefix_ senf::intrusive_refcount_base::refcount_t senf::intrusive_refcount_base::refcount()
     const
 {

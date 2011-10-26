@@ -30,7 +30,6 @@
 
 // Custom includes
 #include <senf/Utils/senfassert.hh>
-#include <boost/utility.hpp>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,6 +38,9 @@
 // senf::PacketInterpreterBase
 
 // Structors and default members
+
+prefix_ senf::PacketInterpreterBase::~PacketInterpreterBase()
+{}
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::PacketInterpreterBase::no_factory()
 {

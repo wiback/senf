@@ -48,12 +48,12 @@ namespace detail {
     // set.
     template <class Parser>
     PacketParserBase::size_type packetParserSize(
-        Parser p, int, senf::mpl::take_uint<Parser::init_bytes> * = 0);
+        Parser const & p, int, senf::mpl::take_uint<Parser::init_bytes> * = 0);
 
     // An ellipsis is always the worst match. A call 'packetParserSize(p,0) will prefer above
     // overload if that is not disabled by SFINAE.
     template <class Parser>
-    PacketParserBase::size_type packetParserSize(Parser p, ...);
+    PacketParserBase::size_type packetParserSize(Parser const & p, ...);
 
     // Same as above: This overload is only enabled, if Parser has an integer values 'init_bytes'
     // member.

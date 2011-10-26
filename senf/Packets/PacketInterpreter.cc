@@ -42,9 +42,6 @@
 
 // structors and default members
 
-prefix_  senf::PacketInterpreterBase::~PacketInterpreterBase()
-{}
-
 prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::clone()
 {
     detail::PacketImpl::Guard p (new detail::PacketImpl(begin(),end()));

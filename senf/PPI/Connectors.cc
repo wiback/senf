@@ -72,13 +72,13 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
                  "senf::ppi::connector::Connector::connect(): (target) "
                  "duplicate connection" );
 
-    if (! (packetTypeID() == typeid(void) ||
-           target.packetTypeID() == typeid(void) ||
-           packetTypeID() == target.packetTypeID()) )
+    if (! (v_packetTypeId() == typeid(void) ||
+           target.v_packetTypeId() == typeid(void) ||
+           v_packetTypeId() == target.v_packetTypeId()) )
         throw IncompatibleConnectorsException()
-            << ": " << prettyName(packetTypeID())
+            << ": " << prettyName(v_packetTypeId())
             << " [in module " << prettyName(typeid(*module_))  << "] "
-            << ", " << prettyName(target.packetTypeID())
+            << ", " << prettyName(target.v_packetTypeId())
             << " [in module " << prettyName(typeid(*target.module_)) << "]";
 
     peer_ = & target;
@@ -204,7 +204,7 @@ prefix_ void senf::ppi::connector::Connector::disconnect()
     peer.v_disconnected();
 }
 
-prefix_ std::type_info const & senf::ppi::connector::Connector::packetTypeID()
+prefix_ std::type_info const & senf::ppi::connector::Connector::v_packetTypeId()
 {
     return typeid(void);
 }

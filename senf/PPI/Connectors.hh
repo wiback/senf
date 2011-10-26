@@ -196,7 +196,7 @@ namespace connector {
         virtual void v_connected();
 
     private:
-        virtual std::type_info const & packetTypeID();
+        virtual std::type_info const & v_packetTypeId();
 
         void setModule(module::Module & module);
 
@@ -593,7 +593,7 @@ namespace connector {
             using mixin::operator();                                                              \
             using mixin::TypedConnector_ ## dir ;                                                 \
         private:                                                                                  \
-            virtual std::type_info const & packetTypeID()                                         \
+            virtual std::type_info const & v_packetTypeId()                                         \
                 { return typeid(typename PacketType::type); }                                     \
             friend class detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>;    \
         };                                                                                        \

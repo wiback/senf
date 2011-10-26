@@ -406,7 +406,7 @@ namespace senf {
         \ingroup packetparser
      */
     template <class Parser>
-    PacketParserBase::size_type bytes(Parser p);
+    PacketParserBase::size_type bytes(Parser const & p);
 
     namespace detail { template <class Parser> class ParserInitBytes; }
     namespace detail { template <class Parser> class ParserIsFixed; }
