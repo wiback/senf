@@ -103,7 +103,7 @@ prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::registerParser(
 {
     Keytype key (Parser::typeId+0);
     SENF_ASSERT_EXPRESSION(
-            map_.insert( key, new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>()).second == true,
+            map_.insert( key, new detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>()).second,
         "Duplicate TLV registration");
 }
 
