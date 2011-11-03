@@ -109,16 +109,16 @@ prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os
 
     os << boost::format("%s%-5d%|15t|  %12.5g  %19.5g  %12.5g\n")
         % std::string(2*level,' ') % rank()
-        % fmt::eng(min()).setw() % fmt::eng(avg(),dev()).setw() % fmt::eng(max()).setw();
+        % fmt::eng(min()).setw().showbase() % fmt::eng(avg(),dev()).setw().showbase() % fmt::eng(max()).setw().showbase();
     {
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
         for (; i != i_end; ++i)
             os << boost::format("            %3d  %12.5g  %19.5g  %12.5g\n")
                 % i->second.n
-                % fmt::eng(i->second.min).setw()
-                % fmt::eng(i->second.avg, i->second.dev).setw()
-                % fmt::eng(i->second.max).setw();
+                % fmt::eng(i->second.min).setw().showbase()
+                % fmt::eng(i->second.avg, i->second.dev).setw().showbase()
+                % fmt::eng(i->second.max).setw().showbase();
     }
     {
         Children::const_iterator i (children_.begin());
