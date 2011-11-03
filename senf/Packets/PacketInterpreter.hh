@@ -102,26 +102,26 @@ namespace senf {
 
             // Create packet as new packet after a given packet
 
-            virtual ptr createAfter(PacketInterpreterBase::ptr packet) const = 0;
-            virtual ptr createAfter(PacketInterpreterBase::ptr packet, senf::NoInit_t) const = 0;
-            virtual ptr createAfter(PacketInterpreterBase::ptr packet, size_type size) const = 0;
-            virtual ptr createAfter(PacketInterpreterBase::ptr packet, size_type size,
+            virtual ptr createAfter(PacketInterpreterBase::ptr const & packet) const = 0;
+            virtual ptr createAfter(PacketInterpreterBase::ptr const & packet, senf::NoInit_t) const = 0;
+            virtual ptr createAfter(PacketInterpreterBase::ptr const & packet, size_type size) const = 0;
+            virtual ptr createAfter(PacketInterpreterBase::ptr const & packet, size_type size,
                                     senf::NoInit_t) const = 0;
             template <class ForwardReadableRange>
-            ptr createAfter(PacketInterpreterBase::ptr packet,
+            ptr createAfter(PacketInterpreterBase::ptr const & packet,
                             ForwardReadableRange const & range) const;
 
             // Create packet as new packet (header) const before a given packet
 
-            virtual ptr createBefore(PacketInterpreterBase::ptr packet) const = 0;
-            virtual ptr createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t) const = 0;
+            virtual ptr createBefore(PacketInterpreterBase::ptr const & packet) const = 0;
+            virtual ptr createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t) const = 0;
 
-            virtual ptr createInsertBefore(PacketInterpreterBase::ptr packet) const = 0;
-            virtual ptr createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t) const = 0;
+            virtual ptr createInsertBefore(PacketInterpreterBase::ptr const & packet) const = 0;
+            virtual ptr createInsertBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t) const = 0;
 
             // Parse next packet in chain
 
-            virtual ptr parseNext(ptr packet, PacketInterpreterBase::optional_range const & range) const = 0;
+            virtual ptr parseNext(ptr const & packet, PacketInterpreterBase::optional_range const & range) const = 0;
         };
 
         typedef Factory const * factory_t;
@@ -136,7 +136,7 @@ namespace senf {
 
         virtual ~PacketInterpreterBase();
 
-        static                             factory_t no_factory();
+        static factory_t no_factory();
 
         ptr clone();
 
@@ -288,21 +288,21 @@ namespace senf {
 
         // Create packet as new packet after a given packet
 
-        static ptr createAfter(PacketInterpreterBase::ptr packet);
-        static ptr createAfter(PacketInterpreterBase::ptr packet, senf::NoInit_t);
-        static ptr createAfter(PacketInterpreterBase::ptr packet, size_type size);
-        static ptr createAfter(PacketInterpreterBase::ptr packet, size_type size, senf::NoInit_t);
+        static ptr createAfter(PacketInterpreterBase::ptr const & packet);
+        static ptr createAfter(PacketInterpreterBase::ptr const & packet, senf::NoInit_t);
+        static ptr createAfter(PacketInterpreterBase::ptr const & packet, size_type size);
+        static ptr createAfter(PacketInterpreterBase::ptr const & packet, size_type size, senf::NoInit_t);
         template <class ForwardReadableRange>
-        static ptr createAfter(PacketInterpreterBase::ptr packet,
+        static ptr createAfter(PacketInterpreterBase::ptr const & packet,
                                ForwardReadableRange const & range);
 
         // Create packet as new packet (header) before a given packet
 
-        static ptr createBefore(PacketInterpreterBase::ptr packet);
-        static ptr createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t);
+        static ptr createBefore(PacketInterpreterBase::ptr const & spacket);
+        static ptr createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t);
 
-        static ptr createInsertBefore(PacketInterpreterBase::ptr packet);
-        static ptr createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t);
+        static ptr createInsertBefore(PacketInterpreterBase::ptr const & packet);
+        static ptr createInsertBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t);
 
         // Create a clone of the current packet
 
@@ -328,12 +328,12 @@ namespace senf {
         PacketInterpreter(detail::PacketImpl * impl, iterator b, iterator e, Append_t);
         PacketInterpreter(detail::PacketImpl * impl, iterator b, iterator e, Prepend_t);
         PacketInterpreter(detail::PacketImpl * impl, iterator b, iterator e,
-                          PacketInterpreterBase::ptr before);
+                          PacketInterpreterBase::ptr const & before);
 
         static ptr create(detail::PacketImpl * impl, iterator b, iterator e, Append_t);
         static ptr create(detail::PacketImpl * impl, iterator b, iterator e, Prepend_t);
         static ptr create(detail::PacketImpl * impl, iterator b, iterator e,
-                          PacketInterpreterBase::ptr before);
+                          PacketInterpreterBase::ptr const & before);
 
         // PacketType access
 
@@ -371,32 +371,32 @@ namespace senf {
 
             // Create packet as new packet after a given packet
 
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet)
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr const & packet)
                 const;
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet,
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr const & packet,
                                                            senf::NoInit_t) const;
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet,
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr const & packet,
                                                            size_type size) const;
-            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr packet,
+            virtual PacketInterpreterBase::ptr createAfter(PacketInterpreterBase::ptr const & packet,
                                                            size_type size, senf::NoInit_t) const;
 
             // Create packet as new packet (header) before a given packet
 
-            virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr packet)
+            virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr const & packet)
                 const;
-            virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr packet,
+            virtual PacketInterpreterBase::ptr createBefore(PacketInterpreterBase::ptr const & packet,
                                                             senf::NoInit_t)
                 const;
 
-            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr packet)
+            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr const & packet)
                 const;
-            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr packet,
+            virtual PacketInterpreterBase::ptr createInsertBefore(PacketInterpreterBase::ptr const & packet,
                                                                   senf::NoInit_t)
                 const;
 
             // Parse next packet in chain
 
-            virtual PacketInterpreterBase::ptr parseNext(PacketInterpreterBase::ptr packet, PacketInterpreterBase::optional_range const & range)
+            virtual PacketInterpreterBase::ptr parseNext(PacketInterpreterBase::ptr const & packet, PacketInterpreterBase::optional_range const & range)
                 const;
         };
 

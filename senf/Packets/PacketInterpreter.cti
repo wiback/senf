@@ -103,14 +103,14 @@ senf::PacketInterpreter<PacketType>::create(ForwardReadableRange const & range)
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet)
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr const & packet)
 {
     return createAfter(packet, initSize());
 }
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet, senf::NoInit_t)
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr const & packet, senf::NoInit_t)
 {
     return createAfter(packet, 0, senf::noinit);
 }
@@ -157,7 +157,7 @@ senf::PacketInterpreter<PacketType>::create(detail::PacketImpl * impl, iterator 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::create(detail::PacketImpl * impl, iterator b, iterator e,
-                                            PacketInterpreterBase::ptr before)
+                                            PacketInterpreterBase::ptr const & before)
 {
     return ptr(new PacketInterpreter(impl,b,e,before));
 }
@@ -178,7 +178,7 @@ template <class PacketType>
 prefix_
 senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl, iterator b,
                                                        iterator e,
-                                                       PacketInterpreterBase::ptr before)
+                                                       PacketInterpreterBase::ptr const & before)
     : PacketInterpreterBase(impl,b,e,before)
 {}
 

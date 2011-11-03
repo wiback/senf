@@ -185,7 +185,7 @@ namespace detail {
             \internal
 
             The Guard will keep the PacketImpl instance alive during a members execution time
-            It the refcount should drop to 0, PacketImpl will be deleted after the member
+            If the refcount should drop to 0, PacketImpl will be deleted after the member
             has completed executing.
          */
         struct Guard {

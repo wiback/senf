@@ -203,12 +203,12 @@ prefix_ bool senf::Packet::is_shared()
 prefix_ void senf::Packet::reparse()
     const
 {
-    return ptr()->reparse();
+    ptr()->reparse();
 }
 
 prefix_ void senf::Packet::clearAnnotations()
 {
-    return ptr()->clearAnnotations();
+    ptr()->clearAnnotations();
 }
 
 template <class PacketType, class Parser>

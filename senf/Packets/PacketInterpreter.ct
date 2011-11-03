@@ -78,15 +78,14 @@ prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::create(size_type size, senf::NoInit_t)
 {
     detail::PacketImpl::Guard p (new detail::PacketImpl(size,0));
-    ptr pi (create(p.p,p.p->begin(),p.p->end(),Append));
-    return pi;
+    return create(p.p,p.p->begin(),p.p->end(),Append);
 }
 
 // Create packet as new packet after a given packet
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr const & packet,
                                                  size_type size)
 {
     if (size < initSize())
@@ -99,7 +98,7 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr pack
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr const & packet,
                                                  size_type size, senf::NoInit_t)
 {
     optional_range r (packet->nextPacketRange());
@@ -117,7 +116,7 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr pack
 template <class PacketType>
 template <class ForwardReadableRange>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr const & packet,
                                                  ForwardReadableRange const & range)
 {
     optional_range r (packet->nextPacketRange());
@@ -137,7 +136,7 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr pack
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr packet)
+senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr const & packet)
 {
     ptr pi (createBefore(packet, senf::noinit));
     pi->data().insert(pi->data().begin(),initHeadSize(),byte(0x00u));
@@ -148,7 +147,7 @@ senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr pac
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
+senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t)
 {
     if (packet->prev())
         packet->impl().truncateInterpretersBackwards(packet->prev().get());
@@ -158,7 +157,7 @@ senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr pac
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::ptr packet)
+senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::ptr const & packet)
 {
     ptr pi (createInsertBefore(packet, senf::noinit));
     pi->data().insert(pi->data().begin(),initHeadSize(),byte(0x00u));
@@ -169,7 +168,7 @@ senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::p
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::ptr const & packet,
                                                         senf::NoInit_t)
 {
     return create(&packet->impl(),packet->data().begin(),packet->data().end(),packet);
@@ -253,7 +252,7 @@ senf::PacketInterpreterBase::Factory::create(ForwardReadableRange const & range)
 
 template <class ForwardReadableRange>
 prefix_ senf::PacketInterpreterBase::ptr
-senf::PacketInterpreterBase::Factory::createAfter(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreterBase::Factory::createAfter(PacketInterpreterBase::ptr const & packet,
                                                   ForwardReadableRange const & range)
     const
 {
@@ -303,7 +302,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::create(size_type size, senf::N
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
-senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet)
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr const & packet)
     const
 {
     return senf::PacketInterpreter<PacketType>::createAfter(packet);
@@ -311,7 +310,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterB
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
-senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr const & packet,
                                                               senf::NoInit_t)
     const
 {
@@ -320,7 +319,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterB
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
-senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr const & packet,
                                                               size_type size)
     const
 {
@@ -329,7 +328,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterB
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
-senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet,
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr const & packet,
                                                               size_type size, senf::NoInit_t)
     const
 {
@@ -341,7 +340,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterB
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
 senf::PacketInterpreter<PacketType>::FactoryImpl::
-createBefore(PacketInterpreterBase::ptr packet)
+createBefore(PacketInterpreterBase::ptr const & packet)
     const
 {
     return senf::PacketInterpreter<PacketType>::createBefore(packet);
@@ -350,7 +349,7 @@ createBefore(PacketInterpreterBase::ptr packet)
 template <class PacketType>
 prefix_ senf::PacketInterpreterBase::ptr
 senf::PacketInterpreter<PacketType>::FactoryImpl::
-createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
+createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t)
     const
 {
     return senf::PacketInterpreter<PacketType>::createBefore(packet,senf::noinit);
@@ -359,7 +358,7 @@ createBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
 template <class PacketType>
 prefix_ senf::PacketInterpreterBase::ptr
 senf::PacketInterpreter<PacketType>::FactoryImpl::
-createInsertBefore(PacketInterpreterBase::ptr packet)
+createInsertBefore(PacketInterpreterBase::ptr const & packet)
     const
 {
     return senf::PacketInterpreter<PacketType>::createInsertBefore(packet);
@@ -368,7 +367,7 @@ createInsertBefore(PacketInterpreterBase::ptr packet)
 template <class PacketType>
 prefix_ senf::PacketInterpreterBase::ptr
 senf::PacketInterpreter<PacketType>::FactoryImpl::
-createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
+createInsertBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t)
     const
 {
     return senf::PacketInterpreter<PacketType>::createInsertBefore(packet,senf::noinit);
@@ -378,7 +377,7 @@ createInsertBefore(PacketInterpreterBase::ptr packet, senf::NoInit_t)
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
-senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBase::ptr packet, PacketInterpreterBase::optional_range const & range)
+senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBase::ptr const & packet, PacketInterpreterBase::optional_range const & range)
     const
 {
     if (!range)
