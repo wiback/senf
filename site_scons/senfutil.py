@@ -225,7 +225,7 @@ def DefaultOptions(env):
     # Set nice default options
     env.Append(
         CXXFLAGS         = [ '-Wall', '-Woverloaded-virtual',  "${profile and '-pg' or None}" ],
-        CXXFLAGS_final   = [ '-O3' ],
+        CXXFLAGS_final   = [ '-O3', '-fno-threadsafe-statics' ],
         CXXFLAGS_normal  = [ '-O2', '-g' ],
         CXXFLAGS_debug   = [ '-O0', '-g' ],
 

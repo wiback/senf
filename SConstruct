@@ -106,12 +106,12 @@ env.Append(
     CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
                                '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
                                "${profile and '-pg' or None}" ],
-    CXXFLAGS_final         = [ '-O3' ],
+    CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics' ],
     CXXFLAGS_normal        = [ '-O2', '-g' ],
     CXXFLAGS_debug         = [ '-O0', '-g' ],
 
     CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
-    CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'BOOST_NO_MT', 'NDEBUG', 'BOOST_DISABLE_ASSERTS' ],
+    CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'BOOST_NO_MT', 'NDEBUG', 'BOOST_DISABLE_ASSERTS', 'BOOST_DISABLE_THREADS' ],
     CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
     CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
 
