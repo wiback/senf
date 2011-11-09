@@ -95,7 +95,8 @@ prefix_ void senf::RadiotapPacketParser::buildOffsetTable(boost::uint32_t presen
     // radiotap.c nor we will ever dereference those pointers, we just calculate the offsets.
     // This works, as long as we don't support extension headers ...
     header.it_len = 0xFFFF;
-    header.it_present = presentFlags;
+    // Note that all data in the header is little endian!
+    header.it_present = htole32(presentFlags);
 
     parseOffsetTable((boost::uint8_t*)&header, header.it_len, table);
 }

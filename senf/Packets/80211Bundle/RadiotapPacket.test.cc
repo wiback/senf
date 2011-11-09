@@ -137,6 +137,8 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_create)
     BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacketParser_Header::fixed_bytes+0 );
 
     SENF_CHECK_NO_THROW( p->init_tsft()             = 81059833346uLL );
+    BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacketParser_Header::fixed_bytes +
+            senf::RadiotapPacketParser::tsft_t::fixed_bytes );
     SENF_CHECK_NO_THROW( p->init_rate()             =          12u   );
     SENF_CHECK_NO_THROW( p->init_dbmAntennaSignal() =         -61    );
     SENF_CHECK_NO_THROW( p->init_dbmAntennaNoise()  =         -96    );
