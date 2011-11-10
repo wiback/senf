@@ -218,8 +218,9 @@ namespace term {
         void dump(std::ostream & os) const; ///< Dump a description of the terminfo entry
 
         /** \brief Invalid, incomplete or non-existent terminfo entry exception */
-        struct InvalidTerminfoException : public senf::Exception
-        { InvalidTerminfoException() : senf::Exception("Unreadable terminfo file") {} };
+        struct InvalidTerminfoException : public senf::Exception {
+            InvalidTerminfoException(std::string const & term = "");
+        };
 
     private:
         typedef std::vector<bool> BoolVec;
@@ -227,7 +228,7 @@ namespace term {
         typedef std::vector<string_t> StringVec;
         typedef std::vector<char> StringPool;
 
-        std::string findTerminfo(std::string const & name);
+        static std::string findTerminfo(std::string const & name);
         void load(std::istream & is);
 
         std::string name_;

@@ -123,6 +123,7 @@ SENF_AUTO_UNIT_TEST(inet4Network)
 
     BOOST_CHECK_THROW( senf::INet4Network(""), senf::AddressSyntaxException );
     BOOST_CHECK_THROW( senf::INet4Network("192.0.2.0/24/beef"), senf::AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::INet4Network("128.129.130.131/128"), senf::AddressSyntaxException );
 
     {
         std::stringstream str;
@@ -132,12 +133,12 @@ SENF_AUTO_UNIT_TEST(inet4Network)
     }
     {
         std::stringstream str;
-        senf::INet4Network net ("128.129.130.131/128");
+        senf::INet4Network net ("128.129.130.131/32");
         str << net;
-        BOOST_CHECK_EQUAL( str.str(), "128.129.130.131/128");
+        BOOST_CHECK_EQUAL( str.str(), "128.129.130.131/32");
         str >> net;
         BOOST_CHECK( ! str.fail());
-        BOOST_CHECK_EQUAL(net, senf::INet4Network("128.129.130.131/128"));
+        BOOST_CHECK_EQUAL(net, senf::INet4Network("128.129.130.131/32"));
     }
 }
 

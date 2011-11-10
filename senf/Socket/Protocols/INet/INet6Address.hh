@@ -397,6 +397,8 @@ namespace senf {
     private:
         unsigned prefix_len_;
         INet6Address address_;
+
+        unsigned prefix_len_checked(unsigned prefix_len) const;
     };
 
     /** \brief Output INet6Network instance as it's string representation

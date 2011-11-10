@@ -273,6 +273,7 @@ namespace senf {
 
     private:
         boost::uint32_t mask() const;
+        unsigned prefix_len_checked(unsigned prefix_len) const;
 
         unsigned prefix_len_;
         INet4Address address_;

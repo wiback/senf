@@ -214,7 +214,8 @@ prefix_ senf::INet6Network::INet6Network()
 {}
 
 prefix_ senf::INet6Network::INet6Network(INet6Address const & address, unsigned prefix_len)
-    : prefix_len_(prefix_len), address_(address)
+    : prefix_len_( prefix_len_checked(prefix_len)),
+      address_(address)
 {
     using boost::lambda::_1;
     using boost::lambda::_2;
@@ -280,6 +281,15 @@ prefix_ senf::INet6Network senf::INet6Network::subnet(boost::uint64_t net, unsig
                        ( ( _1 |= ret<boost::uint8_t>((var(net) >> 56) & _2) ),
                          ( var(net) <<= 8 ) ));
     return INet6Network(addr, prefix_len);
+}
+
+prefix_ unsigned senf::INet6Network::prefix_len_checked(unsigned prefix_len)
+    const
+{
+    if (prefix_len > 128)
+        throw AddressSyntaxException("invalid INet6 prefix length: " +
+                boost::lexical_cast<std::string>(prefix_len));
+    return prefix_len;
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Network const & addr)

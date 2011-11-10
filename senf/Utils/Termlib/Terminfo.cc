@@ -134,6 +134,13 @@ char const * const senf::term::Terminfo::properties::StringNames[] = {
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::term::Terminfo
 
+prefix_ senf::term::Terminfo::InvalidTerminfoException::InvalidTerminfoException(std::string const & term)
+    : senf::Exception("Unreadable terminfo file")
+{
+    if (!term.empty())
+        append( ": " + term);
+}
+
 prefix_ senf::term::Terminfo::Terminfo()
 {}
 
@@ -145,10 +152,15 @@ prefix_ senf::term::Terminfo::Terminfo(std::string const & term)
 prefix_ void senf::term::Terminfo::load(std::string const & term)
 {
     std::string filename (findTerminfo(term));
-    if (filename.empty()) throw InvalidTerminfoException();
+    if (filename.empty()) throw InvalidTerminfoException(term);
     std::ifstream is (filename.c_str());
-    if (!is) throw InvalidTerminfoException();
-    load(is);
+    if (!is) throw InvalidTerminfoException(filename);
+    try {
+        load(is);
+    } catch (InvalidTerminfoException & ex) {
+        ex << ": " << filename;
+        throw ex;
+    }
 }
 
 prefix_ bool senf::term::Terminfo::getFlag(properties::Boolean p)
@@ -399,6 +411,15 @@ namespace {
         boost::uint16_t nNumbers;
         boost::uint16_t nStrings;
         boost::uint16_t stringPoolSz;
+
+        void letoh() {
+            magic = le16toh(magic);
+            namesSz = le16toh(namesSz);
+            nBooleans = le16toh(nBooleans);
+            nNumbers = le16toh(nNumbers);
+            nStrings = le16toh(nStrings);
+            stringPoolSz = le16toh(stringPoolSz);
+        }
     };
 
 }
@@ -407,7 +428,9 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
 {
     TerminfoHeader h;
     is.read(static_cast<char*>(static_cast<void*>(&h)), sizeof(h));
-    if (!is || h.magic != TerminfoMagic) throw InvalidTerminfoException();
+    h.letoh();
+    if (!is || h.magic != TerminfoMagic) throw InvalidTerminfoException(
+            "invalid magic number (") << h.magic << "!=" << TerminfoMagic << ")";
 
     name_.resize(h.namesSz);
     is.read(&(name_[0]), name_.size());
@@ -445,7 +468,7 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
         number_t v;
         is.read(static_cast<char*>(static_cast<void*>(&v)), sizeof(v));
         if (!is) throw InvalidTerminfoException();
-        *i = v;
+        *i = le16toh(v);
     }
 
     stringPool_.resize(h.stringPoolSz);

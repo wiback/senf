@@ -172,7 +172,7 @@ prefix_ senf::INet6Network::INet6Network(std::string const & s)
     if (i == std::string::npos)
         throw AddressSyntaxException(s);
     try {
-        prefix_len_ = boost::lexical_cast<unsigned>(std::string(s,i+1));
+        prefix_len_ = prefix_len_checked( boost::lexical_cast<unsigned>(std::string(s,i+1)));
     } catch (boost::bad_lexical_cast const &) {
         throw AddressSyntaxException(s);
     }

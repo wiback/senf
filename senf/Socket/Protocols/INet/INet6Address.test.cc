@@ -210,6 +210,7 @@ SENF_AUTO_UNIT_TEST(inet6Network)
 
     BOOST_CHECK_THROW( INet6Network(""), AddressSyntaxException );
     BOOST_CHECK_THROW( INet6Network("2001:db8:1234::/beef"), AddressSyntaxException );
+    BOOST_CHECK_THROW( INet6Network("2001:db8:1234::/129"), AddressSyntaxException );
 
     {
         std::stringstream str;

@@ -39,7 +39,6 @@
 #if defined(_REENTRANT) && !defined(__GLIBC__)
 #include <boost/thread/mutex.hpp>
 #endif
-#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "INet4Address.mpp"
 #define prefix_
@@ -137,7 +136,7 @@ prefix_ senf::INet4Network::INet4Network(std::string const & s)
     if (i == std::string::npos)
         throw AddressSyntaxException(s);
     try {
-        prefix_len_ = boost::lexical_cast<unsigned>(std::string(s,i+1));
+        prefix_len_ = prefix_len_checked(boost::lexical_cast<unsigned>(std::string(s,i+1)));
     } catch (boost::bad_lexical_cast const &) {
         throw AddressSyntaxException(s);
     }

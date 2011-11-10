@@ -29,6 +29,7 @@
     \brief INet4Address inline non-template implementation */
 
 // Custom includes
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,22 +87,6 @@ prefix_ bool senf::INet4Address::boolean_test()
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::INet4Network
 
-prefix_ unsigned senf::INet4Network::prefix_len()
-    const
-{
-    return prefix_len_;
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// private members
-
-prefix_ boost::uint32_t senf::INet4Network::mask()
-    const
-{
-    // This is correct as long as the system is using 2-complement arithmetic ...
-    return (~((boost::uint32_t(1u)<<(32u-prefix_len()))-1u)) & 0xFFFFFFFFu;
-}
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // public members
 
@@ -110,13 +95,20 @@ prefix_ senf::INet4Network::INet4Network()
 {}
 
 prefix_ senf::INet4Network::INet4Network(INet4Address const & address, unsigned prefix_len)
-    : prefix_len_(prefix_len), address_(INet4Address(address.address() & mask()))
+    : prefix_len_( prefix_len_checked(prefix_len)),
+      address_(INet4Address(address.address() & mask()))
 {}
 
 prefix_ senf::INet4Address const & senf::INet4Network::address()
     const
 {
     return address_;
+}
+
+prefix_ unsigned senf::INet4Network::prefix_len()
+    const
+{
+    return prefix_len_;
 }
 
 prefix_ bool senf::INet4Network::boolean_test()
@@ -151,6 +143,25 @@ prefix_ senf::INet4Address senf::INet4Network::host(boost::uint32_t number)
 prefix_ senf::INet4Network senf::INet4Network::subnet(boost::uint32_t net, unsigned prefix_len)
 {
     return INet4Network(host(net << (32-prefix_len)),prefix_len);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// private members
+
+prefix_ unsigned senf::INet4Network::prefix_len_checked(unsigned prefix_len)
+    const
+{
+    if (prefix_len > 32)
+        throw AddressSyntaxException("invalid INet4 prefix length: " +
+                boost::lexical_cast<std::string>(prefix_len));
+    return prefix_len;
+}
+
+prefix_ boost::uint32_t senf::INet4Network::mask()
+    const
+{
+    // This is correct as long as the system is using 2-complement arithmetic ...
+    return (~((boost::uint32_t(1u)<<(32u-prefix_len()))-1u)) & 0xFFFFFFFFu;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
