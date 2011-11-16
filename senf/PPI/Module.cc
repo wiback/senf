@@ -32,6 +32,8 @@
 #include "Module.ih"
 
 // Custom includes
+#include "Events.hh"
+#include "Connectors.hh"
 
 //#include "Module.mpp"
 #define prefix_
@@ -39,6 +41,47 @@
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::Module
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// public members
+
+#ifdef DOXYGEN
+
+prefix_ senf::ppi::Route<connector::InputConnector, connector::OutputConnector> &
+senf::ppi::module::Module::route(connector::InputConnector & input,
+                                 connector::OutputConnector & output)
+{}
+prefix_ senf::ppi::Route<connector::InputConnector, EventDescriptor> &
+senf::ppi::module::Module::route(connector::InputConnector & input, EventDescriptor & output)
+{}
+
+prefix_ senf::ppi::RouteRoute<connector::EventDescriptor, connector::OutputConnector> &
+senf::ppi::module::Module::route(EventDescriptor & input, connector::OutputConnector & output);
+
+#else
+
+#define route_impl( Source, Target )                                                        \
+    prefix_ senf::ppi::Route<senf::ppi::Source, senf::ppi::Target> &                        \
+    senf::ppi::module::Module::route(Source & source, Target & target)                      \
+    {                                                                                       \
+        detail::RouteHelper<Source,Target>::route(*this, source, target, source, target);   \
+        return static_cast< Route<Source,Target> & >(                                       \
+                addRoute(std::auto_ptr< RouteBase >(                                        \
+                     new Route<Source,Target>(*this, source, target))));                    \
+    }
+
+route_impl( connector::GenericPassiveInput, connector::GenericActiveOutput);
+route_impl( connector::GenericActiveInput, connector::GenericPassiveOutput);
+route_impl( connector::GenericActiveInput, connector::GenericActiveOutput);
+route_impl( connector::GenericPassiveInput, connector::GenericPassiveOutput);
+route_impl( connector::GenericPassiveInput, EventDescriptor);
+route_impl( connector::GenericActiveInput, EventDescriptor);
+route_impl( EventDescriptor, connector::GenericPassiveOutput);
+route_impl( EventDescriptor, connector::GenericActiveOutput);
+
+#undef route_impl
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members

@@ -28,8 +28,6 @@
 /** \file
     \brief Node inline template implementation */
 
-#include "Node.ih"
-
 // Custom includes
 
 #define prefix_ inline

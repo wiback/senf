@@ -48,13 +48,6 @@ namespace detail {
         { return a.fd_ < b.fd_; }
     };
 
-    struct FindFd {
-        bool operator()(FdEvent const & a, int b) const
-        { return a.fd_ < b; }
-        bool operator()(int a, FdEvent const & b) const
-        { return a < b.fd_; }
-    };
-
     class FdDispatcher
         : public senf::singleton<FdDispatcher>
     {

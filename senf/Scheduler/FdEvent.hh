@@ -47,7 +47,6 @@ namespace scheduler {
         struct FdSetTag;
         typedef boost::intrusive::iset_base_hook<FdSetTag> FdSetBase;
         struct FdSetCompare;
-        struct FindFd;
         class FdDispatcher;
         class FileDispatcher;
     }
@@ -172,7 +171,6 @@ namespace scheduler {
         int signaledEvents_;
 
         friend class detail::FdSetCompare;
-        friend class detail::FindFd;
         friend class detail::FdDispatcher;
         friend class detail::FileDispatcher;
     };

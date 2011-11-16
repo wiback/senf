@@ -56,7 +56,7 @@
 namespace {
     senf::console::SysInfo::Proxy addSysInfo (
             "SENF: The Simple and Extensible Network Framework\n"
-            "  © 2006-2011 Fraunhofer Institute for Open Communication Systems, Network Research\n"
+            "  (c) 2006-2011 Fraunhofer Institute for Open Communication Systems (FOKUS)\n"
             "  Contact: senf-dev@lists.berlios.de\n"
             "  Version: " SENF_LIB_VERSION " Revision number: " SENF_REVISION "\n"
             "  Build-type: " BUILD_TYPE ", SenfLog compile time limit: " +
@@ -262,7 +262,7 @@ senf::console::detail::NoninteractiveClientReader::streamBufferMaxSize()
 
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_write(std::string const & data)
 {
-    if( sendQueue_.size() > streamBufferMaxSize_)
+    if (sendQueue_.size() > streamBufferMaxSize_)
         return;
     sendQueue_.insert( sendQueue_.end(), data.begin(), data.end());
     writeHandler(scheduler::FdEvent::EV_WRITE);

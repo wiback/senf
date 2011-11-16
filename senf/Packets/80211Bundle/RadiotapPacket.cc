@@ -47,15 +47,14 @@ extern "C" {
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // Offset table management
 
+senf::RadiotapPacketParser::OffsetMap senf::RadiotapPacketParser::offsetMap_;
+
 prefix_ senf::RadiotapPacketParser::OffsetTable &
 senf::RadiotapPacketParser::offsetTable(boost::uint32_t presentFlags)
 {
-    typedef std::map<boost::uint32_t, OffsetTable> OffsetMap;
-    static OffsetMap offsetMap;
-
-    OffsetMap::iterator i (offsetMap.find(presentFlags));
-    if (i == offsetMap.end())
-        i = offsetMap.insert(std::make_pair(presentFlags, OffsetTable())).first;
+    OffsetMap::iterator i (offsetMap_.find(presentFlags));
+    if (i == offsetMap_.end())
+        i = offsetMap_.insert(std::make_pair(presentFlags, OffsetTable())).first;
     return i->second;
 }
 

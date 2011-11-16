@@ -271,6 +271,7 @@ namespace senf {
         static const size_type fixed_bytes = 0; // hide this member, just in case
 
         typedef boost::array<size_type,MAX_INDEX+2> OffsetTable;
+        typedef std::map<boost::uint32_t, OffsetTable> OffsetMap;
 
         //-////////////////////////////////////////////////////////////////////////
         // Offset table handling
@@ -296,6 +297,7 @@ namespace senf {
         void updatePresentFlags(boost::uint32_t flags);
         void insertRemoveBytes(unsigned from, unsigned to, int bytes);
 
+        static OffsetMap offsetMap_;
         OffsetTable const * currentTable_;
 
         friend class RadiotapPacketType;

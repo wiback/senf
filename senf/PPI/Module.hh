@@ -189,10 +189,7 @@ namespace module {
     protected:
         Module();
 
-#ifndef DOXYGEN
-        template <class Source, class Target>
-        Route<Source, Target> & route(Source & source, Target & target);
-#else
+#ifdef DOXYGEN
         Route<connector::InputConnector, connector::OutputConnector> &
         route(connector::InputConnector & input, connector::OutputConnector & output);
                                         ///< Define flow information
@@ -219,9 +216,7 @@ namespace module {
                                              \param[in] output Data target, object which controls
                                                  outgoing data (connector or event)
                                              \returns Route instance describing this route
-                                             \see \ref ppi_throttling
-                                             \note The real implementation is not provided by three
-                                                 overloads but by a single template member */
+                                             \see \ref ppi_throttling */
 
         Route<connector::InputConnector, EventDescriptor> &
         route(connector::InputConnector & input, EventDescriptor & output);
@@ -253,6 +248,21 @@ namespace module {
                                              enable/disable the event on throttling notifications.
 
                                              \see \ref route() */
+#else
+#       define route_decl(Source, Target)               \
+            Route<Source, Target> &                     \
+            route(Source & source, Target & target);
+
+        route_decl( connector::GenericPassiveInput, connector::GenericActiveOutput);
+        route_decl( connector::GenericPassiveInput, connector::GenericPassiveOutput);
+        route_decl( connector::GenericActiveInput,  connector::GenericPassiveOutput);
+        route_decl( connector::GenericActiveInput,  connector::GenericActiveOutput);
+        route_decl( connector::GenericPassiveInput, EventDescriptor);
+        route_decl( connector::GenericActiveInput,  EventDescriptor);
+        route_decl( EventDescriptor, connector::GenericPassiveOutput);
+        route_decl( EventDescriptor, connector::GenericActiveOutput);
+
+#undef Route_decl
 #endif
 
         void noroute(connector::Connector & connector); ///< Define terminal connectors

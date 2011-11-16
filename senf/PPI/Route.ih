@@ -85,8 +85,8 @@ namespace detail {
     };
 
     // The RoutingTraits give routing related information about the argument type:
-    //  - Wether the type is a notifySource or notifyTarget
-    //  - Wether the type is dataSource or dataTarget
+    //  - Whether the type is a notifySource or notifyTarget
+    //  - Whether the type is dataSource or dataTarget
     //  - Provide the generalized target type
     //
     // The real implementation is in RoutingTraitsImplementation which is appropriately specialized
@@ -104,14 +104,13 @@ namespace detail {
     class BaseRouteImplementation
         : public Base
     {
-    public:
+    protected:
         typedef Source source_type;
         typedef Target target_type;
 
         Source & source() const;
         Target & target() const;
 
-    protected:
         BaseRouteImplementation(module::Module & module, Source & source, Target & target);
 
     private:
@@ -168,7 +167,7 @@ namespace detail {
     // This helper class finds the base-class suitable for a specific route. Routes are classified
     // into two groups:
     //  1) A forwarding routes is a routed which forwards notifications from a notifySource to a
-    //     notifyTarget. Forwarding routes are implemneted using ForwardingRouteImplementation
+    //     notifyTarget. Forwarding routes are implemented using ForwardingRouteImplementation
     //  2) Non-forwarding routes don't forward notifications. They are implemented directly
     //     using BaseRouteImplementation
     template <class Source, class Target>

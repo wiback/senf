@@ -122,7 +122,7 @@ construct(container_type & c)
             realAux_ -= std::distance(i, e);
             c.data().erase(i, e); //delete padding
             e = i; //set end iterator
-        } else{
+        } else {
             ++n_;
             std::advance(i, elByte);
         }
@@ -142,7 +142,7 @@ destruct(container_type & c)
     unsigned int padBytes = 0;
     if (realAux_ == 0)      //if list is empty, 6 padding bytes required!
       padBytes = 6;
-    else{
+    else {
       padBytes = ( (realAux_+2) % 8);
       if (padBytes != 0)
           padBytes = 8 - padBytes;

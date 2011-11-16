@@ -23,9 +23,8 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Thorsten Horstmann <tho@berlios.de>
-/** \file
-    \brief StatisticAccumulator non-inline template implementation  */
+//   Mathias Kretschmer <mtk@berlios.de>
+//   Jens Moedeker <jmo@berlios.de>
 
 // Custom includes
 
@@ -34,7 +33,6 @@
 #include "auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 #include <math.h>
-//#include <boost/math/special_functions/fpclassify.hpp>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -42,7 +40,7 @@ SENF_AUTO_UNIT_TEST(StatisticAccumulator)
 {
     senf::Statistics s;
 
-    senf::StatisticAccumulatorInt sa;
+    senf::StatisticAccumulator<int> sa;
 
     sa.accumulate( 5);
     sa.accumulate( 3);
@@ -66,10 +64,6 @@ SENF_AUTO_UNIT_TEST(StatisticAccumulator)
     BOOST_CHECK_EQUAL( sa.last_avg(), 5.0);
     BOOST_CHECK( ::isnan( sa.stddev()));
     BOOST_CHECK_EQUAL( sa.count(), 0);
-
-
-
-
 }
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_

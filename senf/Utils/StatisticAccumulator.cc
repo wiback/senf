@@ -23,18 +23,27 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Stefan Bund <g0dil@berlios.de>
+//   Mathias Kretschmer <mtk@berlios.de>
+//   Jens Moedeker <jmo@berlios.de>
 
 #include "StatisticAccumulator.hh"
 
+// Custom includes
+
+#define prefix_
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
 std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & _data)
- {
-         format::IndentHelper indent;
-         os << indent << "StatisticData:" << std::endl;
-         os << indent << "min: "    << _data.min << std::endl;
-         os << indent << "avg: "    << _data.avg << std::endl;
-         os << indent << "max: "    << _data.max << std::endl;
-         os << indent << "stddev: " << _data.stddev << std::endl;
-         os << indent << "count: "  << _data.count << std::endl;
-         return os;
- };
+{
+    format::IndentHelper indent;
+    os << indent << "StatisticData:" << std::endl
+       << indent << "min: "    << _data.min << std::endl
+       << indent << "avg: "    << _data.avg << std::endl
+       << indent << "max: "    << _data.max << std::endl
+       << indent << "stddev: " << _data.stddev << std::endl
+       << indent << "count: "  << _data.count << std::endl;
+    return os;
+};
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_

@@ -28,8 +28,6 @@
 /** \file
     \brief Node inline non-template implementation */
 
-#include "Node.ih"
-
 // Custom includes
 
 #define prefix_ inline
@@ -257,18 +255,6 @@ prefix_ senf::console::DirectoryNode::cptr senf::console::DirectoryNode::thisptr
 {
     return boost::static_pointer_cast<DirectoryNode const>(shared_from_this());
 }
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::console::detail::NodeTraverser
-#ifndef DOXYGEN
-
-prefix_ senf::console::detail::NodeTraverser::NodeTraverser(DirectoryNode & root,
-                                                            DirectoryNode & dir,
-                                                            bool autocomplete)
-    : root_ (root), dir_ (dir.thisptr()), autocomplete_ (autocomplete), init_ (false)
-{}
-
-#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode

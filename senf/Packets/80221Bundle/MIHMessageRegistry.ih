@@ -54,7 +54,9 @@ namespace senf {
         };
 
 
-        struct MIHMessageRegistry_EntryBase {
+        struct MIHMessageRegistry_EntryBase
+            : private boost::noncopyable
+        {
             virtual ~MIHMessageRegistry_EntryBase() {}
             virtual void validate(senf::Packet message) const = 0;
         };

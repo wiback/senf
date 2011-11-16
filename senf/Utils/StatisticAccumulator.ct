@@ -23,7 +23,9 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Thorsten Horstmann <tho@berlios.de>
+//   Mathias Kretschmer <mtk@berlios.de>
+//   Jens Moedeker <jmo@berlios.de>
+
 /** \file
     \brief StatisticAccumulator non-inline template implementation  */
 
@@ -36,19 +38,9 @@
 // senf::StatisticAccumulator<T>
 
 template <class T>
-prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator( )
-    : sum_squared_(0),
-      sum_(0),
-      min_(0),
-      max_(0),
-      last_avg_(0),
-      count_(0)
-{
-}
-
-//template <class T>
-//prefix_ senf::StatisticAccumulator<T>::~StatisticAccumulator()
-//{ }
+prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
+    : sum_squared_(0), sum_(0), min_(0), max_(0), last_avg_(0), count_(0)
+{ }
 
 template <class T>
 prefix_ float senf::StatisticAccumulator<T>::stddev()
@@ -91,29 +83,28 @@ prefix_ void senf::StatisticAccumulator<T>::accumulate( T value)
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::clear()
 {
-    if( count_ > 0){
-      last_avg_ = avg();
-      count_ = 0;
-      sum_squared_ = 0;
-      sum_ = min_ = max_ = 0;
+    if (count_ > 0) {
+        last_avg_ = avg();
+        count_ = 0;
+        sum_squared_ = 0;
+        sum_ = min_ = max_ = 0;
     }
 }
 
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::data( StatisticsData &data_) const
 {
-    if( count_ == 0){
-    	data_.min = data_.avg = data_.max = last_avg_;
-	data_.stddev = 0.0;
-	data_.count = 0;
+    if (count_ == 0) {
+        data_.min = data_.avg = data_.max = last_avg_;
+        data_.stddev = 0.0;
+        data_.count = 0;
+    } else {
+        data_.min = (float) min_;
+        data_.avg = avg();
+        data_.max = (float) max_;
+        data_.stddev = stddev();
+        data_.count = count_;
     }
-    else{
-      data_.min = (float) min_;
-      data_.avg = avg();	
-      data_.max = (float) max_;
-      data_.stddev = stddev();
-      data_.count = count_;
-  }
 }
 
 

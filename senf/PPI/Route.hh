@@ -51,6 +51,14 @@ namespace ppi {
     public:
         virtual ~RouteBase();
 
+        bool hasConnector(connector::Connector const & conn) const;
+                                        ///< \c true, if route has connector \a conn
+        bool hasEvent(EventDescriptor const & event) const;
+                                        ///< \c true, if route has event \a event
+
+    protected:
+        RouteBase(module::Module & module);
+
 #ifdef DOXYGEN
         Source & source() const;        ///< Routing source
                                         /**< \note The real implementation is in the \c
@@ -61,14 +69,6 @@ namespace ppi {
                                              BaseRouteImplementation template in \c Route.ih. This
                                              class is internal and not documented. */
 #endif
-
-        bool hasConnector(connector::Connector const & conn) const;
-                                        ///< \c true, if route has connector \a conn
-        bool hasEvent(EventDescriptor const & event) const;
-                                        ///< \c true, if route has event \a event
-
-    protected:
-        RouteBase(module::Module & module);
 
     private:
         virtual bool v_hasConnector(connector::Connector const & conn) const = 0;

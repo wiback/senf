@@ -29,7 +29,6 @@
     \brief Node non-inline non-template implementation */
 
 #include "Node.hh"
-#include "Node.ih"
 
 // Custom includes
 #include <senf/Utils/Range.hh>
@@ -203,55 +202,6 @@ prefix_ std::string senf::console::DirectoryNode::v_shorthelp()
         return shortdoc_;
     return doc_.substr(0,doc_.find('\n'));
 }
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::console::detail::NodeTraverser
-#ifndef DOXYGEN
-
-prefix_ void senf::console::detail::NodeTraverser::operator()(std::string const & name)
-{
-    if (! init_) {
-        init_ = true;
-        if (name == std::string("")) {
-            dir_ = root_.thisptr();
-            return;
-        }
-    }
-    if (! elt_.empty()) {
-        if (elt_ == "..") {
-            dir_ = dir_->parent();
-            if (! dir_ || ! dir_->isChildOf(root_))
-                dir_ = root_.thisptr();
-        }
-        else if (elt_ != "" && elt_ != ".") {
-            if (! dir_->hasChild(elt_) && autocomplete_) {
-                DirectoryNode::ChildrenRange completions (dir_->completions(elt_));
-                if (has_one_elt(completions))
-                    elt_ = completions.begin()->first;
-            }
-            // Why does g++ give an error on this line ???? :
-            // dir = dynamic_cast<DirectoryNode&>( dir->get(name) ).thisptr();
-            DirectoryNode & d (dynamic_cast<DirectoryNode&>( dir_->get(elt_) ));
-            dir_ = d.thisptr();
-        }
-    }
-    elt_ = name;
-}
-
-prefix_ senf::console::GenericNode & senf::console::detail::NodeTraverser::node()
-{
-    if (elt_ != "" && elt_ != ".") {
-        if (! dir_->hasChild(elt_) && autocomplete_) {
-            DirectoryNode::ChildrenRange completions (dir_->completions(elt_));
-            if (has_one_elt(completions))
-                elt_ = completions.begin()->first;
-        }
-        return dir_->get(elt_);
-    }
-    else
-        return * dir_;
-}
-#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::SimpleCommandNode

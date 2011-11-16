@@ -66,9 +66,9 @@ prefix_ void senf::scheduler::TimerEventProxy<IdType>::add(
 {
     // insert new entry or replace the timeout of an entry already indexed
     typename EntrySetById_t::iterator i = entrySetById.find(id);
-    if(i == entrySetById.end())
+    if (i == entrySetById.end())
     	entrySetByTimeout.insert( Entry(timeout, id, cb));
-   	else{
+   	else {
    		Entry tmp = *i;
    		tmp.timeout = timeout;
    		entrySetById.replace(i,tmp);

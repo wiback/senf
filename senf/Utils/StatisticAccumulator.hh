@@ -23,7 +23,9 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Thorsten Horstmann <tho@berlios.de>
+//   Mathias Kretschmer <mtk@berlios.de>
+//   Jens Moedeker <jmo@berlios.de>
+
 /** \file
     \brief StatisticAccumulator public header */
 
@@ -74,43 +76,39 @@ namespace senf {
     {
     public:
         StatisticAccumulator();
-//        virtual ~StatisticAccumulator();
 
-        void clear();
-        ///< Reset accumulated values.
-        /**< This member reset all values. */
-        void accumulate(T value);
-        ///< Gather value to be accumulated.
-        /**< This method accumulates a value.
-             \param[in] value to be accumulated value*/
-        void setLastAvg(T value);
-        ///< If no real data was collected, this method specifies the min/avg/max value to be returned.
-        /**< This method specifies the the min/avg/max value to be returned if no real data was colelcted
-             \param[in] value to be returned*/
+        void clear();                   ///< Reset accumulated values.
+                                        /**< This member reset all values. */
+        void accumulate(T value);       ///< Gather value to be accumulated.
+                                        /**< This method accumulates a value.
+                                             \param[in] value to be accumulated value */
+        void setLastAvg(T value);       ///< If no real data was collected, this method specifies the min/avg/max value to be returned.
+                                        /**< This method specifies the the min/avg/max value to
+                                             be returned if no real data was collected
+                                             \param[in] value to be returned */
 
-    public:
-        T     min() const;
-        ///< Returns current minimal value.
-        /**< This method returns the minimal value of the current accumulation.*/
-        T     max() const;
-        ///< Returns current maximal value.
-        /**< This method returns the maximal value of the current accumulation.*/
-        float avg() const;
-        ///< Returns average value.
-        /**< This method returns the average value of the current accumulation.*/
-        float last_avg() const;
-        ///< Returns former average value.
-        /**< This method returns the average value of the former accumulation period.*/
-        float stddev() const;
-        ///< Returns standard deviation value.
-        /**< This method returns the standard deviation value of the current accumulation.*/
-        boost::uint32_t count() const;
-        ///< Returns count of accumulated values.
-        /**< This method returns count of accumulated values of the current accumulation.*/
-        void data( StatisticsData & data_) const;
-        ///< Returns the accumulated data as a tuple
-        /**< This method returns the accumulated information as a tuple.*/  
-
+        T     min() const;              ///< Returns current minimal value.
+                                        /**< This method returns the minimal value of the
+                                             current accumulation. */
+        T     max() const;              ///< Returns current maximal value.
+                                        /**< This method returns the maximal value of the
+                                             current accumulation.*/
+        float avg() const;              ///< Returns average value.
+                                        /**< This method returns the average value of the
+                                             current accumulation.*/
+        float last_avg() const;         ///< Returns former average value.
+                                        /**< This method returns the average value of the
+                                             former accumulation period.*/
+        float stddev() const;           ///< Returns standard deviation value.
+                                        /**< This method returns the standard deviation
+                                             value of the current accumulation.*/
+        boost::uint32_t count() const;  ///< Returns count of accumulated values.
+                                        /**< This method returns count of accumulated
+                                             values of the current accumulation.*/
+        void data(StatisticsData & data_) const;
+                                        ///< Returns the accumulated data as a tuple
+                                        /**< This method returns the accumulated information
+                                             as a tuple.*/
     private:
         T sum_squared_;
         T sum_;
@@ -118,13 +116,7 @@ namespace senf {
         T max_;
         float last_avg_;
         boost::uint32_t count_;
-
-
     };
-
-
-    typedef StatisticAccumulator<int> StatisticAccumulatorInt;
-    typedef StatisticAccumulator<float> StatisticAccumulatorFloat;
 
 }
 ///////////////////////////////hh.e////////////////////////////////////////

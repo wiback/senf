@@ -48,6 +48,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
+#include <boost/bind.hpp>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Backtrace.hh>
@@ -655,6 +656,13 @@ prefix_ void senf::detail::DaemonWatcher::childOk()
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::detail::DaemonWatcher::Forwarder
+
+prefix_ senf::detail::DaemonWatcher::Forwarder::Target::Target(Forwarder & fwd, int fd_)
+    : fd (fd_), offset (0),
+      writeevent ("senf::detail::DaemonWatcher::Forwarder::Target::writeevent",
+                  boost::bind(&Forwarder::writeData, &fwd, _1, this),
+                  fd, scheduler::FdEvent::EV_WRITE, false)
+{}
 
 prefix_ senf::detail::DaemonWatcher::Forwarder::Forwarder(int src, Callback cb)
     : src_(src), cb_(cb),
