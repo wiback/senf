@@ -41,14 +41,6 @@
 // Interpreter chain access
 
 template <class Type>
-prefix_ bool senf::PacketInterpreterBase::is()
-{
-    // ensure that the template argument is included in the corresponding object file when linking:
-    { static typename PacketInterpreter<Type>::factory_t _ (PacketInterpreter<Type>::factory()); (void) _;}
-    return dynamic_cast< PacketInterpreter<Type>* >(this);
-}
-
-template <class Type>
 prefix_ typename senf::PacketInterpreter<Type>::ptr senf::PacketInterpreterBase::as()
 {
     // ensure that the template argument is included in the corresponding object file when linking:

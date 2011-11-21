@@ -59,7 +59,10 @@ template <class OtherPacket>
 prefix_ bool senf::Packet::is()
     const
 {
-    return valid() && ptr()->is<typename OtherPacket::type>();
+    // ensure that the template class is included in the corresponding object file when linking:
+    { static typename PacketInterpreter<typename OtherPacket::type>::factory_t _ (
+            PacketInterpreter<typename OtherPacket::type>::factory()); (void) _;}
+    return valid() && typeId() == typeIdValue<OtherPacket>();
 }
 
 template <class OtherPacket>

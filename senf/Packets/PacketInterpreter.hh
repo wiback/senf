@@ -153,7 +153,6 @@ namespace senf {
 
         template <class Type> typename PacketInterpreter<Type>::ptr parseNextAs();
                                        ptr                          parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range);
-        template <class Type>          bool                         is();
         template <class Type> typename PacketInterpreter<Type>::ptr as();
 
         ptr append(ptr packet);
