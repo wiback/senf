@@ -249,6 +249,7 @@ SENF_AUTO_UNIT_TEST(packetInterpreter_factory)
             (senf::PacketInterpreter<VoidPacket>::create());
 
         BOOST_CHECK_EQUAL( p->data().size(), 0u);
+        BOOST_CHECK( factory->createAfter(p) );
         BOOST_REQUIRE( p->next() );
         BOOST_CHECK( ! p->next()->next() );
 
