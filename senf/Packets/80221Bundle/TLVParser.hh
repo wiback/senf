@@ -53,7 +53,7 @@ namespace senf {
         static value_type const max_value = 4294967295u;
 
         value_type value() const;
-        void value(value_type const & v);
+        void value(value_type v);
 
         MIHLengthParser const & operator= (value_type other);
         size_type bytes() const;

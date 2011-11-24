@@ -65,6 +65,27 @@ prefix_ OtherPacket senf::Packet::rfind(NoThrow_t)
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ConcretePacket<PacketType>
+
+template <class PacketType>
+template <class OtherPacket>
+prefix_ OtherPacket senf::ConcretePacket<PacketType>::next(NoThrow_t)
+    const
+{
+    PacketInterpreterBase::ptr p (Packet::ptr()->next());
+    if (p)
+        return (p->typeId() == typeIdValue<OtherPacket>()) ?
+                OtherPacket(p->as<typename OtherPacket::type>()) : OtherPacket();
+    PacketInterpreterBase::optional_range r (type::nextPacketRange(*this));
+    if (r && ! r->empty()) {
+        PacketInterpreterBase::ptr nxt (getNext(r));
+        if (nxt && nxt->typeId() == typeIdValue<OtherPacket>())
+            return OtherPacket(nxt->as<typename OtherPacket::type>());
+    }
+    return OtherPacket();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
 

@@ -518,8 +518,8 @@ namespace senf {
 
         PacketInterpreterBase::ptr const & ptr() const;
 
-        Packet parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range) const;
-        Packet getNext(PacketInterpreterBase::optional_range const & range) const;
+        PacketInterpreterBase::ptr parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range) const;
+        PacketInterpreterBase::ptr getNext(PacketInterpreterBase::optional_range const & range) const;
         Packet getLast() const;
 
     private:
@@ -754,7 +754,7 @@ namespace senf {
             Parser p_;
         };
 
-        ParserProxy operator->() const;    ///< Access packet fields
+        ParserProxy operator->() const; ///< Access packet fields
                                         /**< This operator allows to access the parsed fields of the
                                              packet using the notation <tt>packet->field()</tt>. The
                                              fields of the packet are specified by the PacketType's
@@ -777,6 +777,8 @@ namespace senf {
         using Packet::next;
 
         Packet next(NoThrow_t) const;
+        template <class OtherPacket>
+        OtherPacket next(NoThrow_t) const;
 #endif
 
     private:
@@ -788,6 +790,7 @@ namespace senf {
 
         friend class Packet;
         friend class PacketInterpreter<PacketType>;
+        template<class PType> friend class ConcretePacket;
     };
 
     /** \brief Generic parser copying

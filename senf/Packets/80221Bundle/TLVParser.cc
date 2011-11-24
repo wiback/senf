@@ -332,7 +332,7 @@ prefix_ senf::MIHLengthParser::value_type senf::MIHLengthParser::value() const
     };
 }
 
-prefix_ void senf::MIHLengthParser::value(value_type const & v)
+prefix_ void senf::MIHLengthParser::value(value_type v)
 {
     switch (bytes() ) {
     case 1:

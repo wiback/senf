@@ -74,13 +74,10 @@ namespace senf {
     {
         typedef std::map<unsigned, Collector> Children;
 
-        struct Transform {
-            typedef Children::value_type & first_argument_type;
-            typedef Collector & result_type;
-            result_type operator()(first_argument_type i) const;
-        };
-
-        typedef boost::transform_iterator<Transform,Children::iterator> ValueIterator;
+        typedef boost::transform_iterator< ::__gnu_cxx::select2nd<Children::value_type>,
+                Children::iterator > collector_iterator;
+        typedef boost::transform_iterator< ::__gnu_cxx::select2nd<Children::value_type>,
+                Children::const_iterator > collector_const_iterator;
 
         struct OutputEntry;
 
@@ -88,7 +85,8 @@ namespace senf {
         //-////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::iterator_range<ValueIterator> CollectorRange;
+        typedef boost::iterator_range<collector_iterator> CollectorRange;
+        typedef boost::iterator_range<collector_const_iterator> const_CollectorRange;
 
         /** \brief Output connection interface
 
@@ -190,6 +188,10 @@ namespace senf {
         CollectorRange collectors();    ///< List all child collectors
                                         /**< \returns iterator range of child collector
                                              references */
+        const_CollectorRange collectors() const;
+                                        ///< List all child collectors
+                                        /**< \returns const iterator range of child collector
+                                             references */
 
         Collector & collect(unsigned rank); ///< Register a new collector
                                         /**< Adds a collector collecting \a rank values into each
@@ -199,6 +201,11 @@ namespace senf {
                                              \throws DuplicateRankException if a collector
                                                  collecting \a rank values already exists. */
 
+        Statistics const & base() const; ///< Get const base statistics object
+                                        /**< Returns the base statistics object as const reference.
+                                             If this is a child collector, this will return the outermost
+                                             statistics object, otherwise it will return
+                                             \c *this. */
         Statistics & base();            ///< Get base statistics object
                                         /**< Returns the base statistics object. If this is
                                              a child collector, this will return the outermost
@@ -229,10 +236,9 @@ namespace senf {
                                              \param[in] n size of sliding average window */
 
         //\}
-        StatisticsData data();      ///< Get the Statistics data as senf::StatisticsData
-                                    /**< Return a Statistic Data object containing values
-                                         from this instance.
-                                     */
+        StatisticsData data() const;    ///< Get the Statistics data as senf::StatisticsData
+                                        /**< Return a Statistic Data object containing values
+                                             from this instance. */
 
 
         //-////////////////////////////////////////////////////////////////////////
