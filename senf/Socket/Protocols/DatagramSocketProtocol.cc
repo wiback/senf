@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <senf/Utils/ClockTypeMacros.hh>
 
 //#include "DatagramSocketProtocol.mpp"
 #define prefix_
@@ -56,7 +57,7 @@ prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp_s
     // this may reduce the precision, but we only care about +/- 1ms, for now 
     struct timeval tv;
     ::gettimeofday( &tv, NULL);
-    return tv.tv_sec * 1000000000LL + tv.tv_usec * 1000LL;
+    return SENF_INT2CLOCKTYPE(tv.tv_sec * 1000000000LL + tv.tv_usec * 1000LL);
 }
 
 

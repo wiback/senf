@@ -24,6 +24,7 @@
 //
 // Contributor(s):
 //   Stefan Bund <g0dil@berlios.de>
+//   Philipp Batroff <philipp.batroff@fokus.fraunhofer.de>
 
 /** \file
     \brief RestrictedInt public header */
@@ -103,6 +104,30 @@ namespace senf {
 
         bool boolean_test() const
             { return value_; }
+
+        RestrictedInt<Base, Tag> operator*(int i) const
+            { return RestrictedInt<Base, Tag>(value_ * i); }
+
+        RestrictedInt<Base, Tag> operator/(int i) const
+            { return RestrictedInt<Base, Tag>(value_ / i); }
+
+        bool operator>(int i) const
+            { return value_ > i; }
+
+        bool operator>=(int i) const
+            { return value_ >= i; }
+
+        bool operator<(int i) const
+            { return value_ < i; }
+
+        bool operator<=(int i) const
+            { return value_ <= i; }
+
+        bool operator==(int i) const
+            { return value_ == i; }
+
+        bool operator!=(int i) const
+            { return value_ != i; }
 
     private:
         Base value_;

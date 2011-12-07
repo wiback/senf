@@ -135,7 +135,7 @@ namespace senf {
 
         bool readable() const;       ///< Check, whether a read on the handle would not block
                                      ///< (ignoring blocking state)
-        bool waitReadable(senf::ClockService::clock_type timeout = -1) const;
+        bool waitReadable(senf::ClockService::clock_type timeout = senf::ClockService::clock_type(-1)) const;
                                      ///< Wait, until read on the handle would not block (ignoring
                                      ///< blocking state)
                                      /**< \param[in] timeout max time to wait, default is to wait
@@ -144,7 +144,7 @@ namespace senf {
                                               timeout. */
         bool writeable() const;      ///< Check, whether a write on the handle would not block
                                      ///< (ignoring blocking state)
-        bool waitWriteable(senf::ClockService::clock_type timeout = -1) const;
+        bool waitWriteable(senf::ClockService::clock_type timeout = senf::ClockService::clock_type(-1)) const;
                                      ///< Wait, until a write on the handle would not block
                                      ///< (ignoring blocking state)
                                      /**< \param[in] timeout max time to wait, default is to wait
@@ -153,7 +153,7 @@ namespace senf {
                                               timeout. */
         bool oobReadable() const;    ///< Check, whether a read of prioritized data on the handle
                                      ///< would not block (ignoring blocking state)
-        bool waitOOBReadable(senf::ClockService::clock_type timeout = -1) const;
+        bool waitOOBReadable(senf::ClockService::clock_type timeout = senf::ClockService::clock_type(-1)) const;
                                      ///< Wait, until read of prioritized data on the handle does
                                      ///< not block (ignoring blocking state)
                                      /**< \param[in] timeout max time to wait, default is to wait

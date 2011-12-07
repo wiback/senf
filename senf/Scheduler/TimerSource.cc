@@ -37,6 +37,7 @@
 #include TIMERFD_H_PATH
 #endif
 #include "senf/Utils/IgnoreValue.hh"
+#include <senf/Utils/ClockTypeMacros.hh>
 
 //#include "TimerSource.mpp"
 #define prefix_
@@ -93,8 +94,8 @@ senf::scheduler::detail::POSIXTimerSource::timeout(ClockService::clock_type time
 {
     if (! timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
-        if (timeout_ <= 0)
-            timeout_ = 1;
+        if (SENF_CLOCKTYPEVAL(timeout_) <= 0)
+            timeout_ = SENF_INT2CLOCKTYPE(1);
         timeoutEnabled_ = true;
         reschedule();
     }
@@ -203,8 +204,8 @@ senf::scheduler::detail::TimerFDTimerSource::timeout(ClockService::clock_type ti
 {
     if (!timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
-        if (timeout_ <= 0)
-            timeout_ = 1;
+        if (SENF_CLOCKTYPEVAL(timeout_) <= 0)
+            timeout_ = SENF_INT2CLOCKTYPE(1);
         timeoutEnabled_ = true;
         reschedule();
     }

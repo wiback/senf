@@ -40,6 +40,7 @@
 #include <senf/config.hh>
 #include <senf/Utils/singleton.hh>
 #include <senf/Utils/Console/Parse.hh>
+#include <senf/Utils/RestrictedInt.hh>
 
 //#include "ClockService.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,12 +79,17 @@ namespace senf {
             Unsigned integer type representing scheduler time. Scheduler time is measured in
             nanoseconds relative to some implementation defined reference time.
          */
+#ifdef SENF_DEBUG
+        struct ClockTypeTag {};
+        typedef senf::RestrictedInt<config::time_type, ClockTypeTag> clock_type;
+#else
         typedef config::time_type clock_type;
-
+#endif
         /** \brief Supplementary integer type
 
             This type is used to represent varies supplementary values (e.g. number of microseconds)
          */
+
         typedef boost::int_fast64_t int64_type;
 
         /** \brief Absolute time data type

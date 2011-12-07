@@ -71,7 +71,7 @@ SENF_AUTO_UNIT_TEST(activeFeeder)
     senf::ClockService::clock_type start (senf::ClockService::now());
     run( senf::ClockService::seconds(1));
     std::cerr << "\nActiveFeeder: "
-              << (sink.size()*1e9)/(senf::ClockService::now()-start)
+              << (sink.size()*1e9)/ (SENF_CLOCKTYPEVAL(senf::ClockService::now()) - SENF_CLOCKTYPEVAL(start))
               << " packets/s" << std::endl;
     BOOST_CHECK( sink.size() > 0);
 }

@@ -33,6 +33,7 @@
 
 // Custom includes
 #include "EventManager.hh"
+#include <senf/Utils/ClockTypeMacros.hh>
 
 //#include "IntervalTimer.mpp"
 #define prefix_
@@ -60,7 +61,7 @@ prefix_ void senf::ppi::IntervalTimer::v_disable()
 
 prefix_ void senf::ppi::IntervalTimer::schedule()
 {
-    info_.expected = info_.intervalStart + ( interval_ * (info_.number+1) ) / eventsPerInterval_;
+    info_.expected = SENF_INT2CLOCKTYPE(SENF_CLOCKTYPEVAL(info_.intervalStart) + ( SENF_CLOCKTYPEVAL(interval_) * (info_.number+1) ) / eventsPerInterval_);
     timer_.timeout(info_.expected);
 }
 

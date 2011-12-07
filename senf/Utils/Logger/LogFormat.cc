@@ -110,7 +110,7 @@ prefix_ void senf::log::detail::LogFormat::timeFormat(std::string const & format
     timeFormat_ = format;
     if (format.empty()) {
         noformat_ = true;
-        timeBase_ = ClockService::now();
+        timeBase_ = SENF_CLOCKTYPEVAL(ClockService::now());
     } else {
         noformat_ = false;
         std::locale const & loc (datestream_.getloc());
@@ -134,7 +134,7 @@ prefix_ std::string senf::log::detail::LogFormat::prefix(time_type timestamp,
                         << std::setw(9) << (delta % 1000000000ll);
         }
         else
-            datestream_ << senf::ClockService::abstime(timestamp);
+            datestream_ << senf::ClockService::abstime(SENF_INT2CLOCKTYPE(timestamp));
         datestream_ << ' ';
     }
     if (!tag_.empty())

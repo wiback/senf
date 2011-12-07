@@ -51,7 +51,7 @@ prefix_ senf::log::TimeSource::~TimeSource()
 prefix_ senf::log::time_type senf::log::SystemTimeSource::operator()()
     const
 {
-    return senf::ClockService::now();
+    return SENF_CLOCKTYPEVAL(senf::ClockService::now());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -34,7 +34,7 @@
 // Custom includes
 #include <boost/regex.hpp>
 #include <senf/Utils/Console/Traits.hh>
-
+#include <senf/Utils/ClockTypeMacros.hh>
 //#include "ClockService.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ prefix_ void
 senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & tokens,
                                 ClockService::clock_type & out)
 {
-    out = 0;
+    out = senf::ClockService::clock_type(0);
     std::string value;
     {
         console::CheckedArgumentIteratorWrapper arg (tokens);

@@ -83,7 +83,7 @@ prefix_ bool senf::FileBody::waitReadable(senf::ClockService::clock_type timeout
     const
 {
     return pollCheck(fd(), true,
-                     (timeout==-1?-1:senf::ClockService::in_milliseconds(timeout)) );
+                     (timeout==senf::ClockService::clock_type(-1)?-1:senf::ClockService::in_milliseconds(timeout)) );
 }
 
 prefix_ bool senf::FileBody::writeable()
@@ -96,7 +96,7 @@ prefix_ bool senf::FileBody::waitWriteable(senf::ClockService::clock_type timeou
     const
 {
     return pollCheck(fd(), false,
-                     (timeout==-1?-1:senf::ClockService::in_milliseconds(timeout)) );
+                     (timeout==senf::ClockService::clock_type(-1)?-1:senf::ClockService::in_milliseconds(timeout)) );
 }
 
 prefix_ bool senf::FileBody::oobReadable()
@@ -109,7 +109,7 @@ prefix_ bool senf::FileBody::waitOOBReadable(senf::ClockService::clock_type time
     const
 {
     return pollCheck(fd(), true,
-                     (timeout==-1?-1:senf::ClockService::in_milliseconds(timeout)), true);
+                     (timeout==senf::ClockService::clock_type(-1)?-1:senf::ClockService::in_milliseconds(timeout)), true);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

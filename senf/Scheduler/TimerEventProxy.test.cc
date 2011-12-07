@@ -75,7 +75,7 @@ SENF_AUTO_UNIT_TEST(timerEventProxy)
         timers.add( now + ClockService::milliseconds(200), 1, &handler);
         BOOST_CHECK( timers.remove( 4));
         BOOST_CHECK(! timers.remove( 4));
-        BOOST_CHECK_EQUAL( timers.timeout(4), 0);
+        BOOST_CHECK_EQUAL( timers.timeout(4), SENF_INT2CLOCKTYPE(0));
         timers.add( now + ClockService::milliseconds(700), 2, &handler);
 
         BOOST_CHECK_EQUAL( timers.timeout(1), now + ClockService::milliseconds(200));

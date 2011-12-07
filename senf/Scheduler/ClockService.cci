@@ -32,6 +32,7 @@
 #include <time.h>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/ClockTypeMacros.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +45,7 @@ prefix_ senf::ClockService::clock_type senf::ClockService::now()
     struct timespec spec;
     if (clock_gettime(CLOCK_MONOTONIC, &spec) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("clock_gettime()");
-    return spec.tv_sec * 1000000000LL + spec.tv_nsec;
+    return SENF_INT2CLOCKTYPE(spec.tv_sec * 1000000000LL + spec.tv_nsec);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ namespace senf { namespace scheduler { ClockService::clock_type now(); } }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type time)
 {
-    if (scheduler::now() - baseClock_ > 1000000000ll)
+    if (scheduler::now() - baseClock_ > clock_type(1000000000ll))
         restart_m();
     boost::posix_time::time_duration delta (time - baseAbstime_);
     return baseClock_ + clock_type( delta.ticks() )
@@ -65,12 +66,12 @@ prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_typ
 {
     if (clock == 0)
         return abstime_type();
-    if (scheduler::now() - baseClock_ > 1000000000ll)
+    if (scheduler::now() - baseClock_ > clock_type(1000000000ll))
         restart_m();
 #ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
     return baseAbstime_ + boost::posix_time::nanoseconds(clock-baseClock_);
 #else
-    return baseAbstime_ + boost::posix_time::microseconds((clock-baseClock_+500)/1000);
+    return baseAbstime_ + boost::posix_time::microseconds((clock.value() - baseClock_.value() + 500 )/1000);
 #endif
 }
 
@@ -97,7 +98,7 @@ prefix_ senf::ClockService::reltime_type senf::ClockService::reltime(clock_type 
 #ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
     return boost::posix_time::nanoseconds(clock);
 #else
-    return  boost::posix_time::microseconds((clock+500)/1000);
+    return  boost::posix_time::microseconds((clock.value() + 500)/1000);
 #endif
 }
 
@@ -113,72 +114,72 @@ prefix_ senf::ClockService::clock_type senf::ClockService::from_time_t(time_t co
 
 prefix_ senf::ClockService::clock_type senf::ClockService::nanoseconds(int64_type v)
 {
-    return v;
+    return SENF_INT2CLOCKTYPE(v);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::microseconds(int64_type v)
 {
-    return v * nanoseconds(1000);
+    return SENF_INT2CLOCKTYPE(v * SENF_CLOCKTYPEVAL(nanoseconds(1000)));
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::milliseconds(int64_type v)
 {
-    return v * microseconds(1000);
+    return SENF_INT2CLOCKTYPE(v * SENF_CLOCKTYPEVAL(microseconds(1000)));
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::seconds(int64_type v)
 {
-    return v * milliseconds(1000);
+    return SENF_INT2CLOCKTYPE(v * SENF_CLOCKTYPEVAL(milliseconds(1000)));
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::minutes(int64_type v)
 {
-    return v * seconds(60);
+    return SENF_INT2CLOCKTYPE(v * SENF_CLOCKTYPEVAL(seconds(60)));
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::hours(int64_type v)
 {
-    return v * minutes(60);
+    return SENF_INT2CLOCKTYPE(v * SENF_CLOCKTYPEVAL(minutes(60)));
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::days(int64_type v)
 {
-    return v * hours(24);
+    return SENF_INT2CLOCKTYPE(v * SENF_CLOCKTYPEVAL(hours(24)));
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::in_nanoseconds(int64_type v)
+prefix_ senf::ClockService::int64_type senf::ClockService::in_nanoseconds(clock_type v)
 {
-    return v;
+    return SENF_CLOCKTYPEVAL(v);
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::in_microseconds(int64_type v)
+prefix_ senf::ClockService::int64_type senf::ClockService::in_microseconds(clock_type v)
 {
-    return v / nanoseconds(1000);
+    return (SENF_CLOCKTYPEVAL(v) / SENF_CLOCKTYPEVAL(nanoseconds(1000)));
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::in_milliseconds(int64_type v)
+prefix_ senf::ClockService::int64_type senf::ClockService::in_milliseconds(clock_type v)
 {
-    return v / microseconds(1000);
+    return (SENF_CLOCKTYPEVAL(v) / SENF_CLOCKTYPEVAL(microseconds(1000)));
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::in_seconds(int64_type v)
+prefix_ senf::ClockService::int64_type senf::ClockService::in_seconds(clock_type v)
 {
-    return v / milliseconds(1000);
+    return (SENF_CLOCKTYPEVAL(v) / SENF_CLOCKTYPEVAL(milliseconds(1000)));
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::in_minutes(int64_type v)
+prefix_ senf::ClockService::int64_type senf::ClockService::in_minutes(clock_type v)
 {
-    return v / seconds(60);
+    return (SENF_CLOCKTYPEVAL(v) / SENF_CLOCKTYPEVAL(seconds(60)));
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::in_hours(int64_type v)
+prefix_ senf::ClockService::int64_type senf::ClockService::in_hours(clock_type v)
 {
-    return v / minutes(60);
+    return (SENF_CLOCKTYPEVAL(v) / SENF_CLOCKTYPEVAL(minutes(60))) ;
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::in_days(int64_type v)
+prefix_ senf::ClockService::int64_type senf::ClockService::in_days(clock_type v)
 {
-    return v / hours(24);
+    return (SENF_CLOCKTYPEVAL(v) / SENF_CLOCKTYPEVAL(hours(24))) ;
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::from_timeval(timeval const & time)
