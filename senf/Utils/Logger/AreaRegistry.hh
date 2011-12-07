@@ -91,7 +91,7 @@ namespace log {
         Registry registry_;
 
         friend class senf::singleton<AreaRegistry>;
-        friend class detail::AreaBase;
+        friend struct detail::AreaBase;
         friend class Target;
     };
 

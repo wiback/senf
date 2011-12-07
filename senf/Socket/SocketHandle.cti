@@ -164,7 +164,7 @@ prefix_ bool senf::check_socket_cast(Source handle)
     // for two reasons:
     // a) since the handle is passed back by value, we cannot return
     //    something like a null handle
-    // b) it is simpler to implement cast_dynamic throwig bad_cast on
+    // b) it is simpler to implement cast_dynamic throwing bad_cast on
     //    failure than implementing cast_check
     try {
         Target::cast_dynamic(handle);

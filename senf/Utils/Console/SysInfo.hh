@@ -46,11 +46,11 @@ namespace console {
         friend class singleton<SysInfo>;
         using singleton<SysInfo>::instance;
 
-        void addEntry(std::string const & descr, unsigned pos=-1);
+        void addEntry(std::string const & descr, int pos=-1);
         void dump(std::ostream & os) const;
 
         struct Proxy {
-            Proxy(std::string const & descr, unsigned pos=-1);
+            Proxy(std::string const & descr, int pos=-1);
         };
 
     private:

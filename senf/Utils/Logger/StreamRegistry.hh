@@ -84,7 +84,7 @@ namespace log {
         Registry registry_;
 
         friend class senf::singleton<StreamRegistry>;
-        friend class detail::StreamBase;
+        friend struct detail::StreamBase;
         friend class Target;
     };
 

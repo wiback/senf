@@ -388,7 +388,7 @@ namespace senf {
         PacketData * data_;
 
         template <class Parser> friend class SafePacketParserWrapper;
-        friend class ParserProtector;
+        friend struct ParserProtector;
     };
 
     /** \brief Return raw size parsed by the given parser object
@@ -408,8 +408,8 @@ namespace senf {
     template <class Parser>
     PacketParserBase::size_type bytes(Parser const & p);
 
-    namespace detail { template <class Parser> class ParserInitBytes; }
-    namespace detail { template <class Parser> class ParserIsFixed; }
+    namespace detail { template <class Parser> struct ParserInitBytes; }
+    namespace detail { template <class Parser> struct ParserIsFixed; }
 
     /** \brief Return number of bytes to allocate to new object of given type
 

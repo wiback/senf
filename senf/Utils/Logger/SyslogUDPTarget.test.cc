@@ -55,16 +55,6 @@ namespace {
         return 23456u + (((base_pid^(base_pid>>8)^(base_pid>>16)^(base_pid>>24))&0xff)<<2) + i;
     }
 
-    std::string localhost4str(unsigned i)
-    {
-        return (boost::format("localhost:%d") % port(i)).str();
-    }
-
-    std::string localhost6str(unsigned i)
-    {
-        return (boost::format("[::1]:%d") % port(i)).str();
-    }
-
 }
 
 SENF_AUTO_UNIT_TEST(syslogUDPTarget)

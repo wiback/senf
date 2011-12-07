@@ -71,10 +71,6 @@ namespace {
         return (boost::format("localhost:%d") % port(i)).str();
     }
 
-    std::string localhost6str(unsigned i)
-    {
-        return (boost::format("[::1]:%d") % port(i)).str();
-    }
 }
 
 SENF_AUTO_UNIT_TEST(socketSource)

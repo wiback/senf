@@ -53,7 +53,7 @@ namespace detail {
         : public singleton<FIFORunner>
     {
     public:
-        struct TaskInfo;
+        class TaskInfo;
 
     private:
         struct TaskListTag;

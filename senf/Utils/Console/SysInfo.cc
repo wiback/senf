@@ -39,7 +39,7 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ senf::console::SysInfo::Proxy::Proxy(std::string const & descr, unsigned pos)
+prefix_ senf::console::SysInfo::Proxy::Proxy(std::string const & descr, int pos)
 {
     SysInfo::instance().addEntry( descr, pos);
 }
@@ -49,7 +49,7 @@ prefix_ senf::console::SysInfo::SysInfo()
     sysdir().add("info", factory::Command(&SysInfo::dump, this));
 }
 
-prefix_ void senf::console::SysInfo::addEntry(std::string const & descr, unsigned pos)
+prefix_ void senf::console::SysInfo::addEntry(std::string const & descr, int pos)
 {
     if (pos < 0)
         descr_.push_back( descr);

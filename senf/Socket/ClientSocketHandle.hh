@@ -181,12 +181,14 @@ namespace senf {
             \c recv.
         */
         std::string  read         (unsigned limit=0);
-        template <class ForwardWritableRange>
+
 #       ifndef DOXYGEN
-        typename boost::range_iterator<ForwardWritableRange>::type
-                     read         (ForwardWritableRange const & range,
-                                   typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type * = 0);
+        template <class ForwardWritableRange>
+        typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned>,
+        typename boost::range_iterator<ForwardWritableRange>::type>::type
+        read(ForwardWritableRange const & range);
 #       else
+        template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
                      read         (ForwardWritableRange const & range);
                                         ///< Read data into range
@@ -204,9 +206,9 @@ namespace senf {
 #       endif
 #       ifndef DOXYGEN
         template <class ForwardWritableRange>
-        typename boost::range_iterator<ForwardWritableRange>::type
-                     read         (ForwardWritableRange & range,
-                                   typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type * = 0);
+        typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned>,
+        typename boost::range_iterator<ForwardWritableRange>::type>::type
+        read(ForwardWritableRange & range);
 #       else
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type

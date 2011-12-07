@@ -78,7 +78,7 @@ namespace packet {
 
 namespace test {
 
-    class TestDriver;
+    struct TestDriver;
 
 }}}}
 

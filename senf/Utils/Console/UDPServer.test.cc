@@ -62,11 +62,6 @@ namespace {
         return (boost::format("localhost:%d") % port(i)).str();
     }
 
-    std::string localhost6str(unsigned i)
-    {
-        return (boost::format("[::1]:%d") % port(i)).str();
-    }
-
     unsigned nread (0);
     unsigned flags (0);
     std::string data;

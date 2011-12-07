@@ -54,7 +54,7 @@
 namespace senf {
 namespace console {
 
-    namespace detail { class ArgumentInfoBase; }
+    namespace detail { struct ArgumentInfoBase; }
 
     /** \brief CommandOverload implementation with automatic argument parsing
 
@@ -552,7 +552,7 @@ namespace console {
         template <class O, unsigned i, bool f>
         friend class ParsedArgumentAttributor;
 
-        friend class detail::ParsedCommandAddNodeAccess;
+        friend struct detail::ParsedCommandAddNodeAccess;
     };
 
 #ifndef DOXYGEN
@@ -573,7 +573,7 @@ namespace console {
         template <class O, unsigned i, bool f>
         friend class ParsedArgumentAttributor;
 
-        friend class detail::ParsedCommandAddNodeAccess;
+        friend struct detail::ParsedCommandAddNodeAccess;
     };
 
 #endif

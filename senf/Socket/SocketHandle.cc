@@ -72,16 +72,6 @@ prefix_ bool senf::SocketBody::v_eof()
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::detail::StateMapOrdering
 
-namespace {
-    bool contains(std::string::const_iterator b, std::string::const_iterator e, char c)
-    {
-        for (; b != e; ++b)
-            if (*b == c)
-                return true;
-        return false;
-    }
-}
-
 prefix_ std::string senf::detail::dumpState(SocketStateMap const & map)
 {
     std::stringstream s;

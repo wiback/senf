@@ -29,61 +29,18 @@
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
-#include <sys/wait.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "RawINetSocketHandle.hh"
-#include <iostream>
+#include "net.test.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
-namespace {
-
-    void error(char const * fn, char const * proc="")
-    {
-        std::cerr << "\n" << proc << ((*proc)?": ":"") << fn << ": " << strerror(errno) << std::endl;
-    }
-
-    void fail(char const * proc, char const * fn)
-    {
-        error(fn,proc);
-        _exit(1);
-    }
-
-    int server_pid = 0;
-
-    void start(void (*fn)())
-    {
-        server_pid = ::fork();
-        if (server_pid < 0) BOOST_FAIL("fork()");
-        if (server_pid == 0) {
-            (*fn)();
-            _exit(0);
-        }
-    }
-
-    void wait()
-    {
-        int status;
-        if (waitpid(server_pid,&status,0)<0)
-            BOOST_FAIL("waitpid()");
-        BOOST_CHECK_EQUAL( status , 0 );
-    }
-
-    void stop()
-    {
-        if (server_pid) {
-            kill(server_pid,9);
-            wait();
-            server_pid = 0;
-        }
-    }
-
-}
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+using namespace senf::test;
 
 namespace {
 

@@ -58,7 +58,7 @@ namespace senf {
 
         SENF_PARSER_FINALIZE ( RadiotapPacketParser_Flags );
 
-        friend class RadiotapPacketParser;
+        friend struct RadiotapPacketParser;
     };
 
     /** \brief Parse in Radiotap Header channel frequency and flag field
@@ -300,7 +300,7 @@ namespace senf {
         static OffsetMap offsetMap_;
         OffsetTable const * currentTable_;
 
-        friend class RadiotapPacketType;
+        friend struct RadiotapPacketType;
     };
 
     /** \brief Radiotap packet

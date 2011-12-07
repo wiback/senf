@@ -101,11 +101,13 @@ env.Append(
                                '--param','large-function-growth=10000',
                                '--param', 'large-function-insns=10000',
                                '--param','inline-unit-growth=10000' ],
-    INLINE_OPTS_NORMAL     = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
-    INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
+    INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
+    INLINE_OPTS            = [ '${str(CXX).split("/")[-1] == "g++" and "$INLINE_OPTS_GCC" or None}' ],
+    CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration' ], # needed for BOOST_PARAMETER_KEYWORD
     CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
                                '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
-                               "${profile and '-pg' or None}" ],
+                               "${profile and '-pg' or None}",
+                               '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
     CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics','-fno-stack-protector',
                                "${profile and ' ' or '-ffunction-sections'}" ],
     CXXFLAGS_normal        = [ '-O2', '-g' ],
@@ -183,7 +185,7 @@ SConscript('SConfigure')
 
 env.Append(LIBS = [ '$LIBSENF$LIBADDSUFFIX',
                     '$BOOSTREGEXLIB', '$BOOSTSIGNALSLIB',
-                    '$BOOSTFSLIB', '$BOOSTSYSTEMLIB' ])
+                    '$BOOSTFSLIB', '$BOOSTSYSTEMLIB', '$BOOSTDATETIMELIB' ])
 
 ###########################################################################
 

@@ -47,7 +47,11 @@
 namespace senf {
 
     template <class PacketType> class PacketInterpreter;
+    
+    void intrusive_ptr_add_ref(PacketInterpreterBase const * p);
+    void intrusive_ptr_release(PacketInterpreterBase const * p);
 
+    
     /** \brief Internal: Base packet interpreter class
 
         \internal
@@ -232,15 +236,12 @@ namespace senf {
         friend class detail::PacketImpl;
         friend class intrusive_refcount_base;
         template <class PacketType> friend class PacketInterpreter;
-        friend class detail::packet::test::TestDriver;
+        friend struct detail::packet::test::TestDriver;
         friend class PacketParserBase;
 
         friend void senf::intrusive_ptr_add_ref(PacketInterpreterBase const *);
         friend void senf::intrusive_ptr_release(PacketInterpreterBase const *);
     };
-
-    void intrusive_ptr_add_ref(PacketInterpreterBase const * p);
-    void intrusive_ptr_release(PacketInterpreterBase const * p);
 
     /** \brief Internal: Concrete packet interpreter
 
@@ -401,9 +402,9 @@ namespace senf {
 
         static const FactoryImpl factory_;
 
-        friend class detail::packet::test::TestDriver;
+        friend struct detail::packet::test::TestDriver;
         friend class PacketInterpreterBase;
-        friend class FactoryImpl;
+        friend struct FactoryImpl;
     };
 
     /** \brief Invalid packet chain operation

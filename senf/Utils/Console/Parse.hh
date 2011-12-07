@@ -211,7 +211,7 @@
 namespace senf {
 namespace console {
 
-    namespace detail { class FilePositionWithIndex; }
+    namespace detail { struct FilePositionWithIndex; }
 
     namespace detail { struct ParserAccess; }
 
@@ -656,7 +656,7 @@ namespace console {
 
         boost::scoped_ptr<Impl> impl_;
 
-        friend class SetIncremental;
+        friend struct SetIncremental;
     };
 
 }}

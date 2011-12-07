@@ -50,7 +50,7 @@ prefix_ senf::VectorParser<ElementParser,AuxPolicy>::VectorParser(AuxPolicy poli
 {}
 
 template <class ElementParser, class AuxPolicy>
-prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::size_type
+prefix_ senf::PacketInterpreterBase::size_type
 senf::VectorParser<ElementParser,AuxPolicy>::bytes()
     const
 {
@@ -60,11 +60,11 @@ senf::VectorParser<ElementParser,AuxPolicy>::bytes()
 // Container interface
 
 template <class ElementParser, class AuxPolicy>
-prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::size_type
+prefix_ senf::PacketInterpreterBase::size_type
 senf::VectorParser<ElementParser,AuxPolicy>::size()
     const
 {
-    return aux(i(),state());
+    return AuxPolicy::aux(i(),state());
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -79,7 +79,7 @@ prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::iterator
 senf::VectorParser<ElementParser,AuxPolicy>::begin()
     const
 {
-    return iterator(adjust(i(),state()),state());
+    return iterator(AuxPolicy::adjust(i(),state()),state());
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -191,7 +191,7 @@ prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::size_typ
 senf::VectorParser_Container<ElementParser,AuxPolicy>::size()
     const
 {
-    return aux(i(),state());
+    return AuxPolicy::WrapperPolicy::aux(i(),state());
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -206,7 +206,7 @@ prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::iterator
 senf::VectorParser_Container<ElementParser,AuxPolicy>::begin()
     const
 {
-    return iterator(adjust(i(),state()),state());
+    return iterator( AuxPolicy::WrapperPolicy::adjust(i(),state()),state());
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -347,7 +347,7 @@ senf::VectorParser_Container<ElementParser,AuxPolicy>::bytes()
 template <class ElementParser, class AuxPolicy>
 prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::setSize(size_type value)
 {
-    aux(value, i(),state());
+    AuxPolicy::WrapperPolicy::aux(value, i(),state());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

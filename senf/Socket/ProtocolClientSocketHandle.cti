@@ -85,10 +85,10 @@ template <class SocketProtocol>
 prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>
 senf::ProtocolClientSocketHandle<SocketProtocol>::cast_dynamic(FileHandle handle)
 {
-    ClientSocketHandle<typename SocketProtocol::Policy> h(
+    ClientSocketHandle<typename SocketProtocol::Policy> h (
         ClientSocketHandle<typename SocketProtocol::Policy>::cast_dynamic(handle));
     // throw std::bad_cast if the protocol is invalid
-    dynamic_cast<SocketProtocol const &>(static_cast<SocketBody&>(FileHandle::body(h)).protocol());
+    IGNORE( dynamic_cast<SocketProtocol const &>(static_cast<SocketBody&>(FileHandle::body(h)).protocol()) );
     return cast_static(handle);
 }
 

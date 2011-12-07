@@ -56,7 +56,7 @@ namespace senf {
 namespace log {
 
     namespace detail { class TargetRegistry; }
-    namespace detail { class AreaBase; }
+    namespace detail { struct AreaBase; }
     namespace detail { struct LogParameters; }
     namespace detail { struct StreamBase; }
 
@@ -409,7 +409,7 @@ namespace log {
 
         console::LazyDirectory consoleDir_;
 
-        friend class detail::AreaBase;
+        friend struct detail::AreaBase;
         friend class detail::TargetRegistry;
     };
 

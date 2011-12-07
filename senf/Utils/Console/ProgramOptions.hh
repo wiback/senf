@@ -77,7 +77,7 @@ namespace console {
         ///\name Structors and default members
         //\{
 
-        ProgramOptions(int argc, char const ** argv, DirectoryNode & root = root());
+        ProgramOptions(int argc, char const ** argv, DirectoryNode & root = senf::console::root());
                                         ///< Create ProgramOptions parser for given options
                                         /**< The given argc/argv values are those passed to main by
                                              the operating system. Especially argv[0] is \e not an
@@ -118,7 +118,7 @@ namespace console {
 
         \related ProgramOptions
      */
-    void parseOptions(int argc, char const ** argv, DirectoryNode & root = root());
+    void parseOptions(int argc, char const ** argv, DirectoryNode & root = senf::console::root());
 
     /** \brief ConfigBundle source reading command line options
 

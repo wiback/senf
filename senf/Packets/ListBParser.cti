@@ -155,9 +155,9 @@ update(container_type const & c)
     data_iterator i (AuxPolicy::WrapperPolicy::adjust(c.i(), c.state()));
     data_iterator j (i);
     for (size_type n (n_); n; --n, std::advance(j,senf::bytes(ElementParser(j,c.state())))) ;
-    aux( std::distance(i,j), c.i(), c.state() );
+    AuxPolicy::WrapperPolicy::aux( std::distance(i,j), c.i(), c.state() );
 #else
-    aux ( aux(c.i(),c.state()) + c.data().size() - container_size_, c.i(), c.state() );
+    AuxPolicy::WrapperPolicy::aux( aux(c.i(),c.state()) + c.data().size() - container_size_, c.i(), c.state() );
 #endif
     container_size_ = c.data().size();
 }
@@ -177,7 +177,7 @@ senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
 setEnd(container_type const & c, iterator_data & d)
     const
 {
-    return boost::next(AuxPolicy::WrapperPolicy::adjust(c.i(), c.state()),aux(c.i(),c.state()));
+    return boost::next(AuxPolicy::WrapperPolicy::adjust(c.i(), c.state()),AuxPolicy::WrapperPolicy::aux(c.i(),c.state()));
 }
 
 template <class ElementParser, class AuxPolicy>

@@ -343,7 +343,7 @@ namespace module {
         RouteInfoBase routes_;
 
         template <class Source, class Target>
-        friend class detail::RouteHelper;
+        friend struct detail::RouteHelper;
         friend class senf::ppi::ModuleManager;
         friend class connector::Connector;
         friend class senf::ppi::detail::EventBindingBase;

@@ -103,7 +103,7 @@ namespace senf {
         UInt32Parser crc() const { return parse<UInt32Parser>( data().size()-4 ); }
         boost::uint32_t calcCrc() const;
 
-        friend class MPESectionType;
+        friend struct MPESectionType;
 
     private:
         typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;

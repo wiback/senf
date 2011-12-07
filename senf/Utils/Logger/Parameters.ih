@@ -50,16 +50,16 @@
 namespace senf {
 namespace log {
 
-    class DefaultArea;
-    class Debug;
-    class NONE;
+    struct DefaultArea;
+    struct Debug;
+    struct NONE;
 
 namespace detail {
 
-    class StreamBase;
-    class AreaBase;
-    class LevelBase;
-    class AliasBase;
+    struct StreamBase;
+    struct AreaBase;
+    struct LevelBase;
+    struct AliasBase;
 
     /// Internal: Parameter extractor
     template <class Base, class Param, unsigned N>

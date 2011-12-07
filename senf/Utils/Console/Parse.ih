@@ -126,12 +126,30 @@ namespace detail {
         //-/////////////////////////////////////////////////////////////////////////////////////////
         // charachter sets
 
-        static boost_spirit::chset<> special_p;
-        static boost_spirit::chset<> punctuation_p;
-        static boost_spirit::chset<> space_p;
-        static boost_spirit::chset<> invalid_p;
-        static boost_spirit::chset<> word_p;
-        static boost_spirit::distinct_parser<> keyword_p;
+        static boost_spirit::chset<> & special_p() {
+            static boost_spirit::chset<> p ("/(){};\"");
+            return p;
+        }
+        static boost_spirit::chset<> & punctuation_p() {
+            static boost_spirit::chset<> p (",=");
+            return p;
+        }
+        static boost_spirit::chset<> & space_p() {
+            static boost_spirit::chset<> p (" \t\n\r");
+            return p;
+        }
+        static boost_spirit::chset<> & invalid_p() {
+            static boost_spirit::chset<> p ((boost_spirit::chset<>('\0') | boost_spirit::chset<>("\x01-\x20")) - space_p() );
+            return p;
+        }
+        static boost_spirit::chset<> & word_p() {
+            static boost_spirit::chset<> p (boost_spirit::anychar_p - special_p() - punctuation_p() - space_p() - invalid_p());
+            return p;
+        }
+        static boost_spirit::distinct_parser<> & keyword_p() {
+            static boost_spirit::distinct_parser<> p (word_p() | boost_spirit::ch_p('/'));
+            return p;
+        }
 
         //-/////////////////////////////////////////////////////////////////////////////////////////
         // Errors
@@ -234,20 +252,20 @@ namespace detail {
                     ;
 
                 builtin
-                    =    self.keyword_p("cd")
+                    =    self.keyword_p()("cd")
                       >> path_expected(path)
                       >> eps_p                    [ bind(&PD::builtin_cd)(d_, path_) ]
-                    |    self.keyword_p("ls")
+                    |    self.keyword_p()("ls")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_ls)(d_, path_) ]
-                    |    self.keyword_p("ll")
+                    |    self.keyword_p()("ll")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_ll)(d_, path_) ]
-                    |    self.keyword_p("lr")
+                    |    self.keyword_p()("lr")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_lr)(d_, path_) ]
-                    |    self.keyword_p("exit")   [ bind(&PD::builtin_exit)(d_) ]
-                    |    self.keyword_p("help")
+                    |    self.keyword_p()("exit")   [ bind(&PD::builtin_exit)(d_) ]
+                    |    self.keyword_p()("help")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_help)(d_, path_) ]
                     ;
@@ -361,7 +379,7 @@ namespace detail {
                          | ch_p(';')                [ token_ = construct_<Token>(
                                                           Token::CommandTerminator,
                                                           ";") ]
-                         | self.punctuation_p       [ token_ = construct_<Token>(
+                         | self.punctuation_p()     [ token_ = construct_<Token>(
                                                           Token::OtherPunctuation,
                                                           construct_<std::string>(1u, arg1),
                                                           pos_) ]
@@ -372,7 +390,7 @@ namespace detail {
                     =    eps_p                    [ pos_ = positionOf(arg1) ]
                       >> lexeme_d
                          [
-                             (+ self.word_p)      [ str_ = construct_<std::string>(arg1, arg2) ]
+                             (+ self.word_p())    [ str_ = construct_<std::string>(arg1, arg2) ]
                          ]
                       >> eps_p                    [ token_ = construct_<Token>(
                                                         Token::Word,
@@ -401,12 +419,12 @@ namespace detail {
                     ;
 
                 skip
-                    =    self.space_p | comment_p('#')
+                    =    self.space_p() | comment_p('#')
                     ;
 
                 //-/////////////////////////////////////////////////////////////////////////////////
 
-                start_parsers(
+                this->start_parsers(
                     command,            // CommandParser
                     skip,               // SkipParser
                     arguments,          // ArgumentsParser
@@ -434,19 +452,6 @@ namespace detail {
             }
         };
     };
-
-    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::special_p (
-        "/(){};\"");
-    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::punctuation_p (
-        ",=");
-    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::space_p (
-        " \t\n\r");
-    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::invalid_p (
-        (boost_spirit::chset<>('\0') | boost_spirit::chset<>("\x01-\x20")) - space_p );
-    template <class PD> boost_spirit::chset<> CommandGrammar<PD>::word_p (
-        boost_spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p);
-    template <class PD> boost_spirit::distinct_parser<> CommandGrammar<PD>::keyword_p (
-        word_p | boost_spirit::ch_p('/'));
 
 #endif
 

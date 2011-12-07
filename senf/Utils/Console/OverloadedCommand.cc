@@ -120,7 +120,7 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
                     for (; k != k_end; ++k)
                         if (k->name == arg.name && k->defaultValue == arg.defaultValue) {
                             if (! arg.doc.empty() && k->doc.empty()) {
-                                k->doc == arg.doc;
+                                k->doc = arg.doc;
                                 haveDocumentedArg = true;
                             }
                             break;

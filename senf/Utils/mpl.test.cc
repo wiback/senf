@@ -91,7 +91,7 @@ namespace {
 
 #   define Begin() SENF_MPL_SLOT_DEF(accum, 0)
 #   define Add(n) SENF_MPL_SLOT_SET(accum, SENF_MPL_SLOT_GET(accum)+n)
-#   define End() BOOST_STATIC_CONSTANT(unsigned, total = SENF_MPL_SLOT_GET(accum))
+#   define End() BOOST_STATIC_CONSTANT(unsigned long, total = SENF_MPL_SLOT_GET(accum))
 
     struct Test
     {

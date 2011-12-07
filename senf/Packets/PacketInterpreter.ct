@@ -180,7 +180,7 @@ senf::PacketInterpreter<PacketType>::createInsertBefore(PacketInterpreterBase::p
 // virtual interface
 
 template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::optional_range
+prefix_ senf::PacketInterpreterBase::optional_range
 senf::PacketInterpreter<PacketType>::v_nextPacketRange()
 {
     return type::nextPacketRange(ConcretePacket<PacketType>(ptr(this)));
@@ -223,14 +223,14 @@ prefix_ senf::TypeIdValue senf::PacketInterpreter<PacketType>::v_type()
 }
 
 template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::factory_t
+prefix_ senf::PacketInterpreterBase::factory_t
 senf::PacketInterpreter<PacketType>::v_factory()
 {
     return factory();
 }
 
 template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::factory_t
+prefix_ senf::PacketInterpreterBase::factory_t
 senf::PacketInterpreter<PacketType>::v_nextPacketType()
 {
     return type::nextPacketType(ConcretePacket<PacketType>(ptr(this)));

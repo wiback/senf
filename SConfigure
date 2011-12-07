@@ -14,7 +14,7 @@ def CheckSTLCopyN(context):
                  ('<ext/algorithm>', '__gnu_cxx::copy_n', 'GNUCXX') ]
     for include, name, define in versions:
         ret = context.TryCompile("#include %s\n"
-                                 "int main(int,char**) { int *a,*b; %s(a,0,b); }\n"
+                                 "int main(int,char**) { int *a (NULL); int *b (NULL); %s(a,0,b); }\n"
                                  % (include, name),
                                  ".cc")
         if ret:

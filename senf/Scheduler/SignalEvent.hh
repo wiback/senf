@@ -51,7 +51,7 @@ namespace scheduler {
         typedef boost::intrusive::iset_base_hook<SignalSetTag> SignalSetBase;
         struct SignalSetCompare;
         struct FindNumericSignal;
-        struct SignalDispatcher;
+        class SignalDispatcher;
     }
 
     /** \brief UNIX signal event
@@ -108,8 +108,8 @@ namespace scheduler {
         Callback cb_;
         siginfo_t siginfo_;
 
-        friend class detail::SignalSetCompare;
-        friend class detail::FindNumericSignal;
+        friend struct detail::SignalSetCompare;
+        friend struct detail::FindNumericSignal;
         friend class detail::SignalDispatcher;
     };
 

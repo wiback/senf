@@ -47,13 +47,13 @@
 namespace {
 
     unsigned calls (0u);
-    float ppss[] = { 13.333333f, 20.f, 13.333333f, 20.f, 13.333333f, 20.f };
 
     float pps;
     float bps;
 
     void collectPPS(float packetsPerSecond)
     {
+        static float ppss[] = { 13.333333f, 20.f, 13.333333f, 20.f, 13.333333f, 20.f };
         // 2 + 3 + 2 + 3 + 2 + 3 packets / interval
         // -> 13.333333 + 20. + 13.333333 + 20. + 13.333333 + 20. / 6 pps
         // -> 16.666666 pps

@@ -107,7 +107,7 @@ namespace ppi {
 
 #ifndef DOXYGEN
         struct RunGuard;
-        friend class RunGuard;
+        friend struct RunGuard;
 #endif
 
         ModuleRegistry moduleRegistry_;
@@ -121,7 +121,7 @@ namespace ppi {
         senf::console::ScopedDirectory<> consoleDir_;
 
         friend class module::Module;
-        friend class Initializable;
+        friend struct Initializable;
     };
 
 }}

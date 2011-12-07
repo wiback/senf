@@ -131,7 +131,7 @@ namespace scheduler {
         ClockService::clock_type timeout_;
 
         friend class detail::TimerDispatcher;
-        friend class detail::TimerSetCompare;
+        friend struct detail::TimerSetCompare;
     };
 
 }}

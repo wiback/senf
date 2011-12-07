@@ -45,7 +45,7 @@
 
 namespace senf {
 
-    class EUI64;
+    struct EUI64;
 
     /** \brief Ethernet MAC address
 

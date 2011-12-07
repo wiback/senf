@@ -117,21 +117,21 @@ namespace {
         tm.timeout(randomDelay());
     }
 
-    void preCb()
-    {
-        haveCb = false;
-    }
-
-    void postCb()
-    {
-        if (! haveCb)
-            std::cerr << senf::scheduler::now() << '\n';
-    }
-
-    void idleCb(senf::scheduler::TimerEvent & tm)
-    {
-        tm.timeout( senf::scheduler::now());
-    }
+//    void preCb()
+//    {
+//        haveCb = false;
+//    }
+//
+//    void postCb()
+//    {
+//        if (! haveCb)
+//            std::cerr << senf::scheduler::now() << '\n';
+//    }
+//
+//    void idleCb(senf::scheduler::TimerEvent & tm)
+//    {
+//        tm.timeout( senf::scheduler::now());
+//    }
 
     void jitterTest()
     {

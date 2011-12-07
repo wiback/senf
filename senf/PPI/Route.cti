@@ -163,8 +163,8 @@ senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
 ForwardingRouteImplementation(module::Module & module, Source & source, Target & target)
     : Base(module,source,target)
 {
-    registerRoute(source);
-    registerRoute(target);
+    Base::registerRoute(source);
+    Base::registerRoute(target);
 }
 
 template <class Source, class Target>
@@ -172,8 +172,8 @@ prefix_
 senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
 ~ForwardingRouteImplementation()
 {
-    unregisterRoute(this->source());
-    unregisterRoute(this->target());
+    Base::unregisterRoute(this->source());
+    Base::unregisterRoute(this->target());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -155,7 +155,7 @@ namespace detail {
         template <BOOST_PP_CAT(name, _chooser_value_type) (*KeyFn)()>                             \
         struct BOOST_PP_CAT(name, _key_value_template)                                            \
             : public senf::detail::VariantKey<BOOST_PP_CAT(name, _chooser_value_type), KeyFn> {}; \
-        template <class T, T (*K)()> friend class senf::detail::VariantKey;                       \
+        template <class T, T (*K)()> friend struct senf::detail::VariantKey;                       \
         typedef senf::detail::VariantKeyTransform<                                                \
             BOOST_PP_CAT(name,_chooser_value_type),                                               \
             boost::mpl::vector<                                                                   \

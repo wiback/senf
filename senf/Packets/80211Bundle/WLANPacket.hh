@@ -255,7 +255,7 @@ namespace senf
         MACAddressParser destinationAddress() const;
         MACAddressParser bssid() const;
 
-        friend class WLANPacket_DataFrameType;
+        friend struct WLANPacket_DataFrameType;
     };
 
     /** \brief WLAN Data frame packet

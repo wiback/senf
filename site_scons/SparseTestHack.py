@@ -81,7 +81,7 @@ def setup(env):
     env['BUILDERS']['BoostUnitTest'] = AutoObjectBoostUnitTest
     env['_UNIT_TEST_LIST'] = []
     env.Append(EXTRA_LIBS = [ '$BOOSTREGEXLIB', '$BOOSTSIGNALSLIB',
-                       '$BOOSTFSLIB', '$BOOSTSYSTEMLIB' ])
+                       '$BOOSTFSLIB', '$BOOSTSYSTEMLIB', '$BOOSTDATETIMELIB' ])
 
 # This needs to be called after all build targets have been set
 # up. This is important since the list of object targets needs to be

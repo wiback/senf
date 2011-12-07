@@ -40,6 +40,12 @@
 namespace senf {
 
     template <class Self> class intrusive_refcount_t;
+    
+    template <class Self>
+    void intrusive_ptr_add_ref(intrusive_refcount_t<Self> const * p);
+    template <class Self>
+    void intrusive_ptr_release(intrusive_refcount_t<Self> const * p);
+    
 
     /** \brief Reference count mixin interface baseclass
 
@@ -161,11 +167,6 @@ namespace senf {
     protected:
         intrusive_refcount();
     };
-
-    template <class Self>
-    void intrusive_ptr_add_ref(intrusive_refcount_t<Self> const * p);
-    template <class Self>
-    void intrusive_ptr_release(intrusive_refcount_t<Self> const * p);
 
 }
 

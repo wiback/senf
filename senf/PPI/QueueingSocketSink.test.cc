@@ -138,7 +138,7 @@ SENF_AUTO_UNIT_TEST(passiveQueueingSocketSink)
         BOOST_CHECK_EQUAL( data, input );
     }
 
-    runPPI( senf::ClockService::milliseconds(250));
+    runPPI( senf::ClockService::milliseconds(500));
     BOOST_CHECK_EQUAL( udpSink.qAlgorithm().size(), 0);
 }
 

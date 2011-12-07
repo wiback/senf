@@ -98,11 +98,11 @@ namespace detail {
 
 #define SENF_LOG_PREDECL_long(seq)                                                                \
     BOOST_PP_SEQ_FOLD_RIGHT( SENF_LOG_PREDECL_,                                                   \
-                             class SENF_PP_SEQ_BACK(seq);,                                        \
+                             struct SENF_PP_SEQ_BACK(seq);,                                        \
                              BOOST_PP_SEQ_POP_BACK(seq) )
 
 #define SENF_LOG_PREDECL_short(seq)                                                               \
-   BOOST_PP_IF( SENF_LOG_IS_NA( SENF_PP_SEQ_BACK(seq) ), ; , class SENF_PP_SEQ_BACK(seq); )
+   BOOST_PP_IF( SENF_LOG_IS_NA( SENF_PP_SEQ_BACK(seq) ), ; , struct SENF_PP_SEQ_BACK(seq); )
 
 #define SENF_LOG_PREDECL(seq)                                                                     \
     BOOST_PP_CAT(SENF_LOG_PREDECL_,                                                               \

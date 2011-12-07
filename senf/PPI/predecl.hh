@@ -74,7 +74,7 @@ namespace ppi {
     namespace module {
         class Module;
         namespace detail {
-            template <class Source, class Target> class RouteHelper;
+            template <class Source, class Target> struct RouteHelper;
         }
         class PassiveJoin;
         class PriorityJoin;

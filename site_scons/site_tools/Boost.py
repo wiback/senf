@@ -212,6 +212,7 @@ def generate(env):
         BOOSTFSLIB        = 'boost_filesystem$_BOOST_VARIANT',
         BOOSTIOSTREAMSLIB = 'boost_iostreams$_BOOST_VARIANT',
         BOOSTSIGNALSLIB   = 'boost_signals$_BOOST_VARIANT',
+        BOOSTDATETIMELIB  = 'boost_date_time$_BOOST_VARIANT',
         
         _BOOSTSYSTEMLIB   = '${HAS_BOOST_SYSTEM and "boost_system" or ""}',
         BOOSTSYSTEMLIB    = '$_BOOSTSYSTEMLIB',

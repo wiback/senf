@@ -42,7 +42,7 @@ template <class ElementParser, class AuxPolicy>
 prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::init()
     const
 {
-    aux(0, i(), state());
+    AuxPolicy::aux(0, i(), state());
     iterator i (begin());
     iterator const e (end());
     for (; i!=e; ++i)

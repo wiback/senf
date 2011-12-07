@@ -43,7 +43,7 @@ struct ifreq;
 
 namespace senf {
 
-    class MACAddress;
+    struct MACAddress;
 
 
     /** \brief Netdevice Controller

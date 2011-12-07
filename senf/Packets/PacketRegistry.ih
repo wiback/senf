@@ -120,7 +120,7 @@ namespace detail {
                         std::greater<int> > >,
                 boost::multi_index::ordered_unique<
                     boost::multi_index::tag<ByType>,
-                    boost::multi_index::mem_fun<Entry const,std::type_info const &,&Entry::type>,
+                    boost::multi_index::const_mem_fun<Entry,std::type_info const &,&Entry::type>,
                     TypeInfoCompare> >
         {};
 

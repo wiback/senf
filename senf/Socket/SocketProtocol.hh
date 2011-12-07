@@ -99,7 +99,7 @@ namespace senf {
     /// \addtogroup protocol_group
     //\{
 
-    class SocketPolicyBase;
+    struct SocketPolicyBase;
 
     /** \brief Socket Protocol base class
 

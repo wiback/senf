@@ -149,14 +149,6 @@ namespace {
     std::ostream & operator<<(std::ostream & os, ComplexEmptyAnnotation const & v)
     { os << "(empty)"; return os; }
 
-    struct InvalidAnnotation
-    {
-        std::string value;
-    };
-
-    std::ostream & operator<<(std::ostream & os, InvalidAnnotation const & v)
-    { os << v.value; return os; }
-
 }
 
 SENF_AUTO_UNIT_TEST(packet)
@@ -388,6 +380,16 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
 
 #ifdef COMPILE_CHECK
 
+namespace {
+    struct InvalidAnnotation
+    {
+        std::string value;
+    };
+
+    std::ostream & operator<<(std::ostream & os, InvalidAnnotation const & v)
+    { os << v.value; return os; }
+}
+    
 COMPILE_FAIL(invalidAnnotation)
 {
 #if 0 // The traits check fails for user defined but trivial constructors so ...

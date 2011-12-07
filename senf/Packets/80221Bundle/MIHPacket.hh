@@ -85,7 +85,7 @@ namespace senf {
             version_() = 1;
         }
 
-        friend class MIHPacketType;
+        friend struct MIHPacketType;
     };
 
     /** \brief MIH packet

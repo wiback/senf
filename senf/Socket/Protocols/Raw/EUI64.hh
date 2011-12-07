@@ -43,7 +43,7 @@
 
 namespace senf {
 
-    class MACAddress;
+    struct MACAddress;
 
     /** \brief EUI-64 data type
 
@@ -78,21 +78,15 @@ namespace senf {
 
         \ingroup addr_group
      */
-    class EUI64
+    struct EUI64
         : public boost::array<boost::uint8_t,8>,
           public senf::comparable_safe_bool<EUI64>
     {
-    public:
         //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         //\{
 
         static EUI64 const None;        ///< The empty (0) address
-
-        // default copy constructor
-        // default copy assignment
-        // default destructor
-        // no conversion constructors
 
         explicit EUI64(boost::uint64_t v=0u); ///< Construct EUI-64
         explicit EUI64(senf::NoInit_t);       ///< Construct <em>uninitialized</em> EUI-64

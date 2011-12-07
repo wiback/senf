@@ -70,7 +70,7 @@ namespace console {
         ///\name Structors and default members
         //\{
 
-        explicit ConfigFile(std::string const & filename, DirectoryNode & root = root());
+        explicit ConfigFile(std::string const & filename, DirectoryNode & root = senf::console::root());
                                         ///< Create ConfigFile object for \a filename
                                         /**< The \a filename configuration file will be parsed using
                                              parse() calls. All configuration statements will be
@@ -94,7 +94,7 @@ namespace console {
 
         \related ConfigFile
      */
-    void parseFile(std::string const & filename, DirectoryNode & root = root());
+    void parseFile(std::string const & filename, DirectoryNode & root = senf::console::root());
 
     /** \brief ConfigBundle source reading a configuration file
 

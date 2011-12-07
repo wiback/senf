@@ -170,7 +170,7 @@ namespace scheduler {
         int events_;
         int signaledEvents_;
 
-        friend class detail::FdSetCompare;
+        friend struct detail::FdSetCompare;
         friend class detail::FdDispatcher;
         friend class detail::FileDispatcher;
     };

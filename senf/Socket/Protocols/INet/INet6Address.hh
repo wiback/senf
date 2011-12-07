@@ -48,8 +48,8 @@
 
 namespace senf {
 
-    class EUI64;
-    class MACAddress;
+    struct EUI64;
+    struct MACAddress;
     class INet6Network;
 
     /** \brief INet6 network address

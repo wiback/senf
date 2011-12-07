@@ -87,7 +87,7 @@ prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const
     //typename boost::range_difference<ForwardReadableRange>::type rangeSize ( boost::size(range));
     unsigned rangeSize ( boost::size(range));
     if ( rangeSize != this->length() )
-        resize( bytes(), rangeSize + senf::bytes(self()) );
+        Base::resize( bytes(), rangeSize + senf::bytes(self()) );
     std::copy( boost::begin(range), boost::end(range), boost::next(
             this->i(), senf::bytes( self())) );
     this->length_() = rangeSize;

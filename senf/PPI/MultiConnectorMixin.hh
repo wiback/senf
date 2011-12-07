@@ -95,7 +95,7 @@ namespace ppi {
 
 namespace module {
 
-    namespace detail { class MultiConnectorMixinAccess; }
+    namespace detail { struct MultiConnectorMixinAccess; }
 
     /** \brief Multi-Connector management
 
@@ -287,7 +287,7 @@ namespace module {
 
         void disconnected(ConnectorType_ const & c);
 
-        friend class detail::MultiConnectorMixinAccess;
+        friend struct detail::MultiConnectorMixinAccess;
         friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
 
         ContainerType_ connectors_;
@@ -324,7 +324,7 @@ namespace module {
 
         void disconnected(ConnectorType_ const & c);
 
-        friend class detail::MultiConnectorMixinAccess;
+        friend struct detail::MultiConnectorMixinAccess;
         friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
 
         ContainerType_ connectors_;
@@ -350,7 +350,7 @@ namespace module {
 
         void disconnected(ConnectorType_ const & c);
 
-        friend class detail::MultiConnectorMixinAccess;
+        friend struct detail::MultiConnectorMixinAccess;
         friend class detail::MultiConnectorWrapper<Self_,ConnectorType_>;
     };
 

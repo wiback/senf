@@ -67,7 +67,7 @@ namespace detail {
 
     private:
         friend class boost::iterator_core_access;
-        template <class P> friend class ListParser_Container;
+        friend class ListParser_Container<typename Container::policy>;
 
         value_type dereference() const;
         bool equal(ListParser_Iterator const & other) const;

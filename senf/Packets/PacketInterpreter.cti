@@ -59,7 +59,7 @@ prefix_ Annotation & senf::PacketInterpreterBase::annotation()
 // senf::PacketInterpreter<PacketType>
 
 template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::factory_t
+prefix_ senf::PacketInterpreterBase::factory_t
 senf::PacketInterpreter<PacketType>::factory()
 {
     return & factory_;
@@ -177,14 +177,14 @@ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl
 // PacketType access
 
 template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::size_type
+prefix_ senf::PacketInterpreterBase::size_type
 senf::PacketInterpreter<PacketType>::initSize()
 {
     return type::initSize();
 }
 
 template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::size_type
+prefix_ senf::PacketInterpreterBase::size_type
 senf::PacketInterpreter<PacketType>::initHeadSize()
 {
     size_type sz (type::initHeadSize());

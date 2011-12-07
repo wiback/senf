@@ -47,7 +47,7 @@ namespace log {
 
 namespace detail {
 
-    class StreamBase;
+    struct StreamBase;
 
     /** \brief Internal: Area base class */
     struct AreaBase

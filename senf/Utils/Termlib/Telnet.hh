@@ -332,7 +332,7 @@ namespace term {
         ClockService::clock_type requestTimeout_;
         scheduler::TimerEvent timeout_;
 
-        friend class TelnetHandler;
+        friend struct TelnetHandler;
     };
 
     /** \brief Telnet handler base class

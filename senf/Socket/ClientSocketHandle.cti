@@ -156,12 +156,12 @@ senf::ClientSocketHandle<SPolicy>::operator=(ClientSocketHandle<OtherPolicy> oth
 // senf::ClientSocketHandle<SPolicy>::read
 
 #ifndef DOXYGEN
+
 template <class SPolicy>
 template <class ForwardWritableRange>
-prefix_ typename boost::range_iterator<ForwardWritableRange>::type
-senf::ClientSocketHandle<SPolicy>::
-read(ForwardWritableRange const & range,
-     typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type *)
+prefix_ typename boost::disable_if<boost::is_convertible<ForwardWritableRange,unsigned>,
+typename boost::range_iterator<ForwardWritableRange>::type>::type
+senf::ClientSocketHandle<SPolicy>::read(ForwardWritableRange const & range)
 {
     return detail::ReadRange<
         ClientSocketHandle<SPolicy>,
@@ -183,10 +183,9 @@ read(ForwardWritableRange const & range)
 #ifndef DOXYGEN
 template <class SPolicy>
 template <class ForwardWritableRange>
-prefix_ typename boost::range_iterator<ForwardWritableRange>::type
-senf::ClientSocketHandle<SPolicy>::
-read(ForwardWritableRange & range,
-     typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type *)
+prefix_ typename boost::disable_if<boost::is_convertible<ForwardWritableRange,unsigned>,
+typename boost::range_iterator<ForwardWritableRange>::type>::type
+senf::ClientSocketHandle<SPolicy>::read(ForwardWritableRange & range)
 {
     return detail::ReadRange<
         ClientSocketHandle<SPolicy>,

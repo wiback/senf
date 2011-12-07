@@ -43,7 +43,7 @@ prefix_ void senf::VariantParser<AuxPolicy,Parsers>::init()
     size_type oldSize( bytes() );
     typedef typename boost::mpl::at<parsers, boost::mpl::int_<N> >::type NewParser;
 
-    if (oldSize < senf::init_bytes<NewParser>::value) {
+    if (oldSize <= senf::init_bytes<NewParser>::value) {
         data_iterator j (i());
         std::advance(j, oldSize);
         std::fill(i(), j, 0u);

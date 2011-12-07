@@ -48,7 +48,7 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
+using namespace senf::test;
 
 namespace {
 
@@ -75,28 +75,28 @@ namespace {
         if (close(sock) < 0) fail("server_v4","close()");
     }
 
-    void server_v6()
-    {
-        int sock = socket(PF_INET6,SOCK_DGRAM,0);
-        if (sock<0) fail("server_v6","socket()");
-        struct sockaddr_in6 sin;
-        ::memset(&sin,0,sizeof(sin));
-        sin.sin6_family = AF_INET6;
-        sin.sin6_port = htons(port(0));
-        sin.sin6_addr = in6addr_loopback;
-        if (bind(sock,(struct sockaddr *)&sin,sizeof(sin))<0) fail("server_v6","bind()");
-
-        sin.sin6_port = htons(port(1));
-        char buffer[1024];
-        while (1) {
-            int n = read(sock,buffer,1024);
-            if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
-                break;
-            sendto(sock,buffer,n,0,(struct sockaddr *)&sin,sizeof(sin));
-        }
-
-        if (close(sock) < 0) fail("server_v6","close()");
-    }
+//    void server_v6()
+//    {
+//        int sock = socket(PF_INET6,SOCK_DGRAM,0);
+//        if (sock<0) fail("server_v6","socket()");
+//        struct sockaddr_in6 sin;
+//        ::memset(&sin,0,sizeof(sin));
+//        sin.sin6_family = AF_INET6;
+//        sin.sin6_port = htons(port(0));
+//        sin.sin6_addr = in6addr_loopback;
+//        if (bind(sock,(struct sockaddr *)&sin,sizeof(sin))<0) fail("server_v6","bind()");
+//
+//        sin.sin6_port = htons(port(1));
+//        char buffer[1024];
+//        while (1) {
+//            int n = read(sock,buffer,1024);
+//            if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
+//                break;
+//            sendto(sock,buffer,n,0,(struct sockaddr *)&sin,sizeof(sin));
+//        }
+//
+//        if (close(sock) < 0) fail("server_v6","close()");
+//    }
 
 }
 
