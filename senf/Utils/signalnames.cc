@@ -29,12 +29,9 @@
     \brief signalnames non-inline non-template implementation */
 
 #include "signalnames.hh"
-//#include "signalnames.ih"
 
 // Custom includes
-#include <boost/format.hpp>
 
-//#include "signalnames.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +51,6 @@ prefix_ std::string const & senf::signalName(int signal)
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "signalnames.mpp"
 
 
 // Local Variables:

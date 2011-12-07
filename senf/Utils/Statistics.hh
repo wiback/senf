@@ -74,6 +74,7 @@ namespace senf {
     {
         typedef std::map<unsigned, Collector> Children;
 
+        // why we can't use ::__gnu_cxx::select2nd instead?!?!
         struct Transform {
             typedef Children::value_type & first_argument_type;
             typedef Collector & result_type;
@@ -229,10 +230,9 @@ namespace senf {
                                              \param[in] n size of sliding average window */
 
         //\}
-        StatisticsData data();      ///< Get the Statistics data as senf::StatisticsData
-                                    /**< Return a Statistic Data object containing values
-                                         from this instance.
-                                     */
+        StatisticsData data() const;    ///< Get the Statistics data as senf::StatisticsData
+                                        /**< Return a Statistic Data object containing values
+                                             from this instance. */
 
 
         //-////////////////////////////////////////////////////////////////////////
@@ -491,7 +491,7 @@ namespace senf {
 
         StatisticsBase::OutputProxy<Statistics> output(unsigned n = 1u);
 
-        void consoleList(std::ostream & os);
+        void consoleList(std::ostream & os) const;
         void consoleCollect(std::vector<unsigned> & ranks);
         boost::shared_ptr<senf::console::DirectoryNode> consoleOutput(
             std::vector<unsigned> & ranks, unsigned window);

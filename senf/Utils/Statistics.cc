@@ -233,6 +233,7 @@ prefix_ senf::Statistics::Statistics()
 }
 
 prefix_ void senf::Statistics::consoleList(std::ostream & os)
+    const
 {
     os << "RANK        WIN       MIN          AVG                   MAX\n";
     StatisticsBase::consoleList(0, os);

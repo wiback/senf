@@ -143,6 +143,7 @@ prefix_ std::string senf::StatisticsBase::path()
 }
 
 prefix_ senf::StatisticsData senf::StatisticsBase::data()
+    const
 {
     return StatisticsData(min_, avg_, max_, dev_, 0);
 }
@@ -184,7 +185,7 @@ prefix_ void senf::Statistics::operator()(float min, float avg, float max, float
 
 prefix_ void senf::Statistics::operator()(StatisticsData const & data)
 {
-  enter(1, data.min, data.avg, data.max, data.stddev);
+    enter(1, data.min, data.avg, data.max, data.stddev);
 }
 
 prefix_ void senf::Statistics::operator()(float value, float dev)
