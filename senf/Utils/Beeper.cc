@@ -44,7 +44,7 @@
 // senf::Beeper
 
 prefix_ senf::Beeper::Beeper(std::string const & device)
-    : timer_( "senf::Beeper::timer", boost::bind(&Beeper::timeout, this), SENF_INT2CLOCKTYPE(0), false)
+    : timer_( "senf::Beeper::timer", boost::bind(&Beeper::timeout, this), ClockService::clock_type(0), false)
 {
     if ((fd_ = ::open(device.c_str(), O_WRONLY)) == -1) {
         SENF_THROW_SYSTEM_EXCEPTION("Could not open device for Beeper.");

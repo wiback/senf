@@ -105,41 +105,48 @@ namespace senf {
         bool boolean_test() const
             { return value_; }
 
-        RestrictedInt<Base, Tag> operator*(int i) const
-            { return RestrictedInt<Base, Tag>(value_ * i); }
-
-        RestrictedInt<Base, Tag> operator/(int i) const
-            { return RestrictedInt<Base, Tag>(value_ / i); }
-
-        bool operator>(int i) const
-            { return value_ > i; }
-
-        bool operator>=(int i) const
-            { return value_ >= i; }
-
-        bool operator<(int i) const
-            { return value_ < i; }
-
-        bool operator<=(int i) const
-            { return value_ <= i; }
-
-        bool operator==(int i) const
-            { return value_ == i; }
-
-        bool operator!=(int i) const
-            { return value_ != i; }
-
     private:
         Base value_;
     };
 
+
+    template <class Base, class Tag, typename OtherType>
+    RestrictedInt<Base, Tag> operator*(OtherType a, RestrictedInt<Base,Tag> b)
+    {
+        return RestrictedInt<Base, Tag>( a * b.value());
+    }
+
+    template <class Base, class Tag, typename OtherType>
+    RestrictedInt<Base, Tag> operator*(RestrictedInt<Base,Tag> a, OtherType b)
+    {
+        return RestrictedInt<Base, Tag>( a.value() * b);
+    }
+
+    template <class Base, class Tag, typename OtherType>
+    RestrictedInt<Base, Tag> operator/(OtherType a, RestrictedInt<Base,Tag> b)
+    {
+        return RestrictedInt<Base, Tag>( a / b.value());
+    }
+
+    template <class Base, class Tag, typename OtherType>
+    RestrictedInt<Base, Tag> operator/(RestrictedInt<Base,Tag> a, OtherType b)
+    {
+        return RestrictedInt<Base, Tag>( a.value() / b);
+    }
+
     template <class Base, class Tag>
     std::ostream & operator<<(std::ostream & os, RestrictedInt<Base, Tag> value)
-        { os << value.value(); return os; }
+    {
+        os << value.value();
+        return os;
+    }
 
     template <class Base, class Tag>
     std::istream & operator>>(std::istream & is, RestrictedInt<Base, Tag> & value)
-        { Base v; is >> v; value = RestrictedInt<Base,Tag>(v); return is; }
+    {
+        Base v; is >> v; value = RestrictedInt<Base,Tag>(v);
+        return is;
+    }
 
 }
 

@@ -89,7 +89,6 @@ namespace senf {
 
             This type is used to represent varies supplementary values (e.g. number of microseconds)
          */
-
         typedef boost::int_fast64_t int64_type;
 
         /** \brief Absolute time data type

@@ -37,7 +37,6 @@
 #include TIMERFD_H_PATH
 #endif
 #include "senf/Utils/IgnoreValue.hh"
-#include <senf/Utils/ClockTypeMacros.hh>
 
 //#include "TimerSource.mpp"
 #define prefix_
@@ -94,8 +93,8 @@ senf::scheduler::detail::POSIXTimerSource::timeout(ClockService::clock_type time
 {
     if (! timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
-        if (SENF_CLOCKTYPEVAL(timeout_) <= 0)
-            timeout_ = SENF_INT2CLOCKTYPE(1);
+        if (timeout_ <= ClockService::clock_type(0))
+            timeout_ = ClockService::clock_type(1);
         timeoutEnabled_ = true;
         reschedule();
     }
@@ -185,7 +184,7 @@ prefix_ void senf::scheduler::detail::PollTimerSource::disable()
 
 #ifdef HAVE_TIMERFD_CREATE
 prefix_ senf::scheduler::detail::TimerFDTimerSource::TimerFDTimerSource()
-    : timerfd_ (-1), timeoutEnabled_ (false), timeout_ (0)
+    : timerfd_ (-1), timeoutEnabled_ (false), timeout_(0)
 {
     timerfd_ = timerfd_create(CLOCK_MONOTONIC, 0);
     if (timerfd_ < 0)
@@ -204,8 +203,8 @@ senf::scheduler::detail::TimerFDTimerSource::timeout(ClockService::clock_type ti
 {
     if (!timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
-        if (SENF_CLOCKTYPEVAL(timeout_) <= 0)
-            timeout_ = SENF_INT2CLOCKTYPE(1);
+        if (timeout_ <= ClockService::clock_type(0))
+            timeout_ = ClockService::clock_type(1);
         timeoutEnabled_ = true;
         reschedule();
     }

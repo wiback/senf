@@ -44,14 +44,16 @@ namespace module = ppi::module;
 namespace debug = module::debug;
 
 namespace {
-    void timeout() {
-        senf::scheduler::terminate();
+    void runPPI(senf::ClockService::clock_type t) {
+        senf::scheduler::TimerEvent timeout(
+                "emulatedDvbInterface test timer", &senf::scheduler::terminate, senf::scheduler::now() + t);
+        senf::ppi::run();
     }
 }
 
 SENF_AUTO_UNIT_TEST(rateFilter)
 {
-    module::RateFilter rateFilter ( senf::ClockService::milliseconds(100) );
+    module::RateFilter rateFilter ( senf::ClockService::milliseconds(200) );
     debug::PassiveSource source;
     debug::PassiveSink sink;
 
@@ -63,13 +65,9 @@ SENF_AUTO_UNIT_TEST(rateFilter)
     for (int i=0; i<10; i++)
         source.submit(p);
 
-    senf::scheduler::TimerEvent timer (
-        "rateFilter test timer", &timeout,
-        senf::ClockService::now() + senf::ClockService::milliseconds(250));
+    runPPI( senf::ClockService::milliseconds(500));
 
-    senf::ppi::run();
-
-    BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(100) );
+    BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(200) );
     BOOST_CHECK_EQUAL( sink.size(), 2u );
 }
 
@@ -104,16 +102,12 @@ SENF_AUTO_UNIT_TEST(rateFilter_changeInterval)
     for (int i=0; i<10; i++)
         source.submit(p);
 
-    senf::scheduler::TimerEvent timeoutTimer (
-        "rateFilter test timer", &timeout,
-        senf::ClockService::now() + senf::ClockService::milliseconds(675));
-
     RateFilter_IntervalChanger intervalChanger (rateFilter);
     senf::scheduler::TimerEvent timer ( "RateFilter_IntervalChanger timer",
         senf::membind(&RateFilter_IntervalChanger::changeInterval, intervalChanger),
         senf::ClockService::now() + senf::ClockService::milliseconds(250));
 
-    senf::ppi::run();
+    runPPI( senf::ClockService::milliseconds(675));
 
     BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(200) );
     if (enabled)

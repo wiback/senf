@@ -40,7 +40,7 @@ prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string co
     : entrySetById( entrySet.template get<Id>()),
       entrySetByTimeout( entrySet.template get<Timeout> ()),
       timer( "TimerEventProxy " + description,
-              membind(&TimerEventProxy<IdType>::timerEvent, this), SENF_INT2CLOCKTYPE(0), false)
+              membind(&TimerEventProxy<IdType>::timerEvent, this), ClockService::clock_type(0), false)
 { }
 
 template<typename IdType>
@@ -93,7 +93,7 @@ prefix_ senf::ClockService::clock_type senf::scheduler::TimerEventProxy<IdType>:
     const
 {
     typename EntrySetById_t::const_iterator i ( entrySetById.find( id));
-    return i == entrySetById.end() ? SENF_INT2CLOCKTYPE(0) : i->timeout;
+    return i == entrySetById.end() ? ClockService::clock_type(0) : i->timeout;
 }
 
 

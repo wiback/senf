@@ -107,6 +107,8 @@ SENF_AUTO_UNIT_TEST(clockService)
                                (t1 + senf::ClockService::milliseconds(200))
                                (senf::ClockService::now())
                                (senf::ClockService::milliseconds(100)) );
+
+    BOOST_CHECK_EQUAL( senf::ClockService::seconds(1),  senf::ClockService::milliseconds(1000) );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

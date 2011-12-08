@@ -105,14 +105,14 @@ namespace {
     }
 
     unsigned count (0);
-    senf::ClockService::clock_type delay (0);
+    senf::ClockService::int64_type delay (0);
     bool haveCb (false);
 
     void jitterCb(senf::scheduler::TimerEvent & tm)
     {
         //std::cerr << "diff:" << senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout()) << '\n';
         count ++;
-        delay += SENF_INT2CLOCKTYPE(senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout()));
+        delay += senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout());
         haveCb = true;
         tm.timeout(randomDelay());
     }
@@ -136,7 +136,7 @@ namespace {
     void jitterTest()
     {
         count = 0;
-        delay = senf::ClockService::clock_type(0);
+        delay = 0;
 //        senf::scheduler::EventHook pre ("jitterTest::preCb", &preCb,
 //                                        senf::scheduler::EventHook::PRE);
 //        senf::scheduler::EventHook post ("jitterTest::postCb", &postCb,
@@ -158,7 +158,7 @@ namespace {
 
         senf::scheduler::process();
 
-        std::cerr << "Average scheduling delay: " << SENF_CLOCKTYPEVAL(delay)/count << " microseconds\n";
+        std::cerr << "Average scheduling delay: " << delay/count << " microseconds\n";
     }
 
 }

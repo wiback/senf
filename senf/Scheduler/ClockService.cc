@@ -34,8 +34,7 @@
 // Custom includes
 #include <boost/regex.hpp>
 #include <senf/Utils/Console/Traits.hh>
-#include <senf/Utils/ClockTypeMacros.hh>
-//#include "ClockService.mpp"
+
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
