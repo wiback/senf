@@ -137,7 +137,7 @@ int main(int argc, char * argv[])
         senf::INet4SocketAddress("localhost:44345"));
 
     module::ActiveSocketSource<>  udpSource ( inputSocket );
-    RateStuffer                   stuffer   ( 1000000000ul,
+    RateStuffer                   stuffer   ( senf::ClockService::seconds(1),
                                               senf::DataPacket::create(std::string("<idle>\n")),
                                               2u, 1u );
     module::PassiveSocketSink<>   udpSink   ( outputSocket );
