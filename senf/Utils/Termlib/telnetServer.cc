@@ -49,6 +49,7 @@ namespace {
     class MyTelnet
         : public senf::term::TelnetTerminal
     {
+        SENF_LOG_CLASS_AREA();
     public:
         explicit MyTelnet(Handle handle)
             : senf::term::BaseTelnetProtocol (handle),
