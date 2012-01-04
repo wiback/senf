@@ -47,11 +47,11 @@
 namespace senf {
 
     template <class PacketType> class PacketInterpreter;
-    
+
     void intrusive_ptr_add_ref(PacketInterpreterBase const * p);
     void intrusive_ptr_release(PacketInterpreterBase const * p);
 
-    
+
     /** \brief Internal: Base packet interpreter class
 
         \internal
@@ -190,6 +190,7 @@ namespace senf {
         void finalizeThis();
         void finalizeTo(ptr other);
         void dump(std::ostream & os);
+        void memDebug(std::ostream & os);
         TypeIdValue typeId();
         factory_t factory();
         factory_t nextPacketType();
@@ -206,10 +207,13 @@ namespace senf {
         ptr appendClone(detail::PacketImpl * impl, iterator base, iterator new_base);
         ptr appendClone(detail::PacketImpl * impl, range r);
 
+        PacketInterpreterBase * nextP();
+        PacketInterpreterBase * prevP();
+
     public:
-        // Need this for g++ < 4.0. Since PacketInterpreter is not publicly visible, it should not
+        // Need this public for g++ < 4.0. Since PacketInterpreter is not publicly visible, it should not
         // be a real problem to make impl() public here
-        using PacketData::impl;
+        detail::PacketImpl & impl() const;
 
     private:
         // abstract packet type interface
@@ -255,8 +259,8 @@ namespace senf {
       */
     template <class PacketType>
     class PacketInterpreter
-        : public PacketInterpreterBase,
-          public pool_alloc_mixin< PacketInterpreter<PacketType> >
+        : public PacketInterpreterBase //,
+    //          public pool_alloc_mixin< PacketInterpreter<PacketType> >
     {
     public:
         //-////////////////////////////////////////////////////////////////////////

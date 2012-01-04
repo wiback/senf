@@ -62,7 +62,7 @@ prefix_ bool senf::Packet::is()
     // ensure that the template class is included in the corresponding object file when linking:
     { static typename PacketInterpreter<typename OtherPacket::type>::factory_t _ (
             PacketInterpreter<typename OtherPacket::type>::factory()); (void) _;}
-    return valid() && typeId() == typeIdValue<OtherPacket>();
+    return (*this) && typeId() == typeIdValue<OtherPacket>();
 }
 
 template <class OtherPacket>
@@ -72,7 +72,7 @@ prefix_ OtherPacket senf::Packet::as()
     if (!is<OtherPacket>())
         throw WrapException<std::bad_cast>(std::bad_cast())
             << ": called packet::as() with wrong PacketType: "
-            << (valid() ? typeId().prettyName() : "invalid packet")
+            << ((*this) ? typeId().prettyName() : "invalid packet")
             << " != " << prettyName(typeid(OtherPacket));
     return OtherPacket(ptr()->as<typename OtherPacket::type>());
 }

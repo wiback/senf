@@ -132,7 +132,9 @@ namespace detail {
         AnnotationRegistry();
 
         key_type simpleAnnotationCount_;
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
         key_type complexAnnotationCount_;
+#endif
 
         Registry registry_;
         // The index is needed to ensure a persistent and reproducible

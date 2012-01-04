@@ -39,6 +39,7 @@
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
+#include <boost/test/execution_monitor.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,7 +195,6 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK_EQUAL( packet.size(), 12u );
     BOOST_CHECK_EQUAL( packet.next().size(), 8u );
     BOOST_CHECK( packet.next().is<FooPacket>() );
-    BOOST_CHECK( ! p2 );
     BOOST_CHECK( packet.next().as<FooPacket>() );
 
     p2 = packet.next().clone();
@@ -334,6 +334,7 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
     senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);
 
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     ComplexAnnotation & ca (packet.annotation<ComplexAnnotation>());
 
     BOOST_CHECK_EQUAL( ca.s, "empty" );
@@ -341,29 +342,38 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
 
     ca.s = "dead beef";
     ca.i = 0x12345678;
+#endif
     SENF_CHECK_NO_THROW( packet.annotation<IntAnnotation>().value = 0xDEADBEEF );
 
     senf::Packet p2 (packet.next());
 
     BOOST_CHECK_EQUAL( p2.annotation<IntAnnotation>().value, 0xDEADBEEFu );
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().s, "dead beef" );
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().i, 0x12345678 );
+#endif
 
     senf::Packet pClone (packet.clone());
 
     p2.clearAnnotations();
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().s, "empty" );
     BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().i, -1 );
+#endif
     BOOST_CHECK_EQUAL( p2.annotation<IntAnnotation>().value, 0 );
 
     BOOST_CHECK_EQUAL( pClone.annotation<IntAnnotation>().value, 0xDEADBEEFu );
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     BOOST_CHECK_EQUAL( pClone.annotation<ComplexAnnotation>().s, "dead beef" );
     BOOST_CHECK_EQUAL( pClone.annotation<ComplexAnnotation>().i, 0x12345678 );
+#endif
 
     BOOST_CHECK( Reg::lookup<IntAnnotation>() >= 0 );
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     BOOST_CHECK( Reg::lookup<LargeAnnotation>() < 0 );
     BOOST_CHECK( Reg::lookup<ComplexAnnotation>() < 0 );
     BOOST_CHECK( Reg::lookup<ComplexEmptyAnnotation>() < 0 );
+#endif
 
     std::stringstream ss;
     senf::dumpPacketAnnotationRegistry(ss);
@@ -372,10 +382,15 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
         "SENF_PACKET_ANNOTATION_SLOTS = 8\n"
         "SENF_PACKET_ANNOTATION_SLOTSIZE = 16\n"
         "TYPE                                                      FAST  COMPLEX   SIZE\n"
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
         "(anonymous namespace)::ComplexAnnotation                  no    yes         32\n"
         "(anonymous namespace)::ComplexEmptyAnnotation             no    yes          1\n"
+#endif
         "(anonymous namespace)::IntAnnotation                      yes   no           4\n"
-        "(anonymous namespace)::LargeAnnotation                    no    no          32\n" );
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+        "(anonymous namespace)::LargeAnnotation                    no    no          32\n"
+#endif
+        );
 }
 
 #ifdef COMPILE_CHECK

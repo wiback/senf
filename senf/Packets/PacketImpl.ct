@@ -43,6 +43,8 @@ template <class Annotation>
 senf::detail::AnnotationRegistry::key_type
     senf::detail::AnnotationRegistry::Entry<Annotation>::key_;
 
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+
 template <class Annotation>
 prefix_ void * senf::detail::PacketImpl::complexAnnotation()
 {
@@ -56,6 +58,8 @@ prefix_ void * senf::detail::PacketImpl::complexAnnotation()
     }
     return rv;
 }
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

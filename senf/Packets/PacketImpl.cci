@@ -72,7 +72,10 @@ prefix_ senf::detail::AnnotationRegistry::iterator senf::detail::AnnotationRegis
 }
 
 prefix_ senf::detail::AnnotationRegistry::AnnotationRegistry()
-    : simpleAnnotationCount_ (0), complexAnnotationCount_ (0)
+    : simpleAnnotationCount_ (0)
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+    , complexAnnotationCount_ (0)
+#endif
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,13 +107,13 @@ prefix_ senf::detail::AnnotationRegistry::AnnotationRegistry()
 // senf::detail::PacketImpl
 
 prefix_ senf::detail::PacketImpl::PacketImpl()
-    : refcount_(0)
+    : refcount_(0), preallocHigh_(0), preallocFree_(0), preallocHeapcount_(0)
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
 }
 
 prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
-    : refcount_(0), data_(size,initValue)
+    : refcount_(0), data_(size,initValue), preallocHigh_(0), preallocFree_(0), preallocHeapcount_(0)
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
 }
@@ -226,7 +229,11 @@ prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::capacity()
 
 prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_type key)
 {
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     return key >= 0 ? & simpleAnnotations_[key] : complexAnnotation(key);
+#else
+    return & simpleAnnotations_[key];
+#endif
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

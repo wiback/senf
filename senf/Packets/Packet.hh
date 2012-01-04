@@ -407,15 +407,7 @@ namespace senf {
         bool operator==(Packet const & other) const; ///< Check for packet identity
                                         /**< Two packet handles compare equal if they really are the
                                              same packet header in the same packet chain. */
-        bool boolean_test() const;      ///< Check, whether the packet is valid()
-                                        /**< \see valid() */
-        bool valid() const;             ///< Check, whether the packet is valid()
-                                        /**< An in - valid() packet does not allow any operation
-                                             except checking for validity and assignment. in -
-                                             valid() packets serve the same role as 0-pointers.
-
-                                             This is an alias for boolean_test() which is called
-                                             when using a packet in a boolean context. */
+        bool boolean_test() const;      ///< Check, whether the packet is valid() (not null)
 
         void finalizeThis();            ///< Update calculated fields
                                         /**< The finalize() family of members will update
@@ -510,6 +502,8 @@ namespace senf {
         bool is_shared() const;         ///< check if this packet shares data with any another packet handle.
                                         /**< This method returns true if there is any other packet
                                              handle pointing to any header in the packet chain. */
+
+        void memDebug(std::ostream & os) const;
 
         //\}
 

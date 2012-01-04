@@ -152,6 +152,25 @@ senf::PacketInterpreterBase::appendClone(detail::PacketImpl * impl, range r)
     return v_appendClone(impl,r);
 }
 
+prefix_ senf::PacketInterpreterBase * senf::PacketInterpreterBase::nextP()
+{
+    // This helper ensures, no temporary smart-pointer is alive after nextP() returns
+    return next().get();
+}
+
+prefix_ senf::PacketInterpreterBase * senf::PacketInterpreterBase::prevP()
+{
+    // This helper ensures, no temporary smart-pointer is alive after prevP() returns
+    return prev().get();
+}
+
+prefix_ senf::detail::PacketImpl & senf::PacketInterpreterBase::impl()
+    const
+{
+    SENF_ASSERT( linked(), "Invalid operation on un-linked PacketInterpreter" );
+    return PacketData::impl();
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
 
@@ -168,14 +187,10 @@ prefix_ void senf::PacketInterpreterBase::assignImpl(detail::PacketImpl * impl)
 prefix_ void senf::PacketInterpreterBase::releaseImpl()
 {
     SENF_ASSERT(impl_, "Internal failure: release of lone PacketInterpreter");
-    if (refcount()) {
-        detail::PacketImpl * i (impl_);
-        impl_ = 0;
-        // This call might delete this ...
-        i->release();
-    } else {
-        impl_ = 0;
-        delete this;
+    if (! refcount()) {
+        detail::PacketImpl * impl (impl_);
+        this->~PacketInterpreterBase();
+        impl->deallocateInterpreter(this);
     }
 }
 

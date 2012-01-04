@@ -135,7 +135,9 @@ prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::create(detail::PacketImpl * impl, iterator b, iterator e,
                                             Append_t)
 {
-    return ptr(new PacketInterpreter(impl,b,e,Append));
+    // PacketInterpreter constructor does not throw
+    void * storage (impl->allocateInterpreter());
+    return ptr(new (storage) PacketInterpreter(impl,b,e,Append));
 }
 
 template <class PacketType>
@@ -143,7 +145,9 @@ prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::create(detail::PacketImpl * impl, iterator b, iterator e,
                                             Prepend_t)
 {
-    return ptr(new PacketInterpreter(impl,b,e,Prepend));
+    // PacketInterpreter constructor does not throw
+    void * storage (impl->allocateInterpreter());
+    return ptr(new (storage) PacketInterpreter(impl,b,e,Prepend));
 }
 
 template <class PacketType>
@@ -151,20 +155,28 @@ prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::create(detail::PacketImpl * impl, iterator b, iterator e,
                                             PacketInterpreterBase::ptr const & before)
 {
-    return ptr(new PacketInterpreter(impl,b,e,before));
+    // PacketInterpreter constructor does not throw
+    void * storage (impl->allocateInterpreter());
+    return ptr(new (storage) PacketInterpreter(impl,b,e,before));
 }
 
 template <class PacketType>
 prefix_ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl,
                                                                iterator b, iterator e, Append_t)
     : PacketInterpreterBase(impl,b,e,Append)
-{}
+{
+    SENF_STATIC_ASSERT(sizeof(PacketInterpreter) == sizeof(PacketInterpreterBase),
+                       invalid_size_of_packetinterpreter);
+}
 
 template <class PacketType>
 prefix_ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl,
                                                                iterator b, iterator e, Prepend_t)
     : PacketInterpreterBase(impl,b,e,Prepend)
-{}
+{
+    SENF_STATIC_ASSERT(sizeof(PacketInterpreter) == sizeof(PacketInterpreterBase),
+                       invalid_size_of_packetinterpreter);
+}
 
 template <class PacketType>
 prefix_
@@ -172,7 +184,10 @@ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl
                                                        iterator e,
                                                        PacketInterpreterBase::ptr const & before)
     : PacketInterpreterBase(impl,b,e,before)
-{}
+{
+    SENF_STATIC_ASSERT(sizeof(PacketInterpreter) == sizeof(PacketInterpreterBase),
+                       invalid_size_of_derived_packetinterpreter);
+}
 
 // PacketType access
 

@@ -54,7 +54,7 @@ prefix_ void senf::detail::MIHMessageRegistryEntry<MIHPacket, true>::validate(se
 {
     if (! message.is<MIHPacket>())
         throw InvalidMIHPacketException("invalid packet chain: ")
-            << (message.valid() ? message.typeId().prettyName() : "invalid packet")
+            << (message ? message.typeId().prettyName() : "invalid packet")
             << " != " << prettyName(typeid(MIHPacket));
     MIHPacket::type::validate(message.as<MIHPacket>());
 }

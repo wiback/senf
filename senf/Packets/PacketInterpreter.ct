@@ -50,7 +50,7 @@ senf::PacketInterpreterBase::parseNextAs()
         throw InvalidPacketChainException();
 
     if (next())
-        impl().truncateInterpreters(next().get());
+        impl().truncateInterpreters(nextP());
 
     typename PacketInterpreter<Type>::ptr pi
         (PacketInterpreter<Type>::create(&impl(),r->begin(),r->end(),Append));
@@ -106,7 +106,7 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr cons
         throw InvalidPacketChainException();
 
     if (packet->next())
-        packet->impl().truncateInterpreters(packet->next().get());
+        packet->impl().truncateInterpreters(packet->nextP());
 
     ptr pi (create(&packet->impl(),r->begin(),r->end(),Append));
     pi->data().resize(size);
@@ -124,7 +124,7 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr cons
         throw InvalidPacketChainException();
 
     if (packet->next())
-        packet->impl().truncateInterpreters(packet->next().get());
+        packet->impl().truncateInterpreters(packet->nextP());
 
     ptr pi (create(&packet->impl(),r->begin(),r->end(),Append));
     pi->data().resize(boost::size(range));
@@ -150,7 +150,7 @@ prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t)
 {
     if (packet->prev())
-        packet->impl().truncateInterpretersBackwards(packet->prev().get());
+        packet->impl().truncateInterpretersBackwards(packet->prevP());
 
     return create(&packet->impl(),packet->data().begin(),packet->data().end(),Prepend);
 }
@@ -384,7 +384,7 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBas
         throw InvalidPacketChainException();
 
     if (packet->next())
-        packet->impl().truncateInterpreters(packet->next().get());
+        packet->impl().truncateInterpreters(packet->nextP());
 
     return senf::PacketInterpreter<PacketType>::create(&packet->impl(),range->begin(),range->end(),Append);
 }

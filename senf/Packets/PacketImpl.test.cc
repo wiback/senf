@@ -73,23 +73,11 @@ SENF_AUTO_UNIT_TEST(packetImpl_mem)
         senf::PacketInterpreterBase::ptr pi (
             senf::detail::packet::test::TestDriver::create<VoidPacket>(
                 p,p->begin(),p->end(), senf::PacketInterpreterBase::Append));
-        // Hmm ... this check works as long as sizeof(PacketInterpreterBase> !=
-        // sizeof(PacketImpl) ... !!
-#ifdef SENF_DEBUG
-        BOOST_CHECK_EQUAL(
-            senf::pool_alloc_mixin< senf::PacketInterpreter<VoidPacket> >::allocCounter(), 1u);
-#endif
         senf::PacketInterpreterBase::ptr pi2 (pi);
         BOOST_CHECK_EQUAL(p->refcount(), 2);
     }
     BOOST_CHECK_EQUAL(p->refcount(),1);
 
-    {
-        senf::PacketInterpreterBase::ptr pi (p->first());
-        BOOST_CHECK_EQUAL(p->refcount(),2);
-        p->truncateInterpreters(pi.get());
-        BOOST_CHECK_EQUAL(p->refcount(),1);
-    }
 #ifdef SENF_DEBUG
     BOOST_CHECK_EQUAL(
         senf::pool_alloc_mixin<senf::PacketInterpreterBase>::allocCounter(), 0u);

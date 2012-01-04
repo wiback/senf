@@ -63,6 +63,15 @@ prefix_ void senf::Packet::dump(std::ostream & os)
     ptr()->dump(os);
 }
 
+prefix_ void senf::Packet::memDebug(std::ostream & os)
+    const
+{
+    ptr()->impl().memDebug(os);
+    os << "  handle @" << ptr().get() << std::endl;
+    PacketInterpreterBase * p (first().ptr().get());
+    p->memDebug(os);
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 //#include "Packet.mpp"

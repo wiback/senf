@@ -52,20 +52,64 @@ prefix_ senf::detail::PacketImpl::~PacketImpl()
     eraseInterpreters(interpreters_.begin(), interpreters_.end());
 }
 
-prefix_ void senf::detail::PacketImpl::release()
+prefix_ bool senf::detail::PacketImpl::release()
 {
     SENF_ASSERT(refcount_ >= 1, "Internal failure: Releasing dead PacketImpl ??");
     // uah ... we need to be extremely careful here. If refcount_ is 1, we want to commit suicide,
     // however the destructor will remove all PacketInterpreters from the list and will thereby
     // decrement refcount -> only decrement refcount_ when *not* calling delete (otherwise
     // the assert above will fail)
-    if (refcount_ == 1)
+    if (refcount_ == 1) {
         delete this;
-    else
+        return true;
+    } else {
         -- refcount_;
+        return false;
+    }
 }
 
 // interpreter chain
+
+prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
+{
+    if (preallocFree_) {
+        void * rv (preallocFree_);
+        SENF_ASSERT(rv >= prealloc_ && rv < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
+                    "Internal failure: preallocFree_ points outside of prealloc_ array");
+        preallocFree_ = preallocFree_ -> nextFree_;
+        return rv;
+    }
+    else if (preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS)
+        return & prealloc_[preallocHigh_++];
+    else {
+        ++ preallocHeapcount_;
+        return new PreallocSlot;
+    }
+}
+
+prefix_ void senf::detail::PacketImpl::deallocateInterpreter(void * address)
+{
+    if (preallocHeapcount_ > 0 &&
+        (address < prealloc_ || address > prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS)) {
+        -- preallocHeapcount_;
+        delete static_cast<PreallocSlot *>(address);
+    }
+    else {
+        SENF_ASSERT(address >= prealloc_ && address < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
+                    "Internal failure: PacketInterpreter outside prealloc array but heapcount == 0");
+        static_cast<PreallocSlot *>(address)->nextFree_ = preallocFree_;
+        preallocFree_ = static_cast<PreallocSlot *>(address);
+    }
+}
+
+prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
+{
+    os << "PacketImpl @" << this << "-" << static_cast<void*>(static_cast<byte*>(static_cast<void*>(this+1))-1)
+       << " refcount=" << refcount()
+       << " preallocHigh=" << preallocHigh_
+       << " preallocHeapcount=" << preallocHeapcount_
+       << std::endl;
+}
 
 prefix_ void senf::detail::PacketImpl::appendInterpreter(PacketInterpreterBase * p)
 {
@@ -108,7 +152,7 @@ prefix_ void senf::detail::PacketImpl::eraseInterpreters(interpreter_list::itera
         interpreter_list::iterator i (b++);
         PacketInterpreterBase * p (&(*i));
         interpreters_.erase(i);
-        p->releaseImpl(); // might call PacketImpl::release and might delete p
+        p->releaseImpl();
     }
 }
 
@@ -164,16 +208,22 @@ prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
 prefix_ void senf::detail::PacketImpl::clearAnnotations()
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     complexAnnotations_.clear();
+#endif
 }
 
 prefix_ void senf::detail::PacketImpl::assignAnnotations(PacketImpl const & other)
 {
     std::copy(&other.simpleAnnotations_[0], &other.simpleAnnotations_[0] +
             sizeof(simpleAnnotations_)/sizeof(simpleAnnotations_[0]), simpleAnnotations_);
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     complexAnnotations_.assign(
             other.complexAnnotations_.begin(), other.complexAnnotations_.end());
+#endif
 }
+
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
 
 prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::key_type key)
 {
@@ -182,6 +232,8 @@ prefix_ void * senf::detail::PacketImpl::complexAnnotation(AnnotationRegistry::k
             || complexAnnotations_.is_null(-key-1))
         ? 0 : complexAnnotations_[-key-1].get();
 }
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::detail::AnnotationRegistry

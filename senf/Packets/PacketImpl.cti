@@ -42,10 +42,18 @@ template <class Annotation>
 prefix_ senf::detail::AnnotationRegistry::key_type
 senf::detail::AnnotationRegistry::registerAnnotation()
 {
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     key_type key (simpleAnnotationCount_ >= SENF_PACKET_ANNOTATION_SLOTS
                || IsComplexAnnotation<Annotation>::value
                ? - ++complexAnnotationCount_
                : simpleAnnotationCount_ ++);
+#else
+    key_type key (simpleAnnotationCount_ ++);
+    SENF_ASSERT(simpleAnnotationCount_ <= SENF_PACKET_ANNOTATION_SLOTS,
+                "to many annotations defined and complex annotations disabled");
+    SENF_STATIC_ASSERT(! IsComplexAnnotation<Annotation>::value,
+                       annotation_is_complex_but_complex_annotations_disabled);
+#endif
     std::pair<Registry::iterator, bool> reg (
         registry_.insert(key, new Registration<Annotation>()));
     SENF_ASSERT(reg.second, "internal error: duplicate annotation key");
@@ -56,6 +64,7 @@ senf::detail::AnnotationRegistry::registerAnnotation()
 template <class Annotation>
 prefix_ senf::detail::AnnotationRegistry::key_type senf::detail::AnnotationRegistry::lookup()
 {
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     SENF_ASSERT(
         -instance().complexAnnotationCount_ <= AnnotationRegistry::Entry<Annotation>::key()
         && AnnotationRegistry::Entry<Annotation>::key() < instance().simpleAnnotationCount_,
@@ -64,6 +73,11 @@ prefix_ senf::detail::AnnotationRegistry::key_type senf::detail::AnnotationRegis
         AnnotationRegistry::Entry<Annotation>::key() < 0
         || ! IsComplexAnnotation<Annotation>::value,
         "internal error: complex annotation registered with invalid key" );
+#else
+    SENF_ASSERT(
+        AnnotationRegistry::Entry<Annotation>::key() >= 0,
+        "internal error: annotation key out of valid range" );
+#endif
     SENF_ASSERT(
         AnnotationRegistry::Entry<Annotation>::key() < SENF_PACKET_ANNOTATION_SLOTS,
         "internal error: annotation key out of valid range" );
@@ -86,7 +100,7 @@ prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, F
 
 template <class InputIterator>
 prefix_ senf::detail::PacketImpl::PacketImpl(InputIterator first, InputIterator last)
-    : refcount_(0), data_(first,last)
+    : refcount_(0), data_(first,last), preallocHigh_(0), preallocFree_(0), preallocHeapcount_(0)
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
 }
@@ -97,7 +111,11 @@ template <class Annotation>
 prefix_ Annotation & senf::detail::PacketImpl::annotation()
 {
     AnnotationRegistry::key_type key (AnnotationRegistry::lookup<Annotation>());
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
     void * antn (key >= 0 ? & simpleAnnotations_[key] : complexAnnotation<Annotation>());
+#else
+    void * antn (& simpleAnnotations_[key]);
+#endif
     SENF_ASSERT( antn, "internal error: null annotation pointer" );
     return * static_cast<Annotation*>(antn);
 }

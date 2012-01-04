@@ -57,7 +57,7 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::clone()
 prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::append(ptr packet)
 {
     if (next())
-        impl().truncateInterpreters(next().get());
+        impl().truncateInterpreters(nextP());
 
     optional_range r (nextPacketRange());
     if (!r)
@@ -76,7 +76,7 @@ prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::append(ptr
 prefix_ void senf::PacketInterpreterBase::reparse()
 {
     if (next())
-        impl().truncateInterpreters(next().get());
+        impl().truncateInterpreters(nextP());
 }
 
 // Access to the abstract interface
@@ -96,6 +96,14 @@ prefix_ void senf::PacketInterpreterBase::dump(std::ostream & os)
     catch (senf::Exception & e) {
         os << "[Exception: " << e.message() << "]\n";
     }
+}
+
+prefix_ void senf::PacketInterpreterBase::memDebug(std::ostream & os)
+{
+    os << "  interpreter @" << this << " refcount=" << refcount() << std::endl;
+    PacketInterpreterBase * n (next().get());
+    if (n)
+        n->memDebug(os);
 }
 
 prefix_ void senf::PacketInterpreterBase::finalizeThis()
@@ -121,11 +129,14 @@ prefix_ void senf::PacketInterpreterBase::add_ref()
 
 prefix_ void senf::PacketInterpreterBase::release()
 {
-    if (impl_ && refcount()==1)
-        // This call will set impl_ to 0 if we just removed the last reference ...
-        impl_->release();
-    if (intrusive_refcount_t<PacketInterpreterBase>::release() && !impl_)
-        delete this;
+    SENF_ASSERT(impl_, "Internal failure: release of lone PacketInterpreter");
+    if (intrusive_refcount_t<PacketInterpreterBase>::release()) {
+        detail::PacketImpl * impl (impl_);
+        if (! linked())
+            releaseImpl(); // This commits suicide !
+        // If this is the last handle referencing the Packet, this call will commit suicide
+        impl->release();
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

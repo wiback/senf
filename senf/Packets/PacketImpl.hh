@@ -37,12 +37,24 @@
 #include <boost/utility.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/type_traits/aligned_storage.hpp>
 #include <senf/Utils/pool_alloc_mixin.hh>
 #include <senf/Utils/singleton.hh>
 
 //#include "PacketImpl.mpp"
 #include "PacketImpl.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Here we only need the size of PacketInterpreter, no implementation is needed
+#ifndef HH_SENF_Packets_Packets__decls_
+#define HH_SENF_Packets_Packets__decls_
+#include "PacketInterpreter.hh"
+#include "PacketType.hh"
+#undef HH_SENF_Packets_Packets__decls_
+#else
+#include "PacketInterpreter.hh"
+#include "PacketType.hh"
+#endif
 
 namespace senf {
 
@@ -83,7 +95,7 @@ namespace senf {
 
         Fast annotations are considerable faster than complex and slow annotations. However, only
         annotations which do not need constructor or destructor calls and which may be
-        zero-initialized (on the memory level) are legible as fast annotations.
+        zero-initialized (on the memory level) are elegible as fast annotations.
 
         It is thus desirable to eliminate any complex and slow annotations, if possible. To optimize
         the annotation system, you may take the following steps:
@@ -100,6 +112,8 @@ namespace senf {
         \see \ref packet_usage_annotation
      */
     void dumpPacketAnnotationRegistry(std::ostream & os);
+
+    template <class PacketType> class PacketInterpreter;
 
 namespace detail {
 
@@ -137,7 +151,7 @@ namespace detail {
         // rerference/memory management
 
         void add_ref();
-        void release();
+        bool release();
         refcount_t refcount() const;
 
         // Interpreter chain
@@ -147,6 +161,11 @@ namespace detail {
 
         PacketInterpreterBase * next(PacketInterpreterBase * p);
         PacketInterpreterBase * prev(PacketInterpreterBase * p);
+
+        void * allocateInterpreter();
+        void deallocateInterpreter(void * address);
+
+        void memDebug(std::ostream & os);
 
         void appendInterpreter    (PacketInterpreterBase * p);
         void prependInterpreter   (PacketInterpreterBase * p);
@@ -199,24 +218,42 @@ namespace detail {
         void updateIterators(PacketData * self, difference_type pos, difference_type n);
 
         void * annotation(AnnotationRegistry::key_type key); // may return 0 !
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
         void * complexAnnotation(AnnotationRegistry::key_type key); // may return 0 !
         template <class Annotation>
         void * complexAnnotation();
+#endif
 
         refcount_t refcount_;
         raw_container data_;
         interpreter_list interpreters_;
 
-        union SimpleAnnotationSlot
-        {
-            unsigned char _ [SENF_PACKET_ANNOTATION_SLOTSIZE];
-        };
+        // Annotations
 
+        typedef boost::aligned_storage<SENF_PACKET_ANNOTATION_SLOTSIZE>::type SimpleAnnotationSlot;
+
+#ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
         typedef boost::ptr_vector< boost::nullable<AnnotationRegistry::EntryBase> >
             ComplexAnnotations;
         ComplexAnnotations complexAnnotations_;
+#endif
 
         SimpleAnnotationSlot simpleAnnotations_[SENF_PACKET_ANNOTATION_SLOTS];
+
+        // Preallocated interpreters
+
+        union PreallocSlot {
+            boost::aligned_storage<
+                sizeof(PacketInterpreter<PacketTypeBase>),
+                boost::alignment_of< PacketInterpreter<PacketTypeBase> >::value
+                >::type storage_;
+            PreallocSlot * nextFree_;
+        };
+
+        PreallocSlot prealloc_[SENF_PACKET_PREALLOC_INTERPRETERS];
+        size_type preallocHigh_;
+        PreallocSlot * preallocFree_;
+        size_type preallocHeapcount_;
     };
 
 }}

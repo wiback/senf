@@ -186,13 +186,7 @@ prefix_ unsigned long senf::Packet::id()
 prefix_ bool senf::Packet::boolean_test()
     const
 {
-    return packet_ && packet_->valid();
-}
-
-prefix_ bool senf::Packet::valid()
-    const
-{
-    return *this;
+    return packet_;
 }
 
 prefix_ bool senf::Packet::is_shared()
