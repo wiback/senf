@@ -150,6 +150,20 @@ namespace {
     std::ostream & operator<<(std::ostream & os, ComplexEmptyAnnotation const & v)
     { os << "(empty)"; return os; }
 
+    std::string memDebugInfo(senf::Packet const & packet)
+    {
+        std::stringstream ss;
+        packet.memDebug(ss);
+        std::string rv (ss.str());
+        for (std::string::size_type i (rv.find("0x"));
+             i != std::string::npos; i = rv.find("0x", i+2)) {
+            while (std::isxdigit(rv[i+2]))
+                rv.erase(i+2,1);
+            rv.insert(i+2, "????????");
+        }
+        return rv;
+    }
+
 }
 
 SENF_AUTO_UNIT_TEST(packet)
@@ -188,16 +202,39 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( ! packet.is_shared() );
 
     senf::Packet p2 (packet.next());
+    BOOST_CHECK_EQUAL( memDebugInfo(packet),
+                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=2 preallocHeapcount=0\n"
+                       "  handle @0x????????\n"
+                       "  interpreter @0x???????? refcount=1\n"
+                       "  interpreter @0x???????? refcount=1\n" );
     BOOST_CHECK( p2 );
     BOOST_CHECK( packet.is_shared() );
     BOOST_CHECK( p2.is_shared() );
     packet.parseNextAs<FooPacket>();
+    BOOST_CHECK_EQUAL( memDebugInfo(packet),
+                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=3 preallocHeapcount=0\n"
+                       "  unlinked @0x???????? refcount=1\n"
+                       "  handle @0x????????\n"
+                       "  interpreter @0x???????? refcount=1\n"
+                       "  interpreter @0x???????? refcount=0\n" );
     BOOST_CHECK_EQUAL( packet.size(), 12u );
     BOOST_CHECK_EQUAL( packet.next().size(), 8u );
     BOOST_CHECK( packet.next().is<FooPacket>() );
     BOOST_CHECK( packet.next().as<FooPacket>() );
+    BOOST_CHECK_EQUAL( memDebugInfo(packet),
+                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=3 preallocHeapcount=0\n"
+                       "  unlinked @0x???????? refcount=1\n"
+                       "  handle @0x????????\n"
+                       "  interpreter @0x???????? refcount=1\n"
+                       "  interpreter @0x???????? refcount=0\n" );
 
     p2 = packet.next().clone();
+    BOOST_CHECK_EQUAL( memDebugInfo(packet),
+                       "PacketImpl @0x????????" "-0x???????? refcount=1 preallocHigh=3 preallocHeapcount=0\n"
+                       "  free @0x????????\n"
+                       "  handle @0x????????\n"
+                       "  interpreter @0x???????? refcount=1\n"
+                       "  interpreter @0x???????? refcount=0\n" );
     BOOST_CHECK( ! packet.is_shared() );
     BOOST_REQUIRE( p2 );
     packet.next().append( p2 );

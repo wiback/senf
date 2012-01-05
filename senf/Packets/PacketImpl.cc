@@ -33,6 +33,7 @@
 // Custom includes
 #include <iterator>
 #include <map>
+#include <set>
 #include <string>
 #include <boost/format.hpp>
 #include <senf/Utils/String.hh>
@@ -109,6 +110,26 @@ prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
        << " preallocHigh=" << preallocHigh_
        << " preallocHeapcount=" << preallocHeapcount_
        << std::endl;
+    std::set<void*> used;
+    for (interpreter_list::iterator i (interpreters_.begin()), i_end (interpreters_.end());
+         i != i_end; ++i)
+        used.insert(&(*i));
+    std::set<void*> free;
+    {
+        PreallocSlot * p (preallocFree_);
+        while (p) {
+            free.insert(p);
+            p = p->nextFree_;
+        }
+    }
+    for (unsigned i (0); i < preallocHigh_; ++i) {
+        void * p (&(prealloc_[i]));
+        if (free.count(p))
+            os << "  free @" << p << std::endl;
+        else if (! used.count(p))
+            os << "  unlinked @" << p
+               << " refcount=" << static_cast<PacketInterpreterBase*>(p)->refcount() << std::endl;
+    }
 }
 
 prefix_ void senf::detail::PacketImpl::appendInterpreter(PacketInterpreterBase * p)
