@@ -39,12 +39,66 @@
 #include <senf/Utils/String.hh>
 #include "Packets.hh"
 
+#ifndef SENF_DISABLE_CONSOLE
+#include <senf/Utils/Console.hh>
+#endif
+
 //#include "PacketImpl.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl
+
+#ifdef SENF_DEBUG
+senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHigh_ (0);
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHeapcount_ (0);
+#endif
+#endif
+
+#ifndef SENF_DISABLE_CONSOLE
+
+namespace {
+
+    struct ConsoleDirRegistration
+    {
+        ConsoleDirRegistration()
+            {
+                namespace fty = senf::console::factory;
+
+                senf::packetConsoleDir()
+                    .add("memoryStatus",
+                         fty::Command(&ConsoleDirRegistration::memoryStatus));
+                senf::packetConsoleDir()
+                    .add("dumpAnnotationRegistry",
+                         fty::Command(&senf::dumpPacketAnnotationRegistry));
+            }
+
+        static void memoryStatus(std::ostream & os)
+            {
+                os << "SENF_PACKET_PREALLOC_INTERPRETERS = " << SENF_PACKET_PREALLOC_INTERPRETERS << "\n"
+#ifdef SENF_PACKET_NO_HEAP_INTERPRETERS
+                   << "SENF_PACKET_NO_HEAP_INTERPRETERS\n"
+#endif
+#ifdef SENF_DEBUG
+                   << "maxPreallocHigh = " << senf::detail::PacketImpl::maxPreallocHigh() << "\n"
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+                   << "maxPreallocHeapcount = " << senf::detail::PacketImpl::maxPreallocHeapcount() << "\n"
+#endif
+                   << "# of live Packets = " << senf::pool_alloc_mixin<senf::detail::PacketImpl>::allocCounter() << "\n"
+#endif
+                    ;
+            }
+
+        static ConsoleDirRegistration instance_;
+    };
+
+    ConsoleDirRegistration ConsoleDirRegistration::instance_;
+
+}
+
+#endif
 
 prefix_ senf::detail::PacketImpl::~PacketImpl()
 {
@@ -87,11 +141,20 @@ prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
         {
             SENF_ASSERT( preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS,
                          "Number of interpreters > SENF_PREALLOC_INTERPRETERS" );
-            return & prealloc_[preallocHigh_++];
+            ++ preallocHigh_;
+#ifdef SENF_DEBUG
+            if (maxPreallocHigh_ < preallocHigh_)
+                maxPreallocHigh_ = preallocHigh_;
+#endif
+            return & prealloc_[preallocHigh_ - 1];
         }
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
     else {
         ++ preallocHeapcount_;
+#ifdef SENF_DEBUG
+        if (maxPreallocHeapcount_ < preallocHeapcount_)
+            maxPreallocHeapcount_ = preallocHeapcount_;
+#endif
         return new PreallocSlot;
     }
 #endif

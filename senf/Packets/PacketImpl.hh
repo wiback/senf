@@ -213,6 +213,9 @@ namespace detail {
             PacketImpl * p;
         };
 
+        static size_type maxPreallocHigh();
+        static size_type maxPreallocHeapcount();
+
     private:
         void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);
         void updateIterators(PacketData * self, difference_type pos, difference_type n);
@@ -255,6 +258,13 @@ namespace detail {
         PreallocSlot * preallocFree_;
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
         size_type preallocHeapcount_;
+#endif
+
+#ifdef SENF_DEBUG
+        static size_type maxPreallocHigh_;
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+        static size_type maxPreallocHeapcount_;
+#endif
 #endif
     };
 

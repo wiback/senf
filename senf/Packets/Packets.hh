@@ -34,6 +34,7 @@
 #define HH_SENF_Packets_Packets__decls_
 
 #include "PacketTypes.hh"
+#include "PacketConsoleSysDir.hh"
 #include "PacketImpl.hh"
 #include "PacketData.hh"
 #include "PacketInterpreter.hh"

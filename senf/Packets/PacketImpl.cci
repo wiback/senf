@@ -242,6 +242,24 @@ prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_type
 #endif
 }
 
+prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHigh()
+{
+#ifdef SENF_DEBUG
+    return maxPreallocHigh_;
+#else
+    return -1;
+#endif
+}
+
+prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHeapcount()
+{
+#if defined(SENF_DEBUG) && ! defined(SENF_PACKET_NO_HEAP_INTERPRETERS)
+    return maxPreallocHeapcount_;
+#else
+    return -1;
+#endif
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl::Guard
 

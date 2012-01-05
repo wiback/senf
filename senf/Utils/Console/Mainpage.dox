@@ -464,7 +464,7 @@
         // Configure console nodes, add commands ...
 
         // Start console server
-        senf::console::start(senf::INet4SocketAddress(12345u))
+        senf::console::Server::start(senf::INet4SocketAddress(12345u))
            .name("myserver");
 
         // You need to enter the scheduler main-loop for the server to work
@@ -504,7 +504,7 @@
     \code
     int main(int, char**)
     {
-        senf::console::Server & server ( senf::console::start( ... ) );
+        senf::console::Server & server ( senf::console::Server::start( ... ) );
 
         // Do something ...
 

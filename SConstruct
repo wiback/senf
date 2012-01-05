@@ -183,9 +183,9 @@ SConscript('SConfigure')
 
 # Only add this here, after all configure checks have run
 
-env.Append(LIBS = [ '$LIBSENF$LIBADDSUFFIX',
-                    '$BOOSTREGEXLIB', '$BOOSTSIGNALSLIB',
-                    '$BOOSTFSLIB', '$BOOSTSYSTEMLIB', '$BOOSTDATETIMELIB' ])
+env.Prepend(LIBS = [ '$LIBSENF$LIBADDSUFFIX',
+                     '$BOOSTREGEXLIB', '$BOOSTSIGNALSLIB',
+                     '$BOOSTFSLIB', '$BOOSTSYSTEMLIB', '$BOOSTDATETIMELIB' ])
 
 ###########################################################################
 
