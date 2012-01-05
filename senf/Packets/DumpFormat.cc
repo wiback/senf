@@ -34,14 +34,11 @@
 // Custom includes
 #include <iostream>
 #include <algorithm>
+#include <senf/config.hh>
 
 //#include "DumpFormat.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-#ifndef SENF_PACKET_DUMP_COLON_COLUMN
-#define SENF_PACKET_DUMP_COLON_COLUMN 27
-#endif
 
 prefix_ std::string senf::fieldName(std::string const & s)
 {

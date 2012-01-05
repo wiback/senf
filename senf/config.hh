@@ -81,6 +81,10 @@ namespace config {
 #     endif
 # endif
 #
+# ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
+#     define SENF_MULTI_CONNECTOR_MAX_ARGS 3
+# endif
+#
 # ifndef SENF_DEBUG_BACKTRACE_NUMCALLERS
 #     define SENF_DEBUG_BACKTRACE_NUMCALLERS 64
 # endif
@@ -90,7 +94,15 @@ namespace config {
 # endif
 #
 # ifndef PHOENIX_LIMIT
+#     define PHOENIX_LIMIT SENF_CONSOLE_MAX_COMMAND_ARITY
+# endif
+#
+# ifndef PHOENIX_LIMIT
 #     define PHOENIX_LIMIT 6
+# endif
+#
+# ifndef SENF_PACKET_DUMP_COLON_COLUMN
+#     define SENF_PACKET_DUMP_COLON_COLUMN 27
 # endif
 #
 # ifndef SENF_PACKET_ANNOTATION_SLOTS
@@ -110,6 +122,7 @@ namespace config {
 #          define SENF_BACKTRACE
 #     endif
 # endif
+#
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 

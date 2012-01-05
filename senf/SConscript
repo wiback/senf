@@ -7,7 +7,7 @@ import SENFSCons, os, re
 
 # Create local_config.h
 if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
-    Execute(Touch("local_config.hh"))
+    Execute(Copy("local_config.hh", "local_config_sample.hh"))
 
 # Ext/SConscript is last so it can depend on env vars set by any other script
 # (e.g. $PACKET_BUNDLES)

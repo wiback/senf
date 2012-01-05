@@ -37,10 +37,6 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/mpl/if.hpp>
 
-#ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
-#define SENF_MULTI_CONNECTOR_MAX_ARGS 3
-#endif
-
 #include "MultiConnectorMixin.mpp"
 #include "MultiConnectorMixin.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
