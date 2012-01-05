@@ -80,27 +80,40 @@ prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
         preallocFree_ = preallocFree_ -> nextFree_;
         return rv;
     }
-    else if (preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS)
-        return & prealloc_[preallocHigh_++];
+    else
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+        if (preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS)
+#endif
+        {
+            SENF_ASSERT( preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS,
+                         "Number of interpreters > SENF_PREALLOC_INTERPRETERS" );
+            return & prealloc_[preallocHigh_++];
+        }
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
     else {
         ++ preallocHeapcount_;
         return new PreallocSlot;
     }
+#endif
 }
 
 prefix_ void senf::detail::PacketImpl::deallocateInterpreter(void * address)
 {
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
     if (preallocHeapcount_ > 0 &&
         (address < prealloc_ || address > prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS)) {
         -- preallocHeapcount_;
         delete static_cast<PreallocSlot *>(address);
     }
     else {
+#endif
         SENF_ASSERT(address >= prealloc_ && address < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
                     "Internal failure: PacketInterpreter outside prealloc array but heapcount == 0");
         static_cast<PreallocSlot *>(address)->nextFree_ = preallocFree_;
         preallocFree_ = static_cast<PreallocSlot *>(address);
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
     }
+#endif
 }
 
 prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
@@ -108,7 +121,9 @@ prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
     os << "PacketImpl @" << this << "-" << static_cast<void*>(static_cast<byte*>(static_cast<void*>(this+1))-1)
        << " refcount=" << refcount()
        << " preallocHigh=" << preallocHigh_
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
        << " preallocHeapcount=" << preallocHeapcount_
+#endif
        << std::endl;
     std::set<void*> used;
     for (interpreter_list::iterator i (interpreters_.begin()), i_end (interpreters_.end());

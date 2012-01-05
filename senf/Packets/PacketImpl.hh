@@ -253,7 +253,9 @@ namespace detail {
         PreallocSlot prealloc_[SENF_PACKET_PREALLOC_INTERPRETERS];
         size_type preallocHigh_;
         PreallocSlot * preallocFree_;
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
         size_type preallocHeapcount_;
+#endif
     };
 
 }}

@@ -203,7 +203,11 @@ SENF_AUTO_UNIT_TEST(packet)
 
     senf::Packet p2 (packet.next());
     BOOST_CHECK_EQUAL( memDebugInfo(packet),
-                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=2 preallocHeapcount=0\n"
+                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=2"
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+                       " preallocHeapcount=0"
+#endif
+                       "\n"
                        "  handle @0x????????\n"
                        "  interpreter @0x???????? refcount=1\n"
                        "  interpreter @0x???????? refcount=1\n" );
@@ -212,7 +216,11 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( p2.is_shared() );
     packet.parseNextAs<FooPacket>();
     BOOST_CHECK_EQUAL( memDebugInfo(packet),
-                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=3 preallocHeapcount=0\n"
+                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=3"
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+                       " preallocHeapcount=0"
+#endif
+                       "\n"
                        "  unlinked @0x???????? refcount=1\n"
                        "  handle @0x????????\n"
                        "  interpreter @0x???????? refcount=1\n"
@@ -222,7 +230,11 @@ SENF_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( packet.next().is<FooPacket>() );
     BOOST_CHECK( packet.next().as<FooPacket>() );
     BOOST_CHECK_EQUAL( memDebugInfo(packet),
-                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=3 preallocHeapcount=0\n"
+                       "PacketImpl @0x????????" "-0x???????? refcount=2 preallocHigh=3"
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+                       " preallocHeapcount=0"
+#endif
+                       "\n"
                        "  unlinked @0x???????? refcount=1\n"
                        "  handle @0x????????\n"
                        "  interpreter @0x???????? refcount=1\n"
@@ -230,7 +242,11 @@ SENF_AUTO_UNIT_TEST(packet)
 
     p2 = packet.next().clone();
     BOOST_CHECK_EQUAL( memDebugInfo(packet),
-                       "PacketImpl @0x????????" "-0x???????? refcount=1 preallocHigh=3 preallocHeapcount=0\n"
+                       "PacketImpl @0x????????" "-0x???????? refcount=1 preallocHigh=3"
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+                       " preallocHeapcount=0"
+#endif
+                       "\n"
                        "  free @0x????????\n"
                        "  handle @0x????????\n"
                        "  interpreter @0x???????? refcount=1\n"

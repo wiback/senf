@@ -107,13 +107,19 @@ prefix_ senf::detail::AnnotationRegistry::AnnotationRegistry()
 // senf::detail::PacketImpl
 
 prefix_ senf::detail::PacketImpl::PacketImpl()
-    : refcount_(0), preallocHigh_(0), preallocFree_(0), preallocHeapcount_(0)
+    : refcount_(0), preallocHigh_(0), preallocFree_(0)
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+    , preallocHeapcount_(0)
+#endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
 }
 
 prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
-    : refcount_(0), data_(size,initValue), preallocHigh_(0), preallocFree_(0), preallocHeapcount_(0)
+    : refcount_(0), data_(size,initValue), preallocHigh_(0), preallocFree_(0)
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+    , preallocHeapcount_(0)
+#endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
 }
