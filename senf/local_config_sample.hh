@@ -83,6 +83,12 @@
 // may not have more than SENF_PACKET_PREALLOC_INTERPRETERS interpreters
 // #define SENF_PACKET_NO_HEAP_INTERPRETERS 1
 
+///////////////////////////////////////////////////////////////////////////
+// If defined, use an alternative preallocation strategy. This together with
+// SENF_PACKET_NO_HEAP_INTERPRETERS generates very fast allocation and
+// deallocation at the cost of slightly higher PacketImpl construction.
+// #define SENF_PACKET_ALTERNATIVE_PREALLOC
+
 
 // Local Variables:
 // mode: c++

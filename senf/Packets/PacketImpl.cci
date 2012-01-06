@@ -107,21 +107,37 @@ prefix_ senf::detail::AnnotationRegistry::AnnotationRegistry()
 // senf::detail::PacketImpl
 
 prefix_ senf::detail::PacketImpl::PacketImpl()
-    : refcount_(0), preallocHigh_(0), preallocFree_(0)
+    : refcount_(0)
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+    , preallocHigh_(0), preallocFree_(0)
+#else
+    , preallocFree_(prealloc_)
+#endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
     , preallocHeapcount_(0)
 #endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+    ::memset(prealloc_, 0, sizeof(prealloc_));
+#endif
 }
 
 prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
-    : refcount_(0), data_(size,initValue), preallocHigh_(0), preallocFree_(0)
+    : refcount_(0), data_(size,initValue)
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+    , preallocHigh_(0), preallocFree_(0)
+#else
+    , preallocFree_(prealloc_)
+#endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
     , preallocHeapcount_(0)
 #endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+    ::memset(prealloc_, 0, sizeof(prealloc_));
+#endif
 }
 
 prefix_ senf::detail::PacketImpl::~PacketImpl()
@@ -143,6 +159,94 @@ prefix_ senf::detail::PacketImpl::refcount_t senf::detail::PacketImpl::refcount(
     const
 {
     return refcount_;
+}
+
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+
+prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
+{
+#   ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+        if (preallocFree_ != prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS) {
+#   endif
+            void * rv (preallocFree_);
+            preallocFree_ += preallocFree_->nextOffset_ + 1;
+            SENF_ASSERT(rv >= prealloc_ && rv < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
+                        "Prealloc array exceeded");
+            return rv;
+#   ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+        }
+        else {
+            ++ preallocHeapcount_;
+#           ifdef SENF_DEBUG
+                if (maxPreallocHeapcount_ < preallocHeapcount_)
+                    maxPreallocHeapcount_ = preallocHeapcount_;
+#           endif
+            return new PreallocSlot;
+        }
+#   endif
+}
+
+#else /* SENF_PACKET_ALTERNATIVE_PREALLOC */
+
+prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
+
+{
+    if (preallocFree_) {
+        void * rv (preallocFree_);
+        SENF_ASSERT(rv >= prealloc_ && rv < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
+                    "Internal failure: preallocFree_ points outside of prealloc_ array");
+        preallocFree_ = preallocFree_ -> nextFree_;
+        return rv;
+    }
+    else
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+        if (preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS)
+#endif
+        {
+            SENF_ASSERT( preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS,
+                         "Number of interpreters > SENF_PREALLOC_INTERPRETERS" );
+            ++ preallocHigh_;
+#ifdef SENF_DEBUG
+            if (maxPreallocHigh_ < preallocHigh_)
+                maxPreallocHigh_ = preallocHigh_;
+#endif
+            return & prealloc_[preallocHigh_ - 1];
+        }
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+    else {
+        ++ preallocHeapcount_;
+#ifdef SENF_DEBUG
+        if (maxPreallocHeapcount_ < preallocHeapcount_)
+            maxPreallocHeapcount_ = preallocHeapcount_;
+#endif
+        return new PreallocSlot;
+    }
+#endif
+}
+
+#endif /* SENF_PACKET_ALTERNATIVE_PREALLOC */
+
+prefix_ void senf::detail::PacketImpl::deallocateInterpreter(void * address)
+{
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+    if (preallocHeapcount_ > 0 &&
+        (address < prealloc_ || address > prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS)) {
+        -- preallocHeapcount_;
+        delete static_cast<PreallocSlot *>(address);
+    }
+    else {
+#endif
+        SENF_ASSERT(address >= prealloc_ && address < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
+                    "Internal failure: PacketInterpreter outside prealloc array but heapcount == 0");
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+        static_cast<PreallocSlot *>(address)->nextFree_ = preallocFree_;
+#else
+        static_cast<PreallocSlot *>(address)->nextOffset_ = (preallocFree_ - static_cast<PreallocSlot *>(address)) - 1;
+#endif
+        preallocFree_ = static_cast<PreallocSlot *>(address);
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+    }
+#endif
 }
 
 // Interpreter chain
@@ -252,7 +356,7 @@ prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_type
 
 prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHigh()
 {
-#ifdef SENF_DEBUG
+#if defined(SENF_DEBUG) && ! defined(SENF_PACKET_ALTERNATIVE_PREALLOC)
     return maxPreallocHigh_;
 #else
     return -1;

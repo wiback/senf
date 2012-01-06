@@ -51,7 +51,9 @@
 // senf::detail::PacketImpl
 
 #ifdef SENF_DEBUG
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
 senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHigh_ (0);
+#endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
 senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHeapcount_ (0);
 #endif
@@ -81,8 +83,13 @@ namespace {
 #ifdef SENF_PACKET_NO_HEAP_INTERPRETERS
                    << "SENF_PACKET_NO_HEAP_INTERPRETERS\n"
 #endif
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+                   << "SENF_PACKET_ALTERNATIVE_PREALLOC\n"
+#endif
 #ifdef SENF_DEBUG
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
                    << "maxPreallocHigh = " << senf::detail::PacketImpl::maxPreallocHigh() << "\n"
+#endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
                    << "maxPreallocHeapcount = " << senf::detail::PacketImpl::maxPreallocHeapcount() << "\n"
 #endif
@@ -138,65 +145,13 @@ prefix_ bool senf::detail::PacketImpl::release()
 
 // interpreter chain
 
-prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
-{
-    if (preallocFree_) {
-        void * rv (preallocFree_);
-        SENF_ASSERT(rv >= prealloc_ && rv < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
-                    "Internal failure: preallocFree_ points outside of prealloc_ array");
-        preallocFree_ = preallocFree_ -> nextFree_;
-        return rv;
-    }
-    else
-#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
-        if (preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS)
-#endif
-        {
-            SENF_ASSERT( preallocHigh_ < SENF_PACKET_PREALLOC_INTERPRETERS,
-                         "Number of interpreters > SENF_PREALLOC_INTERPRETERS" );
-            ++ preallocHigh_;
-#ifdef SENF_DEBUG
-            if (maxPreallocHigh_ < preallocHigh_)
-                maxPreallocHigh_ = preallocHigh_;
-#endif
-            return & prealloc_[preallocHigh_ - 1];
-        }
-#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
-    else {
-        ++ preallocHeapcount_;
-#ifdef SENF_DEBUG
-        if (maxPreallocHeapcount_ < preallocHeapcount_)
-            maxPreallocHeapcount_ = preallocHeapcount_;
-#endif
-        return new PreallocSlot;
-    }
-#endif
-}
-
-prefix_ void senf::detail::PacketImpl::deallocateInterpreter(void * address)
-{
-#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
-    if (preallocHeapcount_ > 0 &&
-        (address < prealloc_ || address > prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS)) {
-        -- preallocHeapcount_;
-        delete static_cast<PreallocSlot *>(address);
-    }
-    else {
-#endif
-        SENF_ASSERT(address >= prealloc_ && address < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
-                    "Internal failure: PacketInterpreter outside prealloc array but heapcount == 0");
-        static_cast<PreallocSlot *>(address)->nextFree_ = preallocFree_;
-        preallocFree_ = static_cast<PreallocSlot *>(address);
-#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
-    }
-#endif
-}
-
 prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
 {
     os << "PacketImpl @" << this << "-" << static_cast<void*>(static_cast<byte*>(static_cast<void*>(this+1))-1)
        << " refcount=" << refcount()
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
        << " preallocHigh=" << preallocHigh_
+#endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
        << " preallocHeapcount=" << preallocHeapcount_
 #endif
@@ -208,12 +163,27 @@ prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
     std::set<void*> free;
     {
         PreallocSlot * p (preallocFree_);
-        while (p) {
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+        while (p)
+#else
+        while (p != prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS)
+#endif
+        {
             free.insert(p);
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
             p = p->nextFree_;
+#else
+            p += p->nextOffset_ + 1;
+#endif
         }
     }
-    for (unsigned i (0); i < preallocHigh_; ++i) {
+    for (unsigned i (0); i <
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+             preallocHigh_
+#else
+             SENF_PACKET_PREALLOC_INTERPRETERS
+#endif
+             ; ++i) {
         void * p (&(prealloc_[i]));
         if (free.count(p))
             os << "  free @" << p << std::endl;
