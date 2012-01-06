@@ -124,6 +124,14 @@ prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
 }
 
+prefix_ senf::detail::PacketImpl::~PacketImpl()
+{
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+    if (preallocHeapcount_)
+        destroySelf();
+#endif
+}
+
 // reference/memory management
 
 prefix_ void senf::detail::PacketImpl::add_ref()

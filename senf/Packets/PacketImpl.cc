@@ -100,12 +100,25 @@ namespace {
 
 #endif
 
-prefix_ senf::detail::PacketImpl::~PacketImpl()
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+
+prefix_ void senf::detail::PacketImpl::destroySelf()
 {
     // We increment refcount_ to ensure, release() won't call delete again
     ++refcount_;
-    eraseInterpreters(interpreters_.begin(), interpreters_.end());
+    interpreter_list::iterator b (interpreters_.begin());
+    interpreter_list::iterator e (interpreters_.end());
+    while (b!=e) {
+        interpreter_list::iterator i (b ++);
+        PacketInterpreterBase * p (&(*i));
+        interpreters_.erase(i);
+        p->releaseImpl();
+        if (preallocHeapcount_ == 0)
+            break;
+    }
 }
+
+#endif
 
 prefix_ bool senf::detail::PacketImpl::release()
 {

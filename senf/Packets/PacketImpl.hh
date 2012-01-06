@@ -227,6 +227,10 @@ namespace detail {
         void * complexAnnotation();
 #endif
 
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+        void destroySelf();
+#endif
+
         refcount_t refcount_;
         raw_container data_;
         interpreter_list interpreters_;
