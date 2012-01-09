@@ -31,6 +31,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/pool/singleton_pool.hpp>
 #include <senf/config.hh>
+#include <cstddef>
 
 //#include "PacketVector.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -51,8 +52,8 @@ namespace senf {
         // Types
 
         typedef boost::uint8_t value_type;
-        typedef unsigned size_type;
-        typedef int difference_type;
+        typedef std::size_t size_type;
+        typedef std::ptrdiff_t difference_type;
         typedef value_type * iterator;
         typedef value_type const * const_iterator;
 
