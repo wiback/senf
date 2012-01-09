@@ -91,15 +91,15 @@
 
 ///////////////////////////////////////////////////////////////////////////
 // The base-2 logarithm of the initial packet allocation.
-// #define SENF_PACKET_VECTOR_SIZE_INDEX 10
+// #define SENF_PACKET_VECTOR_SIZE_INDEX 11
 
 ////////////////////////////////////////////////////////////////
 // The initial headroom of PacketVector
-// #define SENF_PACKET_VECTOR_HEADROOM 64
+// #define SENF_PACKET_VECTOR_HEADROOM 128
 
 ///////////////////////////////////////////////////////////////////////////
 // The initial tailroom of PacketVector
-// #define SENF_PACKET_VECTOR_TAILROOM 64
+// #define SENF_PACKET_VECTOR_TAILROOM 128
 
 
 // Local Variables:
