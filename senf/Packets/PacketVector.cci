@@ -124,40 +124,21 @@ prefix_ senf::PacketVector::size_type senf::PacketVector::allocationSize(size_ty
     return ((sz + HeadRoom + TailRoom) | (ChunkSize - 1)) + 1;
 }
 
-prefix_ void senf::PacketVector::grow(size_type requestSize)
-{
-    size_type n (e_ - b_);
-    requestSize = allocationSize(n + requestSize);
-    value_type * newData (static_cast<value_type *>(Pool::ordered_malloc(requestSize >> ChunkSizeIndex)));
-    ::memcpy(newData + HeadRoom, b_, n);
-    if (owner_)
-        Pool::ordered_free(data_, size_ >> ChunkSizeIndex);
-    b_ = newData + HeadRoom;
-    e_ = b_ + n;
-    size_ = requestSize;
-    data_ = newData;
-    owner_ = true;
-}
-
 prefix_ senf::PacketVector::iterator senf::PacketVector::move(iterator pos, size_type n)
 {
-    bool headOk (b_ >= data_ + n);
-    bool tailOk (e_ + n <= data_ + size_);
-    if (! headOk && ! tailOk) {
-        size_type index (pos - b_);
-        grow(n);
-        return move(b_ + index, n);
-    }
-    if ((pos - b_ < e_ - pos && headOk) || !tailOk) {
+    // we check the prevalent cases here and leave the exotic cases to moveGrow
+    if (pos - b_ < e_ - pos && b_ >= data_ + n) {
         ::memmove(b_ - n, b_, pos - b_);
         b_ -= n;
         return pos - n;
     }
-    else {
+    else if (e_ + n <= data_ + size_) {
         ::memmove(pos + n, pos, e_ - pos);
         e_ += n;
         return pos;
     }
+    else
+        return moveGrow(pos, n);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

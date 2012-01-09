@@ -105,8 +105,8 @@ namespace senf {
 
     private:
         static size_type allocationSize(size_type sz);
-        void grow(size_type min = 1u);
         iterator move(iterator pos, size_type n);
+        iterator moveGrow(iterator pos, size_type n);
 
         size_type size_;
         value_type * data_;
