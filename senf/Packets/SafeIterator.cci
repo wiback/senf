@@ -39,27 +39,19 @@
 // senf::safe_data_iterator
 
 prefix_ senf::safe_data_iterator::safe_data_iterator()
-    : data_(0), i_(0)
 {}
 
 prefix_  senf::safe_data_iterator::safe_data_iterator(PacketData & data)
-    : data_(&data), i_(0)
+    : Base(&data)
 {}
 
 prefix_ senf::safe_data_iterator::safe_data_iterator(PacketData & data, PacketData::iterator i)
-    : data_(&data), i_(std::distance(data.begin(),i))
+    : Base(&data, std::distance(data.begin(),i))
 {}
 
 prefix_  senf::safe_data_iterator::safe_data_iterator(PacketParserBase const & parser)
-    : data_(&parser.data()), i_(std::distance(data_->begin(),parser.i()))
+    : Base(&parser.data(), std::distance(parser.data().begin(),parser.i()))
 {}
-
-prefix_ senf::PacketData::iterator senf::safe_data_iterator::i()
-    const
-{
-    SENF_ASSERT(data_, "Use/dereferencing of empty safe_data_iterator");
-    return boost::next(data_->begin(),i_);
-}
 
 prefix_ senf::safe_data_iterator & senf::safe_data_iterator::operator=(PacketData::iterator i)
 {
@@ -76,18 +68,6 @@ senf::safe_data_iterator::operator=(PacketParserBase const & parser)
     return *this;
 }
 
-prefix_ senf::safe_data_iterator::operator senf::PacketData::iterator()
-    const
-{
-    return i();
-}
-
-prefix_ bool senf::safe_data_iterator::boolean_test()
-    const
-{
-    return data_;
-}
-
 prefix_ senf::PacketData & senf::safe_data_iterator::data()
     const
 {
@@ -98,7 +78,7 @@ prefix_ senf::PacketData & senf::safe_data_iterator::data()
 prefix_ senf::safe_data_iterator::value_type & senf::safe_data_iterator::dereference()
     const
 {
-    return *i();
+    return * static_cast<PacketData::iterator>(*this);
 }
 
 prefix_ bool senf::safe_data_iterator::equal(safe_data_iterator const & other)

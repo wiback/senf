@@ -89,6 +89,18 @@
 // deallocation at the cost of slightly higher PacketImpl construction.
 // #define SENF_PACKET_ALTERNATIVE_PREALLOC
 
+///////////////////////////////////////////////////////////////////////////
+// The base-2 logarithm of the initial packet allocation.
+// #define SENF_PACKET_VECTOR_SIZE_INDEX 10
+
+////////////////////////////////////////////////////////////////
+// The initial headroom of PacketVector
+// #define SENF_PACKET_VECTOR_HEADROOM 64
+
+///////////////////////////////////////////////////////////////////////////
+// The initial tailroom of PacketVector
+// #define SENF_PACKET_VECTOR_TAILROOM 64
+
 
 // Local Variables:
 // mode: c++

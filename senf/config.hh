@@ -117,6 +117,18 @@ namespace config {
 #     define SENF_PACKET_PREALLOC_INTERPRETERS 8
 # endif
 #
+# ifndef SENF_PACKET_VECTOR_SIZE_INDEX
+#     define SENF_PACKET_VECTOR_SIZE_INDEX 10
+# endif
+#
+# ifndef SENF_PACKET_VECTOR_HEADROOM
+#     define SENF_PACKET_VECTOR_HEADROOM 64
+# endif
+#
+# ifndef SENF_PACKET_VECTOR_TAILROOM
+#     define SENF_PACKET_VECTOR_TAILROOM 64
+# endif
+#
 # ifdef SENF_DEBUG
 #     ifdef HAVE_EXECINFO_H
 #          define SENF_BACKTRACE

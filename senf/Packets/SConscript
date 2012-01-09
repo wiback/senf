@@ -5,7 +5,7 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.AutoRules(env, exclude = [ 'bundledump.cc' ], doc_extra_sources = [
+SENFSCons.AutoRules(env, exclude = [ 'bundledump.cc', 'benchmark.cc' ], doc_extra_sources = [
     env.Dia2Png("structure.dia"),
     env.Dia2Png("80221Bundle/TLV.dia"),
     env.Dia2Png("GenericTLV.dia"),
@@ -60,3 +60,5 @@ bundledump = env.Program('bundledump', [ 'bundledump.cc', '$LOCALLIBDIR/DefaultB
                          LIBS = [ '$LIBS', 'dl' ])
 env.Default(bundledump)
 env.Install('$BININSTALLDIR', bundledump)
+
+benchmark = env.Program('benchmark', [ 'benchmark.cc', '$LOCALLIBDIR/DefaultBundle.o' ])

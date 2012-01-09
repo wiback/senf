@@ -1,0 +1,175 @@
+// $Id$
+//
+// Copyright (C) 2012
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketVector inline non-template implementation */
+
+//#include "PacketVector.ih"
+
+// Custom includes
+#include <string.h>
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::PacketVector::PacketVector()
+    : size_ (ChunkSize),
+      data_ (static_cast<value_type *>(Pool::ordered_malloc(1))),
+      b_ (data_ + HeadRoom),
+      e_ (b_),
+      owner_ (true)
+{}
+
+prefix_ senf::PacketVector::PacketVector(size_type requestSize, value_type initValue)
+    : size_ (allocationSize(requestSize)),
+      data_ (static_cast<value_type *>(Pool::ordered_malloc(size_ >> ChunkSizeIndex))),
+      b_ (data_ + HeadRoom),
+      e_ (b_ + requestSize),
+      owner_ (true)
+{
+    ::memset(b_, initValue, requestSize);
+}
+
+prefix_ senf::PacketVector::PacketVector(value_type * data, size_type size,
+                                         size_type chunkSize, size_type offset)
+    : size_ (chunkSize ? chunkSize : size + offset),
+      data_ (data),
+      b_ (data_ + offset),
+      e_ (b_ + size),
+      owner_ (false)
+{}
+
+prefix_ senf::PacketVector::~PacketVector()
+{
+    if (owner_)
+        Pool::ordered_free(data_, size_ >> ChunkSizeIndex);
+}
+
+prefix_ senf::PacketVector::iterator senf::PacketVector::begin()
+{
+    return b_;
+}
+
+prefix_ senf::PacketVector::const_iterator senf::PacketVector::begin()
+    const
+{
+    return b_;
+}
+
+prefix_ senf::PacketVector::iterator senf::PacketVector::end()
+{
+    return e_;
+}
+
+prefix_ senf::PacketVector::const_iterator senf::PacketVector::end()
+    const
+{
+    return e_;
+}
+
+prefix_ senf::PacketVector::size_type senf::PacketVector::size()
+    const
+{
+    return e_ - b_;
+}
+
+prefix_ void senf::PacketVector::clear()
+{
+    e_ = b_;
+}
+
+prefix_ void senf::PacketVector::erase(iterator pos)
+{
+    ::memmove(pos, pos + 1, e_ - pos - 1);
+    -- e_;
+}
+
+prefix_ void senf::PacketVector::erase(iterator first, iterator last)
+{
+    ::memmove(first, last, e_ - last);
+    e_ -= last - first;
+}
+
+prefix_ void senf::PacketVector::insert(iterator pos, value_type v)
+{
+    * move(pos, 1) = v;
+}
+
+prefix_ void senf::PacketVector::insert(iterator pos, size_type n, value_type v)
+{
+    ::memset(move(pos, n), v, n);
+}
+
+prefix_ senf::PacketVector::size_type senf::PacketVector::allocationSize(size_type sz)
+{
+    return ((sz + HeadRoom + TailRoom) | (ChunkSize - 1)) + 1;
+}
+
+prefix_ void senf::PacketVector::grow(size_type requestSize)
+{
+    size_type n (e_ - b_);
+    requestSize = allocationSize(n + requestSize);
+    value_type * newData (static_cast<value_type *>(Pool::ordered_malloc(requestSize >> ChunkSizeIndex)));
+    ::memcpy(newData + HeadRoom, b_, n);
+    if (owner_)
+        Pool::ordered_free(data_, size_ >> ChunkSizeIndex);
+    b_ = newData + HeadRoom;
+    e_ = b_ + n;
+    size_ = requestSize;
+    data_ = newData;
+    owner_ = true;
+}
+
+prefix_ senf::PacketVector::iterator senf::PacketVector::move(iterator pos, size_type n)
+{
+    bool headOk (b_ >= data_ + n);
+    bool tailOk (e_ + n <= data_ + size_);
+    if (! headOk && ! tailOk) {
+        size_type index (pos - b_);
+        grow(n);
+        return move(b_ + index, n);
+    }
+    if ((pos - b_ < e_ - pos && headOk) || !tailOk) {
+        ::memmove(b_ - n, b_, pos - b_);
+        b_ -= n;
+        return pos - n;
+    }
+    else {
+        ::memmove(pos + n, pos, e_ - pos);
+        e_ += n;
+        return pos;
+    }
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

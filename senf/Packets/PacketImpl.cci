@@ -332,17 +332,6 @@ prefix_ void senf::detail::PacketImpl::erase(PacketData * self, iterator first, 
     updateIterators(self,ix,-delta);
 }
 
-prefix_ void senf::detail::PacketImpl::reserve(size_type n)
-{
-    data_.reserve(n);
-}
-
-prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::capacity()
-    const
-{
-    return data_.capacity();
-}
-
 // Annotations
 
 prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_type key)

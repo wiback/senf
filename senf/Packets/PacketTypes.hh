@@ -32,7 +32,11 @@
 #define HH_SENF_Packets_PacketTypes_ 1
 
 // Custom includes
+#ifdef SENF_PACKET_STD_CONTAINER
 #include <vector>
+#else
+#include "PacketVector.hh"
+#endif
 #include <boost/intrusive_ptr.hpp>
 #include <boost/cstdint.hpp>
 #include <senf/boost_intrusive/ilist.hpp>
@@ -68,7 +72,11 @@ namespace packet {
     typedef boost::intrusive::ilist<interpreter_list_type,false> interpreter_list;
 
     typedef boost::uint8_t byte;
+#ifdef SENF_PACKET_STD_CONTAINER
     typedef std::vector<byte> raw_container;
+#else
+    typedef PacketVector raw_container;
+#endif
     typedef raw_container::size_type size_type;
     typedef raw_container::difference_type difference_type;
 

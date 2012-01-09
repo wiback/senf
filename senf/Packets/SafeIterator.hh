@@ -38,6 +38,7 @@
 // Custom includes
 #include <boost/iterator/iterator_facade.hpp>
 
+#include "SafeIterator.ih"
 //#include "SafeIterator.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,8 +59,9 @@ namespace senf {
         : public boost::iterator_facade< safe_data_iterator,
                                          PacketData::value_type,
                                          boost::random_access_traversal_tag >,
-          public comparable_safe_bool<safe_data_iterator>
+          public senf::detail::packet::safe_data_iterator_base<PacketData::iterator>
     {
+        typedef senf::detail::packet::safe_data_iterator_base<PacketData::iterator> Base;
     public:
         typedef PacketData::size_type size_type;
 
@@ -81,10 +83,6 @@ namespace senf {
                                         /**< The iterator will point to the parser start
                                              position. */
 
-        operator PacketData::iterator() const; ///< Convert to iterator
-
-        bool boolean_test() const;      ///< Check, if iterator is initialized
-
         PacketData & data() const;      ///< Access data container
 
     private:
@@ -98,11 +96,6 @@ namespace senf {
         void increment();
         void decrement();
         void advance(difference_type n);
-
-        PacketData::iterator i() const;
-
-        PacketData * data_;
-        size_type i_;
     };
 
     /** \brief Iterator re-validating Parser wrapper
