@@ -244,7 +244,7 @@ namespace senf {
 
         template <class OutputIterator>
         static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> >
-        getNAIEncodedOutputIterator(OutputIterator i);
+        getNAIEncodedOutputIterator(OutputIterator & i);
 
         struct binaryNAIDecoder {
             binaryNAIDecoder();
