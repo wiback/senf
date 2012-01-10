@@ -28,7 +28,7 @@
 /** \file
     \brief SafeIterator inline non-template implementation */
 
-//#include "SafeIterator.ih"
+#include "SafeIterator.ih"
 
 // Custom includes
 
