@@ -117,6 +117,17 @@ prefix_ void senf::PacketData::clear()
     impl().clear(this);
 }
 
+prefix_ bool senf::PacketData::usingExternalMemory()
+    const
+{
+    return impl().usingExternalMemory();
+}
+
+prefix_ void senf::PacketData::releaseExternalMemory()
+{
+    impl().releaseExternalMemory();
+}
+
 prefix_ bool senf::PacketData::valid()
 {
     return impl_;

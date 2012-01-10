@@ -26,9 +26,12 @@
 //#include "PacketVector.ih"
 
 // Custom includes
+#include <senf/Utils/senfassert.hh>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
+
+#ifndef SENF_PACKET_STD_CONTAINER
 
 template <class ForwardIterator>
 prefix_ senf::PacketVector::PacketVector(ForwardIterator f, ForwardIterator l)
@@ -45,8 +48,11 @@ prefix_ senf::PacketVector::PacketVector(ForwardIterator f, ForwardIterator l)
 template <class ForwardIterator>
 prefix_ void senf::PacketVector::insert(iterator pos, ForwardIterator f, ForwardIterator l)
 {
+    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::erase" );
     std::copy(f, l, move(pos, std::distance(f,l)));
 }
+
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

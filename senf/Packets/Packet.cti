@@ -228,6 +228,14 @@ create(ForwardReadableRange const & range,
 
 #endif
 
+template <class PacketType>
+prefix_ senf::ConcretePacket<PacketType>
+senf::ConcretePacket<PacketType>::create(byte * data, size_type size, size_type chunkSize,
+                                         size_type offset)
+{
+    return ConcretePacket(interpreter::create(data, size, chunkSize, offset));
+}
+
 // Create packet as new packet after a given packet
 
 template <class PacketType>

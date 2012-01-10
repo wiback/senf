@@ -151,8 +151,9 @@ namespace senf {
         // Types
 
         typedef void type;              ///< Type of the packet.
+        typedef senf::detail::packet::byte byte;
         typedef senf::detail::packet::size_type size_type;
-        ///< Unsigned type to represent packet size
+                                        ///< Unsigned type to represent packet size
         typedef PacketInterpreterBase::factory_t factory_t; ///< Packet factory type (see below)
 
         //-////////////////////////////////////////////////////////////////////////
@@ -616,6 +617,7 @@ namespace senf {
                                              \param[in] size Size of the packet to create in bytes
                                              \param[in] senf::noinit This parameter must always have
                                                  the value \c senf::noinit. */
+
 #ifndef DOXYGEN
         template <class ForwardReadableRange>
         static ConcretePacket create(
@@ -633,6 +635,31 @@ namespace senf {
                                              \param[in] range <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>
                                                  of data to construct packet from. */
 #endif
+
+        static ConcretePacket create(byte * data, size_type size, size_type chunkSize = 0u,
+                                     size_type offset = 0u);
+                                        ///< Create packet utilizing external storage
+                                        /**< The packet will be created using \a size bytes at \a
+                                             data. The data will \e not be copied, instead the
+                                             packet will reference the memory at \a data. Changing
+                                             the packet possibly changes \a data.
+
+                                             By specifying \a chunkSize and / or \a offset, you may
+                                             inform the packet library of additional available
+                                             space: \a chunkSize gives the complete size of the
+                                             memory area at \a data. The packet library will make
+                                             use of this space when resizing the packet as long as
+                                             the data does fit into the available space. \a offset
+                                             instructs the packet library to skip that amount of
+                                             bytes at the beginning of \a data.
+
+                                             \param[in] data pointer to data area
+                                             \param[in] size initial size of packet data
+                                             \param[in] chunkSize size of the memory area at \a
+                                             data, defaults to \a size + \a offset
+                                             \param[in] offset bytes to skip a the beginning of \a
+                                             data
+                                          */
 
         // Create packet as new packet after a given packet
 

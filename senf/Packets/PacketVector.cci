@@ -27,9 +27,12 @@
 
 // Custom includes
 #include <string.h>
+#include <senf/Utils/senfassert.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
+
+#ifndef SENF_PACKET_STD_CONTAINER
 
 prefix_ senf::PacketVector::PacketVector()
     : size_ (ChunkSize),
@@ -97,25 +100,42 @@ prefix_ void senf::PacketVector::clear()
     e_ = b_;
 }
 
+prefix_ bool senf::PacketVector::external()
+    const
+{
+    return ! owner_;
+}
+
+prefix_ void senf::PacketVector::releaseExternal()
+{
+    if (! owner_)
+        grow(begin(), 0);
+}
+
 prefix_ void senf::PacketVector::erase(iterator pos)
 {
+    SENF_ASSERT( pos >= b_ && pos < e_, "invalid iterator passed to PacketVector::erase" );
     ::memmove(pos, pos + 1, e_ - pos - 1);
     -- e_;
 }
 
 prefix_ void senf::PacketVector::erase(iterator first, iterator last)
 {
+    SENF_ASSERT( first >= b_ && last <= e_ && last >= first,
+                 "invalid iterator passed to PacketVector::erase" );
     ::memmove(first, last, e_ - last);
     e_ -= last - first;
 }
 
 prefix_ void senf::PacketVector::insert(iterator pos, value_type v)
 {
+    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::erase" );
     * move(pos, 1) = v;
 }
 
 prefix_ void senf::PacketVector::insert(iterator pos, size_type n, value_type v)
 {
+    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::erase" );
     ::memset(move(pos, n), v, n);
 }
 
@@ -140,6 +160,8 @@ prefix_ senf::PacketVector::iterator senf::PacketVector::move(iterator pos, size
     else
         return moveGrow(pos, n);
 }
+
+#endif
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

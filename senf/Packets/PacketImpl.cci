@@ -140,6 +140,29 @@ prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
 #endif
 }
 
+prefix_ senf::detail::PacketImpl::PacketImpl(byte * data, size_type size, size_type chunkSize,
+                                             size_type offset)
+    : refcount_(0)
+#ifndef SENF_PACKET_STD_CONTAINER
+    , data_(data, size, chunkSize, offset)
+#else
+    , data_(data + offset, data + offset + size)
+#endif
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+    , preallocHigh_(0), preallocFree_(0)
+#else
+    , preallocFree_(prealloc_)
+#endif
+#ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
+    , preallocHeapcount_(0)
+#endif
+{
+    ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+    ::memset(prealloc_, 0, sizeof(prealloc_));
+#endif
+}
+
 prefix_ senf::detail::PacketImpl::~PacketImpl()
 {
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
@@ -169,9 +192,9 @@ prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
         if (preallocFree_ != prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS) {
 #   endif
             void * rv (preallocFree_);
-            preallocFree_ += preallocFree_->nextOffset_ + 1;
             SENF_ASSERT(rv >= prealloc_ && rv < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
                         "Prealloc array exceeded");
+            preallocFree_ += preallocFree_->nextOffset_ + 1;
             return rv;
 #   ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
         }
@@ -248,6 +271,32 @@ prefix_ void senf::detail::PacketImpl::deallocateInterpreter(void * address)
     }
 #endif
 }
+
+#ifndef SENF_PACKET_STD_CONTAINER
+
+prefix_ bool senf::detail::PacketImpl::usingExternalMemory()
+    const
+{
+    return data_.external();
+}
+
+prefix_ void senf::detail::PacketImpl::releaseExternalMemory()
+{
+    return data_.releaseExternal();
+}
+
+#else
+
+prefix_ bool senf::detail::PacketImpl::usingExternalMemory()
+    const
+{
+    return false;
+}
+
+prefix_ void senf::detail::PacketImpl::releaseExternalMemory()
+{}
+
+#endif
 
 // Interpreter chain
 

@@ -32,6 +32,8 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+#ifndef SENF_PACKET_STD_CONTAINER
+
 prefix_ senf::PacketVector::iterator senf::PacketVector::moveGrow(iterator pos, size_type n)
 {
     // This is called in two cases:
@@ -44,24 +46,30 @@ prefix_ senf::PacketVector::iterator senf::PacketVector::moveGrow(iterator pos, 
         b_ -= n;
         return pos - n;
     }
-    else {
+    else
         // otherwise we need a reallocation
-        size_type posIndex (pos - b_);
-        size_type dataSize (e_ - b_);
-        size_type requestSize (allocationSize(dataSize + n));
-        value_type * newData (static_cast<value_type *>(Pool::ordered_malloc(requestSize >> ChunkSizeIndex)));
-        ::memcpy(newData + HeadRoom, b_, posIndex);
-        ::memcpy(newData + HeadRoom + posIndex + n, b_ + posIndex, dataSize - posIndex);
-        if (owner_)
-            Pool::ordered_free(data_, size_ >> ChunkSizeIndex);
-        b_ = newData + HeadRoom;
-        e_ = b_ + dataSize + n;
-        size_ = requestSize;
-        data_ = newData;
-        owner_ = true;
-        return b_ + posIndex;
-    }
+        return grow(pos, n);
 }
+
+prefix_ senf::PacketVector::iterator senf::PacketVector::grow(iterator pos, size_type n)
+{
+    size_type posIndex (pos - b_);
+    size_type dataSize (e_ - b_);
+    size_type requestSize (allocationSize(dataSize + n));
+    value_type * newData (static_cast<value_type *>(Pool::ordered_malloc(requestSize >> ChunkSizeIndex)));
+    ::memcpy(newData + HeadRoom, b_, posIndex);
+    ::memcpy(newData + HeadRoom + posIndex + n, b_ + posIndex, dataSize - posIndex);
+    if (owner_)
+        Pool::ordered_free(data_, size_ >> ChunkSizeIndex);
+    b_ = newData + HeadRoom;
+    e_ = b_ + dataSize + n;
+    size_ = requestSize;
+    data_ = newData;
+    owner_ = true;
+    return b_ + posIndex;
+}
+
+#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

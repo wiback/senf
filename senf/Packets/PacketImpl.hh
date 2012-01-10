@@ -146,6 +146,8 @@ namespace detail {
         PacketImpl(size_type size, byte initValue);
         template <class InputIterator>
         PacketImpl(InputIterator b, InputIterator e);
+        PacketImpl(byte * data, size_type size, size_type chunkSize = 0u,
+                   size_type offset = 0u);
         ~PacketImpl();
 
         // rerference/memory management
@@ -164,6 +166,9 @@ namespace detail {
 
         void * allocateInterpreter();
         void deallocateInterpreter(void * address);
+
+        bool usingExternalMemory() const;
+        void releaseExternalMemory();
 
         void memDebug(std::ostream & os);
 

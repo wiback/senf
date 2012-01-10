@@ -53,6 +53,8 @@ namespace {
                          static_cast<char const *>(static_cast<void const *>(data + N - 1))); }
 }
 
+#ifndef SENF_PACKET_STD_CONTAINER
+
 SENF_AUTO_UNIT_TEST(packetVector)
 {
     {
@@ -139,6 +141,8 @@ SENF_AUTO_UNIT_TEST(packetVector)
         BOOST_CHECK_EQUAL( str(storage), strc("DAS FEST!!") );
     }
 }
+
+#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

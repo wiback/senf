@@ -36,6 +36,8 @@
 //#include "PacketVector.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+#ifndef SENF_PACKET_STD_CONTAINER
+
 namespace senf {
 
     /** \brief
@@ -93,6 +95,9 @@ namespace senf {
         size_type size() const;
         void clear();
 
+        bool external() const;
+        void releaseExternal();
+
         void erase(iterator pos);
         void erase(iterator first, iterator last);
 
@@ -107,6 +112,7 @@ namespace senf {
         static size_type allocationSize(size_type sz);
         iterator move(iterator pos, size_type n);
         iterator moveGrow(iterator pos, size_type n);
+        iterator grow(iterator pos, size_type n);
 
         size_type size_;
         value_type * data_;
@@ -116,6 +122,8 @@ namespace senf {
     };
 
 }
+
+#endif
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "PacketVector.cci"

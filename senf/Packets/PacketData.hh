@@ -134,6 +134,9 @@ namespace senf {
         void erase(iterator first, iterator last);
         void clear(); ///< All bytes of the packet data dropped, leaving the container with a size of 0. */
 
+        bool usingExternalMemory() const;
+        void releaseExternalMemory();
+
         void resize(size_type n, byte v=0);
 
         //\}

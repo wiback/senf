@@ -32,6 +32,7 @@
 //#include "Packet.test.ih"
 
 // Custom includes
+#include <iostream>
 #include <sstream>
 #include <boost/static_assert.hpp>
 #include <boost/cstdint.hpp>
@@ -171,6 +172,24 @@ namespace {
         packet.memDebug(ss);
         return ss.str();
     }
+
+}
+
+namespace {
+
+    template <class T, unsigned N>
+    std::string str(T const (& data) [N])
+    { return std::string(static_cast<char const *>(static_cast<void const *>(data)),
+                         static_cast<char const *>(static_cast<void const *>(data + N))); }
+
+    template <class T>
+    std::string str(T const & container)
+    { return std::string(container.begin(), container.end()); }
+
+    template <unsigned N>
+    std::string strc(char const (& data) [N])
+    { return std::string(static_cast<char const *>(static_cast<void const *>(data)),
+                         static_cast<char const *>(static_cast<void const *>(data + N - 1))); }
 
 }
 
@@ -416,6 +435,40 @@ SENF_AUTO_UNIT_TEST(concretePacket)
 
     SENF_CHECK_NOT_EQUAL( packet.clone(), packet );
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
+}
+
+SENF_AUTO_UNIT_TEST(packetExternalMemory)
+{
+    senf::Packet::byte storage[] = "\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x11";
+    BarPacket bar (BarPacket::create(storage, 8, 12, 4));
+
+    BOOST_CHECK_EQUAL( bar->type(), 1u );
+    BOOST_CHECK_EQUAL( bar->length(), 2 );
+    BOOST_CHECK_EQUAL( bar->reserved(), 0x1100u );
+#ifndef SENF_PACKET_STD_CONTAINER
+    BOOST_CHECK( bar.data().usingExternalMemory() );
+#endif
+
+    bar->length() = 4;
+#ifndef SENF_PACKET_STD_CONTAINER
+    BOOST_CHECK_EQUAL( storage[9], 4u );
+#endif
+
+    FooPacket foo (FooPacket::createBefore(bar));
+
+    foo->data()[0] = 0xaau;
+#ifndef SENF_PACKET_STD_CONTAINER
+    BOOST_CHECK_EQUAL( storage[0], 0xaau);
+#endif
+
+    foo.data().releaseExternalMemory();
+    BOOST_CHECK( ! foo.data().usingExternalMemory() );
+    BOOST_CHECK( ! bar.data().usingExternalMemory() );
+    bar->length() = 6;
+#ifndef SENF_PACKET_STD_CONTAINER
+    BOOST_CHECK_EQUAL( storage[9], 4u );
+#endif
+    BOOST_CHECK_EQUAL( foo->data()[9], 6u );
 }
 
 SENF_AUTO_UNIT_TEST(packetAssign)
