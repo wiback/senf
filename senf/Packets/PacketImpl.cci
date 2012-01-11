@@ -108,7 +108,7 @@ prefix_ senf::detail::AnnotationRegistry::AnnotationRegistry()
 
 prefix_ senf::detail::PacketImpl::PacketImpl()
     : refcount_(0)
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
     , preallocHigh_(0), preallocFree_(0)
 #else
     , preallocFree_(prealloc_)
@@ -118,14 +118,14 @@ prefix_ senf::detail::PacketImpl::PacketImpl()
 #endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
-#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
     ::memset(prealloc_, 0, sizeof(prealloc_));
 #endif
 }
 
 prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
     : refcount_(0), data_(size,initValue)
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
     , preallocHigh_(0), preallocFree_(0)
 #else
     , preallocFree_(prealloc_)
@@ -135,7 +135,7 @@ prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
 #endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
-#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
     ::memset(prealloc_, 0, sizeof(prealloc_));
 #endif
 }
@@ -148,7 +148,7 @@ prefix_ senf::detail::PacketImpl::PacketImpl(byte * data, size_type size, size_t
 #else
     , data_(data + offset, data + offset + size)
 #endif
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
     , preallocHigh_(0), preallocFree_(0)
 #else
     , preallocFree_(prealloc_)
@@ -158,7 +158,7 @@ prefix_ senf::detail::PacketImpl::PacketImpl(byte * data, size_type size, size_t
 #endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
-#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
     ::memset(prealloc_, 0, sizeof(prealloc_));
 #endif
 }
@@ -184,7 +184,7 @@ prefix_ senf::detail::PacketImpl::refcount_t senf::detail::PacketImpl::refcount(
     return refcount_;
 }
 
-#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
 
 prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
 {
@@ -194,6 +194,10 @@ prefix_ void * senf::detail::PacketImpl::allocateInterpreter()
             void * rv (preallocFree_);
             SENF_ASSERT(rv >= prealloc_ && rv < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
                         "Prealloc array exceeded");
+#ifdef SENF_DEBUG
+            if (size_type(static_cast<PreallocSlot *>(rv) - prealloc_) > maxPreallocHigh_)
+                maxPreallocHigh_ = static_cast<PreallocSlot *>(rv) - prealloc_;
+#endif
             preallocFree_ += preallocFree_->nextOffset_ + 1;
             return rv;
 #   ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
@@ -261,7 +265,7 @@ prefix_ void senf::detail::PacketImpl::deallocateInterpreter(void * address)
 #endif
         SENF_ASSERT(address >= prealloc_ && address < prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS,
                     "Internal failure: PacketInterpreter outside prealloc array but heapcount == 0");
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
         static_cast<PreallocSlot *>(address)->nextFree_ = preallocFree_;
 #else
         static_cast<PreallocSlot *>(address)->nextOffset_ = (preallocFree_ - static_cast<PreallocSlot *>(address)) - 1;
@@ -394,7 +398,7 @@ prefix_ void * senf::detail::PacketImpl::annotation(AnnotationRegistry::key_type
 
 prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHigh()
 {
-#if defined(SENF_DEBUG) && ! defined(SENF_PACKET_ALTERNATIVE_PREALLOC)
+#if defined(SENF_DEBUG)
     return maxPreallocHigh_;
 #else
     return -1;

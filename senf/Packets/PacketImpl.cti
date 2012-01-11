@@ -101,7 +101,7 @@ prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, F
 template <class InputIterator>
 prefix_ senf::detail::PacketImpl::PacketImpl(InputIterator first, InputIterator last)
     : refcount_(0), data_(first,last)
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
     , preallocHigh_(0), preallocFree_(0)
 #else
     , preallocFree_(prealloc_)
@@ -111,7 +111,7 @@ prefix_ senf::detail::PacketImpl::PacketImpl(InputIterator first, InputIterator 
 #endif
 {
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
-#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
     ::memset(prealloc_, 0, sizeof(prealloc_));
 #endif
 }

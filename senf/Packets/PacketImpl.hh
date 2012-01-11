@@ -256,7 +256,7 @@ namespace detail {
                 sizeof(PacketInterpreter<PacketTypeBase>),
                 boost::alignment_of< PacketInterpreter<PacketTypeBase> >::value
                 >::type storage_;
-#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
             int nextOffset_;
 #else
             PreallocSlot * nextFree_;
@@ -264,7 +264,7 @@ namespace detail {
         };
 
         PreallocSlot prealloc_[SENF_PACKET_PREALLOC_INTERPRETERS];
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
         size_type preallocHigh_;
 #endif
         PreallocSlot * preallocFree_;

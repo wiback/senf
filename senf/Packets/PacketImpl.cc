@@ -51,9 +51,7 @@
 // senf::detail::PacketImpl
 
 #ifdef SENF_DEBUG
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
 senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHigh_ (0);
-#endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
 senf::detail::PacketImpl::size_type senf::detail::PacketImpl::maxPreallocHeapcount_ (0);
 #endif
@@ -87,9 +85,7 @@ namespace {
                    << "SENF_PACKET_ALTERNATIVE_PREALLOC\n"
 #endif
 #ifdef SENF_DEBUG
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
                    << "maxPreallocHigh = " << senf::detail::PacketImpl::maxPreallocHigh() << "\n"
-#endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
                    << "maxPreallocHeapcount = " << senf::detail::PacketImpl::maxPreallocHeapcount() << "\n"
 #endif
@@ -149,7 +145,7 @@ prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
 {
     os << "PacketImpl @" << this << "-" << static_cast<void*>(static_cast<byte*>(static_cast<void*>(this+1))-1)
        << " refcount=" << refcount()
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
        << " preallocHigh=" << preallocHigh_
 #endif
 #ifndef SENF_PACKET_NO_HEAP_INTERPRETERS
@@ -163,14 +159,14 @@ prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
     std::set<void*> free;
     {
         PreallocSlot * p (preallocFree_);
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
         while (p)
 #else
         while (p != prealloc_ + SENF_PACKET_PREALLOC_INTERPRETERS)
 #endif
         {
             free.insert(p);
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
             p = p->nextFree_;
 #else
             p += p->nextOffset_ + 1;
@@ -178,7 +174,7 @@ prefix_ void senf::detail::PacketImpl::memDebug(std::ostream & os)
         }
     }
     for (unsigned i (0); i <
-#ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
+#ifdef SENF_PACKET_ALTERNATIVE_PREALLOC
              preallocHigh_
 #else
              SENF_PACKET_PREALLOC_INTERPRETERS

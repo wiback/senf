@@ -134,10 +134,27 @@ namespace senf {
         void erase(iterator first, iterator last);
         void clear(); ///< All bytes of the packet data dropped, leaving the container with a size of 0. */
 
-        bool usingExternalMemory() const;
-        void releaseExternalMemory();
-
         void resize(size_type n, byte v=0);
+
+        bool usingExternalMemory() const; ///< Check for external memory usage
+                                        /**< Returns \c true, if the packet data resides in external
+                                             memmory not managed by the packet, \c false otherwise.
+
+                                             Normally, this member will return \c false. If however
+                                             the Packet has been constructed using the special
+                                             zero-copy external memory constructor, \c
+                                             usingExternalMemory() will return \c true as long as no
+                                             reallocation has occured. */
+        void releaseExternalMemory();   ///< Release external memory
+                                        /**< If \c usingExternalMemory() returns \c true, this
+                                             member will force a reallocation of the packet data
+                                             into internally managed memory. This operation does
+                                             not change the packet in any way it only changes the
+                                             location, the packet data is stored at. This operation
+                                             will invalidate any iterators.
+
+                                             If \c usingExternalMemory() is \c false, this function
+                                             is a no-op. */
 
         //\}
 
