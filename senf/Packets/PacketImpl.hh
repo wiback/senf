@@ -150,7 +150,7 @@ namespace detail {
                    size_type offset = 0u);
         ~PacketImpl();
 
-        // rerference/memory management
+        // reference/memory management
 
         void add_ref();
         bool release();

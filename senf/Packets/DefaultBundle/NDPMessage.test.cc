@@ -69,7 +69,7 @@ SENF_AUTO_UNIT_TEST(NDPMessage_create)
     BOOST_CHECK( listIter->is<senf::NDPSourceLLAddressTLVParser>() );
     BOOST_CHECK_EQUAL( listIter->type(), 1u );
     BOOST_CHECK_EQUAL( listIter->length(), 1u );
-    senf::NDPSourceLLAddressTLVParser llopt (listIter->as<senf::NDPSourceLLAddressTLVParser>());
+    SENF_CHECK_NO_THROW( listIter->as<senf::NDPSourceLLAddressTLVParser>());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

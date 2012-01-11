@@ -102,7 +102,6 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_fragment)
     BOOST_CHECK( uFragment_packet.next().is<senf::DataPacket>() );
 
     senf::DataPacket dFragment_packet (uFragment_packet.next().as<senf::DataPacket>());
-    senf::PacketData::iterator i (uFragment_packet.next().data().begin());
     BOOST_CHECK_EQUAL( dFragment_packet.size(), 4u );
     BOOST_CHECK_EQUAL( dFragment_packet.data()[0], 0x11 );
 }

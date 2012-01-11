@@ -290,6 +290,8 @@ namespace {
         senf::console::CheckedArgumentIteratorWrapper arg (args);
         senf::console::ParseCommandInfo::TokensRange arg1 (*(arg++));
         senf::console::ParseCommandInfo::TokensRange arg2 (*(arg++));
+        BOOST_CHECK( arg1 );
+        BOOST_CHECK( arg2 );
     }
 }
 
