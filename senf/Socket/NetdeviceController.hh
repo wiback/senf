@@ -110,7 +110,7 @@ namespace senf {
 
         static SockFd::ptr sockfd();
 
-    private:
+    protected:
         void ifrName(ifreq & ifr) const;
         SockFd::ptr sockfd_;
         int ifindex_;
