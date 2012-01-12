@@ -42,6 +42,8 @@
 #include "Sysdir.hh"
 #include "SysInfo.hh"
 #include "ParsedCommand.hh"
+#include <senf/Utils/CpuStat.hh>
+
 
 //#include "Server.mpp"
 #define prefix_
@@ -61,6 +63,8 @@ namespace {
             "  Version: " SENF_LIB_VERSION " Revision number: " SENF_REVISION "\n"
             "  Build-type: " BUILD_TYPE ", SenfLog compile time limit: " +
             senf::str(senf::log::LEVELNAMES[senf::SenfLog::compileLimit::value]), 0);
+
+    senf::CpuStatConsole console;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
