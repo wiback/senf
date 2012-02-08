@@ -59,12 +59,18 @@ namespace senf {
         size_type bytes() const;
         void init() const;
 
-#       include SENF_PARSER()
-        SENF_PARSER_PRIVATE_FIELD ( length_field, UInt8Parser );
-        SENF_PARSER_GOTO( length_field );
-        SENF_PARSER_PRIVATE_BITFIELD ( extended_length_flag, 1,  bool     );
-        SENF_PARSER_PRIVATE_BITFIELD ( underflow_flag,       1,  bool     );
-        SENF_PARSER_PRIVATE_BITFIELD ( fixed_length_field,   6,  unsigned );
+        UInt8Parser length_field() const {
+            return parse<UInt8Parser>( i());
+        }
+        FlagParser<0> extended_length_flag() const {
+            return parse<FlagParser<0> >( i());
+        }
+        FlagParser<1> underflow_flag() const {
+            return parse<FlagParser<1> >( i());
+        }
+        UIntFieldParser<2,8> fixed_length_field() const {
+            return parse<UIntFieldParser<2,8> >( i());
+        }
 
         void finalize();
         void capacity(value_type v);

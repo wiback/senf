@@ -52,7 +52,8 @@
         SENF_MPL_SLOT_DEF_ZERO(bit);                                                              \
         SENF_MPL_SLOT_DEF_ZERO(bitfield_size);                                                    \
         void init_chain(senf::mpl::rv<0>*) const {}                                               \
-    public:
+    public:                                                                                       \
+        struct SelfProxy;
 #
 # define SENF_PARSER_INITIALIZE_var()                                                             \
     private:                                                                                      \
@@ -63,7 +64,8 @@
         SENF_MPL_SLOT_DEF_ZERO(group);                                                            \
         void init_chain(senf::mpl::rv<0>*) const {}                                               \
         size_type field_offset_(senf::mpl::rv<0>*) const { return 0; }                            \
-    public:
+    public:                                                                                       \
+        struct SelfProxy;
 #
 # //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_INHERIT_*
@@ -214,6 +216,11 @@
     access:                                                                                       \
         BOOST_PP_CAT(name, _t) name() const {                                                     \
             return BOOST_PP_CAT(name,_)();                                                        \
+        }                                                                                         \
+        template <typename T>                                                                     \
+        SelfProxy name(T const & v) const {                                                       \
+            protect(), name() << v;                                                               \
+            return SelfProxy(this);                                                               \
         }
 #
 # define SENF_PARSER_I_FIELD_VAL_ro(name, type, access)                                           \
@@ -431,14 +438,19 @@
     static size_type const fixed_bytes = SENF_MPL_SLOT_GET(offset);
 #
 # define SENF_PARSER_FINALIZE_GENERIC(name)                                                       \
-         void defaultInit() const {                                                               \
-             init_chain(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(0));                \
-         }                                                                                        \
-         name(data_iterator i, state_type s) : parser_base_type(i,s) {}                           \
+        void defaultInit() const {                                                                \
+            init_chain(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(0));                 \
+        }                                                                                         \
+        name(data_iterator i, state_type s) : parser_base_type(i,s) {}                            \
     private:                                                                                      \
-         template <class T> void init(T) const { defaultInit(); }                                 \
+        template <class T> void init(T) const { defaultInit(); }                                  \
     public:                                                                                       \
-         void init() const { init(0); }
+        void init() const { init(0); }                                                            \
+        struct SelfProxy {                                                                        \
+            SelfProxy(name const * p) : p_(p) {}                                                  \
+            name const * operator->() { return p_; }                                              \
+            name const * p_;                                                                      \
+        };
 #
 # //-///////////////////////////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_REQUIRE_VAR

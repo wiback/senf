@@ -158,7 +158,7 @@ namespace senf {
         ptr last();
 
         template <class Type> typename PacketInterpreter<Type>::ptr parseNextAs();
-                                       ptr                          parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range);
+                                       ptr                          parseNextAs(ptr const & self, factory_t factory, PacketInterpreterBase::optional_range const & range);
         template <class Type> typename PacketInterpreter<Type>::ptr as();
 
         ptr append(ptr packet);
@@ -222,7 +222,7 @@ namespace senf {
 
         virtual optional_range v_nextPacketRange() = 0;
         virtual ptr v_appendClone(detail::PacketImpl * impl, iterator base, iterator new_base) = 0;
-        virtual ptr v_appendClone(detail::PacketImpl * impl, range r) =0;
+        virtual ptr v_appendClone(detail::PacketImpl * impl, range r) = 0;
         virtual void v_finalize() = 0;
         virtual void v_dump(std::ostream & os) = 0;
         virtual TypeIdValue v_type() = 0;

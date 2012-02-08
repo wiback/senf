@@ -112,14 +112,14 @@ prefix_ senf::Packet senf::Packet::last()
 prefix_ senf::Packet senf::Packet::parseNextAs(factory_t factory)
     const
 {
-    return Packet(ptr()->parseNextAs(factory, ptr()->nextPacketRange()));
+    return Packet(ptr()->parseNextAs(ptr(), factory, ptr()->nextPacketRange()));
 }
 
 prefix_ senf::PacketInterpreterBase::ptr
 senf::Packet::parseNextAs(factory_t factory, PacketInterpreterBase::optional_range const & range)
     const
 {
-    return ptr()->parseNextAs(factory, range);
+    return ptr()->parseNextAs(ptr(), factory, range);
 }
 
 prefix_ senf::Packet senf::Packet::append(Packet const & packet)
