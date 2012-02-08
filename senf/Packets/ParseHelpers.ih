@@ -219,7 +219,10 @@
         }                                                                                         \
         template <typename T>                                                                     \
         SelfProxy name(T const & v) const {                                                       \
-            protect(), name() << v;                                                               \
+            if (senf::is_fixed<type>::value)                                                      \
+                name() << v;                                                                      \
+            else                                                                                  \
+                protect(), name() << v;                                                           \
             return SelfProxy(this);                                                               \
         }
 #
