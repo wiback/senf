@@ -64,9 +64,7 @@ def checkLocalConf(target, source, env):
 if os.environ.get('debian_build'):
     rev = os.popen("dpkg-parsechangelog | awk '/^Version:/{print $2}'").read().strip()
 else:
-    rev = 'r' + os.popen("svnversion").read().strip().lower()
-    if rev == 'rexported':
-        rev = os.popen("gitsvnversion").read().strip().lower()
+    rev = env.CalculateRevision()
 
 logname = os.environ.get('LOGNAME')
 if not logname:

@@ -121,7 +121,7 @@ The environment 'env' is updated in the following way:
             return True
     return False
 
-def SetupForSENF(env, senf_path = [], flavor=None):
+def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
     try_flavors = [ '', 'g' ]
     if flavor is not None:
         try_flavors[0:0] = [ flavor ]
@@ -132,7 +132,12 @@ def SetupForSENF(env, senf_path = [], flavor=None):
             print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} "
                             "'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
     else:
-        print "scons: SENF library not found, trying to build anyway ..."
+        print "scons: SENF library not found,",
+        if exit_if_not_found:
+            print "abort."
+            sys.exit(1)
+        else:
+            "trying to build anyway ..."
 
     loadTools(env)
 

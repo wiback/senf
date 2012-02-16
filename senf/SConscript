@@ -18,21 +18,6 @@ env.InstallSubdir(target = '$INCLUDEINSTALLDIR',
                   source = sorted(env.Glob("*.hh", strings=True)))
 
 # Create Version.hh
-MAJOR = 1
-MINOR = 1
-svn_info = re.search('.*last changed rev: (\d+).*', os.popen('svn info').read().strip().lower());
-if svn_info:
-    REV = int(svn_info.groups()[0])
-else:
-    REV = 0
-env.CreateFile("Version.hh", env.Value(
-    '// auto-generated file.\n\n'
-    '#ifndef HH_SENF_Version\n'
-    '#define HH_SENF_Version\n\n'
-    '// SENF_VERSION %% 100000 is the revision number\n'
-    '// SENF_VERSION / 100000 %% 100 is the minor version\n'
-    '// SENF_VERSION / 10000000 is the major version\n'
-    '#define SENF_VERSION %(MAJOR)d%(MINOR)02d%(REV)05d\n\n'
-    '#define SENF_LIB_VERSION "%(MAJOR)d.%(MINOR)02d"\n\n'
-    '#define SENF_REVISION "%(REV)d"\n\n'
-    '#endif\n' % locals()) )
+env.CreateVersionFile( "Version.hh", name='SENF', major_version=1, minor_version=2,
+                       local_revision_file='.revision')
+
