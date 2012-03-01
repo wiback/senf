@@ -43,7 +43,7 @@ namespace senf {
 
         <b>Re-ordering of bits due to LSB byte order</b>
      */
-    struct RadiotapPacketParser_Flags : public PacketParserBase
+    struct RadiotapPacket_FlagsParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -56,7 +56,7 @@ namespace senf {
         SENF_PARSER_BITFIELD ( shortPreamble,  1, bool );
         SENF_PARSER_BITFIELD ( cfp,            1, bool );
 
-        SENF_PARSER_FINALIZE ( RadiotapPacketParser_Flags );
+        SENF_PARSER_FINALIZE ( RadiotapPacket_FlagsParser );
 
         friend struct RadiotapPacketParser;
     };
@@ -65,7 +65,7 @@ namespace senf {
 
         <b>Re-ordering of bits due to LSB byte order</b>
      */
-    struct RadiotapPacketParser_ChannelOptions : public PacketParserBase
+    struct RadiotapPacket_ChannelOptionsParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -85,10 +85,10 @@ namespace senf {
         SENF_PARSER_BITFIELD  ( passive,              1, bool  );
         SENF_PARSER_BITFIELD  ( flag5ghz,             1, bool  );
 
-        SENF_PARSER_FINALIZE ( RadiotapPacketParser_ChannelOptions );
+        SENF_PARSER_FINALIZE ( RadiotapPacket_ChannelOptionsParser );
     };
 
-    struct RadiotapPacketParser_RxFlags : public PacketParserBase
+    struct RadiotapPacket_RxFlagsParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -96,10 +96,10 @@ namespace senf {
         SENF_PARSER_BITFIELD  ( badPlcp,              1, bool  );
         SENF_PARSER_SKIP_BITS ( 1                              );
 
-        SENF_PARSER_FINALIZE( RadiotapPacketParser_RxFlags );
+        SENF_PARSER_FINALIZE( RadiotapPacket_RxFlagsParser );
     };
 
-    struct RadiotapPacketParser_TxFlags : public PacketParserBase
+    struct RadiotapPacket_TxFlagsParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -108,7 +108,29 @@ namespace senf {
         SENF_PARSER_BITFIELD  ( txCts,                1, bool  );
         SENF_PARSER_BITFIELD  ( fail,                 1, bool  );
 
-        SENF_PARSER_FINALIZE( RadiotapPacketParser_TxFlags );
+        SENF_PARSER_FINALIZE( RadiotapPacket_TxFlagsParser );
+    };
+
+    struct RadiotapPacket_MCSParser : public PacketParserBase
+    {
+#       include SENF_FIXED_PARSER()
+
+        SENF_PARSER_SKIP_BITS ( 3                              );
+        SENF_PARSER_BITFIELD  ( fecTypeKnown,         1, bool  );
+        SENF_PARSER_BITFIELD  ( htFormatKnown,        1, bool  );
+        SENF_PARSER_BITFIELD  ( guardIntervalKnown,   1, bool  );
+        SENF_PARSER_BITFIELD  ( mcsIndexKnown,        1, bool  );
+        SENF_PARSER_BITFIELD  ( bandwidthKnown,       1, bool  );
+
+        SENF_PARSER_SKIP_BITS ( 3                              );
+        SENF_PARSER_BITFIELD  ( fecType,              1, bool  );
+        SENF_PARSER_BITFIELD  ( htFormat,             1, bool  );
+        SENF_PARSER_BITFIELD  ( guardInterval,        1, bool  );
+        SENF_PARSER_BITFIELD  ( bandwidth,            2, bool  );
+
+        SENF_PARSER_FIELD     ( mcsIndex,          UInt8Parser );
+
+        SENF_PARSER_FINALIZE( RadiotapPacket_MCSParser );
     };
 
     /** \brief Parse an Radiotap header
@@ -128,7 +150,7 @@ namespace senf {
 
         \todo extended present field (bit 31 of present field is set)
     */
-    struct RadiotapPacketParser_Header : public PacketParserBase
+    struct RadiotapPacket_HeaderParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -142,7 +164,7 @@ namespace senf {
 
         SENF_PARSER_PRIVATE_FIELD ( presentFlags, UInt32LSBParser );
 
-        SENF_PARSER_FINALIZE ( RadiotapPacketParser_Header );
+        SENF_PARSER_FINALIZE ( RadiotapPacket_HeaderParser );
 
         enum PresentIndex {
             // Could use the the entries from radiotap.h but I don't know,
@@ -165,8 +187,9 @@ namespace senf {
             TX_FLAGS_INDEX          = 15,
             RTS_RETRIES_INDEX       = 16,
             DATA_RETRIES_INDEX      = 17,
+            MCS_INDEX               = 19,
 
-            MAX_INDEX               = 17,
+            MAX_INDEX               = 19,
 
             RADIOTOP_NS_INDEX       = 29,
             VENDOR_NS_INDEX         = 30,
@@ -192,6 +215,7 @@ namespace senf {
             TX_FLAGS_FLAG           = (1<<TX_FLAGS_INDEX),
             RTS_RETRIES_FLAG        = (1<<RTS_RETRIES_INDEX),
             DATA_RETRIES_FLAG       = (1<<DATA_RETRIES_INDEX),
+            MCS_FLAG                = (1<<MCS_INDEX),
 
             RADIOTOP_NS_FLAG        = (1<<RADIOTOP_NS_INDEX),
             VENDOR_NS_FLAG          = (1<<VENDOR_NS_INDEX),
@@ -201,7 +225,7 @@ namespace senf {
         static unsigned const FIELD_SIZE[MAX_INDEX+2];
     };
 
-    struct RadiotapPacketParser_FrameType : public PacketParserBase
+    struct RadiotapPacket_FrameTypeParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -209,14 +233,14 @@ namespace senf {
         SENF_PARSER_BITFIELD_RO( frameType, 2, unsigned );
         SENF_PARSER_SKIP_BITS(2);
 
-        SENF_PARSER_FINALIZE(RadiotapPacketParser_FrameType);
+        SENF_PARSER_FINALIZE(RadiotapPacket_FrameTypeParser);
     };
 
-    struct RadiotapPacketParser : public RadiotapPacketParser_Header
+    struct RadiotapPacketParser : public RadiotapPacket_HeaderParser
     {
         RadiotapPacketParser(data_iterator i, state_type s);
 
-        static const size_type init_bytes = RadiotapPacketParser_Header::fixed_bytes;
+        static const size_type init_bytes = RadiotapPacket_HeaderParser::fixed_bytes;
 
         size_type bytes() const;
 
@@ -233,7 +257,7 @@ namespace senf {
         FIELD( tsft,              UInt64LSBParser,                      TSFT_INDEX              );
 
         // flags is special: disabling 'flags' must also disable the 'fcs' field
-        typedef RadiotapPacketParser_Flags flags_t;
+        typedef RadiotapPacket_FlagsParser flags_t;
         flags_t flags() { return parseField<flags_t>(FLAGS_INDEX); }
         bool has_flags() { return currentTable()[FLAGS_INDEX]; }
         bool flagsPresent() { return has_flags(); }
@@ -241,7 +265,7 @@ namespace senf {
         void disable_flags() { disable_fcs(); disableField(FLAGS_INDEX); }
 
         FIELD( rate,              UInt8Parser,                          RATE_INDEX              );
-        FIELD( channelOptions,    RadiotapPacketParser_ChannelOptions,  CHANNEL_INDEX           );
+        FIELD( channelOptions,    RadiotapPacket_ChannelOptionsParser,  CHANNEL_INDEX           );
         FIELD( fhss,              UInt16LSBParser,                      FHSS_INDEX              );
         FIELD( dbmAntennaSignal,  Int8Parser,                           DBM_ANTSIGNAL_INDEX     );
         FIELD( dbmAntennaNoise,   Int8Parser,                           DBM_ANTNOISE_INDEX      );
@@ -252,10 +276,11 @@ namespace senf {
         FIELD( antenna,           UInt8Parser,                          ANTENNA_INDEX           );
         FIELD( dbAntennaSignal,   UInt8Parser,                          DB_ANTSIGNAL_INDEX      );
         FIELD( dbAntennaNoise,    UInt8Parser,                          DB_ANTNOISE_INDEX       );
-        FIELD( rxFlags,           RadiotapPacketParser_RxFlags,         RX_FLAGS_INDEX          );
-        FIELD( txFlags,           RadiotapPacketParser_TxFlags,         TX_FLAGS_INDEX          );
+        FIELD( rxFlags,           RadiotapPacket_RxFlagsParser,         RX_FLAGS_INDEX          );
+        FIELD( txFlags,           RadiotapPacket_TxFlagsParser,         TX_FLAGS_INDEX          );
         FIELD( rtsRetries,        UInt8Parser,                          RTS_RETRIES_INDEX       );
         FIELD( dataRetries,       UInt8Parser,                          DATA_RETRIES_INDEX      );
+        FIELD( mcs,               RadiotapPacket_MCSParser,             MCS_INDEX               );
 
 #       undef FIELD
 

@@ -41,9 +41,9 @@
 SENF_AUTO_UNIT_TEST(RadiotapPacket_fieldSizes)
 {
     // This test only asserts, that nobody forgot to update the FIELD_SIZE table
-    // when chaning MAX_INDEX
-    BOOST_CHECK( senf::RadiotapPacketParser_Header::FIELD_SIZE[
-                     senf::RadiotapPacketParser_Header::MAX_INDEX] != 0 );
+    // when changing MAX_INDEX
+    BOOST_CHECK( senf::RadiotapPacket_HeaderParser::FIELD_SIZE[
+                     senf::RadiotapPacket_HeaderParser::MAX_INDEX] != 0 );
 }
 
 SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
@@ -134,10 +134,10 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_create)
 {
     senf::RadiotapPacket p (senf::RadiotapPacket::create());
 
-    BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacketParser_Header::fixed_bytes+0 );
+    BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacket_HeaderParser::fixed_bytes+0 );
 
     SENF_CHECK_NO_THROW( p->init_tsft()             = 81059833346uLL );
-    BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacketParser_Header::fixed_bytes +
+    BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacket_HeaderParser::fixed_bytes +
             senf::RadiotapPacketParser::tsft_t::fixed_bytes );
     SENF_CHECK_NO_THROW( p->init_rate()             =          12u   );
     SENF_CHECK_NO_THROW( p->init_dbmAntennaSignal() =         -61    );
@@ -319,6 +319,32 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_parsetest)
                       "  bss id                  : 00:0b:0e:26:ab:c0\n"
                       "  sequence number         : 3790\n"
                       "  fragment number         : 0\n");
+}
+
+
+SENF_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k_mcs)
+{
+    unsigned char data[] = {
+            '\x00', '\x00', '\x15', '\x00', '\x2a', '\x48', '\x08', '\x00',
+            '\x00', '\x00', '\xa8', '\x09', '\x80', '\x04', '\xe1', '\x01',
+            '\x00', '\x00', '\x07', '\x00', '\x07'
+    };
+    senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
+
+    BOOST_CHECK_EQUAL( p->version(),    0u   );
+    BOOST_CHECK_EQUAL( p->mcsPresent(), true );
+
+    BOOST_CHECK_EQUAL( p->mcs().bandwidthKnown(),     true );
+    BOOST_CHECK_EQUAL( p->mcs().mcsIndexKnown(),      true );
+    BOOST_CHECK_EQUAL( p->mcs().guardIntervalKnown(), true );
+    BOOST_CHECK_EQUAL( p->mcs().fecTypeKnown(),       false);
+    BOOST_CHECK_EQUAL( p->mcs().htFormatKnown(),      false);
+
+    BOOST_CHECK_EQUAL( p->mcs().bandwidth(),     0);
+    BOOST_CHECK_EQUAL( p->mcs().guardInterval(), 0);
+    BOOST_CHECK_EQUAL( p->mcs().mcsIndex(),      7);
+
+    p.dump(std::cout);
 }
 
 

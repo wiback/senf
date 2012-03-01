@@ -103,8 +103,8 @@ prefix_ void senf::RadiotapPacketParser::buildOffsetTable(boost::uint32_t presen
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::RadiotapPacketParser
 
-unsigned const senf::RadiotapPacketParser_Header::FIELD_SIZE[] = {
-    8, 1, 1, 4, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1 };
+unsigned const senf::RadiotapPacket_HeaderParser::FIELD_SIZE[] = {
+    8, 1, 1, 4, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 0, 3 };
 
 prefix_ senf::UInt32Parser senf::RadiotapPacketParser::init_fcs()
 {
@@ -118,7 +118,7 @@ prefix_ senf::UInt32Parser senf::RadiotapPacketParser::init_fcs()
 prefix_ void senf::RadiotapPacketParser::disable_fcs()
 {
     if (has_fcs()) {
-        validate(RadiotapPacketParser_Header::fixed_bytes+4);
+        validate(RadiotapPacket_HeaderParser::fixed_bytes+4);
         data().erase(data().end()-4, data().end());
         flags().fcsAtEnd_() = false;
     }
@@ -162,7 +162,7 @@ prefix_ void senf::RadiotapPacketParser::updatePresentFlags(boost::uint32_t flag
 
     OffsetTable const & oldTable (currentTable());
     OffsetTable const & newTable (getTable(flags));
-    unsigned b (RadiotapPacketParser_Header::fixed_bytes);
+    unsigned b (RadiotapPacket_HeaderParser::fixed_bytes);
     int cumulativeNewBytes (0);
 
     for (unsigned index (0); index <= MAX_INDEX; ++index) {
@@ -228,6 +228,21 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream & os)
 #   define END_FLAGS()                                                  \
         os << '\n';
 
+static const char * MCSbandwidthDesc[] = { "20", "40", "20L", "20U" };
+static const char * MCSguardIntervalDesc[] = { "long", "short" };
+static const char * MCShtFormatDesc[] = { "mixed", "greenfield" };
+static const char * MCSfecTypeDesc[] = { "BCC", "LDPC" };
+static const char * MCSmcsIndexDesc[] = { };
+
+#   define MCS_FLAG(name, desc, longDesc)                                   \
+        if (subparser.name ## Known()) {                                    \
+            os << senf::fieldName("  " desc) << unsigned(subparser.name()); \
+            if (longDesc)                                                   \
+                os << " (" << MCS ## name ## Desc[subparser.name()] << ")"; \
+            os << "\n"; }
+
+
+
     FIELD           ( tsft,              boost::uint64_t, "MAC timestamp"        );
     ENTER           ( flags                                                      );
       START_FLAGS   (                                     "flags"                );
@@ -282,6 +297,21 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream & os)
     LEAVE           (                                                            );
     FIELD           ( rtsRetries,        unsigned,        "rts retries"          );
     FIELD           ( dataRetries,       unsigned,        "data retries"         );
+    ENTER           ( mcs                                                        );
+      START_FLAGS   (                                    "known MCS information" );
+        FLAG        (     bandwidthKnown,                     "bandwidth"        );
+        FLAG        (     mcsIndexKnown,                      "MCS index"        );
+        FLAG        (     guardIntervalKnown,                 "guard interval"   );
+        FLAG        (     htFormatKnown,                      "HT format"        );
+        FLAG        (     fecTypeKnown,                       "FEC type"         );
+      END_FLAGS     (                                                            );
+      os <<                                            "  MCS information\n"      ;
+        MCS_FLAG    (     bandwidth,                          "bandwidth",      1);
+        MCS_FLAG    (     guardInterval,                      "guard interval", 1);
+        MCS_FLAG    (     htFormat,                           "HT format",      1);
+        MCS_FLAG    (     fecType,                            "FEC type",       1);
+        MCS_FLAG    (     mcsIndex,                           "MCS index",      0);
+    LEAVE           (                                                            );
 
     if (p->flagsPresent() && p->flags().fcsAtEnd())
         os << senf::fieldName("fcs") << unsigned(p->fcs()) << '\n';
@@ -293,13 +323,14 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream & os)
 #   undef SUBFIELD
 #   undef ENTER
 #   undef FIELD
+#   undef MCS_FLAG
 }
 
 prefix_ void senf::RadiotapPacketType::init(packet p)
 {
     // ?? Why the heck do we need the +0? Otherwise we get an
-    // 'undefined reference to 'RadiotapPacketParser_Header::fixed_bytes'
-    p->length() << RadiotapPacketParser_Header::fixed_bytes+0;
+    // 'undefined reference to 'RadiotapPacket_HeaderParser::fixed_bytes'
+    p->length() << RadiotapPacket_HeaderParser::fixed_bytes+0;
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::RadiotapPacketType::nextPacketType(packet p)
