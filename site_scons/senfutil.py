@@ -126,18 +126,19 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
     if flavor is not None:
         try_flavors[0:0] = [ flavor ]
 
-    res = detect_senf(env, senf_path, try_flavors)
-    if res:
-        if not env.GetOption('no_progress'):
-            print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} "
-                            "'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
-    else:
-        print "scons: SENF library not found,",
-        if exit_if_not_found:
-            print "abort."
-            sys.exit(1)
+    if not env.GetOption('clean'):
+        res = detect_senf(env, senf_path, try_flavors)
+        if res:
+            if not env.GetOption('no_progress'):
+                print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} "
+                                "'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
         else:
-            "trying to build anyway ..."
+            print "scons: SENF library not found,",
+            if exit_if_not_found:
+                print "abort."
+                sys.exit(1)
+            else:
+                "trying to build anyway ..."
 
     loadTools(env)
 

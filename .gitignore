@@ -34,3 +34,5 @@ config.log
 /build/
 /lcov-build/
 /senf/Packets/benchmark
+/.pydevproject
+/.settings
