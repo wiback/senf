@@ -137,19 +137,21 @@ prefix_ void senf::StatisticsBase::generateOutput()
     OutputMap::iterator i (outputs_.begin());
     OutputMap::iterator const i_end (outputs_.end());
     for (; i != i_end; ++i) {
-        i->second.min = i->second.avg = i->second.max = i->second.dev = 0.0f;
+        i->second.min = FLT_MAX;
+        i->second.max = -FLT_MAX;
+        i->second.avg = i->second.dev = 0.0f;
         Queue::const_iterator j (queue_.begin());
         Queue::const_iterator const j_end (queue_.end());
         unsigned n (0);
         for (; n < i->second.n && j != j_end; ++n, ++j) {
-            i->second.min += j->min;
+            i->second.min = std::min(i->second.min, j->min);
             i->second.avg += j->avg;
-            i->second.max += j->max;
+            i->second.max = std::max( i->second.max, j->max);
             i->second.dev += j->dev;
         }
-        i->second.min /= n;
+        //i->second.min /= n;
         i->second.avg /= n;
-        i->second.max /= n;
+        //i->second.max /= n;
         i->second.dev /= n;
         i->second.signal(i->second.min, i->second.avg, i->second.max, i->second.dev);
     }
