@@ -317,6 +317,8 @@ namespace senf {
         void validate() const;
     };
 
+    void swap(MIHFSrcIdTLVParser src, MIHFDstIdTLVParser dst);
+
     /** \brief Parser for 802.21 Status TLV
      */
     struct MIHStatusTLVParser : public MIHBaseTLVParser

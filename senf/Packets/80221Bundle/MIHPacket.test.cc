@@ -84,6 +84,10 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             mihPacket.data().begin(), mihPacket.data().end() );
+    swap( mihPacket->src_mihfId(), mihPacket->dst_mihfId());
+    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().valueAsString(), "senf@berlios.de");
+    BOOST_CHECK_EQUAL( mihPacket->src_mihfId().valueAsString(), "test");
+    swap( mihPacket->src_mihfId(), mihPacket->dst_mihfId());
     BOOST_CHECK_EQUAL( mihPacket->src_mihfId().valueAsString(), "senf@berlios.de");
     BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().valueAsString(), "test");
 

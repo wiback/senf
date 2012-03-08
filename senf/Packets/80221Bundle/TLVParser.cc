@@ -183,6 +183,14 @@ prefix_ senf::MIHFId senf::MIHFIdTLVParser::valueAs(MIHFId::Type type)
     return MIHFId();
 }
 
+prefix_ void senf::swap(MIHFSrcIdTLVParser src, MIHFDstIdTLVParser dst)
+{
+    std::string d (dst.valueAsString());
+    SafePacketParserWrapper<MIHFSrcIdTLVParser> safe_src (src);
+    dst << src.valueAsString();
+    *safe_src << d;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHFSrcIdTLVParser
