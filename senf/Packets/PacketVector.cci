@@ -136,7 +136,8 @@ prefix_ void senf::PacketVector::insert(iterator pos, value_type v)
 prefix_ void senf::PacketVector::insert(iterator pos, size_type n, value_type v)
 {
     SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::erase" );
-    ::memset(move(pos, n), v, n);
+    if (n > 0)
+        ::memset(move(pos, n), v, n);
 }
 
 prefix_ senf::PacketVector::size_type senf::PacketVector::allocationSize(size_type sz)

@@ -62,6 +62,10 @@ SENF_AUTO_UNIT_TEST(packetVector)
         BOOST_CHECK_EQUAL( vec.size(), 0u );
         BOOST_CHECK( vec.begin() == vec.end() );
 
+        vec.insert(vec.begin(), 0, 'a');
+        BOOST_CHECK_EQUAL( vec.size(), 0u );
+        BOOST_CHECK( vec.begin() == vec.end() );
+
         vec.insert(vec.begin(), 'a');
         BOOST_CHECK_EQUAL( vec.size(), 1u );
         BOOST_CHECK_EQUAL( vec.begin()[0], 'a' );
