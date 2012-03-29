@@ -164,7 +164,7 @@ template <class BaseParser, class Keytype>
 template <class PacketParser>
 prefix_ senf::GenericTLVParserRegistry<BaseParser,Keytype>::RegistrationProxy<PacketParser>::RegistrationProxy()
 {
-    GenericTLVParserRegistry<BaseParser,Keytype>::instance().registerParser<PacketParser>();
+    GenericTLVParserRegistry<BaseParser,Keytype>::instance().template registerParser<PacketParser>();
 };
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

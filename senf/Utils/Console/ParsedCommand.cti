@@ -305,7 +305,7 @@ template <class Overload, unsigned index, bool flag>
 prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
 defaultValue(value_type const & value)
 {
-    this->overload().arg<index>().defaultValue = value;
+    this->overload().template arg<index>().defaultValue = value;
     this->overload().arg(index).hasDefault = true;
 }
 
@@ -313,7 +313,7 @@ template <class Overload, unsigned index, bool flag>
 template <class Fn>
 prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::parser(Fn fn)
 {
-    this->overload().arg<index>().parser = fn;
+    this->overload().template arg<index>().parser = fn;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

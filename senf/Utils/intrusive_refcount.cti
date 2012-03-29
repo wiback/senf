@@ -50,13 +50,13 @@ prefix_ void senf::intrusive_refcount_base::intrusive_ptr_release()
 template <class Self>
 prefix_ void senf::intrusive_ptr_add_ref(intrusive_refcount_t<Self> const * p)
 {
-    const_cast<intrusive_refcount_t<Self>*>(p)->intrusive_ptr_add_ref<Self>();
+    const_cast<intrusive_refcount_t<Self>*>(p)->template intrusive_ptr_add_ref<Self>();
 }
 
 template <class Self>
 prefix_ void senf::intrusive_ptr_release(intrusive_refcount_t<Self> const * p)
 {
-    const_cast<intrusive_refcount_t<Self>*>(p)->intrusive_ptr_release<Self>();
+    const_cast<intrusive_refcount_t<Self>*>(p)->template intrusive_ptr_release<Self>();
 }
 
 template <class Self>

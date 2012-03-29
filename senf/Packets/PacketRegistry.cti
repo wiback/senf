@@ -64,7 +64,7 @@ template <class Tag>
 template <class PacketType>
 prefix_ void senf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key, int priority)
 {
-    registry().registerPacket<PacketType>(key, priority);
+    registry().template registerPacket<PacketType>(key, priority);
 }
 
 template <class Tag>
@@ -72,7 +72,7 @@ template <class PacketType>
 prefix_ void senf::PacketRegistry<Tag>::unregisterPacket()
 {
     if (alive())
-        registry().unregisterPacket<PacketType>();
+        registry().template unregisterPacket<PacketType>();
 }
 
 template <class Tag>
