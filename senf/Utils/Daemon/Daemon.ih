@@ -33,8 +33,8 @@
 
 // Custom includes
 #include <deque>
-#include <senf/boost_intrusive/iset.hpp>
-#include <senf/boost_intrusive/iset_hook.hpp>
+#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/list_hook.hpp>
 #include <boost/utility.hpp>
 #include <boost/function.hpp>
 #include <senf/Scheduler/Scheduler.hh>
@@ -73,7 +73,7 @@ namespace detail {
             // However, this makes memory-management explicit and we'll need to be careful.
             typedef std::deque<char> Buffer;
             struct TargetListTag;
-            typedef boost::intrusive::ilist_base_hook<TargetListTag> TargetListBase;
+            typedef boost::intrusive::list_base_hook< boost::intrusive::tag<TargetListTag> > TargetListBase;
 
             struct Target : public TargetListBase
             {
@@ -83,7 +83,10 @@ namespace detail {
                 Buffer::size_type offset;
                 scheduler::FdEvent writeevent;
             };
-            typedef boost::intrusive::ilist<TargetListBase::value_traits<Target>,false> Targets;
+
+            typedef boost::intrusive::list< Target,
+                                            boost::intrusive::constant_time_size<false>,
+                                            boost::intrusive::base_hook<TargetListBase> > Targets;
 
             struct DestroyDelete
             {

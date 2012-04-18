@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <boost/function.hpp>
-#include <senf/boost_intrusive/ilist_hook.hpp>
+#include <boost/intrusive/list_hook.hpp>
 #include "FIFORunner.hh"
 
 //#include "IdleEvent.mpp"
@@ -44,7 +44,7 @@ namespace scheduler {
 
 namespace detail {
     struct IdleEventListTag;
-    typedef boost::intrusive::ilist_base_hook<IdleEventListTag> IdleEventListBase;
+    typedef boost::intrusive::list_base_hook< boost::intrusive::tag<IdleEventListTag> > IdleEventListBase;
     class IdleEventDispatcher;
 }
 

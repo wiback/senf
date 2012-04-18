@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <signal.h>
-#include <senf/boost_intrusive/iset_hook.hpp>
+#include <boost/intrusive/set_hook.hpp>
 #include "ClockService.hh"
 #include "FIFORunner.hh"
 #include <senf/Utils/Logger/SenfLog.hh>
@@ -46,7 +46,7 @@ namespace scheduler {
 
     namespace detail {
         struct TimerSetTag;
-        typedef boost::intrusive::iset_base_hook<TimerSetTag> TimerSetBase;
+        typedef boost::intrusive::set_base_hook< boost::intrusive::tag<TimerSetTag> > TimerSetBase;
         struct TimerSetCompare;
         class TimerDispatcher;
     }

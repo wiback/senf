@@ -58,7 +58,7 @@ void senf::scheduler::detail::TimerDispatcher::add(TimerEvent & event)
 
 prefix_ void senf::scheduler::detail::TimerDispatcher::remove(TimerEvent & event)
 {
-    TimerSet::iterator i (TimerSet::current(event));
+    TimerSet::iterator i (TimerSet::s_iterator_to(event));
     if (i == timers_.end())
         return;
     FIFORunner::instance().dequeue(&(*i));

@@ -35,7 +35,7 @@
 #include <signal.h>
 #include <boost/function.hpp>
 #include "FIFORunner.hh"
-#include <senf/boost_intrusive/iset_hook.hpp>
+#include <boost/intrusive/set_hook.hpp>
 
 //#include "SignalEvent.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ namespace scheduler {
 
     namespace detail {
         struct SignalSetTag;
-        typedef boost::intrusive::iset_base_hook<SignalSetTag> SignalSetBase;
+        typedef boost::intrusive::set_base_hook< boost::intrusive::tag<SignalSetTag> > SignalSetBase;
         struct SignalSetCompare;
         struct FindNumericSignal;
         class SignalDispatcher;

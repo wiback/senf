@@ -32,7 +32,7 @@
 #define IH_SENF_Scheduler_FdEvent_ 1
 
 // Custom includes
-#include <senf/boost_intrusive/iset.hpp>
+#include <boost/intrusive/set.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,9 +66,10 @@ namespace detail {
         FdDispatcher();
         ~FdDispatcher();
 
-        typedef boost::intrusive::imultiset< FdSetBase::value_traits<FdEvent>,
-                                             FdSetCompare,
-                                             false > FdSet;
+        typedef boost::intrusive::multiset< FdEvent,
+                                            boost::intrusive::constant_time_size<false>,
+                                            boost::intrusive::compare<FdSetCompare>,
+                                            boost::intrusive::base_hook<FdSetBase> > FdSet;
 
         FdSet fds_;
 
@@ -103,9 +104,10 @@ namespace detail {
 
         // We really only need a list here but we need to use the same event structure used by
         // the FdEvent.
-        typedef boost::intrusive::imultiset< FdSetBase::value_traits<FdEvent>,
-                                             FdSetCompare,
-                                             false > FdSet;
+        typedef boost::intrusive::multiset< FdEvent,
+                                            boost::intrusive::constant_time_size<false>,
+                                            boost::intrusive::compare<FdSetCompare>,
+                                            boost::intrusive::base_hook<FdSetBase> > FdSet;
 
         FdSet fds_;
         int managerTimeout_;

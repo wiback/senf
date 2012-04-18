@@ -672,7 +672,7 @@ prefix_ senf::detail::DaemonWatcher::Forwarder::Forwarder(int src, Callback cb)
 
 prefix_ senf::detail::DaemonWatcher::Forwarder::~Forwarder()
 {
-    targets_.clear_and_destroy(DestroyDelete());
+    targets_.clear_and_dispose(DestroyDelete());
 }
 
 prefix_ void senf::detail::DaemonWatcher::Forwarder::addTarget(int fd)
@@ -717,7 +717,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(int event, Target
 {
     if (event != scheduler::FdEvent::EV_WRITE) {
         // Broken pipe while writing data ? Not much, we can do here, we just drop the data
-        targets_.erase_and_destroy(Targets::current(*target),DestroyDelete());
+        targets_.erase_and_dispose(Targets::s_iterator_to(*target),DestroyDelete());
         if (targets_.empty() && src_ == -1)
             cb_();
         return;

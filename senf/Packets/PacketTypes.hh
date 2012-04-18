@@ -39,8 +39,8 @@
 #endif
 #include <boost/intrusive_ptr.hpp>
 #include <boost/cstdint.hpp>
-#include <senf/boost_intrusive/ilist.hpp>
-#include <senf/boost_intrusive/ilist_hook.hpp>
+#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/list_hook.hpp>
 
 //#include "PacketTypes.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,10 +66,10 @@ namespace packet {
     };
 
     struct interpreter_list_tag;
-    typedef boost::intrusive::ilist_base_hook<interpreter_list_tag> interpreter_list_base;
-    typedef interpreter_list_base::value_traits<PacketInterpreterBase> interpreter_list_type;
-
-    typedef boost::intrusive::ilist<interpreter_list_type,false> interpreter_list;
+    typedef boost::intrusive::list_base_hook< boost::intrusive::tag<interpreter_list_tag> > interpreter_list_base;
+    typedef boost::intrusive::list< PacketInterpreterBase,
+                                    boost::intrusive::constant_time_size<false>,
+                                    boost::intrusive::base_hook<interpreter_list_base> > interpreter_list;
 
     typedef boost::uint8_t byte;
 #ifdef SENF_PACKET_STD_CONTAINER

@@ -167,7 +167,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::stopWatchdog()
 
 prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
 {
-    TaskList::iterator i (TaskList::current(*task));
+    TaskList::iterator i (TaskList::s_iterator_to(*task));
     if (next_ == i)
         ++next_;
     tasks_.erase(i);
@@ -177,7 +177,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
 {
     for (;;) {
         TaskList::iterator f (tasks_.begin());
-        TaskList::iterator l (TaskList::current(highPriorityEnd_));
+        TaskList::iterator l (TaskList::s_iterator_to(highPriorityEnd_));
         run(f, l);
         if (yield_) {
             yield_ = false;
@@ -185,7 +185,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
         }
 
         f = l; ++f;
-        l = TaskList::current(normalPriorityEnd_);
+        l = TaskList::s_iterator_to(normalPriorityEnd_);
         run(f, l);
         if (yield_) {
             yield_ = false;
@@ -221,7 +221,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
 
     NullTask null;
     tasks_.insert(l, null);
-    TaskList::iterator end (TaskList::current(null));
+    TaskList::iterator end (TaskList::s_iterator_to(null));
     next_ = f;
 
     // Would prefer to use ScopeExit+boost::lambda here instead of try but profiling has shown that
@@ -265,9 +265,9 @@ senf::scheduler::detail::FIFORunner::priorityEnd(TaskInfo::Priority p)
     case TaskInfo::PRIORITY_LOW :
         return tasks_.end();
     case TaskInfo::PRIORITY_NORMAL :
-        return TaskList::current(normalPriorityEnd_);
+        return TaskList::s_iterator_to(normalPriorityEnd_);
     case TaskInfo::PRIORITY_HIGH :
-        return TaskList::current(highPriorityEnd_);
+        return TaskList::s_iterator_to(highPriorityEnd_);
     }
     return tasks_.begin();
 }

@@ -167,7 +167,7 @@ prefix_ senf::PacketInterpreterBase * senf::PacketInterpreterBase::prevP()
 prefix_ senf::detail::PacketImpl & senf::PacketInterpreterBase::impl()
     const
 {
-    SENF_ASSERT( linked(), "Invalid operation on un-linked PacketInterpreter" );
+    SENF_ASSERT( is_linked(), "Invalid operation on un-linked PacketInterpreter" );
     return PacketData::impl();
 }
 

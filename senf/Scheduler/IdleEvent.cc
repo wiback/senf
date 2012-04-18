@@ -62,7 +62,7 @@ prefix_ std::string senf::scheduler::IdleEvent::v_info()
 
 prefix_ void senf::scheduler::detail::IdleEventDispatcher::remove(IdleEvent & event)
 {
-    EventList::iterator i (EventList::current(event));
+    EventList::iterator i (EventList::s_iterator_to(event));
     if (i == events_.end())
         return;
     FIFORunner::instance().dequeue(&event);

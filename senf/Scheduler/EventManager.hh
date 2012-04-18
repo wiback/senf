@@ -34,8 +34,8 @@
 // Custom includes
 #include <string>
 #include <boost/iterator/filter_iterator.hpp>
-#include <senf/boost_intrusive/ilist.hpp>
-#include <senf/boost_intrusive/ilist_hook.hpp>
+#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/list_hook.hpp>
 #include <senf/Utils/singleton.hh>
 
 //#include "EventManager.mpp"
@@ -47,8 +47,11 @@ namespace detail {
 
     class Event;
     struct EventListTag;
-    typedef boost::intrusive::ilist_base_hook<EventListTag> EventListBase;
-    typedef boost::intrusive::ilist<EventListBase::value_traits<Event>, false> EventList;
+
+    typedef boost::intrusive::list_base_hook< boost::intrusive::tag<EventListTag> > EventListBase;
+    typedef boost::intrusive::list< Event,
+                                    boost::intrusive::constant_time_size<false>,
+                                    boost::intrusive::base_hook<EventListBase> > EventList;
 
     /** \brief
       */

@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <boost/scoped_ptr.hpp>
-#include <senf/boost_intrusive/iset.hpp>
+#include <boost/intrusive/set.hpp>
 #include "TimerSource.hh"
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,9 +79,10 @@ namespace detail {
         TimerDispatcher();
         ~TimerDispatcher();
 
-        typedef boost::intrusive::imultiset< TimerSetBase::value_traits<TimerEvent>,
-                                             TimerSetCompare,
-                                             false > TimerSet;
+        typedef boost::intrusive::multiset< TimerEvent,
+                                            boost::intrusive::constant_time_size<false>,
+                                            boost::intrusive::compare<TimerSetCompare>,
+                                            boost::intrusive::base_hook<TimerSetBase> > TimerSet;
 
         TimerSet timers_;
 

@@ -77,7 +77,7 @@ prefix_ bool senf::scheduler::detail::FIFORunner::TaskInfo::runnable()
 prefix_ bool senf::scheduler::detail::FIFORunner::TaskInfo::v_enabled()
     const
 {
-    return TaskListBase::linked();
+    return TaskListBase::is_linked();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ prefix_ senf::scheduler::detail::FIFORunner::NullTask::NullTask()
 
 prefix_ senf::scheduler::detail::FIFORunner::NullTask::~NullTask()
 {
-    if (TaskListBase::linked())
+    if (TaskListBase::is_linked())
         FIFORunner::instance().dequeue(this);
 }
 

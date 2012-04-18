@@ -132,7 +132,7 @@ prefix_ void senf::PacketInterpreterBase::release()
     SENF_ASSERT(impl_, "Internal failure: release of lone PacketInterpreter");
     if (intrusive_refcount_t<PacketInterpreterBase>::release()) {
         detail::PacketImpl * impl (impl_);
-        if (! linked())
+        if (! is_linked())
             releaseImpl(); // This commits suicide !
         // If this is the last handle referencing the Packet, this call will commit suicide
         impl->release();

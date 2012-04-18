@@ -69,7 +69,7 @@ prefix_ bool senf::scheduler::detail::FdDispatcher::add(FdEvent & event)
 
 prefix_ void senf::scheduler::detail::FdDispatcher::remove(FdEvent & event)
 {
-    fds_.erase(FdSet::current(event));
+    fds_.erase(FdSet::s_iterator_to(event));
     detail::FIFORunner::instance().dequeue(&event);
 
     std::pair<FdSet::iterator,FdSet::iterator> range (fds_.equal_range(event));
@@ -122,7 +122,7 @@ prefix_ void senf::scheduler::detail::FileDispatcher::prepareRun()
 
 prefix_ void senf::scheduler::detail::FileDispatcher::remove(FdEvent & event)
 {
-    fds_.erase(FdSet::current(event));
+    fds_.erase(FdSet::s_iterator_to(event));
     detail::FIFORunner::instance().dequeue(&event);
     if (fds_.empty())
         detail::FdManager::instance().timeout(managerTimeout_);
@@ -163,7 +163,7 @@ prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::events(int events)
 
 prefix_ void senf::scheduler::FdEvent::signal(int events)
 {
-    detail::FdDispatcher::FdSet::iterator i (detail::FdDispatcher::FdSet::current(*this));
+    detail::FdDispatcher::FdSet::iterator i (detail::FdDispatcher::FdSet::s_iterator_to(*this));
     detail::FdDispatcher::FdSet::iterator const i_end (detail::FdDispatcher::instance().fds_.end());
     bool all ((events & (EV_ERR | EV_HUP)) && ! (events & (EV_READ | EV_PRIO | EV_WRITE)));
     for (; i != i_end && fd_ == i->fd_; ++i) {

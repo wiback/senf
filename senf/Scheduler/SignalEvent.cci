@@ -76,13 +76,13 @@ prefix_ senf::scheduler::SignalEvent::~SignalEvent()
 
 prefix_ void senf::scheduler::SignalEvent::disable()
 {
-    if (detail::SignalSetBase::linked())
+    if (detail::SignalSetBase::is_linked())
         senf::scheduler::detail::SignalDispatcher::instance().remove(*this);
 }
 
 prefix_ void senf::scheduler::SignalEvent::enable()
 {
-    if (! detail::SignalSetBase::linked())
+    if (! detail::SignalSetBase::is_linked())
         senf::scheduler::detail::SignalDispatcher::instance().add(*this);
 }
 

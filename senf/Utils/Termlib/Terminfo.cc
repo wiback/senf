@@ -40,6 +40,13 @@
 #include <unistd.h>
 #include <string.h>
 
+// Compatibility with glibc < 2.9
+#if !defined(le16toh)
+#  include <byteswap.h>
+#  include <arpa/inet.h>
+#  define le16toh(x)  (ntohs(bswap_16(x)))
+#endif
+
 //#include "Terminfo.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -65,8 +65,9 @@ namespace detail {
         IdleEventDispatcher();
         ~IdleEventDispatcher();
 
-        typedef boost::intrusive::ilist<
-            IdleEventListBase::value_traits<IdleEvent>, false > EventList;
+        typedef boost::intrusive::list< IdleEvent,
+                                        boost::intrusive::constant_time_size<false>,
+                                        boost::intrusive::base_hook<IdleEventListBase> > EventList;
 
         EventList events_;
         int managerTimeout_;

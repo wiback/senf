@@ -204,7 +204,7 @@ prefix_ void senf::detail::PacketImpl::prependInterpreter(PacketInterpreterBase 
 prefix_ void senf::detail::PacketImpl::prependInterpreter(PacketInterpreterBase * p,
                                                           PacketInterpreterBase * before)
 {
-    interpreter_list::iterator i (interpreter_list::current(*before));
+    interpreter_list::iterator i (interpreter_list::s_iterator_to(*before));
     interpreters_.insert(i, *p);
     p->assignImpl(this);
 }

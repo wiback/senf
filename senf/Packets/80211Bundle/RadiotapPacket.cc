@@ -36,6 +36,15 @@
 #include "WLANPacket.hh"
 #include <boost/io/ios_state.hpp>
 #include <memory.h>
+#include <endian.h>
+
+// Compatibility with glibc < 2.9
+#if !defined(htole32) && !defined(le32toh)
+#  include <byteswap.h>
+#  include <arpa/inet.h>
+#  define htole32(x)  (bswap_32(htonl(x)))
+#  define le32toh(x)  (ntohl(bswap_32(x)))
+#endif
 
 extern "C" {
 #   include "radiotap/radiotap_iter.h"

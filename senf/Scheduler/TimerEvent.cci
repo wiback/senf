@@ -60,13 +60,13 @@ prefix_ senf::scheduler::TimerEvent::~TimerEvent()
 
 prefix_ void senf::scheduler::TimerEvent::enable()
 {
-    if (! detail::TimerSetBase::linked())
+    if (! detail::TimerSetBase::is_linked())
         detail::TimerDispatcher::instance().add(*this);
 }
 
 prefix_ void senf::scheduler::TimerEvent::disable()
 {
-    if (detail::TimerSetBase::linked())
+    if (detail::TimerSetBase::is_linked())
         detail::TimerDispatcher::instance().remove(*this);
 }
 

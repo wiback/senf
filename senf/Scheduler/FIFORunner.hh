@@ -34,8 +34,8 @@
 // Custom includes
 #include <signal.h>
 #include <boost/utility.hpp>
-#include <senf/boost_intrusive/ilist.hpp>
-#include <senf/boost_intrusive/ilist_hook.hpp>
+#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/list_hook.hpp>
 #include <senf/Utils/singleton.hh>
 #include "EventManager.hh"
 
@@ -57,8 +57,10 @@ namespace detail {
 
     private:
         struct TaskListTag;
-        typedef boost::intrusive::ilist_base_hook<TaskListTag> TaskListBase;
-        typedef boost::intrusive::ilist<TaskListBase::value_traits<TaskInfo>, false> TaskList;
+        typedef boost::intrusive::list_base_hook< boost::intrusive::tag<TaskListTag> > TaskListBase;
+        typedef boost::intrusive::list< TaskInfo,
+                                        boost::intrusive::constant_time_size<false>,
+                                        boost::intrusive::base_hook<TaskListBase> > TaskList;
 
     public:
         class TaskInfo

@@ -32,7 +32,7 @@
 #define HH_SENF_Scheduler_FdEvent_ 1
 
 // Custom includes
-#include <senf/boost_intrusive/iset_hook.hpp>
+#include <boost/intrusive/set_hook.hpp>
 #include <senf/Utils/Exception.hh>
 #include "FdManager.hh"
 #include "FIFORunner.hh"
@@ -45,7 +45,7 @@ namespace scheduler {
 
     namespace detail {
         struct FdSetTag;
-        typedef boost::intrusive::iset_base_hook<FdSetTag> FdSetBase;
+        typedef boost::intrusive::set_base_hook< boost::intrusive::tag<FdSetTag> > FdSetBase;
         struct FdSetCompare;
         class FdDispatcher;
         class FileDispatcher;

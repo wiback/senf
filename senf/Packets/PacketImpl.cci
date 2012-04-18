@@ -316,26 +316,26 @@ prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::last()
 
 prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::next(PacketInterpreterBase * p)
 {
-    interpreter_list::iterator i (interpreter_list::current(*p));
+    interpreter_list::iterator i (interpreter_list::s_iterator_to(*p));
     return (++i == interpreters_.end()) ? 0 : &*i;
 }
 
 prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::prev(PacketInterpreterBase * p)
 {
-    interpreter_list::iterator i (interpreter_list::current(*p));
+    interpreter_list::iterator i (interpreter_list::s_iterator_to(*p));
     return (i == interpreters_.begin()) ? 0 : &*(--i);
 }
 
 prefix_ void senf::detail::PacketImpl::truncateInterpreters(PacketInterpreterBase * p)
 {
     Guard guard (this);
-    eraseInterpreters(interpreter_list::current(*p),interpreters_.end());
+    eraseInterpreters(interpreter_list::s_iterator_to(*p),interpreters_.end());
 }
 
 prefix_ void senf::detail::PacketImpl::truncateInterpretersBackwards(PacketInterpreterBase * p)
 {
     Guard guard (this);
-    eraseInterpreters(interpreters_.begin(),boost::next(interpreter_list::current(*p)));
+    eraseInterpreters(interpreters_.begin(),boost::next(interpreter_list::s_iterator_to(*p)));
 }
 
 // Data container

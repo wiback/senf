@@ -46,7 +46,8 @@ prefix_ senf::scheduler::detail::Event::Event(std::string const & name)
 
 prefix_ senf::scheduler::detail::Event::~Event()
 {
-    EventManager::instance().remove(*this);
+    if (EventManager::alive())
+        EventManager::instance().remove(*this);
 }
 
 prefix_ void senf::scheduler::detail::EventManager::add(Event & event)
@@ -56,7 +57,7 @@ prefix_ void senf::scheduler::detail::EventManager::add(Event & event)
 
 prefix_ void senf::scheduler::detail::EventManager::remove(Event & event)
 {
-    events_.erase(EventList::current(event));
+    events_.erase(EventList::s_iterator_to(event));
 }
 
 prefix_ std::string const & senf::scheduler::detail::Event::name()

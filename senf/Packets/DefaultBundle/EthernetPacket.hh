@@ -107,9 +107,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<EthernetPacketType, EtherTypes>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<EthernetPacketType, EtherTypes> mixin;
-#endif
         typedef ConcretePacket<EthernetPacketType> packet;
         typedef EthernetPacketParser parser;
 
@@ -169,9 +167,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<EthVLanPacketType, EtherTypes>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<EthVLanPacketType, EtherTypes> mixin;
-#endif
         typedef ConcretePacket<EthVLanPacketType> packet;
         typedef EthVLanPacketParser parser;
 
@@ -194,6 +190,53 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<EthVLanPacketType> EthVLanPacket;
+
+
+    struct EthOUIExtensionPacketParser : public PacketParserBase
+    {
+#       include SENF_FIXED_PARSER()
+
+        SENF_PARSER_FIELD( oui,      UInt24Parser );
+        SENF_PARSER_FIELD( ext_type, UInt16Parser );
+
+        SENF_PARSER_FINALIZE( EthOUIExtensionPacketParser );
+    };
+
+    struct EtherOUIExtTypes {
+        typedef boost::uint64_t key_t;
+
+        static key_t type(boost::uint32_t oui, boost::uint16_t extType) {
+            return (boost::uint64_t(oui & 0x00ffffff) << 16) | extType;
+        }
+        static boost::uint32_t oui(key_t key) {
+            return boost::uint32_t( key >> 16);
+        }
+        static boost::uint16_t ext_type(key_t key) {
+            return boost::uint16_t( key);
+        }
+
+    };
+
+    struct EthOUIExtensionPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<EthOUIExtensionPacketType, EtherOUIExtTypes>
+    {
+        typedef PacketTypeMixin<EthOUIExtensionPacketType, EtherOUIExtTypes> mixin;
+        typedef ConcretePacket<EthOUIExtensionPacketType> packet;
+        typedef EthOUIExtensionPacketParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::initSize;
+        using mixin::init;
+
+        static key_t nextPacketKey(packet p)
+            { return EtherOUIExtTypes::type(p->oui(), p->ext_type()); }
+        static void dump(packet p, std::ostream & os);
+        static void finalize(packet p);
+    };
+
+    typedef ConcretePacket<EthOUIExtensionPacketType> EthOUIExtensionPacket;
 
 }
 

@@ -33,7 +33,7 @@
 
 // Custom includes
 #include "FdManager.hh"
-#include <senf/boost_intrusive/iset.hpp>
+#include <boost/intrusive/set.hpp>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/singleton.hh>
 
@@ -62,9 +62,11 @@ namespace detail {
         : public detail::FdManager::Event,
           public singleton<SignalDispatcher>
     {
-        typedef boost::intrusive::iset< SignalSetBase::value_traits<SignalEvent>,
-                                        SignalSetCompare,
-                                        false > SignalSet;
+        typedef boost::intrusive::set< SignalEvent,
+                                       boost::intrusive::constant_time_size<false>,
+                                       boost::intrusive::compare<SignalSetCompare>,
+                                       boost::intrusive::base_hook<SignalSetBase> > SignalSet;
+
     public:
         using singleton<SignalDispatcher>::instance;
         using singleton<SignalDispatcher>::alive;
