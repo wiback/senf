@@ -255,7 +255,10 @@ prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
         try {
             v_enqueueEvent();
         } catch (Exception & e) {
-            queue_.push_front(p);
+            if (fastPacket_) {
+                queue_.push_front(p);
+                fastPacket_ = NULL;
+            }
             throw e;
         }
         if (fastPacket_) {

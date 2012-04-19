@@ -313,10 +313,6 @@ namespace module {
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new valid handle is assigned. */
 
-#ifndef DOXYGEN
-        void replaceHandle(Handle newHandle);
-#endif
-
     private:
         void write();
         void checkThrottle();

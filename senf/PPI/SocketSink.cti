@@ -117,14 +117,6 @@ prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::handle(Handle const &
     checkThrottle();
 }
 
-#ifndef DOXYGEN
-template <class Writer>
-prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::replaceHandle(Handle newHandle)
-{
-    handle(newHandle);
-}
-#endif
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
