@@ -145,6 +145,14 @@ prefix_ void senf::console::Server::removeClient(Client & client)
     clients_.erase(boost::intrusive_ptr<Client>(&client));
 }
 
+prefix_ senf::console::Server & senf::console::Server::welcomeMessage(std::string const & message)
+{
+    welcomeMsg_ = message;
+    if (!message.empty() && message[message.size()-1] != '\n')
+        welcomeMsg_ += '\n';
+    return *this;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::detail::DumbClientReader
 
@@ -373,6 +381,8 @@ prefix_ void senf::console::Client::setInteractive()
     mode_ = Server::Interactive;
     reader_.reset(new detail::LineEditorSwitcher (*this));
     executor_.autocd(true).autocomplete(true);
+    if (! server_.welcomeMsg_.empty())
+        write( server_.welcomeMsg_);
 }
 
 prefix_ void senf::console::Client::setNoninteractive()
@@ -382,10 +392,10 @@ prefix_ void senf::console::Client::setNoninteractive()
     mode_ = Server::Noninteractive;
     detail::NoninteractiveClientReader * newReader (new detail::NoninteractiveClientReader(*this));
     reader_.reset( newReader);
-    consoleDir().add( "streamBuffer", senf::console::factory::Command( senf::membind(
+    consoleDir().add( "streamBuffer", factory::Command( senf::membind(
             SENF_MEMFNP( detail::NoninteractiveClientReader::SendQueue::size_type, detail::NoninteractiveClientReader, streamBufferMaxSize, () const ),
             newReader )));
-    consoleDir().add( "streamBuffer", senf::console::factory::Command( senf::membind(
+    consoleDir().add( "streamBuffer", factory::Command( senf::membind(
             SENF_MEMFNP( void, detail::NoninteractiveClientReader, streamBufferMaxSize, (detail::NoninteractiveClientReader::SendQueue::size_type) ),
             newReader )));
 }

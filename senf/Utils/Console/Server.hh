@@ -87,9 +87,11 @@ namespace console {
 
         std::string const & name() const; ///< Get server name
                                         /**< This information is used in the prompt string. */
-
         Server & name(std::string const & name); ///< Set server name
                                         /**< This information is used in the prompt string. */
+
+        Server & welcomeMessage(std::string const & message); ///< Set server welcome message
+                                        /**< This message is printed on login. */
 
         DirectoryNode & root() const;   ///< Get root node
 
@@ -137,6 +139,7 @@ namespace console {
         typedef std::set< boost::intrusive_ptr<Client> > Clients;
         Clients clients_;
         std::string name_;
+        std::string welcomeMsg_;
 
         friend class Client;
     };

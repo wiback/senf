@@ -634,7 +634,7 @@ prefix_ void senf::term::KeyParser::dump(std::ostream & os)
     for (Keytable::const_iterator i (table_.begin()); i != table_.end(); ++i) {
         unsigned index (i->second - First);
         if (index < sizeof(KeyNames)/sizeof(KeyNames[0])) {
-            std::cout << "    " << std::setw(32) << KeyNames[index] << ": ";
+            os << "    " << std::setw(32) << KeyNames[index] << ": ";
             hexdump(i->first.begin(), i->first.end(), os);
         }
     }

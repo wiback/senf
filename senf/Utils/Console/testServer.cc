@@ -121,7 +121,8 @@ int main(int, char **)
     senf::console::root().add("ex", fty::Link(test.dir));
 
     senf::console::Server::start( senf::INet4SocketAddress(23232u) )
-        .name("testServer");
+        .name("testServer")
+        .welcomeMessage( "Welcome to the TestServer.");
 
     senf::scheduler::process();
     return 0;
