@@ -259,7 +259,7 @@ static unsigned getRate( unsigned char mcs, unsigned bandwidth, bool shortGI)
         return 0;
 
     unsigned idx = bandwidth==20 ? 0 : 2;
-    idx += shortGI ? 0 : 1;
+    idx += shortGI ? 1 : 0;
 
     return mcsInfo[mcs].rate[idx]; 
 }
@@ -272,7 +272,7 @@ prefix_ unsigned senf::RadiotapPacketParser::rateInKbps()
     }
     else if( mcsPresent()){
         return getRate( mcs().mcsIndex(), 
-                        mcs().bandwidth() == 1 ? 40 : 20,
+                        (mcs().bandwidth() == 1) ? 40 : 20,
                         mcs().guardInterval());
     }
     
