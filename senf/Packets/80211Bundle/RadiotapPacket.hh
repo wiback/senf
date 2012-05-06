@@ -292,6 +292,8 @@ namespace senf {
 
         unsigned frameType();
 
+        unsigned rateInKbps();
+
     private:
         static const size_type fixed_bytes = 0; // hide this member, just in case
 
