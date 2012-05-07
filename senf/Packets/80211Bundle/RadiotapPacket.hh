@@ -126,7 +126,7 @@ namespace senf {
         SENF_PARSER_BITFIELD  ( fecType,              1, bool  );
         SENF_PARSER_BITFIELD  ( htFormat,             1, bool  );
         SENF_PARSER_BITFIELD  ( guardInterval,        1, bool  );
-        SENF_PARSER_BITFIELD  ( bandwidth,            2, bool  );
+        SENF_PARSER_BITFIELD  ( bandwidth,            2, unsigned  );
 
         SENF_PARSER_FIELD     ( mcsIndex,          UInt8Parser );
 
