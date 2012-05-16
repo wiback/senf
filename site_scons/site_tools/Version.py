@@ -24,9 +24,9 @@ def CalculateRevision(env, local_revision_file=None):
         except:
             pass
     if rev is None:
-        r, rev = _getOutput( 'svn info', '.*last changed rev: (\d+).*')
+        r, rev = _getOutput( 'env LC_ALL=C svn info', '.*last changed rev: (\d+).*')
         if r != 0:
-            r, rev = _getOutput( 'git svn info', '.*last changed rev: (\d+).*')
+            r, rev = _getOutput( 'env LC_ALL=C git svn info', '.*last changed rev: (\d+).*')
             if r != 0:
                 r, rev = _getOutput( 'git rev-parse --short HEAD', '(\d+)')
                 if r != 0: rev = 0
