@@ -38,7 +38,7 @@ namespace senf {
     struct MIHLengthException : public senf::Exception
     {
         MIHLengthException(std::string const & description)
-          : senf::Exception("MIHLengthException") { append(description); }
+          : senf::Exception("MIHLengthException: ") { append(description); }
     };
 
     struct InvalidMIHPacketException : public senf::Exception

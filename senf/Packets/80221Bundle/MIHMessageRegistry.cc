@@ -48,6 +48,8 @@ prefix_ void senf::MIHMessageRegistry::validate(key_t messageId, senf::Packet me
     Map::const_iterator i (map_.find( messageId));
     if (i != map_.end())
         PTRMAP_GET_CONTENTS(*i).validate( message);
+    else
+        throw InvalidMIHPacketException("unknown message id: ") << messageId;
 }
 
 #undef PTRMAP_GET_CONTENTS
