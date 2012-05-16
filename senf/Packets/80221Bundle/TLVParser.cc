@@ -336,34 +336,38 @@ prefix_ senf::MIHLengthParser::value_type senf::MIHLengthParser::value() const
     case 5:
         return parse<UInt32Parser>( 1 ).value() + (underflow_flag() ? 0 : 128u);
     default:
-        throw( MIHLengthException());
-    };
+        throw( MIHLengthException("cannot get length value: size of length field is greater than 5: ") << bytes());
+    }
 }
 
 prefix_ void senf::MIHLengthParser::value(value_type v)
 {
     switch (bytes() ) {
     case 1:
-        if (v > 128) throw( MIHLengthException());
+        if (v > 128)
+            throw( MIHLengthException("cannot set length to ") << v << ": insufficient size of length field " << bytes());
         length_field() = v;
         return;
     case 2:
-        if (v > UInt8Parser::max_value + 128) throw( MIHLengthException());
+        if (v > UInt8Parser::max_value + 128)
+            throw( MIHLengthException("cannot set length to ") << v << ": insufficient size of length field " << bytes());
         parse<UInt8Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     case 3:
-        if (v > UInt16Parser::max_value + 128) throw( MIHLengthException());
+        if (v > UInt16Parser::max_value + 128)
+            throw( MIHLengthException("cannot set length to ") << v << ": insufficient size of length field " << bytes());
         parse<UInt16Parser>(1) = v - (v>128 ? 128 : 0);
         break;;
     case 4:
-        if (v > UInt24Parser::max_value + 128) throw( MIHLengthException());
+        if (v > UInt24Parser::max_value + 128)
+            throw( MIHLengthException("cannot set length to ") << v << ": insufficient size of length field " << bytes());
         parse<UInt24Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     case 5:
         parse<UInt32Parser>(1) = v - (v>128 ? 128 : 0);
         break;
     default:
-        throw( MIHLengthException());
+        throw( MIHLengthException("cannot set length to ") << v << ": size of length field is greater than 5: " << bytes());
     };
     underflow_flag() = (v <= 128);
 }
@@ -383,7 +387,7 @@ prefix_ senf::MIHLengthParser::value_type senf::MIHLengthParser::capacity()
     case 5:
         return UInt32Parser::max_value;
     default:
-        throw( MIHLengthException());
+        throw( MIHLengthException("cannot get capacity: size of length field is greater than 5: ") << bytes());
     };
 }
 
