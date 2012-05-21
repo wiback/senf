@@ -44,8 +44,6 @@
 #include "ParsedCommand.hh"
 #include <senf/Utils/CpuStat.hh>
 
-
-//#include "Server.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,8 +56,8 @@
 namespace {
     senf::console::SysInfo::Proxy addSysInfo (
             "SENF: The Simple and Extensible Network Framework\n"
-            "  (c) 2006-2011 Fraunhofer Institute for Open Communication Systems (FOKUS)\n"
-            "  Contact: senf-dev@lists.berlios.de\n"
+            "  (c) 2006-2012 Fraunhofer Institute for Open Communication Systems (FOKUS)\n"
+            "  Contact: http://senf.berlios.de\n"
             "  Version: " SENF_LIB_VERSION " Revision number: " SENF_REVISION "\n"
             "  Build-type: " BUILD_TYPE ", SenfLog compile time limit: " +
             senf::str(senf::log::LEVELNAMES[senf::SenfLog::compileLimit::value]), 0);
@@ -484,7 +482,6 @@ senf::console::Client::SysBacktrace senf::console::Client::SysBacktrace::instanc
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "Server.mpp"
 
 
 // Local Variables:

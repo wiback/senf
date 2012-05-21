@@ -51,18 +51,15 @@ prefix_ senf::console::SysInfo::SysInfo()
 
 prefix_ void senf::console::SysInfo::addEntry(std::string const & descr, int pos)
 {
-    if (pos < 0)
-        descr_.push_back( descr);
-    else
-        descr_.insert( boost::next(descr_.begin(), pos > int(descr_.size()) ? int(descr_.size()) : pos), descr);
-
+    descr_.insert( std::make_pair(
+            pos < 0 ? std::numeric_limits<int>::max() : pos, descr));
 }
 
 prefix_ void senf::console::SysInfo::dump(std::ostream & os)
     const
 {
-    BOOST_FOREACH( std::string const & d, descr_) {
-        os << d << std::endl;
+    BOOST_FOREACH( Descriptions::value_type const & d, descr_) {
+        os << d.second << std::endl;
     }
 }
 

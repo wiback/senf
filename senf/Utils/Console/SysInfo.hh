@@ -32,7 +32,7 @@
 #define HH_SENF_Scheduler_Console_SysInfo_ 1
 
 // Custom includes
-#include <list>
+#include <map>
 #include <senf/Utils/singleton.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,8 @@ namespace console {
         };
 
     private:
-        std::list<std::string> descr_;
+        typedef std::multimap<int, std::string> Descriptions;
+        Descriptions descr_;
 
         SysInfo();
     };
