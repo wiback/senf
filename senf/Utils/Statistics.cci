@@ -48,6 +48,13 @@ senf::StatisticsBase::Transform::operator()(first_argument_type i)
     return i.second;
 }
 
+prefix_ senf::StatisticsBase::ConstTransform::result_type
+senf::StatisticsBase::ConstTransform::operator()(first_argument_type i)
+    const
+{
+    return i.second;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::StatisticsBase::OutputEntry
 
@@ -96,6 +103,12 @@ prefix_ senf::StatisticsBase::StatisticsBase()
 prefix_ senf::StatisticsBase::~StatisticsBase()
 {}
 
+prefix_ senf::StatisticsBase::const_CollectorRange senf::StatisticsBase::collectors()
+    const
+{
+    return senf::make_transform_range(children_, ConstTransform());
+}
+
 prefix_ senf::StatisticsBase::CollectorRange senf::StatisticsBase::collectors()
 {
     return senf::make_transform_range(children_, Transform());
@@ -134,6 +147,12 @@ prefix_ unsigned senf::StatisticsBase::rank()
 prefix_ senf::Statistics & senf::StatisticsBase::base()
 {
     return v_base();
+}
+
+prefix_ senf::Statistics const & senf::StatisticsBase::base()
+    const
+{
+    return const_cast<StatisticsBase *>(this)->v_base();
 }
 
 prefix_ std::string senf::StatisticsBase::path()

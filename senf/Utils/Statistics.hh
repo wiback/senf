@@ -80,8 +80,14 @@ namespace senf {
             typedef Collector & result_type;
             result_type operator()(first_argument_type i) const;
         };
+        struct ConstTransform {
+            typedef Children::value_type const & first_argument_type;
+            typedef Collector const & result_type;
+            result_type operator()(first_argument_type i) const;
+        };
 
         typedef boost::transform_iterator<Transform,Children::iterator> ValueIterator;
+        typedef boost::transform_iterator<ConstTransform,Children::const_iterator> const_ValueIterator;
 
         struct OutputEntry;
 
@@ -90,6 +96,7 @@ namespace senf {
         // Types
 
         typedef boost::iterator_range<ValueIterator> CollectorRange;
+        typedef boost::iterator_range<const_ValueIterator> const_CollectorRange;
 
         /** \brief Output connection interface
 
@@ -191,6 +198,10 @@ namespace senf {
         CollectorRange collectors();    ///< List all child collectors
                                         /**< \returns iterator range of child collector
                                              references */
+        const_CollectorRange collectors() const;
+                                        ///< List all child collectors
+                                        /**< \returns iterator range of child collector
+                                             references */
 
         Collector & collect(unsigned rank); ///< Register a new collector
                                         /**< Adds a collector collecting \a rank values into each
@@ -200,6 +211,7 @@ namespace senf {
                                              \throws DuplicateRankException if a collector
                                                  collecting \a rank values already exists. */
 
+        Statistics const & base() const;
         Statistics & base();            ///< Get base statistics object
                                         /**< Returns the base statistics object. If this is
                                              a child collector, this will return the outermost
