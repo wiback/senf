@@ -166,7 +166,7 @@ prefix_ void senf::term::Terminfo::load(std::string const & term)
         load(is);
     } catch (InvalidTerminfoException & ex) {
         ex << ": " << filename;
-        throw ex;
+        throw;
     }
 }
 
