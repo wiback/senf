@@ -184,6 +184,8 @@ namespace senf {
         /// Dump given EthVLanPacket in readable form to given output stream
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
+
+        static const boost::uint16_t etherType = 0x8100;
     };
 
     /** \brief Ethernet VLAN tag typedef
@@ -234,6 +236,8 @@ namespace senf {
             { return EtherOUIExtTypes::type(p->oui(), p->ext_type()); }
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
+
+        static const boost::uint16_t etherType = 0x88b7;
     };
 
     typedef ConcretePacket<EthOUIExtensionPacketType> EthOUIExtensionPacket;

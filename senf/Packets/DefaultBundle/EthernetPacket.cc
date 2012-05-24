@@ -40,8 +40,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8100, senf::EthVLanPacket);
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x88b7, senf::EthOUIExtensionPacket);
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanPacketType::etherType, senf::EthVLanPacket);
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthOUIExtensionPacketType::etherType, senf::EthOUIExtensionPacket);
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::EthernetPacketType
