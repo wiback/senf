@@ -243,8 +243,10 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
                 watchdogCount_ = 1;
                 yield_ = false;
                 runningTask_->run();
-                if (yield_)
+                if (yield_) {
+                    tasks_.erase(end);
                     return;
+                }
             }
             else
                 ++ next_;
