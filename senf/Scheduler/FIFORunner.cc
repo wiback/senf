@@ -53,7 +53,7 @@
 
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000),
-      watchdogAbort_ (false), watchdogCount_(0), hangCount_ (0), yield_ (false)
+      watchdogAbort_ (false), runningTask_(NULL), watchdogCount_(0), hangCount_ (0), yield_ (false)
 {
     struct sigevent ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -170,6 +170,13 @@ prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
     TaskList::iterator i (TaskList::s_iterator_to(*task));
     if (next_ == i)
         ++next_;
+    if (runningTask_ == task) {
+        runningTask_ = NULL;
+        runningName_ = task->name();
+#ifdef SENF_BACKTRACE
+        runningBacktrace_ = task->backtrace_;
+#endif
+    }
     tasks_.erase(i);
 }
 
@@ -219,9 +226,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
     // - We keep the next to-be-processed node in a class variable which is checked and updated
     //   whenever a node is removed.
 
-    NullTask null;
-    tasks_.insert(l, null);
-    TaskList::iterator end (TaskList::s_iterator_to(null));
+    TaskList::iterator end (tasks_.insert(l, queueEnd_));
     next_ = f;
 
     // Would prefer to use ScopeExit+boost::lambda here instead of try but profiling has shown that
@@ -229,19 +234,15 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
 
     try {
         while (next_ != end) {
-            TaskInfo & task (*next_);
-            if (task.runnable_) {
-                task.runnable_ = false;
-                runningName_ = task.name();
-# ifdef SENF_BACKTRACE
-                runningBacktrace_ = task.backtrace_;
-# endif
+            runningTask_ = &(*next_);
+            if (runningTask_->runnable_) {
+                runningTask_->runnable_ = false;
                 TaskList::iterator i (next_);
                 ++ next_;
                 tasks_.splice(l, tasks_, i);
                 watchdogCount_ = 1;
                 yield_ = false;
-                task.run();
+                runningTask_->run();
                 if (yield_)
                     return;
             }
@@ -250,10 +251,12 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
         }
         watchdogCount_ = 0;
         next_ = l;
+        tasks_.erase(end);
     }
     catch (...) {
         watchdogCount_ = 0;
         next_ = l;
+        tasks_.erase(end);
         throw;
     }
 }
@@ -293,7 +296,10 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     pid[6] = 0;
     senf::IGNORE( write(1, pid, 6) );
     senf::IGNORE( write(1, "): ", 3) );
-    senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
+    if (runningTask_)
+        senf::IGNORE( write(1, runningTask_->name().c_str(), runningTask_->name().size()) );
+    else
+        senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
 /*    senf::IGNORE( write(1, " at\n ", 3) );
 #ifdef SENF_BACKTRACE
     static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -313,9 +319,12 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
 
 #ifdef SENF_BACKTRACE
     senf::IGNORE( write(1, "Task was initialized at\n", 24) );
-    senf::IGNORE( write(1, runningBacktrace_.c_str(), runningBacktrace_.size()) );
-#endif
+    if (runningTask_)
+        senf::IGNORE( write(1, runningTask_->backtrace_.c_str(), runningTask_->backtrace_.size()) );
+    else
+        senf::IGNORE( write(1, runningBacktrace_.c_str(), runningBacktrace_.size()) );
     senf::IGNORE( write(1, "\n", 1) );
+#endif
     if (watchdogAbort_)
         assert(false);
 }

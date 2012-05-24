@@ -32,12 +32,10 @@
 //#include "CpuStat.test.ih"
 
 // Custom includes
-#include <vector>
-#include <string>
+#include "CpuStat.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
-#include <senf/Utils/CpuStat.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +45,7 @@ SENF_AUTO_UNIT_TEST(CpuStat)
 
     senf::CpuStatProb csp;
 
-    std::cerr<< csp.cpuStat()<<std::endl;
+    std::cerr << csp.cpuStat() << std::endl;
 
 }
 

@@ -39,31 +39,33 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ senf::CpuStat::CpuStat( ClockService::clock_type duration_, unsigned user_, unsigned system_, unsigned nice_, unsigned idle_, unsigned iowait_, unsigned irq_, unsigned softirq_, unsigned steal_, unsigned guest_)
-    : duration(duration_), user(user_), system(system_), nice(nice_), idle(idle_), iowait(iowait_), irq(irq_), softirq(softirq_), steal(steal_), guest(guest_)
+prefix_ senf::CpuStat::CpuStat(ClockService::clock_type duration_, unsigned user_,
+        unsigned system_, unsigned nice_, unsigned idle_, unsigned iowait_,
+        unsigned irq_, unsigned softirq_, unsigned steal_, unsigned guest_)
+    : duration(duration_), user(user_), system(system_), nice(nice_), idle(idle_),
+      iowait(iowait_), irq(irq_), softirq(softirq_), steal(steal_), guest(guest_)
 {
 }
 
 prefix_ senf::CpuStat senf::CpuStatProb::cpuStat()
 {
-
-    std::ifstream statfd( "/proc/stat");
+    std::ifstream statfd ("/proc/stat");
 
     CpuStatProbs current;
 
     std::string prefix;
     statfd >> prefix;
 
-    if( prefix.compare("cpu") != 0)
-        return CpuStat(ClockService::milliseconds( 0));
+    if (prefix.compare("cpu") != 0)
+        return CpuStat();
 
     ClockService::clock_type now = ClockService::now();
     boost::long_long_type x;
-    for( unsigned i=0; statfd.good() && statfd >> x; ++i){
+    for (unsigned i=0; statfd.good() && statfd >> x; ++i){
         current.push_back( x);
     }
 
-    if( probs.size() == 0 || time == 0){
+    if (probs.size() == 0 || time == 0) {
         probs = current;
         time = now;
         return CpuStat();
@@ -72,16 +74,16 @@ prefix_ senf::CpuStat senf::CpuStatProb::cpuStat()
     boost::long_long_type sum = 0;
     CpuStatProbs::iterator c = current.begin();
     CpuStatProbs::iterator p = probs.begin();
-    for( ; c != current.end() && p != probs.end(); ++c, ++p){
+    for (; c != current.end() && p != probs.end(); ++c, ++p) {
         sum += *c - *p;
     }
 
-    if( sum <= 0){
+    if (sum <= 0) {
         time = now;
         return CpuStat();
     }
 
-    CpuStat cs(now - time,
+    CpuStat cs (now - time,
             100 * (current[0] - probs[0]) / sum,
             100 * (current[1] - probs[1]) / sum,
             100 * (current[2] - probs[2]) / sum,
@@ -106,7 +108,7 @@ prefix_ senf::CpuStatConsole::CpuStatConsole()
       .doc("Returns the CPU usage based on /proc/stat since last call of this function");
 }
 
-prefix_ void senf::CpuStatConsole::dump( std::ostream & os)
+prefix_ void senf::CpuStatConsole::dump(std::ostream & os)
 {
     os << procStats_.cpuStat();
 }
@@ -115,15 +117,12 @@ prefix_ void senf::CpuStatConsole::dump( std::ostream & os)
 prefix_ std::ostream & senf::operator<<(std::ostream & os, CpuStat const & cs)
 {
     boost::format fmtStat ("user=%3.0d%% sys=%3.0d%% nice=%3.0d%% idle=%3.0d%% io=%3.0d%% irq=%3.0d%% sirq=%3.0d%% steal=%3.0d%% guest=%3.0d%% duration=%dms ");
-
     os << fmtStat % cs.user % cs.system % cs.nice % cs.idle % cs.iowait % cs.irq % cs.softirq % cs.steal % cs.guest % ClockService::in_milliseconds(cs.duration) << std::endl;
     return os;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-
-
 
 // Local Variables:
 // mode: c++

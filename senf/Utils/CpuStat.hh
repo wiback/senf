@@ -39,7 +39,8 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf {
 
-    struct CpuStat{
+    struct CpuStat
+    {
         ClockService::clock_type duration;
         unsigned user;
         unsigned system;
@@ -63,7 +64,8 @@ namespace senf {
                  unsigned guest=0);
     };
 
-    class CpuStatProb{
+    class CpuStatProb
+    {
     public:
         CpuStat cpuStat();
 
@@ -71,18 +73,14 @@ namespace senf {
         typedef std::vector<boost::long_long_type> CpuStatProbs;
         CpuStatProbs probs;
         ClockService::clock_type time;
-
-        void readProcStat( CpuStatProb &);
     };
 
 
     class CpuStatConsole
     {
     public:
-
-        void dump( std::ostream & os);
-
         CpuStatConsole();
+        void dump(std::ostream & os);
 
     private:
         CpuStatProb procStats_;

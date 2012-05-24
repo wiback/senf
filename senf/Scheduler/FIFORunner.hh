@@ -141,6 +141,7 @@ namespace detail {
         TaskList tasks_;
         TaskList::iterator next_;
 
+        NullTask queueEnd_;
         NullTask normalPriorityEnd_;
         NullTask highPriorityEnd_;
 
@@ -148,10 +149,11 @@ namespace detail {
         bool watchdogRunning_;
         unsigned watchdogMs_;
         bool watchdogAbort_;
+
+        TaskInfo * runningTask_;
         std::string runningName_;
-#   ifdef SENF_DEBUG
         std::string runningBacktrace_;
-#   endif
+
         unsigned watchdogCount_;
         unsigned hangCount_;
         bool yield_;
