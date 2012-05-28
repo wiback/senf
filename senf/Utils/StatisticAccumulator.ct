@@ -45,7 +45,7 @@ prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator( StatisticAccumulator const & other)
     : sum_squared_(other.sum_squared_), sum_(other.sum_), 
-      min_(other.min_), max_(other.max_), last_avg_(other.last_avg_), count_(other._count)
+      min_(other.min_), max_(other.max_), last_avg_(other.last_avg_), count_(other.count_)
 { }
 
 template <class T>
