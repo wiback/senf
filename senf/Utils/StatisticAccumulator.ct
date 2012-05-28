@@ -117,7 +117,7 @@ template <class T>
 prefix_ senf::StatisticsData senf::StatisticAccumulator<T>::data() const
 {
 	StatisticsData tmp;
-	data( &tmp);
+	data( tmp);
 	return tmp;
 }
 
