@@ -78,6 +78,7 @@ namespace senf {
     {
     public:
         StatisticAccumulator();
+	StatisticAccumulator( StatisticAccumulator const & other);
 
         void clear();                   ///< Reset accumulated values.
                                         /**< This member reset all values. */
@@ -109,6 +110,10 @@ namespace senf {
                                              values of the current accumulation.*/
         void data(StatisticsData & data_) const;
                                         ///< Returns the accumulated data as a tuple
+                                        /**< This method returns the accumulated information
+                                             as a tuple.*/
+        StatisticsData data() const;
+	                                ///< Returns the accumulated data as a tuple
                                         /**< This method returns the accumulated information
                                              as a tuple.*/
     private:

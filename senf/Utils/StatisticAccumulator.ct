@@ -43,6 +43,12 @@ prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
 { }
 
 template <class T>
+prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator( StatisticAccumulator const & other)
+    : sum_squared_(other.sum_squared_), sum_(other.sum_), 
+      min_(other.min_), max_(other.max_), last_avg_(other.last_avg_), count_(other._count)
+{ }
+
+template <class T>
 prefix_ float senf::StatisticAccumulator<T>::stddev()
     const
 {
@@ -107,6 +113,13 @@ prefix_ void senf::StatisticAccumulator<T>::data( StatisticsData &data_) const
     }
 }
 
+template <class T>
+prefix_ senf::StatisticsData senf::StatisticAccumulator<T>::data() const
+{
+	StatisticsData tmp;
+	data( &tmp);
+	return tmp;
+}
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
