@@ -26,7 +26,7 @@
 //   Thorsten Horstmann <tho@berlios.de>
 
 /** \file
-    \brief Algorithm inline template implementation */
+    \brief Algorithm inline non-template implementation */
 
 
 // Custom includes
@@ -34,34 +34,14 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <class InputIterator, class ValueType>
-prefix_ bool senf::contains(InputIterator first, InputIterator last, ValueType const & value)
+prefix_ bool senf::contains(std::string const & str, std::string const & substr)
 {
-    return std::find(first, last, value) != last;
+    return str.find(substr) != std::string::npos;
 }
 
-template <class Container, class ValueType>
-prefix_ bool senf::contains(Container const & container, ValueType const & value)
+prefix_ bool senf::contains(std::string const & str, char c)
 {
-    return senf::contains( boost::begin(container), boost::end(container), value);
-}
-
-template <class ValueType>
-prefix_ bool senf::contains(std::set<ValueType> const & container, ValueType const & value)
-{
-    return container.find(value) != container.end();
-}
-
-template <typename KeyType, typename ValueType>
-prefix_ bool senf::contains(std::map<KeyType, ValueType> const & container, KeyType const & key)
-{
-    return container.find(key) != container.end();
-}
-
-template <typename KeyType, typename ValueType>
-prefix_ bool senf::contains(boost::ptr_map<KeyType, ValueType> const & container, KeyType const & key)
-{
-    return container.find(key) != container.end();
+    return str.find(c) != std::string::npos;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -54,10 +54,13 @@ namespace senf {
     template <typename KeyType, typename ValueType>
     bool contains(boost::ptr_map<KeyType, ValueType> const & container, KeyType const & key);
 
+    bool contains(std::string const & str, std::string const & substr);
+    bool contains(std::string const & str, char c);
+
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "algorithm.cci"
+#include "algorithm.cci"
 //#include "algorithm.ct"
 #include "algorithm.cti"
 #endif
