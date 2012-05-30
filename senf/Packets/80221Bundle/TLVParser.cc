@@ -32,7 +32,6 @@
 //#include "TLVParser.ih"
 
 // Custom includes
-#include <senf/Utils/hexdump.hh>
 #include <senf/Utils/Format.hh>
 #include "Exceptions.hh"
 

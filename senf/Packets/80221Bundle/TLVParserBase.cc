@@ -26,23 +26,15 @@
 //   Thorsten Horstmann <tho@berlios.de>
 
 /** \file
-    \brief TLVParser non-inline non-template implementation */
+    \brief TLVParserBase non-inline non-template implementation */
 
-#include "TLVParser.hh"
-//#include "TLVParser.ih"
+#include "TLVParserBase.hh"
 
 // Custom includes
-#include <senf/Utils/hexdump.hh>
-#include <senf/Utils/Format.hh>
 #include "Exceptions.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHFSrcIdTLVParser );
-SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHFDstIdTLVParser );
-SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHStatusTLVParser );
-SENF_PACKET_TLV_REGISTRY_REGISTER( senf::MIHValidTimeIntervalTLVParser );
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // MIHBaseTLVParser
