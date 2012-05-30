@@ -36,14 +36,6 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// MIHLengthParser
-
-prefix_ senf::MIHLengthParser::size_type senf::MIHLengthParser::bytes() const
-{
-    return 1 + ( length_field()<=128 ? 0 : fixed_length_field());
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // MIHFIdTLVParser::binaryNAIDecoder
 
 prefix_ senf::MIHFIdTLVParser::binaryNAIDecoder::binaryNAIDecoder()
@@ -144,22 +136,6 @@ prefix_ bool senf::MIHFIdTLVParser::valueEquals( MIHFId const & id)
 {
     return boost::apply_visitor( ValueEqualsVisitor(*this), id);
 }
-
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// MIHBaseTLVParser
-
-prefix_ void senf::MIHBaseTLVParser::maxLength(MIHLengthParser::value_type maxl)
-    const
-{
-    protect(), length_().capacity(maxl);
-}
-
-prefix_ void senf::MIHBaseTLVParser::finalize()
-{
-    protect(), length_().finalize();
-};
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

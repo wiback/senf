@@ -191,11 +191,6 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, senf::format:
     return os;
 }
 
-
-
-
-
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

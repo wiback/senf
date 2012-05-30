@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2010
+// Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
@@ -26,27 +26,28 @@
 //   Thorsten Horstmann <tho@berlios.de>
 
 /** \file
-    \brief TLVParser non-inline template implementation */
+    \brief TLVParserBase inline non-template implementation */
+
+//#include "TLVParser.ih"
 
 // Custom includes
 
-#define prefix_
+#define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::MIHListTLVParserMixin
+// MIHBaseTLVParser
 
-template <class Self>
-prefix_ void senf::MIHListTLVParserMixin<Self>::finalize()
+prefix_ void senf::MIHBaseTLVParser::maxLength(MIHLengthParser::value_type maxl)
+    const
 {
-    Self * self ( static_cast<Self *>(this));
-    self->protect(), self->listSize_().finalize();
-    typename Self::length_t::value_type size (
-            senf::bytes(self->listSize_()) + senf::bytes(self->value()));
-    self->maxLength( size);
-    self->length_() << size;
-    self->length_().finalize();
+    protect(), length_().capacity(maxl);
 }
+
+prefix_ void senf::MIHBaseTLVParser::finalize()
+{
+    protect(), length_().finalize();
+};
 
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,9 +57,9 @@ prefix_ void senf::MIHListTLVParserMixin<Self>::finalize()
 // Local Variables:
 // mode: c++
 // fill-column: 100
-// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:
