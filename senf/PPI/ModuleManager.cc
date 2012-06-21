@@ -32,6 +32,7 @@
 //#include "ModuleManager.ih"
 
 // Custom includes
+#include <senf/Scheduler/Scheduler.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Console/ParsedCommand.hh>
 #include <senf/Utils/Console/Sysdir.hh>
@@ -73,6 +74,25 @@ prefix_ void senf::ppi::ModuleManager::run()
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
+
+prefix_ void senf::ppi::ModuleManager::registerInitializable(Initializable & i)
+{
+    initQueue_.push_back(&i);
+    initRunner_.enable();
+    // This call ensures, that the senf::ppi::init() handler is called as next handler
+    // after this handler returns (this works since the senf::ppi::init() handler is registered as
+    // PRE hook and thus has very high priority)
+    senf::scheduler::yield();
+}
+
+prefix_ void senf::ppi::ModuleManager::unregisterInitializable(Initializable & i)
+{
+    initQueue_.erase(
+        std::remove(initQueue_.begin(), initQueue_.end(), & i),
+        initQueue_.end());
+    if (initQueue_.empty())
+        initRunner_.disable();
+}
 
 prefix_ senf::ppi::ModuleManager::ModuleManager()
     : running_(false), terminate_(false),

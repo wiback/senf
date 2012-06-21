@@ -32,11 +32,11 @@
 //#include "Executor.ih"
 
 // Custom includes
-#include <boost/utility.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/preprocessor/stringize.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include <senf/Utils/senfassert.hh>
 #include <senf/Utils/Range.hh>
 #include "senf/Utils/IgnoreValue.hh"
@@ -75,7 +75,7 @@ prefix_ std::string senf::console::Executor::cwdPath()
     if (skipping())
         return "";
     senf::IGNORE( cwd() ); // ensure, cwd is live.
-    return "/" + senf::stringJoin(
+    return "/" + boost::algorithm::join(
         senf::make_transform_range(
             boost::make_iterator_range(boost::next(cwd_.begin()), cwd_.end()),
             boost::bind(&DirectoryNode::name, boost::bind(&DirectoryNode::weak_ptr::lock, _1))),
@@ -408,8 +408,7 @@ senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path
         return dir.back().lock()->get(name);
     }
     catch (UnknownNodeNameException &) {
-        throw InvalidPathException(
-            senf::stringJoin(
+        throw InvalidPathException( boost::algorithm::join(
                 senf::make_transform_range(path, boost::bind(&Token::value, _1)),
                 "/"));
     }

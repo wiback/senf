@@ -33,8 +33,8 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
+#include "Registries.hh"
 
-//#include "ICMPv6Packet.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf
 {
@@ -48,11 +48,6 @@ namespace senf
         SENF_PARSER_FINALIZE ( ICMPv6PacketParser );
 
         boost::uint16_t calcChecksum() const;
-    };
-
-    struct ICMPTypes {
-        // ICMP type registry
-        typedef boost::uint8_t key_t;
     };
 
     /** \brief ICMP Packet for IPv6
@@ -92,6 +87,8 @@ namespace senf
             p->type() << key(p.next(senf::nothrow));
             p->checksum() << p->calcChecksum();
         }
+
+        static const IPTypes::key_t ipType = 58;
     };
 
     /** \brief ICMPv6 packet typedef

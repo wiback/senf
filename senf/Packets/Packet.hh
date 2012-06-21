@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <boost/operators.hpp>
-#include <boost/utility.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <senf/Utils/Tags.hh>
 #include <senf/Utils/safe_bool.hh>

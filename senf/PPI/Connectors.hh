@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <deque>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Exception.hh>

@@ -74,7 +74,9 @@ SENF_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
     BOOST_CHECK_EQUAL( llcsnap->ssap(), 0xaa );
     BOOST_CHECK_EQUAL( llcsnap->ctrl(), 0x03 );
     BOOST_CHECK_EQUAL( llcsnap->protocolId(), 0x000000u );
-    BOOST_CHECK_EQUAL( llcsnap->type_length(), 14 + 13);
+    // the type/length field was set to the ethertype 0x6558
+    // (Trans Ether Bridging [RFC1701]) on finalize()
+    BOOST_CHECK_EQUAL( llcsnap->type_length(), 0x6558);
 }
 
 

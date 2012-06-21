@@ -32,9 +32,9 @@
 #define HH_SENF_Packets_DefaultBundle_LlcSnapPacket_ 1
 
 // Custom includes
-#include "EthernetPacket.hh"
+#include <senf/Packets/Packets.hh>
+#include "Registries.hh"
 
-//#include "LlcSnapPacket.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -87,9 +87,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<LlcSnapPacketType, EtherTypes>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<LlcSnapPacketType, EtherTypes> mixin;
-#endif
         typedef ConcretePacket<LlcSnapPacketType> packet; ///< LLC/SNAP packet typedef
         typedef LlcSnapPacketParser parser;               ///< typedef to the parser of LLC/SNAP packet
 

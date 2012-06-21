@@ -40,7 +40,7 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 58, senf::ICMPv6Packet);
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::ICMPv6PacketType::ipType, senf::ICMPv6Packet);
 
 prefix_ boost::uint16_t senf::ICMPv6PacketParser::calcChecksum()
     const

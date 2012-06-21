@@ -36,6 +36,22 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+SENF_CONSOLE_REGISTER_ENUM( dmx_input_t, (DMX_IN_FRONTEND)(DMX_IN_DVR) );
+SENF_CONSOLE_REGISTER_ENUM( dmx_output_t, (DMX_OUT_DECODER)(DMX_OUT_TAP)(DMX_OUT_TS_TAP) );
+SENF_CONSOLE_REGISTER_ENUM( dmx_pes_type_t, (DMX_PES_AUDIO0)(DMX_PES_VIDEO0)(DMX_PES_TELETEXT0)
+        (DMX_PES_SUBTITLE0)(DMX_PES_PCR0)(DMX_PES_AUDIO1)(DMX_PES_VIDEO1)(DMX_PES_TELETEXT1)
+        (DMX_PES_SUBTITLE1)(DMX_PES_PCR1)(DMX_PES_AUDIO2)(DMX_PES_VIDEO2)(DMX_PES_TELETEXT2)
+        (DMX_PES_SUBTITLE2)(DMX_PES_PCR2)(DMX_PES_AUDIO3)(DMX_PES_VIDEO3)(DMX_PES_TELETEXT3)
+        (DMX_PES_SUBTITLE3)(DMX_PES_PCR3)(DMX_PES_OTHER));
+
+namespace senf {
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER(DVBSectionProtocolWrapper, Flags,
+            (CHECK_CRC)(ONESHOT)(IMMEDIATE_START)(KERNEL_CLIENT));
+
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER(DVBPESProtocolWrapper, Flags,
+            (CHECK_CRC)(ONESHOT)(IMMEDIATE_START)(KERNEL_CLIENT));
+}
+
 prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh)
     : protocol(sh.protocol()), dir(this)
 {

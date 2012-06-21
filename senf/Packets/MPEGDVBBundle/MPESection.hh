@@ -125,9 +125,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<MPESectionType>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<MPESectionType> mixin;
-#endif
         typedef ConcretePacket<MPESectionType> packet; ///< MPESection packet typedef
         typedef MPESectionParser parser;               ///< typedef to the parser of MPESection
 

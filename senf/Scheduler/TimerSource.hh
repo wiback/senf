@@ -32,8 +32,8 @@
 #define HH_SENF_Scheduler_TimerSource_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
 #include <signal.h>
+#include <boost/noncopyable.hpp>
 #include "ClockService.hh"
 #include "FdManager.hh"
 

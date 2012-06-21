@@ -40,7 +40,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanPacketType::etherType, senf::EthVLanPacket);
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x6558,                                     senf::EthernetPacket       );
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanPacketType::etherType,         senf::EthVLanPacket        );
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthOUIExtensionPacketType::etherType, senf::EthOUIExtensionPacket);
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,12 +93,13 @@ prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("cfi")                       << p->cfi() << std::endl
        << senf::fieldName("vlan-ID")                   << p->vlanId() << std::endl
        << senf::fieldName("ethertype")
-       << " 0x" << std::hex << std::setw(4) << std::setfill('0') << std::right << p->type() << std::endl;
+       << " 0x" << std::hex << std::setw(4) << std::setfill('0')
+       << std::right << p->type_length() << std::endl;
 }
 
 prefix_ void senf::EthVLanPacketType::finalize(packet p)
 {
-    p->type() << key(p.next(nothrow));
+    p->type_length() << key(p.next(nothrow));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

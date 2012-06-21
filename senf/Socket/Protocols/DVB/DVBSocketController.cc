@@ -464,7 +464,7 @@ prefix_ void senf::DVBSocketController::initConsole()
     namespace fty = console::factory;
     namespace kw = console::kw;
 
-    dir.doc("DVB Controller " + controllerNr);
+    dir.doc("DVB Controller " + senf::str(controllerNr));
     ++controllerNr;
 
     dir.add("type", fty::Command(&DVBSocketController::getTypeString, this)

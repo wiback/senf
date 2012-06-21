@@ -32,6 +32,7 @@
 //#include "SocketSink.test.ih"
 
 // Custom includes
+#include <senf/Scheduler/Scheduler.hh>
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <senf/Socket/Protocols/INet/ConnectedUDPSocketHandle.hh>
 #include "SocketSource.hh"

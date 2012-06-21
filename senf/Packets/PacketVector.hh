@@ -27,7 +27,7 @@
 #define HH_SENF_PacketVector_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/pool/singleton_pool.hpp>
 #include <senf/config.hh>

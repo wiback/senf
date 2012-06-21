@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <boost/scoped_ptr.hpp>
+#include <senf/Scheduler/Scheduler.hh>
 #include "Route.hh"
 #include "DebugEvent.hh"
 #include "DebugModules.hh"

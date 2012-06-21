@@ -31,7 +31,6 @@
 //#include "PacketType.ih"
 
 // Custom includes
-#include <boost/utility.hpp>
 #include "PacketRegistry.hh"
 
 #define prefix_ inline

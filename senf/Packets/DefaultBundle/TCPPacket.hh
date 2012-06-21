@@ -32,8 +32,8 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
+#include "Registries.hh"
 
-//#include "TCPPacket.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -147,9 +147,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<TCPPacketType>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<TCPPacketType> mixin;
-#endif
         typedef ConcretePacket<TCPPacketType> packet; ///< TCP packet typedef
         typedef TCPPacketParser parser;               ///< typedef to the parser of TCP packet
 
@@ -165,6 +163,7 @@ namespace senf {
                                                header size
                                              \li calculate and set \ref TCPPacketParser::checksum()
                                                "checksum" */
+        static const IPTypes::key_t ipType = 6;
     };
 
     /** \brief TCP packet typedef

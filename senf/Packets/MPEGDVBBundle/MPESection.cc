@@ -41,7 +41,6 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 prefix_ boost::uint32_t senf::MPESectionParser::calcCrc()
     const
 {
@@ -50,7 +49,6 @@ prefix_ boost::uint32_t senf::MPESectionParser::calcCrc()
             boost::prior(data().end(), 4),
             crc32_t() ).checksum();
 }
-
 
 prefix_ void senf::MPESectionType::dump(packet p, std::ostream & os)
 {

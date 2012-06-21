@@ -32,7 +32,6 @@
 #define HH_SENF_PPI_Route_ 1
 
 // Custom includes
-#include <boost/type_traits.hpp>
 #include "predecl.hh"
 
 //#include "Route.mpp"

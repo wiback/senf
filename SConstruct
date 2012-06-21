@@ -104,8 +104,8 @@ env.Append(
     INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '${str(CXX).split("/")[-1] == "g++" and "$INLINE_OPTS_GCC" or None}' ],
     CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration' ], # needed for BOOST_PARAMETER_KEYWORD
-    CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
-                               '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
+    CXXFLAGS               = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-long-long', '-Wno-unused-parameter', 
+                               '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
                                "${profile and '-pg' or None}",
                                '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
     CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics','-fno-stack-protector',

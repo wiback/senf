@@ -39,7 +39,7 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/fold.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/utility.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <senf/Utils/mpl.hh>
 #include "Config.hh"

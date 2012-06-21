@@ -48,12 +48,12 @@
 #include <boost/preprocessor/control/if.hpp>
 #include <boost/preprocessor/comparison/equal.hpp>
 
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/fold.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
-#include <boost/utility.hpp> // for enable_if
+#include <boost/utility/enable_if.hpp>
 
 #include <senf/Utils/mpl.hh>
 #include <senf/Utils/pool_alloc_mixin.hh>

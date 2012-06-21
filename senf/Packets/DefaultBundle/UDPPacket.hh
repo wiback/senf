@@ -33,8 +33,8 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
+#include "Registries.hh"
 
-//#include "UDPPacket.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -98,9 +98,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<UDPPacketType>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<UDPPacketType> mixin;
-#endif
         typedef ConcretePacket<UDPPacketType> packet; ///< UDP packet typedef
         typedef UDPPacketParser parser;               ///< typedef to the parser of UDP packet
 
@@ -110,12 +108,12 @@ namespace senf {
 
         /** \brief Dump given UDPPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-
         static void finalize(packet p); ///< Finalize packet.
                                         /**< \li set \ref UDPPacketParser::length() "length" from
                                                payload size
                                              \li calculate and set \ref UDPPacketParser::checksum()
                                                "checksum" */
+        static const IPTypes::key_t ipType = 17;
     };
 
     /** \brief UDP packet typedef
@@ -123,7 +121,6 @@ namespace senf {
      */
     typedef ConcretePacket<UDPPacketType> UDPPacket;
 }
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "UDPPacket.cci"

@@ -32,7 +32,7 @@
 #define HH_SENF_Scheduler_Console_LazyDirectory_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 
 //#include "LazyDirectory.mpp"

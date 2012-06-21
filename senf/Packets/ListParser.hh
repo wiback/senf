@@ -32,7 +32,7 @@
 #define HH_SENF_Packets_ListParser_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/utility/enable_if.hpp>
 #include "PacketParser.hh"
 
 //#include "ListParser.mpp"

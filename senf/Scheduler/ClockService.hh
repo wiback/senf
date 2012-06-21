@@ -32,10 +32,7 @@
 #define HH_SENF_Scheduler_ClockService_ 1
 
 // Custom includes
-#include <sys/time.h>
-#include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/cstdint.hpp>
 #include <senf/config.hh>
 #include <senf/Utils/singleton.hh>

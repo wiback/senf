@@ -34,9 +34,8 @@
 // Custom includes
 #include <senf/Socket/Protocols/INet/INet6Address.hh>
 #include <senf/Packets/Packets.hh>
-#include "IPv4Packet.hh"
+#include "Registries.hh"
 
-//#include "IPv6Packet.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -115,7 +114,7 @@ namespace senf {
         </table>
 
         \par Associated registries:
-            \ref IpTypes
+            \ref IPTypes
 
         \par Finalize action:
             \copydetails finalize()
@@ -124,11 +123,9 @@ namespace senf {
      */
     struct IPv6PacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<IPv6PacketType, IpTypes>
+          public PacketTypeMixin<IPv6PacketType, IPTypes>
     {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6PacketType, IpTypes> mixin;
-#endif
+        typedef PacketTypeMixin<IPv6PacketType, IPTypes> mixin;
         typedef ConcretePacket<IPv6PacketType> packet; ///< IPv6 packet typedef
         typedef IPv6PacketParser parser;               ///< typedef to the parser of IPv6 packet
 
@@ -148,7 +145,9 @@ namespace senf {
                                                from payload size
                                              \li set \ref IPv6PacketParser::nextHeader()
                                                "nextHeader" from type of next packet if found
-                                               in \ref IpTypes */
+                                               in \ref IPTypes */
+
+        static const EtherTypes::key_t etherType = 0x86dd;
     };
 
     /** \brief IPv6 packet typedef

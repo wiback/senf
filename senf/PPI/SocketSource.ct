@@ -146,14 +146,14 @@ prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::read()
 template <class Reader>
 prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::flush()
 {
-    try{
-        while( true){
+    try {
+        while (true) {
             typename Reader::PacketType p(reader_(handle_));
             if (p.data().size() <= 0)
                 break;
         }
     }
-    catch(...){};
+    catch (...) {};
 }
 
 

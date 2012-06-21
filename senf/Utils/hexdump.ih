@@ -34,7 +34,7 @@
 // Custom includes
 #include <string>
 #include <boost/io/ios_state.hpp>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 

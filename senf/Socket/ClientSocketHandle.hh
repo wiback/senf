@@ -36,7 +36,7 @@
 #include <boost/call_traits.hpp>
 #include <boost/range.hpp>
 #include <boost/utility.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include "SocketHandle.hh"
 
 //#include "ClientSocketHandle.mpp"

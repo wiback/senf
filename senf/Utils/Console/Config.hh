@@ -32,7 +32,6 @@
 #define HH_SENF_Scheduler_Console_Config_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
 #include <list>
 #include "Executor.hh"
 

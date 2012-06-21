@@ -30,19 +30,17 @@
     \brief IPv6Extensions non-inline non-template implementation */
 
 #include "IPv6Extensions.hh"
-//#include "IPv6Extensions.ih"
 
 // Custom includes
 
-//#include "IPv6Extensions.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 44,  senf::IPv6FragmentPacket           );
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 43,  senf::IPv6RoutingPacket            );
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 0u,  senf::IPv6HopByHopOptionsPacket    );
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 60u, senf::IPv6DestinationOptionsPacket );
+    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6FragmentPacketType::ipType,           senf::IPv6FragmentPacket           );
+    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6RoutingPacketType::ipType,            senf::IPv6RoutingPacket            );
+    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6HopByHopOptionsPacketType::ipType,    senf::IPv6HopByHopOptionsPacket    );
+    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6DestinationOptionsPacketType::ipType, senf::IPv6DestinationOptionsPacket );
 }
 
 prefix_ void senf::IPv6FragmentPacketType::dump(packet p, std::ostream & os)
@@ -135,10 +133,8 @@ prefix_ void senf::IPv6DestinationOptionsPacketType::finalize(packet p)
     }
 }
 
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "IPv6Extensions.mpp"
 
 
 // Local Variables:

@@ -34,6 +34,7 @@
 // Custom includes
 #include <boost/scoped_ptr.hpp>
 #include <senf/Utils/membind.hh>
+#include <senf/Scheduler/Scheduler.hh>
 #include "DebugEvent.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"

@@ -35,7 +35,7 @@
 #include <vector>
 #include <deque>
 #include "predecl.hh"
-#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Scheduler/EventHook.hh>
 #include <senf/Utils/Console/ScopedDirectory.hh>
 
 //#include "ModuleManager.mpp"

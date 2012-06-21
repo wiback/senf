@@ -29,11 +29,11 @@
     \brief LlcSnapPacket non-inline non-template implementation */
 
 #include "LlcSnapPacket.hh"
-//#include "LlcSnapPacket.ih"
 
 // Custom includes
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
+#include "EthernetPacket.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,12 +44,12 @@ prefix_ void senf::LlcSnapPacketType::dump(packet p, std::ostream & os)
     os << "LLC/SNAP:\n"
        << std::hex << std::setfill('0') << std::right
        << "  LLC\n"
-       << senf::fieldName("  dsap")                    << "0x" << unsigned(p->dsap()) << "\n"
-       << senf::fieldName("  ssap")                    << "0x" << unsigned(p->ssap()) << "\n"
-       << senf::fieldName("  control id")              << "0x" << unsigned(p->ctrl()) << "\n"
+       << senf::fieldName("  dsap")        << "0x" << unsigned(p->dsap()) << "\n"
+       << senf::fieldName("  ssap")        << "0x" << unsigned(p->ssap()) << "\n"
+       << senf::fieldName("  control id")  << "0x" << unsigned(p->ctrl()) << "\n"
        << "  SNAP\n"
-       << senf::fieldName("  protocol id")             << "0x" << std::setw(6) << unsigned(p->protocolId()) << "\n"
-       << senf::fieldName("  type/length")             << "0x" << std::setw(4) << unsigned(p->type_length()) << "\n";
+       << senf::fieldName("  protocol id") << "0x" << std::setw(6) << unsigned(p->protocolId()) << "\n"
+       << senf::fieldName("  type/length") << "0x" << std::setw(4) << unsigned(p->type_length()) << "\n";
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::LlcSnapPacketType::nextPacketType(packet p)
@@ -66,13 +66,8 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::LlcSnapPacketType::nextPack
 
 prefix_ void senf::LlcSnapPacketType::finalize(packet p)
 {
-    optional_key_t k (key(p.next(nothrow)));
-    if (k)
-        p->type_length() << k;
-    else if (p.next().is<EthernetPacket>())
-        p->type_length() << p.next().data().size();
+    p->type_length() << key(p.next(nothrow));
 }
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

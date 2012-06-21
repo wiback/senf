@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <boost/function.hpp>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 //#include "ScopeExit.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

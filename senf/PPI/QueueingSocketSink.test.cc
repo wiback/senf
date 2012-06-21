@@ -33,6 +33,7 @@
 // Custom includes
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <senf/Socket/Protocols/INet/ConnectedUDPSocketHandle.hh>
+#include <senf/Scheduler/Scheduler.hh>
 #include "DebugModules.hh"
 #include "SocketSink.hh"
 #include "Setup.hh"
@@ -81,7 +82,7 @@ namespace {
             return ConnectedDgramWriter::operator()( handle, packet);
         }
 
-        TestingConnectedDgramWriter(){
+        TestingConnectedDgramWriter() {
             throttled = false;
         }
     };

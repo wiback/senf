@@ -32,9 +32,8 @@
 #define HH_SENF_Utils_Logger_FileTarget_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
-#include <boost/shared_ptr.hpp>
 #include <fstream>
+#include <boost/shared_ptr.hpp>
 #include "IOStreamTarget.hh"
 
 //#include "FileTarget.mpp"

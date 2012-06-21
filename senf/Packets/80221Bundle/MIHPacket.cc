@@ -34,7 +34,6 @@
 // Custom includes
 #include <boost/io/ios_state.hpp>
 #include <senf/Utils/String.hh>
-#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

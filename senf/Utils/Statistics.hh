@@ -37,7 +37,7 @@
 #include <deque>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/signals.hpp>
 #include <senf/Utils/Logger/Logger.hh>

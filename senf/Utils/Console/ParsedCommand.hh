@@ -39,7 +39,6 @@
 #include <boost/type_traits/function_traits.hpp>
 #include <boost/type_traits/is_member_function_pointer.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/utility.hpp>
 #include <boost/parameter/keyword.hpp>
 #include <boost/parameter/parameters.hpp>
 #include <senf/config.hh>

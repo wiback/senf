@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <vector>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/Console/LazyDirectory.hh>
 #include "TimeSource.hh"

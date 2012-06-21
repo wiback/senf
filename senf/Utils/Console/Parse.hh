@@ -197,7 +197,7 @@
 // Custom includes
 #include <string>
 #include <vector>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/iterator/iterator_facade.hpp>

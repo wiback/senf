@@ -123,9 +123,7 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<TransportPacketType>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<TransportPacketType> mixin;
-#endif
         typedef ConcretePacket<TransportPacketType> packet; ///< Transport packet typedef
         typedef TransportPacketParser parser; ///< typedef to the parser of Transport packet
 

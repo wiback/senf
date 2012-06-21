@@ -34,8 +34,8 @@
 // Custom includes
 #include <senf/Socket/Protocols/INet/INet4Address.hh>
 #include <senf/Packets/Packets.hh>
+#include "Registries.hh"
 
-//#include "IPv4Packet.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -108,16 +108,6 @@ namespace senf {
                                              "calculated checksum" */
     };
 
-    /** \brief IP protocol number registry
-
-        This registeres packets with their IP protocol number.
-
-        \see <a href="http://www.iana.org/assignments/protocol-numbers">Protocol numbers</a> \n
-            PacketRegistry
-     */
-    struct IpTypes {
-        typedef boost::uint8_t key_t;
-    };
 
     /** \brief IPv4 packet
 
@@ -157,7 +147,7 @@ namespace senf {
         </table>
 
         \par Associated registries:
-            \ref IpTypes
+            \ref IPTypes
 
         \par Finalize action:
             \copydetails finalize()
@@ -166,11 +156,9 @@ namespace senf {
      */
     struct IPv4PacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<IPv4PacketType, IpTypes>
+          public PacketTypeMixin<IPv4PacketType, IPTypes>
     {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv4PacketType, IpTypes> mixin;
-#endif
+        typedef PacketTypeMixin<IPv4PacketType, IPTypes> mixin;
         typedef ConcretePacket<IPv4PacketType> packet;  ///< IPv4 packet typedef
         typedef IPv4PacketParser parser;                ///< typedef to the parser of IPv4 packet
 
@@ -189,9 +177,11 @@ namespace senf {
                                         /**< \li set \ref IPv4PacketParser::length() "length"
                                                from payload size
                                              \li set \ref IPv4PacketParser::protocol() "protocol"
-                                               from type of next packet if found in \ref IpTypes
+                                               from type of next packet if found in \ref IPTypes
                                              \li calculate and set
                                                \ref IPv4PacketParser::checksum() "checksum" */
+
+        static const EtherTypes::key_t etherType = 0x0800;
     };
 
     /** \brief IPv4 packet typedef

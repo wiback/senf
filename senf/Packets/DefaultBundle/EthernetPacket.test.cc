@@ -76,7 +76,7 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
     BOOST_CHECK_EQUAL( v->priority(), 4u );
     BOOST_CHECK( v->cfi() );
     BOOST_CHECK_EQUAL( v->vlanId(), 0x234u );
-    BOOST_CHECK_EQUAL( v->type(), 0xabcd );
+    BOOST_CHECK_EQUAL( v->type_length(), 0xabcd );
     BOOST_CHECK( v.next().is<senf::DataPacket>() );
     BOOST_CHECK_EQUAL( *v.next().data().begin(), 0xf0 );
 
@@ -97,11 +97,11 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_create)
 
     eth.finalizeAll();
     BOOST_CHECK_EQUAL(eth->type_length(), 0x8100u);
-    BOOST_CHECK_EQUAL(vlan->type(), 0u);
+    BOOST_CHECK_EQUAL(vlan->type_length(), 0u);
 
     senf::IPv4Packet ip (senf::IPv4Packet::createAfter(vlan));
     eth.finalizeAll();
-    BOOST_CHECK_EQUAL(vlan->type(), 0x0800u);
+    BOOST_CHECK_EQUAL(vlan->type_length(), 0x0800u);
 }
 
 SENF_AUTO_UNIT_TEST(ethernetPacket_llcsnap)

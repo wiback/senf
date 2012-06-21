@@ -41,8 +41,8 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x86dd, senf::IPv6Packet);
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes,    41,     senf::IPv6Packet); // IP6-in-IP(6) encapsulation
+    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::IPv6PacketType::etherType, senf::IPv6Packet);
+    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes,    41,                              senf::IPv6Packet); // IP6-in-IP(6) encapsulation
 }
 
 prefix_ void senf::IPv6PacketType::dump(packet p, std::ostream & os)

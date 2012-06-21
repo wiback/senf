@@ -32,7 +32,7 @@
 #define HH_SENF_Scheduler_Console_Executor_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include "Parse.hh"
 #include <senf/Utils/Logger/SenfLog.hh>
 #include "Node.hh"

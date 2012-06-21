@@ -32,7 +32,7 @@
 #define HH_SENF_Utils_intrusive_refcount_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 //#include "intrusive_refcount.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

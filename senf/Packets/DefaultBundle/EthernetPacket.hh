@@ -34,8 +34,8 @@
 // Custom includes
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
 #include <senf/Packets/Packets.hh>
+#include "Registries.hh"
 
-//#include "EthernetPacket.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -73,17 +73,6 @@ namespace senf {
         SENF_PARSER_FIELD( type_length, UInt16Parser );
 
         SENF_PARSER_FINALIZE(EthernetPacketParser);
-    };
-
-    /** \brief EtherType registry
-
-        This registry registers packet types with their EtherType number.
-
-        \see <a href="http://www.iana.org/assignments/ethernet-numbers">Ethernet numbers</a> \n
-            \ref PacketRegistry
-     */
-    struct EtherTypes {
-        typedef boost::uint16_t key_t;
     };
 
     /** \brief Ethernet packet
@@ -141,7 +130,8 @@ namespace senf {
         SENF_PARSER_BITFIELD( cfi,       1, bool     );
         SENF_PARSER_BITFIELD( vlanId,   12, unsigned );
 
-        SENF_PARSER_FIELD( type, UInt16Parser );
+        // field is named "type_length" analogue to EthernetPacketParser
+        SENF_PARSER_FIELD( type_length, UInt16Parser );
 
         SENF_PARSER_FINALIZE(EthVLanPacketParser);
     };
@@ -179,13 +169,13 @@ namespace senf {
         /** \todo Add LLC/SNAP support -> only use the registry
             for type() values >=1536, otherwise expect an LLC header */
         static key_t nextPacketKey(packet p)
-            { return p->type(); }
+            { return p->type_length(); }
 
         /// Dump given EthVLanPacket in readable form to given output stream
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
 
-        static const boost::uint16_t etherType = 0x8100;
+        static const EtherTypes::key_t etherType = 0x8100;
     };
 
     /** \brief Ethernet VLAN tag typedef
@@ -202,21 +192,6 @@ namespace senf {
         SENF_PARSER_FIELD( ext_type, UInt16Parser );
 
         SENF_PARSER_FINALIZE( EthOUIExtensionPacketParser );
-    };
-
-    struct EtherOUIExtTypes {
-        typedef boost::uint64_t key_t;
-
-        static key_t type(boost::uint32_t oui, boost::uint16_t extType) {
-            return (boost::uint64_t(oui & 0x00ffffff) << 16) | extType;
-        }
-        static boost::uint32_t oui(key_t key) {
-            return boost::uint32_t( key >> 16);
-        }
-        static boost::uint16_t ext_type(key_t key) {
-            return boost::uint16_t( key);
-        }
-
     };
 
     struct EthOUIExtensionPacketType
@@ -237,7 +212,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
 
-        static const boost::uint16_t etherType = 0x88b7;
+        static const EtherTypes::key_t etherType = 0x88b7;
     };
 
     typedef ConcretePacket<EthOUIExtensionPacketType> EthOUIExtensionPacket;

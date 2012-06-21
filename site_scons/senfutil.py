@@ -232,7 +232,8 @@ def DefaultOptions(env):
     # Set nice default options
     env.Append(
         CXXFLAGS_CLANG   = [ '-Wno-unneeded-internal-declaration' ], # needed for BOOST_PARAMETER_KEYWORD
-        CXXFLAGS         = [ '-Wall', '-Woverloaded-virtual',  "${profile and '-pg' or None}",
+        CXXFLAGS         = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-unused-parameter', 
+                             "${profile and '-pg' or None}",
                              '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
         CXXFLAGS_final   = [ '-O3', '-fno-threadsafe-statics', '-fno-stack-protector',
                                "${profile and ' ' or '-ffunction-sections'}" ],

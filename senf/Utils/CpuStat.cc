@@ -61,7 +61,7 @@ prefix_ senf::CpuStat senf::CpuStatProb::cpuStat()
 
     ClockService::clock_type now = ClockService::now();
     boost::long_long_type x;
-    for (unsigned i=0; statfd.good() && statfd >> x; ++i){
+    for (unsigned i=0; statfd.good() && statfd >> x; ++i) {
         current.push_back( x);
     }
 

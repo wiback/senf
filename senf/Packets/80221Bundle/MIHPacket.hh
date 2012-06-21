@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
+#include <senf/Packets/DefaultBundle/Registries.hh>
 #include "TLVParser.hh"
 #include "MIHMessageRegistry.hh"
 
@@ -116,7 +117,7 @@ namespace senf {
         static factory_t nextPacketType(packet p);
         static void validate(packet p);
 
-        static const boost::uint16_t etherType = 0x8917;
+        static const EtherTypes::key_t etherType = 0x8917;
     };
 
     /** \brief MIH packet typedef

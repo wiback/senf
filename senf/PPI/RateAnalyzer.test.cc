@@ -32,6 +32,7 @@
 //#include "RateAnalyzer.test.ih"
 
 // Custom includes
+#include <senf/Scheduler/Scheduler.hh>
 #include "RateAnalyzer.hh"
 #include "CloneSource.hh"
 #include "RateFilter.hh"

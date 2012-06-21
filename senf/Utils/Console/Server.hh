@@ -33,7 +33,6 @@
 
 // Custom includes
 #include <set>
-#include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <senf/Scheduler/FdEvent.hh>
 #include <senf/Scheduler/TimerEvent.hh>

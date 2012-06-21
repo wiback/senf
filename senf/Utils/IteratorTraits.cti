@@ -31,7 +31,7 @@
 #include "IteratorTraits.ih"
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/utility/addressof.hpp>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

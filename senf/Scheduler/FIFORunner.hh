@@ -33,7 +33,6 @@
 
 // Custom includes
 #include <signal.h>
-#include <boost/utility.hpp>
 #include <boost/intrusive/list.hpp>
 #include <boost/intrusive/list_hook.hpp>
 #include <senf/Utils/singleton.hh>

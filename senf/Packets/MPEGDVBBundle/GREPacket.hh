@@ -31,7 +31,8 @@
 #define HH_SENF_Packets_MPEGDVBBundle_GREPacket_ 1
 
 // Custom includes
-#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include <senf/Packets/Packets.hh>
+#include <senf/Packets/DefaultBundle/Registries.hh>
 
 //#include "GREPacket.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +108,8 @@ namespace senf {
             // ???
           }
         }
+
+        static const IPTypes::key_t ipType = 47;
     };
 
     /** \brief GRE packet typedef */

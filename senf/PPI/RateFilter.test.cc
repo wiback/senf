@@ -29,6 +29,7 @@
     \brief RateFilter unit tests */
 
 // Custom includes
+#include <senf/Scheduler/Scheduler.hh>
 #include "RateFilter.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"

@@ -35,13 +35,14 @@
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
 #include <senf/Utils/IpChecksum.hh>
+#include "IPv4Packet.hh"
 #include "IPv6Packet.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 17, senf::UDPPacket);
+    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::UDPPacketType::ipType, senf::UDPPacket);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

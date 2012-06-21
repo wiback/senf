@@ -135,7 +135,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
 
 prefix_ senf::log::Target::~Target()
 {
-    while( ! rib_.empty()) {
+    while (! rib_.empty()) {
         // This is slow but simplifies the area cache handling and removing a target should be
         // relatively seldom
         RIB::reverse_iterator i (rib_.rbegin());

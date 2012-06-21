@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <sys/epoll.h>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/range/iterator_range.hpp>
 

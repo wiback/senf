@@ -35,14 +35,14 @@
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
 #include <senf/Utils/IpChecksum.hh>
-#include "EthernetPacket.hh"
+#include "Registries.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x0800, senf::IPv4Packet);
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes,    4,      senf::IPv4Packet); // IP-in-IP encapsulation
+    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::IPv4PacketType::etherType, senf::IPv4Packet);
+    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes,    4,                               senf::IPv4Packet); // IP-in-IP encapsulation
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

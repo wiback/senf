@@ -35,7 +35,7 @@
 #include <deque>
 #include <boost/intrusive/list.hpp>
 #include <boost/intrusive/list_hook.hpp>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
 #include <senf/Scheduler/Scheduler.hh>
 

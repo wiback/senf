@@ -32,7 +32,7 @@
 #define HH_SENF_PPI_EventManager_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <senf/Scheduler/ClockService.hh>
 #include "predecl.hh"

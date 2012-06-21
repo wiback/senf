@@ -72,20 +72,18 @@ namespace senf {
             \ref IPv6FragmentPacketParser
 
         \par Associated registries:
-            \ref IpTypes
+            \ref IPTypes
 
         \par Finalize action:
-            Set \a nextHeader from type of next packet if found in \ref IpTypes
+            Set \a nextHeader from type of next packet if found in \ref IPTypes
 
         \ingroup protocolbundle_default
      */
     struct IPv6FragmentPacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<IPv6FragmentPacketType, IpTypes>
+          public PacketTypeMixin<IPv6FragmentPacketType, IPTypes>
     {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6FragmentPacketType, IpTypes> mixin;
-#endif
+        typedef PacketTypeMixin<IPv6FragmentPacketType, IPTypes> mixin;
         /** \brief IPv6 fragment extension packet typedef */
         typedef ConcretePacket<IPv6FragmentPacketType> packet;
         /** \brief typedef to the parser of IPv6 fragment extension packet */
@@ -101,8 +99,9 @@ namespace senf {
 
         /** \brief Dump given IPv6FragmentPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-
         static void finalize(packet p);
+
+        static const IPTypes::key_t ipType = 44;
     };
 
     /** \brief IPv6 fragment extension packet typedef
@@ -179,20 +178,18 @@ namespace senf {
             \ref IPv6RoutingPacketParser
 
         \par Associated registries:
-            \ref IpTypes
+            \ref IPTypes
 
         \par Finalize action:
-            Set \a nextHeader from type of next packet if found in \ref IpTypes
+            Set \a nextHeader from type of next packet if found in \ref IPTypes
 
         \ingroup protocolbundle_default
      */
     struct IPv6RoutingPacketType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6RoutingPacketType, IpTypes>
+        public PacketTypeMixin<IPv6RoutingPacketType, IPTypes>
     {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6RoutingPacketType, IpTypes> mixin;
-#endif
+        typedef PacketTypeMixin<IPv6RoutingPacketType, IPTypes> mixin;
         /** \brief IPv6 routing extension packet typedef */
         typedef ConcretePacket<IPv6RoutingPacketType> packet;
         /** \brief typedef to the parser of IPv6 routing extension packet */
@@ -208,8 +205,9 @@ namespace senf {
 
         /** \brief Dump given IPv6RoutingPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-
         static void finalize(packet p);
+
+        static const IPTypes::key_t ipType = 43;
     };
 
     /** \brief IPv6 routing extension packet typedef
@@ -254,20 +252,18 @@ namespace senf {
             \ref IPv6HopByHopOptionsPacketParser
 
         \par Associated registries:
-            \ref IpTypes
+            \ref IPTypes
 
         \par Finalize action:
-            Set \a nextHeader from type of next packet if found in \ref IpTypes
+            Set \a nextHeader from type of next packet if found in \ref IPTypes
 
         \ingroup protocolbundle_default
     */
     struct IPv6HopByHopOptionsPacketType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6HopByHopOptionsPacketType, IpTypes>
+        public PacketTypeMixin<IPv6HopByHopOptionsPacketType, IPTypes>
     {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6HopByHopOptionsPacketType, IpTypes> mixin;
-#endif
+        typedef PacketTypeMixin<IPv6HopByHopOptionsPacketType, IPTypes> mixin;
         /** \brief IPv6 Hop-By-Hop extension packet typedef */
         typedef ConcretePacket<IPv6HopByHopOptionsPacketType> packet;
         /** \brief typedef to the parser of IPv6 Hop-By-Hop extension packet */
@@ -283,8 +279,9 @@ namespace senf {
 
         /** \brief Dump given IPv6HopByHopOptionsPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-
         static void finalize(packet p);
+
+        static const IPTypes::key_t ipType = 0;
     };
 
     /** \brief IPv6 routing Hop-By-Hop packet typedef
@@ -327,20 +324,18 @@ namespace senf {
             \ref IPv6DestinationOptionsPacketParser
 
         \par Associated registries:
-            \ref IpTypes
+            \ref IPTypes
 
         \par Finalize action:
-            Set \a nextHeader from type of next packet if found in \ref IpTypes
+            Set \a nextHeader from type of next packet if found in \ref IPTypes
 
         \ingroup protocolbundle_default
      */
     struct IPv6DestinationOptionsPacketType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6DestinationOptionsPacketType, IpTypes>
+        public PacketTypeMixin<IPv6DestinationOptionsPacketType, IPTypes>
     {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6DestinationOptionsPacketType, IpTypes> mixin;
-#endif
+        typedef PacketTypeMixin<IPv6DestinationOptionsPacketType, IPTypes> mixin;
         /** \brief IPv6 Destination Options extension packet typedef */
         typedef ConcretePacket<IPv6DestinationOptionsPacketType> packet;
         /** \brief typedef to the parser of IPv6 Destination Options extension packet */
@@ -355,8 +350,9 @@ namespace senf {
         { return p->nextHeader(); }
         /** \brief Dump given IPv6DestinationOptionsPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-
         static void finalize(packet p);
+
+        static const IPTypes::key_t ipType = 60u;
     };
 
     /** \brief IPv6 routing Destination Options packet typedef

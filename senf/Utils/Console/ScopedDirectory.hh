@@ -32,7 +32,7 @@
 #define HH_SENF_Scheduler_Console_ScopedDirectory_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include "Node.hh"
 #include "LazyDirectory.hh" // For ScopedDirectory template default arg

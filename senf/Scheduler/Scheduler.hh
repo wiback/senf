@@ -33,7 +33,7 @@
 #define HH_SENF_Scheduler_Scheduler_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <senf/Utils/Logger/TimeSource.hh>
 #include "FdEvent.hh"
 #include "TimerEvent.hh"

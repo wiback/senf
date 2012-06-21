@@ -32,7 +32,7 @@
 #define HH_SENF_Utils_Console_UDPServer_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <senf/Utils/Logger/SenfLog.hh>
 #include <senf/Scheduler/FdEvent.hh>

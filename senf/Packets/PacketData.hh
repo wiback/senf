@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <boost/utility.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include <senf/Utils/Exception.hh>
 
 //#include "PacketData.mpp"

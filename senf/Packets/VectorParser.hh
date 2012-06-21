@@ -32,7 +32,7 @@
 #define HH_SENF_Packets_VectorParser_ 1
 
 // Custom includes
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include "PacketParser.hh"
 #include "ArrayParser.hh" // for ArrayParser_iterator
 #include "AuxParser.hh" // for the AuxPolicies
