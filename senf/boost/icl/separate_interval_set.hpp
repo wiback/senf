@@ -9,9 +9,9 @@ Copyright (c) 2007-2009: Joachim Faulhaber
 #define BOOST_ICL_SEPARATE_INTERVAL_SET_HPP_JOFA_080608
 
 #include <boost/assert.hpp>
-#include <boost/icl/type_traits/is_interval_separator.hpp>
-#include <boost/icl/interval_base_set.hpp>
-#include <boost/icl/interval_set.hpp>
+#include <senf/boost/icl/type_traits/is_interval_separator.hpp>
+#include <senf/boost/icl/interval_base_set.hpp>
+#include <senf/boost/icl/interval_set.hpp>
 
 namespace boost{namespace icl
 {

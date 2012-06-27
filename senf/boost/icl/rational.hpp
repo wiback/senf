@@ -28,9 +28,9 @@ itl_rational provides adapter code for boost::rational.
 #pragma warning(pop)
 #endif
 
-#include <boost/icl/type_traits/is_continuous.hpp>
-#include <boost/icl/type_traits/has_inverse.hpp>
-#include <boost/icl/type_traits/is_numeric.hpp>
+#include <senf/boost/icl/type_traits/is_continuous.hpp>
+#include <senf/boost/icl/type_traits/has_inverse.hpp>
+#include <senf/boost/icl/type_traits/is_numeric.hpp>
 
 namespace boost{namespace icl
 {

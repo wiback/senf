@@ -8,7 +8,7 @@ Copyright (c) 2007-2010: Joachim Faulhaber
 #ifndef BOOST_ICL_SET_HPP_JOFA_070519
 #define BOOST_ICL_SET_HPP_JOFA_070519
 
-#include <boost/icl/impl_config.hpp>
+#include <senf/boost/icl/impl_config.hpp>
 
 #if defined(ICL_USE_BOOST_INTERPROCESS_IMPLEMENTATION)
 #include <boost/interprocess/containers/set.hpp>
@@ -18,7 +18,7 @@ Copyright (c) 2007-2010: Joachim Faulhaber
 #include <set>
 #endif
 
-#include <boost/icl/concept/associative_element_container.hpp>
+#include <senf/boost/icl/concept/associative_element_container.hpp>
 
 
 }} // namespace icl boost

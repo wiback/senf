@@ -11,10 +11,10 @@ Copyright (c) 2007-2009: Joachim Faulhaber
 #include <functional>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/icl/type_traits/identity_element.hpp>
-#include <boost/icl/type_traits/unit_element.hpp>
-#include <boost/icl/type_traits/is_set.hpp>
-#include <boost/icl/type_traits/has_set_semantics.hpp>
+#include <senf/boost/icl/type_traits/identity_element.hpp>
+#include <senf/boost/icl/type_traits/unit_element.hpp>
+#include <senf/boost/icl/type_traits/is_set.hpp>
+#include <senf/boost/icl/type_traits/has_set_semantics.hpp>
 
 namespace boost{namespace icl
 {

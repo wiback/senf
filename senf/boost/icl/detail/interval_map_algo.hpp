@@ -11,14 +11,14 @@ Copyright (c) 2008-2010: Joachim Faulhaber
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/not.hpp>
 
-#include <boost/icl/type_traits/is_total.hpp>
-#include <boost/icl/type_traits/is_map.hpp>
-#include <boost/icl/detail/notate.hpp>
-#include <boost/icl/detail/relation_state.hpp>
-#include <boost/icl/type_traits/identity_element.hpp>
-#include <boost/icl/interval_combining_style.hpp>
-#include <boost/icl/detail/element_comparer.hpp>
-#include <boost/icl/detail/interval_subset_comparer.hpp>
+#include <senf/boost/icl/type_traits/is_total.hpp>
+#include <senf/boost/icl/type_traits/is_map.hpp>
+#include <senf/boost/icl/detail/notate.hpp>
+#include <senf/boost/icl/detail/relation_state.hpp>
+#include <senf/boost/icl/type_traits/identity_element.hpp>
+#include <senf/boost/icl/interval_combining_style.hpp>
+#include <senf/boost/icl/detail/element_comparer.hpp>
+#include <senf/boost/icl/detail/interval_subset_comparer.hpp>
 
 namespace boost{namespace icl
 {

@@ -9,9 +9,9 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 #define BOOST_ICL_INTERVAL_MAP_HPP_JOFA_080705
 
 #include <boost/assert.hpp>
-#include <boost/icl/type_traits/is_map.hpp>
-#include <boost/icl/interval_set.hpp>
-#include <boost/icl/interval_base_map.hpp>
+#include <senf/boost/icl/type_traits/is_map.hpp>
+#include <senf/boost/icl/interval_set.hpp>
+#include <senf/boost/icl/interval_base_map.hpp>
 
 namespace boost{namespace icl
 {

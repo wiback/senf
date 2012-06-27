@@ -8,7 +8,7 @@ Copyright (c) 2007-2010: Joachim Faulhaber
 #ifndef BOOST_ICL_MAP_HPP_JOFA_070519
 #define BOOST_ICL_MAP_HPP_JOFA_070519
 
-#include <boost/icl/impl_config.hpp>
+#include <senf/boost/icl/impl_config.hpp>
 
 #if defined(ICL_USE_BOOST_INTERPROCESS_IMPLEMENTATION)
 #include <boost/interprocess/containers/map.hpp>
@@ -24,19 +24,19 @@ Copyright (c) 2007-2010: Joachim Faulhaber
 #include <string>
 #include <boost/type_traits/ice.hpp>
 #include <boost/call_traits.hpp> 
-#include <boost/icl/detail/notate.hpp>
-#include <boost/icl/detail/design_config.hpp>
-#include <boost/icl/detail/concept_check.hpp>
-#include <boost/icl/detail/on_absorbtion.hpp>
-#include <boost/icl/type_traits/is_map.hpp>
-#include <boost/icl/type_traits/absorbs_identities.hpp>
-#include <boost/icl/type_traits/is_total.hpp>
-#include <boost/icl/type_traits/is_element_container.hpp>
-#include <boost/icl/type_traits/has_inverse.hpp>
-#include <boost/icl/type_traits/to_string.hpp>
-#include <boost/icl/functors.hpp>
+#include <senf/boost/icl/detail/notate.hpp>
+#include <senf/boost/icl/detail/design_config.hpp>
+#include <senf/boost/icl/detail/concept_check.hpp>
+#include <senf/boost/icl/detail/on_absorbtion.hpp>
+#include <senf/boost/icl/type_traits/is_map.hpp>
+#include <senf/boost/icl/type_traits/absorbs_identities.hpp>
+#include <senf/boost/icl/type_traits/is_total.hpp>
+#include <senf/boost/icl/type_traits/is_element_container.hpp>
+#include <senf/boost/icl/type_traits/has_inverse.hpp>
+#include <senf/boost/icl/type_traits/to_string.hpp>
+#include <senf/boost/icl/functors.hpp>
 
-#include <boost/icl/associative_element_container.hpp>
+#include <senf/boost/icl/associative_element_container.hpp>
 
 namespace boost{namespace icl
 {

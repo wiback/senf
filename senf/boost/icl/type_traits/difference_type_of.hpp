@@ -11,8 +11,8 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 #include <boost/config.hpp> // For macro BOOST_STATIC_CONSTANT
 #include <boost/type_traits/is_pointer.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/icl/type_traits/no_type.hpp>
-#include <boost/icl/type_traits/is_numeric.hpp>
+#include <senf/boost/icl/type_traits/no_type.hpp>
+#include <senf/boost/icl/type_traits/is_numeric.hpp>
 
 namespace boost{ namespace icl
 {

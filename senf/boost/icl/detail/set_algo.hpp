@@ -12,12 +12,12 @@ Copyright (c) 1999-2006: Cortex Software GmbH, Kantstrasse 57, Berlin
 
 #include <boost/type_traits/remove_const.hpp>
 
-#include <boost/icl/detail/notate.hpp>
-#include <boost/icl/functors.hpp>
+#include <senf/boost/icl/detail/notate.hpp>
+#include <senf/boost/icl/functors.hpp>
 
-#include <boost/icl/concept/container.hpp>
-#include <boost/icl/concept/set_value.hpp>
-#include <boost/icl/concept/map_value.hpp>
+#include <senf/boost/icl/concept/container.hpp>
+#include <senf/boost/icl/concept/set_value.hpp>
+#include <senf/boost/icl/concept/map_value.hpp>
 
 
 namespace boost{namespace icl

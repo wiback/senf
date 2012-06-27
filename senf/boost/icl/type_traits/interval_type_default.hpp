@@ -9,15 +9,15 @@ Copyright (c) 2010-2010: Joachim Faulhaber
 #define BOOST_ICL_TYPE_TRAITS_INTERVAL_TYPE_DEFAULT_HPP_JOFA_100403
 
 #include <boost/mpl/if.hpp>
-#include <boost/icl/detail/design_config.hpp>
-#include <boost/icl/continuous_interval.hpp>
-#include <boost/icl/discrete_interval.hpp>
-#include <boost/icl/right_open_interval.hpp>
-#include <boost/icl/left_open_interval.hpp>
-#include <boost/icl/closed_interval.hpp>
-#include <boost/icl/open_interval.hpp>
-#include <boost/icl/type_traits/is_continuous.hpp>
-#include <boost/icl/type_traits/is_discrete.hpp>
+#include <senf/boost/icl/detail/design_config.hpp>
+#include <senf/boost/icl/continuous_interval.hpp>
+#include <senf/boost/icl/discrete_interval.hpp>
+#include <senf/boost/icl/right_open_interval.hpp>
+#include <senf/boost/icl/left_open_interval.hpp>
+#include <senf/boost/icl/closed_interval.hpp>
+#include <senf/boost/icl/open_interval.hpp>
+#include <senf/boost/icl/type_traits/is_continuous.hpp>
+#include <senf/boost/icl/type_traits/is_discrete.hpp>
 
 namespace boost{ namespace icl
 {

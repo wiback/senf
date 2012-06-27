@@ -11,8 +11,8 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 #include <set>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/icl/type_traits/no_type.hpp>
-#include <boost/icl/type_traits/is_container.hpp>
+#include <senf/boost/icl/type_traits/no_type.hpp>
+#include <senf/boost/icl/type_traits/is_container.hpp>
 
 namespace boost{ namespace icl
 {

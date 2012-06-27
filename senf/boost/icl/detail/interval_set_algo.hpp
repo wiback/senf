@@ -9,18 +9,18 @@ Copyright (c) 2008-2010: Joachim Faulhaber
 #define BOOST_ICL_INTERVAL_SET_ALGO_HPP_JOFA_081005
 
 #include <boost/next_prior.hpp>
-#include <boost/icl/detail/notate.hpp>
-#include <boost/icl/detail/relation_state.hpp>
-#include <boost/icl/type_traits/identity_element.hpp>
-#include <boost/icl/type_traits/is_map.hpp>
-#include <boost/icl/type_traits/is_total.hpp>
-#include <boost/icl/type_traits/is_combinable.hpp>
-#include <boost/icl/concept/set_value.hpp>
-#include <boost/icl/concept/map_value.hpp>
-#include <boost/icl/interval_combining_style.hpp>
-#include <boost/icl/detail/element_comparer.hpp>
-#include <boost/icl/detail/interval_subset_comparer.hpp>
-#include <boost/icl/detail/associated_value.hpp>
+#include <senf/boost/icl/detail/notate.hpp>
+#include <senf/boost/icl/detail/relation_state.hpp>
+#include <senf/boost/icl/type_traits/identity_element.hpp>
+#include <senf/boost/icl/type_traits/is_map.hpp>
+#include <senf/boost/icl/type_traits/is_total.hpp>
+#include <senf/boost/icl/type_traits/is_combinable.hpp>
+#include <senf/boost/icl/concept/set_value.hpp>
+#include <senf/boost/icl/concept/map_value.hpp>
+#include <senf/boost/icl/interval_combining_style.hpp>
+#include <senf/boost/icl/detail/element_comparer.hpp>
+#include <senf/boost/icl/detail/interval_subset_comparer.hpp>
+#include <senf/boost/icl/detail/associated_value.hpp>
 
 namespace boost{namespace icl
 {

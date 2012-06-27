@@ -8,7 +8,7 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 #ifndef BOOST_ICL_GREGORIAN_DATE_HPP_JOFA_080416
 #define BOOST_ICL_GREGORIAN_DATE_HPP_JOFA_080416
 
-#include <boost/icl/detail/boost_config.hpp>
+#include <senf/boost/icl/detail/boost_config.hpp>
 #include <boost/detail/workaround.hpp>
 
 #ifdef BOOST_MSVC 
@@ -30,10 +30,10 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 #pragma warning(pop)
 #endif
 
-#include <boost/icl/type_traits/identity_element.hpp>
-#include <boost/icl/type_traits/is_discrete.hpp>
-#include <boost/icl/type_traits/difference_type_of.hpp>
-#include <boost/icl/type_traits/size_type_of.hpp>
+#include <senf/boost/icl/type_traits/identity_element.hpp>
+#include <senf/boost/icl/type_traits/is_discrete.hpp>
+#include <senf/boost/icl/type_traits/difference_type_of.hpp>
+#include <senf/boost/icl/type_traits/size_type_of.hpp>
 
 namespace boost{namespace icl
 {

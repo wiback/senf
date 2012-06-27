@@ -11,7 +11,7 @@ Copyright (c) 2009-2009: Joachim Faulhaber
 #include <boost/type_traits/is_const.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/icl/type_traits/is_concept_equivalent.hpp>
+#include <senf/boost/icl/type_traits/is_concept_equivalent.hpp>
 
 namespace boost{namespace icl
 {

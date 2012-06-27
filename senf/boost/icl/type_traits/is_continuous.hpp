@@ -10,7 +10,7 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 
 #include <string>
 #include <boost/mpl/not.hpp>
-#include <boost/icl/type_traits/is_discrete.hpp>
+#include <senf/boost/icl/type_traits/is_discrete.hpp>
 
 namespace boost{ namespace icl
 {

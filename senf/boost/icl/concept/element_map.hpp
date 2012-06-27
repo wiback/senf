@@ -10,14 +10,14 @@ Copyright (c) 2010-2010: Joachim Faulhaber
 
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/icl/detail/on_absorbtion.hpp>
-#include <boost/icl/type_traits/is_total.hpp>
-#include <boost/icl/type_traits/absorbs_identities.hpp>
-#include <boost/icl/type_traits/is_associative_element_container.hpp>
-#include <boost/icl/type_traits/is_combinable.hpp>
+#include <senf/boost/icl/detail/on_absorbtion.hpp>
+#include <senf/boost/icl/type_traits/is_total.hpp>
+#include <senf/boost/icl/type_traits/absorbs_identities.hpp>
+#include <senf/boost/icl/type_traits/is_associative_element_container.hpp>
+#include <senf/boost/icl/type_traits/is_combinable.hpp>
 
-#include <boost/icl/concept/map_value.hpp>
-#include <boost/icl/detail/map_algo.hpp>
+#include <senf/boost/icl/concept/map_value.hpp>
+#include <senf/boost/icl/detail/map_algo.hpp>
 
 
 namespace boost{ namespace icl

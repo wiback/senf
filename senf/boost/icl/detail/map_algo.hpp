@@ -11,8 +11,8 @@ Copyright (c) 2007-2010: Joachim Faulhaber
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/icl/detail/notate.hpp>
-#include <boost/icl/detail/set_algo.hpp>
+#include <senf/boost/icl/detail/notate.hpp>
+#include <senf/boost/icl/detail/set_algo.hpp>
 
 #ifdef BOOST_MSVC 
 #pragma warning(push)

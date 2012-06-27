@@ -8,14 +8,14 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 #ifndef BOOST_ICL_INTERVAL_SUBSET_COMPARER_HPP_JOFA_090827
 #define BOOST_ICL_INTERVAL_SUBSET_COMPARER_HPP_JOFA_090827
 
-#include <boost/icl/type_traits/is_map.hpp>
-#include <boost/icl/detail/notate.hpp>
-#include <boost/icl/detail/relation_state.hpp>
-#include <boost/icl/type_traits/identity_element.hpp>
-#include <boost/icl/type_traits/is_concept_equivalent.hpp>
-#include <boost/icl/type_traits/is_interval_container.hpp>
-#include <boost/icl/type_traits/is_set.hpp>
-#include <boost/icl/concept/interval_set_value.hpp>
+#include <senf/boost/icl/type_traits/is_map.hpp>
+#include <senf/boost/icl/detail/notate.hpp>
+#include <senf/boost/icl/detail/relation_state.hpp>
+#include <senf/boost/icl/type_traits/identity_element.hpp>
+#include <senf/boost/icl/type_traits/is_concept_equivalent.hpp>
+#include <senf/boost/icl/type_traits/is_interval_container.hpp>
+#include <senf/boost/icl/type_traits/is_set.hpp>
+#include <senf/boost/icl/concept/interval_set_value.hpp>
 
 namespace boost{namespace icl
 {

@@ -10,7 +10,7 @@ Copyright (c) 2010-2010: Joachim Faulhaber
 
 #include <string>
 #include <boost/static_assert.hpp>
-#include <boost/icl/type_traits/is_numeric.hpp>
+#include <senf/boost/icl/type_traits/is_numeric.hpp>
 #include <boost/mpl/if.hpp>
 
 namespace boost{ namespace icl

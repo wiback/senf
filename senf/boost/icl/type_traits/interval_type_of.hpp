@@ -10,7 +10,7 @@ Copyright (c) 2010-2010: Joachim Faulhaber
 
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/icl/type_traits/no_type.hpp>
+#include <senf/boost/icl/type_traits/no_type.hpp>
 
 namespace boost{ namespace icl
 {

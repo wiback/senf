@@ -8,9 +8,9 @@ Copyright (c) 2010-2010: Joachim Faulhaber
 #ifndef BOOST_ICL_CLOSED_INTERVAL_HPP_JOFA_100324
 #define BOOST_ICL_CLOSED_INTERVAL_HPP_JOFA_100324
 
-#include <boost/icl/concept/interval.hpp>
-#include <boost/icl/type_traits/value_size.hpp>
-#include <boost/icl/type_traits/type_to_string.hpp>
+#include <senf/boost/icl/concept/interval.hpp>
+#include <senf/boost/icl/type_traits/value_size.hpp>
+#include <senf/boost/icl/type_traits/type_to_string.hpp>
 
 namespace boost{namespace icl
 {

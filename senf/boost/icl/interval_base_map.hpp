@@ -15,15 +15,15 @@ Copyright (c) 1999-2006: Cortex Software GmbH, Kantstrasse 57, Berlin
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/not.hpp>
 
-#include <boost/icl/detail/notate.hpp>
-#include <boost/icl/detail/design_config.hpp>
-#include <boost/icl/detail/on_absorbtion.hpp>
-#include <boost/icl/detail/interval_map_algo.hpp>
+#include <senf/boost/icl/detail/notate.hpp>
+#include <senf/boost/icl/detail/design_config.hpp>
+#include <senf/boost/icl/detail/on_absorbtion.hpp>
+#include <senf/boost/icl/detail/interval_map_algo.hpp>
 
-#include <boost/icl/associative_interval_container.hpp>
+#include <senf/boost/icl/associative_interval_container.hpp>
 
-#include <boost/icl/type_traits/is_interval_splitter.hpp>
-#include <boost/icl/map.hpp>
+#include <senf/boost/icl/type_traits/is_interval_splitter.hpp>
+#include <senf/boost/icl/map.hpp>
 
 namespace boost{namespace icl
 {

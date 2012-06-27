@@ -9,7 +9,7 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 #define BOOST_ICL_TYPE_TRAITS_IS_SET_HPP_JOFA_081004
 
 #include <boost/config.hpp>
-#include <boost/icl/type_traits/is_container.hpp>
+#include <senf/boost/icl/type_traits/is_container.hpp>
 
 namespace boost{ namespace icl
 {

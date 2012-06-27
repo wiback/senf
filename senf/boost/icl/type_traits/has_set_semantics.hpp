@@ -10,9 +10,9 @@ Copyright (c) 2008-2009: Joachim Faulhaber
 
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/and.hpp>
-#include <boost/icl/type_traits/is_set.hpp>
-#include <boost/icl/type_traits/is_map.hpp>
-#include <boost/icl/type_traits/codomain_type_of.hpp>
+#include <senf/boost/icl/type_traits/is_set.hpp>
+#include <senf/boost/icl/type_traits/is_map.hpp>
+#include <senf/boost/icl/type_traits/codomain_type_of.hpp>
 
 namespace boost{ namespace icl
 {

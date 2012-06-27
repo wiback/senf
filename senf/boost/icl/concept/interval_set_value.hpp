@@ -9,8 +9,8 @@ Copyright (c) 2010-2010: Joachim Faulhaber
 #define BOOST_ICL_CONCEPT_INTERVAL_SET_VALUE_HPP_JOFA_100924
 
 #include <boost/utility/enable_if.hpp>
-#include <boost/icl/type_traits/is_interval_container.hpp>
-#include <boost/icl/concept/interval.hpp>
+#include <senf/boost/icl/type_traits/is_interval_container.hpp>
+#include <senf/boost/icl/concept/interval.hpp>
 
 namespace boost{ namespace icl
 {

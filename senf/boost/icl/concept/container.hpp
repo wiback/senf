@@ -11,8 +11,8 @@ Copyright (c) 2010-2010: Joachim Faulhaber
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/icl/type_traits/is_container.hpp>
-#include <boost/icl/type_traits/is_icl_container.hpp>
+#include <senf/boost/icl/type_traits/is_container.hpp>
+#include <senf/boost/icl/type_traits/is_icl_container.hpp>
 
 namespace boost{ namespace icl
 {
