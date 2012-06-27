@@ -138,13 +138,13 @@ namespace senf {
 
         bool usingExternalMemory() const; ///< Check for external memory usage
                                         /**< Returns \c true, if the packet data resides in external
-                                             memmory not managed by the packet, \c false otherwise.
+                                             memory not managed by the packet, \c false otherwise.
 
                                              Normally, this member will return \c false. If however
                                              the Packet has been constructed using the special
                                              zero-copy external memory constructor, \c
                                              usingExternalMemory() will return \c true as long as no
-                                             reallocation has occured. */
+                                             reallocation has occurred. */
         void releaseExternalMemory();   ///< Release external memory
                                         /**< If \c usingExternalMemory() returns \c true, this
                                              member will force a reallocation of the packet data
