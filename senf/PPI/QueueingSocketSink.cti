@@ -62,6 +62,7 @@ prefix_ typename Writer::Handle & senf::ppi::module::PassiveQueueingSocketSink<W
 
 template <class Writer>
 prefix_ senf::ppi::QueueingAlgorithm & senf::ppi::module::PassiveQueueingSocketSink<Writer>::qAlgorithm()
+    const
 {
     return *qAlgo_;
 }

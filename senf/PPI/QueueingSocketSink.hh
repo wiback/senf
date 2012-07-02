@@ -159,7 +159,7 @@ namespace module {
                                         ///< Set handle
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new valid handle is assigned. */
-        QueueingAlgorithm & qAlgorithm();
+        QueueingAlgorithm & qAlgorithm() const;
         void qAlgorithm(QueueingAlgorithm::ptr qAlgorithm);
 
     private:

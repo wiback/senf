@@ -71,8 +71,8 @@ prefix_ senf::scheduler::detail::EventManager::EventManager()
 prefix_ void senf::scheduler::detail::EventManager::listEvents(std::ostream & os)
 {
     // On an 80 column display, this wraps nicely directly before the INFO column
-    boost::format fmt  ("%s %-55.55s 0x%08x %8d %s %s\n");
-    os << boost::format("%s %-55.55s %-10s %8s %s %s\n")
+    boost::format fmt  ("%s %-55.55s 0x%016x %8d %s %s\n");
+    os << boost::format("%s %-55.55s %-18s %8s %s %s\n")
         % "TP" % "NAME" % "ADDRESS" % "RUNCNT" % "S" % "INFO";
     {
         FIFORunner::iterator i (FIFORunner::instance().begin());
@@ -85,8 +85,7 @@ prefix_ void senf::scheduler::detail::EventManager::listEvents(std::ostream & os
                 % i->runCount()
                 % (i->runnable() ? "R" : "W")
                 % i->info();
-    }
-    {
+    } {
         iterator i (begin());
         iterator const i_end (end());
         for (; i != i_end; ++i)
