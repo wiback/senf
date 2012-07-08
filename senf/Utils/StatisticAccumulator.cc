@@ -36,12 +36,12 @@
 std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & _data)
 {
     format::IndentHelper indent;
-    os << indent << "StatisticData:" << std::endl
-       << indent << "min: "    << _data.min << std::endl
-       << indent << "avg: "    << _data.avg << std::endl
-       << indent << "max: "    << _data.max << std::endl
-       << indent << "stddev: " << _data.stddev << std::endl
-       << indent << "count: "  << _data.count << std::endl;
+    os << "StatisticData: " 
+       << "min "    << _data.min << ", "
+       << "avg "    << _data.avg << ", " 
+       << "max "    << _data.max <<  ", "
+       << "stddev " << _data.stddev <<  ", "
+       << "count "  << _data.count;
     return os;
 };
 
