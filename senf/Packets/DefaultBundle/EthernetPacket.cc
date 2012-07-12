@@ -57,9 +57,9 @@ prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
     else
         os << "Ethernet 802.3 (bad ethertype >1500 and <1536)";
     os <<     ": \n"
-       << senf::fieldName("destination")               << p->destination() << std::endl
-       << senf::fieldName("source")                    << p->source() << std::endl
-       << senf::fieldName("type/length")               << format::dumpint(p->type_length().value()) << std::endl;
+       << senf::fieldName("destination") << p->destination() << std::endl
+       << senf::fieldName("source")      << p->source() << std::endl
+       << senf::fieldName("type/length") << format::dumpint(p->type_length().value()) << std::endl;
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPacketType(packet p)
@@ -89,12 +89,12 @@ prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Ethernet 802.1q (VLAN):\n"
-       << senf::fieldName("priority")                  << p->priority() << std::endl
-       << senf::fieldName("cfi")                       << p->cfi() << std::endl
-       << senf::fieldName("vlan-ID")                   << p->vlanId() << std::endl
+       << senf::fieldName("priority")    << p->priority() << std::endl
+       << senf::fieldName("cfi")         << p->cfi() << std::endl
+       << senf::fieldName("vlan-ID")     << p->vlanId() << std::endl
        << senf::fieldName("ethertype")
-       << " 0x" << std::hex << std::setw(4) << std::setfill('0')
-       << std::right << p->type_length() << std::endl;
+            << "0x" << std::hex << std::setw(4) << std::setfill('0')
+            << std::right << p->type_length() << std::endl;
 }
 
 prefix_ void senf::EthVLanPacketType::finalize(packet p)
@@ -110,8 +110,8 @@ prefix_ void senf::EthOUIExtensionPacketType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "Ethernet OUI Extension:\n"
        << std::hex << std::setfill('0') << std::right
-       << senf::fieldName("OUI")            << std::setw(3) << " 0x" << p->oui() << std::endl
-       << senf::fieldName("Ext. EtherType") << std::setw(2) << " 0x" << p->ext_type() << std::endl;
+       << senf::fieldName("OUI")            << std::setw(3) << "0x" << p->oui() << std::endl
+       << senf::fieldName("Ext. EtherType") << std::setw(2) << "0x" << p->ext_type() << std::endl;
 }
 
 prefix_ void senf::EthOUIExtensionPacketType::finalize(packet p)

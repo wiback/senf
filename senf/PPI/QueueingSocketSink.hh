@@ -88,6 +88,7 @@ namespace ppi {
         QAlgoMap qAlgoMap_;
 
         QueueingAlgorithmRegistry() {};
+
     public:
         using senf::singleton<QueueingAlgorithmRegistry>::instance;
         friend class senf::singleton<QueueingAlgorithmRegistry>;

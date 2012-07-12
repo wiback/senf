@@ -108,6 +108,9 @@ namespace senf {
         // If you need to pass an iterator it is much simpler and cleaner to use the
         // 'container' wrapper
 
+        template <class InputIterator>
+        void assign(InputIterator first, InputIterator last);
+
         template <class Value> void push_back        (Value const & value, size_type n=1) const;
         value_type                  push_back_space  (size_type n=1) const;
         template <class Value> void push_front       (Value const & value, size_type n=1) const;

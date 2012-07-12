@@ -117,6 +117,16 @@ senf::VectorParser<ElementParser,AuxPolicy>::back()
 // Mutators
 
 template <class ElementParser, class AuxPolicy>
+template <class InputIterator>
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::assign(InputIterator first, InputIterator last)
+{
+    container c (*this);
+    c.clear();
+    while (first != last)
+        c.push_back( *first++);
+}
+
+template <class ElementParser, class AuxPolicy>
 template <class Value>
 prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back(Value const & value, size_type n)
     const

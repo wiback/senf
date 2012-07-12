@@ -286,7 +286,7 @@ prefix_ bool senf::detail::PacketImpl::usingExternalMemory()
 
 prefix_ void senf::detail::PacketImpl::releaseExternalMemory()
 {
-    return data_.releaseExternal();
+    data_.releaseExternal();
 }
 
 #else

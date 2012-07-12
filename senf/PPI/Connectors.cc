@@ -60,18 +60,19 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
                  "senf::ppi::connector::Connector::connect(): (source) "
                  "Missing route() or noroute()" );
     // The connector is already connected
-    SENF_ASSERT( ! peer_,
-                 "senf::ppi::connector::Connector::connect(): (source) "
-                 "duplicate connection" );
+    if (peer_)
+        throw DuplicateConnectionException()
+            << " in module: " << prettyName(typeid(*module_))
+            << ", source module: " << prettyName(typeid(peer_->module()));
     // The target connector is not registered -> route() or noroute() statement missing
     SENF_ASSERT( target.module_,
                  "senf::ppi::connector::Connector::connect(): (target) "
                  "Missing route() or noroute()" );
     // The target connector is already connected
-    SENF_ASSERT( ! target.peer_,
-                 "senf::ppi::connector::Connector::connect(): (target) "
-                 "duplicate connection" );
-
+    if (target.peer_)
+        throw DuplicateConnectionException()
+            << " in module: " << prettyName(typeid(*module_))
+            << ", target module: " << prettyName(typeid(target.peer_->module()));
     if (! (v_packetTypeId() == typeid(void) ||
            target.v_packetTypeId() == typeid(void) ||
            v_packetTypeId() == target.v_packetTypeId()) )
@@ -81,7 +82,7 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
             << ", " << prettyName(target.v_packetTypeId())
             << " [in module " << prettyName(typeid(*target.module_)) << "]";
 
-    peer_ = & target;
+    peer_ = &target;
     target.peer_ = this;
 
     if (! initializationScheduled())

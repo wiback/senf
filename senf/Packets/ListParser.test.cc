@@ -40,7 +40,7 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Since the list cannot be instantiated without a policy, there is nothing to test without atleast
+// Since the list cannot be instantiated without a policy, there is nothing to test without at least
 // a very simple policy. Since ListBParser provides a policy which is as simple as it can get, all
 // testing is performed in ListBParser.test.cc
 

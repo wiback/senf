@@ -157,6 +157,10 @@ namespace connector {
     struct IncompatibleConnectorsException : public senf::Exception
     { IncompatibleConnectorsException() : senf::Exception("Incompatible connectors") {} };
 
+    struct DuplicateConnectionException : public senf::Exception
+    { DuplicateConnectionException() : senf::Exception("Duplicate connection") {} };
+
+
     /** \brief Connector base-class
 
         This connector provides access to the generic connector facilities. This includes the

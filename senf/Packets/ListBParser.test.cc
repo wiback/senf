@@ -181,12 +181,11 @@ namespace {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_PRIVATE_FIELD ( size1 , senf::UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
-        SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
-        SENF_PARSER_LIST          ( list1  , bytes(size1) , VectorParser );
-        SENF_PARSER_LIST          ( list2  , transform(TestTransform, bytes(size2)) ,
-                                             VectorParser );
+        SENF_PARSER_PRIVATE_FIELD ( size1, senf::UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD ( size2, senf::UInt8Parser );
+        SENF_PARSER_FIELD         ( dummy, senf::UInt32Parser );
+        SENF_PARSER_LIST          ( list1, bytes(size1), VectorParser );
+        SENF_PARSER_LIST          ( list2, transform(TestTransform, bytes(size2)), VectorParser );
 
         SENF_PARSER_FINALIZE(TestListParser);
     };
@@ -377,12 +376,69 @@ SENF_AUTO_UNIT_TEST(listBytesMacro_stress)
 {
     TestListPacket testListPacket (TestListPacket::create());
     for (unsigned i=0; i<12; ++i) {
-        VectorParser::value_type vec( 4, 42);
+        VectorParser::value_type vec (4, 42);
         testListPacket->list2().push_back( vec);
     }
     BOOST_CHECK_EQUAL( testListPacket->list2().size(), 12u );
-
 }
+
+namespace {
+    struct NonValueVectorParser : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+        SENF_PARSER_FIELD_RO( size, senf::UInt8Parser       );
+        SENF_PARSER_VECTOR  ( vec, size, senf::UInt8Parser  );
+        SENF_PARSER_FINALIZE( NonValueVectorParser          );
+    };
+
+    struct TestPacketSizeList2 : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+        SENF_PARSER_LIST    ( list, packetSize(), NonValueVectorParser );
+        SENF_PARSER_FINALIZE(TestPacketSizeList2                       );
+    };
+}
+
+SENF_AUTO_UNIT_TEST(list_copy_value)
+{
+    senf::DataPacket p (senf::DataPacket::create(TestPacketSizeList::init_bytes));
+    TestPacketSizeList parser (p.data().begin(), &p.data());
+
+    {
+        VectorParser::value_type vec (4, 42);
+        std::list<VectorParser::value_type> list (5, vec);
+
+        std::copy( list.begin(), list.end(), senf::back_inserter(parser.list()));
+        BOOST_REQUIRE_EQUAL( parser.list().size(), list.size() );
+        BOOST_CHECK_EQUAL( parser.list().front().vec().size(), vec.size());
+        BOOST_CHECK_EQUAL( parser.list().front().vec()[0], 42);
+    } {
+        std::list<VectorParser::value_type> list;
+
+        senf::copy( parser.list(), std::back_inserter(list));
+        BOOST_REQUIRE_EQUAL( list.size(), 5u );
+        BOOST_CHECK_EQUAL( list.front().size(), 4u);
+    }
+}
+
+SENF_AUTO_UNIT_TEST(list_copy_non_value)
+{
+    unsigned char data[] = { 0x01, 0xaa,
+                             0x02, 0xbb, 0xcc,
+                             0x03, 0xdd, 0xee, 0xff };
+
+    senf::DataPacket p1 (senf::DataPacket::create(data));
+    TestPacketSizeList2 parser1 (p1.data().begin(), &p1.data());
+
+    senf::DataPacket p2 (senf::DataPacket::create(TestPacketSizeList2::init_bytes));
+    TestPacketSizeList2 parser2 (p2.data().begin(), &p2.data());
+
+    senf::copy( parser1.list(), senf::back_inserter(parser2.list()));
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+            data, data+sizeof(data), p2.data().begin(), p2.data().end() );
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

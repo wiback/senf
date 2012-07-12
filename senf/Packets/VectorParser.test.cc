@@ -349,35 +349,82 @@ SENF_AUTO_UNIT_TEST(vectorMacro_inherit)
 
 namespace {
 
+    struct TestNonValueFixedSizeParser
+        : public senf::PacketParserBase
+    {
+#       include SENF_FIXED_PARSER()
+        SENF_PARSER_FIELD ( value, senf::UInt8Parser );
+        SENF_PARSER_FINALIZE( TestNonValueFixedSizeParser );
+    };
+
     struct TestPacketSizeVectorParser
         : public senf::PacketParserBase
     {
 #       include SENF_PARSER()
-
-        SENF_PARSER_VECTOR        ( vec   , packetSize() , senf::UInt16Parser );
-
-        SENF_PARSER_FINALIZE( TestPacketSizeVectorParser );
+        SENF_PARSER_FIELD_RO ( size1, senf::UInt8Parser                 );
+        SENF_PARSER_VECTOR   ( vec1, size1, TestNonValueFixedSizeParser );
+        SENF_PARSER_VECTOR   ( vec2, packetSize(), senf::UInt16Parser   );
+        SENF_PARSER_FINALIZE ( TestPacketSizeVectorParser               );
     };
 
 }
 
 SENF_AUTO_UNIT_TEST(vectorMacro_packetSize)
 {
-    unsigned char data[] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
-                             0x21, 0x22, 0x23, 0x24, 0x25, 0x26 };
+    unsigned char data[] = {
+            0x05, 0xaa, 0xbb, 0xcc, 0xdd, 0xee,
+            0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+            0x21, 0x22, 0x23, 0x24, 0x25, 0x26 };
 
     senf::DataPacket p (senf::DataPacket::create(data));
     TestPacketSizeVectorParser parser (p.data().begin(), &p.data());
 
     {
-        BOOST_CHECK_EQUAL( parser.vec().size(), 6u );
-        BOOST_CHECK_EQUAL( parser.vec()[0], 0x1112u );
-        BOOST_CHECK_EQUAL( parser.vec()[1], 0x1314u );
-        BOOST_CHECK_EQUAL( parser.vec()[5], 0x2526u );
+        BOOST_REQUIRE_EQUAL( parser.size1(), 5u );
+        BOOST_REQUIRE_EQUAL( parser.vec1().size(), 5u );
+        BOOST_REQUIRE_EQUAL( parser.vec2().size(), 6u );
+        BOOST_CHECK_EQUAL( parser.vec2()[0], 0x1112u );
+        BOOST_CHECK_EQUAL( parser.vec2()[1], 0x1314u );
+        BOOST_CHECK_EQUAL( parser.vec2()[5], 0x2526u );
+    } {
+        std::vector<boost::uint16_t> vec;
+        std::copy( parser.vec2().begin(), parser.vec2().end(), std::inserter(vec, vec.begin()));
+        BOOST_CHECK_EQUAL( vec.size(), 6u );
+        BOOST_CHECK_EQUAL( vec[0], 0x1112u );
+        BOOST_CHECK_EQUAL( vec[1], 0x1314u );
+        BOOST_CHECK_EQUAL( vec[5], 0x2526u );
+
+        TestPacketSizeVectorParser::vec2_t::container(parser.vec2()).clear();
+        BOOST_CHECK_EQUAL( parser.vec2().size(), 0u );
+
+        std::copy( vec.begin(), vec.end(), senf::back_inserter(parser.vec2()));
+        BOOST_REQUIRE_EQUAL( parser.vec2().size(), 6u );
+        BOOST_CHECK_EQUAL( parser.vec2()[0], 0x1112u );
+        BOOST_CHECK_EQUAL( parser.vec2()[1], 0x1314u );
+        BOOST_CHECK_EQUAL( parser.vec2()[5], 0x2526u );
+    } {
+        senf::DataPacket p2 (senf::DataPacket::create(TestPacketSizeVectorParser::init_bytes));
+        TestPacketSizeVectorParser parser2 (p2.data().begin(), &p2.data());
+
+        std::copy( parser.vec2().begin(), parser.vec2().end(), senf::back_inserter(parser2.vec2()));
+        BOOST_REQUIRE_EQUAL( parser2.vec2().size(), 6u );
+        BOOST_CHECK_EQUAL( parser2.vec2()[0], 0x1112u );
+        BOOST_CHECK_EQUAL( parser2.vec2()[1], 0x1314u );
+        BOOST_CHECK_EQUAL( parser2.vec2()[5], 0x2526u );
+    } {
+        senf::DataPacket p2 (senf::DataPacket::create(TestPacketSizeVectorParser::init_bytes));
+        TestPacketSizeVectorParser parser2 (p2.data().begin(), &p2.data());
+
+        std::copy( parser.vec1().begin(), parser.vec1().end(), senf::back_inserter(parser2.vec1()));
+        BOOST_REQUIRE_EQUAL( parser2.vec1().size(), parser.size1() );
+        BOOST_CHECK_EQUAL( parser2.vec1()[0].value(), 0xaa );
+        BOOST_CHECK_EQUAL( parser2.vec1()[1].value(), 0xbb );
+        BOOST_CHECK_EQUAL( parser2.vec1()[4].value(), 0xee );
     }
 
     // The real functionality is already tested in AuxPolixy.test.cc ...
 }
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

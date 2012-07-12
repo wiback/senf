@@ -58,6 +58,14 @@ senf::ListParser<ListPolicy>::bytes()
     return ListPolicy::bytes(i(),state());
 }
 
+template <class ListPolicy, class OutputIterator>
+prefix_ void senf::copy(ListParser_Container<ListPolicy> container, OutputIterator result)
+{
+    for (typename ListParser_Container<ListPolicy>::iterator i (container.begin()); i != container.end(); ++i) {
+        *result++ = *i++;
+    }
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // Container interface
 
@@ -78,12 +86,29 @@ prefix_ bool senf::ListParser<ListPolicy>::empty()
 }
 
 template <class ListPolicy>
+template <class InputIterator>
+prefix_ void senf::ListParser<ListPolicy>::assign(InputIterator first, InputIterator last)
+{
+    container c (*this);
+    c.clear();
+    while (first != last)
+        c.push_back( *first++);
+}
+
+template <class ListPolicy>
+template <class Range>
+prefix_ void senf::ListParser<ListPolicy>::assign(Range const & range)
+{
+    assign(boost::begin(range), boost::end(range));
+}
+
+template <class ListPolicy>
 prefix_ typename senf::ListParser<ListPolicy>::value_type
 senf::ListParser<ListPolicy>::front()
     const
 {
     SENF_ASSERT( ! empty(), "front() called on empty list" );
-    container c(*this);
+    container c (*this);
     return *(c.begin());
 }
 
@@ -92,7 +117,7 @@ template <class Value>
 prefix_ void senf::ListParser<ListPolicy>::push_back(Value const & value, size_type n)
     const
 {
-    container c(*this);
+    container c (*this);
     c.push_back(value,n);
 }
 
@@ -101,7 +126,7 @@ prefix_ typename senf::ListParser<ListPolicy>::value_type
 senf::ListParser<ListPolicy>::push_back_space(size_type n)
     const
 {
-    container c(*this);
+    container c (*this);
     return c.push_back_space(n);
 }
 
@@ -110,7 +135,7 @@ template <class Value>
 prefix_ void senf::ListParser<ListPolicy>::push_front(Value const & value, size_type n)
     const
 {
-    container c(*this);
+    container c (*this);
     c.push_front(value,n);
 }
 
@@ -119,7 +144,7 @@ prefix_ typename senf::ListParser<ListPolicy>::value_type
 senf::ListParser<ListPolicy>::push_front_space(size_type n)
     const
 {
-    container c(*this);
+    container c (*this);
     return c.push_front_space(n);
 }
 
@@ -127,7 +152,7 @@ template <class ListPolicy>
 prefix_ void senf::ListParser<ListPolicy>::resize(size_type n)
     const
 {
-    container c(*this);
+    container c (*this);
     c.resize(n);
 }
 
@@ -136,7 +161,7 @@ template <class Value>
 prefix_ void senf::ListParser<ListPolicy>::resize(size_type n, Value value)
     const
 {
-    container c(*this);
+    container c (*this);
     c.resize(n,value);
 }
 

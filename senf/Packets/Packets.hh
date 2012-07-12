@@ -79,6 +79,7 @@
 #include "DataPacket.hh"
 #include "DumpFormat.hh"
 #include "GenericTLV.hh"
+#include "algorithms.hh"
 
 #endif
 

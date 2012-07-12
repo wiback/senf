@@ -106,6 +106,11 @@ namespace senf {
         value_type front() const;
         value_type back() const;
 
+        template <class InputIterator>
+        void assign(InputIterator first, InputIterator last);
+        template <class Range>
+        void assign(Range const & range);
+
         template <class Value> void push_back        (Value const & value, size_type n=1) const;
         value_type                  push_back_space  (size_type n=1) const;
         template <class Value> void push_front       (Value const & value, size_type n=1) const;
@@ -322,6 +327,10 @@ namespace senf {
      */
 #   define SENF_PARSER_PRIVATE_LIST(name, size, elt_type) \
         SENF_PARSER_LIST_I(protected, name, size, elt_type)
+
+
+    template <class ListPolicy, class OutputIterator>
+    void copy(ListParser_Container<ListPolicy> container, OutputIterator result);
 
 }
 

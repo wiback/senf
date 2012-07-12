@@ -215,15 +215,12 @@ namespace senf
 
         typedef UIntFieldParser<0, 0+4> seqNumber_1_t;
         seqNumber_1_t seqNumber_1() const { return parse<seqNumber_1_t>( 22); }
+        UInt8Parser seqNumber_2() const { return parse<UInt8Parser>( 23); }
 
     public:
         typedef UIntFieldParser<4, 4+4> fragmentNumber_t;
         fragmentNumber_t fragmentNumber() const { return parse<fragmentNumber_t>( 22); }
 
-    protected:
-        UInt8Parser seqNumber_2() const { return parse<UInt8Parser>( 23); }
-
-    public:
         boost::uint16_t sequenceNumber() const {
             return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
         };
