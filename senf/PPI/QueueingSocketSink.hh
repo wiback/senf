@@ -71,6 +71,7 @@ namespace ppi {
     namespace detail {
         struct QueueingAlgorithmRegistry_EntryBase
         {
+            virtual ~QueueingAlgorithmRegistry_EntryBase() {}
             virtual QueueingAlgorithm::ptr create() const = 0;
         };
 

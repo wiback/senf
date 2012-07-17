@@ -288,8 +288,9 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
         remoteThrottled_ = false;
         if (!nativeThrottled_)
             emitUnthrottle();
-    } else
+    } else {
         SENF_PPI_THROTTLE_TRACE("OUT", "not forwarding unthrottle event");
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -95,7 +95,7 @@ namespace scheduler {
         typedef boost::function<void (int)> Callback;
 
         enum Events {
-            EV_NONE = 0                             ///< No event
+            EV_NULL = 0                             ///< No event
           , EV_READ = detail::FdManager::EV_READ    ///< fd readable (or EOF)
           , EV_PRIO = detail::FdManager::EV_PRIO    ///< OOB data available for read
           , EV_WRITE = detail::FdManager::EV_WRITE  ///< fd writable

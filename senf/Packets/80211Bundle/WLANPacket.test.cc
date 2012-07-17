@@ -91,7 +91,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
     senf::WLANPacket_DataFrame p (senf::WLANPacket_DataFrame::create());
 
     SENF_CHECK_NO_THROW( p->bssid() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
-    SENF_CHECK_NO_THROW(p->sequenceNumber(4095u));
+    SENF_CHECK_NO_THROW( p->sequenceNumber(4095u));
 
     BOOST_CHECK_EQUAL( p->type(), 2u );
     BOOST_CHECK_EQUAL( p->sequenceNumber(), 4095u );

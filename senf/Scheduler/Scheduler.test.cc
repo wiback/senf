@@ -256,7 +256,7 @@ void schedulerTest()
     {
         senf::scheduler::FdEvent fde1 ("testFdEvent", boost::bind(&callback, sock, _1),
                                       sock, senf::scheduler::FdEvent::EV_READ);
-        event = senf::scheduler::FdEvent::EV_NONE;
+        event = senf::scheduler::FdEvent::EV_NULL;
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ );
         BOOST_REQUIRE_EQUAL( size, 4 );
@@ -268,12 +268,12 @@ void schedulerTest()
                                       handle, senf::scheduler::FdEvent::EV_WRITE);
         strcpy(buffer,"WRITE");
         size=5;
-        event = senf::scheduler::FdEvent::EV_NONE;
+        event = senf::scheduler::FdEvent::EV_NULL;
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_WRITE );
 
         SENF_CHECK_NO_THROW( fde2.disable() );
-        event = senf::scheduler::FdEvent::EV_NONE;
+        event = senf::scheduler::FdEvent::EV_NULL;
         sleep(1);
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ|senf::scheduler::FdEvent::EV_HUP );
@@ -288,14 +288,14 @@ void schedulerTest()
         senf::scheduler::TimerEvent timer2 ("testTimer2", &timeout,
                                             senf::ClockService::now()+senf::ClockService::milliseconds(400));
 
-        event = senf::scheduler::FdEvent::EV_NONE;
+        event = senf::scheduler::FdEvent::EV_NULL;
         senf::ClockService::clock_type t (senf::ClockService::now());
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
         if (enabled)
             BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(200)) );
         BOOST_CHECK( timeoutCalled );
         BOOST_CHECK( ! timer1.enabled() );
-        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NULL );
         if (enabled)
             BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (senf::scheduler::eventTime()) );
         timeoutCalled = false;
@@ -303,7 +303,7 @@ void schedulerTest()
         if (enabled)
             BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(400)) );
         BOOST_CHECK( timeoutCalled );
-        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NULL );
         BOOST_CHECK( ! timer2.enabled() );
 
         BOOST_MESSAGE( "A 'Scheduler task hanging' error is expected to be signaled here." );

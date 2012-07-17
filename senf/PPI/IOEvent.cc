@@ -61,10 +61,9 @@ prefix_ void senf::ppi::IOEvent::cb(int event)
     if ((event & ~event_.events()) != 0) {
         if (event & Err)
             throw ErrorException();
-        else if (event & Hup)
+        if (event & Hup)
             throw HangupException();
-        else
-            SENF_ASSERT(false, "Internal failure: IOEvent::cb() called with invalid flag??");
+        SENF_ASSERT(false, "Internal failure: IOEvent::cb() called with invalid flag??");
     } else {
         IOEventInfo info = { event };
         callback(info);

@@ -91,7 +91,7 @@ prefix_ int senf::ppi::IPv4SourceForcingDgramWriter::sendtoandfrom(
 
     pi = (struct in_pktinfo *)CMSG_DATA(c);
     pi->ipi_ifindex = 0;
-    memcpy(&pi->ipi_addr, src, 16);
+    memcpy(&pi->ipi_addr, &src->s_addr, sizeof(src->s_addr));
 
     iov.iov_base = (void *)data;
     iov.iov_len = dataLen;
