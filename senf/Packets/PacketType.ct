@@ -46,12 +46,17 @@ senf::PacketTypeMixin<Self,void>::nextPacketRange(ConcretePacket<Self> const & p
     ///\idea This if condition could be replaced with a compile time switch by checking, whether
     /// (the function address) Self::initHeadSize is different from PacketTypeBase::initHeadSize
     if (sz == PacketTypeBase::size_type(-1)) {
-        typename Self::size_type headsz (bytes(p.parser()));
-        return p.data().size() < headsz ?
-            PacketTypeBase::no_range() :
-            PacketInterpreterBase::optional_range(
-                PacketTypeBase::range(boost::next(p.data().begin(), headsz),
-                                      p.data().end()));
+        try {
+            typename Self::size_type headsz (bytes(p.parser()));
+            return p.data().size() < headsz ?
+                    PacketTypeBase::no_range() :
+                    PacketInterpreterBase::optional_range(
+                            PacketTypeBase::range(boost::next(p.data().begin(), headsz),
+                                    p.data().end()));
+        } catch (senf::TruncatedPacketException & ) {
+            return PacketTypeBase::no_range();
+        }
+
     }
     else
         // If we have a trailer, we do *not* use the 'bytes' value but initSize/initHeadSize, this

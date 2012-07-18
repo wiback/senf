@@ -228,9 +228,9 @@ update(container_type const & c)
 {
     if (container_size_ == c.data().size())
         return;
-    data_iterator i(AuxPolicy::adjust(c.i(), c.state()));
-    data_iterator j(i);
-    for (size_type n(n_); n; --n, std::advance(j, senf::bytes(ElementParser(j,c.state())))) { ; }
+    data_iterator i (AuxPolicy::adjust(c.i(), c.state()));
+    data_iterator j (i);
+    for (size_type n (n_); n; --n, std::advance(j, senf::bytes(ElementParser(j,c.state())))) { ; }
     realAux_ = std::distance(i, j);
     container_size_ = c.data().size();
 }

@@ -122,7 +122,7 @@ template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::parser
 senf::PacketInterpreter<PacketType>::fields()
 {
-    return parser (data().begin(),&data());
+    return parser(data().begin(),&data());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
