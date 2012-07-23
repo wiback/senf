@@ -87,6 +87,11 @@ prefix_ void senf::Daemon::daemonize(bool v)
     daemonize_ = v;
 }
 
+prefix_ void senf::Daemon::catchExceptions(bool flag)
+{
+    catchExceptions_ = flag;
+}
+
 prefix_ bool senf::Daemon::daemon()
 {
     return daemonize_;
@@ -279,19 +284,22 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
     catch (DaemonExitException & e) {
         return e.code;
     }
-
-#ifndef SENF_DEBUG
-
     catch (std::exception & e) {
-        std::cerr << "\n*** Fatal exception: " << e.what() << "\n" << std::endl;
-        return 1;
+        if (catchExceptions_) {
+            std::cerr << "\n*** Fatal exception: " << e.what() << "\n" << std::endl;
+            return 1;
+        } else {
+            throw;
+        }
     }
     catch (...) {
-        std::cerr << "\n*** Fatal exception: (unknown)" << "\n" << std::endl;
-        return 1;
+        if (catchExceptions_) {
+            std::cerr << "\n*** Fatal exception: (unknown)" << "\n" << std::endl;
+            return 1;
+        } else {
+            throw;
+        }
     }
-
-#   endif
 
     return 0;
 }
@@ -311,6 +319,11 @@ prefix_ senf::Daemon::Daemon()
 {
     BOOST_ASSERT( ! instance_ );
     instance_ = this;
+#ifdef SENF_DEBUG
+    catchExceptions_ = false;
+#else
+    catchExceptions_ = true;
+#endif
 }
 
 senf::Daemon * senf::Daemon::instance_ (0);
