@@ -109,11 +109,11 @@ prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector &
         connectorRegistry_.push_back(&connector);
         connector.setModule(*this);
     }
+#ifndef SENF_PPI_NOTRACE
     console::DirectoryNode & conDir (console::provideDirectory(
             console::provideDirectory(
                     moduleManager().consoleDir()["modules"], consoleDirectoryName(*this)),
             consoleDirectoryName(connector) ));
-#ifndef SENF_PPI_NOTRACE
     conDir.add("tracing", senf::console::factory::Command(
             SENF_MEMFNP(void, connector::Connector, tracingState, (connector::Connector::TraceState)), &connector));
     conDir.add("tracing", senf::console::factory::Command(
