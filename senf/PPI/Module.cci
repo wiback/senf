@@ -45,9 +45,6 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::module::Module::v_init()
-{}
-
 prefix_ senf::ppi::EventManager & senf::ppi::module::Module::eventManager()
     const
 {

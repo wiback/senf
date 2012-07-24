@@ -32,6 +32,9 @@
 #include "Module.ih"
 
 // Custom includes
+#include <senf/Utils/algorithm.hh>
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/Console/ParsedCommand.hh>
 #include "Events.hh"
 #include "Connectors.hh"
 
@@ -86,13 +89,36 @@ route_impl( EventDescriptor, connector::GenericActiveOutput);
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
 
+namespace {
+    template <class T>
+    std::string consoleDirectoryName(T & t) {
+        return senf::prettyName(typeid(t)) + "_" + senf::str(&t);
+    }
+}
+
+namespace senf { namespace ppi { namespace connector {
+
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER(
+        Connector, TraceState, (NO_TRACING)(TRACE_IDS)(TRACE_CONTENTS) );
+
+}}}
+
 prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)
 {
-    if (std::find(connectorRegistry_.begin(), connectorRegistry_.end(), &connector)
-        == connectorRegistry_.end()) {
+    if (! senf::contains(connectorRegistry_, &connector)) {
         connectorRegistry_.push_back(&connector);
         connector.setModule(*this);
     }
+    console::DirectoryNode & conDir (console::provideDirectory(
+            console::provideDirectory(
+                    moduleManager().consoleDir()["modules"], consoleDirectoryName(*this)),
+            consoleDirectoryName(connector) ));
+#ifndef SENF_PPI_NOTRACE
+    conDir.add("tracing", senf::console::factory::Command(
+            SENF_MEMFNP(void, connector::Connector, tracingState, (connector::Connector::TraceState)), &connector));
+    conDir.add("tracing", senf::console::factory::Command(
+                SENF_MEMFNP(connector::Connector::TraceState, connector::Connector, tracingState, ()), &connector));
+#endif
 }
 
 prefix_ void senf::ppi::module::Module::unregisterConnector(connector::Connector & connector)
@@ -103,6 +129,9 @@ prefix_ void senf::ppi::module::Module::unregisterConnector(connector::Connector
         connectorRegistry_.erase(i);
 
     routes_.erase_if(boost::bind(&RouteBase::hasConnector, _1, boost::cref(connector)));
+
+    moduleManager().consoleDir()["modules"][consoleDirectoryName(*this)].remove(
+            consoleDirectoryName(connector), senf::nothrow );
 }
 
 prefix_ senf::ppi::RouteBase &
@@ -110,6 +139,14 @@ senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
 {
     routes_.push_back(route.release());
     return routes_.back();
+}
+
+prefix_ void senf::ppi::module::Module::v_init()
+{
+    // we can't do this in the constructor,
+    // since we want that typeid returns the type of the most derived complete object.
+    console::provideDirectory(
+            moduleManager().consoleDir()["modules"], consoleDirectoryName(*this));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

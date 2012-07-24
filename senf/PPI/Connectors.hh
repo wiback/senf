@@ -181,9 +181,9 @@ namespace connector {
         void disconnect();              ///< Disconnect connector from peer
 
         enum TraceState { NO_TRACING, TRACE_IDS, TRACE_CONTENTS };
-
-        static void tracing(TraceState state);
-        static TraceState tracing();
+        static void staticTracingState(TraceState state);
+        void tracingState(TraceState state);
+        TraceState tracingState();
 
     protected:
         Connector();
@@ -207,7 +207,8 @@ namespace connector {
         Connector * peer_;
         module::Module * module_;
 
-        static TraceState traceState_;
+        TraceState traceState_;
+        static TraceState staticTraceState_;
 
         friend class module::Module;
     };

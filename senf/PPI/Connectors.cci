@@ -64,21 +64,26 @@ prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
     return *module_;
 }
 
-prefix_ void senf::ppi::connector::Connector::tracing(TraceState state)
+prefix_ void senf::ppi::connector::Connector::staticTracingState(TraceState state)
 {
-    traceState_ = state;
+    staticTraceState_ = state;
 }
 
-prefix_ senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::tracing()
+prefix_ senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::tracingState()
 {
-    return traceState_;
+    return std::max(staticTraceState_, traceState_);
+}
+
+prefix_ void senf::ppi::connector::Connector::tracingState(TraceState state)
+{
+    traceState_ = state;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // protected members
 
 prefix_ senf::ppi::connector::Connector::Connector()
-    : peer_(), module_()
+    : peer_(), module_(), traceState_(NO_TRACING)
 {}
 
 prefix_ bool senf::ppi::connector::Connector::connected()
