@@ -143,6 +143,7 @@ namespace senf {
                                              When running in the foreground, the %log files will be
                                              ignored. */
 
+        void catchExceptions(bool flag);
         void pidFile(std::string const &); ///< Configure pid file
                                         /**< If a pid file is configured it will be checked on
                                              daemon startup. If another running instance of the
@@ -224,7 +225,7 @@ namespace senf {
         int stderr_;
         std::string pidfile_;
         bool pidfileCreated_;
-
+        bool catchExceptions_;
         bool detached_;
 
         static Daemon * instance_;

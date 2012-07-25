@@ -466,12 +466,6 @@ namespace console {
                                              will automatically dispose the removed node, or it may
                                              be saved and/or re-attached at some other place in the
                                              tree. */
-        GenericNode::ptr remove(std::string const & name, NoThrow_t);
-                                        ///< Remove node \a name from the tree
-                                        /**< The returned pointer may either be discarded, which
-                                             will automatically dispose the removed node, or it may
-                                             be saved and/or re-attached at some other place in the
-                                             tree. */
 
         bool hasChild(std::string const & name) const;
                                         ///< \c true, if there is a child with name \a name

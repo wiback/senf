@@ -43,6 +43,18 @@ prefix_ senf::ppi::ModuleManager & senf::ppi::ModuleManager::instance()
     return manager;
 }
 
+prefix_ void senf::ppi::ModuleManager::registerModule(module::Module & module)
+{
+    moduleRegistry_.push_back(&module);
+}
+
+prefix_ void senf::ppi::ModuleManager::unregisterModule(module::Module & module)
+{
+    moduleRegistry_.erase(
+        std::remove(moduleRegistry_.begin(), moduleRegistry_.end(), & module),
+        moduleRegistry_.end());
+}
+
 prefix_ bool senf::ppi::ModuleManager::initializableRegistered(Initializable const & i)
     const
 {

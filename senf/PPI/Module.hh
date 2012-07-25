@@ -309,6 +309,8 @@ namespace module {
 
 #ifndef DOXYGEN
         virtual void macro_SENF_PPI_MODULE_missing() = 0;
+
+    private:
 #endif
         virtual void v_init();          ///< Called after module setup
                                         /**< This member is called directly before the PPI (resumes)

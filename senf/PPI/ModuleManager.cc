@@ -114,19 +114,6 @@ prefix_ senf::ppi::ModuleManager::ModuleManager()
                   "    $ echo /sys/ppi/dump | nc -q1 <host> <port> \\\n"
                   "          | python tools/drawmodules.py | dot -Tpng /dev/fd/0 >modules.png\n")
             );
-    consoleDir_.add("modules", console::factory::Directory());
-}
-
-prefix_ void senf::ppi::ModuleManager::registerModule(module::Module & module)
-{
-    moduleRegistry_.push_back(&module);
-}
-
-prefix_ void senf::ppi::ModuleManager::unregisterModule(module::Module & module)
-{
-    moduleRegistry_.erase(
-        std::remove(moduleRegistry_.begin(), moduleRegistry_.end(), & module),
-        moduleRegistry_.end());
 }
 
 prefix_ void senf::ppi::ModuleManager::dumpModules(std::ostream & os)

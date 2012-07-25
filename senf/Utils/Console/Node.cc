@@ -145,15 +145,6 @@ prefix_ senf::console::DirectoryNode::~DirectoryNode()
 }
 
 prefix_ senf::console::GenericNode::ptr
-senf::console::DirectoryNode::remove(std::string const & name, NoThrow_t)
-{
-    try {
-        return remove( name);
-    } catch (UnknownNodeNameException &) {}
-    return ptr();
-}
-
-prefix_ senf::console::GenericNode::ptr
 senf::console::DirectoryNode::remove(std::string const & name)
 {
     ChildMap::iterator i (children_.find(name));

@@ -123,11 +123,6 @@ namespace test {
         senf::test::nocharIterator(left_begin), senf::test::nocharIterator(left_end),           \
         senf::test::nocharIterator(right_begin), senf::test::nocharIterator(right_end))
 
-#define SENF_REQUIRE_EQUAL_COLLECTIONS(left_begin, left_end, right_begin, right_end)              \
-    BOOST_REQUIRE_EQUAL_COLLECTIONS(                                                              \
-        senf::test::nocharIterator(left_begin), senf::test::nocharIterator(left_end),           \
-        senf::test::nocharIterator(right_begin), senf::test::nocharIterator(right_end))
-
 /** \brief Define new test case
 
     \c SENF_AUTO_UNIT_TEST() is like \c BOOST_AUTO_UNIT_TEST(). The only difference is, that
