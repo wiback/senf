@@ -126,7 +126,7 @@ namespace detail {
         iterator begin() const;
         iterator end() const;
 
-        void dumpRegistrations(std::ostream & os);
+        void dumpRegistrations(std::ostream & os) const;
 
     private:
         AnnotationRegistry();

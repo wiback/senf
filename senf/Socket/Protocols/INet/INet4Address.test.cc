@@ -58,7 +58,7 @@ SENF_AUTO_UNIT_TEST(inet4Address)
     BOOST_CHECK_EQUAL( addr, INet4Address::Loopback );
     BOOST_CHECK( addr.loopback() );
 
-    char data[] = { 128, 129, 130, 131 };
+    unsigned char data[] = { 128, 129, 130, 131 };
     addr = INet4Address::from_data(data);
     BOOST_CHECK_EQUAL( addr, INet4Address::from_string("128.129.130.131") );
     BOOST_CHECK_EQUAL( addr.inaddr(), htonl(0x80818283u) );

@@ -55,7 +55,8 @@ boost::function<R()> membind(R (T1::* fn)() const, T2 scOBTYPE ob)
 // for BOOST_PP_ITERATION() in 2..9 do
 #define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, SENF_ABSOLUTE_INCLUDE_PATH(Utils/impl/membind.hh), 1))
 #include BOOST_PP_ITERATE()
-#elif BOOST_PP_ITERATION_DEPTH()==1 && BOOST_PP_ITERATION_FLAGS()==1
+#else
+#if BOOST_PP_ITERATION_DEPTH()==1 && BOOST_PP_ITERATION_FLAGS()==1
 // {{
 
 #define scARG(z,n,d) BOOST_PP_CAT(d,n)
@@ -86,6 +87,7 @@ membind(R (T1::* fn)( scPARAMS(A) ) const, T2 scOBTYPE ob)
 #undef scARG
 
 // }
+#endif
 #endif
 // done
 

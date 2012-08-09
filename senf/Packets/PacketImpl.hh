@@ -94,7 +94,7 @@ namespace senf {
 
         Fast annotations are considerable faster than complex and slow annotations. However, only
         annotations which do not need constructor or destructor calls and which may be
-        zero-initialized (on the memory level) are elegible as fast annotations.
+        zero-initialized (on the memory level) are eligible as fast annotations.
 
         It is thus desirable to eliminate any complex and slow annotations, if possible. To optimize
         the annotation system, you may take the following steps:

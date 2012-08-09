@@ -87,7 +87,8 @@ namespace detail {
         //\}
         //-////////////////////////////////////////////////////////////////////////
 
-        bool set(int fd, int events, Value * data); ///< Set file descriptor event data and mask
+        bool set(int fd, int events, Value * data);
+                                        ///< Set file descriptor event data and mask
                                         /**< The Poller does \e not own \a data. The value is owned
                                              by some external entity (the dispatcher to be more
                                              precise). */

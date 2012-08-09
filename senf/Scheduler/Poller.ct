@@ -40,7 +40,7 @@
 template <class Value>
 prefix_ bool senf::scheduler::detail::Poller<Value>::set(int fd, int events, Value * data)
 {
-    struct epoll_event ev = { events, { data } };
+    struct epoll_event ev = { uint32_t(events), { data } };
     if (epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev) != -1)
         return true;
     if (errno == EEXIST)

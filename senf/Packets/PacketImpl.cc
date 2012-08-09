@@ -329,10 +329,14 @@ prefix_ void senf::detail::AnnotationRegistry::dump(key_type key, std::ostream &
 }
 
 prefix_ void senf::detail::AnnotationRegistry::dumpRegistrations(std::ostream & os)
+    const
 {
     boost::format fmt ("%-56.56s  %-4.4s  %-7.7s  %5d\n");
     os << "SENF_PACKET_ANNOTATION_SLOTS = " << SENF_PACKET_ANNOTATION_SLOTS << "\n"
        << "SENF_PACKET_ANNOTATION_SLOTSIZE = " << SENF_PACKET_ANNOTATION_SLOTSIZE << "\n";
+#ifdef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+    os << "SENF_PACKET_NO_COMPLEX_ANNOTATIONS defined\n";
+#endif
     os << fmt % "TYPE" % "FAST" % "COMPLEX" % "SIZE";
 
     for (Index::const_iterator i (index_.begin()), i_end (index_.end()); i != i_end; ++i) {

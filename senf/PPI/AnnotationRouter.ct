@@ -60,14 +60,9 @@ prefix_ void senf::ppi::module::AnnotationRouter<AnnotationType>::request()
     typename AnnotationRouter::ContainerType::iterator i (
         this->connectors().find(p.annotation<AnnotationType>()));
     if (i == this->connectors().end())
-        defaultOutput(p);
-    else {
-#if BOOST_VERSION >= 103400
-        (*i->second)(p);
-#else
-        (*i)(p);
-#endif
-    }
+        defaultOutput.write(p);
+    else
+        i->second->write(p);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

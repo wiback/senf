@@ -29,7 +29,6 @@
     \brief MIH Message-Registry non-inline non-template implementation */
 
 #include "MIHMessageRegistry.hh"
-//#include "MIHMessageRegistry.ih"
 
 // Custom includes
 
@@ -37,22 +36,14 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MIHMessageRegistry
 
-#if BOOST_VERSION < 103400
-#   define PTRMAP_GET_CONTENTS(v) (v)
-#else
-#   define PTRMAP_GET_CONTENTS(v) (*(v).second)
-#endif
-
 prefix_ void senf::MIHMessageRegistry::validate(key_t messageId, senf::Packet message)
 {
     Map::const_iterator i (map_.find( messageId));
     if (i != map_.end())
-        PTRMAP_GET_CONTENTS(*i).validate( message);
+        i->second->validate( message);
     else
         throw InvalidMIHPacketException("unknown message id: ") << messageId;
 }
-
-#undef PTRMAP_GET_CONTENTS
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

@@ -107,14 +107,6 @@ prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::registerParser(
         "Duplicate TLV registration");
 }
 
-// Wow ... this is stupid .. Boost 1.33 ptr_map API is broken ...
-
-#if BOOST_VERSION < 103400
-#define PTRMAP_GET_CONTENTS(v) (v)
-#else
-#define PTRMAP_GET_CONTENTS(v) (*(v).second)
-#endif
-
 template <class BaseParser, class Keytype>
 prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
         GenericTLVParser const & parser, std::ostream & os)
@@ -122,7 +114,7 @@ prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
 {
     typename Map::const_iterator i (map_.find( parser.type()));
     if (i != map_.end())
-        PTRMAP_GET_CONTENTS(*i).dump(parser, os);
+        i->second->dump(parser, os);
 }
 
 template <class BaseParser, class Keytype>
@@ -132,7 +124,7 @@ prefix_ void senf::GenericTLVParserRegistry<BaseParser,Keytype>::dump(
 {
     typename Map::const_iterator i (map_.find( key));
     if (i != map_.end())
-        PTRMAP_GET_CONTENTS(*i).dump(parser, os);
+        i->second->dump(parser, os);
 }
 
 template <class BaseParser, class Keytype>
@@ -142,7 +134,7 @@ prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserRegistry<BasePar
 {
     typename Map::const_iterator i (map_.find( parser.type()));
     if (i != map_.end())
-        return PTRMAP_GET_CONTENTS(*i).bytes(parser);
+        return i->second->bytes(parser);
     else
         throw TLVParserNotRegisteredException();
 }
@@ -154,12 +146,10 @@ prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserRegistry<BasePar
 {
     typename Map::const_iterator i (map_.find( key));
     if (i != map_.end())
-        return PTRMAP_GET_CONTENTS(*i).bytes(parser);
+        return i->second->bytes(parser);
     else
         throw TLVParserNotRegisteredException();
 }
-
-#undef PTRMAP_GET_CONTENTS
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

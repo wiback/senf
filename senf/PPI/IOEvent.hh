@@ -48,7 +48,7 @@ namespace ppi {
      */
     struct IOEventInfo
     {
-        unsigned events;                ///< Type of event signaled
+        int events;                     ///< Type of event signaled
                                         /**< The value is a combination of the flags from
                                              IOEvent::EventFlags */
     };
