@@ -35,6 +35,7 @@
 #include "NetdeviceController.hh"
 #include <net/if.h>
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/IgnoreValue.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -52,7 +53,7 @@ SENF_AUTO_UNIT_TEST(NetdeviceController) {
     BOOST_CHECK_EQUAL( index, senf::NetdeviceController(index).interfaceIndex() );
     BOOST_CHECK_EQUAL( index, if_nametoindex( ifname.c_str()) );
 
-    BOOST_CHECK_THROW( senf::NetdeviceController("invalid_interfacename"), senf::SystemException );
+    BOOST_CHECK_THROW( senf::IGNORE(senf::NetdeviceController("invalid_interfacename")), senf::SystemException );
 
     int oldMTU (0);
     SENF_CHECK_NO_THROW( oldMTU = ctrl.mtu());

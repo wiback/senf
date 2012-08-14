@@ -56,7 +56,7 @@ namespace ppi {
                                         ///< \c true, if route has event \a event
 
     protected:
-        RouteBase(module::Module & module);
+        RouteBase();
 
 #ifdef DOXYGEN
         Source & source() const;        ///< Routing source
@@ -72,8 +72,6 @@ namespace ppi {
     private:
         virtual bool v_hasConnector(connector::Connector const & conn) const = 0;
         virtual bool v_hasEvent(EventDescriptor const & event) const = 0;
-
-        module::Module * module_;
     };
 
     /** \brief Forwarding route base class
@@ -108,7 +106,7 @@ namespace ppi {
                                              will always return \c false. */
 
     protected:
-        ForwardingRoute(module::Module & module);
+        ForwardingRoute();
 
         // Called to register this route with the connectors forwarding information base
         template <class T> void registerRoute(T & ob);
@@ -163,7 +161,7 @@ namespace ppi {
         typedef detail::RouteImplementation<Source,Target> Base;
         typedef detail::RouteImplementation<Source,Target> Implementation;
 
-        Route(module::Module & module, Source & source, Target & target);
+        Route(Source & source, Target & target);
 
         friend class module::Module;
     };

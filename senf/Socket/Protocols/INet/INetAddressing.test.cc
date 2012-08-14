@@ -33,8 +33,9 @@
 
 // Custom includes
 #include "INetAddressing.hh"
-#include <senf/Utils/String.hh>
 #include <senf/Socket/Protocols/AddressExceptions.hh>
+#include <senf/Utils/String.hh>
+#include <senf/Utils/IgnoreValue.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -62,10 +63,10 @@ SENF_AUTO_UNIT_TEST(inet4SocketAddress)
     BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345"),
                        INet4SocketAddress(INet4Address::Loopback,12345) );
 
-    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1"), AddressSyntaxException );
-    BOOST_CHECK_THROW( INet4SocketAddress("foo:bar"), AddressSyntaxException );
-    BOOST_CHECK_THROW( INet4SocketAddress(":12345"), AddressSyntaxException );
-    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1:1234a"), AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(INet4SocketAddress("127.0.0.1")), AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(INet4SocketAddress("foo:bar")), AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(INet4SocketAddress(":12345")), AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(INet4SocketAddress("127.0.0.1:1234a")), AddressSyntaxException );
 
     BOOST_CHECK_EQUAL( INet4SocketAddress(12345).port(), 12345u );
     BOOST_CHECK_EQUAL( INet4SocketAddress(12345).address(), INet4Address::None );
@@ -121,7 +122,7 @@ SENF_AUTO_UNIT_TEST(inet6SocketAddress)
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );
         BOOST_CHECK_EQUAL( addr, INet6SocketAddress("[12::21]:12345") );
-        SENF_CHECK_NO_THROW( INet6SocketAddress("www.go6.net:80") );
+        SENF_CHECK_NO_THROW( senf::IGNORE(INet6SocketAddress("www.go6.net:80")) );
         addr = INet6SocketAddress("1.2.3.4:12345", INet6Address::ResolveINet4);
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("::ffff:1.2.3.4") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
@@ -164,9 +165,9 @@ SENF_AUTO_UNIT_TEST(inet6SocketAddress)
         BOOST_CHECK_EQUAL( addr.port(), 100u );
         addr.address(INet6Address::from_string("::2"));
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("::2") );
-        BOOST_CHECK_THROW( INet6SocketAddress(""), AddressSyntaxException );
-        BOOST_CHECK_THROW( INet6SocketAddress("[::1]"), AddressSyntaxException );
-        BOOST_CHECK_THROW( INet6SocketAddress("[::1]1234"), AddressSyntaxException );
+        BOOST_CHECK_THROW( senf::IGNORE(INet6SocketAddress("")), AddressSyntaxException );
+        BOOST_CHECK_THROW( senf::IGNORE(INet6SocketAddress("[::1]")), AddressSyntaxException );
+        BOOST_CHECK_THROW( senf::IGNORE(INet6SocketAddress("[::1]1234")), AddressSyntaxException );
         addr = INet6SocketAddress("[12::21%lo]:12345");
         BOOST_CHECK_EQUAL( senf::str(addr), "[12::21%lo]:12345" );
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("12::21") );

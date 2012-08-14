@@ -39,9 +39,8 @@
 // senf::ppi::Route<Source,Target>
 
 template <class Source, class Target>
-prefix_ senf::ppi::Route<Source,Target>::Route(module::Module & module, Source & source,
-                                               Target & target)
-    : Base(module,source,target)
+prefix_ senf::ppi::Route<Source,Target>::Route(Source & source, Target & target)
+    : Base(source,target)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,8 +95,8 @@ prefix_ Target & senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>:
 
 template <class Source, class Target, class Base>
 prefix_ senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
-BaseRouteImplementation(module::Module & module, Source & source, Target & target)
-    : Base(module), source_(&source), target_(&target)
+BaseRouteImplementation(Source & source, Target & target)
+    : source_(&source), target_(&target)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,8 +159,8 @@ isSame(EventDescriptor const & event, EventDescriptor const & other)
 template <class Source, class Target>
 prefix_
 senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
-ForwardingRouteImplementation(module::Module & module, Source & source, Target & target)
-    : Base(module,source,target)
+ForwardingRouteImplementation(Source & source, Target & target)
+    : Base(source,target)
 {
     Base::registerRoute(source);
     Base::registerRoute(target);
@@ -233,8 +232,8 @@ throttled(T & ob, boost::mpl::bool_<false> const &)
 
 template <class Source, class Target>
 prefix_ senf::ppi::detail::RouteImplementation2<Source,Target>::
-RouteImplementation2(module::Module & module, Source & source, Target & target)
-    : Base(module,source,target)
+RouteImplementation2(Source & source, Target & target)
+    : Base(source,target)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,8 +244,8 @@ RouteImplementation2(module::Module & module, Source & source, Target & target)
 
 template <class Source, class Target>
 prefix_ senf::ppi::detail::RouteImplementation<Source,Target>::
-RouteImplementation(module::Module & module, Source & source, Target & target)
-    : Base(module,source,target)
+RouteImplementation(Source & source, Target & target)
+    : Base(source,target)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -33,10 +33,11 @@
 
 // Custom includes
 #include "INet6Address.hh"
-#include <senf/Utils/String.hh>
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <senf/Socket/Protocols/Raw/EUI64.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
+#include <senf/Utils/String.hh>
+#include <senf/Utils/IgnoreValue.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -208,9 +209,9 @@ SENF_AUTO_UNIT_TEST(inet6Network)
     BOOST_CHECK_EQUAL( net2.host(0x1234u), INet6Address::from_string("2001:db8:1230::1234") );
     BOOST_CHECK_EQUAL( senf::str(net2.subnet(2u,48u)), "2001:db8:1232::/48" );
 
-    BOOST_CHECK_THROW( INet6Network(""), AddressSyntaxException );
-    BOOST_CHECK_THROW( INet6Network("2001:db8:1234::/beef"), AddressSyntaxException );
-    BOOST_CHECK_THROW( INet6Network("2001:db8:1234::/129"), AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(INet6Network("")), AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(INet6Network("2001:db8:1234::/beef")), AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(INet6Network("2001:db8:1234::/129")), AddressSyntaxException );
 
     {
         std::stringstream str;

@@ -67,7 +67,7 @@ senf::ppi::module::Module::route(EventDescriptor & input, connector::OutputConne
         detail::RouteHelper<Source,Target>::route(*this, source, target, source, target);   \
         return static_cast< Route<Source,Target> & >(                                       \
                 addRoute(std::auto_ptr< RouteBase >(                                        \
-                     new Route<Source,Target>(*this, source, target))));                    \
+                     new Route<Source,Target>(source, target))));                           \
     }
 
 route_impl( connector::GenericPassiveInput, connector::GenericActiveOutput);

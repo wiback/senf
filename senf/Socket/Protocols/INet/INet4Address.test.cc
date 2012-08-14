@@ -35,8 +35,9 @@
 #include <arpa/inet.h>
 #include <sstream>
 #include "INet4Address.hh"
-#include <senf/Utils/String.hh>
 #include <senf/Socket/Protocols/AddressExceptions.hh>
+#include <senf/Utils/String.hh>
+#include <senf/Utils/IgnoreValue.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -121,9 +122,9 @@ SENF_AUTO_UNIT_TEST(inet4Network)
     BOOST_CHECK_EQUAL( net2.host(-1), senf::INet4Address::from_string("192.0.255.255") );
     BOOST_CHECK_EQUAL( senf::str(net2.subnet(2u,24u)), "192.0.2.0/24" );
 
-    BOOST_CHECK_THROW( senf::INet4Network(""), senf::AddressSyntaxException );
-    BOOST_CHECK_THROW( senf::INet4Network("192.0.2.0/24/beef"), senf::AddressSyntaxException );
-    BOOST_CHECK_THROW( senf::INet4Network("128.129.130.131/128"), senf::AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(senf::INet4Network("")), senf::AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(senf::INet4Network("192.0.2.0/24/beef")), senf::AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(senf::INet4Network("128.129.130.131/128")), senf::AddressSyntaxException );
 
     {
         std::stringstream str;

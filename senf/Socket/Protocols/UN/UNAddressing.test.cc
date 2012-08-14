@@ -35,6 +35,7 @@
 #include "UNAddressing.hh"
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <sstream>
+#include <senf/Utils/IgnoreValue.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -60,7 +61,7 @@ SENF_AUTO_UNIT_TEST(UNSocketAddress)
     BOOST_CHECK_EQUAL( str.str(), path );
 
     // UNSocketAddress path too long
-    BOOST_CHECK_THROW( senf::UNSocketAddress(std::string(1024, 'x')), senf::AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::IGNORE(senf::UNSocketAddress(std::string(1024, 'x'))), senf::AddressSyntaxException );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

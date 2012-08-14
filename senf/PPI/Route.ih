@@ -111,7 +111,7 @@ namespace detail {
         Source & source() const;
         Target & target() const;
 
-        BaseRouteImplementation(module::Module & module, Source & source, Target & target);
+        BaseRouteImplementation(Source & source, Target & target);
 
     private:
         bool v_hasConnector(connector::Connector const & conn) const;
@@ -146,7 +146,7 @@ namespace detail {
         typedef BaseRouteImplementation<Source, Target, ForwardingRoute> Base;
 
     protected:
-        ForwardingRouteImplementation(module::Module & module, Source & source, Target & target);
+        ForwardingRouteImplementation(Source & source, Target & target);
         ~ForwardingRouteImplementation();
 
     private:
@@ -198,7 +198,7 @@ namespace detail {
                              RoutingTraits<Target>::dataTarget );
 
     protected:
-        RouteImplementation2(module::Module & module, Source & source, Target & target);
+        RouteImplementation2(Source & source, Target & target);
     };
 
     // RouteImplementation just forwards to RouteImplementation2 replacing the template arguments
@@ -213,7 +213,7 @@ namespace detail {
                                      typename RoutingTraits<Target>::type> Base;
 
     protected:
-        RouteImplementation(module::Module & module, Source & source, Target & target);
+        RouteImplementation(Source & source, Target & target);
     };
 
 }}}
