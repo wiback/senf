@@ -37,12 +37,15 @@
 
 // Custom includes
 #include <boost/iterator/iterator_facade.hpp>
+#include <senf/Utils/safe_bool.hh>
 
 #include "SafeIterator.ih"
-//#include "SafeIterator.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
+
+    class PacketParserBase;
+
 
     /** \brief Re-validating data iterator
 

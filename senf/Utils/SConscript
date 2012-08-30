@@ -6,3 +6,4 @@ import SENFSCons
 ###########################################################################
 
 SENFSCons.AutoRules(env, subdirs=['impl'])
+SENFSCons.CopyToVariantDir(env, 'Daemon.hh')

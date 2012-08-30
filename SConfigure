@@ -73,7 +73,7 @@ def CheckValgrindWildcards(context):
 
 ###########################################################################
 
-conf = env.Configure(clean=False, help=False, config_h="#/senf/autoconf.hh")
+conf = env.Configure(clean=False, help=False, config_h="$BUILDDIR/senf/autoconf.hh")
 
 # Boost
 res = conf.CheckBoostVersion(fail=True)

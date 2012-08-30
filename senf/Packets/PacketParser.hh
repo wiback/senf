@@ -162,7 +162,6 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/optional.hpp>
-#include <senf/Utils/safe_bool.hh>
 #include "PacketTypes.hh"
 #include "PacketData.hh"
 #include "ParseHelpers.hh"

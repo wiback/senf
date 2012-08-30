@@ -96,6 +96,13 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
 
     return doc
 
+def CopyToVariantDir(env, *files):
+    for f in files:
+        for p in env.Glob(f, strings=True):
+            if os.path.splitext(p)[1] in env['CPP_INCLUDE_EXTENSIONS']:
+                env.Depends(DEFAULT_TARGETS, env.Local(p))
+    
+    
 def AllIncludesHH(env, exclude=[]):
     exclude = exclude + ['all_includes.hh']
     headers = [ f for f in env.Glob("*.hh", source=True)
@@ -127,7 +134,7 @@ INDEXPAGE="""
 
 def IndexPage(env, name, title, text=""):
     SUBPAGES = []
-    for dox in sorted(env.Glob("*/Mainpage.dox",strings=True)):
+    for dox in sorted(glob.glob("*/Mainpage.dox")):
         subtitle = ([None] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
                                if '\\mainpage' in line ])[-1]
         if subtitle:

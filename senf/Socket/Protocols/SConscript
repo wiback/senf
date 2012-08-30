@@ -6,3 +6,4 @@ import SENFSCons
 ###########################################################################
 
 SENFSCons.AutoRules(env)
+SENFSCons.CopyToVariantDir(env, 'INet.hh','DVB.hh','Raw.hh','UN.hh')

@@ -31,7 +31,6 @@
 #ifndef HH_SENF_Packets_80211Bundle_WLANPacket_
 #define HH_SENF_Packets_80211Bundle_WLANPacket_ 1
 
-#include <senf/Packets/Packets.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
 

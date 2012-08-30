@@ -1,4 +1,4 @@
-import re, subprocess 
+import re, subprocess, os 
 import SCons.Builder 
      
 def createFile(target, source, env):
@@ -36,7 +36,7 @@ def CalculateRevision(env, local_revision_file=None):
      
 builder = SCons.Builder.Builder(action = createFile) 
 
-def createVersionFile(env, source, target, name='name_missing', major_version=0, minor_version=0, revision=None, local_revision_file=None, **kw):
+def createVersionFile(env, source, target, name='name_missing', directory='', major_version=0, minor_version=0, revision=None, local_revision_file=None, **kw):
     if source is None:
         source = (
            '// auto-generated file.\n\n' 
@@ -56,7 +56,10 @@ def createVersionFile(env, source, target, name='name_missing', major_version=0,
         raise SCons.Errors.UserError, "Need exactly one target for CreateVersionFile()"
     
     if revision is None:
+        curdir = os.curdir
+        if directory: os.chdir(directory)  
         revision = CalculateRevision(env, local_revision_file)
+        if directory: os.chdir(curdir)
 
     source = env.arg2nodes(env.Value(source % dict(
          name=name, major_version=major_version, minor_version=minor_version, revision=revision, **kw)), env.fs.Entry)

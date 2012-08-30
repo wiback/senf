@@ -5,9 +5,11 @@ import SENFSCons, os, re
 
 ###########################################################################
 
+env.Default(env.Local('PPI.hh'), env.Local('Socket.hh'), env.Local('Packets.hh'))
+
 # Create local_config.h
 if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
-    Execute(Copy("local_config.hh", "local_config_sample.hh"))
+    Execute(Copy("local_config.hh", os.path.join(env.Dir('#').abspath, 'senf', 'local_config_sample.hh')))
 
 # Ext/SConscript is last so it can depend on env vars set by any other script
 # (e.g. $PACKET_BUNDLES)
@@ -19,5 +21,6 @@ env.InstallSubdir(target = '$INCLUDEINSTALLDIR',
 
 # Create Version.hh
 env.CreateVersionFile( "Version.hh", name='SENF', major_version=1, minor_version=2,
-                       local_revision_file='.revision')
+                       local_revision_file='.revision',
+                       directory = env.Dir('#').abspath)
 

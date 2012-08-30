@@ -5,7 +5,7 @@ import SENFSCons, glob, os.path, yaptu
 
 ###########################################################################
 
-sconscripts = sorted(glob.glob("*/SConscript"))
+sconscripts = sorted(list(set(env.Glob("*/SConscript", strings=True))))
 
 if sconscripts:
     SENFSCons.IndexPage(env, 'Mainpage.dox', title="Extensions",

@@ -32,7 +32,8 @@
 #define HH_SENF_Packets_PacketData_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <senf/Utils/Exception.hh>
 
@@ -175,7 +176,6 @@ namespace senf {
         friend class detail::PacketImpl;
     };
 
-    class PacketParserBase;
 
     /** \brief Invalid packet data access
 

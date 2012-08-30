@@ -84,8 +84,7 @@ env.Append(
     CLEAN_SOME_PATTERNS    = [ '*~', '#*#', '*.pyc', 'semantic.cache' ],
     CLEAN_PATTERNS         = [ '.sconsign*', '.sconf_temp' ],
 
-    CPPPATH                = [ '#', '$BUILDDIR',
-                               '${NEED_BOOST_EXT and "#/boost_ext" or None}' ],
+    CPPPATH                = [ '${NEED_BOOST_EXT and "#/boost_ext" or None}' ],
     LIBPATH                = [ '$LOCALLIBDIR' ],
     LIBS                   = [ '$EXTRA_LIBS' ],
     EXTRA_LIBS             = [ 'rt' ],
@@ -136,7 +135,6 @@ env.SetDefault(
     SCONSINSTALLDIR        = '$CONFINSTALLDIR/site_scons',
 
     BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
-    LOCALLIBDIR            = '$BUILDDIR',
 
     LIBSENF                = "senf",
     LCOV                   = "lcov",
@@ -156,15 +154,18 @@ env.SetDefault(
 )
 
 # Set variables from command line
+senfutil.ParseDefaultArguments(env)
 senfutil.parseArguments(
     env,
-    BoolVariable('final', 'Build final (optimized) build', False),
-    BoolVariable('debug', 'Link in debug symbols', False),
-    BoolVariable('profile', 'compile and link with the profiling enabled option', False),
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
-    BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False)
+    BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False),
+    BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
 )
 
+if env['debug_final']:
+    env['final'] = True
+    env.Append(CXXFLAGS = [ '-g' ])
+    
 # Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
 senfutil.importProcessEnv(env)
 
@@ -175,11 +176,30 @@ if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
 
 if env.has_key('only_tests') : env['sparse_tests'] = True
 
+if env['builddir']:
+    env.Replace( 
+        BUILDDIR           = os.path.join('build', env['VARIANT']),
+        LOCALLIBDIR        = os.path.join('#', 'build', env['VARIANT']) 
+    )
+    env.Append( 
+        CPPPATH            = [ os.path.join('#', 'build', env['VARIANT']) ]
+    )
+else:
+    env.Replace( 
+        BUILDDIR           = '#',
+        LOCALLIBDIR        = '#', 
+    )
+    env.Append( 
+        CPPPATH            = [ '#' ] 
+    )
+    
+    
 Export('env')
 
 ###########################################################################
 # Configure
-
+env['CONFIGUREDIR'] = os.path.join(env.subst('$BUILDDIR'), '.sconf_temp')
+env['CONFIGURELOG'] = os.path.join(env.subst('$BUILDDIR'), 'config.log')
 SConscript('SConfigure')
 
 # Only add this here, after all configure checks have run
@@ -211,7 +231,7 @@ if env['sparse_tests']:
 if env.subst('$BUILDDIR') == '#':
     SConscript("SConscript")
 else:
-    SConscript("SConscript", variant_dir=env.subst('$BUILDDIR'), src_dir='#', duplicate=False)
+    SConscript("SConscript", variant_dir=env.subst('$BUILDDIR'), src_dir='#')
 SConscript("Examples/SConscript")
 SConscript("HowTos/SConscript")
 SConscript("doclib/SConscript")

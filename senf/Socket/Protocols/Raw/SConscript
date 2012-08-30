@@ -7,3 +7,4 @@ import SENFSCons
 
 SENFSCons.AllIncludesHH(env, exclude=['Raw.hh'])
 SENFSCons.AutoRules(env)
+SENFSCons.CopyToVariantDir(env, 'Raw.hh')

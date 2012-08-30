@@ -47,7 +47,8 @@ namespace connector {
     /** \brief Connector Jack base class
         \see \ref ppi_jacks */
     class Jack
-        : private boost::noncopyable, private ppi::detail::DisableStandardConnect
+        : private boost::noncopyable,
+          private ppi::detail::DisableStandardConnect
     {};
 
     /** \brief Jack referencing an ActiveInput

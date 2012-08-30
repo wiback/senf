@@ -1,4 +1,4 @@
-import os, os.path, site_tools.Yaptu, types, re, fnmatch, sys
+import os, os.path, site_tools.Yaptu, types, re, fnmatch, sys, platform
 import SCons.Util
 from SCons.Script import *
 
@@ -102,7 +102,11 @@ The environment 'env' is updated in the following way:
     SENFDIR        set to the base directory of the senf installation.
 """
     global senfutildir
-    senf_path.extend((os.path.dirname(senfutildir), '/usr/local', '/usr'))
+    if env['builddir']:
+        senf_path = [
+             os.path.join( os.path.dirname(senfutildir), 'build', env.subst('$VARIANT')) ]
+    else:
+        senf_path.extend( (os.path.dirname(senfutildir), '/usr/local', '/usr') )
 
     for path in senf_path:
         if not path.startswith('/') : sconspath = '#/%s' % path
@@ -122,6 +126,8 @@ The environment 'env' is updated in the following way:
     return False
 
 def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
+    ParseDefaultArguments(env)
+
     try_flavors = [ '', 'g' ]
     if flavor is not None:
         try_flavors[0:0] = [ flavor ]
@@ -189,6 +195,30 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
 ###########################################################################
 # Helpers
 
+def ParseDefaultArguments(env):
+    # Interpret command line options
+    parseArguments(
+        env,
+        BoolVariable('final', 'Build final (optimized) build', False),
+        BoolVariable('debug', 'Link in debug symbols', False),
+        BoolVariable('debug_final', 'Build final (optimized) build with debug symbols', False),
+        BoolVariable('profile', 'compile and link with the profiling enabled option', False),
+        BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
+    )
+    
+    build_type = 'normal'
+    for type in ('debug_final', 'final', 'debug'):
+        if env[type]: 
+            build_type = type
+    if env['profile']:
+        build_type += '-profile'
+        
+    issue = re.sub(r'\\\w', '', open('/etc/issue').read()).strip().lower().replace(' ', '_')
+    env.Replace(
+        BUILD_TYPE = build_type,
+        VARIANT    = '%s-%s-%s' % (issue, platform.machine(), build_type)
+    )
+    
 def DefaultOptions(env):
     env.Replace(
         expandLogOption   = expandLogOption,
@@ -196,13 +226,13 @@ def DefaultOptions(env):
         CPPDEFINES_       = env.BuildTypeOptions('CPPDEFINES'),
         LINKFLAGS_        = env.BuildTypeOptions('LINKFLAGS'),
         LOGLEVELS_        = env.BuildTypeOptions('LOGLEVELS'),
-        )
+    )
     env.Append(
         CXXFLAGS          = [ '$CXXFLAGS_' ],
         CPPDEFINES        = [ '$CPPDEFINES_' ],
         LINKFLAGS         = [ '$LINKFLAGS_' ],
         LOGLEVELS         = [ '$LOGLEVELS_' ],
-        )
+    )
     env.SetDefault(
         CXXFLAGS_final    = [],
         CXXFLAGS_normal   = [],
@@ -219,15 +249,11 @@ def DefaultOptions(env):
         LOGLEVELS_final   = [],
         LOGLEVELS_normal  = [],
         LOGLEVELS_debug   = [],
-        )
-
-    # Interpret command line options
-    parseArguments(
-        env,
-        BoolVariable('final', 'Build final (optimized) build', False),
-        BoolVariable('debug', 'Link in debug symbols', False),
-        BoolVariable('profile', 'compile and link with the profiling enabled option', False),
     )
+
+    if env['debug_final']:
+        env['final'] = True
+        env.Append(CXXFLAGS = [ '-g' ])
 
     # Set nice default options
     env.Append(
@@ -245,7 +271,7 @@ def DefaultOptions(env):
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],
     )
-
+    
     env.Alias('all', '#')
 
 

@@ -6,3 +6,4 @@ import SENFSCons
 ###########################################################################
 
 SENFSCons.AutoPacketBundle(env, 'DefaultBundle')
+SENFSCons.CopyToVariantDir(env, 'EUI64Parser.hh')
