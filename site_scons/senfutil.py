@@ -213,7 +213,7 @@ def ParseDefaultArguments(env):
     if env['profile']:
         build_type += '-profile'
         
-    issue = re.sub(r'\\\w', '', open('/etc/issue').read()).strip().lower().replace(' ', '_')
+    issue = re.sub(r'\\\w', '', open('/etc/issue').readline()).strip().lower().replace(' ', '_').replace('/', '_')
     env.Replace(
         BUILD_TYPE = build_type,
         VARIANT    = '%s-%s-%s' % (issue, platform.machine(), build_type)
