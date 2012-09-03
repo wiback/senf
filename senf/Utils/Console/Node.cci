@@ -169,8 +169,7 @@ prefix_ senf::console::DirectoryNode::ptr senf::console::DirectoryNode::create()
 prefix_ bool senf::console::DirectoryNode::hasChild(std::string const & name)
     const
 {
-    ChildMap::const_iterator i (children_.find(name));
-    return i != children_.end();
+    return children_.find(name) != children_.end();
 }
 
 prefix_ senf::console::GenericNode &

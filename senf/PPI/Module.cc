@@ -32,6 +32,7 @@
 #include "Module.ih"
 
 // Custom includes
+#include <senf/Utils/algorithm.hh>
 #include "Events.hh"
 #include "Connectors.hh"
 
@@ -86,12 +87,20 @@ route_impl( EventDescriptor, connector::GenericActiveOutput);
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
 
+namespace {
+    template <class T>
+    std::string consoleDirectoryName(T & t) {
+        return senf::prettyBaseName(typeid(t)) + "_" + senf::str(&t);
+    }
+}
+
 prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)
 {
-    if (std::find(connectorRegistry_.begin(), connectorRegistry_.end(), &connector)
-        == connectorRegistry_.end()) {
+    if (! senf::contains(connectorRegistry_, &connector)) {
         connectorRegistry_.push_back(&connector);
         connector.setModule(*this);
+        sysConsoleDir().add( consoleDirectoryName(connector), connector.consoleDir())
+                .doc( senf::prettyName(typeid(connector)) + " " + senf::str(&connector));
     }
 }
 
@@ -119,6 +128,14 @@ prefix_ void senf::ppi::module::Module::noroute(connector::Connector & connector
 {
     registerConnector(connector);
     connector.setModule(*this);
+}
+
+prefix_ void senf::ppi::module::Module::v_init()
+{
+    // we can't do this in the constructor,
+    // since we want that typeid returns the type of the most derived complete object.
+    moduleManager().consoleDir()["modules"].add( consoleDirectoryName(*this), sysConsoleDir_)
+            .doc( senf::prettyName(typeid(*this)) + " " + senf::str(this));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

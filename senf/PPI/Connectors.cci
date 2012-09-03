@@ -64,27 +64,34 @@ prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
     return *module_;
 }
 
-prefix_ void senf::ppi::connector::Connector::tracing(TraceState state)
+prefix_ void senf::ppi::connector::Connector::staticTracingState(TraceState state)
 {
-    traceState_ = state;
+    staticTraceState_ = state;
 }
 
-prefix_ senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::tracing()
+prefix_ senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::tracingState()
 {
-    return traceState_;
+    return std::max(staticTraceState_, traceState_);
+}
+
+prefix_ void senf::ppi::connector::Connector::tracingState(TraceState state)
+{
+    traceState_ = state;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // protected members
 
-prefix_ senf::ppi::connector::Connector::Connector()
-    : peer_(), module_()
-{}
-
 prefix_ bool senf::ppi::connector::Connector::connected()
     const
 {
     return peer_;
+}
+
+prefix_ senf::console::DirectoryNode & senf::ppi::connector::Connector::consoleDir()
+    const
+{
+    return consoleDir_.node();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,10 +169,6 @@ prefix_ void senf::ppi::connector::PassiveConnector::unthrottle()
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // protected members
 
-prefix_ senf::ppi::connector::PassiveConnector::PassiveConnector()
-    : callback_(), remoteThrottled_(), nativeThrottled_()
-{}
-
 prefix_ void senf::ppi::connector::PassiveConnector::emit()
 {
     // No event callback has been registered (onRequest() call missing)
@@ -207,7 +210,7 @@ prefix_ bool senf::ppi::connector::ActiveConnector::throttled()
 // protected members
 
 prefix_ senf::ppi::connector::ActiveConnector::ActiveConnector()
-    : throttleCallback_(), unthrottleCallback_(), notifyRoutes_(), throttled_(false)
+    : peer_(NULL), throttled_(false)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +245,7 @@ prefix_ bool senf::ppi::connector::InputConnector::empty()
 // protected members
 
 prefix_ senf::ppi::connector::InputConnector::InputConnector()
-    : fastPacket_(NULL)
+    : peer_(NULL), fastPacket_(NULL)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,13 +300,14 @@ prefix_ void senf::ppi::connector::OutputConnector::write(Packet const & p)
 // protected members
 
 prefix_ senf::ppi::connector::OutputConnector::OutputConnector()
+    : peer_(NULL)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::GenericPassiveInput
 
 prefix_ senf::ppi::connector::GenericPassiveInput::GenericPassiveInput()
-    : qdisc_(new ThresholdQueueing(1,0))
+    : peer_(NULL), qdisc_(new ThresholdQueueing(1,0))
 {}
 
 prefix_ senf::ppi::connector::GenericActiveOutput & senf::ppi::connector::GenericPassiveInput::peer()
@@ -341,6 +345,7 @@ prefix_ void senf::ppi::connector::GenericPassiveOutput::connect(GenericActiveIn
 }
 
 prefix_ senf::ppi::connector::GenericPassiveOutput::GenericPassiveOutput()
+    : peer_(NULL)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,6 +371,7 @@ prefix_ void senf::ppi::connector::GenericActiveInput::request()
 }
 
 prefix_ senf::ppi::connector::GenericActiveInput::GenericActiveInput()
+    : peer_(NULL)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -390,6 +396,7 @@ prefix_ void senf::ppi::connector::GenericActiveOutput::connect(GenericPassiveIn
 }
 
 prefix_ senf::ppi::connector::GenericActiveOutput::GenericActiveOutput()
+    : peer_(NULL)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -45,9 +45,6 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::module::Module::v_init()
-{}
-
 prefix_ senf::ppi::EventManager & senf::ppi::module::Module::eventManager()
     const
 {
@@ -94,6 +91,7 @@ prefix_ senf::ClockService::clock_type senf::ppi::module::Module::now()
 // protected members
 
 prefix_ senf::ppi::module::Module::Module()
+    : sysConsoleDir_(this)
 {
     moduleManager().registerModule(*this);
 }
@@ -102,6 +100,12 @@ prefix_ void senf::ppi::module::Module::destroy()
 {
     if (EventManager::alive())
         eventManager().destroyModule(*this);
+}
+
+prefix_ senf::console::DirectoryNode & senf::ppi::module::Module::sysConsoleDir()
+    const
+{
+    return sysConsoleDir_.node();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

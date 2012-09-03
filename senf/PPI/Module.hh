@@ -36,6 +36,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <senf/Scheduler/ClockService.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
 #include "predecl.hh"
 #include "ModuleManager.hh"
 
@@ -318,6 +319,8 @@ namespace module {
                                              You may overload this member. Your overload should
                                              always call the base-class implementation. */
 
+        console::DirectoryNode & sysConsoleDir() const;
+
 #ifndef DOXYGEN
     public:
 #endif
@@ -338,6 +341,8 @@ namespace module {
 
         typedef boost::ptr_vector<RouteBase> RouteInfoBase;
         RouteInfoBase routes_;
+
+        console::ScopedDirectory<Module> sysConsoleDir_;
 
         template <class Source, class Target>
         friend struct detail::RouteHelper;

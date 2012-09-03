@@ -182,14 +182,17 @@ namespace connector {
 
         enum TraceState { NO_TRACING, TRACE_IDS, TRACE_CONTENTS };
 
-        static void tracing(TraceState state);
-        static TraceState tracing();
+        static void staticTracingState(TraceState state);
+        void tracingState(TraceState state);
+        TraceState tracingState();
 
     protected:
         Connector();
         virtual ~Connector();
 
         void connect(Connector & target);
+
+        console::DirectoryNode & consoleDir() const;
 
         void trace(Packet const & p, char const * label);
         void throttleTrace(char const * label, char const * type);
@@ -207,7 +210,10 @@ namespace connector {
         Connector * peer_;
         module::Module * module_;
 
-        static TraceState traceState_;
+        console::ScopedDirectory<Connector> consoleDir_;
+
+        TraceState traceState_;
+        static TraceState staticTraceState_;
 
         friend class module::Module;
     };

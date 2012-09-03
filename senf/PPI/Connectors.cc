@@ -32,15 +32,27 @@
 #include "Connectors.ih"
 
 // Custom includes
-#include "ModuleManager.hh"
 #include <senf/Utils/Console/ParsedCommand.hh>
+#include "ModuleManager.hh"
 
-//#include "Connectors.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::Connector
+
+prefix_ senf::ppi::connector::Connector::Connector()
+    : peer_(NULL), module_(NULL), consoleDir_(this), traceState_(NO_TRACING)
+{
+    namespace fty = console::factory;
+    consoleDir().add("connected", fty::Command( &Connector::connected, this));
+#ifndef SENF_PPI_NOTRACE
+    consoleDir().add("tracing", fty::Command(
+            SENF_MEMFNP(void, Connector, tracingState, (TraceState)), this));
+    consoleDir().add("tracing", fty::Command(
+            SENF_MEMFNP(TraceState, Connector, tracingState, ()), this));
+#endif
+}
 
 prefix_ senf::ppi::connector::Connector::~Connector()
 {
@@ -95,32 +107,32 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 
 }
 
-senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::traceState_ (
+senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::staticTraceState_ (
     senf::ppi::connector::Connector::NO_TRACING);
 
 prefix_ void senf::ppi::connector::Connector::trace(Packet const & p, char const * label)
 {
-    if (traceState_ == NO_TRACING)
+    if (tracingState() == NO_TRACING)
         return;
     SENF_LOG_BLOCK(({
-                std::string type (prettyName(p.typeId().id()));
-                log << "PPI packet trace: " << label << " 0x" << std::hex << p.id() << " "
-                    << type.substr(21, type.size()-22) << " on " << & module() << " "
-                    << prettyName(typeid(module())) << " connector 0x" << this << "\n";
-                if (traceState_ == TRACE_CONTENTS)
-                    p.dump(log);
-            }));
+        std::string type (prettyName(p.typeId().id()));
+        log << "PPI packet trace: " << label << " 0x" << std::hex << p.id() << " "
+            << type.substr(21, type.size()-22) << " on " << & module() << " "
+            << prettyName(typeid(module())) << " connector 0x" << this << "\n";
+        if (tracingState() == TRACE_CONTENTS)
+            p.dump(log);
+    }));
 }
 
 prefix_ void senf::ppi::connector::Connector::throttleTrace(char const * label,
                                                             char const * type)
 {
-    if (traceState_ == NO_TRACING)
+    if (tracingState() == NO_TRACING)
         return;
     SENF_LOG_BLOCK(({
-                log << "PPI throttling trace: " << label << " " << type << " on " << & module()
-                    << " " << prettyName(typeid(module())) << " connector 0x" << this << "\n";
-            }));
+        log << "PPI throttling trace: " << label << " " << type << " on " << & module()
+            << " " << prettyName(typeid(module())) << " connector 0x" << this << "\n";
+    }));
 }
 
 namespace senf { namespace ppi { namespace connector {
@@ -142,42 +154,36 @@ namespace {
 #ifndef SENF_PPI_NOTRACE
         senf::ppi::ModuleManager::instance().consoleDir()
             .add("tracing", senf::console::factory::Command(
-                     SENF_FNP(senf::ppi::connector::Connector::TraceState,
-                              senf::ppi::connector::Connector::tracing, ()))
-                 .doc("Log every packet sent or received by any module.\n"
-                      "There are three different tracing levels:\n"
-                      "\n"
-                      "    NO_TRACING      don't output any tracing information\n"
-                      "    TRACE_IDS       trace packet id's but do not show packet contents\n"
-                      "    TRACE_CONTENTS  trace complete packet contents\n"
-                      "\n"
-                      "A log message is generated whenever the packet traverses a connector. The\n"
-                      "TRACE_IDS log message has the following format:\n"
-                      "\n"
-                      "    PPI packet trace: <direction> <packet-id> <packet-type>\n"
-                      "                      on <module-id> <module-type> connector <connector-id>\n"
-                      "    PPI throttling trace: <direction> <throttle-msg>\n"
-                      "                      on <module-id> <module-type> connector <connector-id>\n"
-                      "\n"
-                      "The fields are:\n"
-                      "\n"
-                      "    direction       'IN' for packets/throttle notifications entering the module,\n"
-                      "                    'OUT' for packets/throttle notifications leaving it\n"
-                      "    packet-id       Numeric unique packet id. This value is unique for packets\n"
-                      "                    alive at the same time, packets at different times may (and\n"
-                      "                    will) share id's\n"
-                      "    packet-type     The type of the packet header\n"
-                      "    module-id       Unique module id\n"
-                      "    module-type     Type of the module the packet is sent to/from\n"
-                      "    connector-id    Unique connector id\n"
-                      "    throttle-msg    Type of throttling event\n")
-                );
-
-        senf::ppi::ModuleManager::instance().consoleDir()
-            .add("tracing", senf::console::factory::Command(
-                     SENF_FNP(void, senf::ppi::connector::Connector::tracing,
+                     SENF_FNP(void, senf::ppi::connector::Connector::staticTracingState,
                               (senf::ppi::connector::Connector::TraceState)))
-                 .arg("state", "new tracing state")
+                .arg("state", "new tracing state")
+                .doc("Log every packet sent or received by any module.\n"
+                     "There are three different tracing levels:\n"
+                     "\n"
+                     "    NO_TRACING      don't output any tracing information\n"
+                     "    TRACE_IDS       trace packet id's but do not show packet contents\n"
+                     "    TRACE_CONTENTS  trace complete packet contents\n"
+                     "\n"
+                     "A log message is generated whenever the packet traverses a connector. The\n"
+                     "TRACE_IDS log message has the following format:\n"
+                     "\n"
+                     "    PPI packet trace: <direction> <packet-id> <packet-type>\n"
+                     "                      on <module-id> <module-type> connector <connector-id>\n"
+                     "    PPI throttling trace: <direction> <throttle-msg>\n"
+                     "                      on <module-id> <module-type> connector <connector-id>\n"
+                     "\n"
+                     "The fields are:\n"
+                     "\n"
+                     "    direction       'IN' for packets/throttle notifications entering the module,\n"
+                     "                    'OUT' for packets/throttle notifications leaving it\n"
+                     "    packet-id       Numeric unique packet id. This value is unique for packets\n"
+                     "                    alive at the same time, packets at different times may (and\n"
+                     "                    will) share id's\n"
+                     "    packet-type     The type of the packet header\n"
+                     "    module-id       Unique module id\n"
+                     "    module-type     Type of the module the packet is sent to/from\n"
+                     "    connector-id    Unique connector id\n"
+                     "    throttle-msg    Type of throttling event\n")
                 );
 #endif
     }
@@ -219,16 +225,30 @@ prefix_ void senf::ppi::connector::Connector::unregisterConnector()
 prefix_ void senf::ppi::connector::Connector::setModule(module::Module & module)
 {
     module_ = &module;
+    consoleDir().remove( "module", senf::nothrow);
+    consoleDir().add( "module", console::factory::Link(module.sysConsoleDir()));
 }
 
 prefix_ void senf::ppi::connector::Connector::v_disconnected()
-{}
+{
+    consoleDir().remove( "peer", senf::nothrow);
+}
 
 prefix_ void senf::ppi::connector::Connector::v_connected()
-{}
+{
+    if (! consoleDir().hasChild("peer"))
+        consoleDir().add( "peer", console::factory::Link(peer_->consoleDir()));
+}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector
+
+prefix_ senf::ppi::connector::PassiveConnector::PassiveConnector()
+    : peer_(NULL), remoteThrottled_(false), nativeThrottled_(false)
+{
+    namespace fty = console::factory;
+    consoleDir().add("throttled", fty::Command( &PassiveConnector::throttled, this));
+}
 
 prefix_ senf::ppi::connector::PassiveConnector::~PassiveConnector()
 {
