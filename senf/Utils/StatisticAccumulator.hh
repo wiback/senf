@@ -50,6 +50,15 @@ namespace senf {
          StatisticsData( float singleValue)
              : min(singleValue), avg(singleValue), max(singleValue), stddev(0.0), count(1) {};
 
+         void clear(){
+	        min = avg = max = stddev = 0.0;
+                count = 0;
+         }
+
+         bool valid(){
+             return count > 0;
+         }
+
          float min;
          float avg;
          float max;
