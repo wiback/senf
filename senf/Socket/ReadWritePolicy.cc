@@ -126,6 +126,12 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle & handle,
             switch (errno) {
             case EINTR:
                 break;
+            case ENOTCONN:
+	    case ENETDOWN:
+                // TODO: The below might not be the best solution for all use cases, but it's ok for WiBACK 
+                // Pretend that we have written out such frames
+                rv = size;
+                break;
             case EAGAIN:
             case ENOBUFS:
                 // According to the man page this should not happen, since packets are just silently being dropped.
