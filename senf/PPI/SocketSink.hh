@@ -34,6 +34,7 @@
 // Custom includes
 #include <senf/Packets/Packets.hh>
 #include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/Protocols/Raw/PacketSocketHandle.hh>
 #include <senf/Socket/SocketPolicy.hh>
 #include <senf/Socket/ReadWritePolicy.hh>
 #include <senf/Socket/FramingPolicy.hh>
@@ -41,6 +42,7 @@
 #include "Module.hh"
 #include "Connectors.hh"
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
+#include <senf/Socket/Protocols/Raw/LLAddressing.hh>
 #include "IOEvent.hh"
 
 //#include "SocketSink.mpp"
@@ -158,8 +160,29 @@ namespace ppi {
         senf::INet6Address source_;
         senf::INet6Address destination_;
         unsigned int protocolId_;
-};
+    };
 
+
+    class LLSocketWriter : ConnectedDgramWriter
+    {
+    public:
+        LLSocketWriter();
+        typedef senf::PacketSocketHandle Handle;
+                                        ///< Handle type supported by this writer
+        typedef Packet PacketType;
+
+        void source(Handle &, senf::LLSocketAddress source);
+        senf::LLSocketAddress source();
+
+        bool operator()(Handle & handle, Packet const & packet);
+                                        ///< Write \a packet to \a handle
+                                        /**< Write the complete \a packet as a datagram to \a
+                                             handle.
+                                             \param[in] handle Handle to write data to
+                                             \param[in] packet Packet to write */
+    private:
+        senf::LLSocketAddress source_;
+    };
 
 }}
 

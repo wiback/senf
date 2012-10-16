@@ -192,4 +192,25 @@ prefix_ int senf::ppi::IPv6SourceForcingDgramWriter::sendtoandfrom(
     return sendmsg(sock, &h, 0);
 }
 
+
+prefix_ senf::ppi::LLSocketWriter::LLSocketWriter()
+{
+}
+
+prefix_ senf::LLSocketAddress senf::ppi::LLSocketWriter::source()
+{
+    return source_;
+}
+
+prefix_ void senf::ppi::LLSocketWriter::source(Handle & handle, senf::LLSocketAddress source)
+{
+    ::bind( handle.fd(), (sockaddr*) reinterpret_cast<sockaddr_ll*> (&source), sizeof(sockaddr_ll));
+    source_ = source;
+}
+
+prefix_ bool senf::ppi::LLSocketWriter::operator()(Handle & handle, Packet const & packet)
+{
+    return ::write( handle.fd(), reinterpret_cast<void*>(&*packet.data().begin()), packet.size()) == ssize_t(packet.size());
+}
+
 #undef prefix_
