@@ -44,6 +44,45 @@ prefix_ bool senf::ppi::ConnectedDgramWriter::operator()(Handle & handle,
     return handle.write(packet.data()) != packet.data().begin();
 }
 
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::LLSocketWriter
+
+prefix_ bool senf::ppi::LLSocketWriter::operator()(Handle & handle, 
+                                                   Packet const & packet)
+{
+    do {
+        if( ::write(handle.fd(), packet.data().begin(), packet.size()) >= 0)
+            return true;
+
+        switch (errno) {
+        case EINTR:
+            break;
+        case ENOTCONN:
+        case ENETDOWN:
+            // TODO: The below might not be the best solution for all use cases, but it's ok for WiBACK 
+            // Pretend that we have written out such frames
+            return true;
+            break;
+        case EAGAIN:
+        case ENOBUFS:
+            // According to the man page this should not happen, since packets are just silently being dropped.
+            // It does happen in NetEmu using small TxQueues on WLAN interfaces 
+        case ECONNREFUSED:
+            // Writing to a UDP socket seems return this error code if a corresponding ICMP
+            // error code has been received before (at least on linux). This is inconsistent
+            // since I cannot rely on getting ECONNREFUSED. I therefore ignore this error. TCP
+            // sockets will return this error on connect() and not on write(). Therefore we can
+            // unconditionally ignore this error here.
+            return false;
+            break;
+        default:
+            SENF_THROW_SYSTEM_EXCEPTION("::write");
+        }
+    }while (true);
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

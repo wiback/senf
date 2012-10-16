@@ -208,9 +208,4 @@ prefix_ void senf::ppi::LLSocketWriter::source(Handle & handle, senf::LLSocketAd
     source_ = source;
 }
 
-prefix_ bool senf::ppi::LLSocketWriter::operator()(Handle & handle, Packet const & packet)
-{
-    return ::write( handle.fd(), reinterpret_cast<void*>(&*packet.data().begin()), packet.size()) == ssize_t(packet.size());
-}
-
 #undef prefix_
