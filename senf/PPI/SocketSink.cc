@@ -197,15 +197,9 @@ prefix_ senf::ppi::LLSocketWriter::LLSocketWriter()
 {
 }
 
-prefix_ senf::LLSocketAddress senf::ppi::LLSocketWriter::source()
-{
-    return source_;
-}
-
 prefix_ void senf::ppi::LLSocketWriter::source(Handle & handle, senf::LLSocketAddress source)
 {
     ::bind( handle.fd(), (sockaddr*) reinterpret_cast<sockaddr_ll*> (&source), sizeof(sockaddr_ll));
-    source_ = source;
 }
 
 #undef prefix_

@@ -172,7 +172,6 @@ namespace ppi {
         typedef Packet PacketType;
 
         void source(Handle &, senf::LLSocketAddress source);
-        senf::LLSocketAddress source();
 
         bool operator()(Handle & handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
@@ -180,8 +179,6 @@ namespace ppi {
                                              handle.
                                              \param[in] handle Handle to write data to
                                              \param[in] packet Packet to write */
-    private:
-        senf::LLSocketAddress source_;
     };
 
 }}
