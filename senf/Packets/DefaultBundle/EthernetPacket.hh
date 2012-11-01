@@ -54,6 +54,17 @@ namespace senf {
 
         value_type value() const { return MACAddress::from_data(i()); }
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
+        void value(boost::uint64_t const & v) {
+            ::memcpy( i(), &v, 6);
+        }
+        boost::uint64_t as_be64() const{
+            boost::uint64_t v;
+            ::memcpy( &v, i(), 6);
+            return v;
+        }
+        void as_be64( boost::uint64_t & v) const{
+            ::memcpy( &v, i(), 6);
+        }
 
         using Base::operator=;
     };

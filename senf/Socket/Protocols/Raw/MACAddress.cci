@@ -29,6 +29,7 @@
     \brief MACAddress inline non-template implementation */
 
 // Custom includes
+#include <string.h>
 #include <algorithm>
 #include <boost/lambda/lambda.hpp>
 #include "EUI64.hh"
@@ -124,6 +125,20 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
         (boost::uint64_t( (*this)[3] ) << 16) |
         (boost::uint64_t( (*this)[4] ) <<  8) |
         (boost::uint64_t( (*this)[5] )      );
+}
+
+prefix_ void senf::MACAddress::be64( boost::uint64_t &be64)
+    const
+{
+    ::memcpy( &be64, &((*this)[0]), 6); 
+}
+
+prefix_ boost::uint64_t senf::MACAddress::be64()
+    const
+{
+    boost::uint64_t be64;
+    ::memcpy( &be64, &((*this)[0]), 6); 
+    return be64;
 }
 
 prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
