@@ -130,7 +130,9 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
 prefix_ void senf::MACAddress::be64( boost::uint64_t &be64)
     const
 {
-    ::memcpy( &be64, &((*this)[0]), 6); 
+    ::memcpy( &be64, &((*this)[0]), 6);
+    ((unsigned short*) &be64)[3] = 0;
+
 }
 
 prefix_ boost::uint64_t senf::MACAddress::be64()
@@ -138,6 +140,7 @@ prefix_ boost::uint64_t senf::MACAddress::be64()
 {
     boost::uint64_t be64;
     ::memcpy( &be64, &((*this)[0]), 6); 
+    ((unsigned short*) &be64)[3] = 0;
     return be64;
 }
 
