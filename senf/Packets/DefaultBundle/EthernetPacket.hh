@@ -56,7 +56,6 @@ namespace senf {
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
         void value(boost::uint64_t const & v) {
             ::memcpy( i(), &v, 6);
-            ((unsigned short*) i())[3] = 0;
         }
         boost::uint64_t as_be64() const{
             boost::uint64_t v;
