@@ -140,7 +140,7 @@ prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
     return mac == eui64;
 }
 
-prefix_ std::size_t hash_value(senf::MACAddress const & mac)
+prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac)
 {
     return boost::hash<boost::uint64_t>().operator()(
            (boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) |
