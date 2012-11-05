@@ -71,6 +71,16 @@ namespace {
 
         SENF_PARSER_FINALIZE(BarParser);
     };
+
+    unsigned UniqueNumber() {
+        static unsigned current = 0;
+        return ++current;
+    }
+
+    bool IsUniqueNumber(senf::PacketData::byte b) {
+        static unsigned current = 0;
+        return b != ++current;
+    }
 }
 
 SENF_AUTO_UNIT_TEST(packetParserBase)
@@ -95,6 +105,19 @@ SENF_AUTO_UNIT_TEST(packetParserBase)
 
     BOOST_CHECK_EQUAL( senf::init_bytes<FooParser>::value, 6u );
     BOOST_CHECK_EQUAL( senf::init_bytes<BarParser>::value, 6u );
+}
+
+SENF_AUTO_UNIT_TEST(packetParser_insertion_operator)
+{
+    senf::PacketInterpreter<VoidPacket>::ptr pi1 (senf::PacketInterpreter<VoidPacket>::create(
+            senf::PacketInterpreterBase::size_type( FooParser::fixed_bytes)));
+    senf::PacketInterpreter<VoidPacket>::ptr pi2 (senf::PacketInterpreter<VoidPacket>::create(
+            senf::PacketInterpreterBase::size_type( FooParser::fixed_bytes)));
+    FooParser p1 (pi1->data().begin(), &pi1->data());
+    FooParser p2 (pi2->data().begin(), &pi2->data());
+    std::generate(pi2->data().begin(), pi2->data().end(), UniqueNumber);
+    p1 << p2;
+    BOOST_CHECK( std::find_if(pi1->data().begin(), pi1->data().end(), IsUniqueNumber) == pi1->data().end() );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -68,9 +68,9 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( destination, MACAddressParser    );
-        SENF_PARSER_FIELD( source,      MACAddressParser    );
-        SENF_PARSER_FIELD( type_length, UInt16Parser );
+        SENF_PARSER_FIELD( destination, MACAddressParser );
+        SENF_PARSER_FIELD( source,      MACAddressParser );
+        SENF_PARSER_FIELD( type_length, UInt16Parser     );
 
         SENF_PARSER_FINALIZE(EthernetPacketParser);
     };

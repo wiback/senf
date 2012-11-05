@@ -37,7 +37,9 @@
 #include <senf/config.hh>
 #include <senf/Utils/singleton.hh>
 #include <senf/Utils/Console/Parse.hh>
+#ifdef SENF_DEBUG
 #include <senf/Utils/RestrictedInt.hh>
+#endif
 
 //#include "ClockService.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

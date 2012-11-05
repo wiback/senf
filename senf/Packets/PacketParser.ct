@@ -37,9 +37,9 @@
 
 #ifndef DOXYGEN
 template <class Parser>
-prefix_ typename boost::enable_if<
-        boost::is_base_of<senf::PacketParserBase, Parser>,
-        Parser >::type senf::operator<<(Parser target, Parser source)
+prefix_ typename boost::enable_if_c<
+        boost::is_base_of<senf::PacketParserBase, Parser>::value && ! senf::is_fixed<Parser>::value, Parser >::type
+        senf::operator<<(Parser const & target, Parser const & source)
 {
     PacketParserBase::size_type target_sz (bytes(target));
     PacketParserBase::size_type source_sz (bytes(source));
@@ -55,7 +55,7 @@ prefix_ typename boost::enable_if<
 }
 #else
 template <class Parser>
-prefix_ Parser senf::operator<<(Parser target, Parser source)
+prefix_ Parser senf::operator<<(Parser const & target, Parser const & source)
 {}
 #endif
 

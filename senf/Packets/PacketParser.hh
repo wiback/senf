@@ -448,11 +448,21 @@ namespace senf {
     {};
 
 #   ifndef DOXYGEN
+
     template <class Parser>
-    typename boost::enable_if<
-        boost::is_base_of<PacketParserBase, Parser>,
+    typename boost::enable_if_c<
+        boost::is_base_of<PacketParserBase, Parser>::value
+            && senf::is_fixed<Parser>::value,
         Parser >::type
-    operator<<(Parser target, Parser source);
+    operator<<(Parser const & target, Parser const & source);
+
+    template <class Parser>
+    typename boost::enable_if_c<
+        boost::is_base_of<PacketParserBase, Parser>::value
+            && ! senf::is_fixed<Parser>::value,
+        Parser >::type
+    operator<<(Parser const & target, Parser const & source);
+
 #   else
     /** \brief Generic parser copying
 
@@ -468,7 +478,7 @@ namespace senf {
         \ingroup packetparser
      */
     template <class Parser>
-    Parser operator<<(Parser target, Parser source);
+    Parser operator<<(Parser const & target, Parser const & source);
 #   endif
 
 #   ifndef DOXYGEN

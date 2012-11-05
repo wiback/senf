@@ -34,8 +34,9 @@
 
 // Custom includes
 #include <math.h>
+#include <ostream>
 #include <boost/cstdint.hpp>
-#include <senf/Utils/Format.hh>
+
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
@@ -47,7 +48,7 @@ namespace senf {
              : min(other.min), avg(other.avg), max(other.max), stddev(other.stddev), count(other.count) {};
          StatisticsData()
              : min(0.0), avg(0.0), max(0.0), stddev(0.0), count(0) {};
-         StatisticsData( float singleValue)
+         StatisticsData(float singleValue)
              : min(singleValue), avg(singleValue), max(singleValue), stddev(0.0), count(1) {};
 
          void clear(){

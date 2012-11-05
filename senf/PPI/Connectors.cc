@@ -34,6 +34,7 @@
 // Custom includes
 #include <senf/Utils/Console/ParsedCommand.hh>
 #include "ModuleManager.hh"
+#include "Module.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +51,7 @@ prefix_ senf::ppi::connector::Connector::Connector()
     consoleDir().add("tracing", fty::Command(
             SENF_MEMFNP(void, Connector, tracingState, (TraceState)), this));
     consoleDir().add("tracing", fty::Command(
-            SENF_MEMFNP(TraceState, Connector, tracingState, ()), this));
+            SENF_MEMFNP(TraceState, Connector, tracingState, () const), this));
 #endif
 }
 
@@ -227,6 +228,15 @@ prefix_ void senf::ppi::connector::Connector::setModule(module::Module & module)
     module_ = &module;
     consoleDir().remove( "module", senf::nothrow);
     consoleDir().add( "module", console::factory::Link(module.sysConsoleDir()));
+}
+
+prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
+    const
+{
+    // The connector is not registered in the module -> probably a route() or noroute() statement is
+    // missing.
+    SENF_ASSERT(module_, "Connector not registered: Missing route() or noroute()");
+    return *module_;
 }
 
 prefix_ void senf::ppi::connector::Connector::v_disconnected()

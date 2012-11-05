@@ -35,6 +35,17 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifndef DOXYGEN
+template <class Parser>
+prefix_ typename boost::enable_if_c<
+        boost::is_base_of<senf::PacketParserBase, Parser>::value && senf::is_fixed<Parser>::value, Parser >::type
+        senf::operator<<(Parser const & target, Parser const & source)
+{
+    std::copy( source.i(), source.i(Parser::fixed_bytes), target.i());
+    return target;
+}
+#endif
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::PacketParserBase
 

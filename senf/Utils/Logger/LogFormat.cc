@@ -44,15 +44,15 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 prefix_ senf::log::detail::LogFormat::LogFormat()
-    : tag_ (detail::getDefaultTag()), noformat_ (false), showTime_ (true),
-      showStream_ (false), showLevel_ (true), showArea_ (true), timeBase_ (-1)
+    : tag_ (detail::getDefaultTag()), timeBase_ (-1), noformat_ (false), showTime_ (true),
+      showStream_ (false), showLevel_ (true), showArea_ (true)
 {
     timeFormat("%Y-%m-%d %H:%M:%S.%f-0000");
 }
 
 prefix_ senf::log::detail::LogFormat::LogFormat(console::ScopedDirectory<> & dir)
-    : tag_ (detail::getDefaultTag()), noformat_ (false), showTime_ (true),
-      showStream_ (false), showLevel_ (true), showArea_ (true), timeBase_ (-1)
+    : tag_ (detail::getDefaultTag()), timeBase_ (-1), noformat_ (false), showTime_ (true),
+      showStream_ (false), showLevel_ (true), showArea_ (true)
 {
     namespace kw = console::kw;
     namespace fty = console::factory;

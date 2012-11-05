@@ -77,16 +77,16 @@ namespace detail {
         void consoleFormat(std::ostream & os);
 
     private:
-
+        std::stringstream datestream_;
         std::string tag_;
         std::string timeFormat_;
-        std::stringstream datestream_;
+        time_type timeBase_;
+
         bool noformat_;
         bool showTime_;
         bool showStream_;
         bool showLevel_;
         bool showArea_;
-        time_type timeBase_;
     };
 
     void quoteNonPrintable(std::string & s);

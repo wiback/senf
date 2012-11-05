@@ -184,7 +184,7 @@ namespace connector {
 
         static void staticTracingState(TraceState state);
         void tracingState(TraceState state);
-        TraceState tracingState();
+        TraceState tracingState() const;
 
     protected:
         Connector();

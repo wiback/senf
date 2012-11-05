@@ -31,7 +31,6 @@
 // Custom includes
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/senfassert.hh>
-#include "Module.hh"
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,21 +54,13 @@ prefix_ senf::ppi::connector::Connector & senf::ppi::connector::Connector::peer(
     return *peer_;
 }
 
-prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
-    const
-{
-    // The connector is not registered in the module -> probably a route() or noroute() statement is
-    // missing.
-    SENF_ASSERT(module_, "Connector not registered: Missing route() or noroute()");
-    return *module_;
-}
-
 prefix_ void senf::ppi::connector::Connector::staticTracingState(TraceState state)
 {
     staticTraceState_ = state;
 }
 
 prefix_ senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::tracingState()
+    const
 {
     return std::max(staticTraceState_, traceState_);
 }
