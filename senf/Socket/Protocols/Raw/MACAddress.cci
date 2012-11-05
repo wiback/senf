@@ -32,6 +32,7 @@
 #include <string.h>
 #include <algorithm>
 #include <boost/lambda/lambda.hpp>
+#include <boost/functional/hash.hpp>
 #include "EUI64.hh"
 
 #define prefix_ inline
@@ -127,23 +128,6 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
         (boost::uint64_t( (*this)[5] )      );
 }
 
-prefix_ void senf::MACAddress::be64( boost::uint64_t &be64)
-    const
-{
-    ::memcpy( &be64, &((*this)[0]), 6);
-    ((unsigned short*) &be64)[3] = 0;
-
-}
-
-prefix_ boost::uint64_t senf::MACAddress::be64()
-    const
-{
-    boost::uint64_t be64;
-    ::memcpy( &be64, &((*this)[0]), 6); 
-    ((unsigned short*) &be64)[3] = 0;
-    return be64;
-}
-
 prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
 {
     return eui64.isMACCompatible()
@@ -155,6 +139,13 @@ prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
 {
     return mac == eui64;
 }
+
+prefix_ std::size_t hash_value(senf::MACAddress & mac)
+{
+    return boost::hash<boost::uint64_t>().operator()(
+           (((boost::uint64_t) *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) + ((boost::uint64_t) *reinterpret_cast<boost::uint16_t const *>(&mac[4])));
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

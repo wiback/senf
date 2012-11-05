@@ -34,6 +34,7 @@
 // Custom includes
 #include <set>
 #include <boost/ptr_container/ptr_map.hpp>
+#include <boost/ptr_container/ptr_unordered_map.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,9 @@ namespace senf {
 
     template <typename KeyType, typename ValueType>
     bool contains(boost::ptr_map<KeyType, ValueType> const & container, KeyType const & key);
+
+    template <typename KeyType, typename ValueType>
+    bool contains(boost::ptr_unordered_map<KeyType, ValueType> const & container, KeyType const & key);
 
     bool contains(std::string const & str, std::string const & substr);
     bool contains(std::string const & str, char c);

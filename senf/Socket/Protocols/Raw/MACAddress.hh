@@ -128,13 +128,6 @@ namespace senf {
 
         boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
         boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
-
-        void be64( boost::uint64_t &be64) const;  ///< Convert MAC address to be64 value
-        boost::uint64_t be64() const;             ///< Return MAC address as be64 value
-        
-        static void from_be64(boost::uint64_t const & be64, MACAddress & mac); ///< Construct MACAddress address from be64 value
-        static MACAddress from_be64(boost::uint64_t const & be64); ///< Construct MACAddress address from be64 value
-
     };
 
     /** \brief Output MAC instance as it's string representation
@@ -150,7 +143,8 @@ namespace senf {
 
     bool operator==(MACAddress const & mac, EUI64 const & eui64);
     bool operator==(EUI64 const & eui64, MACAddress const & mac);
-
+   
+    std::size_t hash_value(MACAddress & mac);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

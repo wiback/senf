@@ -66,18 +66,6 @@ prefix_ senf::MACAddress senf::MACAddress::from_eui64(senf::EUI64 const & eui)
     return mac;
 }
 
-prefix_ senf::MACAddress senf::MACAddress::from_be64(boost::uint64_t const & be64)
-{
-    MACAddress mac (senf::noinit);
-    ::memcpy( &mac[0], &be64, 6); 
-    return mac;
-}
-
-prefix_ void senf::MACAddress::from_be64(boost::uint64_t const & be64, MACAddress & mac)
-{
-    ::memcpy( &mac[0], &be64, 6); 
-}
-
 senf::MACAddress const senf::MACAddress::Broadcast = senf::MACAddress(0xFFFFFFFFFFFFull);
 senf::MACAddress const senf::MACAddress::None;
 

@@ -64,6 +64,12 @@ prefix_ bool senf::contains(boost::ptr_map<KeyType, ValueType> const & container
     return container.find(key) != container.end();
 }
 
+template <typename KeyType, typename ValueType>
+prefix_ bool senf::contains(boost::ptr_unordered_map<KeyType, ValueType> const & container, KeyType const & key)
+{
+    return container.find(key) != container.end();
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
