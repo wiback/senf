@@ -32,7 +32,7 @@
 #define HH_SENF_Packets_IntParser_ 1
 
 // Custom includes
-#include <iostream>
+#include <ostream>
 #include <boost/cstdint.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/integer/integer_mask.hpp>

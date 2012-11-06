@@ -34,7 +34,6 @@
 // Custom includes
 #include <exception>
 #include <string>
-#include <iostream>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <senf/config.hh>

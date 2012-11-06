@@ -37,9 +37,9 @@
 #include <boost/range.hpp>
 #include <senf/Utils/intrusive_refcount.hh>
 #include <senf/Utils/pool_alloc_mixin.hh>
+#include <senf/Utils/TypeIdValue.hh>
 #include <senf/Utils/Tags.hh>
 #include "PacketData.hh"
-#include <senf/Utils/TypeIdValue.hh>
 
 //#include "PacketInterpreter.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -32,7 +32,7 @@
 #define HH_SENF_Socket_Protocols_Raw_MACAddress_ 1
 
 // Custom includes
-#include <iostream>
+#include <iosfwd>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <senf/Utils/safe_bool.hh>

@@ -32,11 +32,11 @@
 #define HH_SENF_Socket_Protocols_Raw_EUI64_ 1
 
 // Custom includes
-#include <iostream>
+#include <iosfwd>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
-#include <senf/Utils/Tags.hh>
 #include <senf/Utils/safe_bool.hh>
+#include <senf/Utils/Tags.hh>
 
 //#include "EUI64.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

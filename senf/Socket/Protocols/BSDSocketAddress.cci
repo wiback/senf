@@ -31,7 +31,7 @@
 //#include "BSDSocketAddress.ih"
 
 // Custom includes
-#include <memory.h>
+#include <string.h>
 #include <algorithm>
 #include <typeinfo>
 

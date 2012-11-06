@@ -32,10 +32,8 @@
 #define HH_SENF_Scheduler_Console_Traits_ 1
 
 // Custom includes
-#include <iostream>
-#include <boost/intrusive_ptr.hpp>
+#include <ostream>
 #include <boost/type_traits/is_same.hpp>
-#include <senf/Utils/intrusive_refcount.hh>
 #include "Parse.hh"
 
 #include "Traits.ih"

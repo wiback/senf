@@ -32,12 +32,12 @@
 #define HH_SENF_Socket_Protocols_BSDSocketAddress_ 1
 
 // Custom includes
+#include <iosfwd>
+#include <sys/socket.h>
 #include <boost/type_traits/alignment_of.hpp>
 #include <boost/type_traits/type_with_alignment.hpp>
 #include <boost/operators.hpp>
 #include <senf/Utils/safe_bool.hh>
-#include <sys/socket.h>
-#include <iostream>
 
 //#include "BSDSocketAddress.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

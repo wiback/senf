@@ -32,13 +32,13 @@
 #define HH_SENF_Utils_senfassert_ 1
 
 // Custom includes
-#include "IgnoreValue.hh"
 
 //#include "senfassert.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef SENF_DEBUG
 
+#   include "IgnoreValue.hh"
 #   define SENF_ASSERT(x, comment)
 #   define SENF_ASSERT_EXPRESSION(expression, comment) senf::IGNORE( expression )
 

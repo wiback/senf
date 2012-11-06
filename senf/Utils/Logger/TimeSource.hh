@@ -32,7 +32,6 @@
 #define HH_SENF_Utils_Logger_TimeSource_ 1
 
 // Custom includes
-#include <boost/cstdint.hpp>
 #include <memory>
 #include <senf/config.hh>
 

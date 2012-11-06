@@ -34,11 +34,11 @@
 // Custom includes
 #include <fstream>
 #include <iomanip>
+#include <unistd.h>
+#include <string.h>
 #include <boost/filesystem/operations.hpp>
 #include <senf/config.hh>
 #include <senf/Utils/hexdump.hh>
-#include <unistd.h>
-#include <string.h>
 
 // Compatibility with glibc < 2.9
 #if !defined(le16toh)

@@ -32,13 +32,11 @@
 #define HH_SENF_Packets_PacketImpl_ 1
 
 // Custom includes
-#include <memory>
 #include <boost/noncopyable.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/type_traits/aligned_storage.hpp>
 #include <senf/Utils/pool_alloc_mixin.hh>
-#include <senf/Utils/singleton.hh>
 
 //#include "PacketImpl.mpp"
 #include "PacketImpl.ih"

@@ -32,7 +32,7 @@
 #define HH_SENF_Packets_PacketType_ 1
 
 // Custom includes
-#include <iostream>
+#include <iosfwd>
 #include "PacketTypes.hh"
 #include "PacketData.hh"
 #include "PacketParser.hh"

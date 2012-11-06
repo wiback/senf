@@ -35,9 +35,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <iostream>
+#include <iosfwd>
 #include <boost/cstdint.hpp>
-#include <boost/array.hpp>
 #include <senf/Utils/Exception.hh>
 
 //#include "Terminfo.mpp"
