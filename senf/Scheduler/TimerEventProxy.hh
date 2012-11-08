@@ -32,11 +32,15 @@
 #ifndef HH_SENF_Scheduler_TimerEventProxy_
 #define HH_SENF_Scheduler_TimerEventProxy_ 1
 
+#ifdef SENF_DEBUG
+#   define BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+#   define BOOST_MULTI_INDEX_ENABLE_SAFE_MODE
+#endif
+
 // Custom includes
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/member.hpp>
-
 #include <senf/Scheduler/ClockService.hh>
 #include <senf/Scheduler/TimerEvent.hh>
 

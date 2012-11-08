@@ -31,6 +31,11 @@
 #ifndef IH_SENF_Packets_PacketRegistry_
 #define IH_SENF_Packets_PacketRegistry_ 1
 
+#ifdef SENF_DEBUG
+#   define BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+#   define BOOST_MULTI_INDEX_ENABLE_SAFE_MODE
+#endif
+
 // Custom includes
 #include <limits>
 #include <boost/multi_index_container.hpp>
