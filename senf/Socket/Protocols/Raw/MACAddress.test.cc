@@ -43,7 +43,7 @@
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-/*
+
 SENF_AUTO_UNIT_TEST(macAddress)
 {
     using senf::MACAddress;
@@ -115,35 +115,6 @@ SENF_AUTO_UNIT_TEST(macAddress)
 
     BOOST_CHECK_EQUAL( mac, senf::EUI64::from_mac(mac) );
     BOOST_CHECK_EQUAL( senf::EUI64::from_mac(mac), mac );
-}
-*/
-namespace {
-bool test1(senf::MACAddress const & mac)
-{
-    using boost::lambda::_1;
-    return std::find_if(mac.begin(),mac.end(), _1 != 0x00u) != mac.end();
-}
-
-bool test2(senf::MACAddress const & mac)
-{
-     return (*reinterpret_cast<boost::uint32_t const *>(&mac[0]) |
-             *reinterpret_cast<boost::uint16_t const *>(&mac[4])) != 0;
-}
-}
-
-#define loops 1000000000
-SENF_AUTO_UNIT_TEST(macAddress_perf)
-{
-    using boost::lambda::_1;
-    for (unsigned long i=1; i<loops; ++i) {
-        senf::MACAddress mac(i);
-        if (! (
-//            std::find_if(mac.begin(),mac.end(), _1 != 0x00u) != mac.end()
-            (*reinterpret_cast<boost::uint32_t const *>(&mac[0]) |
-             *reinterpret_cast<boost::uint16_t const *>(&mac[4])) != 0
-            ))
-               ::exit(2);
-    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
