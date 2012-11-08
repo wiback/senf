@@ -36,14 +36,13 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
-
     template <class PacketType>
     class ConcretePacket;
-
-#   define SENF_PACKET_FWD_DECL( Pkt )              \
-        struct Pkt##Type;                           \
-        typedef ConcretePacket<Pkt##Type> Pkt;
 }
+
+#define SENF_PACKET_FWD_DECL( Pkt )                 \
+    struct Pkt##Type;                               \
+    typedef senf::ConcretePacket<Pkt##Type> Pkt;
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
