@@ -74,6 +74,19 @@ namespace detail {
         typedef CharT type;
     };
 
+    template <typename T>
+    struct EnumFormatter
+    {
+        T value;
+        EnumFormatter(T v) : value(v) {}
+    };
+    template <typename T>
+    inline std::ostream & operator<<(std::ostream & os, EnumFormatter<T> const & enumFormatter)
+    {
+        senf_console_format_value(enumFormatter.value, os);
+        return os;
+    }
+
 #ifndef DOXYGEN
     struct StringILess
     {
@@ -131,6 +144,11 @@ namespace detail {
         {                                                                                         \
             os << senf::console::detail::formatEnum(                                              \
                 senf_console_enum_table( Prefix Type() ), static_cast<long>(value) );             \
+        }                                                                                         \
+        inline senf::console::detail::EnumFormatter<Prefix Type>                                  \
+        senf_console_format_enum(Prefix Type value)                                               \
+        {                                                                                         \
+            return senf::console::detail::EnumFormatter<Prefix Type>(value);                      \
         }
 
 #endif
