@@ -211,9 +211,17 @@
 namespace senf {
 namespace console {
 
-    namespace detail { struct FilePositionWithIndex; }
+    namespace detail {
+        struct FilePositionWithIndex;
+        struct ParserAccess;
+        template <class ParameterType>
+        struct ArgumentInfo;
+    }
 
-    namespace detail { struct ParserAccess; }
+#   define SENF_CONSOLE_PARSE_FRIEND( type )                                                                    \
+        friend void senf_console_parse_argument(senf::console::ParseCommandInfo::TokensRange const &, type &);  \
+        friend struct senf::console::detail::ArgumentInfo<type>;
+
 
     /** \brief Single argument token
 

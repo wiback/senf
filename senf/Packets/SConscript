@@ -5,7 +5,7 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.CopyToVariantDir(env, 'parse_fixed_setup.hh', 'parse_setup.hh')
+SENFSCons.CopyToVariantDir(env, 'parse_fixed_setup.hh', 'parse_setup.hh', 'Packets_fwd.hh')
 
 SENFSCons.AutoRules(env, exclude = [ 'bundledump.cc', 'benchmark.cc' ], doc_extra_sources = [
     env.Dia2Png("structure.dia"),
