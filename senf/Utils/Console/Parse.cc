@@ -118,6 +118,9 @@ namespace detail {
               info_->builtin(ParseCommandInfo::BuiltinHELP);
               setBuiltinPathArg(path); }
 
+        void builtin_echo()
+            { info_->builtin(ParseCommandInfo::BuiltinECHO); }
+
         void setBuiltinPathArg(std::vector<Token> & path)
             {
                 info_->command(path);

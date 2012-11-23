@@ -268,6 +268,9 @@ namespace detail {
                     |    self.keyword_p()("help")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_help)(d_, path_) ]
+                    |    self.keyword_p()("echo")
+                      >> ! arguments
+                      >> eps_p                    [ bind(&PD::builtin_echo)(d_) ]
                     ;
 
                 group_start

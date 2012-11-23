@@ -143,6 +143,14 @@ SENF_AUTO_UNIT_TEST(executor)
 
     {
         std::stringstream os;
+        parser.parse("echo test 1 2 3", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinECHO );
+        BOOST_CHECK_EQUAL( os.str(), "test 1 2 3\n" );
+    }
+
+    {
+        std::stringstream os;
         parser.parse("\"dir 1\"/dir3 { }", &setCommand);
         executor(os, commands.rbegin()[1]);
         BOOST_CHECK_EQUAL( commands.rbegin()[1].builtin(), senf::console::ParseCommandInfo::BuiltinPUSHD );

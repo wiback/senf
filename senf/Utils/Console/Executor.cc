@@ -159,6 +159,12 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             help( output, command.commandPath() );
             break;
 
+        case ParseCommandInfo::BuiltinECHO :
+            if (skipping())
+                break;
+            echo( output, command.tokens() );
+            break;
+
         }
     }
     catch (InvalidPathException & ex) {
@@ -259,6 +265,18 @@ prefix_ void senf::console::Executor::ls(std::ostream & output,
     DirectoryNode::child_iterator const i_end (node.children().end());
     for (; i != i_end; ++i)
         output << i->first << "\n";
+}
+
+prefix_ void senf::console::Executor::echo(std::ostream & output,
+                                           ParseCommandInfo::TokensRange args)
+{
+    ParseCommandInfo::TokensRange::iterator i (args.begin());
+    ParseCommandInfo::TokensRange::iterator i_end (args.end());
+    while (i != i_end) {
+        output << (i++)->value();
+        if (i != i_end) output << ' ';
+    }
+    output << '\n';
 }
 
 prefix_ void senf::console::Executor::ll(std::ostream & output,

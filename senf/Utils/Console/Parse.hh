@@ -384,7 +384,8 @@ namespace console {
                               BuiltinPUSHD,
                               BuiltinPOPD,
                               BuiltinEXIT,
-                              BuiltinHELP };
+                              BuiltinHELP,
+                              BuiltinECHO };
 
         ParseCommandInfo();
 

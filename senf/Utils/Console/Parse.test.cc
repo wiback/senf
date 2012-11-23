@@ -75,6 +75,8 @@ namespace
             { os_ << "builtin_ll( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_lr(std::vector<senf::console::Token> const & path)
             { os_ << "builtin_lr( " << senf::stringJoin(path, "/") << " )\n"; }
+        void builtin_echo()
+            { os_ << "builtin_echo()\n"; }
         void builtin_exit()
             { os_ << "builtin_exit()\n"; }
         void builtin_help(std::vector<senf::console::Token> const & path)

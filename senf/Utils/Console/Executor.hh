@@ -147,6 +147,7 @@ namespace console {
         void ls(std::ostream & output, ParseCommandInfo::TokensRange dir);
         void ll(std::ostream & output, ParseCommandInfo::TokensRange dir);
         void lr(std::ostream & output, ParseCommandInfo::TokensRange dir);
+        void echo(std::ostream & output, ParseCommandInfo::TokensRange args);
         void pushd(ParseCommandInfo::TokensRange dir);
         void popd();
         void exit();
