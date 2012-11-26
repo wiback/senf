@@ -65,7 +65,7 @@ namespace senf {
 
     /** \brief IP protocol number registry
 
-        This registeres packets with their IP protocol number.
+        This registers packets with their IP protocol number.
 
         \see <a href="http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml">Protocol numbers</a> \n
             PacketRegistry

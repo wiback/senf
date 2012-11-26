@@ -46,10 +46,6 @@
 
 namespace senf {
 
-#ifndef DOXYGEN
-    namespace detail { class ClockServiceTest; }
-#endif
-
     // Implementation note: The clock value is represented as a 64bit unsigned integer number of
     // nanoseconds based on the CLOCK_MONOTONIC POSIX clock.
     //
@@ -170,11 +166,7 @@ namespace senf {
         boost::posix_time::ptime baseAbstime_;
         clock_type baseClock_;
 
-        /// Internal: ClockService private data (PIMPL idiom)
-
-#ifndef DOXYGEN
         friend class singleton<ClockService>;
-#endif
     };
 
     /** \brief Console argument parser to parse value as time interval

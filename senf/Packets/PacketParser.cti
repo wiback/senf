@@ -151,6 +151,15 @@ senf::ValueParserBase<Parser, ValueType, FixedBytes>::operator[](size_type index
 }
 
 template <class Parser, typename ValueType, senf::PacketParserBase::size_type FixedBytes>
+prefix_ senf::PacketParserBase::byte const &
+senf::ValueParserBase<Parser, ValueType, FixedBytes>::operator[](size_type index)
+    const
+{
+    return *boost::next(i(), index);
+}
+
+
+template <class Parser, typename ValueType, senf::PacketParserBase::size_type FixedBytes>
 prefix_ Parser const & senf::ValueParserBase<Parser, ValueType, FixedBytes>::operator= (value_type const & other)
 {
     static_cast<Parser*>(this)->value(other);

@@ -33,7 +33,6 @@
 #define HH_SENF_Socket_CommunicationPolicy_ 1
 
 // Custom includes
-#include "SocketPolicy.hh"
 #include "AddressingPolicy.hh"
 #include "FileHandle.hh"
 

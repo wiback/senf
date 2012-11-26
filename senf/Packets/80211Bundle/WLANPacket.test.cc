@@ -62,9 +62,9 @@ SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
 
     BOOST_CHECK_EQUAL( p->duration(),       0u    );
 
-    BOOST_CHECK_EQUAL( p->destinationAddress().value(),
+    BOOST_CHECK_EQUAL( p->destinationAddress(),
             senf::MACAddress::from_string("00:18:4d:6e:78:48") );
-    BOOST_CHECK_EQUAL( p->sourceAddress().value(),
+    BOOST_CHECK_EQUAL( p->sourceAddress(),
                        senf::MACAddress::from_string("00:0b:6b:57:06:b0") );
     BOOST_CHECK_EQUAL (p->bssid().value(),
                        senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
@@ -138,11 +138,11 @@ SENF_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
     BOOST_CHECK_EQUAL( p->order(),          false );
     BOOST_CHECK_EQUAL( p->duration(),       0u    );
 
-    BOOST_CHECK_EQUAL( p->destinationAddress().value(),
+    BOOST_CHECK_EQUAL( p->destinationAddress(),
                        senf::MACAddress::from_string("ff:ff:ff:ff:ff:ff") );
-    BOOST_CHECK_EQUAL( p->sourceAddress().value(),
+    BOOST_CHECK_EQUAL( p->sourceAddress(),
                        senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
-    BOOST_CHECK_EQUAL( p->bssid().value(),
+    BOOST_CHECK_EQUAL( p->bssid(),
                        senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
 
     BOOST_CHECK_EQUAL( p->sequenceNumber(), 302u );

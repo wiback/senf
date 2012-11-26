@@ -545,6 +545,7 @@ namespace senf {
 
         operator value_type () const;
         byte & operator[](size_type index);
+        byte const & operator[](size_type index) const;
         Parser const & operator= (value_type const & other);
     };
 

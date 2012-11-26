@@ -52,11 +52,18 @@ namespace senf {
     {
         MACAddressParser(data_iterator i, state_type s) : Base(i,s) {}
 
-        value_type value() const { return MACAddress::from_data(i()); }
-        void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
+        value_type value() const;
+        void value(value_type const & v);
+
+        bool local() const;             ///< \c true, if address is locally administered
+        bool multicast() const;         ///< \c true, if address is a group/multicast address
+        bool broadcast() const;         ///< \c true, if address is the broadcast address
 
         using Base::operator=;
     };
+
+    bool operator==(MACAddressParser const & macParser, MACAddress const & macAddr);
+
 
     /** \brief Parse an Ethernet packet
 
@@ -220,7 +227,7 @@ namespace senf {
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "EthernetPacket.cci"
+#include "EthernetPacket.cci"
 //#include "EthernetPacket.ct"
 //#include "EthernetPacket.cti"
 #endif
