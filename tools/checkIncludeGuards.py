@@ -6,7 +6,7 @@ srcPath = os.path.join( os.path.normpath( os.path.join(os.path.dirname( sys.argv
 
 r = 0
 
-for (path, dirs, files) in os.walk(srcPath):
+for (path, dirs, files) in os.walk(srcPath, followlinks=True):
     for f in files:
         if not f.endswith('.hh'):
             continue
