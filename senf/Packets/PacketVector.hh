@@ -40,6 +40,13 @@
 
 namespace senf {
 
+namespace detail {
+    class PacketImpl;
+}
+
+    typedef detail::PacketImpl * ExternalPacketMemoryManager;
+
+
     /** \brief
       */
     class PacketVector
@@ -77,7 +84,7 @@ namespace senf {
         PacketVector(size_type requestSize, value_type initValue);
         template <class ForwardIterator>
         PacketVector(ForwardIterator f, ForwardIterator l);
-        PacketVector(value_type * data, size_type size,
+        PacketVector(value_type * data, size_type size, ExternalPacketMemoryManager * epmm,
                      size_type chunkSize = 0u, size_type offset = 0u);
 
         ~PacketVector();
@@ -118,7 +125,7 @@ namespace senf {
         value_type * data_;
         iterator b_;
         iterator e_;
-        bool owner_;
+        ExternalPacketMemoryManager * epmm_;
     };
 
 }

@@ -39,7 +39,7 @@ prefix_ senf::PacketVector::PacketVector()
       data_ (static_cast<value_type *>(Pool::ordered_malloc(1))),
       b_ (data_ + HeadRoom),
       e_ (b_),
-      owner_ (true)
+      epmm_(NULL)
 {}
 
 prefix_ senf::PacketVector::PacketVector(size_type requestSize, value_type initValue)
@@ -47,23 +47,26 @@ prefix_ senf::PacketVector::PacketVector(size_type requestSize, value_type initV
       data_ (static_cast<value_type *>(Pool::ordered_malloc(size_ >> ChunkSizeIndex))),
       b_ (data_ + HeadRoom),
       e_ (b_ + requestSize),
-      owner_ (true)
+      epmm_(NULL)
 {
     ::memset(b_, initValue, requestSize);
 }
 
 prefix_ senf::PacketVector::PacketVector(value_type * data, size_type size,
+                                         ExternalPacketMemoryManager * epmm,
                                          size_type chunkSize, size_type offset)
     : size_ (chunkSize ? chunkSize : size + offset),
       data_ (data),
       b_ (data_ + offset),
       e_ (b_ + size),
-      owner_ (false)
+      epmm_(epmm)
 {}
 
 prefix_ senf::PacketVector::~PacketVector()
 {
-    if (owner_)
+    if (epmm_)
+        *epmm_ = NULL;
+    else
         Pool::ordered_free(data_, size_ >> ChunkSizeIndex);
 }
 
@@ -103,12 +106,12 @@ prefix_ void senf::PacketVector::clear()
 prefix_ bool senf::PacketVector::external()
     const
 {
-    return ! owner_;
+    return epmm_ != NULL;
 }
 
 prefix_ void senf::PacketVector::releaseExternal()
 {
-    if (! owner_)
+    if (epmm_)
         grow(begin(), 0);
 }
 

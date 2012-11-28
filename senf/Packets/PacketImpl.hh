@@ -143,8 +143,8 @@ namespace detail {
         PacketImpl(size_type size, byte initValue);
         template <class InputIterator>
         PacketImpl(InputIterator b, InputIterator e);
-        PacketImpl(byte * data, size_type size, size_type chunkSize = 0u,
-                   size_type offset = 0u);
+        PacketImpl(byte * data, size_type size, ExternalPacketMemoryManager * epmm,
+                   size_type chunkSize = 0u, size_type offset = 0u);
         ~PacketImpl();
 
         // reference/memory management

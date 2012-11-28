@@ -440,13 +440,16 @@ SENF_AUTO_UNIT_TEST(concretePacket)
 SENF_AUTO_UNIT_TEST(packetExternalMemory)
 {
     senf::Packet::byte storage[] = "\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x11";
-    BarPacket bar (BarPacket::create(storage, 8, 12, 4));
+    senf::ExternalPacketMemoryManager epmm;
+    BarPacket bar (BarPacket::create(storage, 8, &epmm, 12, 4));
 
     BOOST_CHECK_EQUAL( bar->type(), 1u );
     BOOST_CHECK_EQUAL( bar->length(), 2 );
     BOOST_CHECK_EQUAL( bar->reserved(), 0x1100u );
 #ifndef SENF_PACKET_STD_CONTAINER
     BOOST_CHECK( bar.data().usingExternalMemory() );
+    BOOST_CHECK( epmm != NULL );
+    BOOST_CHECK( epmm->usingExternalMemory() );
 #endif
 
     bar->length() = 4;
@@ -459,9 +462,12 @@ SENF_AUTO_UNIT_TEST(packetExternalMemory)
     foo->data()[0] = 0xaau;
 #ifndef SENF_PACKET_STD_CONTAINER
     BOOST_CHECK_EQUAL( storage[0], 0xaau);
+    BOOST_CHECK( epmm != NULL );
+    BOOST_CHECK( epmm->usingExternalMemory() );
 #endif
 
     foo.data().releaseExternalMemory();
+    BOOST_CHECK( epmm == NULL );
     BOOST_CHECK( ! foo.data().usingExternalMemory() );
     BOOST_CHECK( ! bar.data().usingExternalMemory() );
     bar->length() = 6;
@@ -469,6 +475,11 @@ SENF_AUTO_UNIT_TEST(packetExternalMemory)
     BOOST_CHECK_EQUAL( storage[9], 4u );
 #endif
     BOOST_CHECK_EQUAL( foo->data()[9], 6u );
+
+    BarPacket::create(storage, 8, &epmm, 12, 4);
+#ifndef SENF_PACKET_STD_CONTAINER
+    BOOST_CHECK( epmm == NULL );
+#endif
 }
 
 SENF_AUTO_UNIT_TEST(packetAssign)

@@ -83,10 +83,10 @@ senf::PacketInterpreter<PacketType>::create(size_type size, senf::NoInit_t)
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::create(byte * data, size_type size, size_type chunkSize,
-                                            size_type offset)
+senf::PacketInterpreter<PacketType>::create(byte * data, size_type size, ExternalPacketMemoryManager * epmm,
+                                            size_type chunkSize, size_type offset)
 {
-    detail::PacketImpl::Guard p (new detail::PacketImpl(data, size, chunkSize, offset));
+    detail::PacketImpl::Guard p (new detail::PacketImpl(data, size, epmm, chunkSize, offset));
     return create(p.p,p.p->begin(),p.p->end(),Append);
 }
 
@@ -310,9 +310,10 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::create(size_type size, senf::N
 template <class PacketType>
 prefix_ typename senf::PacketInterpreterBase::ptr
 senf::PacketInterpreter<PacketType>::FactoryImpl::create(byte * data, size_type size,
+                                                         ExternalPacketMemoryManager * epmm,
                                                          size_type chunkSize, size_type offset)
 {
-    return senf::PacketInterpreter<PacketType>::create(data, size, chunkSize, offset);
+    return senf::PacketInterpreter<PacketType>::create(data, size, epmm, chunkSize, offset);
 }
 
 // Create packet as new packet after a given packet

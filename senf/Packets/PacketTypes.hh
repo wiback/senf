@@ -88,7 +88,10 @@ namespace test {
 
     struct TestDriver;
 
-}}}}
+}}}
+
+    typedef detail::PacketImpl * ExternalPacketMemoryManager;
+}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif

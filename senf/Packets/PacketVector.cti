@@ -35,7 +35,7 @@
 
 template <class ForwardIterator>
 prefix_ senf::PacketVector::PacketVector(ForwardIterator f, ForwardIterator l)
-    : owner_ (true)
+    : epmm_(NULL)
 {
     int requestSize (std::distance(f,l));
     size_ = allocationSize(requestSize);

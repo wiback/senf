@@ -525,6 +525,7 @@ namespace senf {
         friend class PacketParserBase;
     };
 
+
     /** \brief Protocol specific packet handle
 
         The ConcretePacket template class extends Packet to provide protocol/packet type specific
@@ -636,8 +637,8 @@ namespace senf {
                                                  of data to construct packet from. */
 #endif
 
-        static ConcretePacket create(byte * data, size_type size, size_type chunkSize = 0u,
-                                     size_type offset = 0u);
+        static ConcretePacket create(byte * data, size_type size, ExternalPacketMemoryManager * epmm,
+                                     size_type chunkSize = 0u, size_type offset = 0u);
                                         ///< Create packet utilizing external storage
                                         /**< The packet will be created using \a size bytes at \a
                                              data. The data will \e not be copied, instead the

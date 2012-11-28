@@ -52,8 +52,8 @@ namespace senf {
              : min(singleValue), avg(singleValue), max(singleValue), stddev(0.0), count(1) {};
 
          void clear(){
-	        min = avg = max = stddev = 0.0;
-                count = 0;
+             min = avg = max = stddev = 0.0;
+             count = 0;
          }
 
          bool valid(){

@@ -120,7 +120,8 @@ SENF_AUTO_UNIT_TEST(packetVector)
 
     {
         senf::PacketVector::value_type storage[] = "\0\0\0TEST\0\0";
-        senf::PacketVector vec (storage, 4u, 10u, 3u);
+        senf::ExternalPacketMemoryManager epmm;
+        senf::PacketVector vec (storage, 4u, &epmm, 10u, 3u);
         BOOST_CHECK_EQUAL( str(vec), strc("TEST") );
 
         * vec.begin() = 'F';

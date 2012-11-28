@@ -140,11 +140,11 @@ prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
 #endif
 }
 
-prefix_ senf::detail::PacketImpl::PacketImpl(byte * data, size_type size, size_type chunkSize,
-                                             size_type offset)
+prefix_ senf::detail::PacketImpl::PacketImpl(byte * data, size_type size, ExternalPacketMemoryManager * epmm,
+                                             size_type chunkSize, size_type offset)
     : refcount_(0)
 #ifndef SENF_PACKET_STD_CONTAINER
-    , data_(data, size, chunkSize, offset)
+    , data_(data, size, epmm, chunkSize, offset)
 #else
     , data_(data + offset, data + offset + size)
 #endif
@@ -160,6 +160,11 @@ prefix_ senf::detail::PacketImpl::PacketImpl(byte * data, size_type size, size_t
     ::memset(simpleAnnotations_, 0, sizeof(simpleAnnotations_));
 #ifndef SENF_PACKET_ALTERNATIVE_PREALLOC
     ::memset(prealloc_, 0, sizeof(prealloc_));
+#endif
+#ifndef SENF_PACKET_STD_CONTAINER
+    *epmm = this;
+#else
+    *epmm = NULL;
 #endif
 }
 

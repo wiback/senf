@@ -28,7 +28,6 @@
 
 // Custom includes
 
-//#include "PacketVector.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
@@ -59,13 +58,16 @@ prefix_ senf::PacketVector::iterator senf::PacketVector::grow(iterator pos, size
     value_type * newData (static_cast<value_type *>(Pool::ordered_malloc(requestSize >> ChunkSizeIndex)));
     ::memcpy(newData + HeadRoom, b_, posIndex);
     ::memcpy(newData + HeadRoom + posIndex + n, b_ + posIndex, dataSize - posIndex);
-    if (owner_)
+    if (epmm_) {
+        *epmm_ = NULL;
+        epmm_ = NULL;
+    } else {
         Pool::ordered_free(data_, size_ >> ChunkSizeIndex);
+    }
     b_ = newData + HeadRoom;
     e_ = b_ + dataSize + n;
     size_ = requestSize;
     data_ = newData;
-    owner_ = true;
     return b_ + posIndex;
 }
 
@@ -73,7 +75,6 @@ prefix_ senf::PacketVector::iterator senf::PacketVector::grow(iterator pos, size
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "PacketVector.mpp"
 
 
 // Local Variables:
