@@ -66,9 +66,23 @@ prefix_ bool senf::MACAddressParser::broadcast()
     return std::find_if(data().begin(), data().end(), _1 != 0xffu) == data().end();
 }
 
-prefix_ bool senf::operator==(MACAddressParser const & macParser, MACAddress const & macAddr)
+prefix_ bool senf::MACAddressParser::null()
+    const
 {
-    return std::equal(macAddr.begin(), macAddr.end(), macParser.i());
+    using  boost::lambda::_1;
+    return std::find_if(data().begin(), data().end(), _1 != 0x00u) == data().end();
+}
+
+prefix_ bool senf::MACAddressParser::operator==(MACAddress const & macAddr)
+    const
+{
+    return std::equal(macAddr.begin(), macAddr.end(), i());
+}
+
+prefix_ bool senf::MACAddressParser::operator==(MACAddressParser const & other)
+    const
+{
+    return std::equal(i(), i(6), other.i());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

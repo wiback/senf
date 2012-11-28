@@ -28,8 +28,8 @@
 /** \file
     \brief IPv6Extension-Options public header */
 
-#ifndef HH_SENF_Packets_DefaultBundle_IPv6ExtOptions_HH_
-#define HH_SENF_Packets_DefaultBundle_IPv6ExtOptions_HH_ 1
+#ifndef HH_SENF_Packets_DefaultBundle_IPv6ExtOptions_
+#define HH_SENF_Packets_DefaultBundle_IPv6ExtOptions_ 1
 
 // Custom includes
 #include <senf/Packets/Packets.hh>

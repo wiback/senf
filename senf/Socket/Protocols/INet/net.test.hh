@@ -28,8 +28,8 @@
 /** \file
     \brief net.test public header */
 
-#ifndef HH_SENF_senf_Socket_Protocols_INet_net_test_
-#define HH_SENF_senf_Socket_Protocols_INet_net_test_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_net_test_
+#define HH_SENF_Socket_Protocols_INet_net_test_ 1
 
 // Custom includes
 #include <string>

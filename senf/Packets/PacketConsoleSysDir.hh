@@ -23,8 +23,8 @@
 /** \file
     \brief PacketConsoleSysDir public header */
 
-#ifndef HH_SENF_senf_Packets_PacketConsoleSysDir_
-#define HH_SENF_senf_Packets_PacketConsoleSysDir_ 1
+#ifndef HH_SENF_Packets_PacketConsoleSysDir_
+#define HH_SENF_Packets_PacketConsoleSysDir_ 1
 
 #ifndef HH_SENF_Packets_Packets_
 #error "Don't include 'PacketConsoleSysDir.hh' directly, include 'Packets.hh'"
@@ -46,8 +46,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_SENF_senf_Packets_Packets__decls_) && !defined(HH_SENF_senf_Packets_PacketConsoleSysDir_i_)
-#define HH_SENF_senf_Packets_PacketConsoleSysDir_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketConsoleSysDir_i_)
+#define HH_SENF_Packets_PacketConsoleSysDir_i_
 //#include "PacketConsoleSysDir.cci"
 //#include "PacketConsoleSysDir.ct"
 //#include "PacketConsoleSysDir.cti"

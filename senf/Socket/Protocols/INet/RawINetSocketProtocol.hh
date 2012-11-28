@@ -26,7 +26,7 @@
 //   David Wagner <dw6@berlios.de>
 
 #ifndef HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_
-#define HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_
+#define HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_ 1
 
 // Custom includes
 #include "INetSocketProtocol.hh"

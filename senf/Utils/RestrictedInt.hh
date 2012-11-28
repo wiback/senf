@@ -29,8 +29,8 @@
 /** \file
     \brief RestrictedInt public header */
 
-#ifndef HH_SENF_senf_Utils_RestrictedInt_
-#define HH_SENF_senf_Utils_RestrictedInt_ 1
+#ifndef HH_SENF_Utils_RestrictedInt_
+#define HH_SENF_Utils_RestrictedInt_ 1
 
 // Custom includes
 #include <iostream>

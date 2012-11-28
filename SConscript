@@ -25,3 +25,8 @@ cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', env['PACKE
                               NAME="AllBundles")
 env.Default(cobject)
 env.Install('${OBJINSTALLDIR}', cobject)
+
+### checkIncludeGuards.py
+checkIncludeGuards = env.PhonyTarget('checkIncludeGuards', [],
+    [ './tools/checkIncludeGuards.py' ])
+env.Default(checkIncludeGuards)

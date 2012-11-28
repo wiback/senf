@@ -28,8 +28,8 @@
 /** \file
     \brief DumpFormat public header */
 
-#ifndef HH_SENF_senf_Packets_DumpFormat_
-#define HH_SENF_senf_Packets_DumpFormat_ 1
+#ifndef HH_SENF_Packets_DumpFormat_
+#define HH_SENF_Packets_DumpFormat_ 1
 
 #ifndef HH_SENF_Packets_Packets_
 #error "Don't include 'DumpFormat.hh' directly, include 'Packets.hh'"

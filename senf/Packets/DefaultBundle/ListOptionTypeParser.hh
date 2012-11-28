@@ -28,8 +28,8 @@
 /** \file
     \brief ListOptionTypeParser public header */
 
-#ifndef HH_SENF_Packets_ListOptionTypeParser_
-#define HH_SENF_Packets_ListOptionTypeParser_ 1
+#ifndef HH_SENF_Packets_DefaultBundle_ListOptionTypeParser_
+#define HH_SENF_Packets_DefaultBundle_ListOptionTypeParser_ 1
 
 // Custom includes
 

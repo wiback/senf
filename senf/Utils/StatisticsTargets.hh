@@ -28,8 +28,8 @@
 /** \file
     \brief StatisticsTargets public header */
 
-#ifndef HH_SENF_PPI_Utils_StatisticsTargets_
-#define HH_SENF_PPI_Utils_StatisticsTargets_ 1
+#ifndef HH_SENF_Utils_StatisticsTargets_
+#define HH_SENF_Utils_StatisticsTargets_ 1
 
 // Custom includes
 #include <string>

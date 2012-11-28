@@ -28,8 +28,8 @@
 /** \file
     \brief OverloadedCommand public header */
 
-#ifndef HH_SENF_Scheduler_Console_OverloadedCommand_
-#define HH_SENF_Scheduler_Console_OverloadedCommand_ 1
+#ifndef HH_SENF_Utils_Console_OverloadedCommand_
+#define HH_SENF_Utils_Console_OverloadedCommand_ 1
 
 // Custom includes
 #include "Node.hh"

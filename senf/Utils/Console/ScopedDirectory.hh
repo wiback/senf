@@ -28,8 +28,8 @@
 /** \file
     \brief ScopedDirectory public header */
 
-#ifndef HH_SENF_Scheduler_Console_ScopedDirectory_
-#define HH_SENF_Scheduler_Console_ScopedDirectory_ 1
+#ifndef HH_SENF_Utils_Console_ScopedDirectory_
+#define HH_SENF_Utils_Console_ScopedDirectory_ 1
 
 // Custom includes
 #include <boost/utility/enable_if.hpp>

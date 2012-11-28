@@ -28,8 +28,8 @@
 /** \file
     \brief pimpl_ptr public header */
 
-#ifndef HH_SENF_senf_Utils_pimpl_ptr_
-#define HH_SENF_senf_Utils_pimpl_ptr_ 1
+#ifndef HH_SENF_Utils_pimpl_ptr_
+#define HH_SENF_Utils_pimpl_ptr_ 1
 
 // Custom includes
 #include <algorithm>

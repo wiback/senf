@@ -1,9 +1,39 @@
+// $Id$
+//
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at
+// http://senf.berlios.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//   Anton Gillert <atx@berlios.de>
+
 #include "DVBConfigParser.hh"
+
+// Custom includes
 #include <boost/assign/std/map.hpp>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/Logger.hh>
-using namespace std;
+
 #define prefix_
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 senf::DVBConfigParser::DVBParams const senf::DVBConfigParser::params;
 
@@ -51,33 +81,33 @@ prefix_ senf::DVBConfigParser::DVBParams::DVBParams()
     (   "TRANSMISSION_MODE_8K", TRANSMISSION_MODE_8K);
 }
 
-senf::DVBConfigParser::DVBConfigParser(fe_type_t type_, const string & configFilePath_) :
+prefix_ senf::DVBConfigParser::DVBConfigParser(fe_type_t type_, std::string const & configFilePath_) :
     type(type_),
     configFile()
 {
     initConfigFile(configFilePath_);
 }
 
-senf::DVBConfigParser::~DVBConfigParser()
+prefix_ senf::DVBConfigParser::~DVBConfigParser()
 {
     configFile.close();
 }
 
-prefix_ void senf::DVBConfigParser::initConfigFile(string configFilePath_)
+prefix_ void senf::DVBConfigParser::initConfigFile(std::string configFilePath_)
 {
     if (configFilePath_.size() == 0) {
         if ( !(::getenv ("HOME")) )
             SENF_THROW_SYSTEM_EXCEPTION("$HOME not set! You need it to use default configfile.");
-        string configPath(::getenv ("HOME"));
+        std::string configPath (::getenv ("HOME"));
         switch(type) {
             case FE_QPSK :
-                configPath += string("/.szap/channels.conf");
+                configPath += "/.szap/channels.conf";
                 break;
             case FE_QAM :
-                configPath += string("/.czap/channels.conf");
+                configPath += "/.czap/channels.conf";
                 break;
             case FE_OFDM :
-                configPath += string("/.tzap/channels.conf");
+                configPath += "/.tzap/channels.conf";
                 break;
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("Could not determine type of card.");
@@ -85,28 +115,29 @@ prefix_ void senf::DVBConfigParser::initConfigFile(string configFilePath_)
         configFilePath_ = configPath;
     }
     configFilePath = configFilePath_;
-    configFile.open( configFilePath.c_str(), ios_base::in);
+    configFile.open( configFilePath.c_str(), std::ios_base::in);
     if (configFile.bad())
         SENF_LOG((senf::log::IMPORTANT)  ("Could not open channels file"<< configFilePath << "." ));
     configFile.close();
 }
-prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
+
+prefix_ std::string senf::DVBConfigParser::getConfigLine(std::string channel)
 {
-    string configLine;
+    std::string configLine;
     size_t pos;
     transform(channel.begin(), channel.end(), channel.begin(), ::toupper);
 
-    configFile.open( configFilePath.c_str(), ios_base::in);
+    configFile.open( configFilePath.c_str(), std::ios_base::in);
     if (configFile.bad())
            SENF_THROW_SYSTEM_EXCEPTION("Could not read channels file: ") << configFilePath << ".";
 
     while (configFile.good()) {
         getline( configFile, configLine );
-        SENF_LOG((senf::log::NOTICE)  ("configLine: " << configLine ));
+        SENF_LOG((senf::log::NOTICE)("configLine: " << configLine ));
         transform(configLine.begin(), configLine.end(), configLine.begin(), ::toupper);
         pos = configLine.find(channel);
 
-        if (pos != string::npos && pos == 0) { // only first matching number should be interpreted as channel number
+        if (pos != std::string::npos && pos == 0) { // only first matching number should be interpreted as channel number
             configFile.close();
             return configLine; // Line found!
         }
@@ -116,7 +147,7 @@ prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
     return channel;
 }
 
-prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParam(string configLine)
+prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParam(std::string configLine)
 {
     struct dvb_frontend_parameters frontend;
     transform(configLine.begin(), configLine.end(), configLine.begin(), ::toupper);
@@ -142,10 +173,10 @@ prefix_ dvb_frontend_parameters
 senf::DVBConfigParser::getFrontendParamDVB_T(const tokenizer & tokens)
 {
     struct dvb_frontend_parameters frontend;
-    istringstream isst;
+    std::istringstream isst;
     int number;
     enum { p_Frequency=1, p_Inversion, p_Bandwidth, p_hp_code_rate, p_lp_code_rate, p_Mudualtion, p_Transmission, p_guard, p_hierarchy};
-    vector<string> words( tokens.begin(), tokens.end() );
+    std::vector<std::string> words (tokens.begin(), tokens.end());
 
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
 
@@ -197,10 +228,10 @@ prefix_ dvb_frontend_parameters
 senf::DVBConfigParser::getFrontendParamDVB_S(const tokenizer & tokens)
 {
     struct dvb_frontend_parameters frontend;
-    istringstream isst;
+    std::istringstream isst;
     int number;
     enum { p_Frequency=1, p_Inversion, p_Symbole, p_code_rate};
-    vector<string> words( tokens.begin(), tokens.end() ) ;
+    std::vector<std::string> words (tokens.begin(), tokens.end());
 
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
 
@@ -234,10 +265,10 @@ prefix_ dvb_frontend_parameters
 senf::DVBConfigParser::getFrontendParamDVB_C(const tokenizer & tokens)
 {
     struct dvb_frontend_parameters frontend;
-    istringstream isst;
+    std::istringstream isst;
     int number;
     enum { p_Frequency=1, p_Inversion, p_Symbole, p_code_rate, p_modulation};
-    vector<string> words( ++tokens.begin(), tokens.end() ) ;
+    std::vector<std::string> words (++tokens.begin(), tokens.end());
 
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
 
@@ -270,3 +301,6 @@ senf::DVBConfigParser::getFrontendParamDVB_C(const tokenizer & tokens)
 
     return frontend;
 }
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_

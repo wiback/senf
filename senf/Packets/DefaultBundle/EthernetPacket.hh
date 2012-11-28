@@ -58,11 +58,13 @@ namespace senf {
         bool local() const;             ///< \c true, if address is locally administered
         bool multicast() const;         ///< \c true, if address is a group/multicast address
         bool broadcast() const;         ///< \c true, if address is the broadcast address
+        bool null() const;              ///< \c true, if address is the zero address
+
+        bool operator==(MACAddress const & macAddr) const;
+        bool operator==(MACAddressParser const & other) const;
 
         using Base::operator=;
     };
-
-    bool operator==(MACAddressParser const & macParser, MACAddress const & macAddr);
 
 
     /** \brief Parse an Ethernet packet

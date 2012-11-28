@@ -28,8 +28,8 @@
 /** \file
     \brief CPU Stat public header */
 
-#ifndef HH_SENF_Scheduler_CpuStat_
-#define HH_SENF_Scheduler_CpuStat_ 1
+#ifndef HH_SENF_Utils_CpuStat_
+#define HH_SENF_Utils_CpuStat_ 1
 
 // Custom includes
 #include <list>

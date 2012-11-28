@@ -28,8 +28,8 @@
 /** \file
     \brief ConfigFile public header */
 
-#ifndef HH_SENF_Scheduler_Console_ConfigFile_
-#define HH_SENF_Scheduler_Console_ConfigFile_ 1
+#ifndef HH_SENF_Utils_Console_ConfigFile_
+#define HH_SENF_Utils_Console_ConfigFile_ 1
 
 // Custom includes
 #include "Config.hh"

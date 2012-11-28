@@ -23,8 +23,8 @@
 /** \file
     \brief PacketVector public header */
 
-#ifndef HH_SENF_PacketVector_
-#define HH_SENF_PacketVector_ 1
+#ifndef HH_SENF_Packets_PacketVector_
+#define HH_SENF_Packets_PacketVector_ 1
 
 // Custom includes
 #include <boost/noncopyable.hpp>

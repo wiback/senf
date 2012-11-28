@@ -28,8 +28,8 @@
 /** \file
     \brief LazyDirectory public header */
 
-#ifndef HH_SENF_Scheduler_Console_LazyDirectory_
-#define HH_SENF_Scheduler_Console_LazyDirectory_ 1
+#ifndef HH_SENF_Utils_Console_LazyDirectory_
+#define HH_SENF_Utils_Console_LazyDirectory_ 1
 
 // Custom includes
 #include <boost/noncopyable.hpp>

@@ -27,7 +27,7 @@
 
 
 #ifndef HH_SENF_Socket_Protocols_INet_RawINetSocketHandle_
-#define HH_SENF_Socket_Protocols_INet_RawINetSocketHandle_
+#define HH_SENF_Socket_Protocols_INet_RawINetSocketHandle_ 1
 
 
 // Custom includes

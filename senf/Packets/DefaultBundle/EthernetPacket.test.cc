@@ -51,9 +51,11 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_parse)
     };                        // EtherType
     senf::EthernetPacket p (senf::EthernetPacket::create(data));
 
+    BOOST_CHECK( ! p->source().null() );
     BOOST_CHECK_EQUAL( p->destination()[3], 0x04 );
     BOOST_CHECK_EQUAL( p->source()[0], 0x07 );
     BOOST_CHECK_EQUAL( p->type_length(), 0x1011 );
+    SENF_CHECK_NOT_EQUAL( p->source(), p->destination() );
 
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( p.dump( oss));
@@ -87,6 +89,7 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
 SENF_AUTO_UNIT_TEST(ethernetPacket_create)
 {
     senf::EthernetPacket eth (senf::EthernetPacket::create());
+    BOOST_CHECK( eth->source().null() );
     eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
     eth->destination() = senf::MACAddress::from_string("07:08:09:0a:0b:0c");
 

@@ -28,8 +28,8 @@
 /** \file
     \brief Variables public header */
 
-#ifndef HH_SENF_Scheduler_Console_Variables_
-#define HH_SENF_Scheduler_Console_Variables_ 1
+#ifndef HH_SENF_Utils_Console_Variables_
+#define HH_SENF_Utils_Console_Variables_ 1
 
 // Custom includes
 #include <boost/type_traits/is_convertible.hpp>

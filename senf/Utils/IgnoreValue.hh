@@ -28,8 +28,8 @@
 /** \file
     \brief IgnoreValue public header */
 
-#ifndef HH_SENF_senf_Utils_IgnoreValue_
-#define HH_SENF_senf_Utils_IgnoreValue_ 1
+#ifndef HH_SENF_Utils_IgnoreValue_
+#define HH_SENF_Utils_IgnoreValue_ 1
 
 // Custom includes
 

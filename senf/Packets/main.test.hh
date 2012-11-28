@@ -29,7 +29,7 @@
     \brief main.test public header */
 
 #ifndef HH_SENF_Packets_main_test_
-#define HH_SENF_PAckets_main_test_ 1
+#define HH_SENF_Packets_main_test_ 1
 
 // Custom includes
 

@@ -28,8 +28,8 @@
 /** \file
     \brief Operators public header */
 
-#ifndef HH_SENF_senf_Utils_Operators_
-#define HH_SENF_senf_Utils_Operators_ 1
+#ifndef HH_SENF_Utils_Operators_
+#define HH_SENF_Utils_Operators_ 1
 
 // Custom includes
 #include <boost/operators.hpp>

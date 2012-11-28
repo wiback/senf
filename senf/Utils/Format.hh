@@ -28,8 +28,8 @@
 /** \file
     \brief Format public header */
 
-#ifndef HH_SENF_senf_Utils_Format_
-#define HH_SENF_senf_Utils_Format_ 1
+#ifndef HH_SENF_Utils_Format_
+#define HH_SENF_Utils_Format_ 1
 
 // Custom includes
 #include <limits>
