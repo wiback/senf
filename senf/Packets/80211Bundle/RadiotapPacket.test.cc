@@ -294,31 +294,31 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_parsetest)
 
     std::stringstream ss;
     p.dump(ss);
-
-    BOOST_CHECK_EQUAL(ss.str(),
-                      "Radiotap:\n"
-                      "  version                 : 0\n"
-                      "  length                  : 32\n"
-                      "  MAC timestamp           : 11511230\n"
-                      "  flags                   : FCSatEnd \n"
-                      "  rate                    : 4\n"
-                      "  channel frequency       : 2412\n"
-                      "  channel flags           : 2GHz CCK \n"
-                      "  antenna signal (dBm)    : -74\n"
-                      "  antenna                 : 1\n"
-                      "  rx flags                : \n"
-                      "  fcs                     : 240700832\n"
-                      "802.11 MAC Management Frame:\n"
-                      "  version                 : 0\n"
-                      "  type                    : 0\n"
-                      "  subtype                 : 8\n"
-                      "  flags                   : none\n"
-                      "  duration                : 0\n"
-                      "  destination             : ff:ff:ff:ff:ff:ff\n"
-                      "  source                  : 00:0b:0e:26:ab:c0\n"
-                      "  bss id                  : 00:0b:0e:26:ab:c0\n"
-                      "  sequence number         : 3790\n"
-                      "  fragment number         : 0\n");
+    std::string radiotapDump (
+            "Radiotap:\n"
+            "  version                 : 0\n"
+            "  length                  : 32\n"
+            "  MAC timestamp           : 11511230\n"
+            "  flags                   : FCSatEnd \n"
+            "  rate                    : 4\n"
+            "  channel frequency       : 2412\n"
+            "  channel flags           : 2GHz CCK \n"
+            "  antenna signal (dBm)    : -74\n"
+            "  antenna                 : 1\n"
+            "  rx flags                : \n"
+            "  fcs                     : 240700832\n"
+            "802.11 MAC Management Frame:\n"
+            "  version                 : 0\n"
+            "  type                    : 0\n"
+            "  subtype                 : 8\n"
+            "  flags                   : none\n"
+            "  duration                : 0\n"
+            "  destination             : ff:ff:ff:ff:ff:ff\n"
+            "  source                  : 00:0b:0e:26:ab:c0\n"
+            "  bss id                  : 00:0b:0e:26:ab:c0\n"
+            "  sequence number         : 3790\n"
+            "  fragment number         : 0\n");
+    BOOST_CHECK_EQUAL(ss.str().substr(0,radiotapDump.size()), radiotapDump);
 }
 
 

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2009
+// Copyright (C) 2012
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
@@ -24,41 +24,27 @@
 //
 // Contributor(s):
 //   Thorsten Horstmann <tho@berlios.de>
-//   Christian Niephaus <cni@berlios.de>
 
+/** \file
+    \brief 80211Bundle packet registries public header */
 
-// Definition of 802.11 WLAN Beacon Packet non-inline non-template functions
-
-#include "WLANBeaconPacket.hh"
+#ifndef HH_SENF_Packets_80211Bundle_Registries_
+#define HH_SENF_Packets_80211Bundle_Registries_ 1
 
 // Custom includes
-#include <boost/io/ios_state.hpp>
-#include "Registries.hh"
 
-#define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::WLANManagementSubtypes, 8u, senf::WLANBeaconPacket );
-}
+namespace senf {
 
-prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream & os)
-{
-    boost::io::ios_all_saver ias(os);
-    os << "WLAN beacon frame:\n"
-       << senf::fieldName("timestamp")      << unsigned( p->timestamp())      << "\n"
-       << senf::fieldName("beaconInterval") << unsigned( p->beaconInterval()) << "\n";
-    p->ssidIE().dump( os);
-    p->supportedRatesIE().dump( os);
-    os << "  Optional Information Elements:\n";
-    typedef parser::ieList_t::container ieListContainer_t;
-    ieListContainer_t ieListContainer (p->ieList());
-    for (ieListContainer_t::const_iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
-        i->dump( os);
+    struct WLANManagementSubtypes {
+        typedef boost::uint8_t key_t;
+    };
+
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#undef prefix_
+#endif
 
 
 // Local Variables:

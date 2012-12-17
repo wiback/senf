@@ -132,13 +132,13 @@ prefix_ void senf::PacketVector::erase(iterator first, iterator last)
 
 prefix_ void senf::PacketVector::insert(iterator pos, value_type v)
 {
-    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::erase" );
+    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::insert" );
     * move(pos, 1) = v;
 }
 
 prefix_ void senf::PacketVector::insert(iterator pos, size_type n, value_type v)
 {
-    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::erase" );
+    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::insert" );
     if (n > 0)
         ::memset(move(pos, n), v, n);
 }

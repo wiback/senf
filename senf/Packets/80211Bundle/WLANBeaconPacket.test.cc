@@ -31,6 +31,7 @@
 
 // Custom includes
 #include "WLANBeaconPacket.hh"
+#include "WLANPacket.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -122,6 +123,12 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
     };
     SENF_CHECK_EQUAL_COLLECTIONS( p.data().begin(), p.data().end(),
             data, data+sizeof(data) );
+
+    senf::WLANPacket_MgtFrame mgt (senf::WLANPacket_MgtFrame::createBefore(p));
+    mgt.finalizeThis();
+
+    BOOST_CHECK_EQUAL( mgt->type(),    0u);
+    BOOST_CHECK_EQUAL( mgt->subtype(), 8u);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,7 @@
 
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
+#include "Registries.hh"
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,6 +100,8 @@ namespace senf
         };
 
         void sequenceNumber(boost::uint16_t sn);
+
+        friend struct WLANPacket_MgtFrameType;
     };
 
     /** \brief WLAN Management frame packet
@@ -114,16 +117,21 @@ namespace senf
      */
     struct WLANPacket_MgtFrameType
         : public PacketTypeBase,
-          public PacketTypeMixin<WLANPacket_MgtFrameType>
+          public PacketTypeMixin<WLANPacket_MgtFrameType, WLANManagementSubtypes>
     {
-        typedef PacketTypeMixin<WLANPacket_MgtFrameType> mixin;
+        typedef PacketTypeMixin<WLANPacket_MgtFrameType, WLANManagementSubtypes> mixin;
         typedef ConcretePacket<WLANPacket_MgtFrameType> packet;
         typedef WLANPacket_MgtFrameParser parser;
 
         using mixin::init;
         using mixin::initSize;
-        using PacketTypeBase::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::nextPacketRange;
 
+        static key_t nextPacketKey(packet p)
+            { return p->subtype(); }
+        static void finalize(packet p)
+            { p->subtype_() << key(p.next(nothrow)); }
         static void dump(packet p, std::ostream & os);
     };
 
