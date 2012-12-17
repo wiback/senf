@@ -204,6 +204,7 @@ def ParseDefaultArguments(env):
         BoolVariable('debug_final', 'Build final (optimized) build with debug symbols', False),
         BoolVariable('profile', 'compile and link with the profiling enabled option', False),
         BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
+        BoolVariable('lto', 'enable link-time-optimization', False),
     )
     
     build_type = 'normal'
@@ -259,14 +260,14 @@ def DefaultOptions(env):
     env.Append(
         CXXFLAGS_CLANG   = [ '-Wno-unneeded-internal-declaration' ], # needed for BOOST_PARAMETER_KEYWORD
         CXXFLAGS         = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-unused-parameter', 
-                             "${profile and '-pg' or None}",
+                             "${profile and '-pg' or None}", "${lto and '-flto' or None}", 
                              '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
         CXXFLAGS_final   = [ '-O3', '-fno-threadsafe-statics', '-fno-stack-protector',
                                "${profile and ' ' or '-ffunction-sections'}" ],
         CXXFLAGS_normal  = [ '-O2', '-g' ],
         CXXFLAGS_debug   = [ '-O0', '-g' ],
 
-        LINKFLAGS        = [ "${profile and '-pg' or None}" ],
+        LINKFLAGS        = [ "${profile and '-pg' or None}", "${lto and '-flto -fwhole-program' or None}" ],
         LINKFLAGS_final  = [ "${profile and ' ' or '-Wl,--gc-sections'}" ],
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],

@@ -106,7 +106,7 @@ env.Append(
     CXXFLAGS               = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-long-long', '-Wno-unused-parameter',
                                '-Wnon-virtual-dtor', '-Wcast-align', '-Winit-self', '-Wdisabled-optimization', '-Wpointer-arith',
                                '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
-                               "${profile and '-pg' or None}",
+                               "${profile and '-pg' or None}", "${lto and '-flto' or None}",
                                '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
     CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics','-fno-stack-protector',
                                "${profile and ' ' or '-ffunction-sections'}" ],
@@ -119,7 +119,8 @@ env.Append(
     CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
     CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
 
-    LINKFLAGS              = [ '-rdynamic', '$LINKFLAGS_', "${profile and '-pg' or None}" ],
+    LINKFLAGS              = [ '-rdynamic', '$LINKFLAGS_', "${profile and '-pg' or None}",
+                               "${lto and '-flto -fwhole-program' or None}" ],
     LINKFLAGS_final        = [ "${profile and ' ' or '-Wl,--gc-sections'}" ],
     LINKFLAGS_normal       = [ '-Wl,-S' ],
     LINKFLAGS_debug        = [ '-g' ],

@@ -39,11 +39,11 @@
 template <class Self>
 prefix_ void senf::MIHListTLVParserMixin<Self>::finalize()
 {
-    Self * self ( static_cast<Self *>(this));
+    Self * self (static_cast<Self *>(this));
     self->protect(), self->listSize_().finalize();
     typename Self::length_t::value_type size (
             senf::bytes(self->listSize_()) + senf::bytes(self->value()));
-    self->maxLength( size);
+    self->maxLength(size);
     self->length_() << size;
     self->length_().finalize();
 }
