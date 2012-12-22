@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <fstream>
+#include <boost/utility/base_from_member.hpp>
 #include <boost/shared_ptr.hpp>
 #include "IOStreamTarget.hh"
 
