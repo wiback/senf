@@ -34,10 +34,11 @@
 // Custom includes
 #include <ostream>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/typeof/typeof.hpp>
+#include <senf/Utils/Cpp11Support.hh>
 #include "Parse.hh"
 
 #include "Traits.ih"
-//#include "Traits.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -68,7 +69,7 @@ namespace console {
         typedef Type type;
 
         static bool const singleToken =
-            boost::is_same< typeof(senf_console_parse_argument(
+            boost::is_same< SENF_DECLTYPE(senf_console_parse_argument(
                                        *static_cast<ParseCommandInfo::TokensRange const *>(0),
                                        *static_cast<Type*>(0))),
                             bool >::value;

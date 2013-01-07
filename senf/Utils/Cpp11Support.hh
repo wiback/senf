@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2012
+// Copyright (C) 2013
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
@@ -25,37 +25,30 @@
 // Contributor(s):
 //   Thorsten Horstmann <tho@berlios.de>
 
-#ifndef HH_SENF_Packets_80211Bundle_MCSInfo_
-#define HH_SENF_Packets_80211Bundle_MCSInfo_ 1
+#ifndef HH_SENF_Utils_Cpp11Support_
+#define HH_SENF_Utils_Cpp11Support_ 1
 
 // Custom includes
-#include <string>
-#include <vector>
-#include <boost/cstdint.hpp>
+#include <boost/config.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-namespace senf {
 
-    // http://mcsindex.com/
-    struct WLAN_MCSInfo
-    {
-        struct Info
-        {
-            std::string    coding;
-            unsigned       rate[4];
-            short          rssi[2];
-            boost::uint8_t index;
-            boost::uint8_t streams;
-        };
-
-        static std::vector<Info> getInfos();
-        static Info const & getInfo(boost::uint8_t index);
-        static unsigned getRate(boost::uint8_t mcsIndex, unsigned bandwidth, bool shortGI);
-    };
-}
+#ifdef __clang__
+#  if __has_feature(cxx_decltype)
+#    define SENF_DECLTYPE decltype
+#  else
+#    define SENF_DECLTYPE typeof
+#  endif
+#else
+#  ifdef BOOST_HAS_DECLTYPE
+#    define SENF_DECLTYPE decltype
+#  else
+#    define SENF_DECLTYPE typeof
+#  endif
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "MCSInfo.cci"
-//#include "MCSInfo.ct"
-//#include "MCSInfo.cti"
+//#include "Cpp11Support.cci"
+//#include "Cpp11Support.ct"
+//#include "Cpp11Support.cti"
 #endif

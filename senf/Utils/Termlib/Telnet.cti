@@ -39,12 +39,11 @@
 // senf::term::BaseTelnetProtocol
 
 template <class Handler>
-prefix_ void senf::term::BaseTelnetProtocol::registerHandler(Handler * h,
-                                                                        bool request)
+prefix_ void senf::term::BaseTelnetProtocol::registerHandler(Handler * h, bool request)
 {
-    handlers_.insert(std::make_pair(Handler::OPTION_CODE, h));
+    handlers_.insert(std::make_pair(Handler::OPTION_CODE+0, h));
     if (request)
-        requestPeerOption(Handler::OPTION_CODE);
+        requestPeerOption(Handler::OPTION_CODE+0);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
