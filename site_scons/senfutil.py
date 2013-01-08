@@ -258,7 +258,7 @@ def DefaultOptions(env):
 
     # Set nice default options
     env.Append(
-        CXXFLAGS_CLANG   = [ '-Wno-unneeded-internal-declaration' ], # needed for BOOST_PARAMETER_KEYWORD
+        CXXFLAGS_CLANG   = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene' ], 
         CXXFLAGS         = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-unused-parameter', 
                              '-Wno-unused-function',
                              "${profile and '-pg' or None}", "${lto and '-flto' or None}", 

@@ -102,11 +102,11 @@ env.Append(
                                '--param','inline-unit-growth=10000' ],
     INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '${str(CXX).split("/")[-1] == "g++" and "$INLINE_OPTS_GCC" or None}' ],
-    CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration', ], 
+    CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene', ], 
     CXXFLAGS               = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-long-long', 
                                '-Wno-unused-parameter', '-Wno-unused-function', '-Wnon-virtual-dtor',
                                '-Wcast-align', '-Winit-self', '-Wdisabled-optimization',
-                               '-Wpointer-arith', '-Werror'
+                               '-Wpointer-arith', '-Werror',
                                '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
                                "${profile and '-pg' or None}", "${lto and '-flto' or None}",
                                '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
