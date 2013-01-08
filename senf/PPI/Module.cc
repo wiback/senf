@@ -115,7 +115,7 @@ prefix_ void senf::ppi::module::Module::unregisterConnector(connector::Connector
 }
 
 prefix_ senf::ppi::RouteBase &
-senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
+senf::ppi::module::Module::addRoute(unique_or_auto_ptr<RouteBase> route)
 {
     routes_.push_back(route.release());
     return routes_.back();

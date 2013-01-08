@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <memory>
+#include <senf/Utils/Cpp11Support.hh>
 #include <senf/config.hh>
 
 //#include "TimeSource.mpp"
@@ -83,7 +84,7 @@ namespace log {
 
         \ingroup config
      */
-    void timeSource(std::auto_ptr<TimeSource> source);
+    void timeSource(unique_or_auto_ptr<TimeSource> source);
 
     /** \brief Change %log message time source
 

@@ -96,6 +96,7 @@ res = conf.CheckSymbolWithExpression(
 res = conf.CheckByteorder()
 res = conf.CheckSTLCopyN(); \
     conf.env.Fail(condition=not res, message="No 'copy_n' implementation found")
+res = conf.CheckType("std::unique_ptr<void>", includes="#include <memory>", language="c++")
 
 # valgrind
 res = conf.CheckValgrind() and conf.CheckValgrindWildcards(); \

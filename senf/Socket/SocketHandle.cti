@@ -64,8 +64,8 @@ senf::SocketHandle<SPolicy>::operator=(SocketHandle<OtherPolicy> other)
 
 template <class SPolicy>
 prefix_
-senf::SocketHandle<SPolicy>::SocketHandle(std::auto_ptr<SocketBody> body)
-    : FileHandle(std::auto_ptr<FileBody>(body.release()))
+senf::SocketHandle<SPolicy>::SocketHandle(unique_or_auto_ptr<SocketBody> body)
+    : FileHandle(unique_or_auto_ptr<FileBody>(body.release()))
 {}
 
 template <class SPolicy>

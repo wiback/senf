@@ -105,7 +105,7 @@ prefix_ std::vector<std::pair<senf::ClockService::clock_type, IdType> > senf::sc
 
     typename EntrySetByTimeout_t::const_iterator it;
     for (it = entrySetByTimeout.begin(); it != entrySetByTimeout.end(); ++it) {
-        tmp.push_back(std::make_pair<ClockService::clock_type, IdType>( it->timeout, it->id));
+        tmp.push_back(std::make_pair( it->timeout, it->id));
     }
     return tmp;
 }

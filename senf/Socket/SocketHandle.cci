@@ -56,13 +56,13 @@ prefix_ bool senf::SocketBody::isServer()
     return isServer_;
 }
 
-prefix_ std::auto_ptr<senf::SocketBody> senf::SocketBody::clone(bool isServer)
+prefix_ unique_or_auto_ptr<senf::SocketBody> senf::SocketBody::clone(bool isServer)
     const
 {
     return protocol().clone(isServer);
 }
 
-prefix_ std::auto_ptr<senf::SocketBody> senf::SocketBody::clone(int fd, bool isServer)
+prefix_ unique_or_auto_ptr<senf::SocketBody> senf::SocketBody::clone(int fd, bool isServer)
     const
 {
     return protocol().clone(fd, isServer);

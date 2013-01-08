@@ -438,7 +438,7 @@ namespace senf {
 
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);
-        explicit ClientSocketHandle(std::auto_ptr<SocketBody> body);
+        explicit ClientSocketHandle(unique_or_auto_ptr<SocketBody> body);
 
     private:
         friend class senf::ServerSocketHandle<SPolicy>;

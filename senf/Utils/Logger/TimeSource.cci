@@ -47,7 +47,7 @@ prefix_ senf::log::time_type senf::log::detail::TimeSourceManager::now()
     return (*timeSource_)();
 }
 
-prefix_ void senf::log::detail::TimeSourceManager::timeSource(std::auto_ptr<TimeSource> source)
+prefix_ void senf::log::detail::TimeSourceManager::timeSource(unique_or_auto_ptr<TimeSource> source)
 {
     timeSource_.reset(source.release());
 }
@@ -63,9 +63,9 @@ prefix_ senf::log::time_type senf::log::TimeSource::now()
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // namespace senf::log members
 
-prefix_ void senf::log::timeSource(std::auto_ptr<TimeSource> source)
+prefix_ void senf::log::timeSource(unique_or_auto_ptr<TimeSource> source)
 {
-    detail::TimeSourceManager::instance().timeSource(source);
+    detail::TimeSourceManager::instance().timeSource(move_or_noop(source));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

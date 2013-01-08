@@ -71,11 +71,9 @@ senf::RadiotapPacketParser::offsetTable(boost::uint32_t presentFlags)
 prefix_ void senf::RadiotapPacketParser::parseOffsetTable(boost::uint8_t * data, int maxLength,
                                                           OffsetTable & table)
 {
-    struct ieee80211_radiotap_iterator iter;
-    ieee80211_radiotap_iterator_init(&iter,
-                                     (struct ieee80211_radiotap_header *)data,
-                                     maxLength,
-                                     0);
+    ieee80211_radiotap_iterator iter;
+    ieee80211_radiotap_iterator_init(
+            &iter, reinterpret_cast<ieee80211_radiotap_header *>(data), maxLength, 0);
     unsigned size (8u);
     while (ieee80211_radiotap_iterator_next(&iter) == 0) {
         if (iter.is_radiotap_ns &&
@@ -96,7 +94,7 @@ prefix_ void senf::RadiotapPacketParser::buildOffsetTable(boost::uint32_t presen
                                    (1<<IEEE80211_RADIOTAP_EXT) )),
                 "Extended or vendor fields not supported");
 
-    struct ieee80211_radiotap_header header;
+    ieee80211_radiotap_header header;
     memset(&header, 0, sizeof(header));
     // header.it_version = 0;
 

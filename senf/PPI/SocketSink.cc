@@ -80,7 +80,7 @@ prefix_ int senf::ppi::IPv4SourceForcingDgramWriter::sendtoandfrom(
         const in_addr *src)
 {
     uint8_t cbuf[CMSG_SPACE(sizeof(struct in_pktinfo))];
-    struct cmsghdr *c = (struct cmsghdr *)cbuf;
+    struct cmsghdr *c = reinterpret_cast<cmsghdr *>(cbuf);
     struct in_pktinfo *pi;
     struct iovec iov;
     struct msghdr h;
@@ -89,7 +89,7 @@ prefix_ int senf::ppi::IPv4SourceForcingDgramWriter::sendtoandfrom(
     c->cmsg_level = IPPROTO_IP;
     c->cmsg_type = IP_PKTINFO;
 
-    pi = (struct in_pktinfo *)CMSG_DATA(c);
+    pi = reinterpret_cast<in_pktinfo *>(CMSG_DATA(c));
     pi->ipi_ifindex = 0;
     memcpy(&pi->ipi_addr, &src->s_addr, sizeof(src->s_addr));
 
@@ -159,7 +159,7 @@ prefix_ int senf::ppi::IPv6SourceForcingDgramWriter::sendtoandfrom(
         const in6_addr *src)
 {
     uint8_t cbuf[CMSG_SPACE(sizeof(struct in6_pktinfo))];
-    struct cmsghdr *c = (struct cmsghdr *)cbuf;
+    struct cmsghdr *c = reinterpret_cast<cmsghdr *>(cbuf);
     struct in6_pktinfo *pi;
     struct iovec iov;
     struct msghdr h;
@@ -168,7 +168,7 @@ prefix_ int senf::ppi::IPv6SourceForcingDgramWriter::sendtoandfrom(
     c->cmsg_level = IPPROTO_IPV6;
     c->cmsg_type = IPV6_PKTINFO;
 
-    pi = (struct in6_pktinfo *)CMSG_DATA(c);
+    pi = reinterpret_cast<in6_pktinfo *>(CMSG_DATA(c));
     pi->ipi6_ifindex = 0;
     memcpy(&pi->ipi6_addr, src, 16);
 

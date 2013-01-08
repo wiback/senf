@@ -334,7 +334,7 @@ namespace module {
         void unregisterConnector(connector::Connector & connector);
         void unregisterEvent(EventDescriptor & event);
 
-        RouteBase & addRoute(std::auto_ptr<RouteBase> route);
+        RouteBase & addRoute(unique_or_auto_ptr<RouteBase> route);
 
         typedef std::vector<connector::Connector *> ConnectorRegistry;
         ConnectorRegistry connectorRegistry_;

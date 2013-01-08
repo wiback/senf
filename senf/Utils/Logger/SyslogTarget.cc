@@ -94,7 +94,7 @@ senf::log::SyslogTarget::RegisterConsole::create(LogFacility facility)
 {
     std::auto_ptr<Target> tp (new SyslogTarget(facility));
     Target & target (*tp.get());
-    detail::TargetRegistry::instance().dynamicTarget(tp);
+    detail::TargetRegistry::instance().dynamicTarget(move_or_noop(tp));
     return target.consoleDir().node().thisptr();
 }
 

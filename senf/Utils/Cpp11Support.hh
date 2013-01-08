@@ -30,6 +30,7 @@
 
 // Custom includes
 #include <boost/config.hpp>
+#include <senf/autoconf.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +46,14 @@
 #  else
 #    define SENF_DECLTYPE typeof
 #  endif
+#endif
+
+#ifdef HAVE_STD__UNIQUE_PTR_VOID_
+#  define unique_or_auto_ptr std::unique_ptr
+#  define move_or_noop(t)    std::move(t)
+#else
+#  define unique_or_auto_ptr std::auto_ptr
+#  define move_or_noop(t)    t
 #endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

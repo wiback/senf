@@ -33,7 +33,6 @@
 
 // Custom includes
 #include <set>
-#include <memory>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/shared_ptr.hpp>
@@ -89,7 +88,7 @@ namespace detail {
 
         senf::console::ScopedDirectory<> & consoleDir();
 
-        void dynamicTarget(std::auto_ptr<Target> target);
+        void dynamicTarget(unique_or_auto_ptr<Target> target);
 
     private:
         TargetRegistry();
