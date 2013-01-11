@@ -35,12 +35,13 @@
 
 std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & _data)
 {
-    os << "StatisticData: " 
-       << "min "    << _data.min << ", "
-       << "avg "    << _data.avg << ", " 
-       << "max "    << _data.max <<  ", "
-       << "stddev " << _data.stddev <<  ", "
-       << "count "  << _data.count;
+    os << "(" 
+       << "min "    << _data.min    << ", "
+       << "avg "    << _data.avg    << ", " 
+       << "max "    << _data.max    << ", "
+       << "stddev " << _data.stddev << ", "
+       << "count "  << _data.count
+       << ")";
     return os;
 };
 
