@@ -105,8 +105,11 @@ namespace senf {
         T     max() const;              ///< Returns current maximal value.
                                         /**< This method returns the maximal value of the
                                              current accumulation.*/
-        float avg() const;              ///< Returns average value.
-                                        /**< This method returns the average value of the
+        float avg() const;              ///< Returns arithmetic average value.
+                                        /**< This method returns the arithmetic average value of the
+                                             current accumulation.*/
+        float rms() const;              ///< Returns root mean square value.
+                                        /**< This method returns the oot mean square value of the
                                              current accumulation.*/
         float last_avg() const;         ///< Returns former average value.
                                         /**< This method returns the average value of the

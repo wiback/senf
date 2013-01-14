@@ -59,6 +59,14 @@ prefix_ float senf::StatisticAccumulator<T>::avg()
 }
 
 template <class T>
+prefix_ float senf::StatisticAccumulator<T>::rms()
+    const
+{
+    return count_ == 0 ? NAN : sqrt(sum_squared_ / float(count_));
+}
+
+
+template <class T>
 prefix_ float senf::StatisticAccumulator<T>::last_avg()
     const
 {
