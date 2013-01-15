@@ -34,6 +34,7 @@
 // Custom includes
 #include "Connectors.hh"
 #include "DebugModules.hh"
+#include "Joins.hh"
 #include "Setup.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
@@ -305,9 +306,10 @@ namespace {
         }
 
         void request() {
-            senf::IGNORE( input() );
-            senf::IGNORE( input.read() );
+            readPacketsPtr.push_back(&input());
         }
+
+        std::vector<PacketType const *> readPacketsPtr;
     };
 
     template <class PacketType = senf::DataPacket>
@@ -391,6 +393,35 @@ SENF_AUTO_UNIT_TEST(tyepdOutput)
     senf::IGNORE( target.request() );
 
     BOOST_CHECK( true );
+}
+
+SENF_AUTO_UNIT_TEST(typedConnection)
+{
+    {
+        TypedActiveOutput<MyPacket> source;
+        ppi::module::PassiveJoin<MyPacket> join;
+        TypedPassiveInput<MyPacket> sink;
+
+        ppi::connect(source, join);
+        ppi::connect(join, sink);
+        ppi::init();
+
+        MyPacket p (MyPacket::create());
+        source.output.write(p);
+        BOOST_CHECK_EQUAL( &p, sink.readPacketsPtr.back() );
+    }{
+        TypedActiveOutput<MyPacket> source;
+        ppi::module::PassiveJoin<senf::Packet> join;
+        TypedPassiveInput<MyPacket> sink;
+
+        ppi::connect(source, join);
+        ppi::connect(join, sink);
+        ppi::init();
+
+        MyPacket p (MyPacket::create());
+        source.output.write(p);
+        SENF_CHECK_NOT_EQUAL( &p, sink.readPacketsPtr.back() );
+    }
 }
 
 SENF_AUTO_UNIT_TEST(connectorTest)

@@ -26,19 +26,57 @@
 //   Stefan Bund <g0dil@berlios.de>
 
 /** \file
-    \brief Joins inline non-template implementation */
+    \brief Joins non-inline template implementation */
+
+#include "Joins.hh"
 
 // Custom includes
+#include <algorithm>
+#include <boost/bind.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
 
-#define prefix_ inline
+#define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveJoin
 
-prefix_ void senf::ppi::module::PassiveJoin::request(connector::GenericPassiveInput & input)
+template <class PacketType>
+prefix_ senf::ppi::module::PassiveJoin<PacketType>::PassiveJoin()
 {
-    output(input());
+    noroute(output);
+    output.onThrottle(&PassiveJoin::onThrottle);
+    output.onUnthrottle(&PassiveJoin::onUnthrottle);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// private members
+
+template <class PacketType>
+prefix_ void senf::ppi::module::PassiveJoin<PacketType>::connectorSetup(connector::PassiveInput<PacketType> & conn)
+{
+    noroute(conn);
+    conn.onRequest(boost::bind(&PassiveJoin::request,this,boost::ref(conn)));
+    conn.qdisc( QueueingDiscipline::NONE);
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::module::PassiveJoin<PacketType>::onThrottle()
+{
+    using boost::lambda::_1;
+    using boost::lambda::bind;
+    std::for_each(this->connectors().begin(), this->connectors().end(),
+                  bind(&connector::GenericPassiveInput::throttle, _1));
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::module::PassiveJoin<PacketType>::onUnthrottle()
+{
+    using boost::lambda::_1;
+    using boost::lambda::bind;
+    std::for_each(this->connectors().begin(), this->connectors().end(),
+                  bind(&connector::GenericPassiveInput::unthrottle, _1));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

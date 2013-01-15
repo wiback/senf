@@ -95,6 +95,9 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
             << ", " << prettyName(target.v_packetTypeId())
             << " [in module " << prettyName(typeid(*target.module_)) << "]";
 
+    dynamic_cast<InputConnector &>(target).v_checkedPacketCast(
+            v_packetTypeId() != target.v_packetTypeId());
+
     peer_ = &target;
     target.peer_ = this;
 

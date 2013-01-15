@@ -29,11 +29,9 @@
     \brief CloneSource non-inline non-template implementation */
 
 #include "CloneSource.hh"
-//#include "CloneSource.ih"
 
 // Custom includes
 
-//#include "CloneSource.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,7 +55,6 @@ prefix_ void senf::ppi::module::CloneSource::replacePacket(senf::Packet const & 
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "CloneSource.mpp"
 
 
 // Local Variables:

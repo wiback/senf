@@ -88,7 +88,7 @@ namespace ppi {
 
         bool running() const;           ///< \c true, if the network is running
 
-        senf::console::DirectoryNode & consoleDir() const;
+        console::DirectoryNode & consoleDir() const;
 
     private:
         ModuleManager();
@@ -112,13 +112,12 @@ namespace ppi {
 
         ModuleRegistry moduleRegistry_;
         bool running_;
-        bool terminate_;
 
         InitQueue initQueue_;
 
         scheduler::EventHook initRunner_;
 
-        senf::console::ScopedDirectory<> consoleDir_;
+        console::ScopedDirectory<> consoleDir_;
 
         friend class module::Module;
         friend struct Initializable;

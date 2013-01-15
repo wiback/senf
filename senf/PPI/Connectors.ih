@@ -40,14 +40,46 @@ namespace ppi {
 namespace connector {
 namespace detail {
 
+    template <class PacketType>
+    struct PacketCasterBase
+    {
+        virtual ~PacketCasterBase() {}
+        virtual PacketType const & cast(senf::Packet const & packet) = 0;
+        static PacketType nullPacket_;
+    };
+
+    template <class PacketType>
+    struct CheckedPacketCaster : public PacketCasterBase<PacketType>
+    {
+        virtual PacketType const & cast(senf::Packet const & packet);
+        PacketType packet_;
+    };
+
+    template <class PacketType>
+    class NonCheckedPacketCaster : public PacketCasterBase<PacketType>
+    {
+        virtual PacketType const & cast(senf::Packet const & packet);
+    };
+
+
     template <class Self, class PacketType>
     class TypedInputMixin
     {
     public:
+        TypedInputMixin();
+
         typedef PacketType Type;
 
-        Type operator()();
-        Type read();
+        PacketType const & operator()();
+        PacketType const & read();
+
+        void checkedPacketCast(bool check);
+
+    private:
+        CheckedPacketCaster<PacketType> checkedPacketCaster_;
+        NonCheckedPacketCaster<PacketType> nonCheckedPacketCaster_;
+        PacketCasterBase<PacketType> * packetCaster_;
+
     };
 
     template <class Self, class PacketType>

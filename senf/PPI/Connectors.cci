@@ -332,7 +332,7 @@ prefix_ bool senf::ppi::connector::GenericPassiveOutput::boolean_test()
 
 prefix_ void senf::ppi::connector::GenericPassiveOutput::connect(GenericActiveInput & target)
 {
-    Connector::connect(target);
+    OutputConnector::connect(target);
 }
 
 prefix_ senf::ppi::connector::GenericPassiveOutput::GenericPassiveOutput()
@@ -383,7 +383,7 @@ prefix_ bool senf::ppi::connector::GenericActiveOutput::boolean_test()
 
 prefix_ void senf::ppi::connector::GenericActiveOutput::connect(GenericPassiveInput & target)
 {
-    Connector::connect(target);
+    OutputConnector::connect(target);
 }
 
 prefix_ senf::ppi::connector::GenericActiveOutput::GenericActiveOutput()

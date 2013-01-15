@@ -36,21 +36,50 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::connectors::detail::PacketCaster<PacketType>
+
+template <class PacketType>
+PacketType senf::ppi::connector::detail::PacketCasterBase<PacketType>::nullPacket_;
+
+template <class PacketType>
+prefix_ PacketType const & senf::ppi::connector::detail::CheckedPacketCaster<PacketType>::cast(senf::Packet const & packet)
+{
+    packet_ = packet ? packet.as<PacketType>() : PacketCasterBase<PacketType>::nullPacket_;
+    return packet_;
+}
+
+template <class PacketType>
+prefix_ PacketType const & senf::ppi::connector::detail::NonCheckedPacketCaster<PacketType>::cast(senf::Packet const & packet)
+{
+    return packet ? static_cast<PacketType const &>(packet) : PacketCasterBase<PacketType>::nullPacket_;
+};
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connectors::detail::TypedInputMixin<Self,PacketType>
 
 template <class Self, class PacketType>
-prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type
-senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::operator()()
+prefix_ senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::TypedInputMixin()
+    : packetCaster_(&checkedPacketCaster_)
+{}
+
+template <class Self, class PacketType>
+prefix_ PacketType const & senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::operator()()
 {
-    Packet const & p (static_cast<Self*>(this)->InputConnector::operator()());
-    return p ? p.as<Type>() : Type();
+    return packetCaster_->cast( static_cast<Self*>(this)->InputConnector::operator()());
 }
 
 template <class Self, class PacketType>
-prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type
-senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::read()
+prefix_ PacketType const & senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::read()
 {
     return operator()();
+}
+
+template <class Self, class PacketType>
+prefix_ void senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::checkedPacketCast(bool check)
+{
+    packetCaster_ = check ?
+            reinterpret_cast<PacketCasterBase<PacketType> *>(&checkedPacketCaster_) :
+            reinterpret_cast<PacketCasterBase<PacketType> *>(&nonCheckedPacketCaster_);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

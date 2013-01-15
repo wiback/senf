@@ -250,9 +250,8 @@ namespace module {
      */
     template <class Self_,
               class ConnectorType_,
-              class KeyType_=void,
-              class ContainerType_=typename detail::MultiConnectorDefaultContainer<
-                                               KeyType_,ConnectorType_>::type>
+              class KeyType_ = void,
+              class ContainerType_ = typename detail::MultiConnectorDefaultContainer<KeyType_, ConnectorType_>::type>
     class MultiConnectorMixin
         : private detail::MultiConnectorSelectBase<ConnectorType_>::type
     {

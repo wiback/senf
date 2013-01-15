@@ -26,52 +26,24 @@
 //   Stefan Bund <g0dil@berlios.de>
 
 /** \file
-    \brief CloneSource public header */
-
-#ifndef HH_SENF_PPI_CloneSource_
-#define HH_SENF_PPI_CloneSource_ 1
+    \brief Joins inline non-template implementation */
 
 // Custom includes
-#include "Module.hh"
-#include "Connectors.hh"
 
-//#include "CloneSource.mpp"
+#define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace senf {
-namespace ppi {
-namespace module {
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::PassiveJoin
 
-    /** \brief Generate clone's of a template packet
-
-        CloneSource will provide clone's of a template \a packet on it's \a output.
-
-        \ingroup io_modules
-     */
-    class CloneSource
-        : public Module
-    {
-        SENF_PPI_MODULE(CloneSource);
-
-    public:
-        connector::PassiveOutput<> output;
-
-        CloneSource(senf::Packet const & packet);
-        void replacePacket(senf::Packet const & packet);
-
-    private:
-        void request();
-
-        senf::Packet packet_;
-    };
-
-}}}
+template <class PacketType>
+prefix_ void senf::ppi::module::PassiveJoin<PacketType>::request(connector::PassiveInput<PacketType> & input)
+{
+    output(input());
+}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "CloneSource.cci"
-//#include "CloneSource.ct"
-//#include "CloneSource.cti"
-#endif
+#undef prefix_
 
 
 // Local Variables:

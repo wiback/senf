@@ -206,8 +206,8 @@ SENF_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
 {
     debug::ActiveSource source;
     debug::PassiveSink sink;
-    module::PassiveJoin join1;
-    module::PassiveJoin join2;
+    module::PassiveJoin<> join1;
+    module::PassiveJoin<> join2;
     module::AnnotationRouter<IntAnnotation> router;
     UserContainerModule module;
 

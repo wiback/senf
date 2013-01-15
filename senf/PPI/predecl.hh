@@ -76,7 +76,7 @@ namespace ppi {
         namespace detail {
             template <class Source, class Target> struct RouteHelper;
         }
-        class PassiveJoin;
+        template <class PacketType> class PassiveJoin;
         class PriorityJoin;
         class ActiveDuplicator;
     }

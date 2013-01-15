@@ -55,13 +55,13 @@ prefix_ senf::scheduler::EventHook::~EventHook()
 
 prefix_ void senf::scheduler::EventHook::disable()
 {
-    if (enabled())
+    if (detail::EventHookDispatcher::alive() && enabled())
         detail::EventHookDispatcher::instance().remove(*this);
 }
 
 prefix_ void senf::scheduler::EventHook::enable()
 {
-    if (! enabled()) {
+    if (detail::EventHookDispatcher::alive() && !enabled()) {
         detail::EventHookDispatcher::instance().add(*this);
         setRunnable();
     }

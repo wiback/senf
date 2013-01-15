@@ -50,9 +50,9 @@ namespace debug = module::debug;
 
 namespace {
 
-    struct PassiveJoin : public module::PassiveJoin
+    struct PassiveJoin : public module::PassiveJoin<>
     {
-        using module::PassiveJoin::connectors;
+        using module::PassiveJoin<>::connectors;
     };
 
 }

@@ -63,23 +63,24 @@ namespace module {
 
         \ingroup routing_modules
      */
+    template <class PacketType = Packet>
     class PassiveJoin
         : public Module,
-          public MultiConnectorMixin<PassiveJoin, connector::PassiveInput<> >
+          public MultiConnectorMixin<PassiveJoin<PacketType>, connector::PassiveInput<PacketType> >
     {
         SENF_PPI_MODULE(PassiveJoin);
     public:
-        connector::ActiveOutput<> output;
+        connector::ActiveOutput<PacketType> output;
 
         PassiveJoin();
 
     private:
-        void connectorSetup(connector::PassiveInput<> & conn);
-        void request(connector::GenericPassiveInput & input);
+        void connectorSetup(connector::PassiveInput<PacketType> & conn);
+        void request(connector::PassiveInput<PacketType>  & input);
         void onThrottle();
         void onUnthrottle();
 
-        friend class MultiConnectorMixin<PassiveJoin, connector::PassiveInput<> >;
+        friend class MultiConnectorMixin<PassiveJoin<PacketType>, connector::PassiveInput<PacketType> >;
     };
 
     /** \brief Join multiple packet streams with active inputs
@@ -130,9 +131,9 @@ namespace module {
 }}}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#include "Joins.cci"
-//#include "Joins.ct"
-//#include "Joins.cti"
+//#include "Joins.cci"
+#include "Joins.ct"
+#include "Joins.cti"
 #endif
 
 

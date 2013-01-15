@@ -43,7 +43,7 @@
 prefix_ senf::scheduler::detail::SignalDispatcher::SignalDispatcher()
     : blocked_ (true)
 {
-    if (pipe(sigPipe_) <0)
+    if (pipe(sigPipe_) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("pipe()");
     sigemptyset(&sigSet_);
     detail::FdManager::instance().set(sigPipe_[0], detail::FdManager::EV_READ, this);

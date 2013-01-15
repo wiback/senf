@@ -42,42 +42,6 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::PassiveJoin
-
-prefix_ senf::ppi::module::PassiveJoin::PassiveJoin()
-{
-    noroute(output);
-    output.onThrottle(&PassiveJoin::onThrottle);
-    output.onUnthrottle(&PassiveJoin::onUnthrottle);
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// private members
-
-prefix_ void senf::ppi::module::PassiveJoin::connectorSetup(connector::PassiveInput<> & conn)
-{
-    noroute(conn);
-    conn.onRequest(boost::bind(&PassiveJoin::request,this,boost::ref(conn)));
-    conn.qdisc( QueueingDiscipline::NONE);
-}
-
-prefix_ void senf::ppi::module::PassiveJoin::onThrottle()
-{
-    using boost::lambda::_1;
-    using boost::lambda::bind;
-    std::for_each(connectors().begin(), connectors().end(),
-                  bind(&connector::GenericPassiveInput::throttle, _1));
-}
-
-prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
-{
-    using boost::lambda::_1;
-    using boost::lambda::bind;
-    std::for_each(connectors().begin(), connectors().end(),
-                  bind(&connector::GenericPassiveInput::unthrottle, _1));
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PriorityJoin
 
 prefix_ senf::ppi::module::PriorityJoin::PriorityJoin()

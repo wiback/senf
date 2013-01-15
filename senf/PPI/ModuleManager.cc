@@ -94,22 +94,21 @@ prefix_ void senf::ppi::ModuleManager::registerInitializable(Initializable & i)
     // This call ensures, that the senf::ppi::init() handler is called as next handler
     // after this handler returns (this works since the senf::ppi::init() handler is registered as
     // PRE hook and thus has very high priority)
-    senf::scheduler::yield();
+    scheduler::yield();
 }
 
 prefix_ void senf::ppi::ModuleManager::unregisterInitializable(Initializable & i)
 {
     initQueue_.erase(
-        std::remove(initQueue_.begin(), initQueue_.end(), & i),
+        std::remove(initQueue_.begin(), initQueue_.end(), &i),
         initQueue_.end());
     if (initQueue_.empty())
         initRunner_.disable();
 }
 
 prefix_ senf::ppi::ModuleManager::ModuleManager()
-    : running_(false), terminate_(false),
-      initRunner_ ("senf::ppi::init", membind(&ModuleManager::init, this),
-                   scheduler::EventHook::PRE, false)
+    : running_(false),
+      initRunner_("senf::ppi::init", membind(&ModuleManager::init, this), scheduler::EventHook::PRE, false)
 {
     console::sysdir().add("ppi", consoleDir_);
 
