@@ -46,6 +46,13 @@ namespace senf {
     public:
         typedef boost::uint16_t key_t;
 
+    private:
+        MIHMessageRegistry() {};
+
+        typedef boost::ptr_map<key_t, detail::MIHMessageRegistry_EntryBase > Map;
+        Map map_;
+
+    public:
         using senf::singleton<MIHMessageRegistry>::instance;
         friend class senf::singleton<MIHMessageRegistry>;
 
@@ -59,11 +66,9 @@ namespace senf {
 
         void validate(key_t messageId, senf::Packet message);
 
-    private:
-        typedef boost::ptr_map<key_t, detail::MIHMessageRegistry_EntryBase > Map;
-        Map map_;
-
-        MIHMessageRegistry() {};
+        typedef Map::const_iterator const_iterator;
+        const_iterator begin() const;
+        const_iterator end() const;
     };
 
 

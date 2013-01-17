@@ -192,6 +192,7 @@ namespace senf {
             virtual ~GenericTLVParserRegistry_EntryBase() {}
             virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const = 0;
             virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const = 0;
+            virtual std::string name() const = 0;
         };
 
         template <class BaseParser, class Parser>
@@ -200,6 +201,7 @@ namespace senf {
         {
             virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
             virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const;
+            virtual std::string name() const;
         };
 
         //Helper Functor for STL-compatible predicate (E.g. find_if, for_each ...)
@@ -264,11 +266,12 @@ namespace senf {
     class GenericTLVParserRegistry
         : public senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >
     {
+        GenericTLVParserRegistry() {};
+
         typedef boost::ptr_map<Keytype,
             detail::GenericTLVParserRegistry_EntryBase<BaseParser> > Map;
         Map map_;
 
-        GenericTLVParserRegistry() {};
     public:
         using senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >::instance;
         friend class senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >;
@@ -291,6 +294,10 @@ namespace senf {
 
         PacketParserBase::size_type bytes(GenericTLVParser const & parser) const;
         PacketParserBase::size_type bytes(GenericTLVParser const & parser, Keytype const & key) const;
+
+        typedef typename Map::const_iterator const_iterator;
+        const_iterator begin() const;
+        const_iterator end() const;
     };
 
     struct TLVParserNotRegisteredException : public senf::Exception

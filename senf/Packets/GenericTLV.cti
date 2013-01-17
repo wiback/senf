@@ -137,6 +137,14 @@ senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::bytes(
     return senf::bytes( parser.template as<Parser>());
 }
 
+template <class BaseParser, class Parser>
+prefix_ std::string senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::name()
+    const
+{
+    return senf::prettyName(typeid(Parser));
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::GenericTLVParserRegistry<BaseParser,Keytype>
 

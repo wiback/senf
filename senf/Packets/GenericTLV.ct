@@ -151,6 +151,22 @@ prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserRegistry<BasePar
         throw TLVParserNotRegisteredException();
 }
 
+template <class BaseParser, class Keytype>
+prefix_ typename senf::GenericTLVParserRegistry<BaseParser,Keytype>::const_iterator
+senf::GenericTLVParserRegistry<BaseParser,Keytype>::begin()
+    const
+{
+    return map_.begin();
+}
+
+template <class BaseParser, class Keytype>
+prefix_ typename senf::GenericTLVParserRegistry<BaseParser,Keytype>::const_iterator
+senf::GenericTLVParserRegistry<BaseParser,Keytype>::end()
+    const
+{
+    return map_.end();
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

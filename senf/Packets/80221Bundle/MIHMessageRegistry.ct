@@ -59,7 +59,6 @@ prefix_ void senf::detail::MIHMessageRegistryEntry<MIHPacket, true>::validate(se
     MIHPacket::type::validate(message.as<MIHPacket>());
 }
 
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

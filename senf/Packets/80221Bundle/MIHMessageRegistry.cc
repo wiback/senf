@@ -45,6 +45,18 @@ prefix_ void senf::MIHMessageRegistry::validate(key_t messageId, senf::Packet me
         throw InvalidMIHPacketException("unknown message id: ") << messageId;
 }
 
+prefix_ senf::MIHMessageRegistry::const_iterator senf::MIHMessageRegistry::begin()
+    const
+{
+    return map_.begin();
+}
+
+prefix_ senf::MIHMessageRegistry::const_iterator senf::MIHMessageRegistry::end()
+    const
+{
+    return map_.end();
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
