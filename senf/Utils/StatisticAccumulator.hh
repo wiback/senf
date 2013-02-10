@@ -109,7 +109,7 @@ namespace senf {
                                         /**< This method returns the arithmetic average value of the
                                              current accumulation.*/
         float rms() const;              ///< Returns root mean square value.
-                                        /**< This method returns the oot mean square value of the
+                                        /**< This method returns the root mean square value of the
                                              current accumulation.*/
         float last_avg() const;         ///< Returns former average value.
                                         /**< This method returns the average value of the
