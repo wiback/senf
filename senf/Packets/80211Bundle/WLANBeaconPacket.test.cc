@@ -69,7 +69,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     ieListContainer_t ieListContainer (p->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 5);
 
-    ieListContainer_t::iterator i ( ieListContainer.begin());
+    ieListContainer_t::iterator i (ieListContainer.begin());
     BOOST_CHECK_EQUAL( i->type(), 0x03); //DS parameter set
     ++i;
     BOOST_CHECK_EQUAL( i->type(), 0x05); //TIM
@@ -129,6 +129,74 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
 
     BOOST_CHECK_EQUAL( mgt->type(),    0u);
     BOOST_CHECK_EQUAL( mgt->subtype(), 8u);
+}
+
+SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
+{
+    unsigned char data[] = {
+            0x62, 0xb0, 0x82, 0x04, 0x00, 0x00, 0x00, 0x00,
+            0x64, 0x00, 0x02, 0x00, 0x00, 0x04, 0x74, 0x65,
+            0x73, 0x74, 0x01, 0x08, 0x8c, 0x12, 0x98, 0x24,
+            0xb0, 0x48, 0x60, 0x6c, 0x06, 0x02, 0x00, 0x00,
+            0x2d, 0x1a, 0xce, 0x11, 0x1b, 0xff, 0xff, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x3d, 0x16, 0x24, 0x05,
+            0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0xdd, 0x07, 0x00, 0x50,
+            0xf2, 0x02, 0x00, 0x01, 0x00
+    };
+
+    senf::WLANBeaconPacket p (senf::WLANBeaconPacket::create(data));
+
+    BOOST_CHECK_EQUAL( p->timestamp(), 0x000000000482b062uLL);
+    BOOST_CHECK_EQUAL( p->ssid().value(), "test");
+
+    typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
+    ieListContainer_t ieListContainer (p->ieList());
+    BOOST_CHECK_EQUAL( ieListContainer.size(), 4);
+
+    ieListContainer_t::iterator i (boost::next(ieListContainer.begin(), 1));
+    BOOST_CHECK_EQUAL( i->type(), senf::WLANHTCapabilitiesInfoElementParser::typeId+0);
+    BOOST_CHECK_EQUAL( i->length(), 26u);
+    BOOST_CHECK( i->is<senf::WLANHTCapabilitiesInfoElementParser>());
+    senf::WLANHTCapabilitiesInfoElementParser htCapaIE (i->as<senf::WLANHTCapabilitiesInfoElementParser>());
+    // HT Capabilities Info Field
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().ldpcCodingCapability(),      false);
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().supportedChannelWidth(),     true );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().smPowerSave(),               3u   );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().htGreenfield(),              false);
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().shortGIfor20MHz(),           false);
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().shortGIfor40MHz(),           true );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().txSTBC(),                    true );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().rxSTBC(),                    1u   );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().delayedBlockAck(),           false);
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().maxAMSDULength(),            false);
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().dsss_cckModeIn40MHz(),       true );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().fortyMHzIntolerant(),        false);
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().lSIGTXOPProtectionSupport(), false);
+    // A-MPDU Parameters
+    BOOST_CHECK_EQUAL( htCapaIE.aMPDUParameters().maxAMPDULength(),      3u);
+    BOOST_CHECK_EQUAL( htCapaIE.aMPDUParameters().minMPDUStartSpacing(), 6u);
+    // Supported MCS Set
+    BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().rxMCSBitmask()[0],            true  );
+    BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().rxMCSBitmask()[15],           true  );
+    BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().rxMCSBitmask()[16],           false );
+    BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().rxMCSBitmask()[76],           false );
+    BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().rxHighestSupoortedDataRate(), 0x0u  );
+    BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().txMCSSetDefined(),            true  );
+    BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().txRxMCSSetNotEqual(),         false );
+    // HT Extended Capabilities
+    // Transmit Beamforming Capabilities
+    // Antenna Selection Capability
+    // ...
+    ++i;
+    BOOST_CHECK_EQUAL( i->type(), senf::WLANHTOperationInfoElementParser::typeId+0);
+    BOOST_CHECK_EQUAL( i->length(), 22u);
+    senf::WLANHTOperationInfoElementParser htOpIE (i->as<senf::WLANHTOperationInfoElementParser>());
+    BOOST_CHECK_EQUAL( htOpIE.primaryChannel(),               36u );
+    BOOST_CHECK_EQUAL( htOpIE.operatinInfo().channelWidth(), true );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

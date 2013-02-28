@@ -38,9 +38,7 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::WLANManagementSubtypes, 8u, senf::WLANBeaconPacket );
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::WLANManagementSubtypes, 8u, senf::WLANBeaconPacket );
 
 prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream & os)
 {

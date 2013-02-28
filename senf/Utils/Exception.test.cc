@@ -82,7 +82,7 @@ SENF_AUTO_UNIT_TEST(errnoException)
         try {
             throw senf::SystemException("::open()", ENOENT) << "\nmore";
         }
-        catch(senf::Exception & e) {
+        catch (senf::Exception & e) {
             e << "\nx=" << 1 << boost::format("\ny=%d") % 2;
             throw;
         }

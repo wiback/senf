@@ -42,23 +42,12 @@ namespace senf {
 
      struct StatisticsData
      {
-         StatisticsData(float min_, float avg_, float max_, float stddev_, boost::uint32_t count_)
-             : min(min_), avg(avg_), max(max_), stddev(stddev_), count(count_) {};
-         StatisticsData(StatisticsData const & other)
-             : min(other.min), avg(other.avg), max(other.max), stddev(other.stddev), count(other.count) {};
-         StatisticsData()
-             : min(0.0), avg(0.0), max(0.0), stddev(0.0), count(0) {};
-         StatisticsData(float singleValue)
-             : min(singleValue), avg(singleValue), max(singleValue), stddev(0.0), count(1) {};
+         StatisticsData();
+         StatisticsData(float min_, float avg_, float max_, float stddev_, boost::uint32_t count_);
+         StatisticsData(float singleValue);
 
-         void clear(){
-             min = avg = max = stddev = 0.0;
-             count = 0;
-         }
-
-         bool valid(){
-             return count > 0;
-         }
+         void clear();
+         bool valid() const;
 
          float min;
          float avg;
@@ -68,6 +57,7 @@ namespace senf {
      };
 
      std::ostream & operator<<(std::ostream & os, StatisticsData const & _data);
+
 
      /** \brief Accumulate measurement values
 
@@ -138,7 +128,7 @@ namespace senf {
 
 }
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "StatisticAccumulator.cci"
+#include "StatisticAccumulator.cci"
 #include "StatisticAccumulator.ct"
 #include "StatisticAccumulator.cti"
 #endif

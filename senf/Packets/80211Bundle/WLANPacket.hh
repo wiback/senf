@@ -249,9 +249,9 @@ namespace senf
                 //we cannot parse qos Null (data) frames at the moment
                 ( ids( na,       na,           set_qosNullData, key(12, UInt16LSBParser)) ) );
 
-        SENF_PARSER_INIT() { type_() = 2; }
-
         SENF_PARSER_FINALIZE(WLANPacket_DataFrameParser);
+
+        SENF_PARSER_INIT() { type_() = 2; }
 
         MACAddressParser receiverAddress() const    { return addr1(); }; //ra is always addr1
         MACAddressParser transmitterAddress() const { return addr2(); }; //ta is always addr2

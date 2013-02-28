@@ -34,12 +34,12 @@
 // Custom includes
 #include <senf/Packets/Packets.hh>
 
-//#include "InformationElements.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 
-    class WLANInfoElementParser : public PacketParserBase
+    class WLANInfoElementParser
+        : public PacketParserBase
     {
     public:
 #       include SENF_PARSER()
@@ -51,6 +51,7 @@ namespace senf {
     };
 
     typedef GenericTLVParserBase<WLANInfoElementParser> WLANGenericInfoElementParser;
+
 
     struct WLANSSIDInfoElementParser
         : public WLANInfoElementParser
@@ -64,11 +65,13 @@ namespace senf {
 
         SENF_PARSER_INIT() {
             type() = typeId;
+            length() = 0u;
         }
         static const type_t::value_type typeId = 0x00u;
 
         void dump(std::ostream & os) const;
     };
+
 
     struct WLANSupportedRatesInfoElementParser
         : public WLANInfoElementParser
@@ -88,19 +91,199 @@ namespace senf {
         void dump(std::ostream & os) const;
     };
 
+
     struct WLANPowerConstraintInfoElementParser
         : public WLANInfoElementParser
     {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( WLANInfoElementParser                );
-        SENF_PARSER_FIELD    ( value,   UInt8Parser                 );
+        SENF_PARSER_FIELD    ( value, UInt8Parser                   );
         SENF_PARSER_FINALIZE ( WLANPowerConstraintInfoElementParser );
 
         SENF_PARSER_INIT() {
             type() = typeId;
-            length() = 1;
+            length() = 1u;
         }
         static const type_t::value_type typeId = 0x20u;
+
+        void dump(std::ostream & os) const;
+    };
+
+
+    struct WLANVendorSpecificInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( WLANInfoElementParser               );
+        SENF_PARSER_FIELD    ( oui, UInt24Parser                   );
+        SENF_PARSER_SKIP     ( length()-3, 0                       );
+        SENF_PARSER_FINALIZE ( WLANVendorSpecificInfoElementParser );
+
+        SENF_PARSER_INIT() {
+            type() = typeId;
+            length() = 3u;
+        }
+        static const type_t::value_type typeId = 0xddu;
+
+        void dump(std::ostream & os) const;
+    };
+
+
+    struct WLANHTCapabilitiesInfoFieldParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // re-ordering of the fields due to the byte order
+        SENF_PARSER_BITFIELD  ( txSTBC,                    1, bool     );
+        SENF_PARSER_BITFIELD  ( shortGIfor40MHz,           1, bool     );
+        SENF_PARSER_BITFIELD  ( shortGIfor20MHz,           1, bool     );
+        SENF_PARSER_BITFIELD  ( htGreenfield,              1, bool     );
+        SENF_PARSER_BITFIELD  ( smPowerSave,               2, unsigned );
+        SENF_PARSER_BITFIELD  ( supportedChannelWidth,     1, bool     );
+        SENF_PARSER_BITFIELD  ( ldpcCodingCapability,      1, bool     );
+        SENF_PARSER_BITFIELD  ( lSIGTXOPProtectionSupport, 1, bool     );
+        SENF_PARSER_BITFIELD  ( fortyMHzIntolerant,        1, bool     );
+		SENF_PARSER_SKIP_BITS (                            1           );  // reserved
+        SENF_PARSER_BITFIELD  ( dsss_cckModeIn40MHz,       1, bool     );
+        SENF_PARSER_BITFIELD  ( maxAMSDULength,            1, bool     );
+        SENF_PARSER_BITFIELD  ( delayedBlockAck,           1, bool     );
+        SENF_PARSER_BITFIELD  ( rxSTBC,                    2, unsigned );
+        SENF_PARSER_FINALIZE  ( WLANHTCapabilitiesInfoFieldParser      );
+    };
+
+    struct WLANAMPDUParametersParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // re-ordering of the fields due to the byte order
+        SENF_PARSER_SKIP_BITS (                      3           );  // reserved
+        SENF_PARSER_BITFIELD  ( minMPDUStartSpacing, 3, unsigned );
+        SENF_PARSER_BITFIELD  ( maxAMPDULength,      2, unsigned );
+        SENF_PARSER_FINALIZE  ( WLANAMPDUParametersParser        );
+    };
+
+    struct WLANSupportedMCSSetParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // re-ordering of the fields due to the byte order
+        typedef BitsetParser<77, MSB0Endianness> MCSBitmaskParser;
+        SENF_PARSER_FIELD     ( rxMCSBitmask,            MCSBitmaskParser );  // the remaining 3 bits are already captured by the BitsetParser
+        SENF_PARSER_SKIP_BITS (                               6           );  // reserved
+        SENF_PARSER_BITFIELD  ( rxHighestSupoortedDataRate,  10, unsigned );
+        SENF_PARSER_SKIP_BITS (                               3           );  // reserved
+        SENF_PARSER_BITFIELD  ( txUnequalModulationSupported, 1, bool     );
+        SENF_PARSER_BITFIELD  ( txMaxStreamsSupported,        2, unsigned );
+        SENF_PARSER_BITFIELD  ( txRxMCSSetNotEqual,           1, bool     );
+        SENF_PARSER_BITFIELD  ( txMCSSetDefined,              1, bool     );
+        SENF_PARSER_SKIP      ( 3                                         );  // reserved
+        SENF_PARSER_FINALIZE  ( WLANSupportedMCSSetParser                 );
+    };
+
+    struct WLANHTExtendedCapabilitiesParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // re-ordering of the fields due to the byte order
+        SENF_PARSER_SKIP_BITS (                    5           );  // reserved
+        SENF_PARSER_BITFIELD  ( pcoTransitionTime, 2, unsigned );
+        SENF_PARSER_BITFIELD  ( pco,               1, bool     );
+        SENF_PARSER_SKIP_BITS (                    4           );  // reserved
+        SENF_PARSER_BITFIELD  ( rdResponder,       1, bool     );
+        SENF_PARSER_BITFIELD  ( htcSupport,        1, bool     );
+        SENF_PARSER_BITFIELD  ( mcsFeedback,       2, unsigned );
+        SENF_PARSER_FINALIZE  ( WLANHTExtendedCapabilitiesParser );
+    };
+
+    struct WLANTxBeamformingCapabilitiesParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // if somebody needs the information he has to implement this himself. sorry.
+        SENF_PARSER_SKIP( 4 );
+        SENF_PARSER_FINALIZE ( WLANTxBeamformingCapabilitiesParser );
+    };
+
+    struct WLANAntennaSelectionCapabilityParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // if somebody needs the information he has to implement this himself. sorry.
+        SENF_PARSER_SKIP( 1 );
+        SENF_PARSER_FINALIZE ( WLANAntennaSelectionCapabilityParser );
+    };
+
+    struct WLANHTCapabilitiesInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( WLANInfoElementParser                                            );
+        SENF_PARSER_FIELD    ( capabilitiesInfo,           WLANHTCapabilitiesInfoFieldParser    );
+        SENF_PARSER_FIELD    ( aMPDUParameters,            WLANAMPDUParametersParser            );
+        SENF_PARSER_FIELD    ( supportedMCSSet,            WLANSupportedMCSSetParser            );
+        SENF_PARSER_FIELD    ( extendedCapabilities,       WLANHTExtendedCapabilitiesParser     );
+        SENF_PARSER_FIELD    ( txBeamformingCapabilities,  WLANTxBeamformingCapabilitiesParser  );
+        SENF_PARSER_FIELD    ( antennaSelectionCapability, WLANAntennaSelectionCapabilityParser );
+        SENF_PARSER_FINALIZE ( WLANHTCapabilitiesInfoElementParser                              );
+
+        SENF_PARSER_INIT() {
+            type() = typeId;
+            length() = 26u;
+        }
+        static const type_t::value_type typeId = 0x2du;
+
+        void dump(std::ostream & os) const;
+    };
+
+
+    struct WLANHTOperationInfoFieldParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // re-ordering of the fields due to the byte order
+        SENF_PARSER_SKIP_BITS (                             4           );  // reserved
+        SENF_PARSER_BITFIELD  ( rifsMode,                   1, bool     );
+        SENF_PARSER_BITFIELD  ( channelWidth,               1, bool     );
+        SENF_PARSER_BITFIELD  ( secondaryChannelOffset,     2, unsigned );
+        SENF_PARSER_SKIP_BITS (                             3           );  // reserved
+        SENF_PARSER_BITFIELD  ( obssNonHTSTAsPresent,       1, bool     );
+        SENF_PARSER_SKIP_BITS (                             1           );  // reserved
+        SENF_PARSER_BITFIELD  ( nonGreenfieldHTSTAsPresent, 1, bool     );
+        SENF_PARSER_BITFIELD  ( htProtection,               2, unsigned );
+        SENF_PARSER_SKIP_BITS (                             8           );  // reserved
+        SENF_PARSER_BITFIELD  ( dualCTSProtection,          1, bool     );
+        SENF_PARSER_BITFIELD  ( dualBeacon,                 1, bool     );
+        SENF_PARSER_SKIP_BITS (                             6           );  // reserved
+        SENF_PARSER_SKIP_BITS (                             4           );  // reserved
+        SENF_PARSER_BITFIELD  ( pcoPhase,                   1, bool     );
+        SENF_PARSER_BITFIELD  ( pcoActive,                  1, bool     );
+        SENF_PARSER_BITFIELD  ( lsigTXOPProtectionSupport,  1, bool     );
+        SENF_PARSER_BITFIELD  ( stbcBeacon,                 1, bool     );
+        SENF_PARSER_FINALIZE  ( WLANHTOperationInfoFieldParser          );
+    };
+
+    struct WLANHTOperationInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT  ( WLANInfoElementParser                          );
+        SENF_PARSER_FIELD    ( primaryChannel, UInt8Parser                    );
+        SENF_PARSER_FIELD    ( operatinInfo,   WLANHTOperationInfoFieldParser );
+        SENF_PARSER_FIELD    ( basicMCSSet,    WLANSupportedMCSSetParser      );
+        SENF_PARSER_FINALIZE ( WLANHTOperationInfoElementParser               );
+
+        SENF_PARSER_INIT() {
+            type() = typeId;
+            length() = 22u;
+        }
+        static const type_t::value_type typeId = 0x3du;
 
         void dump(std::ostream & os) const;
     };

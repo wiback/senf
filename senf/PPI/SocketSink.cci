@@ -52,7 +52,7 @@ prefix_ bool senf::ppi::LLSocketWriter::operator()(Handle & handle,
                                                    Packet const & packet)
 {
     do {
-        if( ::write(handle.fd(), packet.data().begin(), packet.size()) >= 0)
+        if (::write(handle.fd(), packet.data().begin(), packet.size()) >= 0)
             return true;
 
         switch (errno) {

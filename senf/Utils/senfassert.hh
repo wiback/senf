@@ -44,10 +44,28 @@
 
 #else
 
+#ifndef SENF_ASSERT_EXCEPTION
+
 #   include <cassert>
 #   define SENF_ASSERT(x, comment) assert((x) && comment)
 #   define SENF_ASSERT_EXPRESSION(expression, comment) assert((expression) && comment)
 
+#else
+
+#   include "Exception.hh"
+    namespace senf {
+        struct AssertException : public Exception
+        {
+            AssertException(std::string const & descr) {
+                (*this) << "Assertion failed at " << __FILE__ << ":" << __LINE__ << ": " << descr;
+            }
+        };
+    }
+
+#   define SENF_ASSERT(x, comment) if (!(x)) throw senf::AssertException(comment);
+#   define SENF_ASSERT_EXPRESSION(expression, comment) if (!(expression)) throw senf::AssertException(comment);
+
+#endif
 #endif
 
 

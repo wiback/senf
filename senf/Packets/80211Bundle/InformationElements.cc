@@ -29,18 +29,18 @@
     \brief InformationElements non-inline non-template implementation */
 
 #include "InformationElements.hh"
-//#include "InformationElements.ih"
 
 // Custom includes
 
-//#include "InformationElements.cc.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANSSIDInfoElementParser            );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANPowerConstraintInfoElementParser );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANSupportedRatesInfoElementParser  );
-
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANVendorSpecificInfoElementParser  );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANHTCapabilitiesInfoElementParser  );
+//SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANHTOperationInfoElementParser     );
 
 prefix_ void senf::WLANPowerConstraintInfoElementParser::dump(std::ostream & os)
     const
@@ -68,6 +68,34 @@ prefix_ void senf::WLANSupportedRatesInfoElementParser::dump(std::ostream & os)
        << "    length: " << unsigned(length()) << "\n"
        << "    value:  ToDo!\n";
 }
+
+prefix_ void senf::WLANVendorSpecificInfoElementParser::dump(std::ostream & os)
+    const
+{
+    os << "  WLAN Vendor Specific Information Element\n"
+       << "    type:   " << unsigned(type()) << "\n"
+       << "    length: " << unsigned(length()) << "\n"
+       << "    value:  ToDo!\n";
+}
+
+prefix_ void senf::WLANHTCapabilitiesInfoElementParser::dump(std::ostream & os)
+    const
+{
+    os << "  WLAN HT Capabilities Information Element\n"
+       << "    type:   " << unsigned(type()) << "\n"
+       << "    length: " << unsigned(length()) << "\n"
+       << "    value:  ToDo!\n";
+}
+
+prefix_ void senf::WLANHTOperationInfoElementParser::dump(std::ostream & os)
+    const
+{
+    os << "  WLAN HT Operation Information Element\n"
+       << "    type:   " << unsigned(type()) << "\n"
+       << "    length: " << unsigned(length()) << "\n"
+       << "    value:  ToDo!\n";
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

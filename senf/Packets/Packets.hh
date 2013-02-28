@@ -54,6 +54,7 @@
 #include "DataPacket.hh"
 #include "DumpFormat.hh"
 #include "GenericTLV.hh"
+#include "BitsetParser.hh"
 
 #undef HH_SENF_Packets_Packets__decls_
 
@@ -79,6 +80,7 @@
 #include "DataPacket.hh"
 #include "DumpFormat.hh"
 #include "GenericTLV.hh"
+#include "BitsetParser.hh"
 #include "algorithms.hh"
 
 #endif

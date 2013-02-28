@@ -1,0 +1,219 @@
+// $Id$
+//
+// Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at
+// http://senf.berlios.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//   Thorsten Horstmann <tho@berlios.de>
+
+/** \file
+    \brief BitsetParser inline template implementation */
+
+// Custom includes
+#include <senf/Utils/senfassert.hh>
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::BitsetParser::reference
+
+template <std::size_t N, typename Endianness>
+prefix_ typename senf::BitsetParser<N,Endianness>::reference &
+senf::BitsetParser<N,Endianness>::reference::operator=(bool v)
+{
+    parser_.set(pos_, v);
+    return *this;
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ typename senf::BitsetParser<N,Endianness>::reference &
+senf::BitsetParser<N,Endianness>::reference::operator=(BitsetParser<N,Endianness>::reference const & other)
+{
+    parser_.set(pos_, other);
+    return *this;
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ bool senf::BitsetParser<N,Endianness>::reference::operator~()
+    const
+{
+    return ! parser_.test(pos_);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ senf::BitsetParser<N,Endianness>::reference::operator bool()
+    const
+{
+    return parser_.test(pos_);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ typename senf::BitsetParser<N,Endianness>::reference & senf::BitsetParser<N,Endianness>::reference::flip()
+{
+    parser_.flip(pos_);
+    return *this;
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ senf::BitsetParser<N,Endianness>::reference::reference(BitsetParser<N,Endianness> & parser, std::size_t pos)
+    : parser_(parser), pos_(pos)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::BitsetParser
+
+#define validatePostion(pos) if (pos > N-1) \
+        throw WrapException<std::out_of_range>(std::out_of_range("invalid position in bitset"))
+
+#define assertPostion(pos) SENF_ASSERT( pos <= N-1, "invalid position in bitset");
+
+template <std::size_t N, typename Endianness>
+prefix_ void senf::BitsetParser<N,Endianness>::reset()
+{
+    std::fill_n( i(), fixed_bytes, 0x00);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ void senf::BitsetParser<N,Endianness>::reset(std::size_t pos)
+{
+    validatePostion(pos);
+    i()[Endianness::bytePosition(fixed_bytes, pos)] &= ~Endianness::bit(pos);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ void senf::BitsetParser<N,Endianness>::flip()
+{
+    for (std::size_t j(0); j<fixed_bytes; j++)
+        i()[j] = ~(i()[j]);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ void senf::BitsetParser<N,Endianness>::flip(std::size_t pos)
+{
+    validatePostion(pos);
+    i()[Endianness::bytePosition(fixed_bytes, pos)] ^= Endianness::bit(pos);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ void senf::BitsetParser<N,Endianness>::set()
+{
+    std::fill_n( i(), fixed_bytes, 0xff);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ void senf::BitsetParser<N,Endianness>::set(std::size_t pos, bool v)
+{
+    validatePostion(pos);
+    if (v)
+        i()[Endianness::bytePosition(fixed_bytes, pos)] |= Endianness::bit(pos);
+    else
+        i()[Endianness::bytePosition(fixed_bytes, pos)] &= ~Endianness::bit(pos);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ bool senf::BitsetParser<N,Endianness>::test(std::size_t pos)
+    const
+{
+    validatePostion(pos);
+    return i()[Endianness::bytePosition(fixed_bytes, pos)] & Endianness::bit(pos);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ bool senf::BitsetParser<N,Endianness>::operator[](std::size_t pos)
+    const
+{
+    assertPostion(pos);
+    return i()[Endianness::bytePosition(fixed_bytes, pos)] & Endianness::bit(pos);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ typename senf::BitsetParser<N,Endianness>::reference senf::BitsetParser<N,Endianness>::operator[](std::size_t pos)
+{
+    return reference(*this, pos);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ std::size_t senf::BitsetParser<N,Endianness>::size()
+    const
+{
+    return N;
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ std::size_t senf::BitsetParser<N,Endianness>::count()
+    const
+{
+    std::size_t result = 0;
+    for (std::size_t j(0); j<N; j++)
+        result += (*this)[j];
+    return result;
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ bool senf::BitsetParser<N,Endianness>::all()
+    const
+{
+    for (std::size_t j(0); j<fixed_bytes; j++)
+        if (i()[j] != 0xffu) return false;
+    return true;
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ bool senf::BitsetParser<N,Endianness>::any()
+    const
+{
+    for (std::size_t j(0); j<fixed_bytes; j++)
+        if (i()[j] != 0x00) return true;
+    return false;
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ bool senf::BitsetParser<N,Endianness>::none()
+    const
+{
+    return ! this->any();
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ void senf::BitsetParser<N,Endianness>::value(value_type const & bset)
+{
+    for (std::size_t j(0); j<N; j++)
+        set(j, bset[j]);
+}
+
+template <std::size_t N, typename Endianness>
+prefix_ typename senf::BitsetParser<N,Endianness>::value_type senf::BitsetParser<N,Endianness>::value()
+    const
+{
+    value_type v;
+    for (std::size_t j(0); j<N; j++)
+        v[j] = (*this)[j];
+    return v;
+}
+
+#undef validatePostion
+#undef assertPostion
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
