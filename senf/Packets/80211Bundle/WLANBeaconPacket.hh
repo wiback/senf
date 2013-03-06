@@ -54,6 +54,10 @@ namespace senf {
         SENF_PARSER_LIST ( ieList, packetSize(), WLANGenericInfoElementParser );
 
         SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
+
+        bool hasIE(boost::uint8_t typeId) const;
+        template <typename IEParser>
+        boost::optional<IEParser> findIE();
     };
 
 
@@ -90,7 +94,7 @@ namespace senf {
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "WLANBeaconPacket.cci"
-//#include "WLANBeaconPacket.ct"
+#include "WLANBeaconPacket.ct"
 //#include "WLANBeaconPacket.cti"
 #endif
 

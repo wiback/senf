@@ -57,16 +57,19 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
         0xa3, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00, 0x42, 0x43, 0x5e, 0x00,
         0x62, 0x32, 0x2f, 0x00,  //vendor specific
     };
-    senf::WLANBeaconPacket p (senf::WLANBeaconPacket::create(data));
+    senf::WLANBeaconPacket beacon (senf::WLANBeaconPacket::create(data));
 
-    BOOST_CHECK_EQUAL( p->timestamp(), 0x0000009C4CAA303AuLL);
-    BOOST_CHECK_EQUAL( p->beaconInterval(), 100u);
-    BOOST_CHECK_EQUAL( p->ssidIE().length(), 5);
-    BOOST_CHECK_EQUAL( p->ssidIE().value().value(), "boxC1");
-    BOOST_CHECK_EQUAL( p->ssid().value(), "boxC1");
+    BOOST_CHECK_EQUAL( beacon->timestamp(), 0x0000009C4CAA303AuLL);
+    BOOST_CHECK_EQUAL( beacon->beaconInterval(), 100u);
+    BOOST_CHECK_EQUAL( beacon->ssidIE().length(), 5);
+    BOOST_CHECK_EQUAL( beacon->ssidIE().value().value(), "boxC1");
+    BOOST_CHECK_EQUAL( beacon->ssid().value(), "boxC1");
+
+    BOOST_CHECK(  beacon->hasIE(senf::WLANPowerConstraintInfoElementParser::typeId+0) );
+    BOOST_CHECK(! beacon->hasIE(0xff) );
 
     typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
-    ieListContainer_t ieListContainer (p->ieList());
+    ieListContainer_t ieListContainer (beacon->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 5);
 
     ieListContainer_t::iterator i (ieListContainer.begin());
@@ -95,7 +98,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
             boost::begin(i->value()), boost::end(i->value()) );
 
     std::ostringstream oss (std::ostringstream::out);
-    SENF_CHECK_NO_THROW( p.dump( oss ));
+    SENF_CHECK_NO_THROW( beacon.dump( oss ));
 }
 
 SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
@@ -148,13 +151,13 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
             0xf2, 0x02, 0x00, 0x01, 0x00
     };
 
-    senf::WLANBeaconPacket p (senf::WLANBeaconPacket::create(data));
+    senf::WLANBeaconPacket beacon (senf::WLANBeaconPacket::create(data));
 
-    BOOST_CHECK_EQUAL( p->timestamp(), 0x000000000482b062uLL);
-    BOOST_CHECK_EQUAL( p->ssid().value(), "test");
+    BOOST_CHECK_EQUAL( beacon->timestamp(), 0x000000000482b062uLL);
+    BOOST_CHECK_EQUAL( beacon->ssid().value(), "test");
 
     typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
-    ieListContainer_t ieListContainer (p->ieList());
+    ieListContainer_t ieListContainer (beacon->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 4);
 
     ieListContainer_t::iterator i (boost::next(ieListContainer.begin(), 1));
@@ -163,22 +166,22 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
     BOOST_CHECK( i->is<senf::WLANHTCapabilitiesInfoElementParser>());
     senf::WLANHTCapabilitiesInfoElementParser htCapaIE (i->as<senf::WLANHTCapabilitiesInfoElementParser>());
     // HT Capabilities Info Field
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().ldpcCodingCapability(),      false);
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().supportedChannelWidth(),     true );
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().smPowerSave(),               3u   );
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().htGreenfield(),              false);
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().shortGIfor20MHz(),           false);
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().shortGIfor40MHz(),           true );
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().txSTBC(),                    true );
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().rxSTBC(),                    1u   );
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().delayedBlockAck(),           false);
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().maxAMSDULength(),            false);
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().dsss_cckModeIn40MHz(),       true );
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().fortyMHzIntolerant(),        false);
-    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().lSIGTXOPProtectionSupport(), false);
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().ldpcCodingCapability(),      false );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().supportedChannelWidth(),     true  );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().smPowerSave(),               3u    );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().htGreenfield(),              false );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().shortGIfor20MHz(),           false );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().shortGIfor40MHz(),           true  );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().txSTBC(),                    true  );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().rxSTBC(),                    1u    );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().delayedBlockAck(),           false );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().maxAMSDULength(),            false );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().dsss_cckModeIn40MHz(),       true  );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().fortyMHzIntolerant(),        false );
+    BOOST_CHECK_EQUAL( htCapaIE.capabilitiesInfo().lSIGTXOPProtectionSupport(), false );
     // A-MPDU Parameters
-    BOOST_CHECK_EQUAL( htCapaIE.aMPDUParameters().maxAMPDULength(),      3u);
-    BOOST_CHECK_EQUAL( htCapaIE.aMPDUParameters().minMPDUStartSpacing(), 6u);
+    BOOST_CHECK_EQUAL( htCapaIE.aMPDUParameters().maxAMPDULength(),             3u    );
+    BOOST_CHECK_EQUAL( htCapaIE.aMPDUParameters().minMPDUStartSpacing(),        6u    );
     // Supported MCS Set
     BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().rxMCSBitmask()[0],            true  );
     BOOST_CHECK_EQUAL( htCapaIE.supportedMCSSet().rxMCSBitmask()[15],           true  );
@@ -194,7 +197,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
     ++i;
     BOOST_CHECK_EQUAL( i->type(), senf::WLANHTOperationInfoElementParser::typeId+0);
     BOOST_CHECK_EQUAL( i->length(), 22u);
-    senf::WLANHTOperationInfoElementParser htOpIE (i->as<senf::WLANHTOperationInfoElementParser>());
+    senf::WLANHTOperationInfoElementParser htOpIE (*(beacon->findIE<senf::WLANHTOperationInfoElementParser>()));
     BOOST_CHECK_EQUAL( htOpIE.primaryChannel(),               36u );
     BOOST_CHECK_EQUAL( htOpIE.operatinInfo().channelWidth(), true );
 }
