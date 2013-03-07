@@ -275,7 +275,7 @@ namespace senf {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( WLANInfoElementParser                          );
         SENF_PARSER_FIELD    ( primaryChannel, UInt8Parser                    );
-        SENF_PARSER_FIELD    ( operatinInfo,   WLANHTOperationInfoFieldParser );
+        SENF_PARSER_FIELD    ( operationInfo,  WLANHTOperationInfoFieldParser );
         SENF_PARSER_FIELD    ( basicMCSSet,    WLANSupportedMCSSetParser      );
         SENF_PARSER_FINALIZE ( WLANHTOperationInfoElementParser               );
 

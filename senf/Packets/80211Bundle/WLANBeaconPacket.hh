@@ -57,7 +57,7 @@ namespace senf {
 
         bool hasIE(boost::uint8_t typeId) const;
         template <typename IEParser>
-        boost::optional<IEParser> findIE();
+        IEParser findIE();
     };
 
 

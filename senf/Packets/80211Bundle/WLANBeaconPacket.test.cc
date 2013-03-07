@@ -197,9 +197,10 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
     ++i;
     BOOST_CHECK_EQUAL( i->type(), senf::WLANHTOperationInfoElementParser::typeId+0);
     BOOST_CHECK_EQUAL( i->length(), 22u);
-    senf::WLANHTOperationInfoElementParser htOpIE (*(beacon->findIE<senf::WLANHTOperationInfoElementParser>()));
-    BOOST_CHECK_EQUAL( htOpIE.primaryChannel(),               36u );
-    BOOST_CHECK_EQUAL( htOpIE.operatinInfo().channelWidth(), true );
+    BOOST_CHECK( beacon->hasIE(senf::WLANHTOperationInfoElementParser::typeId+0) );
+    senf::WLANHTOperationInfoElementParser htOpIE (beacon->findIE<senf::WLANHTOperationInfoElementParser>());
+    BOOST_CHECK_EQUAL( htOpIE.primaryChannel(),                36u );
+    BOOST_CHECK_EQUAL( htOpIE.operationInfo().channelWidth(), true );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

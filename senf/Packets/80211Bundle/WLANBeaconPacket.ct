@@ -34,13 +34,13 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename IEParser>
-prefix_ boost::optional<IEParser> senf::WLANBeaconPacketParser::findIE()
+prefix_ IEParser senf::WLANBeaconPacketParser::findIE()
 {
     ieList_t::container ieListContainer (ieList());
     for (ieList_t::container::const_iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
         if (i->is<IEParser>())
-            return boost::make_optional(i->as<IEParser>());
-    return boost::none;
+            return i->as<IEParser>();
+    throw InvalidPacketChainException();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
