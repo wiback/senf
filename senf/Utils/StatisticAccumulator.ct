@@ -39,22 +39,22 @@
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
-    : sum_squared_(0), sum_(0), min_(0), max_(0), last_avg_(0), count_(0)
+    : sum_squared_(0), sum_(0), min_(0), max_(0), last_avg_(0), cnt_(0)
 { }
 
 template <class T>
 prefix_ float senf::StatisticAccumulator<T>::stddev()
     const
 {
-    if (count_ == 0) {
+    if (cnt_ == 0) {
         return NAN;
     }
-    else if (count_ == 1) {
+    else if (cnt_ == 1) {
         return 0.0f;
     }
     float _avg (avg());
     // std::max avoid rounding errors, that might cause a sqrt(<0)
-    return sqrt( ( std::max(0.0f,float(sum_squared_) / float( count_) ) - (_avg * _avg) ));
+    return sqrt( ( std::max(0.0f,float(sum_squared_) / float( cnt_) ) - (_avg * _avg) ));
 }
 
 template <class T>
@@ -66,15 +66,15 @@ prefix_ void senf::StatisticAccumulator<T>::setLastAvg( T value)
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::accumulate( T value)
 {
-    if (count_ == 0) {
+    if (cnt_ == 0) {
         min_ = max_ = sum_ = value;
         sum_squared_ = value * value;
-        count_++;
+        cnt_++;
         return;
     }
     sum_ += value;
     sum_squared_ += value * value;
-    count_++;
+    cnt_++;
     if (value < min_)
         min_ = value;
     else if (value > max_)
@@ -84,9 +84,9 @@ prefix_ void senf::StatisticAccumulator<T>::accumulate( T value)
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::clear()
 {
-    if (count_ > 0) {
+    if (cnt_ > 0) {
         last_avg_ = avg();
-        count_ = 0;
+        cnt_ = 0;
         sum_squared_ = 0;
         sum_ = min_ = max_ = 0;
     }
@@ -96,16 +96,16 @@ template <class T>
 prefix_ void senf::StatisticAccumulator<T>::data( StatisticsData & data_)
     const
 {
-    if (count_ == 0) {
+    if (cnt_ == 0) {
         data_.min = data_.avg = data_.max = last_avg_;
         data_.stddev = 0.0;
-        data_.count = 0;
+        data_.cnt = 0;
     } else {
         data_.min = (float) min_;
         data_.avg = avg();
         data_.max = (float) max_;
         data_.stddev = stddev();
-        data_.count = count_;
+        data_.cnt = cnt_;
     }
 }
 

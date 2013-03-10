@@ -40,7 +40,7 @@ std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & 
        << "avg "    << _data.avg    << ", " 
        << "max "    << _data.max    << ", "
        << "stddev " << _data.stddev << ", "
-       << "count "  << _data.count
+       << "cnt "    << _data.cnt
        << ")";
     return os;
 };

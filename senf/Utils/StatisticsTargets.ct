@@ -39,13 +39,14 @@
 // senf::detail::StatisticsLogger
 
 template <class Stream, class Area, class Level>
-prefix_ void senf::detail::StatisticsLogger<Stream,Area,Level>::operator()(float min,
+prefix_ void senf::detail::StatisticsLogger<Stream,Area,Level>::operator()(unsigned cnt,
+                                                                           float min,
                                                                            float avg,
                                                                            float max,
                                                                            float dev)
 {
     SENF_LOG_TPL((StatisticsStream)(Stream)(Area)(Level)(
-                     label << min << ' ' << avg << ' ' << max << ' ' << dev));
+                  label << cnt << ' ' << min << ' ' << avg << ' ' << max << ' ' << dev));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

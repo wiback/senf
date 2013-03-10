@@ -126,7 +126,7 @@ namespace senf {
             // Function object
             struct Collector
             {
-                void operator()(float min, float avg, float max, float dev)
+                void operator()(unsigned cnt, float min, float avg, float max, float dev)
                     { ... }
             };
             \endcode
@@ -165,6 +165,7 @@ namespace senf {
         ///\name Accessing the current value
         //\{
 
+        unsigned cnt () const;          ///< Last cnt value entered
         float min() const;              ///< Last min value entered
         float avg() const;              ///< Last avg value entered
         float max() const;              ///< Last max value entered
@@ -261,7 +262,7 @@ namespace senf {
     protected:
         StatisticsBase();
         virtual ~StatisticsBase();
-        void enter(unsigned n, float min, float avg, float max, float dev);
+        void enter(unsigned n, unsigned cnt, float min, float avg, float max, float dev);
 
     private:
         virtual Statistics & v_base() = 0;
@@ -269,6 +270,7 @@ namespace senf {
 
         void generateOutput();
 
+        unsigned cnt_;
         float min_;
         float avg_;
         float max_;
@@ -276,13 +278,14 @@ namespace senf {
         Children children_;
 
         struct QueueEntry {
+            unsigned cnt;
             float min;
             float avg;
             float max;
             float dev;
-            QueueEntry() : min(), avg(), max(), dev() {}
-            QueueEntry(float min_, float avg_, float max_, float dev_)
-                : min(min_), avg(avg_), max(max_), dev(dev_) {}
+            QueueEntry() : cnt(), min(), avg(), max(), dev() {}
+            QueueEntry(unsigned cnt_, float min_, float avg_, float max_, float dev_)
+                : cnt(cnt_), min(min_), avg(avg_), max(max_), dev(dev_) {}
         };
         typedef std::deque<QueueEntry> Queue;
         Queue queue_;
@@ -314,12 +317,13 @@ namespace senf {
             void consoleList(std::ostream & os);
 
             unsigned n;
+            unsigned cnt;
             float min;
             float avg;
             float max;
             float dev;
 
-            boost::signal<void(float,float,float,float)> signal;
+            boost::signal<void(unsigned,float,float,float,float)> signal;
             boost::ptr_vector<TargetBase> targets_;
 
             senf::console::ScopedDirectory<> dir;
@@ -452,7 +456,7 @@ namespace senf {
 
         Statistics();
 
-        void operator()(unsigned n, float min, float avg, float max, float dev);
+        void operator()(unsigned n, unsigned cnt, float min, float avg, float max, float dev);
                                         ///< Enter new data
                                         /**< This member must be called whenever new data is
                                              available.
@@ -480,11 +484,11 @@ namespace senf {
                                              \param[in] avg average data value since last call
                                              \param[in] max maximal data values since last call
                                              \param[in] dev standard deviation of avg value */
-        void operator()(float min, float avg, float max, float dev=0.0f);
+        void operator()(unsigned cnt, float min, float avg, float max, float dev=0.0f);
                                         ///< Same as operator() with \a n==1
                                         /**< Provided so a Statistics instance can be directly used
                                              as a signal target. */
-        void operator()(float value, float dev=0.0f);
+        void operator()(unsigned cnt, float value, float dev=0.0f);
                                         ///< Same as operator() with \a min == \a avg == \a max
                                         /**< Provided so a Statistics instance can be directly used
                                              as a signal target. */
@@ -529,12 +533,13 @@ namespace senf {
 
     private:
         Collector(StatisticsBase * owner, unsigned rank);
-        void enter(unsigned n, float min, float avg, float max, float dev);
+        void enter(unsigned n, unsigned cnt, float min, float avg, float max, float dev);
         Statistics & v_base();
         std::string v_path() const;
 
         unsigned rank_;
         unsigned i_;
+        unsigned accCnt_;
         float accMin_;
         float accSum_;
         float accSumSq_;

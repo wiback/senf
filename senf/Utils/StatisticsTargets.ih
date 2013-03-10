@@ -69,7 +69,7 @@ namespace detail {
         : boost::noncopyable
     {
         StatisticsLogger(std::string const & label_);
-        void operator()(float min, float avg, float max, float dev);
+        void operator()(unsigned cnt, float min, float avg, float max, float dev);
 
         std::string label;
     };

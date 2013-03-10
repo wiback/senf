@@ -43,7 +43,7 @@ namespace senf {
      struct StatisticsData
      {
          StatisticsData();
-         StatisticsData(float min_, float avg_, float max_, float stddev_, boost::uint32_t count_);
+         StatisticsData(float min_, float avg_, float max_, float stddev_, unsigned cnt_);
          StatisticsData(float singleValue);
 
          void clear();
@@ -53,7 +53,7 @@ namespace senf {
          float avg;
          float max;
          float stddev;
-         boost::uint32_t count;
+         unsigned cnt;
      };
 
      std::ostream & operator<<(std::ostream & os, StatisticsData const & _data);
@@ -107,7 +107,7 @@ namespace senf {
         float stddev() const;           ///< Returns standard deviation value.
                                         /**< This method returns the standard deviation
                                              value of the current accumulation.*/
-        boost::uint32_t count() const;  ///< Returns count of accumulated values.
+        unsigned cnt() const;           ///< Returns count of accumulated values.
                                         /**< This method returns count of accumulated
                                              values of the current accumulation.*/
         void data(StatisticsData & data_) const;
@@ -123,7 +123,7 @@ namespace senf {
         T min_;
         T max_;
         float last_avg_;
-        boost::uint32_t count_;
+        unsigned cnt_;
     };
 
 }
