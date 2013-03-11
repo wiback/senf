@@ -144,7 +144,7 @@ namespace senf {
         SENF_PARSER_BITFIELD  ( ldpcCodingCapability,      1, bool     );
         SENF_PARSER_BITFIELD  ( lSIGTXOPProtectionSupport, 1, bool     );
         SENF_PARSER_BITFIELD  ( fortyMHzIntolerant,        1, bool     );
-		SENF_PARSER_SKIP_BITS (                            1           );  // reserved
+        SENF_PARSER_SKIP_BITS (                            1           );  // reserved
         SENF_PARSER_BITFIELD  ( dsss_cckModeIn40MHz,       1, bool     );
         SENF_PARSER_BITFIELD  ( maxAMSDULength,            1, bool     );
         SENF_PARSER_BITFIELD  ( delayedBlockAck,           1, bool     );
