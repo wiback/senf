@@ -59,6 +59,7 @@ namespace senf {
         bool multicast() const;         ///< \c true, if address is a group/multicast address
         bool broadcast() const;         ///< \c true, if address is the broadcast address
         bool null() const;              ///< \c true, if address is the zero address
+        boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
 
         bool operator==(MACAddress const & macAddr) const;
         bool operator==(MACAddressParser const & other) const;
