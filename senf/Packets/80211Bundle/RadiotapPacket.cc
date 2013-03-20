@@ -368,7 +368,7 @@ senf::RadiotapPacketType::nextPacketRange(packet const & p)
     parser rtParser (p.parser());
     size_type h (senf::bytes(rtParser));
     size_type t (rtParser.flagsPresent() && rtParser.flags().fcsAtEnd() ? 4 : 0);
-    return p.size() <= h+t
+    return p.size() < h+t
         ? no_range()
         : optional_range( range(p.data().begin() + h, p.data().end() - t) );
 }
