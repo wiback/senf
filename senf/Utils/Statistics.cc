@@ -124,18 +124,19 @@ prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os
     }
     */
 
-    os << boost::format("%s%-5d%|15t|  %12.5g  %19.5g  %12.5g\n")
+    os << boost::format("%s%-5d%|15t|  %12.5g  %19.5g  %12.5g  %12.5g\n")
         % std::string(2*level,' ') % rank()
-        % fmt::eng(min()).setw() % fmt::eng(avg(),dev()).setw() % fmt::eng(max()).setw();
+        % fmt::eng(min()).setw() % fmt::eng(avg(),dev()).setw() % fmt::eng(max()).setw() % fmt::eng(cnt()).setw();
     {
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
         for (; i != i_end; ++i)
-            os << boost::format("            %3d  %12.5g  %19.5g  %12.5g\n")
+            os << boost::format("            %3d  %12.5g  %19.5g  %12.5g  %12.5g\n")
                 % i->second.n
                 % fmt::eng(i->second.min).setw()
                 % fmt::eng(i->second.avg).setw()
-                % fmt::eng(i->second.max).setw();
+                % fmt::eng(i->second.max).setw()
+                % fmt::eng(i->second.cnt).setw();
     }
 
 
@@ -210,7 +211,8 @@ prefix_ senf::Statistics::Statistics()
                  "    MIN     Last entered minimum value.\n"
                  "    AVG     Last entered average value.\n"
                  "    DEV     Standard deviation of average value over the collector rank.\n"
-                 "    MAX     Last entered maximum value.") );
+                 "    MAX     Last entered maximum value."
+                 "    CNT     Number of samples represented by this collector") );
     dir.add("collect", fty::Command(&Statistics::consoleCollect, this)
             .doc("Add statistics collection groups. The argument gives a sequence of collector\n"
                  "ranks each building on the preceding collector:\n"
@@ -258,7 +260,7 @@ prefix_ senf::Statistics::Statistics()
 prefix_ void senf::Statistics::consoleList(std::ostream & os)
     const
 {
-    os << "RANK        WIN       MIN          AVG                   MAX\n";
+    os << "RANK        WIN       MIN          AVG                   MAX           CNT\n";
     StatisticsBase::consoleList(0, os);
 }
 
