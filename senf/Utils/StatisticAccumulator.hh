@@ -78,6 +78,7 @@ namespace senf {
     {
     public:
         StatisticAccumulator();
+        StatisticAccumulator(T sum, T sumSquared, T min, T max, unsigned count);
 
         void clear();                   ///< Reset accumulated values.
                                         /**< This member reset all values. */
