@@ -48,6 +48,12 @@ senf::operator<<(Exc const & exc, Arg const & arg)
 // senf::WrapExcecption<BaseException>
 
 template <class BaseException>
+prefix_ senf::WrapException<BaseException> senf::make_WrapException(BaseException const & base)
+{
+    return WrapException<BaseException>(base);
+}
+
+template <class BaseException>
 prefix_ senf::WrapException<BaseException>::WrapException(BaseException const & base)
     : ExceptionMixin(base.what()), BaseException(base)
 {}

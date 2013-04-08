@@ -211,6 +211,10 @@ namespace senf {
         virtual char const * what() const throw();
     };
 
+    template <class BaseException>
+    WrapException<BaseException> make_WrapException(BaseException const & base);
+
+
     /** \brief Wrap a non-senf exception
 
         This macro allows to wrap a non-senf exception adding functionality from ExceptionMixin

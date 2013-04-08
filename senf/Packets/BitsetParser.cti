@@ -83,7 +83,7 @@ prefix_ senf::BitsetParser<N,Endianness>::reference::reference(BitsetParser<N,En
 // senf::BitsetParser
 
 #define validatePostion(pos) if (pos > N-1) \
-        throw WrapException<std::out_of_range>(std::out_of_range("invalid position in bitset"))
+        throw make_WrapException(std::out_of_range("invalid position in bitset"))
 
 #define assertPostion(pos) SENF_ASSERT( pos <= N-1, "invalid position in bitset");
 

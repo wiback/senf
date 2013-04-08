@@ -108,7 +108,7 @@ namespace senf {
         float stddev() const;           ///< Returns standard deviation value.
                                         /**< This method returns the standard deviation
                                              value of the current accumulation.*/
-        unsigned cnt() const;           ///< Returns count of accumulated values.
+        unsigned count() const;         ///< Returns count of accumulated values.
                                         /**< This method returns count of accumulated
                                              values of the current accumulation.*/
         void data(StatisticsData & data_) const;

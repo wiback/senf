@@ -138,8 +138,6 @@ prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os
                 % fmt::eng(i->second.max).setw()
                 % fmt::eng(i->second.cnt).setw();
     }
-
-
     {
         Children::const_iterator i (children_.begin());
         Children::const_iterator const i_end (children_.end());
