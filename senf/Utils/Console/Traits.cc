@@ -29,12 +29,10 @@
     \brief Traits non-inline non-template implementation */
 
 #include "Traits.hh"
-#include "Traits.ih"
 
 // Custom includes
-#include <senf/Utils/senfassert.hh>
+#include <senf/Utils/String.hh>
 
-//#include "Traits.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,13 +62,13 @@ prefix_ long senf::console::detail::parseEnum(EnumTable const & table,
 prefix_ std::string senf::console::detail::formatEnum(EnumTable const & table, long value)
 {
     EnumTable::right_map::const_iterator i (table.right.find(value));
-    SENF_ASSERT( i != table.right.end(), "Invalid enum value" );
+    if (i == table.right.end())
+        return "invalid enum value: " + senf::str(value);
     return i->second;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "Traits.mpp"
 
 
 // Local Variables:

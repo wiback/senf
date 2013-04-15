@@ -211,16 +211,24 @@
 namespace senf {
 namespace console {
 
+    template <class Type>
+    struct ArgumentTraits;
+
     namespace detail {
         struct FilePositionWithIndex;
         struct ParserAccess;
         template <class ParameterType>
         struct ArgumentInfo;
+        template<class Collection, class Adder>
+        struct CollectionArgumentTraits;
     }
 
 #   define SENF_CONSOLE_PARSE_FRIEND( type )                                                                    \
         friend void senf_console_parse_argument(senf::console::ParseCommandInfo::TokensRange const &, type &);  \
-        friend struct senf::console::detail::ArgumentInfo<type>;
+        friend struct senf::console::detail::ArgumentInfo<type>;                                                \
+        friend struct senf::console::ArgumentTraits<type>;                                                \
+        template<class Collection, class Adder>                                                                 \
+        friend struct senf::console::detail::CollectionArgumentTraits;
 
 
     /** \brief Single argument token

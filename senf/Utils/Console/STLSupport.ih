@@ -53,7 +53,7 @@ namespace detail {
     struct CollectionArgumentTraits
         : detail::CollectionArgumentTraitsBase<Collection>
     {
-        static void parse(ParseCommandInfo::TokensRange const & tokens, Collection  & out);
+        static void parse(ParseCommandInfo::TokensRange const & tokens, Collection & out);
     };
 
     template <class Collection>

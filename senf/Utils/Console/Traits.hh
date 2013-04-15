@@ -61,7 +61,7 @@ namespace console {
 
         To customize just the argument parsing, just provide an implementation of
         senf_console_parse_argument(). Alternatively or to customize type naming or default value
-        formatting, specialize ArgumentTraits  for the type.
+        formatting, specialize ArgumentTraits for the type.
      */
     template <class Type>
     struct ArgumentTraits

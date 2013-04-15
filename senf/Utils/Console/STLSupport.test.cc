@@ -192,7 +192,7 @@ SENF_AUTO_UNIT_TEST(mapSupport)
         parser.parse("test/test; test/test (); "
                      "test/test (vier=4 fuenf = 5 acht=8 )",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-    BOOST_CHECK_EQUAL( ss.str(), "(\"barfoo bar\" 9)\n" "(\"\" 0)\n" "(achtfuenfvier 17)\n" ); //
+    BOOST_CHECK_EQUAL( ss.str(), "(\"barfoo bar\" 9)\n" "(\"\" 0)\n" "(achtfuenfvier 17)\n" );
 
     ss.str("");
     SENF_CHECK_NO_THROW(
