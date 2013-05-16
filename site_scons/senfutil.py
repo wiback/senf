@@ -139,7 +139,7 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
                 print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} "
                                 "'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
         else:
-            print "scons: SENF library not found,",
+            print "scons: SENF library not found or it is not compiled,",
             if exit_if_not_found:
                 print "abort."
                 sys.exit(1)
