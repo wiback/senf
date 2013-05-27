@@ -83,11 +83,11 @@ namespace senf {
         //\{
         void value( MIHFId const & id);
 
-        void value( std::string        const & id  );
-        void value( senf::MACAddress   const & addr);
-        void value( senf::INet4Address const & addr);
-        void value( senf::INet6Address const & addr);
-        void value( senf::EUI64        const & addr);
+        void value(std::string        const & id  );
+        void value(senf::MACAddress   const & addr);
+        void value(senf::INet4Address const & addr);
+        void value(senf::INet6Address const & addr);
+        void value(senf::EUI64        const & addr);
         //\}
 
         ///\name Value getters
@@ -105,11 +105,11 @@ namespace senf {
         //\{
         bool valueEquals( MIHFId const & id) const;
 
-        bool valueEquals( std::string        const & id  ) const;
-        bool valueEquals( senf::MACAddress   const & addr) const;
-        bool valueEquals( senf::INet4Address const & addr) const;
-        bool valueEquals( senf::INet6Address const & addr) const;
-        bool valueEquals( senf::EUI64        const & addr) const;
+        bool valueEquals(std::string        const & id  ) const;
+        bool valueEquals(senf::MACAddress   const & addr) const;
+        bool valueEquals(senf::INet4Address const & addr) const;
+        bool valueEquals(senf::INet6Address const & addr) const;
+        bool valueEquals(senf::EUI64        const & addr) const;
         //\}
 
         void dump(std::ostream & os) const;

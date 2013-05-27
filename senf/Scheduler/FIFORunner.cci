@@ -31,9 +31,10 @@
 //#include "FIFORunner.ih"
 
 // Custom includes
-#ifdef SENF_DEBUG
-#include <sstream>
-#include <senf/Utils/Backtrace.hh>
+#include <senf/config.hh>
+#ifdef SENF_BACKTRACE
+#  include <sstream>
+#  include <senf/Utils/Backtrace.hh>
 #endif
 
 #define prefix_ inline

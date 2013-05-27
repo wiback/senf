@@ -155,15 +155,11 @@ namespace senf {
                                              string. This should probably be a string constant
                                              describing the exception for most derived
                                              exceptions. */
-
         std::string what_;
+
     private:
-#ifdef SENF_BACKTRACE
         void addBacktrace();
-#endif
-#ifdef SENF_DEBUG
         std::string::size_type excLen_;
-#endif
     };
 
     /** \brief Extensible exception base-class

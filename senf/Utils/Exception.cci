@@ -39,15 +39,13 @@
 prefix_ senf::ExceptionMixin::ExceptionMixin(std::string const & description)
     : what_(description)
 {
-#ifdef SENF_BACKTRACE
     addBacktrace();
-#endif
 }
 
 prefix_ std::string senf::ExceptionMixin::message()
     const
 {
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
     return what_.substr(excLen_);
 #else
     return what_;
@@ -57,7 +55,7 @@ prefix_ std::string senf::ExceptionMixin::message()
 prefix_ std::string senf::ExceptionMixin::backtrace()
     const
 {
-#ifdef SENF_DEBUG
+#ifdef SENF_BACKTRACE
     return what_.substr(0,excLen_-4);
 #else
     return "";

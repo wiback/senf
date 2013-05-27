@@ -85,8 +85,7 @@ prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, int num
             os << "    " << sym << "\n";
     }
     free(symbols);
-#endif
-#ifndef SENF_DEBUG
+#else
    os << "no backtrace available please compile SENF without final=1\n";
 #endif
 
