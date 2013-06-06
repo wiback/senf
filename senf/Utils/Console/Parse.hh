@@ -213,6 +213,8 @@ namespace console {
 
     template <class Type>
     struct ArgumentTraits;
+    template <class Type>
+    struct ReturnValueTraits;
 
     namespace detail {
         struct FilePositionWithIndex;
@@ -221,14 +223,19 @@ namespace console {
         struct ArgumentInfo;
         template<class Collection, class Adder>
         struct CollectionArgumentTraits;
+        template <class Collection>
+        struct MapArgumentTraits;
     }
 
 #   define SENF_CONSOLE_PARSE_FRIEND( type )                                                                    \
         friend void senf_console_parse_argument(senf::console::ParseCommandInfo::TokensRange const &, type &);  \
         friend struct senf::console::detail::ArgumentInfo<type>;                                                \
-        friend struct senf::console::ArgumentTraits<type>;                                                \
+        friend struct senf::console::ArgumentTraits<type>;                                                      \
+        friend struct senf::console::ReturnValueTraits<type>;                                                   \
         template<class Collection, class Adder>                                                                 \
-        friend struct senf::console::detail::CollectionArgumentTraits;
+        friend struct senf::console::detail::CollectionArgumentTraits;                                          \
+        template <class Collection>                                                                             \
+        friend struct senf::console::detail::MapArgumentTraits;
 
 
     /** \brief Single argument token
