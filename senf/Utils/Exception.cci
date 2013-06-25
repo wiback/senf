@@ -39,7 +39,9 @@
 prefix_ senf::ExceptionMixin::ExceptionMixin(std::string const & description)
     : what_(description)
 {
+#ifdef SENF_BACKTRACE
     addBacktrace();
+#endif
 }
 
 prefix_ std::string senf::ExceptionMixin::message()

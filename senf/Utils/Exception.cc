@@ -44,9 +44,10 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::Exception
 
+#ifdef SENF_BACKTRACE
+
 prefix_ void senf::ExceptionMixin::addBacktrace()
 {
-#ifdef SENF_BACKTRACE
     void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
     int nEntries (::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS));
 
@@ -57,8 +58,9 @@ prefix_ void senf::ExceptionMixin::addBacktrace()
     excLen_ = ss.str().size();
     ss << what_;
     what_ = ss.str();
-#endif
 }
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::Exception

@@ -158,7 +158,10 @@ namespace senf {
         std::string what_;
 
     private:
+#ifdef SENF_BACKTRACE
         void addBacktrace();
+        std::string::size_type excLen_;
+#endif
     };
 
     /** \brief Extensible exception base-class
