@@ -30,7 +30,6 @@
 
 // Custom includes
 #include "Route.hh"
-#include "Connectors.hh"
 #include "EventManager.hh"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>

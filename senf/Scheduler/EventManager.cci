@@ -41,7 +41,8 @@
 prefix_ senf::scheduler::detail::Event::Event(std::string const & name)
     : name_ (name), runCount_ (0u)
 {
-    EventManager::instance().add(*this);
+    if (EventManager::alive())
+        EventManager::instance().add(*this);
 }
 
 prefix_ senf::scheduler::detail::Event::~Event()

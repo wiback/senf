@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -40,46 +40,14 @@ namespace ppi {
 namespace connector {
 namespace detail {
 
-    template <class PacketType>
-    struct PacketCasterBase
-    {
-        virtual ~PacketCasterBase() {}
-        virtual PacketType const & cast(senf::Packet const & packet) = 0;
-        static PacketType nullPacket_;
-    };
-
-    template <class PacketType>
-    struct CheckedPacketCaster : public PacketCasterBase<PacketType>
-    {
-        virtual PacketType const & cast(senf::Packet const & packet);
-        PacketType packet_;
-    };
-
-    template <class PacketType>
-    class NonCheckedPacketCaster : public PacketCasterBase<PacketType>
-    {
-        virtual PacketType const & cast(senf::Packet const & packet);
-    };
-
-
     template <class Self, class PacketType>
     class TypedInputMixin
     {
     public:
-        TypedInputMixin();
-
         typedef PacketType Type;
 
-        PacketType const & operator()();
-        PacketType const & read();
-
-        void checkedPacketCast(bool check);
-
-    private:
-        CheckedPacketCaster<PacketType> checkedPacketCaster_;
-        NonCheckedPacketCaster<PacketType> nonCheckedPacketCaster_;
-        PacketCasterBase<PacketType> * packetCaster_;
-
+        Type const & operator()();
+        Type const & read();
     };
 
     template <class Self, class PacketType>

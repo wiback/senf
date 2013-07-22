@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -36,50 +36,21 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::connectors::detail::PacketCaster<PacketType>
-
-template <class PacketType>
-PacketType senf::ppi::connector::detail::PacketCasterBase<PacketType>::nullPacket_;
-
-template <class PacketType>
-prefix_ PacketType const & senf::ppi::connector::detail::CheckedPacketCaster<PacketType>::cast(senf::Packet const & packet)
-{
-    packet_ = packet ? packet.as<PacketType>() : PacketCasterBase<PacketType>::nullPacket_;
-    return packet_;
-}
-
-template <class PacketType>
-prefix_ PacketType const & senf::ppi::connector::detail::NonCheckedPacketCaster<PacketType>::cast(senf::Packet const & packet)
-{
-    return packet ? static_cast<PacketType const &>(packet) : PacketCasterBase<PacketType>::nullPacket_;
-};
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connectors::detail::TypedInputMixin<Self,PacketType>
 
 template <class Self, class PacketType>
-prefix_ senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::TypedInputMixin()
-    : packetCaster_(&checkedPacketCaster_)
-{}
-
-template <class Self, class PacketType>
-prefix_ PacketType const & senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::operator()()
+prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type const &
+senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::operator()()
 {
-    return packetCaster_->cast( static_cast<Self*>(this)->InputConnector::operator()());
+    return static_cast<Self*>(this)->InputConnector::operator()().template as<
+        typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type>();
 }
 
 template <class Self, class PacketType>
-prefix_ PacketType const & senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::read()
+prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type const &
+senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::read()
 {
     return operator()();
-}
-
-template <class Self, class PacketType>
-prefix_ void senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::checkedPacketCast(bool check)
-{
-    packetCaster_ = check ?
-            reinterpret_cast<PacketCasterBase<PacketType> *>(&checkedPacketCaster_) :
-            reinterpret_cast<PacketCasterBase<PacketType> *>(&nonCheckedPacketCaster_);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

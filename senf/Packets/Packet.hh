@@ -286,7 +286,7 @@ namespace senf {
 
         template <class OtherPacket> bool        is() const;
                                         ///< Check, whether \c this packet is of the given type
-        template <class OtherPacket> OtherPacket as() const;
+        template <class OtherPacket> OtherPacket const & as() const;
                                         ///< Cast current packet to the given type
                                         /**< This operations returns a handle to the same packet
                                              header/interpreter however upcast to the given
@@ -294,7 +294,8 @@ namespace senf {
                                              before.
                                              \throws std::bad_cast if the current packet is not of
                                                  type \a OtherPacket */
-        template <class OtherPacket> OtherPacket as(NoThrow_t) const;
+        template <class OtherPacket> OtherPacket & as();
+        template <class OtherPacket> OtherPacket const & as(NoThrow_t) const;
                                         ///< Cast current packet to the given type
                                         /**< This operations returns a handle to the same packet
                                              header/interpreter however upcast to the given
@@ -303,6 +304,7 @@ namespace senf {
                                              \warning You must make absolutely sure that the packet
                                              is of the given type. If not, calling this member
                                              crashes your program in a unkindly way. */
+        template <class OtherPacket> OtherPacket & as(NoThrow_t);
 
         Packet append(Packet const & packet) const; ///< Append the given packet to \c this packet
                                         /**< This operation will replace the payload section of \c

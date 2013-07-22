@@ -438,14 +438,11 @@ namespace connector {
         virtual void v_enqueueEvent();
         virtual void v_dequeueEvent();
 
-        virtual void v_checkedPacketCast(bool check) = 0;
-
         OutputConnector * peer_;
         Queue queue_;
         Packet const * fastPacket_;
         Packet slowPacket_;
 
-        friend class Connector;
         friend class OutputConnector;
     };
 
@@ -595,11 +592,6 @@ namespace connector {
 
 #   define TypedConnector_Input read
 #   define TypedConnector_Output write
-#   define TypedConnector_checkedPacketCast_Input                                                 \
-        void v_checkedPacketCast(bool check) {                                                    \
-            mixin::checkedPacketCast(check);                                                      \
-        }
-#   define TypedConnector_checkedPacketCast_Output
 #   define TypedConnector(pType, dir)                                                             \
         template <class PacketType>                                                               \
         class pType ## dir                                                                        \
@@ -611,16 +603,13 @@ namespace connector {
             using mixin::operator();                                                              \
             using mixin::TypedConnector_ ## dir ;                                                 \
         private:                                                                                  \
-            virtual std::type_info const & v_packetTypeId()                                       \
+            virtual std::type_info const & v_packetTypeId()                                         \
                 { return typeid(typename PacketType::type); }                                     \
             friend class detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>;    \
-            TypedConnector_checkedPacketCast_ ## dir                                              \
         };                                                                                        \
         template <>                                                                               \
         class pType ## dir <Packet> : public Generic ## pType ## dir                              \
-        {                                                                                         \
-            void v_checkedPacketCast(bool check) {}                                               \
-        }
+        {}
 
     TypedConnector( Passive, Input  );
     TypedConnector( Passive, Output );
@@ -650,10 +639,10 @@ namespace connector {
     {
     public:
         PacketType const & operator()(); ///< Read packet
-                                         /**< \throws std::bad_cast if the %connector receives a
-                                              Packet which is not of type \a PacketType.
-                                              \returns newly read packet reference. */
-        PacketType const & read();      ///< Alias for operator()
+                                        /**< \throws std::bad_cast if the %connector receives a
+                                             Packet which is not of type \a PacketType.
+                                             \returns newly read packet reference. */
+        PacketType const & read();        ///< Alias for operator()
     };
 
     /** \brief Connector passively receiving packets
@@ -673,9 +662,9 @@ namespace connector {
     {
     public:
         PacketType const & operator()(); ///< Read packet
-                                         /**< \throws std::bad_cast if the %connector receives a
-                                              Packet which is not of type \a PacketType.
-                                              \returns newly read packet reference. */
+                                        /**< \throws std::bad_cast if the %connector receives a
+                                             Packet which is not of type \a PacketType.
+                                             \returns newly read packet reference. */
         PacketType const & read();      ///< Alias for operator()
     };
 

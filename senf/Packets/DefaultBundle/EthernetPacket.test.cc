@@ -35,6 +35,7 @@
 #include "EthernetPacket.hh"
 #include "LlcSnapPacket.hh"
 #include "IPv4Packet.hh"
+#include "UDPPacket.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -109,8 +110,20 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_create)
     BOOST_CHECK_EQUAL(vlan->type_length(), 0u);
 
     senf::IPv4Packet ip (senf::IPv4Packet::createAfter(vlan));
+    ip->source() << senf::INet4Address::Broadcast;
+    senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
+    udp->source() = 42;
     eth.finalizeAll();
     BOOST_CHECK_EQUAL(vlan->type_length(), 0x0800u);
+
+    ::memmove(
+            vlan.data().begin(),
+            vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
+            vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
+    eth.data().resize( eth.size() - senf::EthVLanPacketParser::fixed_bytes);
+    eth->type_length() = 0x0800u;
+    eth.reparse();
+    eth.dump(std::cout);
 }
 
 SENF_AUTO_UNIT_TEST(ethernetPacket_llcsnap)

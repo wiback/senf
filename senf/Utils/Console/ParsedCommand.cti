@@ -31,8 +31,8 @@
 #include "ParsedCommand.ih"
 
 // Custom includes
-#include <senf/Utils/membind.hh>
 #include <boost/format.hpp>
+#include <senf/Utils/membind.hh>
 #include <senf/Utils/parameter.hh>
 
 #define prefix_ inline
