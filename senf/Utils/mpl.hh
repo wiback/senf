@@ -189,7 +189,7 @@ namespace mpl {
         macro invocation to the next.
 
         \implementation The implementation is based on __LINE__: We check backwards for a value
-            defined on a previous line. The check is limited to 80 lines backwards.
+            defined on a previous line. The check is limited to 40 lines backwards.
 
         \ingroup senfmpl
         \hideinitializer

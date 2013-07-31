@@ -83,47 +83,7 @@
     SENF_MPL_SLOT_I_CHECK(name, __LINE__>38?__LINE__-38:0,                                        \
     SENF_MPL_SLOT_I_CHECK(name, __LINE__>39?__LINE__-39:0,                                        \
     SENF_MPL_SLOT_I_CHECK(name, __LINE__>40?__LINE__-40:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>41?__LINE__-41:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>42?__LINE__-42:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>43?__LINE__-43:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>44?__LINE__-44:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>45?__LINE__-45:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>46?__LINE__-46:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>47?__LINE__-47:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>48?__LINE__-48:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>49?__LINE__-49:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>50?__LINE__-50:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>51?__LINE__-51:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>52?__LINE__-52:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>53?__LINE__-53:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>54?__LINE__-54:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>55?__LINE__-55:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>56?__LINE__-56:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>57?__LINE__-57:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>58?__LINE__-58:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>59?__LINE__-59:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>60?__LINE__-60:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>61?__LINE__-61:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>62?__LINE__-62:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>63?__LINE__-63:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>64?__LINE__-64:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>65?__LINE__-65:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>66?__LINE__-66:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>67?__LINE__-67:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>68?__LINE__-68:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>69?__LINE__-69:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>70?__LINE__-70:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>71?__LINE__-71:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>72?__LINE__-72:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>73?__LINE__-73:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>74?__LINE__-74:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>75?__LINE__-75:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>76?__LINE__-76:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>77?__LINE__-77:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>78?__LINE__-78:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>79?__LINE__-79:0,                                        \
-    SENF_MPL_SLOT_I_CHECK(name, __LINE__>80?__LINE__-80:0,                                        \
-        0 ))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+        0 ))))))))))))))))))))))))))))))))))))))))
 
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
