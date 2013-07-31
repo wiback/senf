@@ -56,19 +56,22 @@ namespace senf {
                 imposing any inheritance relationship on the predicate
          */
         template <class Predicate>
-        struct Dispatcher
-            : public ReadHelper<Handle>::InternalPredicate
-        {
-            Dispatcher(Predicate p) : predicate(p) {}
-            virtual std::string::size_type operator()(std::string const & data);
-            Predicate predicate;
-        };
+        struct Dispatcher;
 
         virtual std::string::size_type operator()(std::string const & data) = 0;
     };
 
-}
+    template <class Handle>
+    template <class Predicate>
+    struct ReadHelper<Handle>::InternalPredicate::Dispatcher
+        : public ReadHelper<Handle>::InternalPredicate
+    {
+        Dispatcher(Predicate p) : predicate(p) {}
+        virtual std::string::size_type operator()(std::string const & data);
+        Predicate predicate;
+    };
 
+}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif

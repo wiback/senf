@@ -40,9 +40,9 @@
 namespace {
     void dumpBase(senf::WLANPacketParser const & p, std::ostream & os)
     {
-        os << "  version                 : " << unsigned(p.version()) <<"\n"
-           << "  type                    : " << unsigned(p.type()) << "\n"
-           << "  subtype                 : " << unsigned(p.subtype()) << "\n"
+        os << "  version                 : " << p.version() << std::endl
+           << "  type                    : " << p.type()    << std::endl
+           << "  subtype                 : " << p.subtype() << std::endl
            << "  flags                   :";
         if ( p.toDS()           ) os << " toDS";
         if ( p.fromDS()         ) os << " fromDS";
@@ -56,8 +56,8 @@ namespace {
         if ( !(p.toDS() || p.fromDS() || p.moreFrag() || p.retry() || p.pwrMgt() ||
                p.moreData() || p.protectedFrame() || p.order()) )
             os << " none";
-        os << "\n"
-           << "  duration                : " << unsigned(p.duration()) << "\n";
+        os << std::endl
+           << "  duration                : " << p.duration() << std::endl;
     }
 }
 
@@ -75,11 +75,11 @@ prefix_ void senf::WLANPacket_MgtFrameType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "802.11 MAC Management Frame:\n";
     dumpBase(p.parser(), os);
-    os << senf::fieldName("destination")           << p->destinationAddress() << "\n"
-       << senf::fieldName("source")                << p->sourceAddress() << "\n"
-       << senf::fieldName("bss id")                << p->bssid() << "\n"
-       << senf::fieldName("sequence number")       << p->sequenceNumber() << "\n"
-       << senf::fieldName("fragment number")       << p->fragmentNumber() << "\n";
+    os << senf::fieldName("destination")           << p->destinationAddress() << std::endl
+       << senf::fieldName("source")                << p->sourceAddress()      << std::endl
+       << senf::fieldName("bss id")                << p->bssid()              << std::endl
+       << senf::fieldName("sequence number")       << p->sequenceNumber()     << std::endl
+       << senf::fieldName("fragment number")       << p->fragmentNumber()     << std::endl;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,9 +90,9 @@ prefix_ void senf::WLANPacket_CtrlFrameType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "802.11 MAC Control Frame:\n";
     dumpBase(p.parser(), os);
-    os << senf::fieldName("receiver")              << p->receiverAddress() << "\n";
+    os << senf::fieldName("receiver")              << p->receiverAddress() << std::endl;
     if (p->is_rts())
-        os << senf::fieldName("source")                << p->sourceAddress() << "\n";
+        os << senf::fieldName("source")            << p->sourceAddress() << std::endl;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,18 +150,18 @@ prefix_ void senf::WLANPacket_DataFrameType::dump(packet p, std::ostream & os)
     dumpBase(p.parser(), os);
     os << senf::fieldName("destination")               << p->destinationAddress();
     if (p->dsBits()==0 || p->dsBits()==2) os << " (receiver)";
-    os << "\n"
+    os << std::endl
        << senf::fieldName("source")                    << p->sourceAddress();
     if (p->dsBits()==0 || p->dsBits()==1) os << " (transmitter)";
-    os << "\n"
+    os << std::endl
        << senf::fieldName("bss id")                    << p->bssid();
     if (p->dsBits()==1) os << " (receiver)";
     else if (p->dsBits()!=0) os << " (transmitter)";
-    os << "\n"
-       << senf::fieldName("sequence number")           << p->sequenceNumber() << "\n"
-       << senf::fieldName("fragment number")           << p->fragmentNumber() << "\n";
+    os << std::endl
+       << senf::fieldName("sequence number")           << p->sequenceNumber() << std::endl
+       << senf::fieldName("fragment number")           << p->fragmentNumber() << std::endl;
     if (p->has_qosField())
-        os << senf::fieldName("QOS data")              << p->qosField() << "\n";
+        os << senf::fieldName("QOS data")              << p->qosField() << std::endl;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
