@@ -37,13 +37,8 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <senf/config.hh>
 
-#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
-#  include <boost/spirit/include/classic_file_iterator.hpp>
-#  include <boost/spirit/include/classic_position_iterator.hpp>
-#else
-#  include <boost/spirit/iterator/file_iterator.hpp>
-#  include <boost/spirit/iterator/position_iterator.hpp>
-#endif
+#include <boost/spirit/include/classic_file_iterator.hpp>
+#include <boost/spirit/include/classic_position_iterator.hpp>
 
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/senfassert.hh>
@@ -295,9 +290,7 @@ namespace {
 
 namespace boost {
 namespace spirit {
-#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
 namespace classic {
-#endif
 
     template <>
     class position_policy<senf::console::detail::FilePositionWithIndex>
@@ -325,10 +318,7 @@ namespace classic {
             }
     };
 
-#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
-}
-#endif
-}}
+}}}
 
 prefix_ senf::console::CommandParser::CommandParser()
     : impl_ (new Impl())

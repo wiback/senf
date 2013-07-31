@@ -1,5 +1,4 @@
 debian/tmp/usr/include/senf
-debian/tmp/usr/include/boost_ext
 debian/tmp/usr/lib/senf/site_scons
 README usr/share/doc/libsenf-dev
 debian/README.Debian usr/share/doc/libsenf-dev

@@ -33,20 +33,10 @@
 
 // Custom includes
 #include <vector>
-#include <senf/config.hh>
-
-#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
-#  include <boost/spirit/include/classic.hpp>
-#  include <boost/spirit/include/classic_grammar_def.hpp>
-#  include <boost/spirit/include/classic_dynamic.hpp>
-#  include <boost/spirit/include/phoenix1.hpp>
-#else
-#  include <boost/spirit.hpp>
-#  include <boost/spirit/utility/grammar_def.hpp>
-#  include <boost/spirit/dynamic.hpp>
-#  include <boost/spirit/phoenix.hpp>
-#endif
-
+#include <boost/spirit/include/classic.hpp>
+#include <boost/spirit/include/classic_grammar_def.hpp>
+#include <boost/spirit/include/classic_dynamic.hpp>
+#include <boost/spirit/include/phoenix1.hpp>
 #include <senf/Utils/Phoenix.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,11 +45,7 @@ namespace senf {
 namespace console {
 namespace detail {
 
-#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
     namespace boost_spirit = ::boost::spirit::classic;
-#else
-    namespace boost_spirit = ::boost::spirit;
-#endif
 
 #ifndef DOXYGEN
 

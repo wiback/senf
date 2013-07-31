@@ -84,7 +84,6 @@ env.Append(
     CLEAN_SOME_PATTERNS    = [ '*~', '#*#', '*.pyc', 'semantic.cache' ],
     CLEAN_PATTERNS         = [ '.sconsign*', '.sconf_temp' ],
 
-    CPPPATH                = [ '${NEED_BOOST_EXT and "#/boost_ext" or None}' ],
     LIBPATH                = [ '$LOCALLIBDIR' ],
     LIBS                   = [ '$EXTRA_LIBS' ],
     EXTRA_LIBS             = [ 'rt' ],
@@ -251,8 +250,6 @@ env.Install('${SCONSINSTALLDIR}', [ 'site_scons/__init__.py',
                                     'site_scons/yaptu.py' ])
 env.InstallDir('${SCONSINSTALLDIR}', [ 'site_scons/site_tools', 'site_scons/lib' ],
                FILTER_SUFFIXES=[ '','.css','.pl','.py','.sh','.sty','.xml','.xsl','.yap' ])
-env.Install('${INCLUDEINSTALLDIR}', 'boost_ext')
-env.Install('${INCLUDEINSTALLDIR}/senf', 'senf/boost_intrusive')
 
 env.Alias('install_all', env.FindInstalledFiles())
 env.Alias('default', DEFAULT_TARGETS)

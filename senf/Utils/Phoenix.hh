@@ -32,13 +32,7 @@
 #define HH_SENF_Utils_Phoenix_ 1
 
 // Custom includes
-#include <senf/config.hh>
-
-#if HAVE_BOOST_SPIRIT_INCLUDE_CLASSIC_HPP
-#  include <boost/spirit/include/phoenix1_functions.hpp>
-#else
-#  include <boost/spirit/phoenix/functions.hpp>
-#endif
+#include <boost/spirit/include/phoenix1_functions.hpp>
 
 //#include "Phoenix.mpp"
 #include "Phoenix.ih"

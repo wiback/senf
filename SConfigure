@@ -78,9 +78,6 @@ conf = env.Configure(clean=False, help=False, config_h="$BUILDDIR/senf/autoconf.
 # Boost
 res = conf.CheckBoostVersion(fail=True)
 res = conf.CheckBoostVariants()
-res = conf.CheckCXXHeader("boost/spirit/include/classic.hpp")
-res = conf.CheckCXXHeader("boost/bimap.hpp"); \
-    conf.env.Replace(NEED_BOOST_EXT = not res)
 
 # Compiler support
 res = conf.CheckTempBufferStrategy()
