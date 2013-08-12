@@ -39,11 +39,12 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/signals.hpp>
+#include <boost/signals2.hpp>
 #include <senf/Utils/Logger/Logger.hh>
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include "StatisticAccumulator.hh"
 #include "Exception.hh"
+#include "Cpp11Support.hh"
 
 //#include "Statistics.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +108,7 @@ namespace senf {
             There are two types of targets:
             \li <em>Externally managed targets</em>. These targets live outside of the statistics
                 module, just a reference to those targets is saved. The target should derive from
-                <tt>boost::signals::trackable</tt> to ensure they are automatically disconnected
+                <tt>boost::signals2::trackable</tt> to ensure they are automatically disconnected
                 when destroyed.
             \li <em>Internally managed targets</em>. Those targets are owned by the statistics
                 module and will be destroyed when the statistics class is destroyed.
@@ -140,7 +141,7 @@ namespace senf {
             template <class Target> Owner & connect(Target & target,
                                                     std::string label="") const;
                                         ///< Connect externally managed target
-            template <class PTarget> Owner & connect(std::auto_ptr<PTarget> target,
+            template <class PTarget> Owner & connect(unique_or_auto_ptr<PTarget> target,
                                                      std::string label="") const;
                                         ///< Connect internally managed target
             Owner & noconnect() const;  ///< Don't connect the output
@@ -302,7 +303,7 @@ namespace senf {
             struct Target : public TargetBase
             {
                 boost::scoped_ptr<PTarget> target_;
-                Target(std::auto_ptr<PTarget> target, std::string const & label)
+                Target(unique_or_auto_ptr<PTarget> target, std::string const & label)
                     : TargetBase (label), target_ (target.release()) {}
                 explicit Target(std::string const & label)
                     : TargetBase (label), target_ (0) {}
@@ -323,7 +324,7 @@ namespace senf {
             float max;
             float dev;
 
-            boost::signal<void(unsigned,float,float,float,float)> signal;
+            boost::signals2::signal<void(unsigned,float,float,float,float)> signal;
             boost::ptr_vector<TargetBase> targets_;
 
             senf::console::ScopedDirectory<> dir;

@@ -186,7 +186,7 @@ prefix_ unsigned long senf::Packet::id()
 prefix_ bool senf::Packet::boolean_test()
     const
 {
-    return packet_;
+    return packet_.get() != 0;
 }
 
 prefix_ bool senf::Packet::is_shared()

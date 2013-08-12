@@ -33,7 +33,7 @@
 
 // Custom includes
 
-#define BOOST_PARAMETER_MAX_ARITY 6
+#define BOOST_PARAMETER_MAX_ARITY 7
 
 #include <vector>
 #include <boost/type_traits/function_traits.hpp>

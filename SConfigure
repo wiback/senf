@@ -75,25 +75,46 @@ def CheckValgrindWildcards(context):
 
 conf = env.Configure(clean=False, help=False, config_h="$BUILDDIR/senf/autoconf.hh")
 
-# Boost
-res = conf.CheckBoostVersion(fail=True)
-res = conf.CheckBoostVariants()
+# Compiler
+if env['cxx11']:
+    if 'CXX' in ARGUMENTS:
+        compilers = [ARGUMENTS['CXX']]
+    else:
+        compilers = ('g++', 'g++-4.8', 'g++-4.7') 
+    for gcc in compilers:
+        env['CXX'] = gcc
+        if conf.CheckCXXVersion(min='4.7', fail=False):
+            break
+    else:
+        env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
 
+# Boost
+if env['cxx11']:
+    minBoostVersion = '1_49'
+else:
+    minBoostVersion = None
+conf.CheckBoostInstallation(min=minBoostVersion)
+conf.env.SetDefault( BOOST_EXT = [] )
+if not conf.CheckCXXHeader("boost/icl/interval.hpp", include_quotes='<>'):
+    conf.env.Append(BOOST_EXT = ['icl'])
+if env['cxx11']:
+    conf.Define('SENF_CXX11_ENABLED', 1)
+    
 # Compiler support
-res = conf.CheckTempBufferStrategy()
+conf.CheckTempBufferStrategy()
 
 # Standard library stuff
-res = conf.CheckCHeader("execinfo.h")
-res = conf.FindCHeader("timerfd.h", [ 'sys', 'linux' ])
-res = conf.CheckFunc("timerfd_create")
-res = conf.CheckSymbolWithExpression(
+conf.CheckCHeader("execinfo.h")
+conf.FindCHeader("timerfd.h", [ 'sys', 'linux' ])
+conf.CheckFunc("timerfd_create")
+conf.CheckSymbolWithExpression(
     "le16toh", "le16toh(0)", "#include <senf/Packets/80211Bundle/radiotap/platform.h>")
-res = conf.CheckSymbolWithExpression(
+conf.CheckSymbolWithExpression(
     "le32toh", "le32toh(0)", "#include <senf/Packets/80211Bundle/radiotap/platform.h>")
-res = conf.CheckByteorder()
+conf.CheckByteorder()
 res = conf.CheckSTLCopyN(); \
     conf.env.Fail(condition=not res, message="No 'copy_n' implementation found")
-res = conf.CheckType("std::unique_ptr<void>", includes="#include <memory>", language="c++")
+conf.CheckType("std::unique_ptr<void>", includes="#include <memory>", language="c++")
 
 # valgrind
 res = conf.CheckValgrind() and conf.CheckValgrindWildcards(); \
@@ -111,4 +132,3 @@ if sconscripts:
 ###########################################################################
 
 env = conf.Finish()
-

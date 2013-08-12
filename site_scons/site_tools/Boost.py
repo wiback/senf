@@ -2,6 +2,7 @@ import SCons.Script
 import SCons.Script.SConscript
 import SCons.Defaults
 import os.path
+import glob
 import os
 import sys
 import tempfile
@@ -121,18 +122,59 @@ def NopAction(env, target, source):
 ConfTest = CustomTests.ConfTest()
 
 @ConfTest
-def CheckBoostVersion(context,fail=False,min=None,max=None):
+def CheckBoostInstallation(context, min=None, max=None):
+    BOOST_LIBS = (
+            ('BOOSTTESTLIB',     'boost_unit_test_framework'),
+            ('BOOSTREGEXLIB',    'boost_regex'),
+            ('BOOSTFSLIB',       'boost_filesystem'),
+            ('BOOSTSIGNALSLIB',  'boost_signals'),
+            ('BOOSTDATETIMELIB', 'boost_date_time'),
+            ('BOOSTSYSTEMLIB',   'boost_system') )
+                  
+    # first check the default
+    r = checkBoostVersion(context, min, max)
+    if r: 
+        for envVar, boostlib in BOOST_LIBS:
+            if not checkBoostLib(context, envVar, boostlib):
+                return False
+        return r
+    # check for other boost installations
+    dirs = [d for d in glob.glob('/usr/local/include/boost-*') if os.path.isdir(d)] + \
+           [d for d in glob.glob('/usr/include/boost-*') if os.path.isdir(d)]
+    for d in dirs:
+        r = checkBoostVersion(context, min, max, d)
+        if r:
+            # we have found the boost headers in a non-standard directory
+            # now search the specific libraries
+            for envVar, boostlib in BOOST_LIBS:
+                if not checkBoostLib(context, envVar, boostlib, context.env['BOOST_VERSION']):
+                    context.env.Fail('No valid boost installation found')
+            return r
+    context.env.Fail('No valid boost installation found')
+    
+    
+def checkBoostLib(context, envVar, libName, version=None):
+    if version is None:
+        if context.sconf.CheckLib(libName, language='CXX', autoadd=False):
+            context.env.SetDefault( **{ envVar : libName })
+            return True
+    lib = '%s-%s' % (libName, version)
+    if context.sconf.CheckLib(lib, language='CXX', autoadd=False):
+        context.env.SetDefault( **{ envVar : lib })
+        return True
+    return False
+
+    
+def checkBoostVersion(context, min=None, max=None, includeDir=None):
     """Check for boost includes.
 
-Will place the boost version number (BOOST_LIB_VERSION) into the
-BOOST_VERSION environment variable.
+    Will place the boost version number (BOOST_LIB_VERSION) into the
+    BOOST_VERSION environment variable.
 
-Options:
-
-    min/max   compare boost version against given range.
-
-    fail      if fail is set to True, the build will be terminated,
-              when no valid boost includes are found."""
+    Options:
+        min/max   compare boost version against given range.
+        fail      if fail is set to True, the build will be terminated,
+                  when no valid boost includes are found."""
     if min and max:
         msg = ' in range %s to %s' % (min,max)
     elif min:
@@ -141,24 +183,28 @@ Options:
         msg = ' at most %s' % max
     else:
         msg = ''
+    if includeDir:
+        msg += ' (%s)' % includeDir
     context.Message( "Checking boost version%s... " % msg )
-    if context.env.has_key('BOOST_VERSION'):
+    if context.env.has_key('BOOST_VERSION') and context.env['BOOST_VERSION']:
         ret = context.env['BOOST_VERSION']
     else:
+        cppPath = context.env['CPPPATH']
+        context.env.Replace( CPPPATH = cppPath + [includeDir])
         ret = context.TryRun("#include <boost/version.hpp>\n"
                              "#include <iostream>\n"
                              "int main(int, char **)\n"
                              "{ std::cout << BOOST_LIB_VERSION << std::endl; }",
                              ".cc")[-1].strip()
+        context.env.Replace( CPPPATH = cppPath)                    
 
     if not ret:
         msg = "no boost includes found"
-        context.env.Replace( BOOST_VERSION = None )
     else:
         context.env.Replace( BOOST_VERSION = ret )
         msg = ret
         if min or max:
-            try: version = map(int,ret.split('_'))
+            try: version = map(int, ret.split('_'))
             except ValueError:
                 msg = "[%s] invalid version syntax" % ret
                 ret = None
@@ -167,61 +213,21 @@ Options:
                 if max : ret = ret and (version<=map(int,max.split('_')))
                 msg = '[%s] %s' % (msg, ret and "yes" or "no")
     context.Result(msg)
-    if fail and not ret : context.env.Fail('No valid boost includes found')
+    if ret:
+        if includeDir:
+            context.env.Replace( BOOST_INCLUDE_PATH = includeDir)
+            context.env.Append( CPPPATH = [includeDir])
+            context.env.Append( CXXFLAGS = ['-isystem%s' % includeDir])
+    else:
+        context.env.Replace( BOOST_VERSION = None )
     return ret
-
-@ConfTest
-def CheckBoostVariants(context, *variants):
-    if not variants : variants = ('','mt')
-    useVariant = None
-    if context.env['BOOST_VARIANT'] is not None:
-        useVariant = context.env['BOOST_VARIANT']
-    try:
-        _env = context.env.Clone()
-        for variant in variants:
-            if variant : variantStr = "'%s'" % variant
-            else       : variantStr = "default"
-            context.Message( "Checking boost %s variant... " % variantStr )
-            context.env.Replace( BOOST_VARIANT=variant )
-            context.env.Append( _LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB  -Wl,-Bdynamic' )
-            ret = context.TryLink("#define BOOST_AUTO_TEST_MAIN\n"
-                                  "#include <boost/test/auto_unit_test.hpp>\n"
-                                  "#include <boost/test/test_tools.hpp>\n"
-                                  "BOOST_AUTO_TEST_CASE(test) { BOOST_CHECK(true); }\n",
-                                  ".cc")
-            context.Result( ret )
-            if ret and useVariant is None:
-                useVariant = variant
-    finally:
-        context.env.Replace(**_env.Dictionary())
-    if useVariant is not None and not context.env.GetOption('no_progress'):
-        print  "Using %s boost variant." % (
-            useVariant and "'%s'" % useVariant or "default")
-    context.env.Replace( BOOST_VARIANT = useVariant )
-    context.env.Append( HAS_BOOST_SYSTEM = context.sconf.CheckLib('boost_system', language='c++', autoadd=False))
-    return useVariant
 
 
 def generate(env):
     env.SetDefault(
-        BOOST_VARIANT     = None,
-        _BOOST_VARIANT    = '${BOOST_VARIANT and "-" or None}$BOOST_VARIANT',
-
-        BOOSTTESTLIB      = 'boost_unit_test_framework$_BOOST_VARIANT',
-        BOOSTREGEXLIB     = 'boost_regex$_BOOST_VARIANT',
-        BOOSTFSLIB        = 'boost_filesystem$_BOOST_VARIANT',
-        BOOSTIOSTREAMSLIB = 'boost_iostreams$_BOOST_VARIANT',
-        BOOSTSIGNALSLIB   = 'boost_signals$_BOOST_VARIANT',
-        BOOSTDATETIMELIB  = 'boost_date_time$_BOOST_VARIANT',
-
-        _BOOSTSYSTEMLIB   = '${HAS_BOOST_SYSTEM and "boost_system" or ""}',
-        BOOSTSYSTEMLIB    = '$_BOOSTSYSTEMLIB',
-
-        BOOSTTESTARGS     = [ '--build_info=yes', '--log_level=test_suite' ],
-        )
+        BOOSTTESTARGS     = [ '--build_info=yes', '--log_level=test_suite' ] )
     env.Append(
-        CUSTOM_TESTS      = ConfTest.tests,
-        )
+        CUSTOM_TESTS      = ConfTest.tests )
 
     env['BUILDERS']['BoostUnitTest'] = BoostUnitTest
     env['BUILDERS']['FindAllBoostUnitTests'] = FindAllBoostUnitTests

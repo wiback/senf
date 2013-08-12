@@ -153,17 +153,11 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
         env.Append(
             CPPPATH       = [ '$SENFINCDIR' ],
             LIBPATH       = [ '$SENFDIR' ],
-            )
-
-    if env['BOOST_VARIANT'] is None:
-        conf = env.Configure(clean=False, help=False)
-        conf.CheckBoostVersion(fail=True)
-        conf.CheckBoostVariants()
-        conf.Finish()
+        )
 
     env.Replace(
         expandLogOption   = expandLogOption,
-        )
+    )
     env.SetDefault(
         LIBADDSUFFIX      = '${FLAVOR and "_$FLAVOR" or ""}',
         OBJADDSUFFIX      = '${LIBADDSUFFIX}',
@@ -175,7 +169,7 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
         PROJECTEMAIL      = "nobody@nowhere.org",
         COPYRIGHT         = "nobody",
         REVISION          = "unknown",
-        )
+    )
     env.Append(
         CPPDEFINES        = [ '$expandLogOption' ],
         CXXFLAGS          = [ '-Wno-long-long', '-fno-strict-aliasing' ],
@@ -183,14 +177,42 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
         LIBS              = [ 'senf$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB',
                               '$BOOSTSIGNALSLIB', '$BOOSTFSLIB', '$BOOSTSYSTEMLIB',
                               '$BOOSTDATETIMELIB' ],
-        )
+    )
 
     try:
         path = env.File('$BUNDLEDIR/senf${LIBADDSUFFIX}.conf').abspath
         env.MergeFlags(file(path).read())
+        if '-std=c++11' in env['CFLAGS']:
+            env['CFLAGS'].remove('-std=c++11')
+            env.Append( CXXFLAGS=['-std=c++11'])
+        if '-std=c++11' in env['CXXFLAGS']:
+            env['cxx11'] = True
     except IOError:
         # Really should never happen since detect_senf looks for this file ...
         pass
+    
+    # configure - compiler
+    conf = env.Configure(clean=False, help=False)
+    if env['cxx11']:
+        if 'CXX' in ARGUMENTS:
+            compilers = [ARGUMENTS['CXX']]
+        else:
+            compilers = ('g++', 'g++-4.8', 'g++-4.7') 
+        for gcc in compilers:
+            env['CXX'] = gcc
+            if conf.CheckCXXVersion(min='4.7', fail=False):
+                break
+        else:
+            env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
+        
+    # configure - Boost
+    if env['cxx11']:
+        minBoostVersion = '1_49'
+    else:
+        minBoostVersion = None
+    conf.CheckBoostInstallation(min=minBoostVersion)
+    conf.Finish()
+
 
 ###########################################################################
 # Helpers
@@ -205,6 +227,7 @@ def ParseDefaultArguments(env):
         BoolVariable('profile', 'compile and link with the profiling enabled option', False),
         BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
         BoolVariable('lto', 'enable link-time-optimization', False),
+        BoolVariable('cxx11', 'enable C++11 build', False),
     )
     
     build_type = 'normal'

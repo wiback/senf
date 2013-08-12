@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <boost/function.hpp>
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 #include "MonitorModule.hh"
 #include "IntervalTimer.hh"
 
@@ -86,9 +86,9 @@ namespace module {
         // Statistics signals
 
         struct Statistics {
-            boost::signal<void (float)> packetsPerSecond;
-            boost::signal<void (float)> bytesPerSecond;
-            boost::signal<void (unsigned,float,unsigned)> bytesPerPacket;
+            boost::signals2::signal<void (float)> packetsPerSecond;
+            boost::signals2::signal<void (float)> bytesPerSecond;
+            boost::signals2::signal<void (unsigned,float,unsigned)> bytesPerPacket;
         } signals;
 
         void startStatistics(senf::ClockService::clock_type interval);

@@ -45,10 +45,10 @@ prefix_ void senf::detail::StatisticsLoggerRegistry::add(AddFn fn)
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ std::auto_ptr< senf::detail::StatisticsLogger<void,void,void> >
+prefix_ unique_or_auto_ptr< senf::detail::StatisticsLogger<void,void,void> >
 senf::StatisticsLogger(std::string const & label)
 {
-    return std::auto_ptr< detail::StatisticsLogger<void,void,void> >(
+    return unique_or_auto_ptr< detail::StatisticsLogger<void,void,void> >(
         new detail::StatisticsLogger<void,void,void>(label));
 }
 

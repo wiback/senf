@@ -65,13 +65,13 @@ prefix_ Owner & senf::StatisticsBase::OutputProxy<Owner>::connect(Target & targe
 template <class Owner>
 template <class PTarget>
 prefix_ Owner &
-senf::StatisticsBase::OutputProxy<Owner>::connect(std::auto_ptr<PTarget> target, std::string label)
+senf::StatisticsBase::OutputProxy<Owner>::connect(unique_or_auto_ptr<PTarget> target, std::string label)
     const
 {
     if (label.empty())
         label = prettyName(typeid(PTarget));
     PTarget * targetp (target.get());
-    entry_->targets_.push_back(new OutputEntry::Target<PTarget>(target,label));
+    entry_->targets_.push_back(new OutputEntry::Target<PTarget>(move_or_noop(target),label));
     entry_->signal.connect(boost::ref(*targetp));
     return * owner_;
 }

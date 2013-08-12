@@ -102,12 +102,14 @@ env.Append(
     INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '${str(CXX).split("/")[-1] == "g++" and "$INLINE_OPTS_GCC" or None}' ],
     CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene', ], 
-    CXXFLAGS               = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-long-long', 
-                               '-Wno-unused-parameter', '-Wno-unused-function', '-Wnon-virtual-dtor',
-                               '-Wcast-align', '-Winit-self', '-Wdisabled-optimization',
+    CXXFLAGS               = [ '-Wall', '-Wextra', '-Woverloaded-virtual', 
+                               '-Wno-long-long', '-Wno-unused-parameter', 
+                               '-Wnon-virtual-dtor', '-Wcast-align', '-Winit-self', '-Wdisabled-optimization',
                                '-Wpointer-arith', '-Werror',
                                '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
-                               "${profile and '-pg' or None}", "${lto and '-flto' or None}",
+                               '${profile and "-pg" or None}', 
+                               '${lto and "-flto" or None}',
+                               '${cxx11 and "-std=c++11" or None}',
                                '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
     CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics','-fno-stack-protector',
                                "${profile and ' ' or '-ffunction-sections'}" ],
@@ -142,7 +144,7 @@ env.SetDefault(
     LCOV                   = "lcov",
     GENHTML                = "genhtml",
     VALGRIND               = "valgrind",
-    SCONSBIN               = env.File("#/tools/scons"),
+    SCONSBIN               = "scons",
     SCONSARGS              = ([ '-Q', '-j$CONCURRENCY_LEVEL' ] +
                               [ '%s=%s' % (k,v) for k,v in ARGLIST ]),
     SCONS                  = "@$SCONSBIN $SCONSARGS",
@@ -209,6 +211,10 @@ SConscript('SConfigure')
 env.Prepend(LIBS = [ '$LIBSENF$LIBADDSUFFIX',
                      '$BOOSTREGEXLIB', '$BOOSTSIGNALSLIB',
                      '$BOOSTFSLIB', '$BOOSTSYSTEMLIB', '$BOOSTDATETIMELIB' ])
+
+if env.has_key('BOOST_EXT'):
+    for boostlib in env['BOOST_EXT']:
+        env.Append( CPPPATH = [ '#/boost/' + boostlib ])
 
 ###########################################################################
 

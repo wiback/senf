@@ -183,9 +183,11 @@ prefix_ void senf::RadiotapPacketParser::updatePresentFlags(boost::uint32_t flag
         if (index > MAX_INDEX+1)
             break;
         // Now skip over all changed fields
-        // (The condition index <= MAX_INDEX is not needed here since the last
-        // table entry MAX_INDEX+1 is always != 0 in both tables)
         for (; ! (oldTable[index]!=0 && newTable[index]!=0); ++index) ;
+        // (The condition is not needed here since the last table entry MAX_INDEX+1 is
+        // always != 0 in both tables, BUT newer g++ complains about array access above the bounds :-/
+        if (index > MAX_INDEX+1)
+            break;
         // index now either points to
         // a) an entry set in both tables
         // b) at the end of the table which contains the total length

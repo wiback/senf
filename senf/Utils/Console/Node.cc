@@ -115,7 +115,7 @@ prefix_ bool senf::console::GenericNode::isChildOf(DirectoryNode & parent)
     cptr node (thisptr());
     while (node && node != parent.thisptr())
         node = node->parent();
-    return node;
+    return node.get() != 0;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

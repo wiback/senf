@@ -75,11 +75,11 @@ namespace senf {
         \ingroup senf_statistics
      */
     template <class A1=void, class A2=void, class A3=void>
-    std::auto_ptr< unspecified > StatisticsLogger(std::string const & label="")
+    unique_or_auto_ptr< unspecified > StatisticsLogger(std::string const & label="")
 
 #else
 
-    std::auto_ptr< detail::StatisticsLogger<void,void,void> > StatisticsLogger(
+    unique_or_auto_ptr< detail::StatisticsLogger<void,void,void> > StatisticsLogger(
         std::string const & label="");
 
     template <class Stream>
@@ -87,11 +87,11 @@ namespace senf {
         std::string const & label="");
 
     template <class Stream, class Area>
-    std::auto_ptr< detail::StatisticsLogger<Stream,Area,void> > StatisticsLogger(
+    unique_or_auto_ptr< detail::StatisticsLogger<Stream,Area,void> > StatisticsLogger(
         std::string const & label="");
 
     template <class Stream, class Area, class Level>
-    std::auto_ptr< detail::StatisticsLogger<Stream,Area,Level> > StatisticsLogger(
+    unique_or_auto_ptr< detail::StatisticsLogger<Stream,Area,Level> > StatisticsLogger(
         std::string const & label="");
 
 #endif
