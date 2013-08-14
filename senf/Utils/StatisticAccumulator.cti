@@ -62,7 +62,7 @@ template <class T>
 prefix_ float senf::StatisticAccumulator<T>::rms()
     const
 {
-    return cnt_ == 0 ? NAN : sqrt(sum_squared_ / float(cnt_));
+    return cnt_ == 0 ? NAN : sqrtf(sum_squared_ / float(cnt_));
 }
 
 

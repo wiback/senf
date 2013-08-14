@@ -102,10 +102,10 @@ env.Append(
     INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '${str(CXX).split("/")[-1] == "g++" and "$INLINE_OPTS_GCC" or None}' ],
     CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene', ], 
-    CXXFLAGS               = [ '-Wall', '-Wextra', '-Woverloaded-virtual', 
-                               '-Wno-long-long', '-Wno-unused-parameter', 
-                               '-Wnon-virtual-dtor', '-Wcast-align', '-Winit-self', '-Wdisabled-optimization',
-                               '-Wpointer-arith', '-Werror',
+    CXXFLAGS               = [ '-Wall', '-Wextra', '-Werror',
+                               '-Woverloaded-virtual', '-Wnon-virtual-dtor', '-Wcast-align', '-Winit-self',
+                               '-Wdisabled-optimization', '-Wpointer-arith', '-Wdouble-promotion',
+                               '-Wno-long-long', '-Wno-unused-parameter',
                                '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
                                '${profile and "-pg" or None}', 
                                '${lto and "-flto" or None}',
@@ -157,6 +157,9 @@ env.SetDefault(
     PARSEFLAGS             = '',
 )
 
+# Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
+senfutil.importProcessEnv(env)
+
 # Set variables from command line
 senfutil.ParseDefaultArguments(env)
 senfutil.parseArguments(
@@ -170,9 +173,6 @@ if env['debug_final']:
     env['final'] = True
     env.Append(CXXFLAGS = [ '-g' ])
     
-# Add UNIX env vars matching IMPORT_ENV patterns into the execution environment
-senfutil.importProcessEnv(env)
-
 # Handle 'test_changes'
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
     import SparseTestHack

@@ -81,16 +81,16 @@ prefix_ std::ostream & senf::format::operator<<(std::ostream & os, eng const & v
     int scale (0);
 
     if (d > ref) ref = d;
-    while (ref >= 1000.0) {
-        ref /= 1000.0;
-        v /= 1000.0;
-        d /= 1000.0;
+    while (ref >= 1000.0f) {
+        ref /= 1000.0f;
+        v /= 1000.0f;
+        d /= 1000.0f;
         scale += 3;
     }
     while (ref > 0 && ref < 1) {
-        ref *= 1000.0;
-        v *= 1000.0;
-        d *= 1000.0;
+        ref *= 1000.0f;
+        v *= 1000.0f;
+        d *= 1000.0f;
         scale -= 3;
     }
 
