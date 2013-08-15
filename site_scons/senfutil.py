@@ -197,11 +197,11 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
         if 'CXX' in ARGUMENTS:
             compilers = [ARGUMENTS['CXX']]
         else:
-            compilers = ('g++', 'g++-4.8', 'g++-4.7') 
+            compilers = ('g++', 'g++-4.8', 'g++-4.9') 
         for gcc in compilers:
             env['CXX'] = gcc
             env['LINK'] = gcc
-            if conf.CheckCXXVersion(min='4.7', fail=False):
+            if conf.CheckCXXVersion(min='4.8', fail=False):
                 break
         else:
             env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
