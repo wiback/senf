@@ -190,7 +190,10 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
     except IOError:
         # Really should never happen since detect_senf looks for this file ...
         pass
-    
+   
+    if env.GetOption('clean'):
+        return
+ 
     # configure - compiler
     conf = env.Configure(clean=False, help=False)
     if env['cxx11']:
