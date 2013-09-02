@@ -32,11 +32,26 @@
 #define HH_SENF_Utils_safe_bool_ 1
 
 // Custom includes
+#include <senf/autoconf.hh>
 
 //#include "safe_bool.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
+
+#ifdef SENF_CXX11_ENABLED
+
+    template <typename T>
+    class comparable_safe_bool
+    {
+    public:
+        explicit operator bool() const;
+    };
+
+    template <typename T>
+    class safe_bool : public comparable_safe_bool<T> {};
+
+#else
 
     /** \brief internal safe_bool base class
         \internal
@@ -125,6 +140,8 @@ namespace senf {
 
     template <typename T,typename U>
     void operator!=(const safe_bool<T>& lhs,const safe_bool<U>& rhs);
+
+#endif
 
 }
 

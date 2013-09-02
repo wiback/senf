@@ -50,7 +50,7 @@ prefix_ void senf::ppi::module::debug::ActiveSource::submit(Packet const & packe
 prefix_ bool senf::ppi::module::debug::ActiveSource::boolean_test()
     const
 {
-    return output;
+    return bool(output);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ prefix_ senf::Packet senf::ppi::module::debug::ActiveSink::request()
 prefix_ bool senf::ppi::module::debug::ActiveSink::boolean_test()
     const
 {
-    return input;
+    return bool(input);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

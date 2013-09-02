@@ -52,7 +52,7 @@ namespace senf {
                  boost::unit_steppable< RestrictedInt<Base,Tag>,
                  boost::shiftable< RestrictedInt<Base,Tag>,
                  boost::bitwise1< RestrictedInt<Base,Tag>,
-                 senf::comparable_safe_bool< RestrictedInt<Base,Tag> > > > > >
+                 senf::comparable_safe_bool<RestrictedInt<Base,Tag> > > > > >
     {
     public:
         typedef Base base_type;

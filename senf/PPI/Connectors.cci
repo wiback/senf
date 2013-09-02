@@ -201,7 +201,7 @@ prefix_ bool senf::ppi::connector::ActiveConnector::throttled()
 // protected members
 
 prefix_ senf::ppi::connector::ActiveConnector::ActiveConnector()
-    : peer_(NULL), throttled_(false)
+    : peer_(SENF_NULLPTR), throttled_(false)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,14 +229,14 @@ senf::ppi::connector::InputConnector::queueSize()
 prefix_ bool senf::ppi::connector::InputConnector::empty()
     const
 {
-    return fastPacket_ == NULL && queue_.empty();
+    return fastPacket_ == SENF_NULLPTR && queue_.empty();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // protected members
 
 prefix_ senf::ppi::connector::InputConnector::InputConnector()
-    : peer_(NULL), fastPacket_(NULL)
+    : peer_(SENF_NULLPTR), fastPacket_(SENF_NULLPTR)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -251,13 +251,13 @@ prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
         } catch (Exception & e) {
             if (fastPacket_) {
                 queue_.push_front(p);
-                fastPacket_ = NULL;
+                fastPacket_ = SENF_NULLPTR;
             }
             throw e;
         }
         if (fastPacket_) {
             queue_.push_front(p);
-            fastPacket_ = NULL;
+            fastPacket_ = SENF_NULLPTR;
         }
     } else {
         queue_.push_front(p);
@@ -291,14 +291,14 @@ prefix_ void senf::ppi::connector::OutputConnector::write(Packet const & p)
 // protected members
 
 prefix_ senf::ppi::connector::OutputConnector::OutputConnector()
-    : peer_(NULL)
+    : peer_(SENF_NULLPTR)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::GenericPassiveInput
 
 prefix_ senf::ppi::connector::GenericPassiveInput::GenericPassiveInput()
-    : peer_(NULL), qdisc_(new ThresholdQueueing(1,0))
+    : peer_(SENF_NULLPTR), qdisc_(new ThresholdQueueing(1,0))
 {}
 
 prefix_ senf::ppi::connector::GenericActiveOutput & senf::ppi::connector::GenericPassiveInput::peer()
@@ -336,7 +336,7 @@ prefix_ void senf::ppi::connector::GenericPassiveOutput::connect(GenericActiveIn
 }
 
 prefix_ senf::ppi::connector::GenericPassiveOutput::GenericPassiveOutput()
-    : peer_(NULL)
+    : peer_(SENF_NULLPTR)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +362,7 @@ prefix_ void senf::ppi::connector::GenericActiveInput::request()
 }
 
 prefix_ senf::ppi::connector::GenericActiveInput::GenericActiveInput()
-    : peer_(NULL)
+    : peer_(SENF_NULLPTR)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,7 +387,7 @@ prefix_ void senf::ppi::connector::GenericActiveOutput::connect(GenericPassiveIn
 }
 
 prefix_ senf::ppi::connector::GenericActiveOutput::GenericActiveOutput()
-    : peer_(NULL)
+    : peer_(SENF_NULLPTR)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

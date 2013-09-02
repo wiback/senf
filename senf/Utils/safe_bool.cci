@@ -34,6 +34,8 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifndef SENF_CXX11_ENABLED
+
 prefix_ void senf::safe_bool_base::this_type_does_not_support_comparisons()
     const
 {}
@@ -51,6 +53,8 @@ prefix_ senf::safe_bool_base& senf::safe_bool_base::operator=(const safe_bool_ba
 
 prefix_ senf::safe_bool_base::~safe_bool_base()
 {}
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

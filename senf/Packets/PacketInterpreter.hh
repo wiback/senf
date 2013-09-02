@@ -32,7 +32,6 @@
 #define HH_SENF_Packets_PacketInterpreter_ 1
 
 // Custom includes
-#include <boost/intrusive/list.hpp>
 #include <boost/optional.hpp>
 #include <boost/range.hpp>
 #include <senf/Utils/intrusive_refcount.hh>
@@ -157,9 +156,11 @@ namespace senf {
         ptr first();
         ptr last();
 
-        template <class Type> typename PacketInterpreter<Type>::ptr parseNextAs();
-                                       ptr                          parseNextAs(ptr const & self, factory_t factory, PacketInterpreterBase::optional_range const & range);
-        template <class Type> typename PacketInterpreter<Type>::ptr as();
+        template <class Type>
+        typename PacketInterpreter<Type>::ptr parseNextAs();
+        ptr parseNextAs(ptr const & self, factory_t factory, PacketInterpreterBase::optional_range const & range);
+        template <class Type>
+        typename PacketInterpreter<Type>::ptr as();
 
         ptr append(ptr packet);
 

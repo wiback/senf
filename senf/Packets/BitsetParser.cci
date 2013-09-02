@@ -43,7 +43,7 @@ prefix_ std::size_t senf::LSB0Endianness::bytePosition(std::size_t totalBytes, s
 
 prefix_ std::size_t senf::LSB0Endianness::bit(std::size_t bitPos)
 {
-    return 1 << (bitPos%8);
+    return 1u << (bitPos%8);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ prefix_ std::size_t senf::MSB0Endianness::bytePosition(std::size_t totalBytes, s
 
 prefix_ std::size_t senf::MSB0Endianness::bit(std::size_t bitPos)
 {
-    return 1 << (7-(bitPos%8));
+    return 1u << (7-(bitPos%8));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

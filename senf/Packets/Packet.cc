@@ -72,6 +72,13 @@ prefix_ void senf::Packet::memDebug(std::ostream & os)
     p->memDebug(os);
 }
 
+prefix_ std::ostream & senf::operator<<(std::ostream & os, Packet const & packet)
+{
+    os << "Packet<" << packet.typeId().prettyName() << ">:" << packet.id();
+    return os;
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 //#include "Packet.mpp"

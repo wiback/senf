@@ -53,7 +53,7 @@
 
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000),
-      watchdogAbort_ (false), runningTask_(NULL), watchdogCount_(0), hangCount_ (0), yield_ (false)
+      watchdogAbort_ (false), runningTask_(SENF_NULLPTR), watchdogCount_(0), hangCount_ (0), yield_ (false)
 {
     struct sigevent ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -171,7 +171,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
     if (next_ == i)
         ++next_;
     if (runningTask_ == task) {
-        runningTask_ = NULL;
+        runningTask_ = SENF_NULLPTR;
         runningName_ = task->name();
 #ifdef SENF_BACKTRACE
         runningBacktrace_ = task->backtrace_;

@@ -65,7 +65,7 @@ prefix_ senf::CpuStat senf::CpuStatProb::cpuStat()
         current.push_back( x);
     }
 
-    if (probs.size() == 0 || time == 0) {
+    if (probs.size() == 0 || time == ClockService::seconds(0)) {
         probs = current;
         time = now;
         return CpuStat();

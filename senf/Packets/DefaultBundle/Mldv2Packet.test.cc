@@ -50,5 +50,5 @@ SENF_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
     recContainer_t mcastAddrRecords (p->mcastAddrRecords());
     recContainer_t::iterator mcAddrIt (mcastAddrRecords.begin() );
     BOOST_CHECK_EQUAL( mcAddrIt->recordType(), 0x04);
-    BOOST_CHECK_EQUAL( mcAddrIt->mcAddress().value(), senf::MACAddress(0xff1516));
+    BOOST_CHECK_EQUAL( mcAddrIt->mcAddress().value(), senf::INet6Address::from_string("ff15::16"));
 }

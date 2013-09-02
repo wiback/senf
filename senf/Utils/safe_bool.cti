@@ -35,6 +35,17 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef SENF_CXX11_ENABLED
+
+template <typename T>
+prefix_ senf::comparable_safe_bool<T>::operator bool()
+    const
+{
+    return static_cast<const T*>(this)->boolean_test();
+}
+
+#else
+
 template <typename T>
 prefix_ senf::comparable_safe_bool<T>::operator bool_type()
     const
@@ -66,6 +77,8 @@ prefix_ void senf::operator!=(const safe_bool<T>& lhs, const safe_bool<U>& rhs)
 {
     lhs.this_type_does_not_support_comparisons();
 }
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

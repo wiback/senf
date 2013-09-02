@@ -527,6 +527,8 @@ namespace senf {
         friend class PacketParserBase;
     };
 
+    std::ostream & operator<<(std::ostream & os, Packet const & packet);
+
 
     /** \brief Protocol specific packet handle
 

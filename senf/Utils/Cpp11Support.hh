@@ -59,6 +59,14 @@
 #endif
 
 #ifdef SENF_CXX11_ENABLED
+#  define SENF_NULLPTR nullptr
+#  define SENF_CONSTEXPR constexpr
+#else
+#  define SENF_NULLPTR NULL
+#  define SENF_CONSTEXPR
+#endif
+
+#ifdef SENF_CXX11_ENABLED
 
 #include <type_traits>
 

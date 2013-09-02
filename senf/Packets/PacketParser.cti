@@ -83,7 +83,7 @@ prefix_ Parser senf::PacketParserBase::parse(Arg const & arg, size_type n)
 template <class Parser>
 prefix_ senf::PacketParserBase::size_type senf::bytes(Parser const & p)
 {
-    return detail::packetParserSize(p,0);
+    return detail::packetParserSize(p, 0);
 }
 
 #ifndef DOXYGEN

@@ -37,6 +37,7 @@
 # include <boost/preprocessor/punctuation/comma.hpp>
 # include "../Utils/preprocessor.hh"
 # include "../Utils/mpl.hh"
+# include "../Utils/Cpp11Support.hh"
 #
 # //-///////////////////////////////////////////////////////////////////////////////////////////////
 #
@@ -139,7 +140,7 @@
 # define SENF_PARSER_I_FIELD_INIT_rw(name, type, access)                                          \
     private:                                                                                      \
         void init_chain(senf::mpl::rv<BOOST_PP_CAT(name,_index)>*) const {                        \
-            init_chain(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));              \
+            init_chain(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(SENF_NULLPTR));   \
             name().init();                                                                        \
         }                                                                                         \
     access:
@@ -147,7 +148,7 @@
 # define SENF_PARSER_I_FIELD_INIT_ro(name, type, access)                                          \
     private:                                                                                      \
         void init_chain(senf::mpl::rv<BOOST_PP_CAT(name,_index)>*) const {                        \
-            init_chain(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));              \
+            init_chain(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(SENF_NULLPTR));   \
         }                                                                                         \
     access:
 #
@@ -157,7 +158,8 @@
 # define SENF_PARSER_I_FIELD_OFS_var(name, type, access)                                          \
     protected:                                                                                    \
         size_type BOOST_PP_CAT(name,_offset)() const {                                            \
-            return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));    \
+            return field_offset_(                                                                 \
+                static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(SENF_NULLPTR));          \
         }                                                                                         \
         static size_type const BOOST_PP_CAT(name, _init_bytes) =                                  \
             SENF_MPL_SLOT_GET(init_bytes);                                                        \
@@ -308,7 +310,8 @@
 #
 # define SENF_PARSER_I_BITFIELD_OFS_var(name, type, access)                                       \
         size_type BOOST_PP_CAT(name,_offset)() const {                                            \
-            return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0))     \
+            return field_offset_(                                                                 \
+                    static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(SENF_NULLPTR))       \
                 - SENF_MPL_SLOT_GET(bitfield_size);                                               \
         }                                                                                         \
         static size_type const BOOST_PP_CAT(name, _init_bytes) =                                  \
@@ -432,7 +435,7 @@
 # define SENF_PARSER_FINALIZE_var(name)                                                           \
     SENF_PARSER_FINALIZE_GENERIC(name)                                                            \
     size_type bytes() const {                                                                     \
-        return field_offset_(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(0));           \
+        return field_offset_(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(SENF_NULLPTR));\
     }                                                                                             \
     static size_type const init_bytes = SENF_MPL_SLOT_GET(init_bytes)
 #
@@ -442,7 +445,7 @@
 #
 # define SENF_PARSER_FINALIZE_GENERIC(name)                                                       \
         void defaultInit() const {                                                                \
-            init_chain(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(0));                 \
+            init_chain(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(SENF_NULLPTR));      \
         }                                                                                         \
         name(data_iterator i, state_type s) : parser_base_type(i,s) {}                            \
     private:                                                                                      \

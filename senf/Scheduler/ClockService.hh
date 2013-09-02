@@ -38,10 +38,17 @@
 #include <senf/Utils/singleton.hh>
 #include <senf/Utils/Console/Parse.hh>
 #ifdef SENF_DEBUG
-#include <senf/Utils/RestrictedInt.hh>
+#  include <senf/Utils/RestrictedInt.hh>
 #endif
 
-//#include "ClockService.mpp"
+#ifdef SENF_DEBUG
+#  define SENF_CLOCKSERVICE_CONSTEXPR
+#else
+#  ifdef SENF_CXX11_ENABLED
+#    define SENF_CLOCKSERVICE_CONSTEXPR constexpr
+#  endif
+#endif
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -135,21 +142,21 @@ namespace senf {
                                         /**< This member converts an absolute time value
                                              represented as a timeval value into a clock value */
 
-        static clock_type nanoseconds(int64_type v); ///< Convert \a v nanoseconds to clock_type
-        static clock_type microseconds(int64_type v); ///< Convert \a v microseconds to clock_type
-        static clock_type milliseconds(int64_type v); ///< Convert \a v milliseconds to clock_type
-        static clock_type seconds(int64_type v); ///< Convert \a v seconds to clock_type
-        static clock_type minutes(int64_type v); ///< Convert \a v minutes to clock_type
-        static clock_type hours(int64_type v); ///< Convert \a v hours to clock_type
-        static clock_type days(int64_type v); ///< Convert \a v days to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type nanoseconds(int64_type v); ///< Convert \a v nanoseconds to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type microseconds(int64_type v); ///< Convert \a v microseconds to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type milliseconds(int64_type v); ///< Convert \a v milliseconds to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type seconds(int64_type v); ///< Convert \a v seconds to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type minutes(int64_type v); ///< Convert \a v minutes to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type hours(int64_type v); ///< Convert \a v hours to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type days(int64_type v); ///< Convert \a v days to clock_type
 
-        static int64_type in_nanoseconds(clock_type v); ///< Convert \a v to nanoseconds
-        static int64_type in_microseconds(clock_type v); ///< Convert \a v to microseconds
-        static int64_type in_milliseconds(clock_type v); ///< Convert \a v to milliseconds
-        static int64_type in_seconds(clock_type v); ///< Convert \a v to seconds
-        static int64_type in_minutes(clock_type v); ///< Convert \a v to minutes
-        static int64_type in_hours(clock_type v); ///< Convert \a v to hours
-        static int64_type in_days(clock_type v); ///< Convert \a v to days
+        static SENF_CLOCKSERVICE_CONSTEXPR int64_type in_nanoseconds(clock_type v); ///< Convert \a v to nanoseconds
+        static SENF_CLOCKSERVICE_CONSTEXPR int64_type in_microseconds(clock_type v); ///< Convert \a v to microseconds
+        static SENF_CLOCKSERVICE_CONSTEXPR int64_type in_milliseconds(clock_type v); ///< Convert \a v to milliseconds
+        static SENF_CLOCKSERVICE_CONSTEXPR int64_type in_seconds(clock_type v); ///< Convert \a v to seconds
+        static SENF_CLOCKSERVICE_CONSTEXPR int64_type in_minutes(clock_type v); ///< Convert \a v to minutes
+        static SENF_CLOCKSERVICE_CONSTEXPR int64_type in_hours(clock_type v); ///< Convert \a v to hours
+        static SENF_CLOCKSERVICE_CONSTEXPR int64_type in_days(clock_type v); ///< Convert \a v to days
 
         static void restart(); ///< Force re-synchronization of abstime and clock
                                         /**< Calling the member should never be necessary since
