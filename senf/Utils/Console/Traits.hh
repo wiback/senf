@@ -192,7 +192,10 @@ namespace console {
         \ingroup console_commands
      */
 #   define SENF_CONSOLE_REGISTER_ENUM(Type, Values) \
-        SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), Type, Values)
+        SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), BOOST_PP_EMPTY(), Type, Values)
+
+#   define SENF_CONSOLE_REGISTER_STRONG_ENUM(Type, Values) \
+        SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), Type:: Type, Values)
 
     /** \brief Register enum type for argument parsing
 
@@ -210,7 +213,10 @@ namespace console {
         \ingroup console_commands
      */
 #   define SENF_CONSOLE_REGISTER_ENUM_MEMBER(Class, Type, Values) \
-        SENF_CONSOLE_REGISTER_ENUM_(Class::, Type, Values)
+        SENF_CONSOLE_REGISTER_ENUM_(Class::, BOOST_PP_EMPTY(), Type, Values)
+
+#   define SENF_CONSOLE_REGISTER_STRONG_ENUM_MEMBER(Class, Type, Values) \
+        SENF_CONSOLE_REGISTER_ENUM_(Class::, Type::, Type, Values)
 
 
     /** \brief Format boolean value as \c true / \c false */
