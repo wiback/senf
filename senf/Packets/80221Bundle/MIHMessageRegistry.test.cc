@@ -111,15 +111,18 @@ SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
     mihPacket->src_mihfId().value( "senf@berlios.de");
     mihPacket->dst_mihfId().value( "test");
 
-    BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
-
     mihPacket.finalizeThis();
-    BOOST_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
+    SENF_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
+    mihPacket.data().resize(mihPacket.size()-1);
+    BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
+    mihPacket.data().resize(mihPacket.size()+2);
+    mihPacket->messageId() = test::TestMessagePacketType::MESSAGE_ID;
+    SENF_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
 
     {
         test::TestMessagePacket testMessage (test::TestMessagePacket::createAfter(mihPacket));
         mihPacket.finalizeAll();
-        BOOST_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
+        SENF_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
         mihPacket->messageId() = test::ValidatedTestMessagePacketType::MESSAGE_ID;
         BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
     }
@@ -129,7 +132,7 @@ SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
         testMessage->registerRequestCodeTLV().value() << 3;
         BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
         testMessage->registerRequestCodeTLV().value() << 1;
-        BOOST_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
+        SENF_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
     }
 }
 

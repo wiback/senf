@@ -69,7 +69,7 @@ prefix_ void senf::MIHPacketType::finalize(packet p)
 {
     p->src_mihfId().finalize();
     p->dst_mihfId().finalize();
-    p->payloadLength_() << p.size() - 8;
+    p->payloadLength_() << p.size() - 8u;
     p->messageId() << key(p.next(nothrow));
 }
 
@@ -86,11 +86,11 @@ prefix_ void senf::MIHPacketType::validate(packet p)
 {
     try {
         if (p.data().size() < initSize())
-            throw InvalidMIHPacketException("truncated MIH message");
+            throw InvalidMIHPacketException("truncated MIH message; packet size:") << p.data().size();
+        if (p.data().size() < p->payloadLength() + 8u)
+            throw InvalidMIHPacketException("truncated MIH message; packet size:") << p.data().size() << "; payloadLength:" << p->payloadLength();
         if (p->version() != 1)
-            throw InvalidMIHPacketException("invalid MIH version: ") << senf::str(p->version());
-        if (p->payloadLength() != p.size()-8)
-            throw InvalidMIHPacketException("wrong MIH length: ") << senf::str(p->payloadLength());
+            throw InvalidMIHPacketException("invalid MIH version: ") << p->version();
         if (p.next(senf::nothrow))
             MIHMessageRegistry::instance().validate( p->messageId(), p.next());
     } catch (TruncatedPacketException & e) {
