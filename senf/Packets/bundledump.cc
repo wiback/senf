@@ -31,6 +31,7 @@
 // Custom includes
 #include <dlfcn.h>
 #include <iostream>
+#include <senf/Utils/Logger/Logger.hh>
 #include "Packets.hh"
 
 //#include "bundledump.mpp"
