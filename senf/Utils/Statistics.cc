@@ -38,6 +38,7 @@
 #include <senf/Utils/Format.hh>
 #include <senf/Utils/Console/STLSupport.hh>
 #include "StatisticsTargets.hh"
+#include "String.hh"
 
 //#include "Statistics.mpp"
 #define prefix_

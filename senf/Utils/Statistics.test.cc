@@ -37,6 +37,7 @@
 #include <boost/tokenizer.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+#include <senf/Utils/Logger.hh>
 
 #include "auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

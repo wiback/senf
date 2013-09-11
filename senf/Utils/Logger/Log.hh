@@ -36,7 +36,10 @@
 #include <boost/preprocessor/dec.hpp>
 #include <boost/preprocessor/seq/elem.hpp>
 #include <boost/preprocessor/seq/pop_back.hpp>
+#include "AreaRegistry.hh"
+#include "Definitions.hh"
 #include "Parameters.hh"
+#include "StreamRegistry.hh"
 
 //#include "Log.mpp"
 #include "Log.ih"

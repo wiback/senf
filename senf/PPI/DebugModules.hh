@@ -34,9 +34,10 @@
 // Custom includes
 #include <deque>
 #include <senf/Utils/safe_bool.hh>
+#include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Utils/Logger/Logger.hh>
 #include "MonitorModule.hh"
 #include "ActiveFeeder.hh"
-#include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "DebugModules.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

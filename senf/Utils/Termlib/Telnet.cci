@@ -84,12 +84,6 @@ prefix_ senf::term::BaseTelnetProtocol::Handle senf::term::BaseTelnetProtocol::h
     return handle_;
 }
 
-prefix_ void senf::term::BaseTelnetProtocol::incrementRequestCounter()
-{
-    ++ pendingRequests_;
-    timeout_.timeout(scheduler::eventTime() + requestTimeout_);
-}
-
 prefix_ bool senf::term::BaseTelnetProtocol::requestsPending()
 {
     return pendingRequests_ > 0u;

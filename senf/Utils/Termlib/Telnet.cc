@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <boost/algorithm/string/case_conv.hpp>
+#include <senf/Scheduler/Scheduler.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Logger/SenfLog.hh>
 
@@ -335,6 +336,12 @@ prefix_ void senf::term::BaseTelnetProtocol::transmit(char c)
 {
     sendQueue_.push_back(c);
     outputEvent_.enable();
+}
+
+prefix_ void senf::term::BaseTelnetProtocol::incrementRequestCounter()
+{
+    ++ pendingRequests_;
+    timeout_.timeout(scheduler::eventTime() + requestTimeout_);
 }
 
 prefix_ void senf::term::BaseTelnetProtocol::readHandler(int state)

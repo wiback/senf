@@ -32,7 +32,6 @@
 #include <dlfcn.h>
 #include <iostream>
 #include "Packets.hh"
-#include <senf/Utils/Logger/Logger.hh>
 
 //#include "bundledump.mpp"
 #define prefix_

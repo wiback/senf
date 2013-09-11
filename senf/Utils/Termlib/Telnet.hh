@@ -34,7 +34,12 @@
 // Custom includes
 #include <vector>
 #include <map>
-#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/FramingPolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Scheduler/FdEvent.hh>
+#include <senf/Scheduler/TimerEvent.hh>
 #include <senf/Scheduler/ClockService.hh>
 
 //#include "Telnet.mpp"

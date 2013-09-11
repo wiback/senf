@@ -38,6 +38,7 @@
 #include <senf/Utils/Console/ParsedCommand.hh>
 #include <senf/Utils/Console/Traits.hh>
 #include <senf/Utils/Console/ScopedDirectory.hh>
+#include "SyslogTarget.hh"
 
 //#include "SyslogUDPTarget.mpp"
 #define prefix_

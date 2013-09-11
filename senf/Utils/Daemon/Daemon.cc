@@ -44,6 +44,7 @@
    #include <execinfo.h>
 #endif
 #include <sstream>
+#include <fstream>
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>

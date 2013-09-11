@@ -33,13 +33,13 @@
 
 // Custom includes
 #include <syslog.h>
-#include "LogFormat.hh"
-#include "Target.hh"
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
 #include <senf/Socket/ClientSocketHandle.hh>
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/ReadWritePolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
+#include "LogFormat.hh"
+#include "Target.hh"
 
 //#include "SyslogUDPTarget.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

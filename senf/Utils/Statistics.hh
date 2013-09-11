@@ -40,7 +40,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/signals2.hpp>
-#include <senf/Utils/Logger/Logger.hh>
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include "StatisticAccumulator.hh"
 #include "Exception.hh"

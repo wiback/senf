@@ -34,15 +34,16 @@
 // Custom includes
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/bind.hpp>
+#include <senf/Scheduler/Scheduler.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Utils/CpuStat.hh>
 #include <senf/Version.hh>
 #include "LineEditor.hh"
 #include "ScopedDirectory.hh"
 #include "Sysdir.hh"
 #include "SysInfo.hh"
 #include "ParsedCommand.hh"
-#include <senf/Utils/CpuStat.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

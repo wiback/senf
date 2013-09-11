@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <senf/Utils/algorithm.hh>
+#include <senf/Utils/String.hh>
 #include "Events.hh"
 #include "Connectors.hh"
 

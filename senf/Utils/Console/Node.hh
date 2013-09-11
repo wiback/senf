@@ -212,6 +212,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/any.hpp>
+#include <senf/Utils/Tags.hh>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/Logger/SenfLog.hh>
 
