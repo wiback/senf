@@ -83,7 +83,7 @@ namespace senf {
         std::string const & label="");
 
     template <class Stream>
-    std::auto_ptr< detail::StatisticsLogger<Stream,void,void> > StatisticsLogger(
+    unique_or_auto_ptr< detail::StatisticsLogger<Stream,void,void> > StatisticsLogger(
         std::string const & label="");
 
     template <class Stream, class Area>

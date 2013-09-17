@@ -1,6 +1,6 @@
 # -*- python -*-
 
-import glob
+import os.path, glob
 
 Import('env')
 
@@ -75,19 +75,30 @@ def CheckValgrindWildcards(context):
 
 conf = env.Configure(clean=False, help=False, config_h="$BUILDDIR/senf/autoconf.hh")
 
+def checkCompiler(env, conf, cxx, cc, minVersion, fail):
+    env['CXX'] = cxx
+    env['LINK'] = cxx
+    env['CC'] = cc
+    return conf.CheckCXXVersion(min=minVersion, fail=fail)
+    
 # Compiler
 if env['cxx11']:
     if 'CXX' in ARGUMENTS:
-        compilers = [ARGUMENTS['CXX']]
+        p = os.path.dirname(ARGUMENTS['CXX'])
+        cxx = os.path.basename(ARGUMENTS['CXX'])
+        if cxx.startswith('clang++'):
+            checkCompiler(env, conf, ARGUMENTS['CXX'], 
+                  os.path.join(p, cxx.replace('clang++', 'clang')), '3.3', True)
+        else:
+            checkCompiler(env, conf, ARGUMENTS['CXX'], 
+                  os.path.join(p, cxx.replace('g++', 'gcc')), '4.8', True)
     else:
-        compilers = ('g++', 'g++-4.8', 'g++-4.9') 
-    for gcc in compilers:
-        env['CXX'] = gcc
-        env['LINK'] = gcc
-        if conf.CheckCXXVersion(min='4.8', fail=False):
-            break
-    else:
-        env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
+        for gccVersion in ('', '-4.8', '-4.9'): 
+            if checkCompiler(env, conf, 'g++'+gccVersion, 'gcc'+gccVersion, '4.8', False):
+                break
+        else:
+            if not checkCompiler(env, conf, "clang++", 'clang' '3.3', False):
+                env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
 
 # Boost
 if env['cxx11']:

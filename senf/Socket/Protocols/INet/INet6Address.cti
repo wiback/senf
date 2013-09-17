@@ -49,8 +49,8 @@ template <unsigned a, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl5<a,0,restbits>::match(boost::uint8_t v0,
                                                                         boost::uint8_t v1)
 {
-    return v0 & ~boost::low_bits_mask_t<8-restbits>::sig_bits
-        == boost::uint8_t(a>>8) & ~boost::low_bits_mask_t<8-restbits>::sig_bits;
+    return (v0 & ~boost::low_bits_mask_t<8-restbits>::sig_bits) ==
+        (boost::uint8_t(a>>8) & ~boost::low_bits_mask_t<8-restbits>::sig_bits);
 }
 
 template <unsigned a>
@@ -64,9 +64,9 @@ template <unsigned a, unsigned restbits>
 prefix_ bool senf::detail::CheckINet6Network_impl5<a,1,restbits>::match(boost::uint8_t v0,
                                                                         boost::uint8_t v1)
 {
-    return v0 == boost::uint8_t(a>>8) &&
-        v1 & ~boost::low_bits_mask_t<8-restbits>::sig_bits
-            == boost::uint8_t(a) & ~boost::low_bits_mask_t<8-restbits>::sig_bits;
+    return (v0 == boost::uint8_t(a>>8)) &&
+        ((v1 & ~boost::low_bits_mask_t<8-restbits>::sig_bits)
+            == (boost::uint8_t(a) & ~boost::low_bits_mask_t<8-restbits>::sig_bits));
 }
 
 template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4, unsigned a5,

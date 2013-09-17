@@ -27,9 +27,9 @@ def CheckCXXVersion(context, fail=False, min=None, max=None):
         if proc.returncode < 0: 
             version = None
     if context.env['CXX'].startswith('clang++'):
-        proc = subprocess.Popen((context.env['CXX'], '-v'), stdout=subprocess.PIPE)
+        proc = subprocess.Popen((context.env['CXX'], '-v'), stderr=subprocess.PIPE)
         try:
-            version = proc.communicate()[0].split()[2]
+            version = proc.communicate()[1].split()[2]
             if proc.returncode < 0: 
                 version = None
         except IndexError: pass
