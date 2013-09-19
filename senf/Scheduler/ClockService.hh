@@ -46,6 +46,8 @@
 #else
 #  ifdef SENF_CXX11_ENABLED
 #    define SENF_CLOCKSERVICE_CONSTEXPR constexpr
+#  else
+#    define SENF_CLOCKSERVICE_CONSTEXPR
 #  endif
 #endif
 
