@@ -79,6 +79,8 @@ namespace senf {
 
     typedef ConcretePacket<ICMPv6EchoRequestType> ICMPv6EchoRequest;
 
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( ICMPv6EchoRequest );
+
     //#############################################################
     //ICMPv6 Echo Reply
     //#############################################################
@@ -118,6 +120,8 @@ namespace senf {
     };
 
     typedef ConcretePacket<ICMPv6EchoReplyType> ICMPv6EchoReply;
+
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( ICMPv6EchoReply );
 
     //#############################################################
     //ICMPv6 Error Destination Unreachable Message
@@ -173,6 +177,8 @@ namespace senf {
 
     typedef ConcretePacket<ICMPv6ErrDestUnreachableType> ICMPv6ErrDestUnreachable;
 
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( ICMPv6ErrDestUnreachable );
+
     //#############################################################
     //ICMPv6 Error Packet Too Big Message
     //#############################################################
@@ -218,6 +224,8 @@ namespace senf {
 
     typedef ConcretePacket<ICMPv6ErrTooBigType> ICMPv6ErrTooBig;
 
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( ICMPv6ErrTooBig );
+
     //#############################################################
     //ICMPv6 Error Time Exceeded Message
     //#############################################################
@@ -259,6 +267,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<ICMPv6ErrTimeExceededType> ICMPv6ErrTimeExceeded;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( ICMPv6ErrTimeExceeded );
 
     //#############################################################
     //ICMPv6 Error Parameter Problem Message
@@ -303,6 +312,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<ICMPv6ErrParamProblemType> ICMPv6ErrParamProblem;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( ICMPv6ErrParamProblem );
 
     //#############################################################
     //ICMPv6 MLDv2 (RFC 3810) Multicast Listener Query
@@ -366,6 +376,8 @@ namespace senf {
 
     typedef ConcretePacket<MLDv2ListenerQueryType> MLDv2ListenerQuery;
 
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( MLDv2ListenerQuery );
+
     //#############################################################
     //ICMPv6 MLDv2 (RFC 3810) Multicast Listener Report Message
     //#############################################################
@@ -426,6 +438,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<MLDv2ListenerReportType> MLDv2ListenerReport;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( MLDv2ListenerReport );
 
     //#############################################################
     //ICMPv6 Router Solicitation (RFC 4861) Message
@@ -468,6 +481,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<NDPRouterSolicitationMessageType> NDPRouterSolicitationMessage;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPRouterSolicitationMessage );
 
     //#############################################################
     //ICMPv6 Router Advertisement (RFC 4861) Message
@@ -516,6 +530,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<NDPRouterAdvertisementMessageType> NDPRouterAdvertisementMessage;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPRouterAdvertisementMessage );
 
     //#############################################################
     //ICMPv6 Neighbor Solicitation (RFC 4861) Message
@@ -559,6 +574,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<NDPNeighborSolicitationMessageType> NDPNeighborSolicitationMessage;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPNeighborSolicitationMessage );
 
     //#############################################################
     //ICMPv6 Neighbor Advertisement (RFC 4861) Message
@@ -605,6 +621,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<NDPNeighborAdvertisementMessageType> NDPNeighborAdvertisementMessage;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPNeighborAdvertisementMessage );
 
     //#############################################################
     //ICMPv6 Redirect (RFC 4861) Message
@@ -650,6 +667,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<NDPRedirectMessageType> NDPRedirectMessage;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPRedirectMessage );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

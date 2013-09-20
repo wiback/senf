@@ -188,6 +188,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv4PacketType> IPv4Packet;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( IPv4Packet );
 }
 
 

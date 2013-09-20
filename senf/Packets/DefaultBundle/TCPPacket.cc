@@ -40,9 +40,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::TCPPacketType::ipType, senf::TCPPacket);
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::TCPPacketType::ipType, senf::TCPPacket);
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::TCPPacket );
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::TCPPacketParser

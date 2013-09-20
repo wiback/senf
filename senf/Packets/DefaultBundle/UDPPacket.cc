@@ -41,9 +41,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::UDPPacketType::ipType, senf::UDPPacket);
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::UDPPacketType::ipType, senf::UDPPacket);
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::UDPPacket );
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::UDPPacketParser

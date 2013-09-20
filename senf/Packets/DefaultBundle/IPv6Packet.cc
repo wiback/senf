@@ -36,14 +36,13 @@
 #include <boost/io/ios_state.hpp>
 #include "EthernetPacket.hh"
 
-//#include "IPv6Packet.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::IPv6PacketType::etherType, senf::IPv6Packet);
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes,    41,                              senf::IPv6Packet); // IP6-in-IP(6) encapsulation
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::IPv6PacketType::etherType, senf::IPv6Packet);
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes,    41,                              senf::IPv6Packet); // IP6-in-IP(6) encapsulation
+
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::IPv6Packet );
 
 prefix_ void senf::IPv6PacketType::dump(packet p, std::ostream & os)
 {

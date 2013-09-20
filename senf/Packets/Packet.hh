@@ -830,6 +830,14 @@ namespace senf {
 
     //\}
 
+#ifdef SENF_CXX11_ENABLED
+#  define SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION(Packet) extern template class senf::ConcretePacket<Packet##Type>
+#  define SENF_PACKET_INSTANTIATE_TEMPLATE(Packet) template class senf::ConcretePacket<Packet##Type>
+#else
+#  define SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION(Packet)
+#  define SENF_PACKET_INSTANTIATE_TEMPLATE(Packet)
+#endif
+
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

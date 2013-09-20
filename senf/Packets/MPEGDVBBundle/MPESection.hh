@@ -147,6 +147,7 @@ namespace senf {
          \ingroup protocolbundle_mpegdvb
      */
     typedef ConcretePacket<MPESectionType> MPESection;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( MPESection );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

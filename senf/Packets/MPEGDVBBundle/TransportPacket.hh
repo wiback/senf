@@ -138,6 +138,7 @@ namespace senf {
 
     /** \brief Transport packet typedef */
     typedef ConcretePacket<TransportPacketType> TransportPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( TransportPacket );
 }
 
 

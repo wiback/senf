@@ -41,6 +41,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::MPESection );
+
 prefix_ boost::uint32_t senf::MPESectionParser::calcCrc()
     const
 {

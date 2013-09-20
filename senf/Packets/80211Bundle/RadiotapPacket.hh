@@ -360,6 +360,7 @@ namespace senf {
     };
 
     typedef ConcretePacket<RadiotapPacketType> RadiotapPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( RadiotapPacket );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

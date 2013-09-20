@@ -108,6 +108,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6FragmentPacketType> IPv6FragmentPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( IPv6FragmentPacket );
 
 // =====================================================================================================
 
@@ -214,6 +215,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6RoutingPacketType> IPv6RoutingPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( IPv6RoutingPacket );
 
 
 // =====================================================================================================
@@ -288,6 +290,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6HopByHopOptionsPacketType> IPv6HopByHopOptionsPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( IPv6HopByHopOptionsPacket );
 
 // =====================================================================================================
 
@@ -359,6 +362,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6DestinationOptionsPacketType> IPv6DestinationOptionsPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( IPv6DestinationOptionsPacket );
 
 }
 

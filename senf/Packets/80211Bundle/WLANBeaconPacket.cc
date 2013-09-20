@@ -39,6 +39,7 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 SENF_PACKET_REGISTRY_REGISTER( senf::WLANManagementSubtypes, 8u, senf::WLANBeaconPacket );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::WLANBeaconPacket );
 
 prefix_ bool senf::WLANBeaconPacketParser::hasIE(boost::uint8_t typeId)
     const

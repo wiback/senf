@@ -29,7 +29,6 @@
     \brief MACAddress inline non-template implementation */
 
 // Custom includes
-#include <string.h>
 #include <algorithm>
 #include <boost/lambda/lambda.hpp>
 #include <boost/functional/hash.hpp>

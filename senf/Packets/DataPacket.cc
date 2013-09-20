@@ -29,13 +29,13 @@
     \brief DataPacket non-inline non-template implementation */
 
 #include "Packets.hh"
-//#include "DataPacket.ih"
 
 // Custom includes
 
-//#include "DataPacket.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::DataPacket );
 
 prefix_ void senf::DataPacketType::dump(packet p, std::ostream & os)
 {
@@ -44,7 +44,6 @@ prefix_ void senf::DataPacketType::dump(packet p, std::ostream & os)
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "DataPacket.mpp"
 
 
 // Local Variables:

@@ -124,6 +124,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<EthernetPacketType> EthernetPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( EthernetPacket );
 
 
     /** \brief Parse an ethernet VLAN tag
@@ -192,6 +193,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<EthVLanPacketType> EthVLanPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( EthVLanPacket );
 
 
     struct EthOUIExtensionPacketParser : public PacketParserBase
@@ -226,6 +228,7 @@ namespace senf {
     };
 
     typedef ConcretePacket<EthOUIExtensionPacketType> EthOUIExtensionPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( EthOUIExtensionPacket );
 
 }
 

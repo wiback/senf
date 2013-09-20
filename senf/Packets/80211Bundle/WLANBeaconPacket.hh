@@ -89,6 +89,7 @@ namespace senf {
         \ingroup protocolbundle_80211
      */
     typedef ConcretePacket<WLANBeaconPacketType> WLANBeaconPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( WLANBeaconPacket );
 
 }
 

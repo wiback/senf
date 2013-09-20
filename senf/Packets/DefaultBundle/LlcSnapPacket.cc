@@ -38,6 +38,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::LlcSnapPacket );
+
 prefix_ void senf::LlcSnapPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);

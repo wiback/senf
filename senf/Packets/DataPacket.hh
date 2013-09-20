@@ -59,6 +59,7 @@ namespace senf {
 
     /** \brief Generic payload-only packet typedef */
     typedef ConcretePacket<DataPacketType> DataPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( DataPacket );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

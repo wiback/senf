@@ -40,10 +40,10 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::IPv4PacketType::etherType, senf::IPv4Packet);
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes,    4,                               senf::IPv4Packet); // IP-in-IP encapsulation
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::IPv4PacketType::etherType, senf::IPv4Packet);
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes,    4,                               senf::IPv4Packet); // IP-in-IP encapsulation
+
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::IPv4Packet );
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::IPv4PacketParser

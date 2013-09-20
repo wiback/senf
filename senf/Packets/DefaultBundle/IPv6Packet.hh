@@ -154,6 +154,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<IPv6PacketType> IPv6Packet;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( IPv6Packet );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

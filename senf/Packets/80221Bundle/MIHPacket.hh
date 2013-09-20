@@ -124,6 +124,7 @@ namespace senf {
         \ingroup protocolbundle_80221
      */
     typedef ConcretePacket<MIHPacketType> MIHPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( MIHPacket );
 
 
     struct MIHGenericPayloadPacketParser : public PacketParserBase
@@ -154,6 +155,7 @@ namespace senf {
          \ingroup protocolbundle_80221
       */
     typedef ConcretePacket<MIHGenericPayloadPacketType> MIHGenericPayloadPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( MIHGenericPayloadPacket );
 }
 
 

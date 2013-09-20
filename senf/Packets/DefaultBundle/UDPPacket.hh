@@ -120,6 +120,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<UDPPacketType> UDPPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( UDPPacket );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

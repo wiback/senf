@@ -95,6 +95,7 @@ namespace senf
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<ICMPv6PacketType> ICMPv6Packet;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( ICMPv6Packet );
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -170,6 +170,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<TCPPacketType> TCPPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( TCPPacket );
 }
 
 

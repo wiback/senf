@@ -36,12 +36,18 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6FragmentPacketType::ipType,           senf::IPv6FragmentPacket           );
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6RoutingPacketType::ipType,            senf::IPv6RoutingPacket            );
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6HopByHopOptionsPacketType::ipType,    senf::IPv6HopByHopOptionsPacket    );
-    SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6DestinationOptionsPacketType::ipType, senf::IPv6DestinationOptionsPacket );
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6FragmentPacketType::ipType,           senf::IPv6FragmentPacket           );
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6RoutingPacketType::ipType,            senf::IPv6RoutingPacket            );
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6HopByHopOptionsPacketType::ipType,    senf::IPv6HopByHopOptionsPacket    );
+SENF_PACKET_REGISTRY_REGISTER( senf::IPTypes, senf::IPv6DestinationOptionsPacketType::ipType, senf::IPv6DestinationOptionsPacket );
+
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::IPv6FragmentPacket           );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::IPv6RoutingPacket            );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::IPv6HopByHopOptionsPacket    );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::IPv6DestinationOptionsPacket );
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::IPv6FragmentPacketType
 
 prefix_ void senf::IPv6FragmentPacketType::dump(packet p, std::ostream & os)
 {
@@ -63,6 +69,9 @@ prefix_ void senf::IPv6FragmentPacketType::finalize(packet p)
         p->nextHeader() << 59; // No next header
     }
 }
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::IPv6RoutingPacketType
 
 prefix_ void senf::IPv6RoutingPacketType::dump(packet p, std::ostream & os)
 {
@@ -89,6 +98,9 @@ prefix_ void senf::IPv6RoutingPacketType::finalize(packet p)
     }
 }
 
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::IPv6HopByHopOptionsPacketType
+
 prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
@@ -110,6 +122,9 @@ prefix_ void senf::IPv6HopByHopOptionsPacketType::finalize(packet p)
         p->nextHeader() << 59; // No next header
     }
 }
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::EthernetPacketType
 
 prefix_ void senf::IPv6DestinationOptionsPacketType::dump(packet p, std::ostream & os)
 {

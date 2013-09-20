@@ -38,6 +38,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::TransportPacket );
+
 prefix_ void senf::TransportPacketParser::init_fields()
     const
 {

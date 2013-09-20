@@ -35,21 +35,34 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 1,   senf::ICMPv6ErrDestUnreachable       );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 2,   senf::ICMPv6ErrTooBig                );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 3,   senf::ICMPv6ErrTimeExceeded          );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 4,   senf::ICMPv6ErrParamProblem          );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 128, senf::ICMPv6EchoRequest              );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 129, senf::ICMPv6EchoReply                );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 130, senf::MLDv2ListenerQuery             );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 133, senf::NDPRouterSolicitationMessage   );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 134, senf::NDPRouterAdvertisementMessage  );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 135, senf::NDPNeighborSolicitationMessage );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 136, senf::NDPNeighborAdvertisementMessage);
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 137, senf::NDPRedirectMessage             );
-    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 143, senf::MLDv2ListenerReport            );
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 1,   senf::ICMPv6ErrDestUnreachable       );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 2,   senf::ICMPv6ErrTooBig                );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 3,   senf::ICMPv6ErrTimeExceeded          );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 4,   senf::ICMPv6ErrParamProblem          );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 128, senf::ICMPv6EchoRequest              );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 129, senf::ICMPv6EchoReply                );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 130, senf::MLDv2ListenerQuery             );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 133, senf::NDPRouterSolicitationMessage   );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 134, senf::NDPRouterAdvertisementMessage  );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 135, senf::NDPNeighborSolicitationMessage );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 136, senf::NDPNeighborAdvertisementMessage);
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 137, senf::NDPRedirectMessage             );
+SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 143, senf::MLDv2ListenerReport            );
+
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::ICMPv6ErrDestUnreachable       );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::ICMPv6ErrTooBig                );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::ICMPv6ErrTimeExceeded          );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::ICMPv6ErrParamProblem          );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::ICMPv6EchoRequest              );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::ICMPv6EchoReply                );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::MLDv2ListenerQuery             );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::NDPRouterSolicitationMessage   );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::NDPRouterAdvertisementMessage  );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::NDPNeighborSolicitationMessage );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::NDPNeighborAdvertisementMessage);
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::NDPRedirectMessage             );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::MLDv2ListenerReport            );
+
 
 prefix_ void senf::ICMPv6ErrDestUnreachableParser::setErrCode(int code)
 {

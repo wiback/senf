@@ -105,6 +105,7 @@ namespace senf {
         \ingroup protocolbundle_default
      */
     typedef ConcretePacket<LlcSnapPacketType> LlcSnapPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( LlcSnapPacket );
 }
 
 
