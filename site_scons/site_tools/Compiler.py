@@ -1,4 +1,4 @@
-import subprocess
+import subprocess, os.path
 import SCons.Script
 import SCons.Script.SConscript
 import SCons.Defaults
@@ -21,12 +21,12 @@ def CheckCXXVersion(context, fail=False, min=None, max=None):
     context.Message( "Checking for %s version%s ... " % (context.env['CXX'], msg))
 
     version = None
-    if context.env['CXX'].startswith('g++'):
+    if os.path.basename(context.env['CXX']).startswith('g++'):
         proc = subprocess.Popen((context.env['CXX'], '-dumpversion'), stdout=subprocess.PIPE)
         version = proc.communicate()[0][:-1]
         if proc.returncode < 0: 
             version = None
-    if context.env['CXX'].startswith('clang++'):
+    if os.path.basename(context.env['CXX']).startswith('clang++'):
         proc = subprocess.Popen((context.env['CXX'], '-v'), stderr=subprocess.PIPE)
         try:
             version = proc.communicate()[1].split()[2]
