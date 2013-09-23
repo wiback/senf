@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -35,6 +35,11 @@
 #include <iostream>
 #include <unistd.h>
 #include "PacketSocketHandle.hh"
+#include "TunTapSocketHandle.hh"
+#include <senf/Socket/NetdeviceController.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include <senf/Packets/DefaultBundle/UDPPacket.hh>
+#include <senf/Packets/DefaultBundle/IPv4Packet.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -51,26 +56,66 @@ SENF_AUTO_UNIT_TEST(packetSocketHandle)
         return;
     }
 
+    senf::TapSocketHandle tap;
+    senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
+    tapCtl.up();
+
     {
         senf::PacketSocketHandle sock;
 
-        SENF_CHECK_NO_THROW( sock.bind(senf::LLSocketAddress("eth0")) );
+        SENF_CHECK_NO_THROW( sock.bind(senf::LLSocketAddress(tap.protocol().ifaceName())) );
         senf::LLSocketAddress a;
         SENF_CHECK_NO_THROW( sock.local(a) );
-        BOOST_CHECK_EQUAL( a.interface(), "eth0" );
-
-        // How am I supposed to test read and write .. grmpf ..
+        BOOST_CHECK_EQUAL( a.interface(), tap.protocol().ifaceName() );
 
         SENF_CHECK_NO_THROW( sock.protocol().mcAdd(
-                "eth0", senf::MACAddress::from_string("01-02-03-04-05-06")) );
+                                 tap.protocol().ifaceName(),
+                                 senf::MACAddress::from_string("01-02-03-04-05-06")) );
         SENF_CHECK_NO_THROW( sock.protocol().mcDrop(
-                "eth0", senf::MACAddress::from_string("01-02-03-04-05-06")) );
+                                 tap.protocol().ifaceName(),
+                                 senf::MACAddress::from_string("01-02-03-04-05-06")) );
 
-        SENF_CHECK_NO_THROW( sock.protocol().promisc( "eth0", true) );
-        SENF_CHECK_NO_THROW( sock.protocol().promisc( "eth0", false));
+        SENF_CHECK_NO_THROW( sock.protocol().promisc( tap.protocol().ifaceName(), true) );
+        SENF_CHECK_NO_THROW( sock.protocol().promisc( tap.protocol().ifaceName(), false));
 
         SENF_CHECK_NO_THROW( sock.protocol().available() );
         BOOST_CHECK( ! sock.eof() );
+    }
+
+    senf::PacketSocketHandle pk;
+    pk.bind(senf::LLSocketAddress(tap.protocol().ifaceName()));
+
+    static char const data [] = { "dead beef" };
+
+    {
+        senf::EthernetPacket eth (senf::EthernetPacket::create());
+        eth->source() << senf::MACAddress::from_string("01-02-03-04-05-06");
+        eth->destination() << senf::MACAddress::from_string("02-03-04-05-06-07");
+
+        senf::IPv4Packet ip (senf::IPv4Packet::createAfter(eth));
+        ip->source() << senf::INet4Address::from_string("127.0.0.1");
+        ip->destination() << senf::INet4Address::from_string("127.0.0.1");
+        ip->ttl() << 64;
+
+        senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
+        udp->source() << 5001;
+        udp->destination() << 5001;
+
+        senf::DataPacket dp (senf::DataPacket::createAfter(
+                                 udp,
+                                 boost::make_iterator_range(data, data + sizeof(data))));
+
+        eth.finalizeAll();
+
+        tap.write(eth.data());
+    }
+
+    {
+        senf::EthernetPacket eth (senf::EthernetPacket::create(pk.read()));
+        senf::DataPacket dp (eth.find<senf::DataPacket>());
+
+        BOOST_CHECK_EQUAL( std::string(dp.data().begin(), dp.data().end()),
+                           std::string(data, sizeof(data)) );
     }
 }
 
