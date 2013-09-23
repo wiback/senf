@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2013 
+// Copyright (C) 2013
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,11 +59,9 @@ prefix_ void senf::ConnectedMMapPacketSocketProtocol::init_client(std::string if
 prefix_ unsigned senf::ConnectedMMapPacketSocketProtocol::available()
     const
 {
-    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi_.rx.head));
-    if (qi_.rx.head != qi_.rx.tail && pk.tp_status != TP_STATUS_KERNEL) {
-        return pk.tp_len;
-    }
-    return 0;
+    // Since dequeue() will skip outgoing packets it's impossible to return a correct
+    // value here without race conditions. Thus we always return the frame size
+    return qi_.frameSize;
 }
 
 prefix_ bool senf::ConnectedMMapPacketSocketProtocol::eof()
@@ -72,6 +70,18 @@ prefix_ bool senf::ConnectedMMapPacketSocketProtocol::eof()
     return false;
 }
 
+prefix_ void senf::ConnectedMMapPacketSocketProtocol::close()
+{
+    close_mmap();
+    SocketProtocol::close();
+}
+
+prefix_ void senf::ConnectedMMapPacketSocketProtocol::terminate()
+    const
+{
+    terminate_mmap();
+    SocketProtocol::terminate();
+}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

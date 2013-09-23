@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2013 
+// Copyright (C) 2013
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,13 +50,25 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
-    if (qi.rx.head != qi.rx.tail && pk.tp_status != TP_STATUS_KERNEL) {
-        Buffer bf (qi.rx.head + pk.tp_mac, qi.rx.head + pk.tp_mac + pk.tp_len);
-        qi.inc(qi.rx.head, qi.rx);
-        qi.rx.idle = false;
-        return bf;
+    for (;;) {
+        if ((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL) {
+            Buffer bf (qi.rx.head + pk.tp_mac, qi.rx.head + pk.tp_mac + pk.tp_len);
+            struct ::sockaddr_ll & sa (
+                * reinterpret_cast<struct ::sockaddr_ll *>(
+                    qi.rx.head + TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr))));
+            qi.inc(qi.rx.head, qi.rx);
+            if (sa.sll_pkttype >= PACKET_OUTGOING) {
+                if (qi.rx.idle) {
+                    pk.tp_status = TP_STATUS_KERNEL;
+                    qi.rx.tail = qi.rx.head;
+                }
+                continue;
+            }
+            qi.rx.idle = false;
+            return bf;
+        }
+        return boost::none;
     }
-    return boost::none;
 }
 
 prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
@@ -66,20 +78,35 @@ prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.rx.tail));
         pk.tp_status = TP_STATUS_KERNEL;
         qi.inc(qi.rx.tail, qi.rx);
+        // We set qi.rx.idle prematurely but this is safe: when the while loop is done,
+        // the queue is indeed idle. After the first loop iteration, it is impossible for
+        // the queue to be still completely filled (that is head == tail) so the while
+        // condition above is now correkt with idle = true
         qi.rx.idle = true;
     }
 }
 
 prefix_ unsigned senf::QueueReadPolicy::read(FileHandle & handle, char * buffer, unsigned size)
 {
-    boost::optional<Buffer> buf (dequeue(handle));
-    if (! buf)
-        return 0;
-    if (unsigned(buf->size()) < size)
-        size = buf->size();
-    ::memcpy(buffer, buf->begin(), size);
-    release(handle);
-    return size;
+    SENF_ASSERT( qinfo(handle)->rx.idle,
+                 "Inconsistent mixing of read() and dequeue() on mmap socket" );
+    bool blocking (false);
+    for (;;) {
+        boost::optional<Buffer> buf (dequeue(handle));
+        if (! buf) {
+            if (blocking || handle.blocking()) {
+                blocking = true;
+                handle.waitReadable();
+                continue;
+            }
+            return 0;
+        }
+        if (unsigned(buf->size()) < size)
+            size = buf->size();
+        ::memcpy(buffer, buf->begin(), size);
+        release(handle);
+        return size;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -90,7 +117,7 @@ senf::QueueWritePolicy::allocate(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
-    if (qi.rx.head != qi.rx.tail && pk.tp_status == TP_STATUS_AVAILABLE) {
+    if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && pk.tp_status == TP_STATUS_AVAILABLE) {
 #ifdef SENF_DEBUG
         pk.tp_len = 0;
 #endif
@@ -104,7 +131,8 @@ senf::QueueWritePolicy::allocate(FileHandle & handle)
 
 prefix_ void senf::QueueWritePolicy::enqueue(FileHandle & handle, Buffer & buffer, size_type size)
 {
- struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buffer.begin() - TPacketHdrOffset));
+    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(
+                                    buffer.begin() - TPacketHdrOffset));
     pk.tp_len = size;
 }
 
@@ -118,6 +146,10 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 #endif
         pk.tp_status = TP_STATUS_SEND_REQUEST;
         qi.inc(qi.tx.tail, qi.tx);
+        // We set qi.rx.idle prematurely but this is safe: when the while loop is done,
+        // the queue is indeed idle. After the first loop iteration, it is impossible for
+        // the queue to be still completely filled (that is head == tail) so the while
+        // condition above is now correkt with idle = true
         qi.tx.idle = true;
     }
     for (;;) {
@@ -130,17 +162,27 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
     }
 }
 
-prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const * buffer, unsigned size)
+prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const * buffer,
+                                               unsigned size)
 {
-    boost::optional<Buffer> buf (allocate(handle));
-    if (! buf)
-        return 0;
-    if (unsigned(buf->size()) < size)
-        size = buf->size();
-    ::memcpy(buf->begin(), buffer, size);
-    enqueue(handle, *buf, size);
-    send(handle);
-    return size;
+    SENF_ASSERT( qinfo(handle)->tx.idle,
+                 "Inconsistent mixing of write() and enqueue() on mmap socket" );
+    for (bool repeat (true);; repeat = false) {
+        boost::optional<Buffer> buf (allocate(handle));
+        if (! buf) {
+            if (repeat && handle.blocking()) {
+                handle.waitWriteable();
+                continue;
+            }
+            return 0;
+        }
+        if (unsigned(buf->size()) < size)
+            size = buf->size();
+        ::memcpy(buf->begin(), buffer, size);
+        enqueue(handle, *buf, size);
+        send(handle);
+        return size;
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

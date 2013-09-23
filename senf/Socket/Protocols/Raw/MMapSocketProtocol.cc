@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2013 
+// Copyright (C) 2013
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,28 +37,27 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
                                                  unsigned txqlen)
     const
 {
-    ::memset(&qi_, sizeof(qi_), 0);
+    ::memset(&qi_, 0, sizeof(qi_));
     qi_.frameSize = frameSize;
 
     int v = TPACKET_V2;
     if (setsockopt(fd(), SOL_PACKET, PACKET_VERSION, (char *)&v, sizeof(v)) != 0 )
         SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_VERSION)");
 
-    unsigned nrings (0);
+    unsigned size (0);
 
     struct ::tpacket_req req;
-    ::memset(&req, sizeof(req), 0);
+    ::memset(&req, 0, sizeof(req));
 
     if (rxqlen > 0) {
         req.tp_frame_nr = rxqlen;
         req.tp_frame_size = frameSize;
         req.tp_block_size = req.tp_frame_nr * req.tp_frame_size;
         req.tp_block_nr = 1;
-        int nrings (0);
         if (setsockopt(fd(), SOL_PACKET, PACKET_RX_RING,
                        reinterpret_cast<char *>(&req), sizeof(req)) != 0 )
             SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_RX_RING");
-        ++ nrings;
+        size += req.tp_block_size;
     }
 
     if (txqlen > 0) {
@@ -69,27 +68,49 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         if (setsockopt(fd(), SOL_PACKET, PACKET_TX_RING,
                        reinterpret_cast<char *>(&req), sizeof(req)) != 0 )
             SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TX_RING");
-        ++ nrings;
+        size += req.tp_block_size;
     }
 
     char * map (static_cast<char *>(
-                    ::mmap(NULL, req.tp_block_size * req.tp_block_nr * nrings,
-                           PROT_READ|PROT_WRITE, MAP_SHARED, fd(), 0)));
+                    ::mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd(), 0)));
     if (map == MAP_FAILED)
         SENF_THROW_SYSTEM_EXCEPTION("::mmap()");
 
+    qi_.map = map;
+
     if (rxqlen > 0) {
-        qi_.rx.begin = map;
+        qi_.rx.begin = qi_.rx.head = qi_.rx.tail = map;
         qi_.rx.end = map + frameSize * rxqlen;
+        qi_.rx.idle = true;
         map = qi_.rx.end;
     }
 
     if (txqlen > 0) {
-        qi_.tx.begin = map;
+        qi_.tx.begin = qi_.tx.head = qi_.tx.tail = map;
         qi_.tx.end = map + frameSize * txqlen;
+        qi_.tx.idle = true;
    }
 
     senf::FileHandleAccess::extraPtr(fh(), &qi_);
+}
+
+prefix_ void senf::MMapSocketProtocol::close_mmap()
+    const
+{
+    if (! qi_.map)
+        return;
+    if (::munmap(qi_.map, (qi_.rx.end - qi_.rx.begin) + (qi_.tx.end - qi_.tx.begin)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("::munmap");
+    ::memset(&qi_, 0, sizeof(qi_));
+}
+
+prefix_ void senf::MMapSocketProtocol::terminate_mmap()
+    const
+{
+    if (! qi_.map)
+        return;
+    ::munmap(qi_.map, (qi_.rx.end - qi_.rx.begin) + (qi_.tx.end - qi_.tx.begin));
+    ::memset(&qi_, 0, sizeof(qi_));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2013 
+// Copyright (C) 2013
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@ namespace senf {
     {
     protected:
         void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen) const;
+        void close_mmap() const;
+        void terminate_mmap() const;
 
         mutable detail::QueueInfo qi_;
     };

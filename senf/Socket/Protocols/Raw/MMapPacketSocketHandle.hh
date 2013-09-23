@@ -100,7 +100,7 @@ namespace senf {
 
         ///\name Constructors
         //\{
-        void init_client(std::string iface, unsigned rxqlen, unsigned txqlen, unsigned frameSize=2048, 
+        void init_client(std::string iface, unsigned rxqlen, unsigned txqlen, unsigned frameSize=2048,
                          SocketType type = RawSocket, int protocol = -1) const;
                                         ///< Create packet socket
                                         /**< The new socket will receive all packets of the given
@@ -133,8 +133,11 @@ namespace senf {
 
         unsigned available() const;
         bool eof() const;
+        void close();
+        void terminate() const;
 
         //\}
+
     };
 
     typedef ProtocolClientSocketHandle<ConnectedMMapPacketSocketProtocol> ConnectedMMapPacketSocketHandle;

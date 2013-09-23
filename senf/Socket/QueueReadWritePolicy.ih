@@ -33,6 +33,7 @@ namespace detail {
 
     struct QueueInfo
     {
+        char * map;
         unsigned frameSize;
 
         struct Queue {
