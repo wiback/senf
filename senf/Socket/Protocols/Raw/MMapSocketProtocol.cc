@@ -71,7 +71,7 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         size += req.tp_block_size;
     }
 
-    char * map (static_cast<char *>(
+    unsigned char * map (static_cast<unsigned char *>(
                     ::mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd(), 0)));
     if (map == MAP_FAILED)
         SENF_THROW_SYSTEM_EXCEPTION("::mmap()");

@@ -33,22 +33,23 @@ namespace detail {
 
     struct QueueInfo
     {
-        char * map;
+        unsigned char * map;
         unsigned frameSize;
 
         struct Queue {
-            char * begin; // first buffer in queue
-            char * end;   // after last buffer in queue
-            char * head;  // next buffer in queue (after first buffer in queue still held by user-space)
-            char * tail;  // last buffer in queue still held by user-space
-            bool idle;    // set to true when the range from head -> tail is empty. needed
-                          // to differentiate between empty and full head/tail range
+            unsigned char * begin;  // first buffer in queue
+            unsigned char * end;    // after last buffer in queue
+            unsigned char * head;   // next buffer in queue
+                                    // (after first buffer in queue still held by user-space)
+            unsigned char * tail;   // last buffer in queue still held by user-space
+            bool idle;              // set to true when the range from head -> tail is empty. needed
+                                    // to differentiate between empty and full head/tail range
         };
 
         Queue rx;
         Queue tx;
 
-        void inc(char * & ptr, Queue const & q);
+        void inc(unsigned char * & ptr, Queue const & q);
     };
 
     struct QueuePolicyBase

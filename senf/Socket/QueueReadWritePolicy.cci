@@ -35,7 +35,7 @@ prefix_ senf::detail::QueueInfo * senf::detail::QueuePolicyBase::qinfo(FileHandl
     return static_cast<detail::QueueInfo *>(extraPtr(handle));
 }
 
-prefix_ void senf::detail::QueueInfo::inc(char * & ptr, Queue const & q)
+prefix_ void senf::detail::QueueInfo::inc(unsigned char * & ptr, Queue const & q)
 {
     ptr += frameSize;
     if (ptr == q.end)
@@ -49,7 +49,7 @@ prefix_ senf::SocketQueueBuffer::SocketQueueBuffer()
     : b_ (0), e_ (0)
 {}
 
-prefix_ senf::SocketQueueBuffer::SocketQueueBuffer(char * b, char * e)
+prefix_ senf::SocketQueueBuffer::SocketQueueBuffer(unsigned char * b, unsigned char * e)
     : b_ (b), e_ (e)
 {}
 
@@ -118,6 +118,12 @@ prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::spaceSize()
     const
 {
     return spaceEnd() - spaceBegin();
+}
+
+prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::spaceFrameOffset()
+    const
+{
+    return begin() - spaceBegin();
 }
 
 prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::spaceBegin()
@@ -248,11 +254,11 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
     while (! qi.tx.idle || qi.tx.tail != qi.tx.head) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
 #ifdef SENF_DEBUG
-        SENF_ASSERT(pk.tp_len, "missing call to enqueue()");
+        SENF_ASSERT(pk.tp_len, "missing call to Buffer::resize()");
 #endif
         pk.tp_status = TP_STATUS_SEND_REQUEST;
         qi.inc(qi.tx.tail, qi.tx);
-        // We set qi.rx.idle prematurely but this is safe: when the while loop is done,
+        // We set qi.tx.idle prematurely but this is safe: when the while loop is done,
         // the queue is indeed idle. After the first loop iteration, it is impossible for
         // the queue to be still completely filled (that is head == tail) so the while
         // condition above is now correkt with idle = true
@@ -282,8 +288,8 @@ prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const *
             }
             return 0;
         }
-        if (unsigned(buf->size()) < size)
-            size = buf->size();
+        if (unsigned(buf->frameSize()) < size)
+            size = buf->frameSize();
         buf->resize(size);
         ::memcpy(buf->begin(), buffer, size);
         send(handle);

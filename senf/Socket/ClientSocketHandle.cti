@@ -319,7 +319,7 @@ senf::ClientSocketHandle<SPolicy>::enqueue()
 template <class SPolicy>
 prefix_ void senf::ClientSocketHandle<SPolicy>::send()
 {
-    return SPolicy::WritePolicy::send();
+    SPolicy::WritePolicy::send(*this);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

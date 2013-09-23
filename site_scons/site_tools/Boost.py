@@ -1,13 +1,11 @@
+import CustomTests
+import SCons.Defaults
+import SCons.Scanner.C
 import SCons.Script
 import SCons.Script.SConscript
-import SCons.Defaults
-import os.path
-import glob
 import os
-import sys
+import os.path
 import tempfile
-import SCons.Scanner.C
-import CustomTests
 
 # ARGH ... Why do they put a '+' in the module name ????????
 SCons.Tool.cplusplus=getattr(__import__('SCons.Tool.c++', globals(), locals(), []).Tool, 'c++')
@@ -46,7 +44,8 @@ def CompileCheck(target, source, env):
         if not os.path.exists(filename) : continue
         try: line = int(line)
         except ValueError : continue
-        message = message.strip()
+        # strip column number if given
+        message = message.split(':', 1)[-1].strip()
 
         if delay_name and not message.startswith('instantiated from '):
             print "Passed test '%s': %s" % (delay_name, message)
@@ -130,10 +129,10 @@ def CheckBoostInstallation(context, min=None, max=None):
             ('BOOSTSIGNALSLIB',  'boost_signals'),
             ('BOOSTDATETIMELIB', 'boost_date_time'),
             ('BOOSTSYSTEMLIB',   'boost_system') )
-                  
+
     # first check the default
     r = checkBoostVersion(context, min, max)
-    if r: 
+    if r:
         for envVar, boostlib in BOOST_LIBS:
             if not checkBoostLib(context, envVar, boostlib):
                 return False
@@ -151,8 +150,8 @@ def CheckBoostInstallation(context, min=None, max=None):
                     context.env.Fail('No valid boost installation found')
             return r
     context.env.Fail('No valid boost installation found')
-    
-    
+
+
 def checkBoostLib(context, envVar, libName, version=None):
     if version is None:
         if context.sconf.CheckLib(libName, language='CXX', autoadd=False):
@@ -164,7 +163,7 @@ def checkBoostLib(context, envVar, libName, version=None):
         return True
     return False
 
-    
+
 def checkBoostVersion(context, min=None, max=None, includeDir=None):
     """Check for boost includes.
 
@@ -196,7 +195,7 @@ def checkBoostVersion(context, min=None, max=None, includeDir=None):
                              "int main(int, char **)\n"
                              "{ std::cout << BOOST_LIB_VERSION << std::endl; }",
                              ".cc")[-1].strip()
-        context.env.Replace( CPPPATH = cppPath)                    
+        context.env.Replace( CPPPATH = cppPath)
 
     if not ret:
         msg = "no boost includes found"

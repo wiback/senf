@@ -58,8 +58,8 @@ namespace senf {
     class SocketQueueBuffer
     {
     public:
-        typedef char * iterator;
-        typedef char const * const_iterator;
+        typedef unsigned char * iterator;
+        typedef unsigned char const * const_iterator;
         typedef std::size_t size_type;
 
         SocketQueueBuffer();
@@ -82,6 +82,7 @@ namespace senf {
         const_iterator spaceBegin() const;
         const_iterator spaceEnd() const;
         size_type spaceSize() const;
+        size_type spaceFrameOffset() const;
 
         senf::ClockService::clock_type timestamp() const;
                                         ///< return packet receive timestamp
@@ -91,13 +92,13 @@ namespace senf {
         void resize(size_type sz);      ///< resize active packet data to given size
 
     private:
-        SocketQueueBuffer(char * b, char * e);
+        SocketQueueBuffer(unsigned char * b, unsigned char * e);
 
         struct ::tpacket2_hdr & hdr();
         struct ::tpacket2_hdr const & hdr() const;
 
-        char * b_;
-        char * e_;
+        unsigned char * b_;
+        unsigned char * e_;
 
         friend class QueueReadPolicy;
         friend class QueueWritePolicy;
