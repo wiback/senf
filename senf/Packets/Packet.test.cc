@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -547,6 +547,9 @@ SENF_AUTO_UNIT_TEST(packetAnnotation)
         ss.str(),
         "SENF_PACKET_ANNOTATION_SLOTS = 8\n"
         "SENF_PACKET_ANNOTATION_SLOTSIZE = 16\n"
+#ifdef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
+        "SENF_PACKET_NO_COMPLEX_ANNOTATIONS defined\n"
+#endif
         "TYPE                                                      FAST  COMPLEX   SIZE\n"
 #ifndef SENF_PACKET_NO_COMPLEX_ANNOTATIONS
         "(anonymous namespace)::ComplexAnnotation                  no    yes         32\n"
