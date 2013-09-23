@@ -1,5 +1,12 @@
-import os, os.path, site_tools.Yaptu, types, re, fnmatch, sys, platform
 import SCons.Util
+import fnmatch
+import os
+import os.path
+import platform
+import re
+import site_tools.Yaptu
+import sys
+import types
 from SCons.Script import *
 
 senfutildir = os.path.dirname(__file__)
@@ -19,7 +26,7 @@ for ext in os.listdir(extdir):
     if not os.path.isdir( os.path.join(extdir, ext)): continue
     if ext.startswith('.'): continue
     try:
-        setattr( sys.modules[__name__], ext, 
+        setattr( sys.modules[__name__], ext,
                 __import__('%s.site_scons' % ext, fromlist=['senfutil']).senfutil )
     except ImportError:
         pass
@@ -88,7 +95,7 @@ def expandLogOption(target, source, env, for_signature):
 ###########################################################################
 # client SENF detection/configuration
 
-def detect_senf(env,senf_path, try_flavors):
+def detect_senf(env, senf_path, try_flavors):
     """Detect senf with flavor in 'try_flavors' somewhere in 'senf_path'.
 
 This function returns True, if senf is found, False otherwise.
@@ -99,7 +106,9 @@ The environment 'env' is updated in the following way:
 
     FLAVOR         set to the detected senf flavor
 
-    SENFDIR        set to the base directory of the senf installation.
+    SENFDIR        set to the base directory of the senf installation
+
+    SENFBUILDDIR   set to the base directory of the compiled files
 """
     global senfutildir
     if env['builddir']:
@@ -111,18 +120,29 @@ The environment 'env' is updated in the following way:
     for path in senf_path:
         if not path.startswith('/') : sconspath = '#/%s' % path
         else                        : sconspath = path
+        if os.path.isdir(os.path.join(path, 'build')):
+            buildsubdirs = [
+                os.path.join('build', d.name)
+                for d in env.Glob('%s/build/${SYS_ISSUE}-${SYS_MACHINE}-*' % sconspath) ] + [ '' ]
+        else:
+            buildsubdirs = [ '' ]
         for flavor in try_flavors:
             suffix = flavor and "_"+flavor or ""
-            local_path = os.path.join(path,"senf%s.conf" % suffix)
             sys_path = os.path.join(path, "lib", "senf", "senf%s.conf" % suffix)
-            if os.path.exists(local_path):
-                env.SetDefault( SENFSYSLAYOUT = False )
-            elif os.path.exists(sys_path):
-                env.SetDefault( SENFSYSLAYOUT  = True )
-            else:
-                continue
-            env.SetDefault( FLAVOR = flavor, SENFDIR = sconspath )
-            return True
+            for buildsubdir in buildsubdirs:
+                local_path = os.path.join(path, buildsubdir, "senf%s.conf" % suffix)
+                if os.path.exists(local_path):
+                    env.SetDefault( SENFSYSLAYOUT = False )
+                    env.SetDefault( FLAVOR = flavor,
+                                    SENFDIR = sconspath,
+                                    SENFBUILDDIR = sconspath if not buildsubdir
+                                    else os.path.join(sconspath, buildsubdir) )
+                    return True
+            if os.path.exists(sys_path):
+                env.SetDefault( SENFSYSLAYOUT = True,
+                                SENFDIR = sconspath,
+                                SENFBUILDDIR = sconspath )
+                return True
     return False
 
 def checkCompiler(env, conf, cxx, cc, minVersion, fail):
@@ -131,20 +151,21 @@ def checkCompiler(env, conf, cxx, cc, minVersion, fail):
     env['CC'] = cc
     return conf.CheckCXXVersion(min=minVersion, fail=fail)
 
-def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
-    ParseDefaultArguments(env)
+def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False, vars=[]):
+    ParseDefaultArguments(
+        env,
+        ('senf_flavor', 'preferred flavor of senf to use'),
+        *vars)
 
     try_flavors = [ '', 'g' ]
+    if env.get('senf_flavor', None):
+        try_flavors[0:0] = [ env['senf_flavor'] ]
     if flavor is not None:
         try_flavors[0:0] = [ flavor ]
 
     if not env.GetOption('clean'):
         res = detect_senf(env, senf_path, try_flavors)
-        if res:
-            if not env.GetOption('no_progress'):
-                print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} "
-                                "'libsenf${LIBADDSUFFIX}' in '$SENFDIR'")
-        else:
+        if not res:
             print "scons: SENF library not found or it is not compiled,",
             if exit_if_not_found:
                 print "abort."
@@ -167,7 +188,7 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
     env.SetDefault(
         LIBADDSUFFIX      = '${FLAVOR and "_$FLAVOR" or ""}',
         OBJADDSUFFIX      = '${LIBADDSUFFIX}',
-        BUNDLEDIR         = '$SENFDIR${SENFSYSLAYOUT and "/lib/senf" or ""}',
+        BUNDLEDIR         = '$SENFBUILDDIR${SENFSYSLAYOUT and "/lib/senf" or ""}',
         SENFINCDIR        = '$SENFDIR${SENFSYSLAYOUT and "/include" or ""}',
 
         PROJECTNAME       = "Unnamed project",
@@ -196,10 +217,10 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
     except IOError:
         # Really should never happen since detect_senf looks for this file ...
         pass
-   
+
     if env.GetOption('clean'):
         return
- 
+
     # configure - compiler
     conf = env.Configure(clean=False, help=False)
     # Compiler
@@ -208,19 +229,19 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
             p = os.path.dirname(ARGUMENTS['CXX'])
             cxx = os.path.basename(ARGUMENTS['CXX'])
             if cxx.startswith('clang++'):
-                checkCompiler(env, conf, ARGUMENTS['CXX'], 
+                checkCompiler(env, conf, ARGUMENTS['CXX'],
                       os.path.join(p, cxx.replace('clang++', 'clang')), '3.3', True)
             else:
-                checkCompiler(env, conf, ARGUMENTS['CXX'], 
+                checkCompiler(env, conf, ARGUMENTS['CXX'],
                       os.path.join(p, cxx.replace('g++', 'gcc')), '4.8', True)
         else:
-            for gccVersion in ('', '-4.8', '-4.9'): 
+            for gccVersion in ('', '-4.8', '-4.9'):
                 if checkCompiler(env, conf, 'g++'+gccVersion, 'gcc'+gccVersion, '4.8', False):
                     break
             else:
                 if not checkCompiler(env, conf, "clang++", 'clang' '3.3', False):
                     env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
-        
+
     # configure - Boost
     if env['cxx11']:
         minBoostVersion = '1_49'
@@ -230,10 +251,14 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False):
     conf.Finish()
 
 
+    if not env.GetOption('no_progress'):
+        print env.subst("scons: Using${SENFSYSLAYOUT and ' system' or ''} "
+                        "'libsenf${LIBADDSUFFIX}' in '$SENFBUILDDIR'")
+
 ###########################################################################
 # Helpers
 
-def ParseDefaultArguments(env):
+def ParseDefaultArguments(env, *extraArgs):
     # Interpret command line options
     parseArguments(
         env,
@@ -244,21 +269,26 @@ def ParseDefaultArguments(env):
         BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
         BoolVariable('lto', 'enable link-time-optimization', False),
         BoolVariable('cxx11', 'enable C++11 build', False),
+        *extraArgs
     )
-    
+
     build_type = 'normal'
     for type in ('debug_final', 'final', 'debug'):
-        if env[type]: 
+        if env[type]:
             build_type = type
     if env['profile']:
         build_type += '-profile'
-        
+    if env['debug_final']:
+        env['final'] = True
+
     issue = re.sub(r'\\\w', '', open('/etc/issue').readline()).strip().lower().replace(' ', '_').replace('/', '_')
     env.Replace(
         BUILD_TYPE = build_type,
+        SYS_ISSUE = issue,
+        SYS_MACHINE = platform.machine(),
         VARIANT    = '%s-%s-%s' % (issue, platform.machine(), build_type)
     )
-    
+
 def DefaultOptions(env):
     env.Replace(
         expandLogOption   = expandLogOption,
@@ -268,23 +298,26 @@ def DefaultOptions(env):
         LOGLEVELS_        = env.BuildTypeOptions('LOGLEVELS'),
     )
     env.Append(
-        CXXFLAGS          = [ '$CXXFLAGS_' ],
-        CPPDEFINES        = [ '$CPPDEFINES_' ],
-        LINKFLAGS         = [ '$LINKFLAGS_' ],
+        CXXFLAGS          = [ '$CXXFLAGS_', '${debug_final and "$CXXFLAGS_extra_debug_final" or None}' ],
+        CPPDEFINES        = [ '$CPPDEFINES_', '${debug_final and "$CPPDEFINES_extra_debug_final" or []}'],
+        LINKFLAGS         = [ '$LINKFLAGS_', '${debug_final and "$LINKFLAGS_extra_debug_final" or None}' ],
         LOGLEVELS         = [ '$LOGLEVELS_' ],
     )
     env.SetDefault(
         CXXFLAGS_final    = [],
         CXXFLAGS_normal   = [],
         CXXFLAGS_debug    = [],
+        CXXFLAGS_extra_debug_final = [],
 
         CPPDEFINES_final  = [],
         CPPDEFINES_normal = [],
         CPPDEFINES_debug  = [],
+        CPPDEFINES_extra_debug_final = [],
 
         LINKFLAGS_final   = [],
         LINKFLAGS_normal  = [],
         LINKFLAGS_debug   = [],
+        LINKFLAGS_extra_debug_final = [],
 
         LOGLEVELS_final   = [],
         LOGLEVELS_normal  = [],
@@ -297,22 +330,24 @@ def DefaultOptions(env):
 
     # Set nice default options
     env.Append(
-        CXXFLAGS_CLANG   = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene' ], 
-        CXXFLAGS         = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-unused-parameter', 
+        CXXFLAGS_CLANG   = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene' ],
+        CXXFLAGS         = [ '-Wall', '-Wextra', '-Woverloaded-virtual', '-Wno-unused-parameter',
                              '-Wno-unused-function',
-                             "${profile and '-pg' or None}", "${lto and '-flto' or None}", 
+                             "${profile and '-pg' or None}", "${lto and '-flto' or None}",
                              '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
         CXXFLAGS_final   = [ '-O3', '-fno-threadsafe-statics', '-fno-stack-protector',
-                               "${profile and ' ' or '-ffunction-sections'}" ],
+                               "${not profile and '-ffunction-sections' or None}" ],
         CXXFLAGS_normal  = [ '-O2', '-g' ],
         CXXFLAGS_debug   = [ '-O0', '-g' ],
+        CXXFLAGS_extra_debug_final = [ '-g' ],
 
         LINKFLAGS        = [ "${profile and '-pg' or None}", "${lto and '-flto -fwhole-program' or None}" ],
-        LINKFLAGS_final  = [ "${profile and ' ' or '-Wl,--gc-sections'}" ],
+        LINKFLAGS_final  = [ "${not profile and '-Wl,--gc-sections' or None}" ],
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],
+        LINKFLAGS_extra_debug_final = [ '-g' ],
     )
-    
+
     env.Alias('all', '#')
 
 

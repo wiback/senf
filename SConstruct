@@ -1,7 +1,9 @@
 # -*- python -*-
 
-import sys, os.path
-import SENFSCons, senfutil
+import SENFSCons
+import os.path
+import senfutil
+import sys
 
 ###########################################################################
 # Load utilities and setup libraries and configure build
@@ -84,6 +86,8 @@ env.Append(
     CLEAN_SOME_PATTERNS    = [ '*~', '#*#', '*.pyc', 'semantic.cache' ],
     CLEAN_PATTERNS         = [ '.sconsign*', '.sconf_temp' ],
 
+    CPPPATH                = [ ],
+    CPPFLAGS               = [ ],
     LIBPATH                = [ '$LOCALLIBDIR' ],
     LIBS                   = [ '$EXTRA_LIBS' ],
     EXTRA_LIBS             = [ 'rt' ],
@@ -99,27 +103,28 @@ env.Append(
                                '--param','large-function-growth=10000',
                                '--param', 'large-function-insns=10000',
                                '--param','inline-unit-growth=10000' ],
-    INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
+    #INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '${str(CXX).split("/")[-1] == "g++" and "$INLINE_OPTS_GCC" or None}' ],
     CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene', ],
-    CXXFLAGS_GCC           = [ '-Wdouble-promotion' ], 
+    CXXFLAGS_GCC           = [ '-Wdouble-promotion' ],
     CXXFLAGS               = [ '-Wall', '-Wextra', '-Werror',
                                '-Woverloaded-virtual', '-Wnon-virtual-dtor', '-Wcast-align', '-Winit-self',
                                '-Wdisabled-optimization', '-Wpointer-arith',
                                '-Wno-long-long', '-Wno-unused-parameter',
-                               '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing', 
-                               '${profile and "-pg" or None}', 
+                               '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing',
+                               '${profile and "-pg" or None}',
                                '${lto and "-flto" or None}',
                                '${cxx11 and "-std=c++11" or None}',
                                '${str(CXX).split("/")[-1].startswith("g++") and "$CXXFLAGS_GCC" or None}',
-                               '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}' ],
+                               '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}',
+                               '${debug_final and "-g" or None}'],
     CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics','-fno-stack-protector',
                                "${profile and ' ' or '-ffunction-sections'}" ],
     CXXFLAGS_normal        = [ '-O2', '-g' ],
     CXXFLAGS_debug         = [ '-O0', '-g' ],
 
     CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
-    CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'NDEBUG', 
+    CPPDEFINES_final       = [ 'SENF_PPI_NOTRACE', 'NDEBUG',
                                'BOOST_NO_MT', 'BOOST_DISABLE_ASSERTS', 'BOOST_DISABLE_THREADS' ],
     CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
     CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
@@ -139,8 +144,6 @@ env.SetDefault(
     OBJINSTALLDIR          = '$CONFINSTALLDIR',
     DOCINSTALLDIR          = '$PREFIX${syslayout and "/share/doc/senf" or "/manual"}',
     SCONSINSTALLDIR        = '$CONFINSTALLDIR/site_scons',
-
-    BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
 
     LIBSENF                = "senf",
     LCOV                   = "lcov",
@@ -163,18 +166,13 @@ env.SetDefault(
 senfutil.importProcessEnv(env)
 
 # Set variables from command line
-senfutil.ParseDefaultArguments(env)
-senfutil.parseArguments(
+senfutil.ParseDefaultArguments(
     env,
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
     BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False),
     BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
 )
 
-if env['debug_final']:
-    env['final'] = True
-    env.Append(CXXFLAGS = [ '-g' ])
-    
 # Handle 'test_changes'
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
     import SparseTestHack
@@ -183,27 +181,28 @@ if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
 if env.has_key('only_tests') : env['sparse_tests'] = True
 
 if env['builddir']:
-    env.Replace( 
+    env.Replace(
         BUILDDIR           = os.path.join('build', env['VARIANT']),
-        LOCALLIBDIR        = os.path.join('#', 'build', env['VARIANT']) 
+        LOCALLIBDIR        = os.path.join('#', 'build', env['VARIANT'])
     )
-    env.Append( 
+    env.Append(
         CPPPATH            = [ os.path.join('#', 'build', env['VARIANT']) ]
     )
 else:
-    env.Replace( 
+    env.Replace(
         BUILDDIR           = '#',
-        LOCALLIBDIR        = '#', 
+        LOCALLIBDIR        = '#',
     )
-    env.Append( 
-        CPPPATH            = [ '#' ] 
+    env.Append(
+        CPPPATH            = [ '#' ]
     )
-    
-    
+
+
 Export('env')
 
 ###########################################################################
 # Configure
+
 env['CONFIGUREDIR'] = os.path.join(env.subst('$BUILDDIR'), '.sconf_temp')
 env['CONFIGURELOG'] = os.path.join(env.subst('$BUILDDIR'), 'config.log')
 SConscript('SConfigure')
