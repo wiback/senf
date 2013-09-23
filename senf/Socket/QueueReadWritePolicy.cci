@@ -92,7 +92,7 @@ prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::frameBegin()
 prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::frameEnd()
 { return e_; }
 
-prefix_ size_type senf::SocketQueueBuffer::frameSize()
+prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::frameSize()
     const
 {
     return frameEnd() - frameBegin();
@@ -114,7 +114,7 @@ prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::spaceBegin()
 prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::spaceEnd()
 { return e_; }
 
-prefix_ size_type senf::SocketQueueBuffer::spaceSize()
+prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::spaceSize()
     const
 {
     return spaceEnd() - spaceBegin();
@@ -290,7 +290,7 @@ prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const *
         return size;
     }
 }
-g
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

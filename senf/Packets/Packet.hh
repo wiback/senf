@@ -640,7 +640,7 @@ namespace senf {
                                                  of data to construct packet from. */
 #endif
 
-        static ConcretePacket create(byte * data, size_type size, size_type chunkSize = 0u,
+        static ConcretePacket create(byte * data, size_type size, size_type totalSize = 0u,
                                      size_type offset = 0u);
                                         ///< Create packet utilizing external storage
                                         /**< The packet will be created using \a size bytes at \a

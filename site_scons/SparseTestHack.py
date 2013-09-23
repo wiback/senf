@@ -67,10 +67,10 @@ def recursiveSourcesMap(nodes):
             if not rv.get(src):
                 rv[src] = True
                 check(src)
-    
+
     for node in nodes:
         check(node)
-    
+
     return rv
 
 # Replacement BoostUnitTest builder. This build just defers the real
@@ -137,22 +137,22 @@ def build(env, accept_unknown_tests=False, verbose=True):
     if not accept_unknown_tests:
         only_tests = [ k for k,v in only_tests.iteritems() if not v ]
         if only_tests:
-            raise SCons.Errors.StopError("Unknown unit tests (only_tests): %s." 
+            raise SCons.Errors.StopError("Unknown unit tests (only_tests): %s."
                                          % ", ".join("`%s'" % x for x in only_tests))
 
 def findSCMChanges(env):
-
     def scmchanges(dir):
         if os.popen("cd %s; svnversion" % dir.abspath).read().strip() in ("","exported"):
             return [
                 entry for entry in (
                     dir.Entry(x[3:])
-                    for x in os.popen("cd %s; git status --porcelain" 
-                                      % dir.abspath).read().strip().split("\n"))
+                    for x in os.popen("cd %s; git status -z"
+                                      % dir.abspath).read().split("\0")
+                    if x)
                 if entry.exists() ]
         else:
             return [ dir.Entry(l[7:])
-                     for l in os.popen("cd %s; svn status" 
+                     for l in os.popen("cd %s; svn status"
                                        % dir.abspath).read().rstrip().split("\n")
                      if l[0] == 'M' ]
 
