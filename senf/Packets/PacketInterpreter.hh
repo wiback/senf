@@ -102,8 +102,8 @@ namespace senf {
             virtual ptr create(size_type size, senf::NoInit_t) const = 0;
             template <class ForwardReadableRange>
             ptr create(ForwardReadableRange const & range) const;
-            virtual ptr create(byte * data, size_type size, ExternalPacketMemoryManager * epmm,
-                               size_type chunkSize = 0u, size_type offset = 0u) = 0;
+            virtual ptr create(byte * data, size_type size, size_type chunkSize = 0u,
+                               size_type offset = 0u) = 0;
 
             // Create packet as new packet after a given packet
 
@@ -292,8 +292,8 @@ namespace senf {
         static ptr create(size_type size, senf::NoInit_t);
         template <class ForwardReadableRange>
         static ptr create(ForwardReadableRange const & range);
-        static ptr create(byte * data, size_type size, ExternalPacketMemoryManager * epmm,
-                          size_type chunkSize = 0u, size_type offset = 0u);
+        static ptr create(byte * data, size_type size, size_type chunkSize = 0u,
+                          size_type offset = 0u);
 
         // Create packet as new packet after a given packet
 
@@ -378,7 +378,6 @@ namespace senf {
             virtual PacketInterpreterBase::ptr create(size_type size) const;
             virtual PacketInterpreterBase::ptr create(size_type size,senf::NoInit_t) const;
             virtual PacketInterpreterBase::ptr create(byte * data, size_type size,
-                                                      ExternalPacketMemoryManager * epmm,
                                                       size_type chunkSize = 0u, size_type offset = 0u);
 
             // Create packet as new packet after a given packet
