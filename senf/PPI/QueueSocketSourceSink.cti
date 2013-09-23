@@ -1,21 +1,29 @@
 // $Id$
 //
 // Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at
+// http://senf.berlios.de/license.html
 //
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the
-// Free Software Foundation, Inc.,
-// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//   Stefan Bund <g0dil@berlios.de>
 
 /** \file
     \brief QueueSocketSourceSink inline template implementation */
@@ -29,15 +37,8 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
-EthernetPacket eth (EthernetPacket::create(
-    ((unsigned char *)hdr) + sizeof(hdr->tp_status),
-    hdr->tp_len,
-    &epmm,
-    req_.tp_frame_size - sizeof(hdr->tp_status),
-    hdr->tp_mac - sizeof(hdr->tp_status)));
-*/
-
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::ActiveQueueSocketSource<Packet>
 
 template <class Packet>
 prefix_
@@ -153,80 +154,6 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::read()
         burstMax_ = burst;
 #endif
     handle_.release();
-}
-
-prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink()
-    : handle_ ()
-    , event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
-              senf::scheduler::EventHook::POST, false)
-#ifdef SENF_DEBUG
-    , burst_ (0)
-    , burstMax_ (0)
-#endif
-{
-    noroute(input);
-    input.onRequest(&PassiveQueueSocketSink::write);
-}
-
-prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink(Handle const & handle)
-    : handle_ (handle)
-    , event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
-              senf::scheduler::EventHook::POST, false)
-#ifdef SENF_DEBUG
-    , burst_ (0)
-    , burstMax_ (0)
-#endif
-{
-    noroute(input);
-    input.onRequest(&PassiveQueueSocketSink::write);
-}
-
-prefix_ senf::ppi::module::PassiveQueueSocketSink::Handle
-senf::ppi::module::PassiveQueueSocketSink::handle()
-    const
-{
-    return handle_;
-}
-
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & handle)
-{
-    handle_ = handle;
-}
-
-#ifdef SENF_DEBUG
-prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink::burstMax()
-{
-    unsigned res (burstMax_);
-    burstMax_ = 0;
-    return res;
-}
-#endif
-
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
-{
-    event_.disable();
-    handle_.send();
-#ifdef SENF_DEBUG
-    if (burst_ > burstMax_)
-        burstMax_ = burst_;
-    burst_ = 0;
-#endif
-}
-
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
-{
-    Packet packet (input());
-    SENF_ASSERT( packet.data().size(), "cannot send empty packet" );
-    boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.enqueue());
-    if (! buf)
-        return;
-    unsigned sz (std::min(packet.data().size(), buf->frameSize()));
-    buf->resize(sz);
-    ::memcpy(buf->begin(), packet.data().begin(), sz);
-    event_.enable();
-#ifdef SENF_DEBUG
-    ++ burst_;
-#endif
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

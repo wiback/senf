@@ -1,21 +1,29 @@
 // $Id$
 //
 // Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at
+// http://senf.berlios.de/license.html
 //
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the
-// Free Software Foundation, Inc.,
-// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//   Stefan Bund <g0dil@berlios.de>
 
 /** \file
     \brief QueueSocketSourceSink public header */
@@ -30,6 +38,7 @@
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
 #include <senf/Scheduler/EventHook.hh>
+#include "QueueingSocketSink.hh"
 #include "Module.hh"
 #include "Connectors.hh"
 #include "IOEvent.hh"
@@ -94,6 +103,7 @@ namespace module {
         void read();
     };
 
+
     class PassiveQueueSocketSink
         : public Module
     {
@@ -113,6 +123,9 @@ namespace module {
         Handle handle() const;
         void handle(Handle const & handle);
 
+        QueueingAlgorithm & qAlgorithm() const;
+        void qAlgorithm(QueueingAlgorithm::ptr qAlgorithm);
+
         void send();
 
 #ifdef SENF_DEBUG
@@ -121,9 +134,13 @@ namespace module {
 
     private:
         void write();
+        void writable();
+        void writePacket(senf::Packet const & packet, QueueReadPolicy::Buffer & buf);
 
         Handle handle_;
-        scheduler::EventHook event_;
+        scheduler::EventHook eventHook_;
+        IOEvent ioEvent_;
+        boost::scoped_ptr<QueueingAlgorithm> qAlgo_;
 
 #ifdef SENF_DEBUG
         unsigned burst_;
@@ -133,7 +150,7 @@ namespace module {
 }}}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "QueueSocketSourceSink.cci"
+#include "QueueSocketSourceSink.cci"
 //#include "QueueSocketSourceSink.ct"
 #include "QueueSocketSourceSink.cti"
 #endif

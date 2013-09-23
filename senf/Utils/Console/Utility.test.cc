@@ -102,6 +102,8 @@ SENF_AUTO_UNIT_TEST(flagCollection)
         parser.parse("test/test ()",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "()\n" );
+
+    BOOST_CHECK_EQUAL( senf::str(senf_console_format_enum(Foo)), "Foo");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

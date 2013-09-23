@@ -109,6 +109,7 @@ namespace senf {
                                              the complete protocol interface as defined by that
                                              class. See the respective protocol class documentation.
                                              \returns \a Protocol class reference */
+        Protocol const & protocol() const;
 
         static ProtocolClientSocketHandle cast_static(FileHandle handle);
         static ProtocolClientSocketHandle cast_dynamic(FileHandle handle);

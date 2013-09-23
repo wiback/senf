@@ -39,6 +39,7 @@
 // senf::ppi::QueueingAlgorithm
 
 prefix_ unsigned senf::ppi::QueueingAlgorithm::size()
+    const
 {
     return v_size();
 }
@@ -68,6 +69,32 @@ prefix_ unsigned senf::ppi::FIFOQueueingAlgorithm::v_size()
     return queue_.size();
 }
 
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::NoneQueueingAlgorithm
+
+prefix_ unsigned senf::ppi::NoneQueueingAlgorithm::v_size()
+    const
+{
+    return 0u;
+}
+
+prefix_ void senf::ppi::NoneQueueingAlgorithm::v_clear()
+{}
+
+prefix_ senf::Packet senf::ppi::NoneQueueingAlgorithm::v_dequeue()
+{
+    return Packet();
+}
+
+prefix_ bool senf::ppi::NoneQueueingAlgorithm::v_enqueue(Packet const & packet)
+{
+    return false;
+}
+
+prefix_ senf::ppi::QueueingAlgorithm::ptr senf::ppi::NoneQueueingAlgorithm::create()
+{
+    return new NoneQueueingAlgorithm();
+}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

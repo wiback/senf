@@ -55,7 +55,7 @@ namespace ppi {
         console::DirectoryNode & consoleDir();
         Packet dequeue();
         bool enqueue(Packet const & packet);
-        unsigned size();
+        unsigned size() const;
         void clear();
 
     protected:
@@ -125,6 +125,17 @@ namespace ppi {
 
         FIFOQueueingAlgorithm();
 
+        virtual Packet v_dequeue();
+        virtual bool v_enqueue(Packet const & packet);
+        virtual unsigned v_size() const;
+        virtual void v_clear();
+
+    public:
+        static QueueingAlgorithm::ptr create();
+    };
+
+    class NoneQueueingAlgorithm : public QueueingAlgorithm
+    {
         virtual Packet v_dequeue();
         virtual bool v_enqueue(Packet const & packet);
         virtual unsigned v_size() const;

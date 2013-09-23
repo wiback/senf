@@ -83,7 +83,7 @@ namespace senf {
         Socket Handle typedefs above.
 
         This protocol uses the linux mmap packet socket access API. This API replaces the ordinary
-        read/write calls with a linxu specific api.
+        read/write calls with a linux specific api.
 
         \warning The socket handle is neither readable nor writable in the ordinary sense. It
             utilises the special QueueReadPolicy and QueueWritePolicy socket policies.

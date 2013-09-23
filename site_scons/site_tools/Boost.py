@@ -4,7 +4,7 @@ import SCons.Scanner.C
 import SCons.Script
 import SCons.Script.SConscript
 import os
-import os.path
+import glob
 import tempfile
 
 # ARGH ... Why do they put a '+' in the module name ????????

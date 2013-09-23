@@ -230,6 +230,10 @@ SENF_AUTO_UNIT_TEST(enumSupport)
         parser.parse("test/testKey ThrEE",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "three\n" );
+
+    BOOST_CHECK_EQUAL( senf::str(senf_console_format_enum(Foo)), "Foo");
+    BOOST_CHECK_EQUAL( senf::str(senf_console_format_enum(TestClass::MemberBar)), "MemberBar");
+    BOOST_CHECK_EQUAL( senf::str(senf_console_format_enum(TWO)), "2");
 }
 
 SENF_AUTO_UNIT_TEST(singleToken)
