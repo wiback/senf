@@ -193,12 +193,14 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & ha
     handle_ = handle;
 }
 
+#ifdef SENF_DEBUG
 prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink::burstMax()
 {
     unsigned res (burstMax_);
     burstMax_ = 0;
     return res;
 }
+#endif
 
 prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
 {
