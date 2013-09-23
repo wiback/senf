@@ -35,6 +35,10 @@
 #include <boost/regex.hpp>
 #include <senf/Utils/Console/Traits.hh>
 
+// this include needed to add dependency on Scheduler. This should really be in 
+// ClockService.cci which is not possible due to recursive includes ...
+#include "Scheduler.hh"
+
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
