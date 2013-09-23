@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -72,8 +72,7 @@ namespace senf {
         <tr><td></td>             <td></td>                                                              <td></td></tr>
         <tr><td>dequeue()</td>    <td>ReadPolicy::dequeue (\ref senf::ReadPolicyBase)</td>               <td></td></tr>
         <tr><td>release()</td>    <td>ReadPolicy::release (\ref senf::ReadPolicyBase)</td>               <td></td></tr>
-        <tr><td>allocate()</td>   <td>WritePolicy::release (\ref senf::WritePolicyBase)</td>             <td></td></tr>
-        <tr><td>enqueue()</td>    <td>WritePolicy::enqueue (\ref senf::WritePolicyBase)</td>             <td></td></tr>
+        <tr><td>enqueue()</td>    <td>WritePolicy::release (\ref senf::WritePolicyBase)</td>             <td></td></tr>
         <tr><td>send()</td>       <td>WritePolicy::send (\ref senf::WritePolicyBase)</td>                <td></td></tr>
         </table>
 
@@ -392,8 +391,8 @@ namespace senf {
 
             \li calling \ref dequeue() will return an iterator range (a pair of pointers) pointing
                 to the data. This data lives directly in the read queue.
-            \li to release the memory returned by dequeue(), call \ref release(). This call will return
-                \e all unreleased frames to the kernel.
+            \li to release the memory returned by dequeue(), call \ref release(). This call will
+                return \e all unreleased frames to the kernel.
 
             The API has some special features:
 
@@ -412,26 +411,26 @@ namespace senf {
         /** \brief Write data to packet queue
 
             Some protocols support a more efficient queue based read/write protocol. If the handle
-            supports this protocol, \ref allocate(), \ref enqueue() and \ref release() are used to
+            supports this protocol, \ref enqueue() and \ref release() are used to
             write packets to that queue.
 
             The API works as follows:
 
-            \li calling \ref allocate() will return an iterator range (a pair of pointers) pointing
-                to a new queue entry. This popinter points directly into the write queue.
+            \li calling \ref enqueue() will return an buffer object pointing to a new queue
+                entry.
             \li now write the data frame to that area (e.g. memcpy the packet there or construct a
                 new packet in the memory area using the external packet memory management support)
-            \li when the data is ready, call \ref enqueue() on the iterator range. At this point,
-                the size of the packet must be specified.
-            \li call \ref send() to send all packets placed into the send queue
+            \li you mast call \c resize() on the buffer object to set the size of the packet
+                to be sent
+            \li call \ref send() to send all packets allocated from the send queue since the last
+                call call to \c send()
 
             The API has some special features:
 
-            \li you may call \ref allocate() and \ref enqueue() several times before calling \ref
-                send()
+            \li you may call \ref enqueue() several times before calling \ref send()
             \li a call to \ref send() will send out all packets allocated since the last call to
                 \ref send()
-            \li it is possible for the call to \ref allocate() to fail if no space is available in
+            \li it is possible for the call to \ref enqueue() to fail if no space is available in
                 the send queue
 
             \warning You must ensure to call \ref enqueue() on all packets you \ref allocate()
@@ -440,15 +439,7 @@ namespace senf {
             \returns iterator range to the write queue buffer or \c boost::none, if there is no room
                 in the write queue.
          */
-        boost::optional<typename SPolicy::WritePolicy::Buffer> allocate();
-
-        void enqueue(typename SPolicy::WritePolicy::Buffer const & buffer, unsigned size);
-                                        ///< prepare frame to be sent
-                                        /**< set the size of the frame in buffer.
-                                             \param[in] buffer buffer holding the frame as returned
-                                                 by \ref allocate()
-                                             \param[in] size size of frame in bytes starting at \a
-                                                 buffer.\c begin() */
+        boost::optional<typename SPolicy::WritePolicy::Buffer> enqueue();
 
         void send();                    ///< Send all data in the write queue
                                         /**< This call will send out all frames allocated since the

@@ -54,9 +54,6 @@ namespace detail {
     struct QueuePolicyBase
         : private FileHandleAccess
     {
-        typedef boost::iterator_range<char *> Buffer;
-        typedef Buffer::size_type size_type;
-
         static detail::QueueInfo * qinfo(FileHandle & handle);
 
         enum { TPacketHdrOffset = TPACKET_HDRLEN - sizeof(struct ::sockaddr_ll) };

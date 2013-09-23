@@ -24,8 +24,10 @@
 #define HH_SENF_QueueReadWritePolicy_ 1
 
 // Custom includes
+#include <linux/if_packet.h>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
+#include "Protocols/Raw/LLAddressing.hh"
 #include "SocketPolicy.hh"
 #include "FileHandle.hh"
 
@@ -34,6 +36,72 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
+
+    class QueueReadPolicy;
+    class QueueWritePolicy;
+
+    /** \brief Buffer used by QueueReadPolicy / QueueWritePolicy
+
+        This class provides a convenient interface to the frame buffers as utilized by the queue
+        based read and write policy. This class resembles an iterator range with additional access
+        to information found in the buffer header.
+
+        The SocketQueueBuffer is a fixed space container which may be resized within the space
+        available. There are several views into that space:
+
+        \li \c begin(), \c end(), \c size() and \c empty() provide access to the active frame data
+        \li \c frameBegin(), \c frameEnd() and \c frameSize() provide access to the maximum space
+            usable for packet data
+        \li \c spaceBegin(), \c spaceEnd() and \c spaceSize() provide access to additional space
+            which is available for use but will overwrite any header information if used
+     */
+    class SocketQueueBuffer
+    {
+    public:
+        typedef char * iterator;
+        typedef char const * const_iterator;
+        typedef std::size_t size_type;
+
+        SocketQueueBuffer();
+
+        iterator begin();
+        iterator end();
+        const_iterator begin() const;
+        const_iterator end() const;
+        size_type size() const;
+        bool empty() const;
+
+        iterator frameBegin();
+        iterator frameEnd();
+        const_iterator frameBegin() const;
+        const_iterator frameEnd() const;
+        size_type frameSize() const;
+
+        iterator spaceBegin();
+        iterator spaceEnd();
+        const_iterator spaceBegin() const;
+        const_iterator spaceEnd() const;
+        size_type spaceSize() const;
+
+        senf::ClockService::clock_type timestamp() const;
+                                        ///< return packet receive timestamp
+        senf::LLSocketAddress address() const;
+                                        ///< return incoming interface address
+
+        void resize(size_type sz);      ///< resize active packet data to given size
+
+    private:
+        SocketQueueBuffer(char * b, char * e);
+
+        struct ::tpacket2_hdr & hdr();
+        struct ::tpacket2_hdr const & hdr() const;
+
+        char * b_;
+        char * e_;
+
+        friend class QueueReadPolicy;
+        friend class QueueWritePolicy;
+    };
 
     /// \addtogroup policy_impl_group
     //\{
@@ -46,8 +114,8 @@ namespace senf {
         : public ReadPolicyBase,
           private detail::QueuePolicyBase
     {
-        typedef detail::QueuePolicyBase::Buffer Buffer;
-        typedef detail::QueuePolicyBase::size_type size_type;
+        typedef SocketQueueBuffer Buffer;
+        typedef SocketQueueBuffer::size_type size_type;
 
         static boost::optional<Buffer> dequeue(FileHandle & handle);
         static void release(FileHandle & handle);
@@ -64,11 +132,10 @@ namespace senf {
         : public WritePolicyBase,
           private detail::QueuePolicyBase
     {
-        typedef detail::QueuePolicyBase::Buffer Buffer;
-        typedef detail::QueuePolicyBase::size_type size_type;
+        typedef SocketQueueBuffer Buffer;
+        typedef SocketQueueBuffer::size_type size_type;
 
-        static boost::optional<Buffer> allocate(FileHandle & handle);
-        static void enqueue(FileHandle & handle, Buffer & buffer, size_type size);
+        static boost::optional<Buffer> enqueue(FileHandle & handle);
         static void send(FileHandle & handle);
 
         // classic write API

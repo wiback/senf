@@ -43,6 +43,120 @@ prefix_ void senf::detail::QueueInfo::inc(char * & ptr, Queue const & q)
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::SocketQueueBuffer
+
+prefix_ senf::SocketQueueBuffer::SocketQueueBuffer()
+    : b_ (0), e_ (0)
+{}
+
+prefix_ senf::SocketQueueBuffer::SocketQueueBuffer(char * b, char * e)
+    : b_ (b), e_ (e)
+{}
+
+prefix_ struct ::tpacket2_hdr & senf::SocketQueueBuffer::hdr()
+{
+    return * reinterpret_cast<struct ::tpacket2_hdr *>(b_);
+}
+
+prefix_ struct ::tpacket2_hdr const & senf::SocketQueueBuffer::hdr()
+    const
+{
+    return * reinterpret_cast<struct ::tpacket2_hdr const *>(b_);
+}
+
+prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::begin()
+{ return b_ + hdr().tp_mac; }
+
+prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::end()
+{ return begin() + hdr().tp_len; }
+
+prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::begin()
+    const
+{ return b_ + hdr().tp_mac; }
+
+prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::end()
+    const
+{ return begin() + hdr().tp_len; }
+
+prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::size()
+    const
+{ return hdr().tp_len; }
+
+prefix_ bool senf::SocketQueueBuffer::empty()
+    const
+{ return hdr().tp_len == 0; }
+
+prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::frameBegin()
+{ return begin(); }
+
+prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::frameEnd()
+{ return e_; }
+
+prefix_ size_type senf::SocketQueueBuffer::frameSize()
+    const
+{
+    return frameEnd() - frameBegin();
+}
+
+prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::frameBegin()
+    const
+{ return begin(); }
+
+prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::frameEnd()
+    const
+{ return e_; }
+
+prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::spaceBegin()
+{ return b_
+        + offsetof(struct ::tpacket2_hdr, tp_status)
+        + sizeof(::tpacket2_hdr::tp_status); }
+
+prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::spaceEnd()
+{ return e_; }
+
+prefix_ size_type senf::SocketQueueBuffer::spaceSize()
+    const
+{
+    return spaceEnd() - spaceBegin();
+}
+
+prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::spaceBegin()
+    const
+{ return b_
+        + offsetof(struct ::tpacket2_hdr, tp_status)
+        + sizeof(::tpacket2_hdr::tp_status); }
+
+prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::spaceEnd()
+    const
+{ return e_; }
+
+prefix_ senf::ClockService::clock_type senf::SocketQueueBuffer::timestamp()
+    const
+{
+    return ClockService::from_time_t(hdr().tp_sec) + ClockService::nanoseconds(hdr().tp_nsec);
+}
+
+prefix_ senf::LLSocketAddress senf::SocketQueueBuffer::address()
+    const
+{
+    SENF_ASSERT( hdr().tp_mac > TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr)),
+                 "frame has no address field" );
+    senf::LLSocketAddress res;
+    ::memcpy(res.sockaddr_p(),
+             reinterpret_cast<struct ::sockaddr_ll *>(
+                 b_ + TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr))),
+             sizeof(struct  ::sockaddr_ll));
+    return res;
+}
+
+prefix_ void senf::SocketQueueBuffer::resize(size_type sz)
+{
+    SENF_ASSERT( frameBegin() + sz <= frameEnd(),
+                 "frame size exceeded" );
+    hdr().tp_len = sz;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::QueueReadPolicy
 
 prefix_ boost::optional<senf::QueueReadPolicy::Buffer>
@@ -52,7 +166,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
     for (;;) {
         if ((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL) {
-            Buffer bf (qi.rx.head + pk.tp_mac, qi.rx.head + pk.tp_mac + pk.tp_len);
+            Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize);
             struct ::sockaddr_ll & sa (
                 * reinterpret_cast<struct ::sockaddr_ll *>(
                     qi.rx.head + TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr))));
@@ -113,27 +227,19 @@ prefix_ unsigned senf::QueueReadPolicy::read(FileHandle & handle, char * buffer,
 // senf::QueueWritePolicy
 
 prefix_ boost::optional<senf::QueueWritePolicy::Buffer>
-senf::QueueWritePolicy::allocate(FileHandle & handle)
+senf::QueueWritePolicy::enqueue(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
     if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && pk.tp_status == TP_STATUS_AVAILABLE) {
-#ifdef SENF_DEBUG
         pk.tp_len = 0;
-#endif
-        Buffer bf (qi.tx.head + TPacketHdrOffset, qi.tx.head + qi.frameSize);
+        pk.tp_mac = TPacketHdrOffset;
+        Buffer bf (qi.tx.head, qi.tx.head + qi.frameSize);
         qi.inc(qi.tx.head, qi.tx);
         qi.tx.idle = false;
         return bf;
     }
     return boost::none;
-}
-
-prefix_ void senf::QueueWritePolicy::enqueue(FileHandle & handle, Buffer & buffer, size_type size)
-{
-    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(
-                                    buffer.begin() - TPacketHdrOffset));
-    pk.tp_len = size;
 }
 
 prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
@@ -168,7 +274,7 @@ prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const *
     SENF_ASSERT( qinfo(handle)->tx.idle,
                  "Inconsistent mixing of write() and enqueue() on mmap socket" );
     for (bool repeat (true);; repeat = false) {
-        boost::optional<Buffer> buf (allocate(handle));
+        boost::optional<Buffer> buf (enqueue(handle));
         if (! buf) {
             if (repeat && handle.blocking()) {
                 handle.waitWriteable();
@@ -178,13 +284,13 @@ prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const *
         }
         if (unsigned(buf->size()) < size)
             size = buf->size();
+        buf->resize(size);
         ::memcpy(buf->begin(), buffer, size);
-        enqueue(handle, *buf, size);
         send(handle);
         return size;
     }
 }
-
+g
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
