@@ -108,8 +108,14 @@ prefix_ char const ** senf::Daemon::argv()
     return argv_;
 }
 
-namespace {
-
+#if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 4
+namespace _senf_detail_gccfix_ {}
+using namespace _senf_detail_gccfix_;
+namespace _senf_detail_gccfix_
+#else
+namespace
+#endif
+{
     struct IsDaemonOpt {
         bool operator()(std::string const & str) const {
             return str == "--no-daemon"
