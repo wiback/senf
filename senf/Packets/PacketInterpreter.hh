@@ -411,8 +411,6 @@ namespace senf {
                 const;
         };
 
-        static const FactoryImpl factory_;
-
         friend struct detail::packet::test::TestDriver;
         friend class PacketInterpreterBase;
         friend struct FactoryImpl;

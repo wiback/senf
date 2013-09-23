@@ -406,10 +406,6 @@ senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBas
     return senf::PacketInterpreter<PacketType>::create(&packet->impl(),range->begin(),range->end(),Append);
 }
 
-template <class PacketType>
-const typename senf::PacketInterpreter<PacketType>::FactoryImpl
-    senf::PacketInterpreter<PacketType>::factory_;
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

@@ -62,7 +62,8 @@ template <class PacketType>
 prefix_ senf::PacketInterpreterBase::factory_t
 senf::PacketInterpreter<PacketType>::factory()
 {
-    return & factory_;
+    static const FactoryImpl factory;
+    return & factory;
 }
 
 // Create completely new packet
