@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -62,9 +62,14 @@ prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_
     if (NO_PI)
         ifr.ifr_flags |= IFF_NO_PI;
     interface_name.copy( ifr.ifr_name, IFNAMSIZ);
-    if (::ioctl(f, TUNSETIFF, (void *) &ifr) < 0 )
+    if (::ioctl(f, TUNSETIFF, (void *) &ifr) < 0 ) {
+        ::close(f);
         SENF_THROW_SYSTEM_EXCEPTION( "Could not create tap device: ") << ifr.ifr_name << ".";
+    }
     ifaceIndex_ = if_nametoindex(ifr.ifr_name);
+    if (ifaceIndex_ == 0)
+        SENF_THROW_SYSTEM_EXCEPTION( "if_nametoindex(): failed to access new tap device '" )
+            << ifr.ifr_name << "'.";
     fd(f);
 }
 
