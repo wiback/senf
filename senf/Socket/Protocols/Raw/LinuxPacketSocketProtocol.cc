@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2013 
+// Copyright (C) 2013
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 #include <sys/socket.h>
 #include <linux/if_packet.h>
 #include <net/if.h>
+#include <net/ethernet.h>
+#include <netinet/in.h>
 
 //#include "LinuxPacketSocketProtocol.mpp"
 #define prefix_
@@ -90,6 +92,37 @@ prefix_ unsigned senf::LinuxPacketSocketProtocol::rxQueueDropped()
                      reinterpret_cast<char *>(&stats), &len) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("::getsocketopt(SOL_PACKET, PACKET_STATISTICS) failed");
     return stats.tp_drops;
+}
+
+prefix_ bool senf::LinuxPacketSocketProtocol::eof()
+    const
+{
+    return false;
+}
+
+prefix_ void senf::LinuxPacketSocketProtocol::init_packetSocket(SocketType type, int protocol)
+    const
+{
+    int socktype = SOCK_RAW;
+    if (type == DatagramSocket)
+        socktype = SOCK_DGRAM;
+    if (protocol == -1)
+        protocol = ETH_P_ALL;
+    int sock = ::socket(PF_PACKET, socktype, htons(protocol));
+    if (sock < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("::socket(PF_PACKET) failed.");
+    fd(sock);
+}
+
+prefix_ unsigned senf::ReadableLinuxPacketProtocol::available()
+    const
+{
+    if (! fh().readable())
+        return 0;
+    ssize_t l = ::recv(fd(),0,0,MSG_PEEK | MSG_TRUNC);
+    if (l < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("::recv(socket_fd) failed.");
+    return l;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

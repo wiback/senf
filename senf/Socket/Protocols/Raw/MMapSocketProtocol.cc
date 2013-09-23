@@ -33,6 +33,19 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+prefix_ void senf::MMapSocketProtocol::close()
+{
+    close_mmap();
+    SocketProtocol::close();
+}
+
+prefix_ void senf::MMapSocketProtocol::terminate()
+    const
+{
+    terminate_mmap();
+    SocketProtocol::terminate();
+}
+
 prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rxqlen,
                                                  unsigned txqlen)
     const
@@ -111,6 +124,15 @@ prefix_ void senf::MMapSocketProtocol::terminate_mmap()
         return;
     ::munmap(qi_.map, (qi_.rx.end - qi_.rx.begin) + (qi_.tx.end - qi_.tx.begin));
     ::memset(&qi_, 0, sizeof(qi_));
+}
+
+
+prefix_ unsigned senf::MMapReadableSocketProtocol::available()
+    const
+{
+    // Since dequeue() will skip outgoing packets it's impossible to return a correct
+    // value here without race conditions. Thus we always return the frame size
+    return static_cast<detail::QueueInfo *>(senf::FileHandleAccess::extraPtr(fh()))->frameSize;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

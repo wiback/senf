@@ -148,7 +148,7 @@ def findSCMChanges(env):
                     dir.Entry(x[3:])
                     for x in os.popen("cd %s; git status -z"
                                       % dir.abspath).read().split("\0")
-                    if x)
+                    if x and not 'D' in x[:3])
                 if entry.exists() ]
         else:
             return [ dir.Entry(l[7:])

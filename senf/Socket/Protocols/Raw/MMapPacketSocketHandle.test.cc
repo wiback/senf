@@ -74,11 +74,144 @@ namespace {
         return true;
     }
 
+
+
+    template <class Handle>
+    void runTest(senf::TapSocketHandle tap, Handle pk)
+    {
+        static char const data [] = { "0 - dead beef" };
+        static std::string const strPacket (
+            "  0000  02 03 04 05 06 07 01 02  03 04 05 06 08 00 45 00  ........ ......E.\n"
+            "  0010  00 2a 00 00 00 00 40 11  ?? ?? 7f 00 00 01 7f 00  .*....@. |.......\n"
+            "  0020  00 01 13 89 13 89 00 16  ?? ?? ## 20 2d 20 64 65  ........ ..# - de\n"
+            "  0030  61 64 20 62 65 65 66 00                           ad beef.\n"
+            "Ethernet II (DIX): \n"
+            "  destination             : 02:03:04:05:06:07\n"
+            "  source                  : 01:02:03:04:05:06\n"
+            "  type/length             : 0x0800 ( 2048) (..)\n"
+            "Internet protocol Version 4:\n"
+            "  version                 : 4\n"
+            "  ip header length        : 5\n"
+            "  tos                     : 0\n"
+            "  length                  : 42\n"
+            "  identifier              : 0\n"
+            "  dont fragment           : 0\n"
+            "  more fragments          : 0\n"
+            "  fragment                : 0\n"
+            "  ttl                     : 64\n"
+            "  protocol                : 17\n"
+            "  checksum                : 0x????\n"
+            "  source                  : 127.0.0.1\n"
+            "  destination             : 127.0.0.1\n"
+            "UDP:\n"
+            "  source port             : 5001\n"
+            "  dest port               : 5001\n"
+            "  length                  : 22\n"
+            "  checksum                : 0x????\n"
+            "Payload data (14 bytes)\n");
+
+        {
+            senf::LLSocketAddress a;
+            SENF_CHECK_NO_THROW( pk.local(a) );
+            BOOST_CHECK_EQUAL( a.interface(), tap.protocol().ifaceName() );
+
+            SENF_CHECK_NO_THROW( pk.protocol().mcAdd(
+                                     tap.protocol().ifaceName(),
+                                     senf::MACAddress::from_string("01-02-03-04-05-06")) );
+            SENF_CHECK_NO_THROW( pk.protocol().mcDrop(
+                                     tap.protocol().ifaceName(),
+                                     senf::MACAddress::from_string("01-02-03-04-05-06")) );
+
+            SENF_CHECK_NO_THROW( pk.protocol().promisc( tap.protocol().ifaceName(), true) );
+            SENF_CHECK_NO_THROW( pk.protocol().promisc( tap.protocol().ifaceName(), false));
+
+            SENF_CHECK_NO_THROW( pk.protocol().available() );
+            BOOST_CHECK( ! pk.eof() );
+        }
+
+        {
+            senf::EthernetPacket eth (senf::EthernetPacket::create());
+            eth->source() << senf::MACAddress::from_string("01-02-03-04-05-06");
+            eth->destination() << senf::MACAddress::from_string("02-03-04-05-06-07");
+
+            senf::IPv4Packet ip (senf::IPv4Packet::createAfter(eth));
+            ip->source() << senf::INet4Address::from_string("127.0.0.1");
+            ip->destination() << senf::INet4Address::from_string("127.0.0.1");
+            ip->ttl() << 64;
+
+            senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
+            udp->source() << 5001;
+            udp->destination() << 5001;
+
+            senf::DataPacket dp (senf::DataPacket::createAfter(
+                                     udp,
+                                     boost::make_iterator_range(data, data + sizeof(data))));
+
+            for (char ch ('0'); ch <= '9'; ++ ch) {
+                * dp.data().begin() = ch;
+                eth.finalizeAll();
+                tap.write(eth.data());
+            }
+        }
+
+        {
+            for (char ch ('0'); ch <= '9'; ++ ch) {
+                senf::EthernetPacket eth;
+                SENF_REQUIRE_NO_THROW( eth = senf::EthernetPacket::create(pk.read()) );
+
+                BOOST_CHECK_PREDICATE( compareIgnoreChars,
+                                       (pkgdump(eth))(tplReplace(strPacket, ch)) );
+            }
+        }
+
+        {
+            senf::EthernetPacket eth (senf::EthernetPacket::create());
+            eth->source() << senf::MACAddress::from_string("01-02-03-04-05-06");
+            eth->destination() << senf::MACAddress::from_string("02-03-04-05-06-07");
+
+            senf::IPv4Packet ip (senf::IPv4Packet::createAfter(eth));
+            ip->source() << senf::INet4Address::from_string("127.0.0.1");
+            ip->destination() << senf::INet4Address::from_string("127.0.0.1");
+            ip->ttl() << 64;
+
+            senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
+            udp->source() << 5001;
+            udp->destination() << 5001;
+
+            senf::DataPacket dp (senf::DataPacket::createAfter(
+                                     udp,
+                                     boost::make_iterator_range(data, data + sizeof(data))));
+
+            for (char ch ('0'); ch <= '9'; ++ ch) {
+                * dp.data().begin() = ch;
+                eth.finalizeAll();
+                pk.write(eth.data());
+            }
+        }
+
+        {
+            for (char ch ('0'); ch <= '9'; ++ ch) {
+                for (;;) {
+                    senf::EthernetPacket eth;
+                    SENF_REQUIRE_NO_THROW( eth = senf::EthernetPacket::create(tap.read()) );
+                    if (eth.find<senf::IPv6Packet>(senf::nothrow))
+                        // IPv6 Router solicitation
+                        continue;
+                    senf::DataPacket dp;
+                    SENF_REQUIRE_NO_THROW( dp = eth.find<senf::DataPacket>() );
+
+                    BOOST_CHECK_PREDICATE( compareIgnoreChars,
+                                           (pkgdump(eth))(tplReplace(strPacket, ch)) );
+                    break;
+                }
+            }
+        }
+    }
+
 }
 
-SENF_AUTO_UNIT_TEST(mmapPacketSocketHandle)
+SENF_AUTO_UNIT_TEST(connectedMMapPacketSocketHandle)
 {
-    // We have a Problem here .. packet sockets are only allowed for root
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
         BOOST_CHECK( true );
@@ -88,140 +221,57 @@ SENF_AUTO_UNIT_TEST(mmapPacketSocketHandle)
     senf::TapSocketHandle tap;
     senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
     tapCtl.up();
-
-    {
-        senf::ConnectedMMapPacketSocketHandle sock (tap.protocol().ifaceName(), 128, 128);
-
-        senf::LLSocketAddress a;
-        SENF_CHECK_NO_THROW( sock.local(a) );
-        BOOST_CHECK_EQUAL( a.interface(), tap.protocol().ifaceName() );
-
-        SENF_CHECK_NO_THROW( sock.protocol().mcAdd(
-                                 tap.protocol().ifaceName(),
-                                 senf::MACAddress::from_string("01-02-03-04-05-06")) );
-        SENF_CHECK_NO_THROW( sock.protocol().mcDrop(
-                                 tap.protocol().ifaceName(),
-                                 senf::MACAddress::from_string("01-02-03-04-05-06")) );
-
-        SENF_CHECK_NO_THROW( sock.protocol().promisc( tap.protocol().ifaceName(), true) );
-        SENF_CHECK_NO_THROW( sock.protocol().promisc( tap.protocol().ifaceName(), false));
-
-        SENF_CHECK_NO_THROW( sock.protocol().available() );
-        BOOST_CHECK( ! sock.eof() );
-    }
-
     senf::ConnectedMMapPacketSocketHandle pk (tap.protocol().ifaceName(), 128, 128);
-    pk.bind(senf::LLSocketAddress(tap.protocol().ifaceName()));
 
-    static char const data [] = { "0 - dead beef" };
-    static std::string const strPacket (
-        "  0000  02 03 04 05 06 07 01 02  03 04 05 06 08 00 45 00  ........ ......E.\n"
-        "  0010  00 2a 00 00 00 00 40 11  ?? ?? 7f 00 00 01 7f 00  .*....@. |.......\n"
-        "  0020  00 01 13 89 13 89 00 16  ?? ?? ## 20 2d 20 64 65  ........ ..# - de\n"
-        "  0030  61 64 20 62 65 65 66 00                           ad beef.\n"
-        "Ethernet II (DIX): \n"
-        "  destination             : 02:03:04:05:06:07\n"
-        "  source                  : 01:02:03:04:05:06\n"
-        "  type/length             : 0x0800 ( 2048) (..)\n"
-        "Internet protocol Version 4:\n"
-        "  version                 : 4\n"
-        "  ip header length        : 5\n"
-        "  tos                     : 0\n"
-        "  length                  : 42\n"
-        "  identifier              : 0\n"
-        "  dont fragment           : 0\n"
-        "  more fragments          : 0\n"
-        "  fragment                : 0\n"
-        "  ttl                     : 64\n"
-        "  protocol                : 17\n"
-        "  checksum                : 0x????\n"
-        "  source                  : 127.0.0.1\n"
-        "  destination             : 127.0.0.1\n"
-        "UDP:\n"
-        "  source port             : 5001\n"
-        "  dest port               : 5001\n"
-        "  length                  : 22\n"
-        "  checksum                : 0x????\n"
-        "Payload data (14 bytes)\n");
+    runTest(tap, pk);
+}
 
-    {
-        senf::EthernetPacket eth (senf::EthernetPacket::create());
-        eth->source() << senf::MACAddress::from_string("01-02-03-04-05-06");
-        eth->destination() << senf::MACAddress::from_string("02-03-04-05-06-07");
-
-        senf::IPv4Packet ip (senf::IPv4Packet::createAfter(eth));
-        ip->source() << senf::INet4Address::from_string("127.0.0.1");
-        ip->destination() << senf::INet4Address::from_string("127.0.0.1");
-        ip->ttl() << 64;
-
-        senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
-        udp->source() << 5001;
-        udp->destination() << 5001;
-
-        senf::DataPacket dp (senf::DataPacket::createAfter(
-                                 udp,
-                                 boost::make_iterator_range(data, data + sizeof(data))));
-
-        for (char ch ('0'); ch <= '9'; ++ ch) {
-            * dp.data().begin() = ch;
-            eth.finalizeAll();
-            tap.write(eth.data());
-        }
+SENF_AUTO_UNIT_TEST(connectedMMapReadPacketSocketHandle)
+{
+    if (getuid() != 0) {
+        BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
+        BOOST_CHECK( true );
+        return;
     }
 
-    {
-        for (char ch ('0'); ch <= '9'; ++ ch) {
-            senf::EthernetPacket eth;
-            SENF_REQUIRE_NO_THROW( eth = senf::EthernetPacket::create(pk.read()) );
+    senf::TapSocketHandle tap;
+    senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
+    tapCtl.up();
+    senf::ConnectedMMapReadPacketSocketHandle pk (tap.protocol().ifaceName(), 128);
 
-            BOOST_CHECK_PREDICATE( compareIgnoreChars,
-                                   (pkgdump(eth))(tplReplace(strPacket, ch)) );
-        }
+    runTest(tap, pk);
+}
+
+SENF_AUTO_UNIT_TEST(connectedMMapWritePacketSocketHandle)
+{
+    if (getuid() != 0) {
+        BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
+        BOOST_CHECK( true );
+        return;
     }
 
-    {
-        senf::EthernetPacket eth (senf::EthernetPacket::create());
-        eth->source() << senf::MACAddress::from_string("01-02-03-04-05-06");
-        eth->destination() << senf::MACAddress::from_string("02-03-04-05-06-07");
+    senf::TapSocketHandle tap;
+    senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
+    tapCtl.up();
+    senf::ConnectedMMapWritePacketSocketHandle pk (tap.protocol().ifaceName(), 128);
 
-        senf::IPv4Packet ip (senf::IPv4Packet::createAfter(eth));
-        ip->source() << senf::INet4Address::from_string("127.0.0.1");
-        ip->destination() << senf::INet4Address::from_string("127.0.0.1");
-        ip->ttl() << 64;
+    runTest(tap, pk);
+}
 
-        senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
-        udp->source() << 5001;
-        udp->destination() << 5001;
-
-        senf::DataPacket dp (senf::DataPacket::createAfter(
-                                 udp,
-                                 boost::make_iterator_range(data, data + sizeof(data))));
-
-        for (char ch ('0'); ch <= '9'; ++ ch) {
-            * dp.data().begin() = ch;
-            eth.finalizeAll();
-            pk.write(eth.data());
-        }
+SENF_AUTO_UNIT_TEST(connectedPacketSocketHandle)
+{
+    if (getuid() != 0) {
+        BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
+        BOOST_CHECK( true );
+        return;
     }
 
-    {
-        for (char ch ('0'); ch <= '9'; ++ ch) {
-            for (;;) {
-                senf::EthernetPacket eth;
-                SENF_REQUIRE_NO_THROW( eth = senf::EthernetPacket::create(tap.read()) );
-                if (eth.find<senf::IPv6Packet>(senf::nothrow))
-                    // IPv6 Router solicitation
-                    continue;
-                senf::DataPacket dp;
-                SENF_REQUIRE_NO_THROW( dp = eth.find<senf::DataPacket>() );
+    senf::TapSocketHandle tap;
+    senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
+    tapCtl.up();
+    senf::ConnectedPacketSocketHandle pk (tap.protocol().ifaceName());
 
-                BOOST_CHECK_PREDICATE( compareIgnoreChars,
-                                       (pkgdump(eth))(tplReplace(strPacket, ch)) );
-                break;
-            }
-        }
-    }
-
+    runTest(tap, pk);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

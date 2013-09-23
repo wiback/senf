@@ -36,6 +36,9 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
+        enum SocketType { RawSocket, DatagramSocket };
+                                        ///< Socket types
+
         void mcAdd(std::string const & interface, MACAddress const & address) const;
                                         ///< Enable reception of a multicast group
                                         /**< mcAdd will join a new multicast group.
@@ -55,6 +58,18 @@ namespace senf {
                                         ///< packets dropped by kernel since last call
                                         /**< query the number of packets dropped by the kernel since
                                              the last call to this method. */
+
+        bool eof() const;
+
+    protected:
+        void init_packetSocket(SocketType type, int protocol) const;
+    };
+
+    class ReadableLinuxPacketProtocol
+        : public virtual SocketProtocol
+    {
+    public:
+        unsigned available() const;
     };
 }
 

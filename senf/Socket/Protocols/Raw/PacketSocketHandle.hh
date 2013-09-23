@@ -84,12 +84,10 @@ namespace senf {
         : public ConcreteSocketProtocol<Packet_Policy, PacketSocketProtocol>,
           public DatagramSocketProtocol,
           public BSDSocketProtocol,
-          public LinuxPacketSocketProtocol
+          public LinuxPacketSocketProtocol,
+          public ReadableLinuxPacketProtocol
     {
     public:
-        enum SocketType { RawSocket, DatagramSocket };
-                                        ///< Socket types
-
         ///\name Constructors
         //\{
         void init_client(SocketType type = RawSocket, int protocol = -1) const;
@@ -114,13 +112,6 @@ namespace senf {
                                              constructor */
         //\}
 
-        ///\name Abstract Interface Implementation
-        //\{
-
-        unsigned available() const;
-        bool eof() const;
-
-        //\}
     };
 
     typedef ProtocolClientSocketHandle<PacketSocketProtocol> PacketSocketHandle;

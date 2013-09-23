@@ -38,6 +38,7 @@
 #include <senf/Socket/ProtocolClientSocketHandle.hh>
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
 #include <senf/Socket/QueueReadWritePolicy.hh>
 #include <senf/Socket/Protocols/BSDSocketProtocol.hh>
 #include <senf/Socket/Protocols/DatagramSocketProtocol.hh>
@@ -46,7 +47,7 @@
 #include "LLAddressing.hh"
 
 //#include "MMapPacketSocketHandle.mpp"
-//#include "MMapPacketSocketHandle.ih"
+#include "MMapPacketSocketHandle.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -58,9 +59,9 @@ namespace senf {
         LLAddressingPolicy,
         DatagramFramingPolicy,
         ConnectedCommunicationPolicy,
-        QueueReadPolicy,
-        QueueWritePolicy
-        >::policy ConnectedMMapPacket_Policy;        ///< Policy of ConnectedMMapPacketSocketProtocol
+        ReadablePolicy,
+        WriteablePolicy
+        >::policy ConnectedMMapPacket_Policy; ///< Policy of ConnectedMMapPacketSocketProtocol
 
     /** \brief Raw Packet-Socket access using mmap read/write (Linux)
 
@@ -74,9 +75,9 @@ namespace senf {
         \par Address Type:
             LLSocketAddress
 
-        The PacketSocketProtocol provides access to the linux packet socket API. This API gives access to
-        the low level network packets. The packet socket allows read() and write() operations. The
-        PacketSocketProtocol has no concept of a server socket.
+        The PacketSocketProtocol provides access to the linux packet socket API. This API gives
+        access to the low level network packets. The packet socket allows read() and write()
+        operations. The PacketSocketProtocol has no concept of a server socket.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle via the
         Socket Handle typedefs above.
@@ -87,21 +88,27 @@ namespace senf {
         \warning The socket handle is neither readable nor writable in the ordinary sense. It
             utilises the special QueueReadPolicy and QueueWritePolicy socket policies.
      */
+    template <class P1=mpl::nil, class P2=mpl::nil>
     class ConnectedMMapPacketSocketProtocol
-        : public ConcreteSocketProtocol<ConnectedMMapPacket_Policy, ConnectedMMapPacketSocketProtocol>,
+        : public ConcreteSocketProtocol<
+              typename MakeSocketPolicy<ConnectedMMapPacket_Policy, P1, P2>::policy,
+              ConnectedMMapPacketSocketProtocol<P1, P2> >,
           public DatagramSocketProtocol,
           public BSDSocketProtocol,
-          public MMapSocketProtocol,
-          public LinuxPacketSocketProtocol
+          public detail::ConnectedMMapPacketSocketProtocol_Bases<
+              typename MakeSocketPolicy<ConnectedMMapPacket_Policy, P1, P2>::policy>
     {
     public:
-        enum SocketType { RawSocket, DatagramSocket };
-                                        ///< Socket types
+        typedef typename MakeSocketPolicy<ConnectedMMapPacket_Policy, P1, P2>::policy Policy;
+        typedef typename detail::ConnectedMMapPacketSocketProtocol_Bases<
+            typename MakeSocketPolicy<ConnectedMMapPacket_Policy, P1, P2>::policy> Base;
 
         ///\name Constructors
         //\{
-        void init_client(std::string iface, unsigned rxqlen, unsigned txqlen, unsigned frameSize=2048,
-                         SocketType type = RawSocket, int protocol = -1) const;
+
+        void init_client(std::string iface, unsigned rxqlen, unsigned txqlen,
+                         unsigned frameSize, typename Base::SocketType type = Base::RawSocket,
+                         int protocol = -1) const;
                                         ///< Create packet socket
                                         /**< The new socket will receive all packets of the given
                                              IEEE 802.3 \a protocol. The socket will receive all
@@ -125,22 +132,47 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
+
+        void init_client(std::string iface, unsigned qlen, unsigned frameSize,
+                         typename Base::SocketType type, int protocol = -1) const;
+
+        void init_client(std::string iface, unsigned rxqlenORqlen, unsigned txqlenORframeSize)
+            const;
+
+        void init_client(std::string iface, unsigned qlen)
+            const;
+
+        void init_client(std::string iface, typename Base::SocketType type = Base::RawSocket, int protocol = -1)
+            const;
+
         //\}
 
-
-        ///\name Abstract Interface Implementation
-        //\{
-
-        unsigned available() const;
-        bool eof() const;
-        void close();
-        void terminate() const;
-
-        //\}
-
+    private:
+        void do_init_client(std::string iface, unsigned rxqlen, unsigned txqlen, unsigned frameSize,
+                            typename Base::SocketType type, int protocol) const;
     };
 
-    typedef ProtocolClientSocketHandle<ConnectedMMapPacketSocketProtocol> ConnectedMMapPacketSocketHandle;
+    typedef ProtocolClientSocketHandle<
+        ConnectedMMapPacketSocketProtocol<QueueReadPolicy, QueueWritePolicy> >
+        ConnectedMMapPacketSocketHandle;
+                                        ///< SocketHandle of the ConnectedMMapPacketSocketProtocol
+                                        /**< \related ConnectedMMapPacketPacketPrototol */
+
+    typedef ProtocolClientSocketHandle<
+        ConnectedMMapPacketSocketProtocol<QueueReadPolicy> >
+        ConnectedMMapReadPacketSocketHandle;
+                                        ///< SocketHandle of the ConnectedMMapPacketSocketProtocol
+                                        /**< \related ConnectedMMapPacketPacketPrototol */
+
+    typedef ProtocolClientSocketHandle<
+        ConnectedMMapPacketSocketProtocol<QueueWritePolicy> >
+        ConnectedMMapWritePacketSocketHandle;
+                                        ///< SocketHandle of the ConnectedMMapPacketSocketProtocol
+                                        /**< \related ConnectedMMapPacketPacketPrototol */
+
+    typedef ProtocolClientSocketHandle<
+        ConnectedMMapPacketSocketProtocol<> >
+        ConnectedPacketSocketHandle;
                                         ///< SocketHandle of the ConnectedMMapPacketSocketProtocol
                                         /**< \related ConnectedMMapPacketPacketPrototol */
 
@@ -149,7 +181,7 @@ namespace senf {
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "MMapPacketSocketHandle.cci"
-//#include "MMapPacketSocketHandle.ct"
+#include "MMapPacketSocketHandle.ct"
 //#include "MMapPacketSocketHandle.cti"
 //#include "MMapPacketSocketHandle.mpp"
 #endif

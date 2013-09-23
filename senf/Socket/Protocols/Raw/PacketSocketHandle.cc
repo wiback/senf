@@ -48,32 +48,7 @@
 prefix_ void senf::PacketSocketProtocol::init_client(SocketType type, int protocol)
     const
 {
-    int socktype = SOCK_RAW;
-    if (type == DatagramSocket)
-        socktype = SOCK_DGRAM;
-    if (protocol == -1)
-        protocol = ETH_P_ALL;
-    int sock = ::socket(PF_PACKET, socktype, htons(protocol));
-    if (sock < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("::socket(...) failed.");
-    fd(sock);
-}
-
-prefix_ unsigned senf::PacketSocketProtocol::available()
-    const
-{
-    if (! fh().readable())
-        return 0;
-    ssize_t l = ::recv(fd(),0,0,MSG_PEEK | MSG_TRUNC);
-    if (l < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("::recv(socket_fd) failed.");
-    return l;
-}
-
-prefix_ bool senf::PacketSocketProtocol::eof()
-    const
-{
-    return false;
+    init_packetSocket(type, protocol);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

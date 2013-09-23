@@ -36,12 +36,24 @@ namespace senf {
         : public virtual SocketProtocol,
           private FileHandleAccess
     {
+    public:
+        void close();
+        void terminate() const;
+
     protected:
         void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen) const;
         void close_mmap() const;
         void terminate_mmap() const;
 
         mutable detail::QueueInfo qi_;
+    };
+
+    class MMapReadableSocketProtocol
+        : public virtual SocketProtocol,
+          private FileHandleAccess
+    {
+    public:
+        unsigned available() const;
     };
 
 }
