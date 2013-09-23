@@ -1,0 +1,89 @@
+// $Id$
+//
+// Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketInfo inline non-template implementation */
+
+//#include "PacketInfo.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::PacketInfo::PacketInfo()
+    : impl_ ()
+{}
+
+prefix_ senf::PacketInfo::PacketInfo(Packet const & packet)
+    : impl_ (& packet.data().impl())
+{}
+
+prefix_ bool senf::PacketInfo::boolean_test()
+    const
+{ return impl_; }
+
+#if 0
+prefix_ Packet senf::PacketInfo::first()
+    const
+{ return Packet(impl_->first()); }
+#endif
+
+template <class Annotation>
+prefix_ Annotation & senf::PacketInfo::annotation()
+{ return impl_->annotation<Annotation>(); }
+
+prefix_ void senf::PacketInfo::clearAnnotations()
+{ impl_->clearAnnotations(); }
+
+prefix_ void senf::PacketInfo::dumpAnnotations(std::ostream & os)
+{ impl_->dumpAnnotations(os); }
+
+prefix_ bool senf::PacketInfo::is_shared()
+    const
+{ return impl_->refcount() > 1; }
+
+prefix_ bool senf::PacketInfo::usingExternalMemory()
+    const
+{ return impl_->usingExternalMemory(); }
+
+prefix_ void senf::PacketInfo::releaseExternalMemory()
+    const
+{ impl_->releaseExternalMemory(); }
+
+prefix_ void senf::PacketInfo::memDebug(std::ostream & os)
+    const
+{ impl_->memDebug(os); }
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
