@@ -76,10 +76,20 @@ namespace module {
 
         void release();
 
+#ifdef SENF_DEBUG
+        unsigned burstMax();
+        unsigned sharedPackets();
+#endif
+
     private:
         Handle handle_;
         IOEvent event_;
         unsigned maxBurst_;
+
+#ifdef SENF_DEBUG
+        unsigned burstMax_;
+        unsigned sharedPackets_;
+#endif
 
         void read();
     };
@@ -105,11 +115,20 @@ namespace module {
 
         void send();
 
+#ifdef SENF_DEBUG
+        unsigned burstMax();
+#endif
+
     private:
         void write();
 
         Handle handle_;
         scheduler::EventHook event_;
+
+#ifdef SENF_DEBUG
+        unsigned burst_;
+        unsigned burstMax_;
+#endif
     };
 }}}
 

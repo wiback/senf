@@ -26,6 +26,7 @@
 // Custom includes
 #include <deque>
 #include <string>
+#include <boost/algorithm/string/predicate.hpp>
 #include "QueueSocketSourceSink.hh"
 #include <senf/Socket/ClientSocketHandle.hh>
 #include <senf/Socket/SocketPolicy.hh>
@@ -62,7 +63,17 @@ namespace {
         std::stringstream ss;
         ss << "Packet data (" << packet.data().size() << " bytes)\n";
         senf::hexdump(packet.data().begin(), packet.data().end(), ss);
-        packet.dump(ss);
+        std::stringstream dump;
+        packet.dump(dump);
+        std::string pk (dump.str());
+        if (boost::algorithm::starts_with(pk, "Annotations:")) {
+            unsigned i (1);
+            for (; i < pk.size(); ++i)
+                if (pk[i-1] == '\n' && pk[i] != ' ')
+                    break;
+            pk.erase(0, i);
+        }
+        ss << pk;
         return ss.str();
     }
 
@@ -149,7 +160,7 @@ SENF_AUTO_UNIT_TEST(queueSocketSourceSink)
     tapCtl2.up();
     senf::ConnectedMMapPacketSocketHandle pack2 (tap2.protocol().ifaceName(), 128, 128);
 
-    module::ActiveQueueSocketSource<senf::EthernetPacket> source (pack1);
+    module::ActiveQueueSocketSource<senf::EthernetPacket> source (pack1, 8);
     module::PassiveQueueSocketSink sink (pack2);
 
     ppi::connect(source, sink);
@@ -226,6 +237,12 @@ SENF_AUTO_UNIT_TEST(queueSocketSourceSink)
             reader.packets.pop_front();
         }
     }
+
+#ifdef SENF_DEBUG
+    BOOST_CHECK_EQUAL( source.sharedPackets(), 0u );
+    BOOST_CHECK_EQUAL( source.burstMax(), 8u );
+    BOOST_CHECK_EQUAL( sink.burstMax(), 8u );
+#endif
 
 }
 

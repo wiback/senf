@@ -24,6 +24,7 @@
 
 // Custom includes
 #include <senf/Utils/membind.hh>
+#include <senf/Packets/PacketInfo.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,13 @@ EthernetPacket eth (EthernetPacket::create(
 template <class Packet>
 prefix_
 senf::ppi::module::ActiveQueueSocketSource<Packet>::ActiveQueueSocketSource(unsigned burst)
-    : maxBurst_ (burst)
+    : handle_ ()
+    , event_ ()
+    , maxBurst_ (burst)
+#ifdef SENF_DEBUG
+    , burstMax_ (0)
+    , sharedPackets_ (0)
+#endif
 {
     registerEvent(event_, &ActiveQueueSocketSource::read);
     route(event_, output);
@@ -50,7 +57,13 @@ senf::ppi::module::ActiveQueueSocketSource<Packet>::ActiveQueueSocketSource(unsi
 template <class Packet>
 prefix_ senf::ppi::module::ActiveQueueSocketSource<Packet>::
 ActiveQueueSocketSource(Handle const & handle, unsigned burst)
-    : handle_ (handle), event_ (handle_, IOEvent::Read), maxBurst_ (burst)
+    : handle_ (handle)
+    , event_ (handle_, IOEvent::Read)
+    , maxBurst_ (burst)
+#ifdef SENF_DEBUG
+    , burstMax_ (0)
+    , sharedPackets_ (0)
+#endif
 {
     registerEvent(event_, &ActiveQueueSocketSource::read);
     route(event_, output);
@@ -90,34 +103,79 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::release()
     handle_.release();
 }
 
+#ifdef SENF_DEBUG
+
+template <class Packet>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet>::burstMax()
+{
+    unsigned res (burstMax_);
+    burstMax_ = 0;
+    return res;
+}
+
+template <class Packet>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet>::sharedPackets()
+{
+    unsigned res (sharedPackets_);
+    sharedPackets_ = 0;
+    return res;
+}
+
+#endif
+
 template <class Packet>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::read()
 {
-    for (unsigned burst (0); burst < maxBurst_; ++ burst) {
+    unsigned burst (0);
+    for (; burst < maxBurst_; ++ burst) {
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
         if (! buf)
             break;
-        output(Packet::create(
-                   buf->spaceBegin(),
-                   buf->size(),
-                   buf->spaceSize(),
-                   buf->spaceFrameOffset()));
+        PacketInfo ifo;
+        {
+            Packet pk (Packet::create(
+                           buf->spaceBegin(),
+                           buf->size(),
+                           buf->spaceSize(),
+                           buf->spaceFrameOffset()));
+            ifo = PacketInfo(pk);
+            output(pk);
+        }
+        if (ifo.is_shared()) {
+            ifo.releaseExternalMemory();
+#ifdef SENF_DEBUG
+            ++ sharedPackets_;
+#endif
+        }
     }
-    release();
+#ifdef SENF_DEBUG
+    if (burst > burstMax_)
+        burstMax_ = burst;
+#endif
+    handle_.release();
 }
 
 prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink()
-    : event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+    : handle_ ()
+    , event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
+#ifdef SENF_DEBUG
+    , burst_ (0)
+    , burstMax_ (0)
+#endif
 {
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
 }
 
 prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink(Handle const & handle)
-    : handle_ (handle),
-      event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+    : handle_ (handle)
+    , event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
+#ifdef SENF_DEBUG
+    , burst_ (0)
+    , burstMax_ (0)
+#endif
 {
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
@@ -135,10 +193,22 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & ha
     handle_ = handle;
 }
 
+prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink::burstMax()
+{
+    unsigned res (burstMax_);
+    burstMax_ = 0;
+    return res;
+}
+
 prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
 {
     event_.disable();
     handle_.send();
+#ifdef SENF_DEBUG
+    if (burst_ > burstMax_)
+        burstMax_ = burst_;
+    burst_ = 0;
+#endif
 }
 
 prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
@@ -152,6 +222,9 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
     buf->resize(sz);
     ::memcpy(buf->begin(), packet.data().begin(), sz);
     event_.enable();
+#ifdef SENF_DEBUG
+    ++ burst_;
+#endif
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
