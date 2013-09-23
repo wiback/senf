@@ -23,6 +23,7 @@
 //#include "QueueSocketSourceSink.ih"
 
 // Custom includes
+#include <senf/Utils/membind.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,19 +107,20 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::read()
 }
 
 prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink()
+    : event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+              senf::scheduler::EventHook::POST, false)
 {
-    registerEvent(event_, &PassiveQueueSocketSink::send);
-    route(input, event_);
+    noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
 }
 
 prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink(Handle const & handle)
-    : handle_ (handle)
+    : handle_ (handle),
+      event_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+              senf::scheduler::EventHook::POST, false)
 {
-    registerEvent(event_, &PassiveQueueSocketSink::send);
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
-    event_.enabled(false);
 }
 
 prefix_ senf::ppi::module::PassiveQueueSocketSink::Handle
@@ -135,7 +137,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & ha
 
 prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
 {
-    event_.enabled(false);
+    event_.disable();
     handle_.send();
 }
 
@@ -149,7 +151,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
     unsigned sz (std::min(packet.data().size(), buf->frameSize()));
     buf->resize(sz);
     ::memcpy(buf->begin(), packet.data().begin(), sz);
-    event_.enabled(true);
+    event_.enable();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

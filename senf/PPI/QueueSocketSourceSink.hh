@@ -29,10 +29,10 @@
 #include <senf/Socket/QueueReadWritePolicy.hh>
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Scheduler/EventHook.hh>
 #include "Module.hh"
 #include "Connectors.hh"
 #include "IOEvent.hh"
-#include "IdleEvent.hh"
 
 //#include "QueueSocketSourceSink.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ namespace module {
         void write();
 
         Handle handle_;
-        IdleEvent event_;
+        scheduler::EventHook event_;
     };
 }}}
 
