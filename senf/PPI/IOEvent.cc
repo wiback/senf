@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -33,6 +33,8 @@
 
 // Custom includes
 #include <senf/Utils/senfassert.hh>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 //#include "IOEvent.mpp"
 #define prefix_
@@ -59,8 +61,13 @@ prefix_ void senf::ppi::IOEvent::v_disable()
 prefix_ void senf::ppi::IOEvent::cb(int event)
 {
     if ((event & ~event_.events()) != 0) {
-        if (event & Err)
-            throw ErrorException();
+        if (event & Err) {
+            int err (0);
+            socklen_t len (sizeof(err));
+            if (::getsockopt(fd_, SOL_SOCKET, SO_ERROR, &err, &len) < 0)
+                err = 0;
+            throw ErrorException(err);
+        }
         if (event & Hup)
             throw HangupException();
         SENF_ASSERT(false, "Internal failure: IOEvent::cb() called with invalid flag??");
