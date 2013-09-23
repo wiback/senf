@@ -146,8 +146,8 @@ def findSCMChanges(env):
             return [
                 entry for entry in (
                     dir.Entry(x[3:])
-                    for x in os.popen("cd %s; git status -z"
-                                      % dir.abspath).read().split("\0")
+                    for x in os.popen("cd %s; git status --porcelain"
+                                      % dir.abspath).read().split("\n")
                     if x and not 'D' in x[:3])
                 if entry.exists() ]
         else:
@@ -158,6 +158,6 @@ def findSCMChanges(env):
 
     changes=scmchanges(env.Dir('#'))
     for dir in env.Dir('senf/Ext').glob("*"):
-        if isinstance(dir,SCons.Node.FS.Dir):
+        if isinstance(dir,SCons.Node.FS.Dir) and dir.name != 'doc':
             changes.extend(scmchanges(dir))
     return [ x for x in changes if not isinstance(x,SCons.Node.FS.Dir) ]

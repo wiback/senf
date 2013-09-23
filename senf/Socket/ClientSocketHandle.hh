@@ -389,8 +389,8 @@ namespace senf {
 
             The API works as follows:
 
-            \li calling \ref dequeue() will return an iterator range (a pair of pointers) pointing
-                to the data. This data lives directly in the read queue.
+            \li calling \ref dequeue() will return a buffer object pointing to the packet data in
+                the read queue.
             \li to release the memory returned by dequeue(), call \ref release(). This call will
                 return \e all unreleased frames to the kernel.
 
@@ -399,8 +399,13 @@ namespace senf {
             \li the API is always non-blocking
             \li you must release() all data back to the kernel before re-entering the
                 scheduler. Otherwise, the file handle will be signaled again immediately.
+            \li even if the handle is marked readable \ref dequeue() might return \c boost::none.
 
             \returns iterator range to the data frame or \c boost::none, if no data is available
+
+            \implementation the reason, \ref dequeue() might return \c boost::none even if readable
+                is, that on a packet socket handle outgoing data is sent to the socket but is
+                filtered in \ref dequeue()
          */
         boost::optional<typename SPolicy::ReadPolicy::Buffer> dequeue();
 
@@ -433,11 +438,11 @@ namespace senf {
             \li it is possible for the call to \ref enqueue() to fail if no space is available in
                 the send queue
 
-            \warning You must ensure to call \ref enqueue() on all packets you \ref allocate()
-                before calling \ref send()
-
             \returns iterator range to the write queue buffer or \c boost::none, if there is no room
                 in the write queue.
+
+            \warning You must ensure to call \ref \a bufffer.\c resize() on all packets you \ref
+                enqueue() before calling \ref send()
          */
         boost::optional<typename SPolicy::WritePolicy::Buffer> enqueue();
 

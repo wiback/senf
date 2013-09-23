@@ -177,6 +177,10 @@ senfutil.ParseDefaultArguments(
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
     import SparseTestHack
     env['only_tests'] = " ".join(x.abspath for x in SparseTestHack.findSCMChanges(env))
+    if not env['only_tests']:
+        import SCons.Util
+        SCons.Util.display("scons: no changes to be tested found")
+        Exit(0)
 
 if env.has_key('only_tests') : env['sparse_tests'] = True
 
