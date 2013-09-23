@@ -1,0 +1,167 @@
+// $Id$
+//
+// Copyright (C) 2013
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief QueueSocketSourceSink inline template implementation */
+
+//#include "QueueSocketSourceSink.ih"
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+EthernetPacket eth (EthernetPacket::create(
+    ((unsigned char *)hdr) + sizeof(hdr->tp_status),
+    hdr->tp_len,
+    &epmm,
+    req_.tp_frame_size - sizeof(hdr->tp_status),
+    hdr->tp_mac - sizeof(hdr->tp_status)));
+*/
+
+
+template <class Packet>
+prefix_
+senf::ppi::module::ActiveQueueSocketSource<Packet>::ActiveQueueSocketSource(unsigned burst)
+    : maxBurst_ (burst)
+{
+    registerEvent(event_, &ActiveQueueSocketSource::read);
+    route(event_, output);
+}
+
+template <class Packet>
+prefix_ senf::ppi::module::ActiveQueueSocketSource<Packet>::
+ActiveQueueSocketSource(Handle const & handle, unsigned burst)
+    : handle_ (handle), event_ (handle_, IOEvent::Read), maxBurst_ (burst)
+{
+    registerEvent(event_, &ActiveQueueSocketSource::read);
+    route(event_, output);
+}
+
+template <class Packet>
+prefix_ typename senf::ppi::module::ActiveQueueSocketSource<Packet>::Handle
+senf::ppi::module::ActiveQueueSocketSource<Packet>::handle()
+    const
+{
+    return handle_;
+}
+
+template <class Packet>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::handle(Handle const & handle)
+{
+    handle_ = handle;
+    event_.set(handle_, IOEvent::Read);
+}
+
+template <class Packet>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet>::maxBurst()
+    const
+{
+    return maxBurst_;
+}
+
+template <class Packet>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::maxBurst(unsigned burst)
+{
+    maxBurst_ = std::max(burst, 1u);
+}
+
+template <class Packet>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::release()
+{
+    handle_.release();
+}
+
+template <class Packet>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::read()
+{
+    for (unsigned burst (0); burst < maxBurst_; ++ burst) {
+        boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
+        if (! buf)
+            break;
+        output(Packet::create(
+                   buf->spaceBegin(),
+                   buf->size(),
+                   buf->spaceSize(),
+                   buf->spaceFrameOffset()));
+    }
+    release();
+}
+
+prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink()
+{
+    registerEvent(event_, &PassiveQueueSocketSink::send);
+    route(input, event_);
+    input.onRequest(&PassiveQueueSocketSink::write);
+}
+
+prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink(Handle const & handle)
+    : handle_ (handle)
+{
+    registerEvent(event_, &PassiveQueueSocketSink::send);
+    noroute(input);
+    input.onRequest(&PassiveQueueSocketSink::write);
+    event_.enabled(false);
+}
+
+prefix_ senf::ppi::module::PassiveQueueSocketSink::Handle
+senf::ppi::module::PassiveQueueSocketSink::handle()
+    const
+{
+    return handle_;
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & handle)
+{
+    handle_ = handle;
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
+{
+    event_.enabled(false);
+    handle_.send();
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
+{
+    Packet packet (input());
+    SENF_ASSERT( packet.data().size(), "cannot send empty packet" );
+    boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.enqueue());
+    if (! buf)
+        return;
+    unsigned sz (std::min(packet.data().size(), buf->frameSize()));
+    buf->resize(sz);
+    ::memcpy(buf->begin(), packet.data().begin(), sz);
+    event_.enabled(true);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
