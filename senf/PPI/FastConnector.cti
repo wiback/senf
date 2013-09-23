@@ -1,0 +1,130 @@
+// $Id$
+//
+// Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief FastConnector inline template implementation */
+
+//#include "FastConnector.ih"
+
+// Custom includes
+#include <senf/Utils/type_traits.hh>
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::FastPassiveInput<PacketType>
+
+template <class PacketType>
+prefix_ senf::ppi::connector::FastPassiveInput<PacketType>::FastPassiveInput()
+{}
+
+template <class PacketType>
+prefix_ senf::ppi::connector::FastPassiveInput<PacketType>::~FastPassiveInput()
+{
+    unregisterConnector();
+}
+
+template <class PacketType>
+prefix_ senf::ppi::connector::FastActiveOutput<PacketType> &
+senf::ppi::connector::FastPassiveInput<PacketType>::peer()
+    const
+{
+    return static_cast<FastActiveOutput<PacketType> &>(Connector::peer());
+}
+
+template <class PacketType>
+template <class Handler>
+prefix_ void senf::ppi::connector::FastPassiveInput<PacketType>::onRequest(Handler handler)
+{
+    cb_.bind(static_cast<typename senf::member_class<Handler>::type *>(& module()), handler);
+}
+
+template <class PacketType>
+prefix_ PacketType const & senf::ppi::connector::FastPassiveInput<PacketType>::operator()()
+    const
+{
+    SENF_ASSERT( packet_, "FastPassiveInput::operator() called without being signaled (no packet)" );
+    return * packet_;
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::FastPassiveInput<PacketType>::v_init()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::FastActiveOutput<PacketType>
+
+template <class PacketType>
+prefix_ senf::ppi::connector::FastActiveOutput<PacketType>::FastActiveOutput()
+{}
+
+template <class PacketType>
+prefix_ senf::ppi::connector::FastActiveOutput<PacketType>::~FastActiveOutput()
+{
+    unregisterConnector();
+}
+
+template <class PacketType>
+prefix_ senf::ppi::connector::FastPassiveInput<PacketType> &
+senf::ppi::connector::FastActiveOutput<PacketType>::peer()
+    const
+{
+    return static_cast<FastPassiveInput<PacketType> &>(Connector::peer());
+}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::FastActiveOutput<PacketType>::operator()(PacketType const & packet)
+    const
+{
+    peer().packet_ = & packet;
+    peer().cb_();
+    peer().packet_ = 0;
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::FastActiveOutput<PacketType>::v_init()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+
+template <class PacketType>
+prefix_ void senf::ppi::connect(connector::FastActiveOutput<PacketType> & source,
+                                connector::FastPassiveInput<PacketType> & target)
+{
+    source.connect(target);
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
