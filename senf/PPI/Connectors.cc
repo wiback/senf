@@ -43,7 +43,10 @@
 // senf::ppi::connector::Connector
 
 prefix_ senf::ppi::connector::Connector::Connector()
-    : peer_(SENF_NULLPTR), module_(SENF_NULLPTR), consoleDir_(this), traceState_(NO_TRACING)
+    : peer_(SENF_NULLPTR), module_(SENF_NULLPTR), consoleDir_(this)
+#   ifndef SENF_PPI_NOTRACE
+    , traceState_(NO_TRACING)
+#   endif
 {
     namespace fty = console::factory;
     consoleDir().add("connected", fty::Command( &Connector::connected, this));
@@ -108,6 +111,7 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 
 }
 
+#ifndef SENF_PPI_NOTRACE
 senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::staticTraceState_ (
     senf::ppi::connector::Connector::NO_TRACING);
 
@@ -142,6 +146,7 @@ namespace senf { namespace ppi { namespace connector {
         Connector, TraceState, (NO_TRACING)(TRACE_IDS)(TRACE_CONTENTS) );
 
 }}}
+#endif
 
 namespace {
 

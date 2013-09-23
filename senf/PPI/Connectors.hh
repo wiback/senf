@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -180,11 +180,13 @@ namespace connector {
 
         void disconnect();              ///< Disconnect connector from peer
 
+#       ifndef SENF_PPI_NOTRACE
         enum TraceState { NO_TRACING, TRACE_IDS, TRACE_CONTENTS };
 
         static void staticTracingState(TraceState state);
         void tracingState(TraceState state);
         TraceState tracingState() const;
+#       endif
 
     protected:
         Connector();
@@ -193,9 +195,10 @@ namespace connector {
         void connect(Connector & target);
 
         console::DirectoryNode & consoleDir() const;
-
+#       ifndef SENF_PPI_NOTRACE
         void trace(Packet const & p, char const * label);
         void throttleTrace(char const * label, char const * type);
+#       endif
 
         void unregisterConnector();
 
@@ -212,8 +215,10 @@ namespace connector {
 
         console::ScopedDirectory<Connector> consoleDir_;
 
+#       ifndef SENF_PPI_NOTRACE
         TraceState traceState_;
         static TraceState staticTraceState_;
+#       endif
 
         friend class module::Module;
     };
