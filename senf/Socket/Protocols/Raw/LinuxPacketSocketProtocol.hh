@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2013 
+// Copyright (C) 2013
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 /** \file
     \brief LinuxPacketSocketProtocol public header */
 
-#ifndef HH_SENF_senf_Socket_Protocols_Raw_LinuxPacketSocketProtocol_
-#define HH_SENF_senf_Socket_Protocols_Raw_LinuxPacketSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_Raw_LinuxPacketSocketProtocol_
+#define HH_SENF_Socket_Protocols_Raw_LinuxPacketSocketProtocol_ 1
 
 // Custom includes
 #include <senf/Socket/SocketProtocol.hh>

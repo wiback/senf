@@ -26,11 +26,11 @@
 //   Stefan Bund <g0dil@berlios.de>
 
 /** \file
-    \brief PacketSocketProtocol and PacketSocketHandle public header
+    \brief PacketSocketProtocol and MMapPacketSocketHandle public header
  */
 
-#ifndef HH_SENF_Socket_Protocols_Raw_PacketSocketHandle_
-#define HH_SENF_Socket_Protocols_Raw_PacketSocketHandle_ 1
+#ifndef HH_SENF_Socket_Protocols_Raw_MMapPacketSocketHandle_
+#define HH_SENF_Socket_Protocols_Raw_MMapPacketSocketHandle_ 1
 
 // Custom includes
 #include <senf/Socket/SocketPolicy.hh>
@@ -45,8 +45,8 @@
 #include "LinuxPacketSocketProtocol.hh"
 #include "LLAddressing.hh"
 
-//#include "PacketSocketHandle.mpp"
-//#include "PacketSocketHandle.ih"
+//#include "MMapPacketSocketHandle.mpp"
+//#include "MMapPacketSocketHandle.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -148,10 +148,10 @@ namespace senf {
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "PacketSocketHandle.cci"
-//#include "PacketSocketHandle.ct"
-//#include "PacketSocketHandle.cti"
-//#include "PacketSocketHandle.mpp"
+//#include "MMapPacketSocketHandle.cci"
+//#include "MMapPacketSocketHandle.ct"
+//#include "MMapPacketSocketHandle.cti"
+//#include "MMapPacketSocketHandle.mpp"
 #endif
 
 

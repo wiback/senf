@@ -20,8 +20,8 @@
 /** \file
     \brief MMapSocketProtocol public header */
 
-#ifndef HH_SENF_senf_Socket_Protocols_Raw_MMapSocketProtocol_
-#define HH_SENF_senf_Socket_Protocols_Raw_MMapSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_Raw_MMapSocketProtocol_
+#define HH_SENF_Socket_Protocols_Raw_MMapSocketProtocol_ 1
 
 // Custom includes
 #include <senf/Socket/SocketProtocol.hh>

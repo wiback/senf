@@ -20,8 +20,8 @@
 /** \file
     \brief QueueReadWritePolicy public header */
 
-#ifndef HH_SENF_QueueReadWritePolicy_
-#define HH_SENF_QueueReadWritePolicy_ 1
+#ifndef HH_SENF_Socket_QueueReadWritePolicy_
+#define HH_SENF_Socket_QueueReadWritePolicy_ 1
 
 // Custom includes
 #include <linux/if_packet.h>

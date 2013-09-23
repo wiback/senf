@@ -23,8 +23,8 @@
 /** \file
     \brief PacketInfo public header */
 
-#ifndef HH_SENF_PacketInfo_
-#define HH_SENF_PacketInfo_ 1
+#ifndef HH_SENF_Packets_PacketInfo_
+#define HH_SENF_Packets_PacketInfo_ 1
 
 // Custom includes
 #include <senf/Utils/safe_bool.hh>
