@@ -1,0 +1,159 @@
+// $Id$
+//
+// Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at
+// http://senf.berlios.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//   Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief QueueSocketSourceSink inline non-template implementation */
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::PassiveQueueSocketSink
+
+prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink()
+    : handle_ ()
+    , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+              senf::scheduler::EventHook::POST, false)
+    , ioEvent_( handle_, IOEvent::Write)
+    , qAlgo_( new NoneQueueingAlgorithm())
+#ifdef SENF_DEBUG
+    , burst_ (0)
+    , burstMax_ (0)
+#endif
+{
+    noroute(input);
+    input.onRequest(&PassiveQueueSocketSink::write);
+    registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
+    ioEvent_.enabled(false);
+}
+
+prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink(Handle const & handle)
+    : handle_ (handle)
+    , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+              senf::scheduler::EventHook::POST, false)
+    , ioEvent_( handle_, IOEvent::Write)
+    , qAlgo_( new NoneQueueingAlgorithm())
+#ifdef SENF_DEBUG
+    , burst_ (0)
+    , burstMax_ (0)
+#endif
+{
+    noroute(input);
+    input.onRequest(&PassiveQueueSocketSink::write);
+    registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
+    ioEvent_.enabled(false);
+}
+
+prefix_ senf::ppi::module::PassiveQueueSocketSink::Handle
+senf::ppi::module::PassiveQueueSocketSink::handle()
+    const
+{
+    return handle_;
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & handle)
+{
+    handle_ = handle;
+    ioEvent_.set( handle_, IOEvent::Write);
+    qAlgo_->clear();
+}
+
+#ifdef SENF_DEBUG
+prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink::burstMax()
+{
+    unsigned res (burstMax_);
+    burstMax_ = 0;
+    return res;
+}
+#endif
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
+{
+    eventHook_.disable();
+    handle_.send();
+#ifdef SENF_DEBUG
+    if (burst_ > burstMax_)
+        burstMax_ = burst_;
+    burst_ = 0;
+#endif
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
+{
+    Packet const & packet (input());
+    if (qAlgo_->size() > 0) {
+        qAlgo_->enqueue(packet);
+        return;
+    }
+    boost::optional<QueueReadPolicy::Buffer> buf (handle_.enqueue());
+    if (! buf) {
+        if (qAlgo_->enqueue(packet) && !ioEvent_.enabled())
+            ioEvent_.enabled( true);
+        return;
+    }
+    writePacket(packet, *buf);
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::writePacket(senf::Packet const & packet, QueueReadPolicy::Buffer & buf)
+{
+    SENF_ASSERT( packet.data().size(), "cannot send empty packet" );
+    unsigned sz (std::min(packet.data().size(), buf.frameSize()));
+    buf.resize(sz);
+    ::memcpy(buf.begin(), packet.data().begin(), sz);
+    eventHook_.enable();
+#ifdef SENF_DEBUG
+    ++ burst_;
+#endif
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::writable()
+{
+    while (qAlgo_->size() != 0) {
+        boost::optional<QueueReadPolicy::Buffer> buf (handle_.enqueue());
+        if (! buf)
+            break;
+        writePacket(qAlgo_->dequeue(), *buf);
+    }
+    if (qAlgo_->size() == 0)
+        ioEvent_.enabled(false);
+}
+
+prefix_ senf::ppi::QueueingAlgorithm & senf::ppi::module::PassiveQueueSocketSink::qAlgorithm()
+    const
+{
+    return *qAlgo_;
+}
+
+prefix_ void senf::ppi::module::PassiveQueueSocketSink::qAlgorithm(QueueingAlgorithm::ptr qAlgorithm)
+{
+    qAlgo_.reset( qAlgorithm);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
