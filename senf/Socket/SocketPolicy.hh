@@ -335,25 +335,31 @@ namespace senf {
 
     /** \brief Policy defining the readability
 
-        The ReadPolicy defines, whether the socket is readable. It may define two members:
+        The ReadPolicy defines, whether the socket is readable. It may define the following members:
 
         <table class="senf">
         <tr><td>method</td> <td><tt>unsigned read(FileHandle, char * buffer, unsigned size)</tt></td>                <td>read data from socket</td></tr>
         <tr><td>method</td> <td><tt>unsigned readfrom(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
+        <tr><td></td>       <td><tt></tt></td>                                                                       <td></td></tr>
+        <tr><td>type</td>   <td><tt>Buffer</tt></td>                                                                 <td>queue buffer type (a \c boost::iterator_range)</td></tr>
+        <tr><td>method</td> <td><tt>boost::optional<Buffer> dequeue()</tt></td>                                      <td>return data from rx queue</td></tr>
+        <tr><td>method</td> <td><tt>void release()</tt></td>                                                         <td>return all read buffers to kernel</td></tr>
         </table>
 
         The second member should only be enabled if the communication policy is
         UnconnectedCommunicationPolicy (otherwise it does not make sense since the communication partner
         is fixed) (see AddressingPolicyBase on how to do this).
 
-        \note This Policy only has two meaningful states: ReadablePolicy and NotReadablePolicy. It
-        probably does not make sense to define new read policy types.
+        The second set of members is special: It provides access to the linux specific packet queue
+        API.
 
         \see policy_group
      */
     struct ReadPolicyBase
     {
         virtual ~ReadPolicyBase();
+
+        class Buffer { Buffer(); };
     };
 
     /** \brief Policy defining the writability
@@ -363,20 +369,27 @@ namespace senf {
         <table class="senf">
         <tr><td>method</td> <td><tt>unsigned write(FileHandle, char * buffer, unsigned size)</tt></td>              <td>read data from socket</td></tr>
         <tr><td>method</td> <td><tt>unsigned writeto(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
+        <tr><td></td>       <td><tt></tt></td>                                                                      <td></td></tr>
+        <tr><td>type</td>   <td><tt>Buffer</tt></td>                                                                <td>queue buffer type (a \c boost::iterator_range)</td></tr>
+        <tr><td>method</td> <td><tt>boost::optional<Buffer> allocate()</tt></td>                                    <td>allocate write buffer in tx queue</td></tr>
+        <tr><td>method</td> <td><tt>void enqueue(Buffer const & buffer, unsigned size)</tt></td>                    <td>prepare write buffer for sending</td></tr>
+        <tr><td>method</td> <td><tt>void send()</tt></td>                                                           <td>send all allocated buffers</td></tr>
         </table>
 
         The second member should only be enabled if the communication policy is
         UnconnectedCommunicationPolicy (otherwise it does not make sense since the communication partner
         is fixed) (see AddressingPolicyBase on how to do this).
 
-        \note This Policy only has two meaningful states: WritablePolicy and NotWritablePolicy. It
-        probably does not make sense to define new write policy types.
+        The second set of members is special: It provides access to the linux specific packet queue
+        API.
 
         \see policy_group
      */
     struct WritePolicyBase
     {
         virtual ~WritePolicyBase();
+
+        class Buffer { Buffer(); };
     };
 
     // The implementation file will for each Policy declared above

@@ -37,6 +37,16 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+prefix_ void * senf::FileHandleAccess::extraPtr(FileHandle const & fh)
+{
+    return fh.extraPtr();
+}
+
+prefix_ void senf::FileHandleAccess::extraPtr(FileHandle fh, void * ptr)
+{
+    fh.extraPtr(ptr);
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::FileBody
 
@@ -58,6 +68,17 @@ prefix_ int senf::FileBody::fd()
 prefix_ void senf::FileBody::fd(int fd)
 {
     fd_ = fd;
+}
+
+prefix_ void * senf::FileBody::extraPtr()
+    const
+{
+    return extraPtr_;
+}
+
+prefix_ void senf::FileBody::extraPtr(void * ptr)
+{
+    extraPtr_ = ptr;
 }
 
 prefix_ bool senf::FileBody::eof()
@@ -239,6 +260,17 @@ prefix_ senf::FileBody const & senf::FileHandle::body(FileHandle const & handle)
 prefix_ void senf::FileHandle::fd(int fd)
 {
     body().fd(fd);
+}
+
+prefix_ void * senf::FileHandle::extraPtr()
+    const
+{
+    return body().extraPtr();
+}
+
+prefix_ void senf::FileHandle::extraPtr(void * ptr)
+{
+    body().extraPtr(ptr);
 }
 
 prefix_ senf::FileHandle senf::FileHandle::cast_static(FileHandle handle)

@@ -1,0 +1,78 @@
+// $Id$
+//
+// Copyright (C) 2013
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief QueueReadWritePolicy internal header */
+
+#ifndef IH_SENF_senf_Socket_QueueReadWritePolicy_
+#define IH_SENF_senf_Socket_QueueReadWritePolicy_ 1
+
+// Custom includes
+#include <linux/if_packet.h>
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+namespace detail {
+
+    struct QueueInfo
+    {
+        unsigned frameSize;
+
+        struct Queue {
+            char * begin; // first buffer in queue
+            char * end;   // after last buffer in queue
+            char * head;  // next buffer in queue (after first buffer in queue still held by user-space)
+            char * tail;  // last buffer in queue still held by user-space
+            bool idle;    // set to true when the range from head -> tail is empty. needed
+                          // to differentiate between empty and full head/tail range
+        };
+
+        Queue rx;
+        Queue tx;
+
+        void inc(char * & ptr, Queue const & q);
+    };
+
+    struct QueuePolicyBase
+        : private FileHandleAccess
+    {
+        typedef boost::iterator_range<char *> Buffer;
+        typedef Buffer::size_type size_type;
+
+        static detail::QueueInfo * qinfo(FileHandle & handle);
+
+        enum { TPacketHdrOffset = TPACKET_HDRLEN - sizeof(struct ::sockaddr_ll) };
+    };
+
+}}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

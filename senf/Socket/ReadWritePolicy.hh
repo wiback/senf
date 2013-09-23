@@ -75,7 +75,7 @@ namespace senf {
                                  typename Policy::AddressingPolicy::Address & address);
                                         ///< read data from socket returning peer address
                                         /**< \param[in] handle socket handle to read from
-                                             \param[in] buffer address of buffer to write data to
+                                             \param[in] buffer address of buffer to writedata to
                                              \param[in] size size of buffer
                                              \param[out] address peer address
                                              \returns number of bytes read */

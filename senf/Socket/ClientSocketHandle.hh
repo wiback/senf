@@ -37,6 +37,7 @@
 #include <boost/range.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/optional.hpp>
 #include "SocketHandle.hh"
 
 //#include "ClientSocketHandle.mpp"
@@ -68,6 +69,12 @@ namespace senf {
         <tr><td>bind()</td>       <td>AddressingPolicy::bind (\ref senf::AddressingPolicyBase)</td>      <td></td></tr>
         <tr><td>peer()</td>       <td>AddressingPolicy::peer (\ref senf::AddressingPolicyBase)</td>      <td></td></tr>
         <tr><td>local()</td>      <td>AddressingPolicy::local (\ref senf::AddressingPolicyBase)</td>     <td></td></tr>
+        <tr><td></td>             <td></td>                                                              <td></td></tr>
+        <tr><td>dequeue()</td>    <td>ReadPolicy::dequeue (\ref senf::ReadPolicyBase)</td>               <td></td></tr>
+        <tr><td>release()</td>    <td>ReadPolicy::release (\ref senf::ReadPolicyBase)</td>               <td></td></tr>
+        <tr><td>allocate()</td>   <td>WritePolicy::release (\ref senf::WritePolicyBase)</td>             <td></td></tr>
+        <tr><td>enqueue()</td>    <td>WritePolicy::enqueue (\ref senf::WritePolicyBase)</td>             <td></td></tr>
+        <tr><td>send()</td>       <td>WritePolicy::send (\ref senf::WritePolicyBase)</td>                <td></td></tr>
         </table>
 
         It is important to note, that not all members are always accessible. Which are depends on
@@ -79,6 +86,9 @@ namespace senf {
         To find out, which members are available, you have to check the documentation of the policy
         classes. You can also find a summary of all members available in the leaf protocol class
         documentation.
+
+        The last set of members is special: it provides an alternative read/write implementation
+        available only on special handles supporting the QueueReadPolicy and/or QueueWritePolicy.
 
         \todo Move all not template-parameter dependent code into a non-template base class
 
@@ -367,6 +377,84 @@ namespace senf {
                                              \see \ref writeto() \n
                                                   <a href="http://www.boost.org/doc/libs/release/libs/range/index.html">Boost.Range</a>  */
 
+        //\}
+
+        //-////////////////////////////////////////////////////////////////////////
+        ///\name Queue based Reading and Writing
+
+        /** \brief Read data from packet queue
+
+            Some protocols support a more efficient queue based read/write protocol. If the handle
+            supports this protocol, \ref dequeue() and \ref release() are used to read packets from
+            that queue.
+
+            The API works as follows:
+
+            \li calling \ref dequeue() will return an iterator range (a pair of pointers) pointing
+                to the data. This data lives directly in the read queue.
+            \li to release the memory returned by dequeue(), call \ref release(). This call will return
+                \e all unreleased frames to the kernel.
+
+            The API has some special features:
+
+            \li the API is always non-blocking
+            \li you must release() all data back to the kernel before re-entering the
+                scheduler. Otherwise, the file handle will be signaled again immediately.
+
+            \returns iterator range to the data frame or \c boost::none, if no data is available
+         */
+        boost::optional<typename SPolicy::ReadPolicy::Buffer> dequeue();
+
+        void release();                 ///< Release all queue frames to the kernel
+                                        /**< All the frames dequeued since the last call to
+                                             release() will be returned to kernel space. */
+
+        /** \brief Write data to packet queue
+
+            Some protocols support a more efficient queue based read/write protocol. If the handle
+            supports this protocol, \ref allocate(), \ref enqueue() and \ref release() are used to
+            write packets to that queue.
+
+            The API works as follows:
+
+            \li calling \ref allocate() will return an iterator range (a pair of pointers) pointing
+                to a new queue entry. This popinter points directly into the write queue.
+            \li now write the data frame to that area (e.g. memcpy the packet there or construct a
+                new packet in the memory area using the external packet memory management support)
+            \li when the data is ready, call \ref enqueue() on the iterator range. At this point,
+                the size of the packet must be specified.
+            \li call \ref send() to send all packets placed into the send queue
+
+            The API has some special features:
+
+            \li you may call \ref allocate() and \ref enqueue() several times before calling \ref
+                send()
+            \li a call to \ref send() will send out all packets allocated since the last call to
+                \ref send()
+            \li it is possible for the call to \ref allocate() to fail if no space is available in
+                the send queue
+
+            \warning You must ensure to call \ref enqueue() on all packets you \ref allocate()
+                before calling \ref send()
+
+            \returns iterator range to the write queue buffer or \c boost::none, if there is no room
+                in the write queue.
+         */
+        boost::optional<typename SPolicy::WritePolicy::Buffer> allocate();
+
+        void enqueue(typename SPolicy::WritePolicy::Buffer const & buffer, unsigned size);
+                                        ///< prepare frame to be sent
+                                        /**< set the size of the frame in buffer.
+                                             \param[in] buffer buffer holding the frame as returned
+                                                 by \ref allocate()
+                                             \param[in] size size of frame in bytes starting at \a
+                                                 buffer.\c begin() */
+
+        void send();                    ///< Send all data in the write queue
+                                        /**< This call will send out all frames allocated since the
+                                             last call to \ref send(). */
+
+        //\}
         //-////////////////////////////////////////////////////////////////////////
         ///\name Addressing
         //\{

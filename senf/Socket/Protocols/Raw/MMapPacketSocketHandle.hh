@@ -38,9 +38,10 @@
 #include <senf/Socket/ProtocolClientSocketHandle.hh>
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
-#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/QueueReadWritePolicy.hh>
 #include <senf/Socket/Protocols/BSDSocketProtocol.hh>
 #include <senf/Socket/Protocols/DatagramSocketProtocol.hh>
+#include "MMapSocketProtocol.hh"
 #include "LinuxPacketSocketProtocol.hh"
 #include "LLAddressing.hh"
 
@@ -56,18 +57,18 @@ namespace senf {
     typedef MakeSocketPolicy<
         LLAddressingPolicy,
         DatagramFramingPolicy,
-        UnconnectedCommunicationPolicy,
-        ReadablePolicy,
-        WriteablePolicy
-        >::policy Packet_Policy;        ///< Policy of PacketSocketProtocol
+        ConnectedCommunicationPolicy,
+        QueueReadPolicy,
+        QueueWritePolicy
+        >::policy ConnectedMMapPacket_Policy;        ///< Policy of ConnectedMMapPacketSocketProtocol
 
-    /** \brief Raw Packet-Socket access (Linux)
+    /** \brief Raw Packet-Socket access using mmap read/write (Linux)
 
         \par Socket Handle typedefs:
-        \ref PacketSocketHandle (ProtocolClientSocketHandle)
+        \ref ConnectedMMapPacketSocketHandle (ProtocolClientSocketHandle)
 
         \par Policy Interface:
-        ClientSocketHandle::read(), ClientSocketHandle::readfrom(), ClientSocketHandle::writeto(),
+        ClientSocketHandle::dequeue(), ClientSocketHandle::enqueue(),
         ClientSocketHandle::bind(), ClientSocketHandle::local()
 
         \par Address Type:
@@ -79,11 +80,18 @@ namespace senf {
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle via the
         Socket Handle typedefs above.
+
+        This protocol uses the linux mmap packet socket access API. This API replaces the ordinary
+        read/write calls with a linxu specific api.
+
+        \warning The socket handle is neither readable nor writable in the ordinary sense. It
+            utilises the special QueueReadPolicy and QueueWritePolicy socket policies.
      */
-    class PacketSocketProtocol
-        : public ConcreteSocketProtocol<Packet_Policy, PacketSocketProtocol>,
+    class ConnectedMMapPacketSocketProtocol
+        : public ConcreteSocketProtocol<ConnectedMMapPacket_Policy, ConnectedMMapPacketSocketProtocol>,
           public DatagramSocketProtocol,
           public BSDSocketProtocol,
+          public MMapSocketProtocol,
           public LinuxPacketSocketProtocol
     {
     public:
@@ -92,7 +100,8 @@ namespace senf {
 
         ///\name Constructors
         //\{
-        void init_client(SocketType type = RawSocket, int protocol = -1) const;
+        void init_client(std::string iface, unsigned rxqlen, unsigned txqlen, unsigned frameSize=2048, 
+                         SocketType type = RawSocket, int protocol = -1) const;
                                         ///< Create packet socket
                                         /**< The new socket will receive all packets of the given
                                              IEEE 802.3 \a protocol. The socket will receive all
@@ -107,12 +116,17 @@ namespace senf {
                                              be removed from received packets and a correct ll
                                              header will be created on sent packets.
 
+                                             \param[in] iface interface to bind to
+                                             \param[in] rxqlen number of frames in rx queue
+                                             \param[in] txqlen number of frames in tx queue
+                                             \param[in] frameSize size of single frame in queue
                                              \param[in] type socket type
                                              \param[in] protocol IEEE 802.3 protocol number */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
         //\}
+
 
         ///\name Abstract Interface Implementation
         //\{
@@ -123,9 +137,9 @@ namespace senf {
         //\}
     };
 
-    typedef ProtocolClientSocketHandle<PacketSocketProtocol> PacketSocketHandle;
-                                        ///< SocketHandle of the PacketSocketProtocol
-                                        /**< \related PacketPrototol */
+    typedef ProtocolClientSocketHandle<ConnectedMMapPacketSocketProtocol> ConnectedMMapPacketSocketHandle;
+                                        ///< SocketHandle of the ConnectedMMapPacketSocketProtocol
+                                        /**< \related ConnectedMMapPacketPacketPrototol */
 
     //\}
 }

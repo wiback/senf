@@ -73,6 +73,15 @@
 
 namespace senf {
 
+    /** \brief access FileHandle extra data information
+     */
+    class FileHandleAccess
+    {
+    protected:
+        static void * extraPtr(FileHandle const & fh);
+        static void extraPtr(FileHandle fh, void * ptr);
+    };
+
     /// \addtogroup handle_group
     //\{
 
@@ -206,10 +215,14 @@ namespace senf {
 
         void fd(int fd);            ///< Set raw filehandle
 
+        void * extraPtr() const;    ///< get extra data pointer
+        void extraPtr(void * ptr);  ///< set extra data pointer
+
     private:
         FileBody::ptr body_;
 
         friend class FileBody;
+        friend class FileHandleAccess;
     };
 
     /** \brief Adapt FileHandle to senf::scheduler

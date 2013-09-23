@@ -1,0 +1,158 @@
+// $Id$
+//
+// Copyright (C) 2013 
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief QueueReadWritePolicy inline non-template implementation */
+
+#include "QueueReadWritePolicy.ih"
+
+// Custom includes
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+prefix_ senf::detail::QueueInfo * senf::detail::QueuePolicyBase::qinfo(FileHandle & handle)
+{
+    SENF_ASSERT( extraPtr(handle), "invalid queue file handle (no QueueInfo found)");
+    return static_cast<detail::QueueInfo *>(extraPtr(handle));
+}
+
+prefix_ void senf::detail::QueueInfo::inc(char * & ptr, Queue const & q)
+{
+    ptr += frameSize;
+    if (ptr == q.end)
+        ptr = q.begin;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::QueueReadPolicy
+
+prefix_ boost::optional<senf::QueueReadPolicy::Buffer>
+senf::QueueReadPolicy::dequeue(FileHandle & handle)
+{
+    detail::QueueInfo & qi (* qinfo(handle));
+    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
+    if (qi.rx.head != qi.rx.tail && pk.tp_status != TP_STATUS_KERNEL) {
+        Buffer bf (qi.rx.head + pk.tp_mac, qi.rx.head + pk.tp_mac + pk.tp_len);
+        qi.inc(qi.rx.head, qi.rx);
+        qi.rx.idle = false;
+        return bf;
+    }
+    return boost::none;
+}
+
+prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
+{
+    detail::QueueInfo & qi (* qinfo(handle));
+    while (! qi.rx.idle || qi.rx.tail != qi.rx.head) {
+        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.rx.tail));
+        pk.tp_status = TP_STATUS_KERNEL;
+        qi.inc(qi.rx.tail, qi.rx);
+        qi.rx.idle = true;
+    }
+}
+
+prefix_ unsigned senf::QueueReadPolicy::read(FileHandle & handle, char * buffer, unsigned size)
+{
+    boost::optional<Buffer> buf (dequeue(handle));
+    if (! buf)
+        return 0;
+    if (unsigned(buf->size()) < size)
+        size = buf->size();
+    ::memcpy(buffer, buf->begin(), size);
+    release(handle);
+    return size;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::QueueWritePolicy
+
+prefix_ boost::optional<senf::QueueWritePolicy::Buffer>
+senf::QueueWritePolicy::allocate(FileHandle & handle)
+{
+    detail::QueueInfo & qi (* qinfo(handle));
+    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
+    if (qi.rx.head != qi.rx.tail && pk.tp_status == TP_STATUS_AVAILABLE) {
+#ifdef SENF_DEBUG
+        pk.tp_len = 0;
+#endif
+        Buffer bf (qi.tx.head + TPacketHdrOffset, qi.tx.head + qi.frameSize);
+        qi.inc(qi.tx.head, qi.tx);
+        qi.tx.idle = false;
+        return bf;
+    }
+    return boost::none;
+}
+
+prefix_ void senf::QueueWritePolicy::enqueue(FileHandle & handle, Buffer & buffer, size_type size)
+{
+ struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buffer.begin() - TPacketHdrOffset));
+    pk.tp_len = size;
+}
+
+prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
+{
+    detail::QueueInfo & qi (* qinfo(handle));
+    while (! qi.tx.idle || qi.tx.tail != qi.tx.head) {
+        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
+#ifdef SENF_DEBUG
+        SENF_ASSERT(pk.tp_len, "missing call to enqueue()");
+#endif
+        pk.tp_status = TP_STATUS_SEND_REQUEST;
+        qi.inc(qi.tx.tail, qi.tx);
+        qi.tx.idle = true;
+    }
+    for (;;) {
+        if (::send(handle.fd(), NULL, 0, 0) < 0) {
+            if (errno == EINTR || errno == EAGAIN)
+                continue;
+            SENF_THROW_SYSTEM_EXCEPTION("::send()");
+        }
+        break;
+    }
+}
+
+prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const * buffer, unsigned size)
+{
+    boost::optional<Buffer> buf (allocate(handle));
+    if (! buf)
+        return 0;
+    if (unsigned(buf->size()) < size)
+        size = buf->size();
+    ::memcpy(buf->begin(), buffer, size);
+    enqueue(handle, *buf, size);
+    send(handle);
+    return size;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

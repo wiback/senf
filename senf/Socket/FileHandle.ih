@@ -105,6 +105,9 @@ namespace senf {
         int fd() const;
         void fd(int fd);
 
+        void * extraPtr() const;
+        void extraPtr(void * ptr);
+
         void close();
         void terminate();
         void destroyClose();
@@ -150,6 +153,7 @@ namespace senf {
         bool pollCheck(int fd, bool incoming, int timeout, bool oob=false) const;
 
         int fd_;
+        void * extraPtr_;
     };
 
 }

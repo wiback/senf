@@ -294,6 +294,42 @@ prefix_ char const * senf::ClientSocketHandle<SPolicy>::writeto(AddressParam add
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// queue based read/write
+
+template <class SPolicy>
+prefix_ boost::optional<typename SPolicy::ReadPolicy::Buffer>
+senf::ClientSocketHandle<SPolicy>::dequeue()
+{
+    return SPolicy::ReadPolicy::dequeue(*this);
+}
+
+template <class SPolicy>
+prefix_ void senf::ClientSocketHandle<SPolicy>::release()
+{
+    return SPolicy::ReadPolicy::release(*this);
+}
+
+template <class SPolicy>
+prefix_ boost::optional<typename SPolicy::WritePolicy::Buffer>
+senf::ClientSocketHandle<SPolicy>::allocate()
+{
+    return SPolicy::WritePolicy::allocate(*this);
+}
+
+template <class SPolicy>
+prefix_ void senf::ClientSocketHandle<SPolicy>::
+enqueue(typename SPolicy::WritePolicy::Buffer const & buffer, unsigned size)
+{
+    return SPolicy::WritePolicy::enqueue(*this, buffer, size);
+}
+
+template <class SPolicy>
+prefix_ void senf::ClientSocketHandle<SPolicy>::send()
+{
+    return SPolicy::WritePolicy::send();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // addressing
 
 // senf::ClientSocketHandle<SPolicy>::peer
