@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.berlios.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -52,7 +52,7 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
     detail::quoteNonPrintable(m);
 
     if (isPlainFormat())
-        stream_ << m << std::endl;
+        *stream_ << m << std::endl;
     else {
         std::string const & prf (prefix(timestamp, stream, area, level));
 
@@ -64,8 +64,8 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
         Tokenizer::iterator const i_end (tokenizer.end());
 
         for (; i != i_end; ++i)
-            stream_ << prf << *i << "\n";
-        stream_ << std::flush;
+            *stream_ << prf << *i << "\n";
+        *stream_ << std::flush;
     }
 }
 
