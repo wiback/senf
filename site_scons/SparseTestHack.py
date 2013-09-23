@@ -1,4 +1,8 @@
-import SCons.Node, SCons.Node.FS, SCons.Util, SCons.Errors, os
+import SCons.Errors
+import SCons.Node
+import SCons.Node.FS
+import SCons.Util
+import os
 
 #####################################################################
 # This IS a hack .. but a very useful one: The hack will remove the
@@ -86,7 +90,7 @@ def setup(env):
 # This needs to be called after all build targets have been set
 # up. This is important since the list of object targets needs to be
 # complete.
-def build(env, accept_unknown_tests=False, verbose=False):
+def build(env, accept_unknown_tests=False, verbose=True):
     env = env.Clone(LIBS = [ '$EXTRA_LIBS' ])
     if env.has_key("only_tests"):
         only_tests = {}
@@ -140,9 +144,12 @@ def findSCMChanges(env):
 
     def scmchanges(dir):
         if os.popen("cd %s; svnversion" % dir.abspath).read().strip() in ("","exported"):
-            return [ dir.Entry(x)
-                     for x in os.popen("cd %s; git ls-files --modified" 
-                                       % dir.abspath).read().strip().split("\n") ]
+            return [
+                entry for entry in (
+                    dir.Entry(x[3:])
+                    for x in os.popen("cd %s; git status --porcelain" 
+                                      % dir.abspath).read().strip().split("\n"))
+                if entry.exists() ]
         else:
             return [ dir.Entry(l[7:])
                      for l in os.popen("cd %s; svn status" 
