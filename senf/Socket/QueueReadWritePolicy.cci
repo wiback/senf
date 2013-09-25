@@ -295,7 +295,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         // We set qi.tx.idle prematurely but this is safe: when the while loop is done,
         // the queue is indeed idle. After the first loop iteration, it is impossible for
         // the queue to be still completely filled (that is head == tail) so the while
-        // condition above is now correkt with idle = true
+        // condition above is now correct with idle = true
         qi.tx.idle = true;
     }
     for (;;) {

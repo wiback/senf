@@ -32,6 +32,7 @@
 //#include "BSDSocketProtocol.ih"
 
 // Custom includes
+#include <linux/filter.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -125,6 +126,22 @@ prefix_ void senf::BSDSocketProtocol::sndbuf(unsigned size)
 {
     if (::setsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_SNDBUF");
+}
+
+prefix_ void senf::BSDSocketProtocol::detachSocketFilter()
+{
+    int dummy;
+    if (::setsockopt(fd(), SOL_SOCKET, SO_DETACH_FILTER, &dummy, sizeof(dummy)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("could not detach socket filter");
+}
+
+prefix_ void senf::BSDSocketProtocol::do_attachSocketFilter(::sock_filter * filter, unsigned short len)
+{
+    struct sock_fprog sockArg;
+    sockArg.filter = filter;
+    sockArg.len = len;
+    if (::setsockopt(fd(), SOL_SOCKET, SO_ATTACH_FILTER, &sockArg, sizeof(sockArg)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

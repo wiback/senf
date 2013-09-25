@@ -35,8 +35,9 @@
 #include <senf/Socket/SocketProtocol.hh>
 #include <boost/cstdint.hpp>
 
-//#include "BSDSocketProtocol.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct sock_filter;
 
 namespace senf {
 
@@ -99,6 +100,12 @@ namespace senf {
         void sndbuf(unsigned size) const; ///< Change size of send buffer
                                         /**< \param[in] size new send buffer size */
 
+        template <unsigned short N>
+        void attachSocketFilter(::sock_filter (&filter)[N]);
+        void detachSocketFilter();
+
+    private:
+        void do_attachSocketFilter(::sock_filter * filter, unsigned short len);
      };
 
     /** \brief Protocol facet providing basic connection oriented BSD socket functions
@@ -120,15 +127,12 @@ namespace senf {
     };
 
     //\}
-
 }
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "BSDSocketProtocol.cci"
-//#include "BSDSocketProtocol.ct"
+#include "BSDSocketProtocol.ct"
 //#include "BSDSocketProtocol.cti"
-//#include "BSDSocketProtocol.mpp"
 #endif
 
 
