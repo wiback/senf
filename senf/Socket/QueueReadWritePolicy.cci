@@ -180,7 +180,7 @@ prefix_ senf::LLSocketAddress senf::SocketQueueBuffer::address()
     const
 {
     SENF_ASSERT( hdr().tp_mac > TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr)),
-                 "frame has no address field" );
+            "frame has no address field" );
     senf::LLSocketAddress res;
     ::memcpy(res.sockaddr_p(),
              reinterpret_cast<struct ::sockaddr_ll *>(
@@ -191,8 +191,7 @@ prefix_ senf::LLSocketAddress senf::SocketQueueBuffer::address()
 
 prefix_ void senf::SocketQueueBuffer::resize(size_type sz)
 {
-    SENF_ASSERT( frameBegin() + sz <= frameEnd(),
-                 "frame size exceeded" );
+    SENF_ASSERT( frameBegin() + sz <= frameEnd(), "frame size exceeded" );
     hdr().tp_len = sz;
 }
 
@@ -235,7 +234,7 @@ prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
         // We set qi.rx.idle prematurely but this is safe: when the while loop is done,
         // the queue is indeed idle. After the first loop iteration, it is impossible for
         // the queue to be still completely filled (that is head == tail) so the while
-        // condition above is now correkt with idle = true
+        // condition above is now correct with idle = true
         qi.rx.idle = true;
     }
 }
@@ -243,7 +242,7 @@ prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
 prefix_ unsigned senf::QueueReadPolicy::read(FileHandle & handle, char * buffer, unsigned size)
 {
     SENF_ASSERT( qinfo(handle)->rx.idle,
-                 "Inconsistent mixing of read() and dequeue() on mmap socket" );
+            "Inconsistent mixing of read() and dequeue() on mmap socket" );
     bool blocking (false);
     for (;;) {
         boost::optional<Buffer> buf (dequeue(handle));
@@ -300,9 +299,16 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
     }
     for (;;) {
         if (::send(handle.fd(), NULL, 0, 0) < 0) {
-            if (errno == EINTR || errno == EAGAIN)
+            switch (errno) {
+            case EINTR:
+            case EAGAIN:
                 continue;
-            SENF_THROW_SYSTEM_EXCEPTION("::send()");
+            case ENOTCONN:
+            case ENETDOWN:
+                break;  // TODO: might not be the best solution...
+            default:
+                SENF_THROW_SYSTEM_EXCEPTION("::send()");
+            }
         }
         break;
     }
@@ -312,7 +318,7 @@ prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const *
                                                unsigned size)
 {
     SENF_ASSERT( qinfo(handle)->tx.idle,
-                 "Inconsistent mixing of write() and enqueue() on mmap socket" );
+            "Inconsistent mixing of write() and enqueue() on mmap socket" );
     for (bool repeat (true);; repeat = false) {
         boost::optional<Buffer> buf (enqueue(handle));
         if (! buf) {
