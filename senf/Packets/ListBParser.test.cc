@@ -60,7 +60,7 @@ namespace {
             return v;
         }
         void value(value_type const & v) {
-            vec_t::container container (vec());
+            vec_t::container_type container (vec());
             container.clear();
             for (value_type::const_iterator i=v.begin(); i!=v.end(); ++i)
                 container.push_back( *i);
@@ -102,7 +102,7 @@ SENF_AUTO_UNIT_TEST(ListBParser_container)
             MyListBParser::init_bytes));
 
     {
-        MyListBParser::container c (MyListBParser(pi->data().begin(),&pi->data()));
+        MyListBParser::container_type c (MyListBParser(pi->data().begin(),&pi->data()));
 
         BOOST_CHECK_EQUAL( c.size(), 0u );
         BOOST_CHECK_EQUAL( c.bytes(), 2u );
@@ -119,9 +119,9 @@ SENF_AUTO_UNIT_TEST(ListBParser_container)
         {
             senf::PacketInterpreterBase::ptr pi2 (senf::PacketInterpreter<VoidPacket>::create(
                     MyListBParser::init_bytes));
-            MyListBParser::container c2 (MyListBParser(pi2->data().begin(),&pi2->data()));
+            MyListBParser::container_type c2 (MyListBParser(pi2->data().begin(),&pi2->data()));
             {
-                VectorParser::vec_t::container c2v (c2.push_back_space().vec());
+                VectorParser::vec_t::container_type c2v (c2.push_back_space().vec());
                 c2v.push_back(0x2345u);
                 c2v.push_back(0x3456u);
             }
@@ -230,13 +230,13 @@ SENF_AUTO_UNIT_TEST(listBytesMacro)
     BOOST_CHECK_EQUAL( parser.list2().size(), 3u );
     BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
 
-    TestListParser::list2_t::container list2 (parser.list2());
+    TestListParser::list2_t::container_type list2 (parser.list2());
 
     {
-        TestListParser::list1_t::container list (parser.list1());
+        TestListParser::list1_t::container_type list (parser.list1());
         BOOST_CHECK_EQUAL( list.size(), 2u );
 
-        TestListParser::list1_t::container::iterator i (list.begin());
+        TestListParser::list1_t::container_type::iterator i (list.begin());
         BOOST_CHECK_EQUAL( i->vec().size(), 1u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0506u );
 
@@ -250,10 +250,10 @@ SENF_AUTO_UNIT_TEST(listBytesMacro)
     }
 
     {
-        TestListParser::list2_t::container list (parser.list2());
+        TestListParser::list2_t::container_type list (parser.list2());
         BOOST_CHECK_EQUAL( list.size(), 3u );
 
-        TestListParser::list2_t::container::iterator i (list.begin());
+        TestListParser::list2_t::container_type::iterator i (list.begin());
         BOOST_CHECK_EQUAL( i->vec().size(), 0u );
 
         ++i;
@@ -304,8 +304,8 @@ SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
         TestPacketSizeList l (p.data().begin(), &p.data());
         BOOST_CHECK_EQUAL( l.list().size(), 5u );
 
-        TestPacketSizeList::list_t::container c (l.list());
-        TestPacketSizeList::list_t::container::iterator i (c.begin());
+        TestPacketSizeList::list_t::container_type c (l.list());
+        TestPacketSizeList::list_t::container_type::iterator i (c.begin());
 
         senf::UInt16Parser::value_type vec0[] = { 0x0506 };
         senf::UInt16Parser::value_type vec1[] = { 0x0708, 0x090A };
@@ -334,7 +334,7 @@ SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
 
         i = c.begin();
         ++i;
-        TestPacketSizeList::list_t::value_type::vec_t::container v (i->vec());
+        TestPacketSizeList::list_t::value_type::vec_t::container_type v (i->vec());
         v.push_back(0xFEFF);
     }
 
@@ -343,8 +343,8 @@ SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
         BOOST_CHECK_EQUAL( l.list().size(), 5u );
         BOOST_CHECK_EQUAL( l.list().bytes(), p.data().size() );
 
-        TestPacketSizeList::list_t::container c (l.list());
-        TestPacketSizeList::list_t::container::iterator i (c.begin());
+        TestPacketSizeList::list_t::container_type c (l.list());
+        TestPacketSizeList::list_t::container_type::iterator i (c.begin());
 
         senf::UInt16Parser::value_type vec0[] = { 0x0506 };
         senf::UInt16Parser::value_type vec1[] = { 0x0708, 0x090A, 0xFEFF };

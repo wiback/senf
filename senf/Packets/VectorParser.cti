@@ -60,6 +60,14 @@ senf::VectorParser<ElementParser,AuxPolicy>::bytes()
 // Container interface
 
 template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::container_type
+senf::VectorParser<ElementParser,AuxPolicy>::container()
+    const
+{
+    return container_type(*this);
+}
+
+template <class ElementParser, class AuxPolicy>
 prefix_ senf::PacketInterpreterBase::size_type
 senf::VectorParser<ElementParser,AuxPolicy>::size()
     const
@@ -120,7 +128,7 @@ template <class ElementParser, class AuxPolicy>
 template <class InputIterator>
 prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::assign(InputIterator first, InputIterator last)
 {
-    container c (*this);
+    container_type c (*this);
     c.clear();
     while (first != last)
         c.push_back( *first++);
@@ -131,7 +139,7 @@ template <class Value>
 prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back(Value const & value, size_type n)
     const
 {
-    container c (*this);
+    container_type c (*this);
     c.push_back(value,n);
 }
 
@@ -140,7 +148,7 @@ prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::value_type
 senf::VectorParser<ElementParser,AuxPolicy>::push_back_space(size_type n)
     const
 {
-    container c (*this);
+    container_type c (*this);
     return c.push_back_space(n);
 }
 
@@ -149,7 +157,7 @@ template <class Value>
 prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_front(Value const & value, size_type n)
     const
 {
-    container c (*this);
+    container_type c (*this);
     c.push_front(value,n);
 }
 
@@ -158,7 +166,7 @@ prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::value_type
 senf::VectorParser<ElementParser,AuxPolicy>::push_front_space(size_type n)
     const
 {
-    container c (*this);
+    container_type c (*this);
     return c.push_front_space(n);
 }
 
@@ -166,7 +174,7 @@ template <class ElementParser, class AuxPolicy>
 prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::resize(size_type n)
     const
 {
-    container c (*this);
+    container_type c (*this);
     c.resize(n);
 }
 
@@ -175,7 +183,7 @@ template <class Value>
 prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::resize(size_type n, Value value)
     const
 {
-    container c (*this);
+    container_type c (*this);
     c.resize(n,value);
 }
 

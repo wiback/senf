@@ -266,7 +266,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_parse)
     MIHGenericPayloadPacket mihPayload (mihPacket.next().as<MIHGenericPayloadPacket>());
 
     BOOST_CHECK_EQUAL( mihPayload->tlvList().size(), 2u);
-    MIHGenericPayloadPacket::Parser::tlvList_t::container tlvListContainer (
+    MIHGenericPayloadPacket::Parser::tlvList_t::container_type tlvListContainer (
             mihPayload->tlvList());
 
     MIHGenericTLVParser tlv1 = *tlvListContainer.begin();
@@ -293,7 +293,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_create)
     mihPacket->dst_mihfId().value( "test");
 
     MIHGenericPayloadPacket mihPayload (MIHGenericPayloadPacket::createAfter(mihPacket));
-    MIHGenericPayloadPacket::Parser::tlvList_t::container tlvListContainer (
+    MIHGenericPayloadPacket::Parser::tlvList_t::container_type tlvListContainer (
             mihPayload->tlvList() );
 
     unsigned char tlv1_value[] = {

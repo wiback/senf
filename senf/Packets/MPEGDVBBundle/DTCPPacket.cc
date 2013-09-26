@@ -56,18 +56,18 @@ prefix_ void senf::DTCPHelloPacketType::dump(packet p, std::ostream & os)
     switch (p->ipVersion()) {
     case 4 : {
         typedef DTCPHelloPacket::Parser::v4fbipList_t FBIPList;
-        FBIPList::container fbips (p->v4fbipList());
-        FBIPList::container::iterator i (fbips.begin());
-        FBIPList::container::iterator const i_end (fbips.end());
+        FBIPList::container_type fbips (p->v4fbipList());
+        FBIPList::container_type::iterator i (fbips.begin());
+        FBIPList::container_type::iterator const i_end (fbips.end());
         for (; i != i_end; ++i)
             os << "    " << *i << "\n";
         break;
     }
     case 6 : {
         typedef DTCPHelloPacket::Parser::v6fbipList_t FBIPList;
-        FBIPList::container fbips (p->v6fbipList());
-        FBIPList::container::iterator i (fbips.begin());
-        FBIPList::container::iterator const i_end (fbips.end());
+        FBIPList::container_type fbips (p->v6fbipList());
+        FBIPList::container_type::iterator i (fbips.begin());
+        FBIPList::container_type::iterator const i_end (fbips.end());
         for (; i != i_end; ++i)
             os << "    " << *i << "\n";
         break;

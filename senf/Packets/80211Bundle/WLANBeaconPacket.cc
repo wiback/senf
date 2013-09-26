@@ -44,8 +44,8 @@ SENF_PACKET_INSTANTIATE_TEMPLATE( senf::WLANBeaconPacket );
 prefix_ bool senf::WLANBeaconPacketParser::hasIE(boost::uint8_t typeId)
     const
 {
-    ieList_t::container ieListContainer (ieList());
-    for (ieList_t::container::const_iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
+    ieList_t::container_type ieListContainer (ieList());
+    for (ieList_t::container_type::const_iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
         if (i->type() == typeId)
             return true;
     return false;
@@ -60,7 +60,7 @@ prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream & os)
     p->ssidIE().dump( os);
     p->supportedRatesIE().dump( os);
     os << "  Optional Information Elements:\n";
-    typedef parser::ieList_t::container ieListContainer_t;
+    typedef parser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (p->ieList());
     for (ieListContainer_t::const_iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
         i->dump( os);

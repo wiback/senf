@@ -46,7 +46,7 @@ SENF_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
 
     senf::MLDv2ListenerReport p ( senf::MLDv2ListenerReport::create(data) );
     BOOST_CHECK_EQUAL(p->reserved(),0x0000 );
-    typedef senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container recContainer_t;
+    typedef senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container_type recContainer_t;
     recContainer_t mcastAddrRecords (p->mcastAddrRecords());
     recContainer_t::iterator mcAddrIt (mcastAddrRecords.begin() );
     BOOST_CHECK_EQUAL( mcAddrIt->recordType(), 0x04);

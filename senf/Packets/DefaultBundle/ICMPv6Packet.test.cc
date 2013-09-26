@@ -179,8 +179,8 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK_EQUAL( pRouterSolicitation.next().size(), 12u );
 
     senf::NDPRouterSolicitationMessage pOption(pRouterSolicitation.next().as<senf::NDPRouterSolicitationMessage>());
-    senf::NDPRouterSolicitationMessage::Parser::options_t::container optC(pOption->options() );
-    senf::NDPRouterSolicitationMessage::Parser::options_t::container::iterator listIter (optC.begin());
+    senf::NDPRouterSolicitationMessage::Parser::options_t::container_type optC(pOption->options() );
+    senf::NDPRouterSolicitationMessage::Parser::options_t::container_type::iterator listIter (optC.begin());
     BOOST_CHECK_EQUAL(listIter->type(),5u);
     BOOST_CHECK_EQUAL(listIter->length(),1u);
 

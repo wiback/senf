@@ -64,8 +64,8 @@ SENF_AUTO_UNIT_TEST(NDPMessage_create)
     senf::NDPNeighborSolicitationMessage rnadm (icmp.next().as<senf::NDPNeighborSolicitationMessage>());
     BOOST_CHECK_EQUAL(rnadm.size(),28);
 
-    senf::NDPNeighborSolicitationMessage::Parser::options_t::container roptC(rnadm->options() );
-    senf::NDPNeighborSolicitationMessage::Parser::options_t::container::const_iterator listIter (roptC.begin());
+    senf::NDPNeighborSolicitationMessage::Parser::options_t::container_type roptC(rnadm->options() );
+    senf::NDPNeighborSolicitationMessage::Parser::options_t::container_type::const_iterator listIter (roptC.begin());
     BOOST_CHECK( listIter->is<senf::NDPSourceLLAddressTLVParser>() );
     BOOST_CHECK_EQUAL( listIter->type(), 1u );
     BOOST_CHECK_EQUAL( listIter->length(), 1u );

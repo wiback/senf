@@ -122,7 +122,7 @@
     probably only // provide a reduced interface, but the collection parser should have a \c
     collection member which is a wrapper providing the full interface.
     \code
-    SomeParser::container c (p.someParserField());
+    SomeParser::container_type c (p.someParserField());
     \endcode
 
     You will probably only very seldom need to implement a completely new collection

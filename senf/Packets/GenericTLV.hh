@@ -111,7 +111,7 @@ namespace senf {
         can cast the parsers to some concrete tlv parser:
         \code
         MyTestPacket p (...
-        typedef MyTestPacket::Parser::tlv_list_t::container container_t;
+        typedef MyTestPacket::Parser::tlv_list_t::container_type container_t;
         container_t tlvContainer (p->tlv_list() );
         optContainer_t::iterator listIter (tlvContainer.begin());
 

@@ -133,7 +133,7 @@ SENF_AUTO_UNIT_TEST(VectorParser_wrapper)
         senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1u>
         > UInt16VectorParser;
     UInt16VectorParser v (boost::next(p->data().begin(),1), &p->data());
-    UInt16VectorParser::container w (v);
+    UInt16VectorParser::container_type w (v);
 
     BOOST_CHECK_EQUAL( w[0], 0x1011 );
     BOOST_CHECK_EQUAL( w[2], 0x1415 );
@@ -193,7 +193,7 @@ SENF_AUTO_UNIT_TEST(dynamicPolicyVector)
 
     UInt16VectorParser v (senf::UInt8Parser(p->data().begin(), &p->data()),
                           boost::next(p->data().begin(),1), &p->data());
-    UInt16VectorParser::container w (v);
+    UInt16VectorParser::container_type w (v);
 
     BOOST_CHECK_EQUAL( v.size(), 3u );
     BOOST_CHECK_EQUAL( w.size(), 3u );
@@ -394,7 +394,7 @@ SENF_AUTO_UNIT_TEST(vectorMacro_packetSize)
         BOOST_CHECK_EQUAL( vec[1], 0x1314u );
         BOOST_CHECK_EQUAL( vec[5], 0x2526u );
 
-        TestPacketSizeVectorParser::vec2_t::container(parser.vec2()).clear();
+        TestPacketSizeVectorParser::vec2_t::container_type(parser.vec2()).clear();
         BOOST_CHECK_EQUAL( parser.vec2().size(), 0u );
 
         std::copy( vec.begin(), vec.end(), senf::back_inserter(parser.vec2()));

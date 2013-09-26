@@ -88,7 +88,7 @@ SENF_AUTO_UNIT_TEST(ListOptionTypeParser_container)
     {
         OptionParser p ( pi->data().begin() ,&pi->data());
         p.init();
-        OptionParser::list_t::container c (p.list());
+        OptionParser::list_t::container_type c (p.list());
 
         BOOST_CHECK_EQUAL( c.size(), 0u );
         BOOST_CHECK_EQUAL( c.bytes(), 0u ); // padding bytes wont be in here, added/removed automatically in destructor
@@ -110,7 +110,7 @@ SENF_AUTO_UNIT_TEST(ListOptionTypeParser_container)
         BOOST_CHECK_EQUAL( c.bytes(), 10u );
         BOOST_CHECK_EQUAL( c.size(), 3u );
 
-        OptionParser::list_t::container::iterator cIter (c.begin());
+        OptionParser::list_t::container_type::iterator cIter (c.begin());
         BOOST_CHECK_EQUAL( cIter->altAction(), 1u);
         BOOST_CHECK_EQUAL( cIter->changeFlag(), 1u);
         BOOST_CHECK_EQUAL( cIter->optionType(), 5u);

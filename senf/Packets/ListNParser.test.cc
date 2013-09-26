@@ -61,7 +61,7 @@ namespace {
             return v;
         }
         void value(value_type const & v) {
-            vec_t::container container (vec());
+            vec_t::container_type container (vec());
             container.clear();
             for (value_type::const_iterator i=v.begin(); i!=v.end(); ++i)
                 container.push_back( *i);
@@ -83,7 +83,7 @@ SENF_AUTO_UNIT_TEST(ListNParser_container)
     MyListNParser(vp.data().begin(),&vp.data()).init();
 
     {
-        MyListNParser::container c (MyListNParser(vp.data().begin(),&vp.data()));
+        MyListNParser::container_type c (MyListNParser(vp.data().begin(),&vp.data()));
 
         c.push_back_space(2u);
         BOOST_CHECK_EQUAL( std::distance(c.begin(), c.end()), 2 );
@@ -95,7 +95,7 @@ SENF_AUTO_UNIT_TEST(ListNParser_container)
         BOOST_CHECK_EQUAL( std::distance(c.data().begin(), c.end().raw()), 4 );
         BOOST_CHECK_EQUAL( c.bytes(), 4u );
 
-        MyListNParser::container::iterator i (c.begin());
+        MyListNParser::container_type::iterator i (c.begin());
         BOOST_CHECK_EQUAL( std::distance(c.data().begin(), i->i()), 2 );
         BOOST_CHECK( i != c.end() );
         ++i;
@@ -235,13 +235,13 @@ SENF_AUTO_UNIT_TEST(listMacro)
     BOOST_CHECK_EQUAL( parser.list2().size(), 3u );
     BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
 
-    TestListParser::list2_t::container list2 (parser.list2());
+    TestListParser::list2_t::container_type list2 (parser.list2());
 
     {
-        TestListParser::list1_t::container list (parser.list1());
+        TestListParser::list1_t::container_type list (parser.list1());
         BOOST_CHECK_EQUAL( list.size(), 2u );
 
-        TestListParser::list1_t::container::iterator i (list.begin());
+        TestListParser::list1_t::container_type::iterator i (list.begin());
         BOOST_CHECK_EQUAL( i->vec().size(), 1u );
         BOOST_CHECK_EQUAL( i->vec()[0], 0x0506u );
 
@@ -255,10 +255,10 @@ SENF_AUTO_UNIT_TEST(listMacro)
     }
 
     {
-        TestListParser::list2_t::container list (parser.list2());
+        TestListParser::list2_t::container_type list (parser.list2());
         BOOST_CHECK_EQUAL( list.size(), 3u );
 
-        TestListParser::list2_t::container::iterator i (list.begin());
+        TestListParser::list2_t::container_type::iterator i (list.begin());
         BOOST_CHECK_EQUAL( i->vec().size(), 0u );
 
         ++i;

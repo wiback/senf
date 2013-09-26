@@ -62,7 +62,7 @@ SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy)
 
     {
         UInt8VectorParser v (p.data().begin(), &p.data());
-        UInt8VectorParser::container w (v);
+        UInt8VectorParser::container_type w (v);
 
         BOOST_CHECK_EQUAL_COLLECTIONS( w.begin(), w.end(), data, data+sizeof(data) );
 
@@ -103,7 +103,7 @@ SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
 
     {
         UInt16VectorParser v (p.data().begin(), &p.data());
-        UInt16VectorParser::container w (v);
+        UInt16VectorParser::container_type w (v);
 
         BOOST_REQUIRE_EQUAL( w.size(), p.data().size()/2 );
         BOOST_CHECK_EQUAL( w[0], 0x1011u );
@@ -146,7 +146,7 @@ SENF_AUTO_UNIT_TEST(listPacketSizeAuxPolicy)
 
     {
         ListParser l (p.data().begin(), &p.data());
-        ListParser::container w (l);
+        ListParser::container_type w (l);
 
         BOOST_REQUIRE_EQUAL( w.size(), p.data().size()/2 );
         BOOST_CHECK_EQUAL( *w.begin(), 0x1011u );

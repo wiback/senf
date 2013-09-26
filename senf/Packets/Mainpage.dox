@@ -566,17 +566,17 @@
     MLDv2ReportPacket report = ...;
 
     // Instantiate a collection wrapper for the list of records:
-    MLDv2ReportPacket::Parser::records_t::container records (report->records());
+    MLDv2ReportPacket::Parser::records_t::container_type records (report->records());
 
     // Iterate over the multicast address records
-    for (MLDv2ReportPacket::Parser::records_t::container::iterator i (records.begin());
+    for (MLDv2ReportPacket::Parser::records_t::container_type::iterator i (records.begin());
          i != records.end(); ++i) {
         // Allocate a collection wrapper for the multicast address record
         typedef MLDv2ReportPacket::Parser::records_t::value_type::sources_t Sources;
-        Sources::container sources (i->sources());
+        Sources::container_type sources (i->sources());
 
         // Iterate over the sources in this record
-        for (Sources::container::iterator i (sources.begin());
+        for (Sources::container_type::iterator i (sources.begin());
              i != sources.end(); ++i)
             std::cout << *i << std::endl;
     }

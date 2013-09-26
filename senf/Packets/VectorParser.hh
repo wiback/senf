@@ -90,7 +90,9 @@ namespace senf {
         typedef ElementParser value_type;
         typedef detail::ArrayParser_iterator<value_type> iterator;
         typedef iterator const_iterator;
-        typedef VectorParser_Container<ElementParser,AuxPolicy> container;
+        typedef VectorParser_Container<ElementParser,AuxPolicy> container_type;
+
+        container_type container() const;
 
         size_type size() const;
         bool empty() const;
@@ -135,7 +137,7 @@ namespace senf {
 
         \code
         SomePacket p (...);
-        SomePacket::aVectorCollection_t::container c (p->aVectorCollection());
+        SomePacket::aVectorCollection_t::container_type c (p->aVectorCollection());
         c.insert(c.begin(), ... );
         \endcode
 

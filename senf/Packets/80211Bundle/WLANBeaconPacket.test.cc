@@ -68,7 +68,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     BOOST_CHECK(  beacon->hasIE(senf::WLANPowerConstraintInfoElementParser::typeId+0) );
     BOOST_CHECK(! beacon->hasIE(0xff) );
 
-    typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
+    typedef senf::WLANBeaconPacket::Parser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (beacon->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 5);
 
@@ -108,7 +108,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
     p->beaconInterval() << 100u;
     p->ssidIE().value() << "boxC1";
 
-    typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
+    typedef senf::WLANBeaconPacket::Parser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (p->ieList());
     senf::WLANPowerConstraintInfoElementParser ie (
             ieListContainer.push_back_space().init<senf::WLANPowerConstraintInfoElementParser>() );
@@ -156,7 +156,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
     BOOST_CHECK_EQUAL( beacon->timestamp(), 0x000000000482b062uLL);
     BOOST_CHECK_EQUAL( beacon->ssid().value(), "test");
 
-    typedef senf::WLANBeaconPacket::Parser::ieList_t::container ieListContainer_t;
+    typedef senf::WLANBeaconPacket::Parser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (beacon->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 4);
 

@@ -81,7 +81,7 @@ prefix_ void senf::IPv6RoutingPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("routing type")              << unsigned(p->routingType()) << "\n"
        << senf::fieldName("segments left")             << unsigned(p->segmentsLeft()) << "\n"
        << "  further Hop Addresses:\n";
-    typedef IPv6RoutingPacket::Parser::hopAddresses_t::container addrContainer_t;
+    typedef IPv6RoutingPacket::Parser::hopAddresses_t::container_type addrContainer_t;
     addrContainer_t hopAddresses (p->hopAddresses());
     if ( p->segmentsLeft() != 0 )
         for (addrContainer_t::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
@@ -107,7 +107,7 @@ prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & 
        << senf::fieldName("next header")               << unsigned(p->nextHeader()) << "\n"
        << senf::fieldName("header length")             << unsigned(p->headerLength()) <<" ("<< unsigned((1+p->headerLength())*8)<< ")\n";
     os << "  OptionTypes:\n";
-    typedef IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
+    typedef IPv6HopByHopOptionsPacket::Parser::options_t::container_type optContainer_t;
     optContainer_t options (p->options());
     for (optContainer_t::const_iterator i = options.begin(); i != options.end(); ++i)
         i->dump( os);
@@ -132,7 +132,7 @@ prefix_ void senf::IPv6DestinationOptionsPacketType::dump(packet p, std::ostream
        << senf::fieldName("next header")               << unsigned (p->nextHeader()) << "\n"
        << senf::fieldName("header length")             << unsigned (p->headerLength()) << "\n";
     os << "  OptionTypes:\n";
-    typedef IPv6DestinationOptionsPacket::Parser::options_t::container optContainer_t;
+    typedef IPv6DestinationOptionsPacket::Parser::options_t::container_type optContainer_t;
     optContainer_t options (p->options());
     for (optContainer_t::const_iterator i = options.begin(); i != options.end(); ++i)
         i->dump( os);

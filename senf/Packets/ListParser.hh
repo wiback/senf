@@ -98,7 +98,9 @@ namespace senf {
         // Container interface
 
         typedef typename ListPolicy::element_type value_type;
-        typedef typename ListPolicy::container_type container;
+        typedef typename ListPolicy::container_type container_type;
+
+        container_type container() const;
 
         size_type size() const;
         bool empty() const;
@@ -137,7 +139,7 @@ namespace senf {
 
         \code
         SomePacket p (...);
-        SomePacket::aListCollection_t::container c (p->aListCollection());
+        SomePacket::aListCollection_t::container_type c (p->aListCollection());
         c.insert(c.begin(), ... );
         \endcode
 

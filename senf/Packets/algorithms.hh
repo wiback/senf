@@ -58,7 +58,7 @@ namespace senf {
         back_insert_iterator & operator++(int){ return *this; }
 
     private:
-        typename CollectionParser::container container_;
+        typename CollectionParser::container_type container_;
     };
 
     template<class CollectionParser>
@@ -71,7 +71,7 @@ namespace senf {
     template <class ListPolicy, class OutputIterator>
     void copy(ListParser<ListPolicy> const & listParser, OutputIterator result)
     {
-        typename ListParser<ListPolicy>::container container (listParser);
+        typename ListParser<ListPolicy>::container_type container (listParser);
         std::copy( container.begin(), container.end(), result);
     }
 

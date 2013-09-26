@@ -206,8 +206,8 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
     BOOST_CHECK_EQUAL( pHop_extension->nextHeader(), 58u );
     BOOST_CHECK_EQUAL( pHop_extension->headerLength(), 0x00 );
 
-    senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pHop_extension->options() );
-    senf::IPv6HopByHopOptionsPacket::Parser::options_t::container::iterator listIter (optC.begin());
+    senf::IPv6HopByHopOptionsPacket::Parser::options_t::container_type optC(pHop_extension->options() );
+    senf::IPv6HopByHopOptionsPacket::Parser::options_t::container_type::iterator listIter (optC.begin());
 
     BOOST_CHECK_EQUAL( listIter->altAction(), 0u);
     BOOST_CHECK_EQUAL( listIter->changeFlag(), 0u);
@@ -281,7 +281,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
     senf::IPv6HopByHopOptionsPacket pext (senf::IPv6HopByHopOptionsPacket::createAfter(ip) );
     pext->nextHeader() = 58u;
     {
-        senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pext->options() );
+        senf::IPv6HopByHopOptionsPacket::Parser::options_t::container_type optC(pext->options() );
         {
             senf::IPv6GenericOptionParser opt (
                     optC.push_back_space().init<senf::IPv6GenericOptionParser>());
@@ -297,7 +297,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
     icmp->code() = 0u;
     senf::MLDv2ListenerReport mld ( senf::MLDv2ListenerReport::createAfter(icmp) );
     {
-        senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container c (mld->mcastAddrRecords() );
+        senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container_type c (mld->mcastAddrRecords() );
         c.push_back_space();
         c.back().recordType() = 4u;
         senf::INet6Address addr( senf::INet6Address::from_string("ff02::1:ffeb:b226") );
@@ -336,7 +336,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
     senf::IPv6HopByHopOptionsPacket p ( senf::IPv6HopByHopOptionsPacket::create() );
     p->nextHeader() = 0x3a;
     {
-        senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC (p->options() );
+        senf::IPv6HopByHopOptionsPacket::Parser::options_t::container_type optC (p->options() );
         {
             IPv6ChecksumOptionParser opt (
                     optC.push_back_space().init<IPv6ChecksumOptionParser>());
@@ -372,7 +372,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
     BOOST_CHECK_EQUAL( p->nextHeader(), 0x3a);
 
     {
-        typedef senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
+        typedef senf::IPv6HopByHopOptionsPacket::Parser::options_t::container_type optContainer_t;
         optContainer_t optC (p->options() );
         optContainer_t::iterator listIter (optC.begin());
 
