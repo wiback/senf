@@ -195,21 +195,23 @@ public:
                                         /**< Returns a human readable version of fe_status_t
                                              (defined by frontend.h)*/
 
-    unsigned int bitErrorRate();        ///< Returns the bit error rate
+    unsigned int bitErrorRate() const;  ///< Returns the bit error rate
                                         /**< \note This function may not be implemented by your
                                              specific driver implementation. In this case the
                                              output is random. This is true for:
                                                Cinergy T� (2.6.27),
                                                Terratec Cinergy DT USB XS Diversity (2.6.27) */
 
-    unsigned int signalToNoiseRatio();  ///< Returns the signal to noise ratio
+    unsigned int signalToNoiseRatio() const;
+                                        ///< Returns the signal to noise ratio
                                         /**< \note This function may not be implemented by your
                                              specific driver implementation. In this case the
                                              output is random. This is true for:
                                                Cinergy T� (2.6.27),
                                                Terratec Cinergy DT USB XS Diversity (2.6.27) */
 
-    unsigned int signalStrength();      ///< Returns the signal strength
+    unsigned int signalStrength() const;
+                                        ///< Returns the signal strength
                                         /**< Returns the signal to noise ratio
                                              \note This function may not be implemented by your
                                              specific driver implementation. In this case the output is

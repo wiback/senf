@@ -235,7 +235,7 @@ namespace senf {
                                              exception description string. This operator allows to
                                              use Exception instances like streams. The conversion is
                                              performed using <code>boost::lexical_cast</code> and is
-                                             therefor identical to a streaming operation.
+                                             therefore identical to a streaming operation.
                                              \see \ref exception */
 
 

@@ -482,6 +482,22 @@ SENF_AUTO_UNIT_TEST(packetAssign)
     BOOST_CHECK_EQUAL( bar1->type(), 0x2A2Bu );
 }
 
+#ifdef SENF_CXX11_ENABLED
+
+void movePacket(senf::Packet packet)
+{
+    BOOST_CHECK(! packet.is_shared());
+}
+
+SENF_AUTO_UNIT_TEST(packet_move)
+{
+    senf::Packet packet (FooPacket::create());
+    movePacket(std::move(packet));
+    BOOST_CHECK(! packet);
+}
+
+#endif
+
 SENF_AUTO_UNIT_TEST(packetAnnotation)
 {
     typedef senf::detail::AnnotationRegistry Reg;

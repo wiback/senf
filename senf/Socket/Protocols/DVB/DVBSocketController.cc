@@ -370,16 +370,19 @@ prefix_ std::string senf::DVBSocketController::getTypeString()
 }
 
 prefix_ unsigned int senf::DVBSocketController::bitErrorRate()
+    const
 {
     return frontendHandle.protocol().bitErrorRate();
 }
 
 prefix_ unsigned int senf::DVBSocketController::signalToNoiseRatio()
+    const
 {
     return frontendHandle.protocol().signalNoiseRatio();
 }
 
 prefix_ unsigned int senf::DVBSocketController::signalStrength()
+    const
 {
     return frontendHandle.protocol().signalStrength();
 }

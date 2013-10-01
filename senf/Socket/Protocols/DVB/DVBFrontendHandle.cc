@@ -205,7 +205,6 @@ prefix_ dvb_frontend_event senf::DVBFrontendSocketProtocol::getEvent() const{
     struct dvb_frontend_event ev ;
 
     ::memset(&ev, 0, sizeof(struct dvb_frontend_event));
-std::cerr<<"DVBFrontendSocketProtocol::getEvent\n";
     if (::ioctl(fd(), FE_GET_EVENT, &ev)) {
         switch(errno) {
             case EBADF:

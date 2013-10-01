@@ -32,7 +32,7 @@ def neededObjects(env,nodes):
         for node in nodes:
             walker = SCons.Node.Walker(node)
             while True:
-                n = walker.next()
+                n = walker.get_next()
                 if n is None : break
                 yield n
 
