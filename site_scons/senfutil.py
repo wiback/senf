@@ -233,10 +233,10 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False, vars
                       os.path.join(p, cxx.replace('clang++', 'clang')), '3.3', True)
             else:
                 checkCompiler(env, conf, ARGUMENTS['CXX'],
-                      os.path.join(p, cxx.replace('g++', 'gcc')), '4.8', True)
+                      os.path.join(p, cxx.replace('g++', 'gcc')), '4.7', True)
         else:
-            for gccVersion in ('', '-4.8', '-4.9'):
-                if checkCompiler(env, conf, 'g++'+gccVersion, 'gcc'+gccVersion, '4.8', False):
+            for gccVersion in ('', '-4.7', '-4.8', '-4.9'):
+                if checkCompiler(env, conf, 'g++'+gccVersion, 'gcc'+gccVersion, '4.7', False):
                     break
             else:
                 if not checkCompiler(env, conf, "clang++", 'clang' '3.3', False):

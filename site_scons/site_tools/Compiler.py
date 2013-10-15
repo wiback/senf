@@ -29,7 +29,11 @@ def CheckCXXVersion(context, fail=False, min=None, max=None):
     if os.path.basename(context.env['CXX']).startswith('clang++'):
         proc = subprocess.Popen((context.env['CXX'], '-v'), stderr=subprocess.PIPE)
         try:
-            version = proc.communicate()[1].split()[2]
+            version = proc.communicate()[1]
+            if version.startswith('Ubuntu'):
+                version = version.split()[3].split('-')[0]
+            else:
+                version = version.split()[2]
             if proc.returncode < 0: 
                 version = None
         except IndexError: pass
