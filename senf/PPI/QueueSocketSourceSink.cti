@@ -130,8 +130,11 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::read()
     unsigned burst (0);
     for (; burst < maxBurst_; ++ burst) {
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
-        if (! buf || buf->size() == 0)
+        if (! buf)
             break;
+        if (buf->size() == 0)
+            continue;
+
         PacketInfo ifo;
         {
             Packet pk (Packet::create(
