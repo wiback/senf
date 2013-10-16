@@ -124,7 +124,9 @@ prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::frameSize()
 
 prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::frameBegin()
     const
-{ return begin(); }
+{
+    return begin();
+}
 
 prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::frameEnd()
     const
