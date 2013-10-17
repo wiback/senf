@@ -264,6 +264,16 @@ prefix_ void senf::Daemon::exit(unsigned code)
     throw DaemonExitException(code);
 }
 
+#define catchAllOtherExceptions()                                                       \
+    catch (std::exception & e) {                                                        \
+        std::cerr << "\n*** Fatal exception: " << e.what() << "\n" << std::endl;        \
+        return 1;                                                                       \
+    }                                                                                   \
+    catch (...) {                                                                       \
+        std::cerr << "\n*** Fatal exception: (unknown)" << "\n" << std::endl;           \
+        return 1;                                                                       \
+    }
+
 prefix_ int senf::Daemon::start(int argc, char const ** argv)
 {
     argc_ = argc;
@@ -286,31 +296,34 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
                 return 1;
             }
         }
-
-        main();
     }
     catch (DaemonExitException & e) {
         return e.code;
     }
-    catch (std::exception & e) {
-        if (catchExceptions_) {
-            std::cerr << "\n*** Fatal exception: " << e.what() << "\n" << std::endl;
-            return 1;
-        } else {
-            throw;
-        }
-    }
-    catch (...) {
-        if (catchExceptions_) {
-            std::cerr << "\n*** Fatal exception: (unknown)" << "\n" << std::endl;
-            return 1;
-        } else {
-            throw;
-        }
-    }
+    catchAllOtherExceptions();
 
+    if (catchExceptions_) {
+        try {
+            main();
+            return 0;
+        }
+        catch (DaemonExitException & e) {
+            return e.code;
+        }
+        catchAllOtherExceptions();
+    } else {
+        try {
+            main();
+            return 0;
+        }
+        catch (DaemonExitException & e) {
+            return e.code;
+        }
+    }
     return 0;
 }
+
+#undef catchAllOtherExceptions
 
 prefix_ senf::Daemon & senf::Daemon::instance()
 {
