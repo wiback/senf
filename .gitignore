@@ -27,6 +27,8 @@ config.log
 /SConscript.local
 /*-stamp
 /*.conf
+/.project
+/.cproject
 /linklint
 /TODO
 /dist/
@@ -37,3 +39,6 @@ config.log
 /.pydevproject
 /.settings
 /core
+
+#Ext
+/senf/Ext/NetEmu

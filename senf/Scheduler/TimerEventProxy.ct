@@ -36,28 +36,38 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename IdType>
+prefix_ senf::scheduler::TimerEventProxy<IdType>::ChangeTimeout::ChangeTimeout(senf::ClockService::clock_type t)
+    : timeout_(t)
+{}
+
+template<typename IdType>
+prefix_ void senf::scheduler::TimerEventProxy<IdType>::ChangeTimeout::operator()(Entry & entry)
+{
+    entry.timeout = timeout_;
+}
+
+template<typename IdType>
 prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & description)
-    : entrySetById( entrySet.template get<Id>()),
-      entrySetByTimeout( entrySet.template get<Timeout> ()),
-      timer( "TimerEventProxy " + description,
-              membind(&TimerEventProxy<IdType>::timerEvent, this), ClockService::clock_type(0), false)
-{ }
+    : entrySetById_( entrySet_.template get<Id>()),
+      entrySetByTimeout_( entrySet_.template get<Timeout>()),
+      timer_( "TimerEventProxy " + description, membind(&TimerEventProxy<IdType>::timerEvent, this))
+{}
 
 template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::timerEvent()
 {
-    ClockService::clock_type now = senf::scheduler::now();
-    typename EntrySetByTimeout_t::iterator it = entrySetByTimeout.begin();
-    while (it != entrySetByTimeout.end() && it->timeout <= now) {
+    ClockService::clock_type now = scheduler::now();
+    typename EntrySetByTimeout_t::iterator it = entrySetByTimeout_.begin();
+    while (it != entrySetByTimeout_.end() && it->timeout <= now) {
         Entry item (*it);
         // remove due entry from set
-        entrySetByTimeout.erase(it);
+        entrySetByTimeout_.erase(it);
         // call callback
         item.cb(now, item.id);
-        it = entrySetByTimeout.begin();
+        it = entrySetByTimeout_.begin();
     }
-    if (entrySet.size() > 0)
-        timer.timeout(entrySetByTimeout.begin()->timeout);
+    if (entrySet_.size() > 0)
+        timer_.timeout(entrySetByTimeout_.begin()->timeout);
 }
 
 template<typename IdType>
@@ -65,26 +75,23 @@ prefix_ void senf::scheduler::TimerEventProxy<IdType>::add(
         ClockService::clock_type timeout, IdType const & id, Callback cb)
 {
     // insert new entry or replace the timeout of an entry already indexed
-    typename EntrySetById_t::iterator i = entrySetById.find(id);
-    if (i == entrySetById.end())
-        entrySetByTimeout.insert( Entry(timeout, id, cb));
-    else {
-        Entry tmp = *i;
-        tmp.timeout = timeout;
-        entrySetById.replace(i,tmp);
-    }
+    typename EntrySetById_t::iterator it = entrySetById_.find(id);
+    if (it == entrySetById_.end())
+        entrySet_.insert( Entry(timeout, id, cb));
+    else
+        entrySetById_.modify( it, ChangeTimeout(timeout));
     // the scheduler time to the first earliest timeout (ordered index)
-    timer.timeout( entrySetByTimeout.begin()->timeout);
+    timer_.timeout( entrySetByTimeout_.begin()->timeout);
 }
 
 template<typename IdType>
 prefix_ bool senf::scheduler::TimerEventProxy<IdType>::remove(IdType const & id)
 {
-    bool removed (entrySetById.erase( id) > 0);
-    if (entrySet.size() > 0)
-        timer.timeout(entrySetByTimeout.begin()->timeout);
+    bool removed (entrySetById_.erase(id) > 0);
+    if (entrySet_.size() > 0)
+        timer_.timeout(entrySetByTimeout_.begin()->timeout);
     else
-        timer.disable();
+        timer_.disable();
     return removed;
 }
 
@@ -92,21 +99,18 @@ template<typename IdType>
 prefix_ senf::ClockService::clock_type senf::scheduler::TimerEventProxy<IdType>::timeout(IdType const & id)
     const
 {
-    typename EntrySetById_t::const_iterator i ( entrySetById.find( id));
-    return i == entrySetById.end() ? ClockService::clock_type(0) : i->timeout;
+    typename EntrySetById_t::const_iterator it (entrySetById_.find( id));
+    return it == entrySetById_.end() ? ClockService::clock_type(0) : it->timeout;
 }
-
 
 template<typename IdType>
 prefix_ std::vector<std::pair<senf::ClockService::clock_type, IdType> > senf::scheduler::TimerEventProxy<IdType>::list()
     const
 {
     std::vector<std::pair<ClockService::clock_type, IdType> > tmp;
-
     typename EntrySetByTimeout_t::const_iterator it;
-    for (it = entrySetByTimeout.begin(); it != entrySetByTimeout.end(); ++it) {
+    for (it = entrySetByTimeout_.begin(); it != entrySetByTimeout_.end(); ++it)
         tmp.push_back(std::make_pair( it->timeout, it->id));
-    }
     return tmp;
 }
 
@@ -114,13 +118,14 @@ template<typename IdType>
 prefix_ unsigned senf::scheduler::TimerEventProxy<IdType>::numEvents()
   const
 {
-    return entrySetByTimeout.size();
+    return entrySet_.size();
 }
 
 template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::clear()
 {
-    entrySetByTimeout.clear();
+    entrySet_.clear();
+    timer_.disable();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

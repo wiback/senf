@@ -74,9 +74,9 @@ namespace scheduler {
                                         ///< Returns timeout for given id
                                         /**< if no timer for this id is registered \a 0 is returned. */
 
-        unsigned numEvents() const;  ///< Returns the number of pending timer events 
+        unsigned numEvents() const;     ///< Returns the number of pending timer events
 
-        void clear(); ///< Clears all pending timer events
+        void clear();                   ///< Clears all pending timer events
         
     private:
 #ifndef DOXYGEN
@@ -87,6 +87,11 @@ namespace scheduler {
 
             Entry(ClockService::clock_type _timeout, IdType _id, Callback _cb)
                 : timeout(_timeout), id(_id), cb(_cb) { }
+        };
+        struct ChangeTimeout {
+            senf::ClockService::clock_type timeout_;
+            ChangeTimeout(senf::ClockService::clock_type t);
+            void operator()(Entry & entry);
         };
         struct Timeout {};
         struct Id {};
@@ -108,11 +113,11 @@ namespace scheduler {
         typedef typename EntrySet_t::template index<Timeout>::type EntrySetByTimeout_t;
         typedef typename EntrySet_t::template index<Id>::type EntrySetById_t;
 
-        EntrySet_t entrySet;
-        EntrySetById_t & entrySetById;
-        EntrySetByTimeout_t & entrySetByTimeout;
+        EntrySet_t entrySet_;
+        EntrySetById_t & entrySetById_;
+        EntrySetByTimeout_t & entrySetByTimeout_;
 
-        scheduler::TimerEvent timer;
+        scheduler::TimerEvent timer_;
 
         void timerEvent();  // callback for the Scheduler timer event
     };

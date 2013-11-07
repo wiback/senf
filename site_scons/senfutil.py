@@ -248,7 +248,7 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False, vars
     else:
         minBoostVersion = None
     conf.CheckBoostInstallation(min=minBoostVersion)
-    conf.Finish()
+    env = conf.Finish()
 
 
     if not env.GetOption('no_progress'):

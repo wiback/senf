@@ -84,10 +84,18 @@ SENF_AUTO_UNIT_TEST(timerEventProxy)
         timers.add( now + ClockService::milliseconds(800), 2, &handler);
         BOOST_CHECK_EQUAL( timers.timeout(2), now + ClockService::milliseconds(800));
         timers.add( now, 4, &handler);
+        BOOST_CHECK_EQUAL( timers.numEvents(), 3);
 
         run( ClockService::milliseconds( 2000));
 
-        BOOST_CHECK( mask == 7);
+        BOOST_CHECK_EQUAL( mask, 7);
+        BOOST_CHECK_EQUAL( timers.numEvents(), 0);
+
+        timers.add( ClockService::now() + ClockService::milliseconds(800), 1, &handler);
+        timers.clear();
+        run( ClockService::milliseconds( 2000));
+        BOOST_CHECK_EQUAL( mask, 7);
+        BOOST_CHECK_EQUAL( timers.numEvents(), 0);
     }
 }
 
