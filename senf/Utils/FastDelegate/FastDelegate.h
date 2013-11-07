@@ -176,7 +176,7 @@ inline OutputClass horrible_cast(const InputClass input){
         // Cause a compile-time error if in, out and u are not the same size.
         // If the compile fails here, it means the compiler has peculiar
         // unions which would prevent the cast from working.
-        BOOST_STATIC_ASSERT_MSG(sizeof(InputClass)==sizeof(u) && sizeof(InputClass)==sizeof(OutputClass), "CantUseHorrible_cast");
+        BOOST_STATIC_ASSERT(sizeof(InputClass)==sizeof(u) && sizeof(InputClass)==sizeof(OutputClass));
         u.in = input;
         return u.out;
 }
@@ -777,7 +777,7 @@ public:
                 // Ensure that there's a compilation failure if function pointers
                 // and data pointers have different sizes.
                 // If you get this error, you need to #undef FASTDELEGATE_USESTATICFUNCTIONHACK.
-                BOOST_STATIC_ASSERT_MSG(sizeof(GenericClass *)==sizeof(function_to_bind), "CantUseEvilMethod");
+                BOOST_STATIC_ASSERT(sizeof(GenericClass *)==sizeof(function_to_bind));
                 m_pthis = horrible_cast<GenericClass *>(function_to_bind);
                 // MSVC, SunC++ and DMC accept the following (non-standard) code:
 //		m_pthis = static_cast<GenericClass *>(static_cast<void *>(function_to_bind));
@@ -792,7 +792,7 @@ public:
                 // Ensure that there's a compilation failure if function pointers
                 // and data pointers have different sizes.
                 // If you get this error, you need to #undef FASTDELEGATE_USESTATICFUNCTIONHACK.
-                BOOST_STATIC_ASSERT_MSG(sizeof(UnvoidStaticFuncPtr)==sizeof(this), "CantUseEvilMethod");
+                BOOST_STATIC_ASSERT(sizeof(UnvoidStaticFuncPtr)==sizeof(this));
                 return horrible_cast<UnvoidStaticFuncPtr>(this);
         }
 #endif // !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
