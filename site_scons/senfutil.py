@@ -123,7 +123,7 @@ The environment 'env' is updated in the following way:
         if os.path.isdir(os.path.join(path, 'build')):
             buildsubdirs = [
                 os.path.join('build', d.name)
-                for d in env.Glob('%s/build/${SYS_ISSUE}-${SYS_MACHINE}-*' % sconspath) ] + [ '' ]
+                for d in env.Glob('%s/build/${SYS_OS}-${SYS_MACHINE}-*' % sconspath) ] + [ '' ]
         else:
             buildsubdirs = [ '' ]
         for flavor in try_flavors:
@@ -178,8 +178,8 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False, vars
     # For a non-system installed senf, we add library and include search path here
     if not env.get('SENFSYSLAYOUT', True):
         env.Append(
-            CPPPATH       = [ '$SENFINCDIR' ],
-            LIBPATH       = [ '$SENFDIR' ],
+            CPPPATH       = [ '$SENFINCDIR', '$SENFBUILDDIR' ],
+            LIBPATH       = [ '$SENFBUILDDIR' ],
         )
 
     env.Replace(
@@ -281,12 +281,18 @@ def ParseDefaultArguments(env, *extraArgs):
     if env['debug_final']:
         env['final'] = True
 
-    issue = re.sub(r'\\\w', '', open('/etc/issue').readline()).strip().lower().replace(' ', '_').replace('/', '_')
+    issue = re.sub(r'\\\w', '', open('/etc/issue').readline()).strip().lower() \
+            .replace(' ', '_') \
+            .replace('/', '_')
+
+    distid = os.popen('lsb_release -s -i').read().strip().lower()
+    distversion = os.popen('lsb_release -s -c').read().strip().lower()
     env.Replace(
         BUILD_TYPE = build_type,
         SYS_ISSUE = issue,
+        SYS_OS = '%s-%s' % (distid, distversion) if distid and distversion else issue,
         SYS_MACHINE = platform.machine(),
-        VARIANT    = '%s-%s-%s' % (issue, platform.machine(), build_type)
+        VARIANT    = '$SYS_OS-$SYS_MACHINE-$BUILD_TYPE'
     )
 
 def DefaultOptions(env):
