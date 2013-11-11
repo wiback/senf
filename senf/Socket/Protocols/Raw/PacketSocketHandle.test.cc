@@ -32,7 +32,6 @@
 //#include "PacketSocketHandle.test.ih"
 
 // Custom includes
-#include <iostream>
 #include <unistd.h>
 #include "PacketSocketHandle.hh"
 #include "TunTapSocketHandle.hh"

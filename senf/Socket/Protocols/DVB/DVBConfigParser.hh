@@ -31,10 +31,7 @@
 #define HH_SENF_Socket_Protocols_DVB_DVBConfigParser_ 1
 
 #include <string>
-#include <vector>
 #include <map>
-#include <iostream>
-#include <sstream>
 #include <fstream>
 #include <boost/tokenizer.hpp>
 #include <linux/dvb/frontend.h>

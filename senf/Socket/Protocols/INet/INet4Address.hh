@@ -32,7 +32,6 @@
 #define HH_SENF_Socket_Protocols_INet_INet4Address_ 1
 
 // Custom includes
-#include <iostream>
 #include <string>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>

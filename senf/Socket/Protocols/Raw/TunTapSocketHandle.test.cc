@@ -32,7 +32,6 @@
 //#include "TunTapSocketHandle.test.ih"
 
 // Custom includes
-#include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
 

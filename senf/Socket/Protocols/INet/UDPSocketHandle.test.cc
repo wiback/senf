@@ -38,7 +38,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <iostream>
 #include "UDPSocketHandle.hh"
 #include "net.test.hh"
 

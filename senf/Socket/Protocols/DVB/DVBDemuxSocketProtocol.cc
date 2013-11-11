@@ -33,7 +33,6 @@
 
 // Custom includes
 #include <sys/socket.h>
-#include <iostream>
 #include <string>
 #include <sys/ioctl.h>
 #include <linux/sockios.h>

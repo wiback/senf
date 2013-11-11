@@ -63,7 +63,6 @@ prefix_ bool senf::ppi::LLSocketWriter::operator()(Handle & handle,
             // TODO: The below might not be the best solution for all use cases, but it's ok for WiBACK 
             // Pretend that we have written out such frames
             return true;
-            break;
         case EAGAIN:
         case ENOBUFS:
             // According to the man page this should not happen, since packets are just silently being dropped.
@@ -75,7 +74,6 @@ prefix_ bool senf::ppi::LLSocketWriter::operator()(Handle & handle,
             // sockets will return this error on connect() and not on write(). Therefore we can
             // unconditionally ignore this error here.
             return false;
-            break;
         default:
             SENF_THROW_SYSTEM_EXCEPTION("::write");
         }

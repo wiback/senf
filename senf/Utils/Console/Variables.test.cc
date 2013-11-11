@@ -32,7 +32,6 @@
 //#include "Variables.test.ih"
 
 // Custom includes
-#include <iostream>
 #include <sstream>
 #include "Console.hh"
 

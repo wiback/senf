@@ -32,7 +32,6 @@
 #define IH_SENF_senf_Packets_PacketImpl_ 1
 
 // Custom includes
-#include <iostream>
 #include <map>
 #include <string>
 #include <ext/functional>

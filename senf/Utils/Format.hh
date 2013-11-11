@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <limits>
-#include <iostream>
+#include <ostream>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_signed.hpp>
 #include <boost/type_traits/is_unsigned.hpp>

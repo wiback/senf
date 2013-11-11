@@ -32,7 +32,6 @@
 //#include "Packet.test.ih"
 
 // Custom includes
-#include <iostream>
 #include <sstream>
 #include <boost/static_assert.hpp>
 #include <boost/cstdint.hpp>

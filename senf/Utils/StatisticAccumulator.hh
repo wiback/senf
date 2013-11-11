@@ -35,7 +35,6 @@
 // Custom includes
 #include <math.h>
 #include <ostream>
-#include <boost/cstdint.hpp>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {

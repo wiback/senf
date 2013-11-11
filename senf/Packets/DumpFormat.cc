@@ -32,7 +32,6 @@
 //#include "DumpFormat.ih"
 
 // Custom includes
-#include <iostream>
 #include <algorithm>
 #include <senf/config.hh>
 

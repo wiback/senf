@@ -31,7 +31,6 @@
 #define HH_SENF_Socket_Protocols_UN_UNAddressing_ 1
 
 // Custom includes
-#include <iostream>
 #include <string>
 #include <sys/socket.h>
 #include <sys/un.h>

@@ -33,7 +33,6 @@
 #define HH_SENF_Utils_RestrictedInt_ 1
 
 // Custom includes
-#include <iostream>
 #include <boost/operators.hpp>
 #include <senf/Utils/safe_bool.hh>
 

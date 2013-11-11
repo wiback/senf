@@ -77,7 +77,7 @@ namespace senf {
         Thie \ref senf::storage_iterator helper function will convert an iterator to a pointer to
         the same element the iterator is referencing.
 
-        This trait will return \c true for pointers. Additonally it should be configured to return
+        This trait will return \c true for pointers. Additionally it should be configured to return
         true for all standard containers which obey above implementation restrictions. This
         typically includes \c std::vector and \c std::basic_string.
 

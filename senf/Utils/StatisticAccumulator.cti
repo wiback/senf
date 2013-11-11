@@ -74,7 +74,7 @@ prefix_ float senf::StatisticAccumulator<T>::last_avg()
 }
 
 template <class T>
-prefix_ boost::uint32_t senf::StatisticAccumulator<T>::count()
+prefix_ unsigned senf::StatisticAccumulator<T>::count()
     const
 {
     return cnt_;

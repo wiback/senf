@@ -31,7 +31,6 @@
 #include "PacketRegistry.ih"
 
 // Custom includes
-#include <iostream>
 #include <iomanip>
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/Format.hh>

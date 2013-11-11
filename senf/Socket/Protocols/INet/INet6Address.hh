@@ -32,7 +32,6 @@
 #define HH_SENF_Socket_Protocols_INet_INet6Address_ 1
 
 // Custom includes
-#include <iostream>
 #include <string>
 #include <netinet/in.h>
 #include <boost/cstdint.hpp>

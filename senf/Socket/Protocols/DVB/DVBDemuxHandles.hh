@@ -32,16 +32,14 @@
 #define HH_SENF_Socket_Protocols_DVB_DVBDemuxHandles_ 1
 
 // Custom includes
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/shared_ptr.hpp>
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
 #include <senf/Socket/ReadWritePolicy.hh>
 #include <senf/Socket/ProtocolClientSocketHandle.hh>
 #include "DVBDemuxSocketProtocol.hh"
 
-//#include "DVBDemuxHandles.mpp"
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
-#include <iostream>
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {

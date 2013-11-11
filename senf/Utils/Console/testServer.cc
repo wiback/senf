@@ -29,7 +29,6 @@
     \brief testServer implementation */
 
 // Custom includes
-#include <iostream>
 #include <senf/Utils/Console.hh>
 #include <senf/Scheduler/Scheduler.hh>
 
