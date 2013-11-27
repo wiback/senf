@@ -35,7 +35,7 @@
 #include <ostream>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/typeof/typeof.hpp>
-#include <senf/Utils/Cpp11Support.hh>
+#include <senf/Utils/Cpp11Support/features.hh>
 #include "Parse.hh"
 
 #include "Traits.ih"

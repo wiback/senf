@@ -67,7 +67,7 @@ template < mpp_TemplateParameters() >
 prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::
 ProtocolClientSocketHandle( mpp_MethodParameters() )
     : ClientSocketHandle<typename SocketProtocol::Policy>(
-            unique_or_auto_ptr<senf::SocketBody>(new ProtocolSocketBody<SocketProtocol>(false)))
+            SENF_SMART_PTR<senf::SocketBody>(new ProtocolSocketBody<SocketProtocol>(false)))
 {
     this->protocol().init_client( mpp_CallParameters() );
 }

@@ -73,7 +73,7 @@ prefix_ bool senf::MACAddress::multicast()
 prefix_ bool senf::MACAddress::broadcast()
     const
 {
-    using  boost::lambda::_1;
+    using boost::lambda::_1;
     return std::find_if(begin(),end(), _1 != 0xffu) == end();
 }
 
@@ -139,11 +139,19 @@ prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
     return mac == eui64;
 }
 
-prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac)
+prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) SENF_NOEXCEPT
 {
-    return boost::hash<boost::uint64_t>().operator()(
-           (boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) |
-            boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&mac[4])) );
+    if (sizeof(std::size_t) == sizeof(boost::uint64_t))
+        return boost::hash<boost::uint64_t>().operator()(
+                (boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) |
+                 boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&mac[4])) );
+    if (sizeof(std::size_t) == sizeof(boost::uint32_t))
+        return boost::hash<boost::uint32_t>().operator()(
+                *reinterpret_cast<boost::uint32_t const *>(&mac[2]) );
+    BOOST_STATIC_ASSERT_MSG(
+            sizeof(std::size_t) != sizeof(boost::uint64_t) ||
+            sizeof(std::size_t) != sizeof(boost::uint32_t),
+            "unknown sizeof(std::size_t)");
 }
 
 

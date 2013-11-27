@@ -522,7 +522,7 @@ namespace senf {
 
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);
-        explicit ClientSocketHandle(unique_or_auto_ptr<SocketBody> body);
+        explicit ClientSocketHandle(SENF_SMART_PTR<SocketBody> body);
 
     private:
         friend class senf::ServerSocketHandle<SPolicy>;

@@ -129,8 +129,8 @@ prefix_ senf::ClientSocketHandle<SPolicy>::ClientSocketHandle(FileHandle other, 
 
 template <class SPolicy>
 prefix_
-senf::ClientSocketHandle<SPolicy>::ClientSocketHandle(unique_or_auto_ptr<SocketBody> body)
-    : SocketHandle<SPolicy>(move_or_noop(body))
+senf::ClientSocketHandle<SPolicy>::ClientSocketHandle(SENF_SMART_PTR<SocketBody> body)
+    : SocketHandle<SPolicy>(SENF_MOVE(body))
 {}
 
 #ifndef DOXYGEN

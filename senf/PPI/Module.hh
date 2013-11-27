@@ -334,7 +334,7 @@ namespace module {
         void unregisterConnector(connector::Connector & connector);
         void unregisterEvent(EventDescriptor & event);
 
-        RouteBase & addRoute(unique_or_auto_ptr<RouteBase> route);
+        RouteBase & addRoute(SENF_SMART_PTR<RouteBase> route);
 
         typedef std::vector<connector::Connector *> ConnectorRegistry;
         ConnectorRegistry connectorRegistry_;

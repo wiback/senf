@@ -36,7 +36,7 @@
 #include "SocketHandle.ih"
 
 // Custom includes
-#include <senf/Utils/Cpp11Support.hh>
+#include <senf/Utils/Cpp11Support/smart_ptr.hh>
 #include "FileHandle.hh"
 #include "SocketPolicy.hh"
 
@@ -163,7 +163,7 @@ namespace senf {
                                              \returns the \a Facet protocol facet of this socket */
 
     protected:
-        explicit SocketHandle(unique_or_auto_ptr<SocketBody> body);
+        explicit SocketHandle(SENF_SMART_PTR<SocketBody> body);
                                         ///< Initialize SocketHandle providing the protocol
                                         /**< \param protocol Protocol class of the protocol
                                                  implemented by this socket handle

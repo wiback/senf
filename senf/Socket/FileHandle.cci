@@ -239,7 +239,7 @@ prefix_ senf::FileHandle::~FileHandle()
         body().destroyClose();
 }
 
-prefix_  senf::FileHandle::FileHandle(unique_or_auto_ptr<FileBody> body)
+prefix_  senf::FileHandle::FileHandle(SENF_SMART_PTR<FileBody> body)
     : body_(body.release())
 {}
 

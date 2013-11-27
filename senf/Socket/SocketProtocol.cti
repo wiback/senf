@@ -53,19 +53,19 @@ senf::ConcreteSocketProtocol<SocketPolicy,Self>::policy()
 }
 
 template <class SocketPolicy, class Self>
-prefix_ unique_or_auto_ptr<senf::SocketBody>
+prefix_ SENF_SMART_PTR<senf::SocketBody>
 senf::ConcreteSocketProtocol<SocketPolicy,Self>::clone(bool isServer)
     const
 {
-    return unique_or_auto_ptr<SocketBody>(new ProtocolSocketBody<Self>(isServer));
+    return SENF_SMART_PTR<SocketBody>(new ProtocolSocketBody<Self>(isServer));
 }
 
 template <class SocketPolicy, class Self>
-prefix_ unique_or_auto_ptr<senf::SocketBody>
+prefix_ SENF_SMART_PTR<senf::SocketBody>
 senf::ConcreteSocketProtocol<SocketPolicy,Self>::clone(int fd, bool isServer)
     const
 {
-    return unique_or_auto_ptr<SocketBody>(new ProtocolSocketBody<Self>(isServer, fd));
+    return SENF_SMART_PTR<SocketBody>(new ProtocolSocketBody<Self>(isServer, fd));
 }
 
 template <class SocketPolicy, class Self>

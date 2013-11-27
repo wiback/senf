@@ -53,8 +53,8 @@ ServerSocketHandle(ServerSocketHandle<OtherPolicy> other,
 
 template <class SPolicy>
 prefix_  senf::ServerSocketHandle<SPolicy>::
-ServerSocketHandle(unique_or_auto_ptr<SocketBody> body)
-    : SocketHandle<SPolicy>(move_or_noop(body))
+ServerSocketHandle(SENF_SMART_PTR<SocketBody> body)
+    : SocketHandle<SPolicy>(SENF_MOVE(body))
 {}
 
 template <class SPolicy>

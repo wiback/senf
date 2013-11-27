@@ -25,45 +25,21 @@
 // Contributor(s):
 //   Thorsten Horstmann <tho@berlios.de>
 
-#ifndef HH_SENF_Utils_Cpp11Support_
-#define HH_SENF_Utils_Cpp11Support_ 1
+#ifndef HH_SENF_Utils_Cpp11Support_smart_ptr_
+#define HH_SENF_Utils_Cpp11Support_smart_ptr_ 1
 
 // Custom includes
 #include <memory>
-#include <utility>
-#include <boost/config.hpp>
 #include <senf/autoconf.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef __clang__
-#  if __has_feature(cxx_decltype)
-#    define SENF_DECLTYPE decltype
-#  else
-#    define SENF_DECLTYPE typeof
-#  endif
-#else
-#  ifdef BOOST_HAS_DECLTYPE
-#    define SENF_DECLTYPE decltype
-#  else
-#    define SENF_DECLTYPE typeof
-#  endif
-#endif
-
 #ifdef HAVE_STD__UNIQUE_PTR_VOID_
-#  define unique_or_auto_ptr std::unique_ptr
-#  define move_or_noop(t)    std::move(t)
+#  define SENF_SMART_PTR  std::unique_ptr
+#  define SENF_MOVE(t)    std::move(t)
 #else
-#  define unique_or_auto_ptr std::auto_ptr
-#  define move_or_noop(t)    t
-#endif
-
-#ifdef SENF_CXX11_ENABLED
-#  define SENF_NULLPTR nullptr
-#  define SENF_CONSTEXPR constexpr
-#else
-#  define SENF_NULLPTR NULL
-#  define SENF_CONSTEXPR
+#  define SENF_SMART_PTR  std::auto_ptr
+#  define SENF_MOVE(t)    t
 #endif
 
 #ifdef SENF_CXX11_ENABLED
@@ -102,7 +78,4 @@ namespace senf {
 #endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-//#include "Cpp11Support.cci"
-//#include "Cpp11Support.ct"
-//#include "Cpp11Support.cti"
 #endif

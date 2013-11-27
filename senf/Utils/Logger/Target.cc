@@ -367,7 +367,7 @@ prefix_ void senf::log::Target::consoleUnroute(detail::LogParameters const & pm,
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::log::detail::TargetRegistry
 
-prefix_ void senf::log::detail::TargetRegistry::dynamicTarget(unique_or_auto_ptr<Target> target)
+prefix_ void senf::log::detail::TargetRegistry::dynamicTarget(SENF_SMART_PTR<Target> target)
 {
     namespace fty = console::factory;
 

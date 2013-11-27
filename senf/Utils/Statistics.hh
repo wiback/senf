@@ -41,9 +41,9 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/signals2.hpp>
 #include <senf/Utils/Console/ScopedDirectory.hh>
+#include <senf/Utils/Cpp11Support/smart_ptr.hh>
 #include "StatisticAccumulator.hh"
 #include "Exception.hh"
-#include "Cpp11Support.hh"
 
 //#include "Statistics.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ namespace senf {
             template <class Target> Owner & connect(Target & target,
                                                     std::string label="") const;
                                         ///< Connect externally managed target
-            template <class PTarget> Owner & connect(unique_or_auto_ptr<PTarget> target,
+            template <class PTarget> Owner & connect(SENF_SMART_PTR<PTarget> target,
                                                      std::string label="") const;
                                         ///< Connect internally managed target
             Owner & noconnect() const;  ///< Don't connect the output
@@ -302,7 +302,7 @@ namespace senf {
             struct Target : public TargetBase
             {
                 boost::scoped_ptr<PTarget> target_;
-                Target(unique_or_auto_ptr<PTarget> target, std::string const & label)
+                Target(SENF_SMART_PTR<PTarget> target, std::string const & label)
                     : TargetBase (label), target_ (target.release()) {}
                 explicit Target(std::string const & label)
                     : TargetBase (label), target_ (0) {}

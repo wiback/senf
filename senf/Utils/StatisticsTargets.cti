@@ -47,26 +47,26 @@ StatisticsLogger(std::string const & label_)
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <class Stream>
-prefix_ unique_or_auto_ptr< senf::detail::StatisticsLogger<Stream,void,void> >
+prefix_ SENF_SMART_PTR< senf::detail::StatisticsLogger<Stream,void,void> >
 senf::StatisticsLogger(std::string const & label)
 {
-    return unique_or_auto_ptr< detail::StatisticsLogger<Stream,void,void> >(
+    return SENF_SMART_PTR< detail::StatisticsLogger<Stream,void,void> >(
         new detail::StatisticsLogger<Stream,void,void>(label));
 }
 
 template <class Stream, class Area>
-prefix_ unique_or_auto_ptr< senf::detail::StatisticsLogger<Stream,Area,void> >
+prefix_ SENF_SMART_PTR< senf::detail::StatisticsLogger<Stream,Area,void> >
 senf::StatisticsLogger(std::string const & label)
 {
-    return unique_or_auto_ptr< detail::StatisticsLogger<Stream,Area,void> >(
+    return SENF_SMART_PTR< detail::StatisticsLogger<Stream,Area,void> >(
         new detail::StatisticsLogger<Stream,Area,void>(label));
 }
 
 template <class Stream, class Area, class Level>
-prefix_ unique_or_auto_ptr< senf::detail::StatisticsLogger<Stream,Area,Level> >
+prefix_ SENF_SMART_PTR< senf::detail::StatisticsLogger<Stream,Area,Level> >
 senf::StatisticsLogger(std::string const & label)
 {
-    return unique_or_auto_ptr< detail::StatisticsLogger<Stream,Area,Level> >(
+    return SENF_SMART_PTR< detail::StatisticsLogger<Stream,Area,Level> >(
         new detail::StatisticsLogger<Stream,Area,Level>(label));
 }
 

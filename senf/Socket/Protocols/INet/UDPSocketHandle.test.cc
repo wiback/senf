@@ -107,10 +107,10 @@ SENF_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
         senf::UDPv4ClientSocketHandle sock;
         SENF_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress(localhost4str(1))) );
         BOOST_CHECK( sock.local() == senf::INet4SocketAddress(localhost4str(1)) );
-        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
-        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
+        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2560) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2560 );
+        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2560) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2560 );
         SENF_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress(localhost4str(0)),
                                            std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );

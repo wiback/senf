@@ -200,7 +200,7 @@ namespace senf {
 
     protected:
         ServerSocketHandle(FileHandle other, bool isChecked);
-        explicit ServerSocketHandle(unique_or_auto_ptr<SocketBody> body);
+        explicit ServerSocketHandle(SENF_SMART_PTR<SocketBody> body);
 
     private:
 

@@ -117,6 +117,17 @@ SENF_AUTO_UNIT_TEST(macAddress)
     BOOST_CHECK_EQUAL( senf::EUI64::from_mac(mac), mac );
 }
 
+#ifdef SENF_CXX11_ENABLED
+#include <unordered_map>
+
+SENF_AUTO_UNIT_TEST(macAddress_std_hash)
+{
+    std::unordered_map<senf::MACAddress, int> map;
+    map.insert( std::make_pair(senf::MACAddress::Broadcast, 42));
+}
+
+#endif
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

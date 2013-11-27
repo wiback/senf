@@ -63,7 +63,7 @@
 #define HH_SENF_Socket_FileHandle_ 1
 
 // Custom includes
-#include <senf/Utils/Cpp11Support.hh>
+#include <senf/Utils/Cpp11Support/smart_ptr.hh>
 #include <senf/Utils/safe_bool.hh>
 #include <senf/Scheduler/ClockService.hh>
 
@@ -198,7 +198,7 @@ namespace senf {
         static FileHandle cast_dynamic(FileHandle handle); /**< \internal */
 
     protected:
-        explicit FileHandle(unique_or_auto_ptr<FileBody> body);
+        explicit FileHandle(SENF_SMART_PTR<FileBody> body);
                                     ///< create new FileHandle instance
                                     /**< The FileHandle instance will take over ownership over the
                                        given FileBody instance which must have been allocated using

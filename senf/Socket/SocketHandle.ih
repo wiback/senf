@@ -135,8 +135,8 @@ namespace senf {
 
         void state(SocketStateMap & map, unsigned lod);
 
-        unique_or_auto_ptr<SocketBody> clone(bool isServer) const;
-        unique_or_auto_ptr<SocketBody> clone(int fd, bool isServer) const;
+        SENF_SMART_PTR<SocketBody> clone(bool isServer) const;
+        SENF_SMART_PTR<SocketBody> clone(int fd, bool isServer) const;
 
     private:
         virtual void v_close();         ///< Close socket

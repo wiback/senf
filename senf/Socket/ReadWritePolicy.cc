@@ -59,7 +59,7 @@ prefix_ unsigned senf::ReadablePolicy::read(FileHandle & handle, char * buffer,
                 rv = 0;
                 break;
             default:
-                SENF_THROW_SYSTEM_EXCEPTION(":::read");
+                SENF_THROW_SYSTEM_EXCEPTION("::read");
             }
     } while (rv<0);
     return rv;

@@ -131,10 +131,10 @@ SENF_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK( sock.peer() == senf::INet4SocketAddress(localhost4str(0)) );
         BOOST_CHECK( sock.local() == senf::INet4SocketAddress(localhost4str(1)) );
         BOOST_CHECK( sock.blocking() );
-        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
-        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
+        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2560) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2560 );
+        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2560) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2560 );
         SENF_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), std::string("TEST-WRITE") );
         BOOST_CHECK( !sock.eof() );
@@ -202,10 +202,10 @@ SENF_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
         BOOST_CHECK( sock.peer() == senf::INet6SocketAddress(localhost6str(0)) );
         BOOST_CHECK( sock.local() == senf::INet6SocketAddress(localhost6str(1)) );
         BOOST_CHECK( sock.blocking() );
-        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
-        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
+        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2560) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2560 );
+        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2560) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2560 );
         SENF_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), std::string("TEST-WRITE") );
         // this fails with ENOFILE ... why ????

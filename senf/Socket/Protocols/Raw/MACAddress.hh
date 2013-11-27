@@ -37,6 +37,7 @@
 #include <boost/array.hpp>
 #include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Tags.hh>
+#include <senf/Utils/Cpp11Support/features.hh>
 
 //#include "MACAddress.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,8 +145,20 @@ namespace senf {
     bool operator==(MACAddress const & mac, EUI64 const & eui64);
     bool operator==(EUI64 const & eui64, MACAddress const & mac);
    
-    std::size_t hash_value(MACAddress const & mac);
+    std::size_t hash_value(MACAddress const & mac) SENF_NOEXCEPT;
+
 }
+
+#ifdef SENF_CXX11_ENABLED
+namespace std {
+    template<> struct hash<senf::MACAddress>
+    {
+        std::size_t operator()(senf::MACAddress const & mac) const SENF_NOEXCEPT {
+            return senf::hash_value(mac);
+        }
+    };
+}
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "MACAddress.cci"
