@@ -1,11 +1,24 @@
 # -*- python -*-
 
-import os.path, glob
+import glob
+import os.path
 
 Import('env')
 
 ###########################################################################
 # Custom configuration checks
+
+@env.ConfTest()
+def CheckToolchain(context):
+    context.Message("Checking wether we can compile and run a simple program... ")
+    ret,_ = context.TryRun("""
+int main()
+{
+    return 0;
+}
+""", ".cc")
+    context.Result(ret)
+    return ret
 
 @env.ConfTest()
 def CheckSTLCopyN(context):
@@ -99,6 +112,12 @@ if env['cxx11']:
         else:
             if not checkCompiler(env, conf, "clang++", 'clang' '3.3', False):
                 env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
+
+if conf.CheckCXXVersion(min='4.7', fail=False):
+    conf.env.Replace(HAVE_GCC_47 = True)
+
+if not conf.CheckToolchain():
+    conf.env.Fail('C++ compiler failed, see config.log for details')
 
 # Boost
 if env['cxx11']:
