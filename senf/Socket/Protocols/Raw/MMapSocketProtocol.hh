@@ -49,7 +49,7 @@ namespace senf {
         void terminate() const;
 
     protected:
-        void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen) const;
+        void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen, unsigned reserve) const;
         void close_mmap() const;
         void terminate_mmap() const;
 

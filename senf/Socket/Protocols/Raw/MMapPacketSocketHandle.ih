@@ -41,43 +41,92 @@
 namespace senf {
 namespace detail {
 
-    template <class Protocol,
-              bool MMapBoth = ReadPolicyIs<typename Protocol::Policy, QueueReadPolicy>::value
-                  && WritePolicyIs<typename Protocol::Policy, QueueWritePolicy>::value>
-    struct ConnectedMMapPacketSocketProtocol_CallInit
-    {
-        static void init_client(Protocol const * protocol, std::string iface, unsigned rxqlenORqlen,
-                                unsigned txqlenORframeSize);
-    };
-
-    template <class Protocol>
-    struct ConnectedMMapPacketSocketProtocol_CallInit<Protocol, false>
-    {
-        static void init_client(Protocol const * protocol, std::string iface, unsigned rxqlenORqlen,
-                                unsigned txqlenORframeSize);
-    };
-
     template <class Policy,
               bool IsMMapReadable=ReadPolicyIs<Policy, QueueReadPolicy>::value,
               bool IsMMapWriteable=WritePolicyIs<Policy, QueueWritePolicy>::value>
     struct ConnectedMMapPacketSocketProtocol_Bases
-        : public MMapSocketProtocol,
+        : public DatagramSocketProtocol,
+          public BSDSocketProtocol,
+          public MMapSocketProtocol,
           public MMapReadableSocketProtocol,
           public LinuxPacketSocketProtocol
-    {};
+    {
+        void init_client(std::string iface,
+                         unsigned qlen,
+                         unsigned frameSize=(1u << SENF_PACKET_VECTOR_SIZE_INDEX),
+                         typename LinuxPacketSocketProtocol::SocketType type = LinuxPacketSocketProtocol::RawSocket,
+                         int protocol = -1,
+                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM) const;
+                                        ///< Create packet socket
+                                        /**< The new socket will receive all packets of the given
+                                             IEEE 802.3 \a protocol. The socket will receive all
+                                             packets, if \a protocol is -1.
+
+                                             If \a type is \c RawSocket, the packet will include the
+                                             link-level header (the Ethernet header). Sent packets
+                                             must already include a well formed ll header.
+
+                                             If \a type is \c DatagramSocket, the link level header
+                                             will not be part of the packet data. The ll header will
+                                             be removed from received packets and a correct ll
+                                             header will be created on sent packets.
+
+                                             \param[in] iface interface to bind to
+                                             \param[in] qlen number of frames in rx queue
+                                             \param[in] txqlen number of frames in tx queue
+                                             \param[in] frameSize size of single frame in queue
+                                             \param[in] type socket type
+                                             \param[in] protocol IEEE 802.3 protocol number */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+                                             constructor */
+    };
+
+    template <class Policy>
+    struct ConnectedMMapPacketSocketProtocol_Bases<Policy, true, false>
+        : public DatagramSocketProtocol,
+          public BSDSocketProtocol,
+          public MMapSocketProtocol,
+          public MMapReadableSocketProtocol,
+          public LinuxPacketSocketProtocol
+    {
+        void init_client(std::string iface,
+                         unsigned qlen,
+                         unsigned frameSize=(1u << SENF_PACKET_VECTOR_SIZE_INDEX),
+                         typename LinuxPacketSocketProtocol::SocketType type = LinuxPacketSocketProtocol::RawSocket,
+                         int protocol = -1,
+                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM) const;
+    };
 
     template <class Policy>
     struct ConnectedMMapPacketSocketProtocol_Bases<Policy, false, true>
-        : public MMapSocketProtocol,
+        : public DatagramSocketProtocol,
+          public BSDSocketProtocol,
+          public MMapSocketProtocol,
           public LinuxPacketSocketProtocol,
           public ReadableLinuxPacketProtocol
-    {};
+    {
+        void init_client(std::string iface,
+                         unsigned qlen,
+                         unsigned frameSize=(1u << SENF_PACKET_VECTOR_SIZE_INDEX),
+                         typename LinuxPacketSocketProtocol::SocketType type = LinuxPacketSocketProtocol::RawSocket,
+                         int protocol = -1,
+                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM) const;
+    };
 
     template <class Policy>
     struct ConnectedMMapPacketSocketProtocol_Bases<Policy, false, false>
-        : public LinuxPacketSocketProtocol,
+        : public DatagramSocketProtocol,
+          public BSDSocketProtocol,
+          public LinuxPacketSocketProtocol,
           public ReadableLinuxPacketProtocol
-    {};
+    {
+        void init_client(std::string iface,
+                         unsigned frameSize=(1u << SENF_PACKET_VECTOR_SIZE_INDEX),
+                         typename LinuxPacketSocketProtocol::SocketType type = LinuxPacketSocketProtocol::RawSocket,
+                         int protocol = -1,
+                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM) const;
+    };
 
 }}
 

@@ -226,7 +226,7 @@ SENF_AUTO_UNIT_TEST(connectedMMapPacketSocketHandle)
     senf::TapSocketHandle tap;
     senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
     tapCtl.up();
-    senf::ConnectedMMapPacketSocketHandle pk (tap.protocol().ifaceName(), 128, 128);
+    senf::ConnectedMMapPacketSocketHandle pk (tap.protocol().ifaceName(), 128);
 
     runTest(tap, pk);
 }

@@ -93,8 +93,6 @@ namespace senf {
         : public ConcreteSocketProtocol<
               typename MakeSocketPolicy<ConnectedMMapPacket_Policy, P1, P2>::policy,
               ConnectedMMapPacketSocketProtocol<P1, P2> >,
-          public DatagramSocketProtocol,
-          public BSDSocketProtocol,
           public detail::ConnectedMMapPacketSocketProtocol_Bases<
               typename MakeSocketPolicy<ConnectedMMapPacket_Policy, P1, P2>::policy>
     {
@@ -103,53 +101,7 @@ namespace senf {
         typedef typename detail::ConnectedMMapPacketSocketProtocol_Bases<
             typename MakeSocketPolicy<ConnectedMMapPacket_Policy, P1, P2>::policy> Base;
 
-        ///\name Constructors
-        //\{
-
-        void init_client(std::string iface, unsigned rxqlen, unsigned txqlen,
-                         unsigned frameSize, typename Base::SocketType type = Base::RawSocket,
-                         int protocol = -1) const;
-                                        ///< Create packet socket
-                                        /**< The new socket will receive all packets of the given
-                                             IEEE 802.3 \a protocol. The socket will receive all
-                                             packets, if \a protocol is -1.
-
-                                             If \a type is \c RawSocket, the packet will include the
-                                             link-level header (the Ethernet header). Sent packets
-                                             must already include a well formed ll header.
-
-                                             If \a type is \c DatagramSocket, the link level header
-                                             will not be part of the packet data. The ll header will
-                                             be removed from received packets and a correct ll
-                                             header will be created on sent packets.
-
-                                             \param[in] iface interface to bind to
-                                             \param[in] rxqlen number of frames in rx queue
-                                             \param[in] txqlen number of frames in tx queue
-                                             \param[in] frameSize size of single frame in queue
-                                             \param[in] type socket type
-                                             \param[in] protocol IEEE 802.3 protocol number */
-                                        /**< \note This member is implicitly called from the
-                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
-                                             constructor */
-
-        void init_client(std::string iface, unsigned qlen, unsigned frameSize,
-                         typename Base::SocketType type, int protocol = -1) const;
-
-        void init_client(std::string iface, unsigned rxqlenORqlen, unsigned txqlenORframeSize)
-            const;
-
-        void init_client(std::string iface, unsigned qlen)
-            const;
-
-        void init_client(std::string iface, typename Base::SocketType type = Base::RawSocket, int protocol = -1)
-            const;
-
-        //\}
-
     private:
-        void do_init_client(std::string iface, unsigned rxqlen, unsigned txqlen, unsigned frameSize,
-                            typename Base::SocketType type, int protocol) const;
     };
 
     typedef ProtocolClientSocketHandle<

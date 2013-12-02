@@ -38,6 +38,7 @@
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
 #include <senf/Scheduler/EventHook.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include "QueueingSocketSink.hh"
 #include "Module.hh"
 #include "Connectors.hh"
@@ -53,6 +54,7 @@ namespace ppi {
     struct QueueBufferAnnotation
     {
         QueueReadPolicy::Buffer const * value;
+        QueueReadPolicy::Buffer const * operator->() const;
     };
 
     std::ostream & operator<<(std::ostream & os, QueueBufferAnnotation const & annotation);
@@ -153,6 +155,20 @@ namespace module {
         unsigned burst_;
         unsigned burstMax_;
 #endif
+    };
+
+    class QueueEthVLanFilter
+        : public Module
+    {
+        SENF_PPI_MODULE(QueueEthVLanFilter);
+    public:
+        connector::PassiveInput<EthernetPacket> input;
+        connector::ActiveOutput<EthernetPacket> output;
+
+        QueueEthVLanFilter();
+
+    private:
+        void request();
     };
 }}}
 

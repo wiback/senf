@@ -59,8 +59,6 @@ namespace senf {
         \li \c begin(), \c end(), \c size() and \c empty() provide access to the active frame data
         \li \c frameBegin(), \c frameEnd() and \c frameSize() provide access to the maximum space
             usable for packet data
-        \li \c spaceBegin(), \c spaceEnd() and \c spaceSize() provide access to additional space
-            which is available for use but will overwrite any header information if used
      */
     class SocketQueueBuffer
     {
@@ -84,28 +82,30 @@ namespace senf {
         const_iterator frameEnd() const;
         size_type frameSize() const;
 
-        iterator spaceBegin();
-        iterator spaceEnd();
-        const_iterator spaceBegin() const;
-        const_iterator spaceEnd() const;
-        size_type spaceSize() const;
-        size_type spaceFrameOffset() const;
+        unsigned dataOffset() const;
 
         senf::ClockService::clock_type timestamp() const;
                                         ///< return packet receive timestamp
         senf::LLSocketAddress address() const;
                                         ///< return incoming interface address
+        boost::optional<unsigned> vlan() const;
+                                        ///< return the preprocessed VLAN TCI if any
 
-        void resize(size_type sz);      ///< resize active packet data to given size
+        void resize(size_type sz
+#ifdef SENF_ENABLE_TPACKET_OFFSET
+                    , int offset=-1
+#endif
+            );      ///< resize active packet data to given size
 
     private:
-        SocketQueueBuffer(unsigned char * b, unsigned char * e);
+        SocketQueueBuffer(unsigned char * b, unsigned char * e, unsigned hdrlen);
 
         struct ::tpacket2_hdr & hdr();
         struct ::tpacket2_hdr const & hdr() const;
 
         unsigned char * b_;
         unsigned char * e_;
+        unsigned hdrlen_;
 
         friend struct QueueReadPolicy;
         friend struct QueueWritePolicy;

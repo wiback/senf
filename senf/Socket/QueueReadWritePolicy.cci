@@ -33,6 +33,7 @@
 // Custom includes
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <senf/Utils/Logger.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,11 +55,12 @@ prefix_ void senf::detail::QueueInfo::inc(unsigned char * & ptr, Queue const & q
 // senf::SocketQueueBuffer
 
 prefix_ senf::SocketQueueBuffer::SocketQueueBuffer()
-    : b_ (0), e_ (0)
+    : b_ (0), e_ (0), hdrlen_ (0)
 {}
 
-prefix_ senf::SocketQueueBuffer::SocketQueueBuffer(unsigned char * b, unsigned char * e)
-    : b_ (b), e_ (e)
+prefix_ senf::SocketQueueBuffer::SocketQueueBuffer(unsigned char * b, unsigned char * e,
+                                                   unsigned hdrlen)
+    : b_ (b), e_ (e), hdrlen_ (hdrlen)
 {}
 
 prefix_ struct ::tpacket2_hdr & senf::SocketQueueBuffer::hdr()
@@ -108,7 +110,7 @@ prefix_ bool senf::SocketQueueBuffer::empty()
 
 prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::frameBegin()
 {
-    return begin();
+    return b_ + hdrlen_;
 }
 
 prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::frameEnd()
@@ -125,7 +127,7 @@ prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::frameSize()
 prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::frameBegin()
     const
 {
-    return begin();
+    return b_ + hdrlen_;
 }
 
 prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::frameEnd()
@@ -134,42 +136,10 @@ prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::frameEn
     return e_;
 }
 
-prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::spaceBegin()
-{
-    return b_
-        + offsetof(struct ::tpacket2_hdr, tp_status)
-        + sizeof(__u32);
-}
-
-prefix_ senf::SocketQueueBuffer::iterator senf::SocketQueueBuffer::spaceEnd()
-{
-    return e_;
-}
-
-prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::spaceSize()
+prefix_ unsigned senf::SocketQueueBuffer::dataOffset()
     const
 {
-    return spaceEnd() - spaceBegin();
-}
-
-prefix_ senf::SocketQueueBuffer::size_type senf::SocketQueueBuffer::spaceFrameOffset()
-    const
-{
-    return begin() - spaceBegin();
-}
-
-prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::spaceBegin()
-    const
-{
-    return b_
-        + offsetof(struct ::tpacket2_hdr, tp_status)
-        + sizeof(__u32);
-}
-
-prefix_ senf::SocketQueueBuffer::const_iterator senf::SocketQueueBuffer::spaceEnd()
-    const
-{
-    return e_;
+    return begin() - frameBegin();
 }
 
 prefix_ senf::ClockService::clock_type senf::SocketQueueBuffer::timestamp()
@@ -181,19 +151,37 @@ prefix_ senf::ClockService::clock_type senf::SocketQueueBuffer::timestamp()
 prefix_ senf::LLSocketAddress senf::SocketQueueBuffer::address()
     const
 {
-    SENF_ASSERT( hdr().tp_mac > TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr)),
+    SENF_ASSERT( hdr().tp_mac > hdrlen_,
             "frame has no address field" );
     senf::LLSocketAddress res;
     ::memcpy(res.sockaddr_p(),
              reinterpret_cast<struct ::sockaddr_ll *>(
-                 b_ + TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr))),
+                 b_ + hdrlen_),
              sizeof(struct  ::sockaddr_ll));
     return res;
 }
 
-prefix_ void senf::SocketQueueBuffer::resize(size_type sz)
+prefix_ boost::optional<unsigned> senf::SocketQueueBuffer::vlan()
+    const
 {
-    SENF_ASSERT( frameBegin() + sz <= frameEnd(), "frame size exceeded" );
+    return hdr().tp_status & TP_STATUS_VLAN_VALID
+        ? boost::optional<unsigned>(hdr().tp_vlan_tci) : boost::none;
+}
+
+prefix_ void senf::SocketQueueBuffer::resize(size_type sz
+#ifdef SENF_ENABLE_TPACKET_OFFSET
+                                             , int offset
+#endif
+)
+{
+#ifdef SENF_ENABLE_TPACKET_OFFSET
+    if (offset == -1)
+        offset = dataOffset();
+#else
+    unsigned offset (dataOffset());
+#endif
+    SENF_ASSERT( frameBegin() + offset + sz <= frameEnd(), "frame size exceeded" );
+    hdr().tp_mac = hdr().tp_net = frameBegin() + offset - b_;
     hdr().tp_len = sz;
 }
 
@@ -207,16 +195,15 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
     for (;;) {
         if ((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL) {
-            Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize);
+            Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize, qi.hdrlen);
             struct ::sockaddr_ll & sa (
                 * reinterpret_cast<struct ::sockaddr_ll *>(
-                    qi.rx.head + TPACKET_ALIGN(sizeof(struct ::tpacket2_hdr))));
+                    qi.rx.head + qi.hdrlen));
             qi.inc(qi.rx.head, qi.rx);
-            if (sa.sll_pkttype >= PACKET_OUTGOING) {
-                if (qi.rx.idle) {
-                    pk.tp_status = TP_STATUS_KERNEL;
+            if (sa.sll_pkttype >= PACKET_OUTGOING || bf.end() > bf.frameEnd()) {
+                pk.tp_status = TP_STATUS_KERNEL;
+                if (qi.rx.idle)
                     qi.rx.tail = qi.rx.head;
-                }
                 continue;
             }
             qi.rx.idle = false;
@@ -273,9 +260,13 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
     detail::QueueInfo & qi (* qinfo(handle));
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
     if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && pk.tp_status == TP_STATUS_AVAILABLE) {
-        pk.tp_len = 0;
-        pk.tp_mac = TPacketHdrOffset;
-        Buffer bf (qi.tx.head, qi.tx.head + qi.frameSize);
+        ::memset(&pk, 0, qi.hdrlen);
+        pk.tp_mac = pk.tp_net = qi.hdrlen
+#ifdef SENF_ENABLE_TPACKET_OFFSET
+            + qi.reserve
+#endif
+            ;
+        Buffer bf (qi.tx.head, qi.tx.head + qi.frameSize, qi.hdrlen);
         qi.inc(qi.tx.head, qi.tx);
         qi.tx.idle = false;
         return bf;

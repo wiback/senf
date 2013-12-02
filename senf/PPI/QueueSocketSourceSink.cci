@@ -40,6 +40,13 @@ prefix_ std::ostream & senf::ppi::operator<<(std::ostream & os,
     return os;
 }
 
+prefix_ senf::QueueReadPolicy::Buffer const * senf::ppi::QueueBufferAnnotation::operator->()
+    const
+{
+    SENF_ASSERT(value, "dereferencing uninitialized QueueBufferAnnotation");
+    return value;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveQueueSocketSink
 

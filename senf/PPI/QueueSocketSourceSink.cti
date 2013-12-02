@@ -139,10 +139,10 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         PacketInfo ifo;
         {
             Packet pk (Packet::create(
-                           buf->spaceBegin(),
+                           buf->frameBegin(),
                            buf->size(),
-                           buf->spaceSize(),
-                           buf->spaceFrameOffset()));
+                           buf->frameSize(),
+                           buf->dataOffset()));
             pk.template annotation<senf::ppi::QueueBufferAnnotation>().value = &(*buf);
             ifo = PacketInfo(pk);
             output(pk);

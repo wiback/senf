@@ -42,95 +42,52 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class P1, class P2>
-prefix_ void senf::ConnectedMMapPacketSocketProtocol<P1,P2>::
-init_client(std::string iface, unsigned rxqlen, unsigned txqlen, unsigned frameSize,
-            typename Base::SocketType type, int protocol)
-    const
-{
-    BOOST_STATIC_ASSERT(( ReadPolicyIs<Policy, QueueReadPolicy>::value &&
-                          WritePolicyIs<Policy, QueueWritePolicy>::value ));
-    do_init_client(iface, rxqlen, txqlen, frameSize, type, protocol);
-}
-
-template <class P1, class P2>
-prefix_ void senf::ConnectedMMapPacketSocketProtocol<P1,P2>::
-init_client(std::string iface, unsigned qlen, unsigned frameSize, typename Base::SocketType type,
-            int protocol)
-    const
-{
-    BOOST_STATIC_ASSERT(( ReadPolicyIs<Policy, QueueReadPolicy>::value ||
-                          WritePolicyIs<Policy, QueueWritePolicy>::value ));
-    BOOST_STATIC_ASSERT(( ReadPolicyIs<Policy, ReadablePolicy>::value ||
-                          WritePolicyIs<Policy, WriteablePolicy>::value ));
-    if (ReadPolicyIs<Policy, QueueReadPolicy>::value)
-        do_init_client(iface, qlen, 0, frameSize, type, protocol);
-    else
-        do_init_client(iface, 0, qlen, frameSize, type, protocol);
-}
-
-template <class Protocol, bool MMapBoth>
+template <class Policy, bool IsMMapReadable, bool IsMMapWriteable>
 prefix_ void
-senf::detail::ConnectedMMapPacketSocketProtocol_CallInit<Protocol,MMapBoth>::
-init_client(Protocol const * protocol, std::string iface, unsigned rxqlenORqlen,
-            unsigned txqlenORframeSize)
-{
-    protocol->init_client(iface, rxqlenORqlen, txqlenORframeSize, 2048, Protocol::RawSocket, -1);
-}
-
-template <class Protocol>
-prefix_ void
-senf::detail::ConnectedMMapPacketSocketProtocol_CallInit<Protocol, false>::
-init_client(Protocol const * protocol, std::string iface, unsigned rxqlenORqlen,
-            unsigned txqlenORframeSize)
-{
-    protocol->init_client(iface, rxqlenORqlen, txqlenORframeSize, Protocol::RawSocket, -1);
-}
-
-template <class P1, class P2>
-prefix_ void
-senf::ConnectedMMapPacketSocketProtocol<P1,P2>::init_client(std::string iface,
-                                                            unsigned rxqlenORqlen,
-                                                            unsigned txqlenORframeSize)
-    const
-{
-    detail::ConnectedMMapPacketSocketProtocol_CallInit<
-        ConnectedMMapPacketSocketProtocol>::init_client(
-            this, iface, rxqlenORqlen, txqlenORframeSize);
-}
-
-template <class P1, class P2>
-prefix_ void senf::ConnectedMMapPacketSocketProtocol<P1,P2>::init_client(std::string iface,
-                                                                         unsigned qlen)
-    const
-{
-    init_client(iface, qlen, 2048, Base::RawSocket, -1);
-}
-
-template <class P1, class P2>
-prefix_ void senf::ConnectedMMapPacketSocketProtocol<P1,P2>::init_client(std::string iface,
-                                                                         typename Base::SocketType type,
-                                                                         int protocol)
-    const
-{
-    BOOST_STATIC_ASSERT(( ReadPolicyIs<Policy, ReadablePolicy>::value &&
-                          WritePolicyIs<Policy, WriteablePolicy>::value ));
-    this->init_packetSocket(type, protocol);
-    this->clientHandle().bind(LLSocketAddress(iface));
-}
-
-template <class P1, class P2>
-prefix_ void senf::ConnectedMMapPacketSocketProtocol<P1,P2>::do_init_client(std::string iface,
-                                                                            unsigned rxqlen,
-                                                                            unsigned txqlen,
-                                                                            unsigned frameSize,
-                                                                            typename Base::SocketType type,
-                                                                            int protocol)
+senf::detail::ConnectedMMapPacketSocketProtocol_Bases<Policy,IsMMapReadable,IsMMapWriteable>::
+init_client(std::string iface, unsigned qlen, unsigned frameSize,
+            typename LinuxPacketSocketProtocol::SocketType type, int protocol, unsigned reserve)
     const
 {
     this->init_packetSocket(type, protocol);
-    this->clientHandle().bind(LLSocketAddress(iface));
-    this->init_mmap(frameSize, rxqlen, txqlen);
+    static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
+    this->init_mmap(frameSize, qlen, qlen, reserve);
+}
+
+template <class Policy>
+prefix_ void
+senf::detail::ConnectedMMapPacketSocketProtocol_Bases<Policy, true, false>::
+init_client(std::string iface, unsigned qlen, unsigned frameSize,
+            typename LinuxPacketSocketProtocol::SocketType type, int protocol, unsigned reserve)
+    const
+{
+    this->init_packetSocket(type, protocol);
+    static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
+    this->init_mmap(frameSize, 0, qlen, reserve);
+}
+
+template <class Policy>
+prefix_ void
+senf::detail::ConnectedMMapPacketSocketProtocol_Bases<Policy, false, true>::
+init_client(std::string iface, unsigned qlen, unsigned frameSize,
+            typename LinuxPacketSocketProtocol::SocketType type, int protocol, unsigned reserve)
+    const
+{
+    this->init_packetSocket(type, protocol);
+    static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
+    this->init_mmap(frameSize, qlen, 0, reserve);
+}
+
+template <class Policy>
+prefix_ void
+senf::detail::ConnectedMMapPacketSocketProtocol_Bases<Policy, false, false>::
+init_client(std::string iface, unsigned frameSize, typename LinuxPacketSocketProtocol::SocketType type,
+            int protocol, unsigned reserve)
+    const
+{
+
+    this->init_packetSocket(type, protocol);
+    static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

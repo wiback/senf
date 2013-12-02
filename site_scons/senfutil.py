@@ -291,7 +291,7 @@ def ParseDefaultArguments(env, *extraArgs):
         SYS_ISSUE = issue,
         SYS_OS = '%s-%s' % (distid, distversion) if distid and distversion else issue,
         SYS_MACHINE = platform.machine(),
-        VARIANT    = '$SYS_OS-$SYS_MACHINE-$BUILD_TYPE'
+        VARIANT    = '$SYS_OS-$SYS_MACHINE-$BUILD_TYPE${FLAVOR and "-$FLAVOR" or ""}'
     )
 
 def DefaultOptions(env):

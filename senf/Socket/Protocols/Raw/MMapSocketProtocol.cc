@@ -41,6 +41,10 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifndef PACKET_TX_HAS_OFF
+#define PACKET_TX_HAS_OFF 19
+#endif
+
 prefix_ void senf::MMapSocketProtocol::close()
 {
     close_mmap();
@@ -55,13 +59,19 @@ prefix_ void senf::MMapSocketProtocol::terminate()
 }
 
 prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rxqlen,
-                                                 unsigned txqlen)
+                                                 unsigned txqlen, unsigned reserve=0)
     const
 {
     ::memset(&qi_, 0, sizeof(qi_));
     qi_.frameSize = frameSize;
 
     int v = TPACKET_V2;
+    ::socklen_t l = sizeof(int);
+    if (getsockopt(fd(), SOL_PACKET, PACKET_HDRLEN, (char *)&v, &l) != 0)
+        SENF_THROW_SYSTEM_EXCEPTION("::getsockopt(SOL_PACKET, PACKET_HDRLEN)");
+    qi_.hdrlen = TPACKET_ALIGN(v);
+
+    v = TPACKET_V2;
     if (setsockopt(fd(), SOL_PACKET, PACKET_VERSION, (char *)&v, sizeof(v)) != 0 )
         SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_VERSION)");
 
@@ -71,6 +81,10 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
     ::memset(&req, 0, sizeof(req));
 
     if (rxqlen > 0) {
+        qi_.reserveSize = 0;
+        if (reserve > 0
+            && setsockopt(fd(), SOL_PACKET, PACKET_RESERVE, (char *)&reserve, sizeof(reserve)) == 0)
+            qi_.reserveSize = reserve;
         req.tp_frame_nr = rxqlen;
         req.tp_frame_size = frameSize;
         req.tp_block_size = req.tp_frame_nr * req.tp_frame_size;
@@ -89,6 +103,11 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         if (setsockopt(fd(), SOL_PACKET, PACKET_TX_RING,
                        reinterpret_cast<char *>(&req), sizeof(req)) != 0 )
             SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TX_RING");
+        v = 1;
+#ifdef SENF_ENABLE_TPACKET_OFFSET
+        if (setsockopt(fd(), SOL_PACKET, PACKET_TX_HAS_OFF, (char *)&v, sizeof(v)) != 0)
+            SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TX_HAS_OFF");
+#endif
         size += req.tp_block_size;
     }
 

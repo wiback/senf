@@ -38,10 +38,17 @@
 namespace senf {
 namespace detail {
 
+// older kernel includes don't define this
+#   if !defined(TP_STATUS_VLAN_VALID)
+#     define TP_STATUS_VLAN_VALID (1<<4)
+#   endif
+
     struct QueueInfo
     {
         unsigned char * map;
+        unsigned hdrlen;
         unsigned frameSize;
+        unsigned reserveSize;
 
         struct Queue {
             unsigned char * begin;  // first buffer in queue
@@ -63,8 +70,6 @@ namespace detail {
         : private FileHandleAccess
     {
         static detail::QueueInfo * qinfo(FileHandle & handle);
-
-        enum { TPacketHdrOffset = TPACKET_HDRLEN - sizeof(struct ::sockaddr_ll) };
     };
 
 }}
