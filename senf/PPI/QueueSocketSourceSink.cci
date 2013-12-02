@@ -43,7 +43,9 @@ prefix_ std::ostream & senf::ppi::operator<<(std::ostream & os,
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveQueueSocketSink
 
-prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink()
+
+template <class Connector>
+prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocketSink()
     : handle_ ()
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
@@ -60,7 +62,8 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink()
     ioEvent_.enabled(false);
 }
 
-prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink(Handle const & handle)
+template <class Connector>
+prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocketSink(Handle const & handle)
     : handle_ (handle)
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
@@ -77,14 +80,16 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink::PassiveQueueSocketSink(Handle
     ioEvent_.enabled(false);
 }
 
-prefix_ senf::ppi::module::PassiveQueueSocketSink::Handle
-senf::ppi::module::PassiveQueueSocketSink::handle()
+template <class Connector>
+prefix_ typename senf::ppi::module::PassiveQueueSocketSink<Connector>::Handle
+senf::ppi::module::PassiveQueueSocketSink<Connector>::handle()
     const
 {
     return handle_;
 }
 
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & handle)
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::handle(Handle const & handle)
 {
     handle_ = handle;
     ioEvent_.set( handle_, IOEvent::Write);
@@ -92,7 +97,8 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::handle(Handle const & ha
 }
 
 #ifdef SENF_DEBUG
-prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink::burstMax()
+template <class Connector>
+prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink<Connector>::burstMax()
 {
     unsigned res (burstMax_);
     burstMax_ = 0;
@@ -100,7 +106,8 @@ prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink::burstMax()
 }
 #endif
 
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 {
     eventHook_.disable();
     handle_.send();
@@ -111,7 +118,8 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::send()
 #endif
 }
 
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
 {
     Packet const & packet (input());
     if (qAlgo_->size() > 0) {
@@ -127,7 +135,8 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::write()
     writePacket(packet, *buf);
 }
 
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::writePacket(senf::Packet const & packet, QueueReadPolicy::Buffer & buf)
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(senf::Packet const & packet, QueueReadPolicy::Buffer & buf)
 {
     SENF_ASSERT( packet.data().size(), "cannot send empty packet" );
     unsigned sz (std::min(packet.data().size(), buf.frameSize()));
@@ -139,7 +148,8 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::writePacket(senf::Packet
 #endif
 }
 
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::writable()
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
 {
     while (qAlgo_->size() != 0) {
         boost::optional<QueueReadPolicy::Buffer> buf (handle_.enqueue());
@@ -151,13 +161,15 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink::writable()
         ioEvent_.enabled(false);
 }
 
-prefix_ senf::ppi::QueueingAlgorithm & senf::ppi::module::PassiveQueueSocketSink::qAlgorithm()
+template <class Connector>
+prefix_ senf::ppi::QueueingAlgorithm & senf::ppi::module::PassiveQueueSocketSink<Connector>::qAlgorithm()
     const
 {
     return *qAlgo_;
 }
 
-prefix_ void senf::ppi::module::PassiveQueueSocketSink::qAlgorithm(QueueingAlgorithm::ptr qAlgorithm)
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::qAlgorithm(QueueingAlgorithm::ptr qAlgorithm)
 {
     qAlgo_.reset( qAlgorithm);
 }

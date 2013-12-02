@@ -54,6 +54,7 @@
 #include <senf/PPI/Setup.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Scheduler/ClockService.hh>
+#include <senf/PPI/FastConnector.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -169,7 +170,7 @@ SENF_AUTO_UNIT_TEST(queueSocketSourceSink)
     senf::ConnectedMMapPacketSocketHandle pack2 (tap2.protocol().ifaceName(), 128, 128);
 
     module::ActiveQueueSocketSource<senf::EthernetPacket> source (pack1, 8);
-    module::PassiveQueueSocketSink sink (pack2);
+    module::PassiveQueueSocketSink<> sink (pack2);
 
     ppi::connect(source, sink);
 
@@ -254,6 +255,112 @@ SENF_AUTO_UNIT_TEST(queueSocketSourceSink)
 
 }
 
+SENF_AUTO_UNIT_TEST(queueSocketSourceSink_fast)
+{
+    if (getuid() != 0) {
+        BOOST_WARN_MESSAGE( false,
+                            "Cannot test senf::ppi::module::ActiveQueueSocketSource "
+                            "/ senf::ppi::module::PassiveQueueSocketSink as non-root user" );
+        BOOST_CHECK( true );
+        return;
+    }
+
+    senf::TapSocketHandle tap1;
+    senf::NetdeviceController tapCtl1 (tap1.protocol().ifaceName());
+    tapCtl1.up();
+    senf::ConnectedMMapPacketSocketHandle pack1 (tap1.protocol().ifaceName(), 128, 128);
+
+    senf::TapSocketHandle tap2;
+    senf::NetdeviceController tapCtl2 (tap2.protocol().ifaceName());
+    tapCtl2.up();
+    senf::ConnectedMMapPacketSocketHandle pack2 (tap2.protocol().ifaceName(), 128, 128);
+
+    module::ActiveQueueSocketSource<senf::EthernetPacket,
+                                    ppi::connector::FastActiveOutput<senf::EthernetPacket> > source (pack1, 8);
+    module::PassiveQueueSocketSink<ppi::connector::FastPassiveInput<senf::EthernetPacket> > sink (pack2);
+
+    ppi::connect(source, sink);
+
+    static char const data [] = { "0 - dead beef" };
+    static std::string const strPacket (
+        "Packet data (56 bytes)\n"
+        "  0000  02 03 04 05 06 07 01 02  03 04 05 06 08 00 45 00  ........ ......E.\n"
+        "  0010  00 2a 00 00 00 00 40 11  ?? ?? 7f 00 00 01 7f 00  .*....@. |.......\n"
+        "  0020  00 01 13 89 13 89 00 16  ?? ?? ## 20 2d 20 64 65  ........ ..# - de\n"
+        "  0030  61 64 20 62 65 65 66 00                           ad beef.\n"
+        "Ethernet II (DIX): \n"
+        "  destination             : 02:03:04:05:06:07\n"
+        "  source                  : 01:02:03:04:05:06\n"
+        "  type/length             : 0x0800 ( 2048) (..)\n"
+        "Internet protocol Version 4:\n"
+        "  version                 : 4\n"
+        "  ip header length        : 5\n"
+        "  tos                     : 0\n"
+        "  length                  : 42\n"
+        "  identifier              : 0\n"
+        "  dont fragment           : 0\n"
+        "  more fragments          : 0\n"
+        "  fragment                : 0\n"
+        "  ttl                     : 64\n"
+        "  protocol                : 17\n"
+        "  checksum                : 0x????\n"
+        "  source                  : 127.0.0.1\n"
+        "  destination             : 127.0.0.1\n"
+        "UDP:\n"
+        "  source port             : 5001\n"
+        "  dest port               : 5001\n"
+        "  length                  : 22\n"
+        "  checksum                : 0x????\n"
+        "Payload data (14 bytes)\n");
+
+    {
+        senf::EthernetPacket eth (senf::EthernetPacket::create());
+        eth->source() << senf::MACAddress::from_string("01-02-03-04-05-06");
+        eth->destination() << senf::MACAddress::from_string("02-03-04-05-06-07");
+
+        senf::IPv4Packet ip (senf::IPv4Packet::createAfter(eth));
+        ip->source() << senf::INet4Address::from_string("127.0.0.1");
+        ip->destination() << senf::INet4Address::from_string("127.0.0.1");
+        ip->ttl() << 64;
+
+        senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
+        udp->source() << 5001;
+        udp->destination() << 5001;
+
+        senf::DataPacket dp (senf::DataPacket::createAfter(
+                                 udp,
+                                 boost::make_iterator_range(data, data + sizeof(data))));
+
+        for (char ch ('0'); ch <= '9'; ++ ch) {
+            * dp.data().begin() = ch;
+            eth.finalizeAll();
+            tap1.write(eth.data());
+        }
+    }
+
+    PacketReader<senf::EthernetPacket, senf::UDPPacket> reader (
+        tap2, 10, senf::ClockService::seconds(1));
+
+    senf::ppi::run();
+
+    {
+        BOOST_CHECK_EQUAL( reader.packets.size(), 10u );
+
+        for (char ch ('0'); ! reader.packets.empty() && ch <= '9'; ++ ch) {
+            BOOST_CHECK_PREDICATE( compareIgnoreChars,
+                                   (pkgdump(reader.packets.front()))(tplReplace(strPacket, ch)) );
+
+            reader.packets.pop_front();
+        }
+    }
+
+#ifdef SENF_DEBUG
+    BOOST_CHECK_EQUAL( source.sharedPackets(), 0u );
+    BOOST_CHECK_EQUAL( source.burstMax(), 8u );
+    BOOST_CHECK_EQUAL( sink.burstMax(), 8u );
+#endif
+
+}
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

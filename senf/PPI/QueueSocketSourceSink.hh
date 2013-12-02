@@ -43,6 +43,7 @@
 #include "Connectors.hh"
 #include "IOEvent.hh"
 
+#include "QueueSocketSourceSink.ih"
 //#include "QueueSocketSourceSink.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,7 +67,8 @@ namespace module {
 
         \see \ref senf::QueueReadPolicy
      */
-    template <class Packet=DataPacket>
+    template <class Packet=DataPacket,
+              class Connector=connector::ActiveOutput<Packet> >
     class ActiveQueueSocketSource
         : public Module
     {
@@ -77,7 +79,7 @@ namespace module {
             senf::MakeSocketPolicy< senf::QueueReadPolicy,
                                     senf::DatagramFramingPolicy >::policy > Handle;
 
-        connector::ActiveOutput<Packet> output;
+        Connector output;
 
         explicit ActiveQueueSocketSource(unsigned burst=1);
         explicit ActiveQueueSocketSource(Handle const & handle, unsigned burst=1);
@@ -108,7 +110,7 @@ namespace module {
         void read();
     };
 
-
+    template <class Connector=connector::PassiveInput<> >
     class PassiveQueueSocketSink
         : public Module
     {
@@ -120,7 +122,7 @@ namespace module {
                                     senf::DatagramFramingPolicy,
                                     senf::ConnectedCommunicationPolicy >::policy > Handle;
 
-        connector::PassiveInput<> input;
+        Connector input;
 
         PassiveQueueSocketSink();
         explicit PassiveQueueSocketSink(Handle const & handle);

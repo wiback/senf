@@ -28,7 +28,7 @@
 /** \file
     \brief QueueSocketSourceSink inline template implementation */
 
-//#include "QueueSocketSourceSink.ih"
+#include "QueueSocketSourceSink.ih"
 
 // Custom includes
 #include <senf/Utils/membind.hh>
@@ -40,9 +40,9 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::ActiveQueueSocketSource<Packet>
 
-template <class Packet>
+template <class Packet, class Connector>
 prefix_
-senf::ppi::module::ActiveQueueSocketSource<Packet>::ActiveQueueSocketSource(unsigned burst)
+senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::ActiveQueueSocketSource(unsigned burst)
     : handle_ ()
     , event_ ()
     , maxBurst_ (burst)
@@ -55,8 +55,8 @@ senf::ppi::module::ActiveQueueSocketSource<Packet>::ActiveQueueSocketSource(unsi
     route(event_, output);
 }
 
-template <class Packet>
-prefix_ senf::ppi::module::ActiveQueueSocketSource<Packet>::
+template <class Packet, class Connector>
+prefix_ senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::
 ActiveQueueSocketSource(Handle const & handle, unsigned burst)
     : handle_ (handle)
     , event_ (handle_, IOEvent::Read)
@@ -67,55 +67,56 @@ ActiveQueueSocketSource(Handle const & handle, unsigned burst)
 #endif
 {
     registerEvent(event_, &ActiveQueueSocketSource::read);
-    route(event_, output);
+    noroute(output);
+    senf::ppi::detail::RouteConnector<Connector>::route(*this, event_, output);
 }
 
-template <class Packet>
-prefix_ typename senf::ppi::module::ActiveQueueSocketSource<Packet>::Handle
-senf::ppi::module::ActiveQueueSocketSource<Packet>::handle()
+template <class Packet, class Connector>
+prefix_ typename senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::Handle
+senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handle()
     const
 {
     return handle_;
 }
 
-template <class Packet>
-prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::handle(Handle const & handle)
+template <class Packet, class Connector>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handle(Handle const & handle)
 {
     handle_ = handle;
     event_.set(handle_, IOEvent::Read);
 }
 
-template <class Packet>
-prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet>::maxBurst()
+template <class Packet, class Connector>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::maxBurst()
     const
 {
     return maxBurst_;
 }
 
-template <class Packet>
-prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::maxBurst(unsigned burst)
+template <class Packet, class Connector>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::maxBurst(unsigned burst)
 {
     maxBurst_ = std::max(burst, 1u);
 }
 
-template <class Packet>
-prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::release()
+template <class Packet, class Connector>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::release()
 {
     handle_.release();
 }
 
 #ifdef SENF_DEBUG
 
-template <class Packet>
-prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet>::burstMax()
+template <class Packet, class Connector>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::burstMax()
 {
     unsigned res (burstMax_);
     burstMax_ = 0;
     return res;
 }
 
-template <class Packet>
-prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet>::sharedPackets()
+template <class Packet, class Connector>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::sharedPackets()
 {
     unsigned res (sharedPackets_);
     sharedPackets_ = 0;
@@ -124,8 +125,8 @@ prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet>::sharedPacke
 
 #endif
 
-template <class Packet>
-prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::read()
+template <class Packet, class Connector>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
 {
     unsigned burst (0);
     for (; burst < maxBurst_; ++ burst) {

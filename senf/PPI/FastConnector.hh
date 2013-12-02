@@ -63,6 +63,8 @@ namespace senf {
 namespace ppi {
 namespace connector {
 
+    class FastConnector : public Connector {};
+
     /** \defgroup fast_connectors Fast Connectors
 
         Fast connectors are simplified form of the generic PPI connectors:
@@ -88,7 +90,7 @@ namespace connector {
     /** \brief Fast passive input connector
       */
     template <class PacketType>
-    class FastPassiveInput : public Connector
+    class FastPassiveInput : public FastConnector
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -121,7 +123,7 @@ namespace connector {
     /** \brief Fast active output connector
       */
     template <class PacketType>
-    class FastActiveOutput : public Connector
+    class FastActiveOutput : public FastConnector
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
