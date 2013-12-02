@@ -142,6 +142,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet>::read()
                            buf->size(),
                            buf->spaceSize(),
                            buf->spaceFrameOffset()));
+            pk.template annotation<senf::ppi::QueueBufferAnnotation>().value = &(*buf);
             ifo = PacketInfo(pk);
             output(pk);
         }

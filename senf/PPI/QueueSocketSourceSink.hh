@@ -48,6 +48,14 @@
 
 namespace senf {
 namespace ppi {
+
+    struct QueueBufferAnnotation
+    {
+        QueueReadPolicy::Buffer const * value;
+    };
+
+    std::ostream & operator<<(std::ostream & os, QueueBufferAnnotation const & annotation);
+
 namespace module {
 
     /** \brief Reader for module::ActiveSocketSource (read from socket packet queue)
@@ -55,9 +63,6 @@ namespace module {
         This read helper will read a datagram from a socket providing the queue read API. The Packet
         will be instantiated utilizing the queue memory using the external packet memory manager
         support.
-
-        \warning You must call \c release() explicitly when done. You must ensure, that when calling
-            \c release() no live packet handle still references the packet data.
 
         \see \ref senf::QueueReadPolicy
      */

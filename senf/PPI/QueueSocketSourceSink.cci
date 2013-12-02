@@ -33,6 +33,13 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+prefix_ std::ostream & senf::ppi::operator<<(std::ostream & os,
+                                             QueueBufferAnnotation const & annotation)
+{
+    os << (annotation.value ? "(buffer)" : "(nil)");
+    return os;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveQueueSocketSink
 
