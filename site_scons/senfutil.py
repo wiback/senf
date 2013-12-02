@@ -6,7 +6,6 @@ import platform
 import re
 import site_tools.Yaptu
 import sys
-import types
 from SCons.Script import *
 
 senfutildir = os.path.dirname(__file__)
@@ -332,7 +331,6 @@ def DefaultOptions(env):
 
     if env['debug_final']:
         env['final'] = True
-        env.Append(CXXFLAGS = [ '-g' ])
 
     # Set nice default options
     env.Append(

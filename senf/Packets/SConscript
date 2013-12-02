@@ -58,9 +58,11 @@ SENFSCons.AutoRules(env, exclude = [ 'bundledump.cc', 'benchmark.cc' ], doc_extr
     env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
 ])
 
-bundledump = env.Program('bundledump', [ 'bundledump.cc', '$LOCALLIBDIR/DefaultBundle.o' ],
+bundledump = env.Program('bundledump',
+                         [ 'bundledump.cc', '$LOCALLIBDIR/DefaultBundle$OBJADDSUFFIX$OBJSUFFIX' ],
                          LIBS = [ '$LIBS', 'dl' ])
 env.Default(bundledump)
 env.Install('$BININSTALLDIR', bundledump)
 
-benchmark = env.Program('benchmark', [ 'benchmark.cc', '$LOCALLIBDIR/DefaultBundle.o' ])
+benchmark = env.Program('benchmark',
+                        [ 'benchmark.cc', '$LOCALLIBDIR/DefaultBundle$OBJADDSUFFIX$OBJSUFFIX' ])
