@@ -288,9 +288,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
     detail::QueueInfo & qi (* qinfo(handle));
     while (! qi.tx.idle || qi.tx.tail != qi.tx.head) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
-#ifdef SENF_DEBUG
         SENF_ASSERT(pk.tp_len, "missing call to Buffer::resize()");
-#endif
         pk.tp_status = TP_STATUS_SEND_REQUEST;
         qi.inc(qi.tx.tail, qi.tx);
         // We set qi.tx.idle prematurely but this is safe: when the while loop is done,
@@ -300,7 +298,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         qi.tx.idle = true;
     }
     for (;;) {
-        if (::send(handle.fd(), NULL, 0, 0) < 0) {
+        if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
             switch (errno) {
             case EINTR:
             case EAGAIN:
