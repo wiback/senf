@@ -195,7 +195,7 @@ namespace console {
         SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), BOOST_PP_EMPTY(), Type, Values)
 
 #   define SENF_CONSOLE_REGISTER_STRONG_ENUM(Type, Values) \
-        SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), Type:: Type, Values)
+        SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), Type::, Type, Values)
 
     /** \brief Register enum type for argument parsing
 

@@ -94,7 +94,7 @@ namespace mpl {
         the possible choices and an overloaded function (only signatures, no implementation needed)
         to provide the conditions.
 
-        When instantiatinv <tt>choice<T></tt>, we forward \a T to the <tt>select_</tt> set of
+        When instantiating <tt>choice<T></tt>, we forward \a T to the <tt>select_</tt> set of
         overloads. Because of <a href="http://en.wikipedia.org/wiki/SFINAE">SFINAE</a>, the overload
         set will only contain those instantiations, for which template expansion does not fail.
 

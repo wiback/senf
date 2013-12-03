@@ -86,7 +86,7 @@
 #define HH_SENF_Socket_SocketProtocol_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 // Hrmpf ... I have tried very hard, but I just can't find a nice, generic way to clean
 // up this include
 #include "SocketHandle.ih"

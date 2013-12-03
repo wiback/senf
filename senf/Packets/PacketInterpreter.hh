@@ -33,9 +33,8 @@
 
 // Custom includes
 #include <boost/optional.hpp>
-#include <boost/range.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <senf/Utils/intrusive_refcount.hh>
-#include <senf/Utils/pool_alloc_mixin.hh>
 #include <senf/Utils/TypeIdValue.hh>
 #include <senf/Utils/Tags.hh>
 #include "PacketData.hh"
@@ -67,8 +66,7 @@ namespace senf {
         //-////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef senf::detail::packet::smart_pointer<
-            PacketInterpreterBase>::ptr_t ptr;
+        typedef senf::detail::packet::smart_pointer<PacketInterpreterBase>::ptr_t ptr;
 
         typedef senf::detail::packet::iterator iterator;
         typedef senf::detail::packet::const_iterator const_iterator;
@@ -262,8 +260,7 @@ namespace senf {
       */
     template <class PacketType>
     class PacketInterpreter
-        : public PacketInterpreterBase //,
-    //          public pool_alloc_mixin< PacketInterpreter<PacketType> >
+        : public PacketInterpreterBase
     {
     public:
         //-////////////////////////////////////////////////////////////////////////

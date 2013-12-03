@@ -34,8 +34,7 @@
 
 // Custom includes
 #include <boost/call_traits.hpp>
-#include <boost/range.hpp>
-#include <boost/utility.hpp>
+#include <boost/range/iterator.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/optional.hpp>
 #include "SocketHandle.hh"
