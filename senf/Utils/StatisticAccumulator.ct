@@ -30,6 +30,7 @@
     \brief StatisticAccumulator non-inline template implementation  */
 
 // Custom includes
+#include <algorithm>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -40,36 +41,34 @@
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
     : sum_squared_(0), sum_(0), min_(0), max_(0), last_avg_(0), cnt_(0)
-{ }
+{}
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T sum, T sumSquared, T min, T max, unsigned count)
     : sum_squared_(sumSquared), sum_(sum), min_(min), max_(max), last_avg_(0), cnt_(count)
-{ }
+{}
 
 template <class T>
 prefix_ float senf::StatisticAccumulator<T>::stddev()
     const
 {
-    if (cnt_ == 0) {
+    if (cnt_ == 0)
         return NAN;
-    }
-    else if (cnt_ == 1) {
+    if (cnt_ == 1)
         return 0.0f;
-    }
     float _avg (avg());
     // std::max avoid rounding errors, that might cause a sqrt(<0)
-    return sqrt( ( std::max(0.0f,float(sum_squared_) / float( cnt_) ) - (_avg * _avg) ));
+    return sqrt( ( std::max(0.0f, float(sum_squared_) / float( cnt_) ) - (_avg * _avg) ));
 }
 
 template <class T>
-prefix_ void senf::StatisticAccumulator<T>::setLastAvg( T value)
+prefix_ void senf::StatisticAccumulator<T>::setLastAvg(T value)
 {
     last_avg_ = value;        
 }
 
 template <class T>
-prefix_ void senf::StatisticAccumulator<T>::accumulate( T value)
+prefix_ void senf::StatisticAccumulator<T>::accumulate(T value)
 {
     if (cnt_ == 0) {
         min_ = max_ = sum_ = value;
@@ -98,7 +97,7 @@ prefix_ void senf::StatisticAccumulator<T>::clear()
 }
 
 template <class T>
-prefix_ void senf::StatisticAccumulator<T>::data( StatisticsData & data_)
+prefix_ void senf::StatisticAccumulator<T>::data(StatisticsData & data_)
     const
 {
     if (cnt_ == 0) {

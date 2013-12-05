@@ -144,7 +144,7 @@ namespace senf {
                                                      std::string label="") const;
                                         ///< Connect internally managed target
             Owner & noconnect() const;  ///< Don't connect the output
-            senf::console::ScopedDirectory<> & dir() const;
+            console::ScopedDirectory<> & dir() const;
                                         ///< Get target's console directory
 
 #ifdef DOXYGEN
@@ -326,7 +326,7 @@ namespace senf {
             boost::signals2::signal<void(unsigned,float,float,float,float)> signal;
             boost::ptr_vector<TargetBase> targets_;
 
-            senf::console::ScopedDirectory<> dir;
+            console::ScopedDirectory<> dir;
         };
         typedef std::map<unsigned, OutputEntry> OutputMap;
         OutputMap outputs_;
@@ -387,7 +387,7 @@ namespace senf {
 
         Lets say, we want to produce the following outputs:
         \li A sliding average of 5 values based on the raw 1/10th second data.
-        \li Three different outputs from the seconds staistics: current value without average,
+        \li Three different outputs from the seconds statistics: current value without average,
             sliding average over 10 seconds and sliding average over 60 seconds.
         \li Output the minutes and hourly value without averaging.
 
@@ -507,12 +507,11 @@ namespace senf {
 
         StatisticsBase::OutputProxy<Statistics> output(unsigned n = 1u);
 
-        void consoleList(std::ostream & os) const;
-        void consoleCollect(std::vector<unsigned> & ranks);
-        boost::shared_ptr<senf::console::DirectoryNode> consoleOutput(
-            std::vector<unsigned> & ranks, unsigned window);
-
     private:
+        void consoleCollect(std::vector<unsigned> & ranks);
+        void consoleList(std::ostream & os) const;
+        boost::shared_ptr<console::DirectoryNode> consoleOutput(
+                std::vector<unsigned> & ranks, unsigned window);
         Statistics & v_base();
         std::string v_path() const;
     };

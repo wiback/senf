@@ -241,6 +241,9 @@ namespace console {
      */
     void dump(std::ostream & os, DirectoryNode & dir=root());
 
+    void copy(DirectoryNode const & from, DirectoryNode & to);
+
+
     /** \brief Config/console node tree base-class
 
         GenericNode is the base class of all node objects. There are two basic node types derived

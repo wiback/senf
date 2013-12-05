@@ -51,10 +51,10 @@
 #include <senf/Socket/Protocols/Raw/TunTapSocketHandle.hh>
 #include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
 #include <senf/Socket/NetdeviceController.hh>
+#include <senf/PPI/FastConnector.hh>
 #include <senf/PPI/Setup.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Scheduler/ClockService.hh>
-#include <senf/PPI/FastConnector.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>

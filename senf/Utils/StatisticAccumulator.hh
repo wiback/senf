@@ -33,8 +33,7 @@
 #define HH_SENF_Utils_StatisticAccumulator_ 1
 
 // Custom includes
-#include <math.h>
-#include <ostream>
+#include <iosfwd>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
@@ -60,8 +59,8 @@ namespace senf {
 
      /** \brief Accumulate measurement values
 
-         The accumulator mainly do the prelimenary work for the senf::Statistic class.
-         It accumulates certain values with in an interval to be used by senf::Statistics
+         The accumulator mainly do the preliminary work for the senf::Statistic class.
+         It accumulates certain values within an interval to be used by senf::Statistics
 
          \li the senf::Statistics class
          \li statistics sources

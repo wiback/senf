@@ -68,6 +68,15 @@ prefix_ void senf::console::dump(std::ostream & os, DirectoryNode & dir)
     dodump(os,0,dir);
 }
 
+prefix_ void senf::console::copy(DirectoryNode const & from, DirectoryNode & to)
+{
+    DirectoryNode::child_iterator i (from.children().begin());
+    DirectoryNode::child_iterator const i_end (from.children().end());
+    for (; i != i_end; ++i) {
+        to.add(i->first, i->second);
+    }
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::GenericNode
 

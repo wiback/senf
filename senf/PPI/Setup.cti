@@ -39,8 +39,7 @@
 #ifndef DOXYGEN
 
 template <class T, class C>
-prefix_ void senf::ppi::
-connect(T & source, C & target,
+prefix_ void senf::ppi::connect(T & source, C & target,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T> >::type *,
         typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *,
         typename boost::disable_if< boost::is_base_of<detail::DisableStandardOutput, T> >::type *)
@@ -49,8 +48,7 @@ connect(T & source, C & target,
 }
 
 template <class C, class T>
-prefix_ void senf::ppi::
-connect(C & source, T & target,
+prefix_ void senf::ppi::connect(C & source, T & target,
         typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *,
         typename boost::disable_if< boost::is_base_of<connector::Connector,T> >::type *,
         typename boost::disable_if< boost::is_base_of<detail::DisableStandardInput, T> >::type *)
@@ -59,8 +57,7 @@ connect(C & source, T & target,
 }
 
 template <class T1, class T2>
-prefix_ void senf::ppi::
-connect(T1 & source, T2 & target,
+prefix_ void senf::ppi::connect(T1 & source, T2 & target,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type *,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type *,
         typename boost::disable_if< boost::is_base_of<detail::DisableStandardOutput, T1> >::type *,

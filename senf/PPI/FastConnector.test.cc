@@ -53,6 +53,7 @@ namespace {
     class FastActiveSource : public module::Module
     {
         SENF_PPI_MODULE(FastActiveSource);
+
     public:
         connector::FastActiveOutput<PacketType> output;
 
@@ -71,7 +72,8 @@ namespace {
     class FastPassiveSink : public module::Module
     {
         SENF_PPI_MODULE(FastPassiveSink);
-       typedef std::deque<PacketType> Queue;
+        typedef std::deque<PacketType> Queue;
+
     public:
         typedef typename Queue::iterator iterator;
         typedef typename Queue::size_type size_type;

@@ -41,16 +41,17 @@
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+using namespace senf;
 
 SENF_AUTO_UNIT_TEST(genericNode)
 {
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
-    senf::console::GenericNode & node (
-        senf::console::root()
+    console::GenericNode & node (
+        console::root()
         .add("dir1", fty::Directory())
         .add("dir2", fty::Directory().doc("help info")));
-    senf::console::GenericNode::weak_ptr wp (node.thisptr());
+    console::GenericNode::weak_ptr wp (node.thisptr());
 
     BOOST_CHECK_EQUAL( node.name(), "dir2" );
     BOOST_CHECK( node.parent() );
@@ -61,7 +62,7 @@ SENF_AUTO_UNIT_TEST(genericNode)
     BOOST_CHECK_EQUAL( ss.str(), "help info\n" );
 
     {
-        senf::console::GenericNode::ptr p (senf::console::root()["dir1"].unlink());
+        console::GenericNode::ptr p (console::root()["dir1"].unlink());
         BOOST_CHECK( ! node.active() );
         BOOST_CHECK( ! wp.expired() );
     }
@@ -69,7 +70,7 @@ SENF_AUTO_UNIT_TEST(genericNode)
 }
 
 namespace {
-    void callback(std::ostream & os, senf::console::ParseCommandInfo const & command)
+    void callback(std::ostream & os, console::ParseCommandInfo const & command)
     {
         os << "callback";
     }
@@ -83,39 +84,39 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(directoryNode)
 {
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
-    senf::console::DirectoryNode::ptr p (senf::console::DirectoryNode::create());
+    console::DirectoryNode::ptr p (console::DirectoryNode::create());
 
-    BOOST_CHECK( & senf::console::root().add("dir1", p) == p.get() );
+    BOOST_CHECK( & console::root().add("dir1", p) == p.get() );
 
-    senf::console::SimpleCommandNode & fnnode (
-        senf::console::root().add( "fn", senf::console::SimpleCommandNode::create(&callback) ));
-    BOOST_CHECK( &senf::console::root()["dir1"] == p.get() );
-    BOOST_CHECK_THROW( senf::console::root()["dir2"], senf::console::UnknownNodeNameException );
-    BOOST_CHECK_THROW( senf::console::root()("dir1"), std::bad_cast );
-    BOOST_CHECK( &senf::console::root()("fn") == &fnnode );
-    BOOST_CHECK_THROW( senf::console::root()("fn2"), senf::console::UnknownNodeNameException );
-    BOOST_CHECK_THROW( senf::console::root()["fn"], std::bad_cast );
-    BOOST_CHECK( &senf::console::root().get("dir1") == p.get() );
+    console::SimpleCommandNode & fnnode (
+        console::root().add( "fn", console::SimpleCommandNode::create(&callback) ));
+    BOOST_CHECK( &console::root()["dir1"] == p.get() );
+    BOOST_CHECK_THROW( console::root()["dir2"], console::UnknownNodeNameException );
+    BOOST_CHECK_THROW( console::root()("dir1"), std::bad_cast );
+    BOOST_CHECK( &console::root()("fn") == &fnnode );
+    BOOST_CHECK_THROW( console::root()("fn2"), console::UnknownNodeNameException );
+    BOOST_CHECK_THROW( console::root()["fn"], std::bad_cast );
+    BOOST_CHECK( &console::root().get("dir1") == p.get() );
 
-    senf::console::root()
+    console::root()
         .add("dir2", fty::Directory())
         .add("dir3", fty::Directory());
     char const * const children[] = { "dir1", "dir2", "fn", "sys" };
     BOOST_CHECK_EQUAL_COLLECTIONS(
-        boost::make_transform_iterator(senf::console::root().children().begin(),
+        boost::make_transform_iterator(console::root().children().begin(),
                                        select1st<std::string const &>()),
-        boost::make_transform_iterator(senf::console::root().children().end(),
+        boost::make_transform_iterator(console::root().children().end(),
                                        select1st<std::string const &>()),
         children,
         children+sizeof(children)/sizeof(children[0]) );
 
     char const * const completions[] = { "dir1", "dir2" };
     BOOST_CHECK_EQUAL_COLLECTIONS(
-        boost::make_transform_iterator(senf::console::root().completions("dir").begin(),
+        boost::make_transform_iterator(console::root().completions("dir").begin(),
                                        select1st<std::string const &>()),
-        boost::make_transform_iterator(senf::console::root().completions("dir").end(),
+        boost::make_transform_iterator(console::root().completions("dir").end(),
                                        select1st<std::string const &>()),
         completions,
         completions+sizeof(completions)/sizeof(completions[0]) );
@@ -131,40 +132,40 @@ SENF_AUTO_UNIT_TEST(directoryNode)
     BOOST_CHECK_EQUAL( p->shorthelp(), "short doc" );
 
     ss.str("");
-    senf::console::root()["dir2"].add("dir4", fty::Directory());
-    senf::console::root()["dir2"].add("link", fty::Link(*p));
-    senf::console::root()["dir2"]["dir4"].add("link", fty::Link(senf::console::root()));
-    senf::console::dump(ss, senf::console::root()["dir2"]);
+    console::root()["dir2"].add("dir4", fty::Directory());
+    console::root()["dir2"].add("link", fty::Link(*p));
+    console::root()["dir2"]["dir4"].add("link", fty::Link(console::root()));
+    console::dump(ss, console::root()["dir2"]);
     BOOST_CHECK_EQUAL( ss.str(),
                        "dir3/\n"
                        "dir4/\n"
                        "  link@ -> /\n"
                        "link@ -> /dir1\n" );
 
-    BOOST_CHECK( senf::console::root().remove("dir1") == p );
-    senf::console::root().remove("dir2");
-    senf::console::root().remove("fn");
+    BOOST_CHECK( console::root().remove("dir1") == p );
+    console::root().remove("dir2");
+    console::root().remove("fn");
 
-    BOOST_CHECK_EQUAL( std::distance(senf::console::root().children().begin(),
-                                     senf::console::root().children().end()), 1 );
+    BOOST_CHECK_EQUAL( std::distance(console::root().children().begin(),
+                                     console::root().children().end()), 1 );
 }
 
 SENF_AUTO_UNIT_TEST(linkNode)
 {
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
-    senf::console::root().add("dir1", fty::Directory());
-    senf::console::root().add("link1", fty::Link(senf::console::root()["dir1"]));
+    console::root().add("dir1", fty::Directory());
+    console::root().add("link1", fty::Link(console::root()["dir1"]));
 
-    BOOST_CHECK( senf::console::root()["dir1"] == senf::console::root()["link1"] );
+    BOOST_CHECK( console::root()["dir1"] == console::root()["link1"] );
 
-    senf::console::root().remove("dir1");
-    senf::console::root().remove("link1");
+    console::root().remove("dir1");
+    console::root().remove("link1");
 }
 
 namespace {
     struct Functor {
-        void operator()(std::ostream & os, senf::console::ParseCommandInfo const &) {
+        void operator()(std::ostream & os, console::ParseCommandInfo const &) {
             os << "functor";
         }
     };
@@ -172,47 +173,47 @@ namespace {
 
 SENF_AUTO_UNIT_TEST(factory)
 {
-    namespace fty = senf::console::factory;
+    namespace fty = console::factory;
 
-    senf::console::root().add("fn1", fty::SimpleCommand(&callback));
-    senf::console::root().add("fn2", fty::SimpleCommand(Functor()));
+    console::root().add("fn1", fty::SimpleCommand(&callback));
+    console::root().add("fn2", fty::SimpleCommand(Functor()));
 
-    senf::console::ParseCommandInfo info;
+    console::ParseCommandInfo info;
 
     {
         std::stringstream ss;
-        senf::console::root()("fn1")(ss, info);
+        console::root()("fn1")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "callback" );
     }
 
     {
         std::stringstream ss;
-        senf::console::root()("fn2")(ss, info);
+        console::root()("fn2")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "functor" );
     }
 
-    senf::console::root().remove("fn1");
-    senf::console::root().remove("fn2");
+    console::root().remove("fn1");
+    console::root().remove("fn2");
 }
 
 SENF_AUTO_UNIT_TEST(simpleCommandNode)
 {
-    senf::console::root().add("fn", senf::console::SimpleCommandNode::create(&callback))
+    console::root().add("fn", console::SimpleCommandNode::create(&callback))
         .doc("help text");
     {
         std::stringstream ss;
-        senf::console::ParseCommandInfo info;
-        senf::console::root()("fn")(ss, info);
+        console::ParseCommandInfo info;
+        console::root()("fn")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "callback" );
     }
 
     {
         std::stringstream ss;
-        senf::console::root().get("fn").help(ss);
+        console::root().get("fn").help(ss);
         BOOST_CHECK_EQUAL( ss.str(), "help text\n" );
     }
 
-    senf::console::root().remove("fn");
+    console::root().remove("fn");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
