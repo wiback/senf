@@ -113,7 +113,7 @@ prefix_ void senf::ppi::FIFOQueueingAlgorithm::v_clear()
 
 prefix_ senf::ppi::QueueingAlgorithm::ptr senf::ppi::FIFOQueueingAlgorithm::create()
 {
-    return new FIFOQueueingAlgorithm();
+    return QueueingAlgorithm::ptr(new FIFOQueueingAlgorithm());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

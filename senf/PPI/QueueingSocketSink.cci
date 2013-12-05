@@ -93,7 +93,7 @@ prefix_ bool senf::ppi::NoneQueueingAlgorithm::v_enqueue(Packet const & packet)
 
 prefix_ senf::ppi::QueueingAlgorithm::ptr senf::ppi::NoneQueueingAlgorithm::create()
 {
-    return new NoneQueueingAlgorithm();
+    return QueueingAlgorithm::ptr(new NoneQueueingAlgorithm());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

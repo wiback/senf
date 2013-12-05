@@ -130,7 +130,7 @@ template <class Writer>
 prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::qAlgorithm(QueueingAlgorithm::ptr qAlgorithm)
 {
 //    dir.remove( "active");
-    qAlgo_.reset( qAlgorithm);
+    qAlgo_.reset( qAlgorithm.release());
     dir.add( "active", qAlgo_->consoleDir());
     if (event_.enabled())
         event_.enabled( false);
