@@ -62,10 +62,10 @@ prefix_ void senf::ppi::connector::ActiveConnector::onUnthrottle(Handler handler
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::GenericPassiveInput
 
-template <class QDisc>
-prefix_ void senf::ppi::connector::GenericPassiveInput::qdisc(QDisc const & disc)
+template <class ThrottlingDisc>
+prefix_ void senf::ppi::connector::GenericPassiveInput::throttlingDisc(ThrottlingDisc const & disc)
 {
-    qdisc_.reset(new QDisc(disc));
+    throttlingDisc_.reset(new ThrottlingDisc(disc));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

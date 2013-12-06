@@ -37,35 +37,13 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::QueueingAlgorithmRegistry
-
-template <class QAlgorithm>
-prefix_ void senf::ppi::QueueingAlgorithmRegistry::registerQAlgorithm(std::string key)
-{
-    if (qAlgoMap_.find( key) == qAlgoMap_.end() )
-        qAlgoMap_.insert(key, new detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>() );
-    else
-        throw Exception("Duplicated QAlgorithm Registration ") << key;
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>
-
-template <class QAlgorithm>
-prefix_ senf::ppi::QueueingAlgorithm::ptr senf::ppi::detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>::create()
-    const
-{
-    return QAlgorithm::create();
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveQueueingSocketSink<Writer>
 
 template <class Writer>
 prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSocketSink(Handle const & handle, QueueingAlgorithm::ptr qAlgorithm)
     : dir( this),
       handle_( handle), writer_( ),
-      qAlgo_( qAlgorithm),
+      qAlgo_( qAlgorithm.release()),
       event_( handle_, IOEvent::Write)
 {
     namespace fty = console::factory;
@@ -78,7 +56,7 @@ prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSoc
     event_.enabled( false);
     noroute(input);
     input.onRequest( &PassiveQueueingSocketSink::write);
-    input.qdisc( QueueingDiscipline::NONE);
+    input.throttlingDisc( ThrottlingDiscipline::NONE);
     checkThrottle();
 }
 

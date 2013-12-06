@@ -26,13 +26,10 @@
 //   Stefan Bund <g0dil@berlios.de>
 
 /** \file
-    \brief Queueing unit tests */
-
-//#include "Queueing.test.hh"
-//#include "Queueing.test.ih"
+    \brief Throttling unit tests */
 
 // Custom includes
-#include "Queueing.hh"
+#include "Throttling.hh"
 #include "Module.hh"
 #include "Connectors.hh"
 #include "DebugModules.hh"
@@ -60,7 +57,7 @@ namespace {
 
         QueueTester() {
             route(input, output);
-            input.qdisc(ppi::ThresholdQueueing(2,1));
+            input.throttlingDisc(ppi::ThresholdThrottling(2,1));
             input.onRequest(&QueueTester::nop);
         }
 
@@ -102,7 +99,7 @@ SENF_AUTO_UNIT_TEST(PPI_Queueing)
         sink.clear();
     }
     {
-        tester.input.qdisc(ppi::QueueingDiscipline::NONE);
+        tester.input.throttlingDisc(ppi::ThrottlingDiscipline::NONE);
         BOOST_CHECK( source );
         source.submit(p);
         BOOST_CHECK( source );

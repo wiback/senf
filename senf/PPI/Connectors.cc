@@ -499,19 +499,19 @@ prefix_ void senf::ppi::connector::GenericPassiveInput::v_connected()
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_enqueueEvent()
 {
     emit();
-    if (qdisc_)
-        qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
+    if (throttlingDisc_)
+        throttlingDisc_->update(*this, ThrottlingDiscipline::ENQUEUE);
 }
 
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_dequeueEvent()
 {
-    if (qdisc_)
-        qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
+    if (throttlingDisc_)
+        throttlingDisc_->update(*this, ThrottlingDiscipline::DEQUEUE);
 }
 
-prefix_ void senf::ppi::connector::GenericPassiveInput::qdisc(QueueingDiscipline::None_t)
+prefix_ void senf::ppi::connector::GenericPassiveInput::throttlingDisc(ThrottlingDiscipline::None_t)
 {
-    qdisc_.reset( 0);
+    throttlingDisc_.reset();
 }
 
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_unthrottleEvent()

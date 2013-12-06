@@ -300,7 +300,7 @@ prefix_ senf::ppi::connector::OutputConnector::OutputConnector()
 // senf::ppi::connector::GenericPassiveInput
 
 prefix_ senf::ppi::connector::GenericPassiveInput::GenericPassiveInput()
-    : peer_(SENF_NULLPTR), qdisc_(new ThresholdQueueing(1,0))
+    : peer_(SENF_NULLPTR), throttlingDisc_(new ThresholdThrottling(1,0))
 {}
 
 prefix_ senf::ppi::connector::GenericActiveOutput & senf::ppi::connector::GenericPassiveInput::peer()

@@ -215,7 +215,7 @@ SENF_AUTO_UNIT_TEST(passiveInput)
     BOOST_CHECK( target.input() == p );
     BOOST_CHECK( ! target.input.throttled() );
 
-    target.input.qdisc(ppi::ThresholdQueueing(2,0));
+    target.input.throttlingDisc(ppi::ThresholdThrottling(2,0));
 
     source.submit(p);
     BOOST_CHECK ( ! target.input.throttled() );

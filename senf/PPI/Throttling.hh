@@ -26,10 +26,10 @@
 //   Stefan Bund <g0dil@berlios.de>
 
 /** \file
-    \brief Queueing public header */
+    \brief Throttling public header */
 
-#ifndef HH_SENF_PPI_Queueing_
-#define HH_SENF_PPI_Queueing_ 1
+#ifndef HH_SENF_PPI_Throttling_
+#define HH_SENF_PPI_Throttling_ 1
 
 // Custom includes
 #include "predecl.hh"
@@ -40,33 +40,33 @@
 namespace senf {
 namespace ppi {
 
-    /** \brief Queueing discipline base class
+    /** \brief Throttling discipline base class
 
-        QueueingDescipline derived classes define the generation of throttling notifications. The
-        QueueingDiscipline is called whenever the packets are entered or removed from the queue. The
-        queueing discipline then determines the new throttling state of the queue.
+        ThrottlingDiscipline derived classes define the generation of throttling notifications. The
+        ThrottlingDiscipline is called whenever the packets are entered or removed from the queue. The
+        throttling discipline then determines the new throttling state of the queue.
 
-        \note The QueueingDiscipline will \e never drop packets explicitly. This is left to the
+        \note The ThrottlingDiscipline will \e never drop packets explicitly. This is left to the
         operating system by sending throttling events. The PPI will never loose a packet internally
         (if not a module explicitly does so), however it may disable reception of new incoming
         packets which will then probably be dropped by the operating system.
 
-        \attention Notifications may be forwarded to the QueueingDiscipline implementation
+        \attention Notifications may be forwarded to the ThrottlingDiscipline implementation
             out-of-order: A dequeue event may be notified before the corresponding enqueue
             event (this happens to optimize away transient throttling state changes which would
             otherwise occur if a packet is entered into the queue and then removed from it in the
             same processing step).
      */
-    class QueueingDiscipline
+    class ThrottlingDiscipline
     {
     public:
-        virtual ~QueueingDiscipline();
+        virtual ~ThrottlingDiscipline();
 
         enum Event { ENQUEUE, DEQUEUE }; ///< Possible queueing events
-        enum None_t { NONE };            ///< Type to disable the queueing discipline
+        enum None_t { NONE };            ///< Type to disable the throttling discipline
 
         virtual void update(connector::GenericPassiveInput & input, Event event) = 0;
-                                        ///< Calculate new queueing state
+                                        ///< Calculate new throttling state
                                         /**< Whenever the queue is manipulated, this member is
                                              called to calculate the new throttling state. The
                                              member must call \a input's \c throttle() or \c
@@ -76,19 +76,19 @@ namespace ppi {
                                              \param[in] event Type of event triggering the update */
     };
 
-    /** \brief Simple queueing discipline with high and low threshold
+    /** \brief Simple throttling discipline with high and low threshold
 
-        The ThresholdQueueing QueueingDiscipline is a simple queueing discipline which throttles the
+        The ThresholdThrottling ThrottlingDiscipline is a simple throttling discipline which throttles the
         input as soon the number of packets in the queue reaches the \a high threshold. The input
         will be unthrottled when the number of packets drops to the \a low threshold.
 
-        The default queueing discipline is ThresholdQueueing(1,0).
+        The default throttling discipline is ThresholdThrottling(1,0).
      */
-    class ThresholdQueueing
-        : public QueueingDiscipline
+    class ThresholdThrottling
+        : public ThrottlingDiscipline
     {
     public:
-        ThresholdQueueing(unsigned high, unsigned low);
+        ThresholdThrottling(unsigned high, unsigned low);
 
         virtual void update(connector::GenericPassiveInput & input, Event event);
 
@@ -100,7 +100,7 @@ namespace ppi {
 }}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#include "Queueing.cci"
+#include "Throttling.cci"
 //#include "Queueing.ct"
 //#include "Queueing.cti"
 #endif

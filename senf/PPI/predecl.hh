@@ -48,7 +48,7 @@ namespace ppi {
     class RouteBase;
     class ForwardingRoute;
     template <class Source, class Target> class Route;
-    class QueueingDiscipline;
+    class ThrottlingDiscipline;
     class ModuleManager;
 
 #ifndef DOXYGEN

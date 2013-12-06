@@ -66,13 +66,14 @@ namespace module {
 
         PassiveQueue();
 
-        template <class QDiscipline>
-        void qdisc(QDiscipline const & disc); ///< Change the queueing discipline
-                                        /**< This call changes the queueing discipline of the
+        template <class ThrottlingDisc>
+        void throttlingDisc(ThrottlingDisc const & disc);
+                                        ///< Change the throttling discipline
+                                        /**< This call changes the throttling discipline of the
                                              queue. This call is just forwarded to the \a input
                                              connector.
 
-                                             \see connector::GenericPassiveInput::qdisc() */
+                                             \see connector::GenericPassiveInput::throttlingDisc() */
 
     private:
         virtual void v_init();

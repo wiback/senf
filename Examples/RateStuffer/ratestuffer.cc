@@ -107,7 +107,7 @@ public:
         ppi::connect( generator,  join       );
         ppi::connect( join,       rateFilter );
 
-        queue.qdisc(ppi::ThresholdQueueing(high,low));
+        queue.throttlingDisc(ppi::ThresholdThrottling(high,low));
     }
 };
 

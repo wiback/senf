@@ -33,6 +33,7 @@
 #define HH_SENF_Utils_StatisticAccumulator_ 1
 
 // Custom includes
+#include <math.h>
 #include <iosfwd>
 
 ///////////////////////////////hh.p////////////////////////////////////////

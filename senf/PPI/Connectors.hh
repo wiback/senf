@@ -40,7 +40,7 @@
 #include <senf/Packets/Packets.hh>
 #include "predecl.hh"
 #include "detail/Callback.hh"
-#include "Queueing.hh"
+#include "Throttling.hh"
 #include "ModuleManager.hh"
 
 //#include "Connectors.mpp"
@@ -480,10 +480,10 @@ namespace connector {
     /** \brief Combination of PassiveConnector and InputConnector
 
         The GenericPassiveInput automatically controls the connectors throttling state using a
-        queueing discipline. The standard queueing discipline is ThresholdQueueing, which throttles
+        queueing discipline. The standard queueing discipline is ThresholdThrottling, which throttles
         the connection whenever the queue length reaches the high threshold and unthrottles the
         connection when the queue reaches the low threshold. The default queueing discipline is
-        <tt>ThresholdQueueing(1,0)</tt> which will throttle the input whenever the queue is
+        <tt>ThresholdThrottling(1,0)</tt> which will throttle the input whenever the queue is
         non-empty.
      */
     class GenericPassiveInput
@@ -495,14 +495,14 @@ namespace connector {
 
         bool boolean_test() const;      ///< \c true, if ! empty()
 
-        template <class QDisc>
-        void qdisc(QDisc const & disc); ///< Change the queueing discipline
-                                        /**< The queueing discipline is a class which provides the
-                                             QueueingDiscipline interface.
+        template <class ThrottlingDisc>
+        void throttlingDisc(ThrottlingDisc const & disc); ///< Change the throttling discipline
+                                        /**< The throttling discipline is a class which provides the
+                                             ThrottlingDiscipline interface.
 
-                                             \param[in] disc New queueing discipline */
-        void qdisc(QueueingDiscipline::None_t);
-                                        ///< Disable queueing discipline
+                                             \param[in] disc New throttling discipline */
+        void throttlingDisc(ThrottlingDiscipline::None_t);
+                                        ///< Disable throttling discipline
 
     protected:
         GenericPassiveInput();
@@ -516,7 +516,7 @@ namespace connector {
         void v_unthrottleEvent();
 
         GenericActiveOutput * peer_;
-        boost::scoped_ptr<QueueingDiscipline> qdisc_;
+        boost::scoped_ptr<ThrottlingDiscipline> throttlingDisc_;
     };
 
     /** \brief Combination of PassiveConnector and OutputConnector

@@ -26,22 +26,31 @@
 //   Stefan Bund <g0dil@berlios.de>
 
 /** \file
-    \brief PassiveQueue inline template implementation */
+    \brief Throttling non-inline non-template implementation */
 
-//#include "PassiveQueue.ih"
+#include "Throttling.hh"
 
 // Custom includes
+#include "Connectors.hh"
 
-#define prefix_ inline
+#define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::PassiveQueue
+// senf::ppi::ThresholdThrottling
 
-template <class ThrottlingDisc>
-prefix_ void senf::ppi::module::PassiveQueue::throttlingDisc(ThrottlingDisc const & disc)
+prefix_ void senf::ppi::ThresholdThrottling::update(connector::GenericPassiveInput & input, Event event)
 {
-    input.throttlingDisc(disc);
+    switch (event) {
+    case ENQUEUE:
+        if (input.queueSize() >= high_)
+            input.throttle();
+        break;
+    case DEQUEUE:
+        if (input.queueSize() <= low_)
+            input.unthrottle();
+        break;
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2010
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
@@ -23,41 +23,49 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Stefan Bund <g0dil@berlios.de>
+//   Thorsten Horstmann <tho@berlios.de>
 
 /** \file
-    \brief Queueing non-inline non-template implementation */
-
-#include "Queueing.hh"
-//#include "Queueing.ih"
+    \brief QueueingAlgorithm inline template implementation */
 
 // Custom includes
-#include "Connectors.hh"
 
-//#include "Queueing.mpp"
-#define prefix_
+#define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::ThresholdQueueing
+// senf::ppi::QueueingAlgorithmRegistry::RegistrationProxy<QAlgorithm>
 
-prefix_ void senf::ppi::ThresholdQueueing::update(connector::GenericPassiveInput & input, Event event)
+template <class QAlgorithm>
+prefix_ senf::ppi::QueueingAlgorithmRegistry::RegistrationProxy<QAlgorithm>::RegistrationProxy(std::string const & key)
 {
-    switch (event) {
-    case ENQUEUE:
-        if (input.queueSize() >= high_)
-            input.throttle();
-        break;
-    case DEQUEUE:
-        if (input.queueSize() <= low_)
-            input.unthrottle();
-        break;
-    }
+    QueueingAlgorithmRegistry::instance().registerQAlgorithm<QAlgorithm>( key);
+};
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::QueueingAlgorithmRegistry
+
+template <class QAlgorithm>
+prefix_ void senf::ppi::QueueingAlgorithmRegistry::registerQAlgorithm(std::string key)
+{
+    if (qAlgoMap_.find( key) == qAlgoMap_.end() )
+        qAlgoMap_.insert(key, new detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>() );
+    else
+        throw Exception("Duplicated QAlgorithm Registration ") << key;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>
+
+template <class QAlgorithm>
+prefix_ senf::ppi::QueueingAlgorithm::ptr senf::ppi::detail::QueueingAlgorithmRegistry_Entry<QAlgorithm>::create()
+    const
+{
+    return QAlgorithm::create();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "Queueing.mpp"
 
 
 // Local Variables:

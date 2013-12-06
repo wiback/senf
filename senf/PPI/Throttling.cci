@@ -34,15 +34,15 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::QueueingDiscipline
+// senf::ppi::ThrottlingDiscipline
 
-prefix_ senf::ppi::QueueingDiscipline::~QueueingDiscipline()
+prefix_ senf::ppi::ThrottlingDiscipline::~ThrottlingDiscipline()
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::ThresholdQueueing
+// senf::ppi::ThresholdThrottling
 
-prefix_ senf::ppi::ThresholdQueueing::ThresholdQueueing(unsigned high, unsigned low)
+prefix_ senf::ppi::ThresholdThrottling::ThresholdThrottling(unsigned high, unsigned low)
     : high_(high), low_(low)
 {}
 

@@ -32,120 +32,13 @@
 #define HH_SENF_PPI_QueueingSocketSink_ 1
 
 // Custom includes
-#include <queue>
+#include "QueueingAlgorithm.hh"
 #include "SocketSink.hh"
-#include <senf/Utils/Console/ScopedDirectory.hh>
 
-//#include "QueueingSocketSink.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
-
-    class QueueingAlgorithm
-        : private boost::noncopyable
-    {
-        console::ScopedDirectory<QueueingAlgorithm> dir_;
-
-    public:
-        typedef SENF_SMART_PTR<QueueingAlgorithm> ptr;
-
-        virtual ~QueueingAlgorithm() {};
-
-        console::DirectoryNode & consoleDir();
-        Packet dequeue();
-        bool enqueue(Packet const & packet);
-        unsigned size() const;
-        void clear();
-
-    protected:
-        QueueingAlgorithm();
-
-        virtual Packet v_dequeue() = 0;
-        virtual bool v_enqueue(Packet const & packet) = 0;
-        virtual unsigned v_size() const = 0;
-        virtual void v_clear() = 0;
-    };
-
-
-    namespace detail {
-        struct QueueingAlgorithmRegistry_EntryBase
-        {
-            virtual ~QueueingAlgorithmRegistry_EntryBase() {}
-            virtual QueueingAlgorithm::ptr create() const = 0;
-        };
-
-        template <class QAlgorithm>
-        struct QueueingAlgorithmRegistry_Entry : QueueingAlgorithmRegistry_EntryBase
-        {
-            virtual QueueingAlgorithm::ptr create() const;
-        };
-    }
-
-    class QueueingAlgorithmRegistry
-        : public senf::singleton<QueueingAlgorithmRegistry>
-    {
-        typedef boost::ptr_map<std::string, detail::QueueingAlgorithmRegistry_EntryBase> QAlgoMap;
-        QAlgoMap qAlgoMap_;
-
-        QueueingAlgorithmRegistry() {};
-
-    public:
-        using senf::singleton<QueueingAlgorithmRegistry>::instance;
-        friend class senf::singleton<QueueingAlgorithmRegistry>;
-
-        struct Exception : public senf::Exception {
-            Exception(std::string const & descr) : senf::Exception(descr) {}
-        };
-
-        template <class QAlgorithm>
-        struct RegistrationProxy {
-            RegistrationProxy(std::string const & key);
-        };
-
-        template <class QAlgorithm>
-        void registerQAlgorithm(std::string key);
-
-        QueueingAlgorithm::ptr createQAlgorithm(std::string const & key) const;
-        void dump(std::ostream & os) const;
-    };
-
-
-#   define SENF_PPI_REGISTER_QALGORITHM( key, QAlgorithm )                          \
-        namespace {                                                                 \
-            senf::ppi::QueueingAlgorithmRegistry::RegistrationProxy<QAlgorithm>     \
-                BOOST_PP_CAT(qAlgorithmRegistration_, __LINE__)( key);              \
-        }
-
-
-    class FIFOQueueingAlgorithm : public QueueingAlgorithm
-    {
-        std::queue<Packet> queue_;
-        unsigned max_size_;
-
-        FIFOQueueingAlgorithm();
-
-        virtual Packet v_dequeue();
-        virtual bool v_enqueue(Packet const & packet);
-        virtual unsigned v_size() const;
-        virtual void v_clear();
-
-    public:
-        static QueueingAlgorithm::ptr create();
-    };
-
-    class NoneQueueingAlgorithm : public QueueingAlgorithm
-    {
-        virtual Packet v_dequeue();
-        virtual bool v_enqueue(Packet const & packet);
-        virtual unsigned v_size() const;
-        virtual void v_clear();
-
-    public:
-        static QueueingAlgorithm::ptr create();
-    };
-
-
 namespace module {
 
     /** \brief QueueingSocketSink
@@ -190,7 +83,7 @@ namespace module {
 }}}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#include "QueueingSocketSink.cci"
+//#include "QueueingSocketSink.cci"
 #include "QueueingSocketSink.ct"
 #include "QueueingSocketSink.cti"
 #endif
