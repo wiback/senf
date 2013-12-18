@@ -129,41 +129,54 @@ senf::detail::packetParserSize(Parser const & p, int, senf::mpl::take_uint<Parse
 
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ValueParserBase<Parser, ValueType, FixedBytes>
+// senf::ArrayValueParserBase<Parser, ValueType, FixedBytes>
 
-template <class Parser, typename ValueType, senf::PacketParserBase::size_type FixedBytes>
-prefix_ senf::ValueParserBase<Parser, ValueType, FixedBytes>::ValueParserBase(data_iterator i, state_type s)
-    : PacketParserBase(i, s, FixedBytes)
+template <class Parser, typename ValueType>
+prefix_ senf::ArrayValueParserBase<Parser, ValueType>::ArrayValueParserBase(data_iterator i, state_type s)
+    : PacketParserBase(i, s, fixed_bytes)
 { }
 
-template <class Parser, typename ValueType, senf::PacketParserBase::size_type FixedBytes>
-prefix_ senf::ValueParserBase<Parser, ValueType, FixedBytes>::operator value_type ()
+template <class Parser, typename ValueType>
+prefix_ senf::ArrayValueParserBase<Parser, ValueType>::operator value_type ()
     const
 {
     return static_cast<Parser const *>(this)->value();
 }
 
-template <class Parser, typename ValueType, senf::PacketParserBase::size_type FixedBytes>
+template <class Parser, typename ValueType>
 prefix_ senf::PacketParserBase::byte &
-senf::ValueParserBase<Parser, ValueType, FixedBytes>::operator[](size_type index)
+senf::ArrayValueParserBase<Parser, ValueType>::operator[](size_type index)
 {
     return *boost::next(i(), index);
 }
 
-template <class Parser, typename ValueType, senf::PacketParserBase::size_type FixedBytes>
+template <class Parser, typename ValueType>
 prefix_ senf::PacketParserBase::byte const &
-senf::ValueParserBase<Parser, ValueType, FixedBytes>::operator[](size_type index)
+senf::ArrayValueParserBase<Parser, ValueType>::operator[](size_type index)
     const
 {
     return *boost::next(i(), index);
 }
 
-
-template <class Parser, typename ValueType, senf::PacketParserBase::size_type FixedBytes>
-prefix_ Parser const & senf::ValueParserBase<Parser, ValueType, FixedBytes>::operator= (value_type const & other)
+template <class Parser, typename ValueType>
+prefix_ Parser const & senf::ArrayValueParserBase<Parser, ValueType>::operator= (value_type const & other)
 {
     static_cast<Parser*>(this)->value(other);
     return *static_cast<Parser const *>(this);
+}
+
+template <class Parser, typename ValueType>
+prefix_ bool senf::ArrayValueParserBase<Parser, ValueType>::operator==(ValueType const & other)
+    const
+{
+    return std::equal(other.begin(), other.end(), i());
+}
+
+template <class Parser, typename ValueType>
+prefix_ bool senf::ArrayValueParserBase<Parser, ValueType>::operator==(Parser const & other)
+    const
+{
+    return std::equal(i(), i(fixed_bytes), other.i());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -48,21 +48,15 @@ namespace senf {
             EthernetPacket
      */
     struct MACAddressParser
-        : public ValueParserBase<MACAddressParser, MACAddress, 6u>
+        : public ArrayValueParserBase<MACAddressParser, MACAddress>
     {
         MACAddressParser(data_iterator i, state_type s) : Base(i,s) {}
-
-        value_type value() const;
-        void value(value_type const & v);
 
         bool local() const;             ///< \c true, if address is locally administered
         bool multicast() const;         ///< \c true, if address is a group/multicast address
         bool broadcast() const;         ///< \c true, if address is the broadcast address
         bool null() const;              ///< \c true, if address is the zero address
         boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
-
-        bool operator==(MACAddress const & macAddr) const;
-        bool operator==(MACAddressParser const & other) const;
 
         using Base::operator=;
     };

@@ -38,11 +38,10 @@
 
 namespace senf {
 
-    class WLANInfoElementParser
+    struct WLANInfoElementParser
         : public PacketParserBase
     {
-    public:
-#       include SENF_PARSER()
+    #   include SENF_PARSER()
         SENF_PARSER_FIELD   ( type,   UInt8Parser   );
         SENF_PARSER_FIELD   ( length, UInt8Parser   );
         SENF_PARSER_FINALIZE( WLANInfoElementParser );

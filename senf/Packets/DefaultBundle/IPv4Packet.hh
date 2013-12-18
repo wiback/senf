@@ -45,12 +45,9 @@ namespace senf {
         \see INet4Address
      */
     struct INet4AddressParser
-        : public ValueParserBase<INet4AddressParser, INet4Address, 4u>
+        : public ArrayValueParserBase<INet4AddressParser, INet4Address>
     {
         INet4AddressParser(data_iterator i, state_type s) : Base(i,s) {}
-
-        value_type value() const { return value_type::from_data(i()); }
-        void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
 
         using Base::operator=;
     };

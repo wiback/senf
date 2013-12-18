@@ -36,17 +36,6 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::MACAddressParser
 
-prefix_ senf::MACAddressParser::value_type senf::MACAddressParser::value()
-    const
-{
-    return MACAddress::from_data(i());
-}
-
-prefix_ void senf::MACAddressParser::value(value_type const & v)
-{
-    std::copy(v.begin(), v.end(), i());
-}
-
 prefix_ bool senf::MACAddressParser::local()
     const
 {
@@ -83,18 +72,6 @@ prefix_ boost::uint64_t senf::MACAddressParser::uint64()
         (boost::uint64_t( (*this)[3] ) << 16) |
         (boost::uint64_t( (*this)[4] ) <<  8) |
         (boost::uint64_t( (*this)[5] )      );
-}
-
-prefix_ bool senf::MACAddressParser::operator==(MACAddress const & macAddr)
-    const
-{
-    return std::equal(macAddr.begin(), macAddr.end(), i());
-}
-
-prefix_ bool senf::MACAddressParser::operator==(MACAddressParser const & other)
-    const
-{
-    return std::equal(i(), i(6), other.i());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -35,6 +35,9 @@
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::StringParser<LengthParser>
+
 template <class LengthParser>
 prefix_ senf::StringParser<LengthParser>::StringParser(data_iterator i, state_type s)
     : PacketParserBase(i, s, init_bytes)
@@ -79,6 +82,44 @@ prefix_ typename senf::StringParser<LengthParser> const & senf::StringParser<Len
 
 template <class LengthParser>
 prefix_ std::ostream & senf::operator<<(std::ostream & os, StringParser<LengthParser> const & value)
+{
+    os << value.value();
+    return os;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::FixedSizeStringParser<N>
+
+template <std::string::size_type N>
+prefix_ typename senf::FixedSizeStringParser<N>::value_type senf::FixedSizeStringParser<N>::value()
+    const
+{
+    return std::string(i(), i()+fixed_bytes);
+}
+
+template <std::string::size_type N>
+prefix_ void senf::FixedSizeStringParser<N>::value(value_type v)
+{
+    std::copy(v.begin(), v.end(), i());
+    std::fill(i()+v.size(), i()+fixed_bytes, '\0');
+}
+
+template <std::string::size_type N>
+prefix_ senf::FixedSizeStringParser<N>::operator value_type()
+    const
+{
+    return value();
+}
+
+template <std::string::size_type N>
+prefix_ typename senf::FixedSizeStringParser<N> const & senf::FixedSizeStringParser<N>::operator=(value_type other)
+{
+    value(other);
+    return *this;
+}
+
+template <std::string::size_type N>
+prefix_ std::ostream & senf::operator<<(std::ostream & os, FixedSizeStringParser<N> const & value)
 {
     os << value.value();
     return os;

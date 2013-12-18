@@ -68,6 +68,26 @@ namespace senf {
     template <class LengthParser>
     std::ostream & operator<<(std::ostream & os, StringParser<LengthParser> const & value);
 
+
+    template <std::string::size_type N>
+    class FixedSizeStringParser
+        : public PacketParserBase
+    {
+    public:
+        FixedSizeStringParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        typedef std::string value_type;
+        static size_type const fixed_bytes = N;
+
+        value_type value() const;
+        void value(value_type v);
+        operator value_type() const;
+        FixedSizeStringParser<N> const & operator=(value_type other);
+    };
+
+    template <std::string::size_type N>
+    std::ostream & operator<<(std::ostream & os, FixedSizeStringParser<N> const & value);
+
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

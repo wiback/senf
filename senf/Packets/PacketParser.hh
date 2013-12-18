@@ -533,20 +533,26 @@ namespace senf {
     };
 
 
-    template <class Parser, typename ValueType, PacketParserBase::size_type FixedBytes>
-    struct ValueParserBase : public PacketParserBase
+    template <class Parser, typename ValueType>
+    struct ArrayValueParserBase : public PacketParserBase
     {
-        typedef ValueParserBase<Parser, ValueType, FixedBytes> Base;
+        typedef ArrayValueParserBase<Parser, ValueType> Base;
 
-        static size_type const fixed_bytes = FixedBytes;
+        static size_type const fixed_bytes = ValueType::static_size;
         typedef ValueType value_type;
 
-        ValueParserBase(data_iterator i, state_type s);
+        ArrayValueParserBase(data_iterator i, state_type s);
+
+        value_type value() const { return value_type::from_data(i()); }
+        void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
 
         operator value_type () const;
         byte & operator[](size_type index);
         byte const & operator[](size_type index) const;
         Parser const & operator= (value_type const & other);
+
+        bool operator==(ValueType const & other) const;
+        bool operator==(Parser const & other) const;
     };
 
 }

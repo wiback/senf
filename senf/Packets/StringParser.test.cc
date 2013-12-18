@@ -45,6 +45,7 @@ namespace {
     {};
 
     typedef senf::StringParser<senf::UInt16Parser> MyStringParser;
+    typedef senf::FixedSizeStringParser<4> MyFixedSizeStringParser;
 }
 
 SENF_AUTO_UNIT_TEST(stringParser)
@@ -60,6 +61,19 @@ SENF_AUTO_UNIT_TEST(stringParser)
     BOOST_CHECK_EQUAL( p->data()[0], 0u );
     BOOST_CHECK_EQUAL( p->data()[1], 12u );
     BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()).value(), "Another Test" );
+}
+
+SENF_AUTO_UNIT_TEST(fixedSizeStringParser)
+{
+    senf::PacketInterpreterBase::byte data[] = { 'T', 'E', 'S', 'T' };
+    senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
+
+    BOOST_CHECK_EQUAL( p->data().size(), 4u );
+    BOOST_CHECK_EQUAL( MyFixedSizeStringParser(p->data().begin(), &p->data()).value(), "TEST" );
+
+    MyFixedSizeStringParser(p->data().begin(), &p->data()).value("ab");
+    std::string s = "ab"; s += '\0'; s += '\0';
+    BOOST_CHECK_EQUAL(MyFixedSizeStringParser(p->data().begin(), &p->data()).value(), s);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

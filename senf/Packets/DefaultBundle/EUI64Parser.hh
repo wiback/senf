@@ -45,12 +45,9 @@ namespace senf {
         \see EUI64
      */
     struct EUI64Parser
-        : public ValueParserBase<EUI64Parser, EUI64, 8u>
+        : public ArrayValueParserBase<EUI64Parser, EUI64>
     {
         EUI64Parser(data_iterator i, state_type s) : Base(i,s) {}
-
-        value_type value() const { return value_type::from_data(i()); }
-        void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
 
         using Base::operator=;
     };
