@@ -72,11 +72,11 @@ namespace senf {
     class MIHFIdTLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_FIELD_RO ( idLength, MIHLengthParser );
-        SENF_PARSER_LABEL    ( idValue          );
-        SENF_PARSER_SKIP     ( idLength(), 0    );
-        SENF_PARSER_FINALIZE ( MIHFIdTLVParser  );
+        SENF_PARSER_INHERIT ( MIHBaseTLVParser );
+        SENF_PARSER_FIELD_RO( idLength, MIHLengthParser );
+        SENF_PARSER_LABEL   ( idValue          );
+        SENF_PARSER_SKIP    ( idLength(), 0    );
+        SENF_PARSER_FINALIZE( MIHFIdTLVParser  );
 
     public:
         ///\name Value setters
@@ -226,9 +226,9 @@ namespace senf {
     struct MIHRegisterReqCodeTLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_FIELD    ( value, UInt8Parser );
-        SENF_PARSER_FINALIZE ( MIHRegisterReqCodeTLVParser );
+        SENF_PARSER_INHERIT ( MIHBaseTLVParser );
+        SENF_PARSER_FIELD   ( value, UInt8Parser );
+        SENF_PARSER_FINALIZE( MIHRegisterReqCodeTLVParser );
 
         SENF_PARSER_INIT() {
             defaultInit();
@@ -245,9 +245,9 @@ namespace senf {
     struct MIHValidTimeIntervalTLVParser : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_FIELD    ( value, UInt32Parser );
-        SENF_PARSER_FINALIZE ( MIHValidTimeIntervalTLVParser );
+        SENF_PARSER_INHERIT ( MIHBaseTLVParser );
+        SENF_PARSER_FIELD   ( value, UInt32Parser );
+        SENF_PARSER_FINALIZE( MIHValidTimeIntervalTLVParser );
 
         SENF_PARSER_INIT() {
             defaultInit();

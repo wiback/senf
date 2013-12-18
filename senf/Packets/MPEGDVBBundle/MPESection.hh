@@ -44,10 +44,10 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_BITFIELD ( delta_t,                  12, unsigned );
-        SENF_PARSER_BITFIELD ( table_boundary,           1,  bool     );
-        SENF_PARSER_BITFIELD ( frame_boundary,           1,  bool     );
-        SENF_PARSER_BITFIELD ( address,                  18, unsigned );
+        SENF_PARSER_BITFIELD( delta_t,        12, unsigned );
+        SENF_PARSER_BITFIELD( table_boundary,  1,  bool    );
+        SENF_PARSER_BITFIELD( frame_boundary,  1,  bool    );
+        SENF_PARSER_BITFIELD( address,        18, unsigned );
 
         SENF_PARSER_FINALIZE( MPERealTimeParametersParser );
     };

@@ -75,11 +75,11 @@ namespace senf {
         SENF_PARSER_FIELD( source,       INet6AddressParser );
         SENF_PARSER_FIELD( destination,  INet6AddressParser );
 
+        SENF_PARSER_FINALIZE( IPv6PacketParser );
+
         SENF_PARSER_INIT() {
             version() = 6;
         }
-
-        SENF_PARSER_FINALIZE(IPv6PacketParser);
     };
 
     /** \brief IPv6 packet

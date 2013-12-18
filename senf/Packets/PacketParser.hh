@@ -529,7 +529,7 @@ namespace senf {
         : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        SENF_PARSER_FINALIZE(VoidPacketParser);
+        SENF_PARSER_FINALIZE( VoidPacketParser );
     };
 
 

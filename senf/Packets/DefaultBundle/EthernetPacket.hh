@@ -82,7 +82,7 @@ namespace senf {
         SENF_PARSER_FIELD( source,      MACAddressParser );
         SENF_PARSER_FIELD( type_length, UInt16Parser     );
 
-        SENF_PARSER_FINALIZE(EthernetPacketParser);
+        SENF_PARSER_FINALIZE( EthernetPacketParser );
     };
 
     /** \brief Ethernet packet
@@ -144,7 +144,7 @@ namespace senf {
         // field is named "type_length" analogue to EthernetPacketParser
         SENF_PARSER_FIELD( type_length, UInt16Parser );
 
-        SENF_PARSER_FINALIZE(EthVLanPacketParser);
+        SENF_PARSER_FINALIZE( EthVLanPacketParser );
     };
 
     /** \brief Ethernet VLAN tag

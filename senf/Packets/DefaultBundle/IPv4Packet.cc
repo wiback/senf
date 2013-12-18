@@ -65,20 +65,21 @@ prefix_ void senf::IPv4PacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Internet protocol Version 4:\n"
-       << senf::fieldName("version")                   << p->version() << "\n"
-       << senf::fieldName("ip header length")          << p->ihl() << "\n"
-       << senf::fieldName("tos")                       << unsigned(p->tos()) << "\n"
-       << senf::fieldName("length")                    << p->length() << "\n"
-       << senf::fieldName("identifier")                << p->identifier() << "\n"
-       << senf::fieldName("dont fragment")             << p->df() << "\n"
-       << senf::fieldName("more fragments")            << p->mf() << "\n"
-       << senf::fieldName("fragment")                  << p->frag() << "\n"
-       << senf::fieldName("ttl")                       << unsigned(p->ttl()) << "\n"
-       << senf::fieldName("protocol")                  << unsigned(p->protocol()) << "\n"
+       << senf::fieldName("version")          << p->version() << "\n"
+       << senf::fieldName("ip header length") << p->ihl() << "\n"
+       << senf::fieldName("dscp")             << (p->dscp()) << "\n"
+       << senf::fieldName("ecn")              << (p->ecn()) << "\n"
+       << senf::fieldName("length")           << p->length() << "\n"
+       << senf::fieldName("identifier")       << p->identifier() << "\n"
+       << senf::fieldName("dont fragment")    << p->df() << "\n"
+       << senf::fieldName("more fragments")   << p->mf() << "\n"
+       << senf::fieldName("fragment")         << p->frag() << "\n"
+       << senf::fieldName("ttl")              << unsigned(p->ttl()) << "\n"
+       << senf::fieldName("protocol")         << unsigned(p->protocol()) << "\n"
        << senf::fieldName("checksum")
        << "0x" << std::hex << std::setw(4) << std::setfill('0') << std::right << p->checksum() << std::dec << "\n"
-       << senf::fieldName("source")                    << p->source() << "\n"
-       << senf::fieldName("destination")               << p->destination() << "\n";
+       << senf::fieldName("source")           << p->source() << "\n"
+       << senf::fieldName("destination")      << p->destination() << "\n";
 }
 
 prefix_ void senf::IPv4PacketType::finalize(packet p)

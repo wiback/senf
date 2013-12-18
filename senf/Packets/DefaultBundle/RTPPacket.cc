@@ -31,10 +31,11 @@
 #include "RTPPacket.hh"
 
 // Custom includes
-#include <boost/io/ios_state.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::RTPPacket );
 
 namespace
 {
@@ -68,18 +69,17 @@ namespace
 
 prefix_ void senf::RTPPacketType::dump(packet p, std::ostream & os)
 {
-    boost::io::ios_all_saver ias(os);
     os << "Real Time Protocol:\n"
-       << senf::fieldName("version")               << p->version() << "\n"
-       << senf::fieldName("padding")               << p->padding() << "\n"
-       << senf::fieldName("extension")             << p->extension() << "\n"
-       << senf::fieldName("contributing source cnt")   << p->csrcCount() << "\n"
-       << senf::fieldName("marker")                << p->marker() << "\n"
-       << senf::fieldName("payload type")          << p->payloadType() << " "
+       << senf::fieldName("version")                 << p->version() << "\n"
+       << senf::fieldName("padding")                 << p->padding() << "\n"
+       << senf::fieldName("extension")               << p->extension() << "\n"
+       << senf::fieldName("contributing source cnt") << p->csrcCount() << "\n"
+       << senf::fieldName("marker")                  << p->marker() << "\n"
+       << senf::fieldName("payload type")            << p->payloadType() << " "
            << ptName(p->payloadType() ) <<"\n"
-       << senf::fieldName("sequence number")       << p->seqNumber() << "\n"
-       << senf::fieldName("timestamp")             << p->timeStamp() << "\n"
-       << senf::fieldName("sync source id")        << p->synSourceId() << "\n";
+       << senf::fieldName("sequence number")         << p->seqNumber() << "\n"
+       << senf::fieldName("timestamp")               << p->timeStamp() << "\n"
+       << senf::fieldName("sync source id")          << p->synSourceId() << "\n";
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

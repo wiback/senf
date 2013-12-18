@@ -47,6 +47,17 @@ prefix_ void senf::GREPacketType::dump(packet p, std::ostream & os)
        << senf::fieldName("protocol_type")             << "0x" << std::hex << p->protocol_type() << "\n";
 }
 
+prefix_ void senf::GREPacketType::finalize(packet p)
+{
+    p->protocol_type() << key(p.next(nothrow));
+    p->version_number() = 0; // as per RFC2784, 2.3.1
+    if (p->checksum_present()) {
+        // compute checksum
+    } else {
+        // ???
+    }
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

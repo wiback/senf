@@ -47,21 +47,21 @@ namespace senf {
      */
     struct GREChecksumParser : public PacketParserBase {
 #       include SENF_PARSER()
-        SENF_PARSER_FIELD ( checksum1_, UInt16Parser );
-        SENF_PARSER_PRIVATE_FIELD ( reserved1_, UInt16Parser );
-        SENF_PARSER_FINALIZE(GREChecksumParser);
+        SENF_PARSER_FIELD        ( checksum1_, UInt16Parser );
+        SENF_PARSER_PRIVATE_FIELD( reserved1_, UInt16Parser );
+        SENF_PARSER_FINALIZE( GREChecksumParser );
     };
 
     struct GREPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_BITFIELD         ( checksum_present,  1, bool );
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,       12, unsigned ); // TODO: SKIP !!
-        SENF_PARSER_BITFIELD         ( version_number,    3, unsigned ); // TODO: Always Zero !!
-        SENF_PARSER_FIELD            ( protocol_type,    UInt16Parser );
-        SENF_PARSER_PRIVATE_VARIANT  ( checksum_,  checksum_present,
-                                                   (VoidPacketParser) (GREChecksumParser) );
+        SENF_PARSER_BITFIELD        ( checksum_present,  1, bool     );
+        SENF_PARSER_PRIVATE_BITFIELD( reserved0_,       12, unsigned ); // TODO: SKIP !!
+        SENF_PARSER_BITFIELD        ( version_number,    3, unsigned ); // TODO: Always Zero !!
+        SENF_PARSER_FIELD           ( protocol_type,    UInt16Parser );
+        SENF_PARSER_PRIVATE_VARIANT ( checksum_,  checksum_present,
+                (VoidPacketParser) (GREChecksumParser) );
 
         SENF_PARSER_FINALIZE( GREPacketParser );
 
@@ -96,18 +96,9 @@ namespace senf {
 
         static void dump(packet p, std::ostream & os);
         static EtherTypes::key_t nextPacketKey(packet p) {
-          return p->protocol_type();
+            return p->protocol_type();
         }
-        static void finalize(packet p) {
-          p->protocol_type() << key(p.next(nothrow));
-          p->version_number() = 0; // as per RFC2784, 2.3.1
-
-          if (p->checksum_present()) {
-            // compute checksum
-          } else {
-            // ???
-          }
-        }
+        static void finalize(packet p);
 
         static const IPTypes::key_t ipType = 47;
     };

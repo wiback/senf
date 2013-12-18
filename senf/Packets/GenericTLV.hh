@@ -53,9 +53,9 @@ namespace senf {
         struct MyTLVParserBase : public senf::PacketParserBase
         {
         #   include SENF_PARSER()
-            SENF_PARSER_FIELD    ( type,   senf::UInt8Parser );
-            SENF_PARSER_FIELD_RO ( length, senf::UInt8Parser );
-            SENF_PARSER_FINALIZE ( MyTLVParserBase           );
+            SENF_PARSER_FIELD   ( type,   senf::UInt8Parser );
+            SENF_PARSER_FIELD_RO( length, senf::UInt8Parser );
+            SENF_PARSER_FINALIZE( MyTLVParserBase           );
         };
         \endcode
 
@@ -65,9 +65,9 @@ namespace senf {
         struct MyConcreteTLVParser : public MyTLVParserBase
         {
         #   include SENF_PARSER()
-            SENF_PARSER_INHERIT  ( MyTLVParserBase             );
-            SENF_PARSER_FIELD    ( myValue, senf::UInt32Parser );
-            SENF_PARSER_FINALIZE ( MyConcreteTLVParser         );
+            SENF_PARSER_INHERIT ( MyTLVParserBase             );
+            SENF_PARSER_FIELD   ( myValue, senf::UInt32Parser );
+            SENF_PARSER_FINALIZE( MyConcreteTLVParser         );
 
             SENF_PARSER_INIT() {
                 type() = typeId;
@@ -101,9 +101,9 @@ namespace senf {
         class MyTestPacketParser : public senf::PacketParserBase
         {
         #   include SENF_PARSER()
-            SENF_PARSER_FIELD_RO ( list_length, senf::UInt8Parser );
-            SENF_PARSER_LIST     ( tlv_list, list_length, MyGenericTLVParser );
-            SENF_PARSER_FINALIZE ( MyTestPacketParser );
+            SENF_PARSER_FIELD_RO( list_length, senf::UInt8Parser );
+            SENF_PARSER_LIST    ( tlv_list, list_length, MyGenericTLVParser );
+            SENF_PARSER_FINALIZE( MyTestPacketParser );
         };
         \endcode
 

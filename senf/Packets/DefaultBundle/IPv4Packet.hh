@@ -70,12 +70,15 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_BITFIELD( version,   4, unsigned );
-        SENF_PARSER_BITFIELD( ihl,       4, unsigned );
+        SENF_PARSER_BITFIELD( version, 4, unsigned );
+        SENF_PARSER_BITFIELD( ihl,     4, unsigned );
 
-        SENF_PARSER_FIELD( tos,         UInt8Parser        );
-        SENF_PARSER_FIELD( length,      UInt16Parser       );
-        SENF_PARSER_FIELD( identifier,  UInt16Parser       );
+        // Originally defined as the Type of service (TOS), now DiffServ
+        SENF_PARSER_BITFIELD( dscp, 6, unsigned );
+        SENF_PARSER_BITFIELD( ecn,  2, unsigned );
+
+        SENF_PARSER_FIELD( length,     UInt16Parser );
+        SENF_PARSER_FIELD( identifier, UInt16Parser );
 
         SENF_PARSER_PRIVATE_BITFIELD( reserved,  1, bool     );
         SENF_PARSER_BITFIELD        ( df,        1, bool     );
@@ -88,13 +91,13 @@ namespace senf {
         SENF_PARSER_FIELD( source,      INet4AddressParser );
         SENF_PARSER_FIELD( destination, INet4AddressParser );
 
+        SENF_PARSER_FINALIZE( IPv4PacketParser );
+
         SENF_PARSER_INIT() {
             version() = 4;
             // We don't support option headers at the moment ...
             ihl() = 5;
         }
-
-        SENF_PARSER_FINALIZE(IPv4PacketParser);
 
         boost::uint16_t calcChecksum() const; ///< calculate header checksum
                                               /**< calculate and return the checksum of the header

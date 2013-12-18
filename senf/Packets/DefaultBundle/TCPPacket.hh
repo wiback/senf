@@ -50,10 +50,10 @@ namespace senf {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_FIELD( source,                  UInt16Parser );
-        SENF_PARSER_FIELD( destination,             UInt16Parser );
-        SENF_PARSER_FIELD( sequencenumber,          UInt32Parser );
-        SENF_PARSER_FIELD( acknowledgmentnumber,    UInt32Parser );
+        SENF_PARSER_FIELD( source,               UInt16Parser );
+        SENF_PARSER_FIELD( destination,          UInt16Parser );
+        SENF_PARSER_FIELD( sequencenumber,       UInt32Parser );
+        SENF_PARSER_FIELD( acknowledgmentnumber, UInt32Parser );
 
         SENF_PARSER_BITFIELD        ( dataoffset, 4, unsigned );
         SENF_PARSER_PRIVATE_BITFIELD( reserved,   6, unsigned );
@@ -73,7 +73,7 @@ namespace senf {
         // if dataoffset() < 5 packet is invalid
         SENF_PARSER_SKIP( (dataoffset() < 5 ? 0 : dataoffset()*4-20), 0);
 
-        SENF_PARSER_FINALIZE(TCPPacketParser);
+        SENF_PARSER_FINALIZE( TCPPacketParser );
 
         SENF_PARSER_INIT() {
             // Reserved: 6 bits, reserved for future use. Must be zero.

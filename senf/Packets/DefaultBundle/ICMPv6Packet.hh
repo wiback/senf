@@ -41,11 +41,11 @@ namespace senf
     struct ICMPv6PacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        SENF_PARSER_FIELD ( type,     UInt8Parser  );
-        SENF_PARSER_FIELD ( code,     UInt8Parser  );
-        SENF_PARSER_FIELD ( checksum, UInt16Parser );
+        SENF_PARSER_FIELD( type,     UInt8Parser  );
+        SENF_PARSER_FIELD( code,     UInt8Parser  );
+        SENF_PARSER_FIELD( checksum, UInt16Parser );
 
-        SENF_PARSER_FINALIZE ( ICMPv6PacketParser );
+        SENF_PARSER_FINALIZE( ICMPv6PacketParser );
 
         boost::uint16_t calcChecksum() const;
     };

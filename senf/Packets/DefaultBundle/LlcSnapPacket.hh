@@ -55,7 +55,7 @@ namespace senf {
         SENF_PARSER_FIELD( protocolId, UInt24Parser );
         SENF_PARSER_FIELD( type_length, UInt16Parser );
 
-        SENF_PARSER_FINALIZE(LlcSnapPacketParser);
+        SENF_PARSER_FINALIZE( LlcSnapPacketParser );
 
         SENF_PARSER_INIT() {
             dsap() = 0xaa;

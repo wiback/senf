@@ -53,18 +53,19 @@ SENF_AUTO_UNIT_TEST(ipV4Packet_parse)
 
     senf::IPv4Packet p (senf::IPv4Packet::create(data));
 
-    BOOST_CHECK_EQUAL( p->version(),     0x00u       );
-    BOOST_CHECK_EQUAL( p->ihl(),         0x01u       );
-    BOOST_CHECK_EQUAL( p->tos(),         0x02u       );
-    BOOST_CHECK_EQUAL( p->length(),      0x0304u     );
-    BOOST_CHECK_EQUAL( p->identifier(),  0x0506u     );
-    BOOST_CHECK_EQUAL( p->df(),          0           );
-    BOOST_CHECK_EQUAL( p->mf(),          0           );
-    BOOST_CHECK_EQUAL( p->frag(),        0x0708u     );
-    BOOST_CHECK_EQUAL( p->ttl(),         0x09u       );
-    BOOST_CHECK_EQUAL( p->protocol(),    0x0Au       );
-    BOOST_CHECK_EQUAL( p->checksum(),    0x0B0Cu     );
-    BOOST_CHECK_EQUAL( p->source().value(), senf::INet4Address(0x11121314u) );
+    BOOST_CHECK_EQUAL( p->version(),     0x00u   );
+    BOOST_CHECK_EQUAL( p->ihl(),         0x01u   );
+    BOOST_CHECK_EQUAL( p->dscp(),        0x00u   );
+    BOOST_CHECK_EQUAL( p->ecn(),         0x02u   );
+    BOOST_CHECK_EQUAL( p->length(),      0x0304u );
+    BOOST_CHECK_EQUAL( p->identifier(),  0x0506u );
+    BOOST_CHECK_EQUAL( p->df(),          0       );
+    BOOST_CHECK_EQUAL( p->mf(),          0       );
+    BOOST_CHECK_EQUAL( p->frag(),        0x0708u );
+    BOOST_CHECK_EQUAL( p->ttl(),         0x09u   );
+    BOOST_CHECK_EQUAL( p->protocol(),    0x0Au   );
+    BOOST_CHECK_EQUAL( p->checksum(),    0x0B0Cu );
+    BOOST_CHECK_EQUAL( p->source().value(),      senf::INet4Address(0x11121314u) );
     BOOST_CHECK_EQUAL( p->destination().value(), senf::INet4Address(0x15161718u) );
 
     std::ostringstream oss (std::ostringstream::out);
@@ -75,17 +76,17 @@ SENF_AUTO_UNIT_TEST(ipV4Packet_create)
 {
     senf::IPv4Packet ip (senf::IPv4Packet::create());
 
-    BOOST_CHECK_EQUAL( ip->version(), 4u );
-    BOOST_CHECK_EQUAL( ip->ihl(), 5u );
-    BOOST_CHECK_EQUAL( ip.size(), 20u );
+    BOOST_CHECK_EQUAL( ip->version(), 4u  );
+    BOOST_CHECK_EQUAL( ip->ihl(),     5u  );
+    BOOST_CHECK_EQUAL( ip.size(),     20u );
 
     senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
 
     BOOST_CHECK( ! ip->validateChecksum() );
 
     ip.finalizeAll();
-    BOOST_CHECK_EQUAL( ip->length(), 28u );
-    BOOST_CHECK_EQUAL( ip->protocol(), 17u );
+    BOOST_CHECK_EQUAL( ip->length(),   28u    );
+    BOOST_CHECK_EQUAL( ip->protocol(), 17u    );
     BOOST_CHECK_EQUAL( ip->checksum(), 0xbad2 );
 
     // Check, that the checksum field is correctly skipped

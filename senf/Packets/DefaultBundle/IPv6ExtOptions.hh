@@ -54,13 +54,15 @@ namespace senf {
     {
     public:
 #       include SENF_PARSER()
-        SENF_PARSER_FIELD    ( type,  UInt8Parser );
-        SENF_PARSER_GOTO     ( type );
-        SENF_PARSER_BITFIELD ( altAction,  2, unsigned );
-        SENF_PARSER_BITFIELD ( changeFlag, 1, unsigned );
-        SENF_PARSER_BITFIELD ( optionType, 5, unsigned );
-        SENF_PARSER_FIELD    ( length, UInt8Parser );
-        SENF_PARSER_FINALIZE ( IPv6OptionParser );
+
+        SENF_PARSER_FIELD   ( type,       UInt8Parser );
+        SENF_PARSER_GOTO    ( type                    );
+        SENF_PARSER_BITFIELD( altAction,  2, unsigned );
+        SENF_PARSER_BITFIELD( changeFlag, 1, unsigned );
+        SENF_PARSER_BITFIELD( optionType, 5, unsigned );
+        SENF_PARSER_FIELD   ( length,     UInt8Parser );
+
+        SENF_PARSER_FINALIZE( IPv6OptionParser );
 
         typedef GenericTLVParserRegistry<IPv6OptionParser> Registry;
     };

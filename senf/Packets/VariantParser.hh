@@ -144,7 +144,7 @@ namespace senf {
                                     (     id( uint24value,  senf::UInt24Parser     ))
                                     (     id( uint32value,  senf::UInt32Parser     )) );
 
-            SENF_PARSER_FINALIZE(SomeParser);
+            SENF_PARSER_FINALIZE( SomeParser );
         };
         \endcode
 

@@ -45,10 +45,10 @@ namespace senf {
     struct ICMPv6EchoRequestParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        SENF_PARSER_FIELD ( identifier, UInt16Parser );
-        SENF_PARSER_FIELD ( seqNr,      UInt16Parser );
+        SENF_PARSER_FIELD( identifier, UInt16Parser );
+        SENF_PARSER_FIELD( seqNr,      UInt16Parser );
 
-        SENF_PARSER_FINALIZE ( ICMPv6EchoRequestParser );
+        SENF_PARSER_FINALIZE( ICMPv6EchoRequestParser );
     };
 
     /** \brief ICMPv6 Echo Request
@@ -87,10 +87,10 @@ namespace senf {
     struct ICMPv6EchoReplyParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        SENF_PARSER_FIELD ( identifier, UInt16Parser );
-        SENF_PARSER_FIELD ( seqNr,      UInt16Parser );
+        SENF_PARSER_FIELD( identifier, UInt16Parser );
+        SENF_PARSER_FIELD( seqNr,      UInt16Parser );
 
-        SENF_PARSER_FINALIZE ( ICMPv6EchoReplyParser );
+        SENF_PARSER_FINALIZE( ICMPv6EchoReplyParser );
     };
 
     /** \brief ICMPv6 Echo Reply
@@ -131,7 +131,9 @@ namespace senf {
 #       include SENF_FIXED_PARSER()
 
         //should be set static 0 by sender and ignored by receiver
-        SENF_PARSER_PRIVATE_FIELD ( unused, UInt32Parser );
+        SENF_PARSER_PRIVATE_FIELD( unused, UInt32Parser );
+
+        SENF_PARSER_FINALIZE( ICMPv6ErrDestUnreachableParser );
 
         SENF_PARSER_INIT() {
             unused() = 0;
@@ -145,8 +147,6 @@ namespace senf {
                     5 - Source address failed ingress/egress policy
                     6 - Reject route to destination   */
         void setErrCode(int code);
-
-        SENF_PARSER_FINALIZE ( ICMPv6ErrDestUnreachableParser );
     };
 
     /** \brief ICMPv6 Destination unreachable
@@ -185,15 +185,14 @@ namespace senf {
     struct ICMPv6ErrTooBigParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        SENF_PARSER_FIELD ( mtu, UInt32Parser );
+        SENF_PARSER_FIELD( mtu, UInt32Parser );
+        SENF_PARSER_FINALIZE( ICMPv6ErrTooBigParser );
 
         /*   Code     static set to 0       */
         SENF_PARSER_INIT() {
             ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = 0;
         }
-
-        SENF_PARSER_FINALIZE ( ICMPv6ErrTooBigParser );
     };
 
     /** \brief ICMPv6 Packet to big
@@ -276,14 +275,14 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
         //should be set static 0 by sender and ignored by receiver
-        SENF_PARSER_FIELD ( pointer, UInt32Parser );
-        /*  Code      0 - Erroneous header field encountered
+        SENF_PARSER_FIELD( pointer, UInt32Parser );
+        /*  Code    0 - Erroneous header field encountered
                     1 - Unrecognized Next Header type encountered
                     2 - Unrecognized IPv6 option encountered          */
 
         void setErrCode(int code);
 
-        SENF_PARSER_FINALIZE ( ICMPv6ErrParamProblemParser );
+        SENF_PARSER_FINALIZE( ICMPv6ErrParamProblemParser );
     };
 
     /** \brief ICMPv6 Parameter problem
@@ -330,15 +329,15 @@ namespace senf {
         |1| exp |          mant         |
         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
 
-        SENF_PARSER_FIELD ( maxResponseCode, UInt16Parser       );
-        SENF_PARSER_FIELD ( reserved,        UInt16Parser       ); // set to zero by default
-        SENF_PARSER_FIELD ( mcAddress,       INet6AddressParser );
-        SENF_PARSER_BITFIELD ( resv,  4, unsigned ); // set to zero by default
-        SENF_PARSER_BITFIELD ( sFlag, 1, unsigned );
-        SENF_PARSER_BITFIELD ( qrv,   3, unsigned );
-        SENF_PARSER_FIELD    ( qqic, UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD ( nrSources, UInt16Parser );
-        SENF_PARSER_VECTOR   (srcAddresses, nrSources, INet6AddressParser );
+        SENF_PARSER_FIELD( maxResponseCode, UInt16Parser       );
+        SENF_PARSER_FIELD( reserved,        UInt16Parser       ); // set to zero by default
+        SENF_PARSER_FIELD( mcAddress,       INet6AddressParser );
+        SENF_PARSER_BITFIELD( resv,  4, unsigned ); // set to zero by default
+        SENF_PARSER_BITFIELD( sFlag, 1, unsigned );
+        SENF_PARSER_BITFIELD( qrv,   3, unsigned );
+        SENF_PARSER_FIELD        ( qqic, UInt8Parser       );
+        SENF_PARSER_PRIVATE_FIELD( nrSources, UInt16Parser );
+        SENF_PARSER_VECTOR( srcAddresses, nrSources, INet6AddressParser );
 
         SENF_PARSER_FINALIZE ( MLDv2ListenerQueryParser );
 
@@ -375,7 +374,6 @@ namespace senf {
     };
 
     typedef ConcretePacket<MLDv2ListenerQueryType> MLDv2ListenerQuery;
-
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( MLDv2ListenerQuery );
 
     //#############################################################
@@ -386,25 +384,25 @@ namespace senf {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_FIELD   ( recordType, UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD   ( auxDataLen, UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD   ( nrOfSrcs, UInt16Parser );
-        SENF_PARSER_FIELD   ( mcAddress, INet6AddressParser);
-        SENF_PARSER_VECTOR  ( srcAddresses, nrOfSrcs, INet6AddressParser );
-        SENF_PARSER_VECTOR  ( auxData, auxDataLen, UInt32Parser );
+        SENF_PARSER_FIELD        ( recordType, UInt8Parser        );
+        SENF_PARSER_PRIVATE_FIELD( auxDataLen, UInt8Parser        );
+        SENF_PARSER_PRIVATE_FIELD( nrOfSrcs,   UInt16Parser       );
+        SENF_PARSER_FIELD        ( mcAddress,  INet6AddressParser );
+        SENF_PARSER_VECTOR( srcAddresses, nrOfSrcs,   INet6AddressParser );
+        SENF_PARSER_VECTOR( auxData,      auxDataLen, UInt32Parser       );
 
-        SENF_PARSER_FINALIZE ( MLDv2AddressRecordParser );
+        SENF_PARSER_FINALIZE( MLDv2AddressRecordParser );
     };
 
     struct MLDv2ListenerReportParser : public PacketParserBase
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_FIELD   ( reserved, UInt16Parser );   //set to zero by default
-        SENF_PARSER_PRIVATE_FIELD   ( nrMcastAddrRecords_, UInt16Parser );
-        SENF_PARSER_LIST    ( mcastAddrRecords, nrMcastAddrRecords_, MLDv2AddressRecordParser );
+        SENF_PARSER_FIELD        ( reserved,            UInt16Parser );   //set to zero by default
+        SENF_PARSER_PRIVATE_FIELD( nrMcastAddrRecords_, UInt16Parser );
+        SENF_PARSER_LIST( mcastAddrRecords, nrMcastAddrRecords_, MLDv2AddressRecordParser );
 
-        SENF_PARSER_FINALIZE ( MLDv2ListenerReportParser );
+        SENF_PARSER_FINALIZE( MLDv2ListenerReportParser );
 
         SENF_PARSER_INIT() {
             reserved() = 0;
@@ -437,6 +435,7 @@ namespace senf {
 
         static void dump(packet p, std::ostream & os);
     };
+
     typedef ConcretePacket<MLDv2ListenerReportType> MLDv2ListenerReport;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( MLDv2ListenerReport );
 
@@ -446,9 +445,9 @@ namespace senf {
     struct NDPRouterSolicitationParser : public PacketParserBase
     {
 #      include SENF_PARSER()
-        SENF_PARSER_BITFIELD ( reserved, 32, unsigned );// set to zero by default
-        SENF_PARSER_LIST     ( options, packetSize(), senf::NDPGenericOptionParser );
-        SENF_PARSER_FINALIZE ( NDPRouterSolicitationParser );
+        SENF_PARSER_BITFIELD( reserved, 32, unsigned );// set to zero by default
+        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE( NDPRouterSolicitationParser );
 
         SENF_PARSER_INIT() {
             reserved() = 0;
@@ -480,6 +479,7 @@ namespace senf {
 
         static void dump(packet p, std::ostream & os);
     };
+
     typedef ConcretePacket<NDPRouterSolicitationMessageType> NDPRouterSolicitationMessage;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPRouterSolicitationMessage );
 
@@ -489,15 +489,15 @@ namespace senf {
     struct NDPRouterAdvertisementParser : public PacketParserBase
     {
 #      include SENF_PARSER()
-        SENF_PARSER_FIELD        ( curHopLimit, UInt8Parser );
-        SENF_PARSER_BITFIELD     ( m, 1, bool);
-        SENF_PARSER_BITFIELD     ( o, 1, bool);
-        SENF_PARSER_BITFIELD     ( reserved, 6, unsigned ); // set to zero by default
-        SENF_PARSER_FIELD        ( routerLifetime, UInt16Parser );
-        SENF_PARSER_FIELD        ( reachableTime, UInt32Parser );
-        SENF_PARSER_FIELD        ( retransTimer, UInt32Parser );
-        SENF_PARSER_LIST         ( options, packetSize(), senf::NDPGenericOptionParser );
-        SENF_PARSER_FINALIZE     ( NDPRouterAdvertisementParser );
+        SENF_PARSER_FIELD( curHopLimit, UInt8Parser );
+        SENF_PARSER_BITFIELD( m,        1, bool     );
+        SENF_PARSER_BITFIELD( o,        1, bool     );
+        SENF_PARSER_BITFIELD( reserved, 6, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD( routerLifetime, UInt16Parser );
+        SENF_PARSER_FIELD( reachableTime,  UInt32Parser );
+        SENF_PARSER_FIELD( retransTimer,   UInt32Parser );
+        SENF_PARSER_LIST( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE( NDPRouterAdvertisementParser );
 
         SENF_PARSER_INIT() {
             reserved() = 0;
@@ -529,6 +529,7 @@ namespace senf {
 
         static void dump(packet p, std::ostream & os);
     };
+
     typedef ConcretePacket<NDPRouterAdvertisementMessageType> NDPRouterAdvertisementMessage;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPRouterAdvertisementMessage );
 
@@ -538,10 +539,10 @@ namespace senf {
     struct NDPNeighborSolicitationParser : public PacketParserBase
     {
 #      include SENF_PARSER()
-        SENF_PARSER_BITFIELD  ( reserved, 32, unsigned ); // set to zero by default
-        SENF_PARSER_FIELD     ( target, INet6AddressParser );
-        SENF_PARSER_LIST      ( options, packetSize(), senf::NDPGenericOptionParser );
-        SENF_PARSER_FINALIZE  ( NDPNeighborSolicitationParser );
+        SENF_PARSER_BITFIELD( reserved, 32, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD   ( target, INet6AddressParser );
+        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE( NDPNeighborSolicitationParser );
 
         SENF_PARSER_INIT() {
             reserved() = 0;
@@ -573,6 +574,7 @@ namespace senf {
 
         static void dump(packet p, std::ostream & os);
     };
+
     typedef ConcretePacket<NDPNeighborSolicitationMessageType> NDPNeighborSolicitationMessage;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPNeighborSolicitationMessage );
 
@@ -582,13 +584,13 @@ namespace senf {
     struct NDPNeighborAdvertisementParser : public PacketParserBase
     {
 #      include SENF_PARSER()
-        SENF_PARSER_BITFIELD  ( r, 1, bool );
-        SENF_PARSER_BITFIELD  ( s, 1, bool );
-        SENF_PARSER_BITFIELD  ( o, 1, bool );
-        SENF_PARSER_BITFIELD  ( reserved, 29, unsigned ); // set to zero by default
-        SENF_PARSER_FIELD     ( target, INet6AddressParser );
-        SENF_PARSER_LIST      ( options, packetSize(), senf::NDPGenericOptionParser );
-        SENF_PARSER_FINALIZE  ( NDPNeighborAdvertisementParser );
+        SENF_PARSER_BITFIELD( r,         1, bool     );
+        SENF_PARSER_BITFIELD( s,         1, bool     );
+        SENF_PARSER_BITFIELD( o,         1, bool     );
+        SENF_PARSER_BITFIELD( reserved, 29, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD   ( target, INet6AddressParser );
+        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE( NDPNeighborAdvertisementParser );
 
         SENF_PARSER_INIT() {
             reserved() = 0;
@@ -620,6 +622,7 @@ namespace senf {
 
         static void dump(packet p, std::ostream & os);
     };
+
     typedef ConcretePacket<NDPNeighborAdvertisementMessageType> NDPNeighborAdvertisementMessage;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPNeighborAdvertisementMessage );
 
@@ -629,11 +632,11 @@ namespace senf {
     struct  NDPRedirectParser : public PacketParserBase
     {
 #      include SENF_PARSER()
-        SENF_PARSER_BITFIELD  ( reserved, 32, unsigned ); // set to zero by default
-        SENF_PARSER_FIELD     ( target, INet6AddressParser );
-        SENF_PARSER_FIELD     ( destination, INet6AddressParser );
-        SENF_PARSER_LIST      ( options, packetSize(), senf::NDPGenericOptionParser );
-        SENF_PARSER_FINALIZE  ( NDPRedirectParser );
+        SENF_PARSER_BITFIELD( reserved, 32, unsigned ); // set to zero by default
+        SENF_PARSER_FIELD   ( target, INet6AddressParser );
+        SENF_PARSER_FIELD   ( destination, INet6AddressParser );
+        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_FINALIZE( NDPRedirectParser );
 
         SENF_PARSER_INIT() {
             reserved() = 0;
@@ -666,6 +669,7 @@ namespace senf {
 
         static void dump(packet p, std::ostream & os);
     };
+
     typedef ConcretePacket<NDPRedirectMessageType> NDPRedirectMessage;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( NDPRedirectMessage );
 }

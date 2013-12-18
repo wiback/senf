@@ -53,14 +53,16 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD            ( nextHeader     , UInt8Parser  );
-        SENF_PARSER_PRIVATE_FIELD    ( reserved1      , UInt8Parser  );
-        SENF_PARSER_BITFIELD         ( fragmentOffset , 13, unsigned );
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved2      ,  2, unsigned );
-        SENF_PARSER_BITFIELD         ( moreFragments  ,  1, bool     );
-        SENF_PARSER_FIELD            ( id             , UInt32Parser );
+        SENF_PARSER_FIELD        ( nextHeader, UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD( reserved1,  UInt8Parser );
 
-        SENF_PARSER_FINALIZE(IPv6FragmentPacketParser);
+        SENF_PARSER_BITFIELD        ( fragmentOffset, 13, unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD( reserved2,       2, unsigned );
+        SENF_PARSER_BITFIELD        ( moreFragments,   1, bool     );
+
+        SENF_PARSER_FIELD( id, UInt32Parser );
+
+        SENF_PARSER_FINALIZE( IPv6FragmentPacketParser );
     };
 
     /** \brief IPv6 fragment extension
@@ -154,14 +156,14 @@ namespace senf {
         */
 #       include SENF_PARSER()
 
-        SENF_PARSER_FIELD ( nextHeader, UInt8Parser      );
-        SENF_PARSER_FIELD ( headerLength, UInt8Parser    );
-        SENF_PARSER_FIELD ( routingType, UInt8Parser     ); //set to Zero for minimal implementation
-        SENF_PARSER_FIELD_RO ( segmentsLeft, UInt8Parser );
-        SENF_PARSER_FIELD ( reserved, UInt32Parser       ); //set to zero by RFC
-        SENF_PARSER_VECTOR ( hopAddresses, segmentsLeft, INet6AddressParser );
+        SENF_PARSER_FIELD   ( nextHeader,   UInt8Parser    );
+        SENF_PARSER_FIELD   ( headerLength, UInt8Parser    );
+        SENF_PARSER_FIELD   ( routingType,  UInt8Parser    ); //set to Zero for minimal implementation
+        SENF_PARSER_FIELD_RO( segmentsLeft, UInt8Parser    );
+        SENF_PARSER_FIELD   ( reserved,     UInt32Parser   ); //set to zero by RFC
+        SENF_PARSER_VECTOR  ( hopAddresses, segmentsLeft, INet6AddressParser );
 
-        SENF_PARSER_FINALIZE ( IPv6RoutingPacketParser );
+        SENF_PARSER_FINALIZE( IPv6RoutingPacketParser );
 
         //provisionary, since only type 0 is implemented
         SENF_PARSER_INIT() {
@@ -230,19 +232,18 @@ namespace senf {
     */
     struct IPv6HopByHopOptionsPacketParser : public PacketParserBase
     {
-#       include SENF_PARSER()
-
-        SENF_PARSER_FIELD    ( nextHeader, UInt8Parser   );
-        SENF_PARSER_FIELD_RO ( headerLength, UInt8Parser );
-
         typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
         typedef detail::ListOptionTypeParser_Policy<
             IPv6GenericOptionParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
         typedef ListParser<ListOptionTypePolicy> ListOptionTypeParser;
 
-        SENF_PARSER_FIELD  ( options, ListOptionTypeParser);
+#       include SENF_PARSER()
 
-        SENF_PARSER_FINALIZE ( IPv6HopByHopOptionsPacketParser );
+        SENF_PARSER_FIELD   ( nextHeader,   UInt8Parser          );
+        SENF_PARSER_FIELD_RO( headerLength, UInt8Parser          );
+        SENF_PARSER_FIELD   ( options,      ListOptionTypeParser );
+
+        SENF_PARSER_FINALIZE( IPv6HopByHopOptionsPacketParser );
     };
 
     /** \brief IPv6 Hop-By-Hop extension
@@ -305,17 +306,18 @@ namespace senf {
      */
     struct IPv6DestinationOptionsPacketParser : public PacketParserBase
     {
-#       include SENF_PARSER()
-        SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
-        SENF_PARSER_FIELD_RO ( headerLength, UInt8Parser );
         typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
         typedef detail::ListOptionTypeParser_Policy<
             IPv6GenericOptionParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
         typedef ListParser<ListOptionTypePolicy> ListOptionTypeParser;
 
-        SENF_PARSER_FIELD  ( options, ListOptionTypeParser);
+#       include SENF_PARSER()
 
-        SENF_PARSER_FINALIZE ( IPv6DestinationOptionsPacketParser );
+        SENF_PARSER_FIELD   ( nextHeader,   UInt8Parser          );
+        SENF_PARSER_FIELD_RO( headerLength, UInt8Parser          );
+        SENF_PARSER_FIELD   ( options,      ListOptionTypeParser );
+
+        SENF_PARSER_FINALIZE( IPv6DestinationOptionsPacketParser );
     };
 
     /** \brief IPv6 Destination Options extension

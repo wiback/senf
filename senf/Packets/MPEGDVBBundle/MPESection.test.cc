@@ -74,7 +74,7 @@ SENF_AUTO_UNIT_TEST(MPESection_parse_chain)
             0xb5, 0x77, 0x4c, 0x3c
     };
 
-    senf::MPESection sec (senf::MPESection::create(data));
+    MPESection sec (MPESection::create(data));
 
     BOOST_CHECK_EQUAL(   sec->table_id(),                0x3eu       );
     BOOST_CHECK(         sec->section_syntax_indicator()             );
@@ -98,8 +98,8 @@ SENF_AUTO_UNIT_TEST(MPESection_parse_chain)
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( sec.dump( oss));
 
-    BOOST_REQUIRE( sec.next().is<senf::LlcSnapPacket>() );
-    senf::LlcSnapPacket llcsnap (sec.next().as<senf::LlcSnapPacket>());
+    BOOST_REQUIRE( sec.next().is<LlcSnapPacket>() );
+    LlcSnapPacket llcsnap (sec.next().as<LlcSnapPacket>());
 
     BOOST_CHECK_EQUAL( llcsnap->dsap(),        0xaau );
     BOOST_CHECK_EQUAL( llcsnap->ssap(),        0xaau );
@@ -110,19 +110,19 @@ SENF_AUTO_UNIT_TEST(MPESection_parse_chain)
     // Ether Bridging [RFC1701]) would be possible as well (see next test)
     BOOST_CHECK_EQUAL( llcsnap->type_length(), 0x62u );
 
-    BOOST_REQUIRE( llcsnap.next().is<senf::EthernetPacket>() );
-    senf::EthernetPacket eth (llcsnap.next().as<senf::EthernetPacket>());
+    BOOST_REQUIRE( llcsnap.next().is<EthernetPacket>() );
+    EthernetPacket eth (llcsnap.next().as<EthernetPacket>());
 
-    BOOST_CHECK_EQUAL( eth->destination().value(), senf::MACAddress::from_string("01:00:5e:01:02:03") );
-    BOOST_CHECK_EQUAL( eth->source().value(),      senf::MACAddress::from_string("12:b0:43:61:5d:99") );
+    BOOST_CHECK_EQUAL( eth->destination().value(), MACAddress::from_string("01:00:5e:01:02:03") );
+    BOOST_CHECK_EQUAL( eth->source().value(),      MACAddress::from_string("12:b0:43:61:5d:99") );
     BOOST_CHECK_EQUAL( eth->type_length(),         0x800u                                             );
 
-    BOOST_REQUIRE( eth.next().is<senf::IPv4Packet>() );
-    senf::IPv4Packet ip (eth.next().as<senf::IPv4Packet>());
+    BOOST_REQUIRE( eth.next().is<IPv4Packet>() );
+    IPv4Packet ip (eth.next().as<IPv4Packet>());
 
     BOOST_CHECK_EQUAL( ip->version(),    0x4u   );
     BOOST_CHECK_EQUAL( ip->ihl(),        0x5u   );
-    BOOST_CHECK_EQUAL( ip->tos(),        0x0u   );
+    BOOST_CHECK_EQUAL( ip->dscp(),       0x0u   );
     BOOST_CHECK_EQUAL( ip->length(),     0x54u  );
     BOOST_CHECK_EQUAL( ip->identifier(), 0x0u   );
     BOOST_CHECK_EQUAL( ip->df(),         1      );
@@ -131,14 +131,14 @@ SENF_AUTO_UNIT_TEST(MPESection_parse_chain)
     BOOST_CHECK_EQUAL( ip->ttl(),        1      );
     BOOST_CHECK_EQUAL( ip->protocol(),   1      );
     BOOST_CHECK_EQUAL( ip->checksum(),   0xc6fb );
-    BOOST_CHECK_EQUAL( ip->source().value(),      senf::INet4Address::from_string("192.168.1.1") );
-    BOOST_CHECK_EQUAL( ip->destination().value(), senf::INet4Address::from_string("239.1.2.3")   );
+    BOOST_CHECK_EQUAL( ip->source().value(),      INet4Address::from_string("192.168.1.1") );
+    BOOST_CHECK_EQUAL( ip->destination().value(), INet4Address::from_string("239.1.2.3")   );
 }
 
 
 SENF_AUTO_UNIT_TEST(MPESection_create)
 {
-    senf::MPESection sec (senf::MPESection::create());
+    MPESection sec (MPESection::create());
     sec->real_time_parameters().delta_t()        = 0x027u;
     sec->real_time_parameters().table_boundary() = 1;
     sec->real_time_parameters().frame_boundary() = 0;
@@ -146,18 +146,18 @@ SENF_AUTO_UNIT_TEST(MPESection_create)
 
     // the type/length field will be set to the ethertype 0x6558 (Trans
     // Ether Bridging [RFC1701]) on finalize()
-    senf::LlcSnapPacket llcsnap (senf::LlcSnapPacket::createAfter(sec));
+    LlcSnapPacket llcsnap (LlcSnapPacket::createAfter(sec));
 
-    senf::EthernetPacket eth (senf::EthernetPacket::createAfter(llcsnap));
-    eth->destination() = senf::MACAddress::from_string("01:00:5e:01:02:03");
-    eth->source()      = senf::MACAddress::from_string("92:4c:a2:1c:da:81");
+    EthernetPacket eth (EthernetPacket::createAfter(llcsnap));
+    eth->destination() = MACAddress::from_string("01:00:5e:01:02:03");
+    eth->source()      = MACAddress::from_string("92:4c:a2:1c:da:81");
 
-    senf::IPv4Packet ip (senf::IPv4Packet::createAfter(eth));
+    IPv4Packet ip (IPv4Packet::createAfter(eth));
     ip->df()          = 1;
     ip->ttl()         = 1;
     ip->protocol()    = 1;
-    ip->source()      = senf::INet4Address::from_string("10.1.2.2");
-    ip->destination() = senf::INet4Address::from_string("239.1.2.3");
+    ip->source()      = INet4Address::from_string("10.1.2.2");
+    ip->destination() = INet4Address::from_string("239.1.2.3");
 
     unsigned char payload_data[] = {
             // Payload (ICMP)
@@ -170,7 +170,7 @@ SENF_AUTO_UNIT_TEST(MPESection_create)
             0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
             0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37
     };
-    senf::DataPacket payload (senf::DataPacket::createAfter(ip, payload_data));
+    DataPacket payload (DataPacket::createAfter(ip, payload_data));
 
     sec.finalizeAll();
 

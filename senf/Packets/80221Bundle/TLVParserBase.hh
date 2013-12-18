@@ -109,9 +109,9 @@ namespace senf {
     {
     public:
 #       include SENF_PARSER()
-        SENF_PARSER_FIELD    ( type,   UInt8Parser        );
-        SENF_PARSER_FIELD_RO ( length, MIHLengthParser );
-        SENF_PARSER_FINALIZE ( MIHBaseTLVParser           );
+        SENF_PARSER_FIELD   ( type,   UInt8Parser     );
+        SENF_PARSER_FIELD_RO( length, MIHLengthParser );
+        SENF_PARSER_FINALIZE( MIHBaseTLVParser        );
 
         /** \brief shrink size of the TLV length field to minimum
 
@@ -141,9 +141,9 @@ namespace senf {
         : public MIHBaseTLVParser
     {
     #   include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( MIHBaseTLVParser );
-        SENF_PARSER_FIELD_RO ( listSize, MIHLengthParser );
-        SENF_PARSER_FINALIZE ( MIHBaseListTLVParser );
+        SENF_PARSER_INHERIT ( MIHBaseTLVParser          );
+        SENF_PARSER_FIELD_RO( listSize, MIHLengthParser );
+        SENF_PARSER_FINALIZE( MIHBaseListTLVParser      );
 
         void maxListSize(MIHLengthParser::value_type maxl = MIHLengthParser::max_value) const;
     };

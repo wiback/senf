@@ -44,7 +44,7 @@ namespace senf {
 
         SENF_PARSER_FIELD( timestamp,      UInt64LSBParser   );
         SENF_PARSER_FIELD( beaconInterval, UInt16LSBParser   );
-        SENF_PARSER_SKIP ( 2,2); //capability flags
+        SENF_PARSER_SKIP ( 2, 2 ); //capability flags
 
         SENF_PARSER_FIELD( ssidIE, WLANSSIDInfoElementParser );
         WLANSSIDInfoElementParser::value_t ssid() const { return ssidIE().value(); }

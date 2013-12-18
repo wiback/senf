@@ -45,9 +45,9 @@ namespace senf {
     {
     public:
 #       include SENF_PARSER()
-        SENF_PARSER_FIELD    ( type, UInt8Parser );
-        SENF_PARSER_FIELD    ( length, UInt8Parser );
-        SENF_PARSER_FINALIZE ( NDPOptionParser );
+        SENF_PARSER_FIELD( type,   UInt8Parser );
+        SENF_PARSER_FIELD( length, UInt8Parser );
+        SENF_PARSER_FINALIZE( NDPOptionParser  );
 
         typedef GenericTLVParserRegistry<NDPOptionParser> Registry;
     };
@@ -66,9 +66,9 @@ namespace senf {
     struct NDPSourceLLAddressTLVParser : public NDPOptionParser
     {
 #       include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( NDPOptionParser );
-        SENF_PARSER_FIELD    ( source, MACAddressParser);
-        SENF_PARSER_FINALIZE ( NDPSourceLLAddressTLVParser);
+        SENF_PARSER_INHERIT ( NDPOptionParser             );
+        SENF_PARSER_FIELD   ( source, MACAddressParser    );
+        SENF_PARSER_FINALIZE( NDPSourceLLAddressTLVParser );
 
         SENF_PARSER_INIT() {
             defaultInit();
@@ -82,9 +82,9 @@ namespace senf {
     struct NDPTargetLLAddressTLVParser : public NDPOptionParser
     {
 #       include SENF_PARSER()
-        SENF_PARSER_INHERIT  ( NDPOptionParser );
-        SENF_PARSER_FIELD    ( target, MACAddressParser );
-        SENF_PARSER_FINALIZE ( NDPTargetLLAddressTLVParser );
+        SENF_PARSER_INHERIT ( NDPOptionParser             );
+        SENF_PARSER_FIELD   ( target, MACAddressParser    );
+        SENF_PARSER_FINALIZE( NDPTargetLLAddressTLVParser );
 
         SENF_PARSER_INIT() {
             defaultInit();
@@ -102,16 +102,21 @@ namespace senf {
     struct NDPPrefixInformationTLVParser : public NDPOptionParser
     {
 #       include SENF_PARSER()
-        SENF_PARSER_INHERIT          ( NDPOptionParser );
-        SENF_PARSER_FIELD            ( prefixLength, UInt8Parser );
-        SENF_PARSER_BITFIELD         ( l, 1, bool );
-        SENF_PARSER_BITFIELD         ( a, 1, bool );
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved1, 6, unsigned );
-        SENF_PARSER_FIELD            ( validLifetime, UInt32Parser );
-        SENF_PARSER_FIELD            ( preferredLifetime, UInt32Parser );
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved2, 32, unsigned );
-        SENF_PARSER_FIELD            ( prefix, INet6AddressParser );
-        SENF_PARSER_FINALIZE         ( NDPPrefixInformationTLVParser );
+        SENF_PARSER_INHERIT( NDPOptionParser );
+
+        SENF_PARSER_FIELD( prefixLength, UInt8Parser );
+
+        SENF_PARSER_BITFIELD        ( l,         1, bool     );
+        SENF_PARSER_BITFIELD        ( a,         1, bool     );
+        SENF_PARSER_PRIVATE_BITFIELD( reserved1, 6, unsigned );
+
+        SENF_PARSER_FIELD( validLifetime,     UInt32Parser );
+        SENF_PARSER_FIELD( preferredLifetime, UInt32Parser );
+
+        SENF_PARSER_PRIVATE_FIELD( reserved2, UInt32Parser       );
+        SENF_PARSER_FIELD        ( prefix,    INet6AddressParser );
+
+        SENF_PARSER_FINALIZE( NDPPrefixInformationTLVParser );
 
         SENF_PARSER_INIT() {
             defaultInit();
@@ -130,10 +135,12 @@ namespace senf {
     struct NDPMTUTLVParser : public NDPOptionParser
     {
 #       include SENF_PARSER()
-        SENF_PARSER_INHERIT          ( NDPOptionParser );
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved, 16, unsigned );
-        SENF_PARSER_FIELD            ( mtu, UInt32Parser );
-        SENF_PARSER_FINALIZE         ( NDPMTUTLVParser );
+        SENF_PARSER_INHERIT( NDPOptionParser );
+
+        SENF_PARSER_PRIVATE_FIELD ( reserved, UInt16Parser );
+        SENF_PARSER_FIELD         ( mtu,      UInt32Parser );
+
+        SENF_PARSER_FINALIZE( NDPMTUTLVParser );
 
         SENF_PARSER_INIT() {
             defaultInit();

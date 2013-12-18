@@ -47,15 +47,15 @@ namespace senf {
 #       include SENF_PARSER()
 
         SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser ); //<pkgdraw: hide
-        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_FIELD( reserved_,  UInt8Parser  ); //<pkgdraw: hide
 
         SENF_PARSER_VECTOR( fbips, fbipCount_, INet4AddressParser );
+
+        SENF_PARSER_FINALIZE( DTCPIPv4AddressListParser );
 
         // Needed since we do NOT want to init fbipCount_ or reseverd_. And since
         // INet4AddressParser::init() is a no-op, we can just as well disable init completely
         SENF_PARSER_INIT() {}
-
-        SENF_PARSER_FINALIZE(DTCPIPv4AddressListParser);
     };
 
     struct DTCPIPv6AddressListParser : public PacketParserBase
@@ -63,15 +63,15 @@ namespace senf {
 #       include SENF_PARSER()
 
         SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser ); //<pkgdraw: hide
-        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_FIELD( reserved_,  UInt8Parser ); //<pkgdraw: hide
 
         SENF_PARSER_VECTOR( fbips, fbipCount_, INet6AddressParser );
+
+        SENF_PARSER_FINALIZE( DTCPIPv6AddressListParser );
 
         // Needed since we do NOT want to init fbipCount_ or reseverd_. And since
         // INet4AddressParser::init() is a no-op, we can just as well disable init completely
         SENF_PARSER_INIT() {}
-
-        SENF_PARSER_FINALIZE(DTCPIPv6AddressListParser);
     };
 
     /** \brief Parse a DTCP HELLO packet
@@ -82,34 +82,32 @@ namespace senf {
      */
     struct DTCPHelloPacketParser : public PacketParserBase
     {
+        enum Command { JOIN=1, LEAVE=2 };
+
 #       include SENF_PARSER()
 
         //>pkgdraw: name=vers
-        SENF_PARSER_BITFIELD         ( versionNumber,        4, unsigned );  // must be 1
-        SENF_PARSER_BITFIELD         ( command,              4, unsigned );  //<pkgdraw: name=cmd
+        SENF_PARSER_BITFIELD( versionNumber, 4, unsigned );  // must be 1
+        SENF_PARSER_BITFIELD( command,       4, unsigned );  //<pkgdraw: name=cmd
 
-        enum Command { JOIN=1, LEAVE=2 };
+        SENF_PARSER_FIELD( interval,       UInt8Parser  );  // should be 5
+        SENF_PARSER_FIELD( sequenceNumber, UInt16Parser );
 
-        SENF_PARSER_FIELD            ( interval,             UInt8Parser );  // should be 5
-        SENF_PARSER_FIELD            ( sequenceNumber,       UInt16Parser );
+        SENF_PARSER_PRIVATE_BITFIELD( reserved0_,         3, unsigned );  //<pkgdraw: name=
+        SENF_PARSER_BITFIELD        ( receiveCapableFeed, 1, bool     );
+        SENF_PARSER_BITFIELD_RO     ( ipVersion,          4, unsigned );  // 4=IPv4, 6=IPv6
 
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,           3, unsigned );  //<pkgdraw: name=
-        SENF_PARSER_BITFIELD         ( receiveCapableFeed,   1, bool );
-        SENF_PARSER_BITFIELD_RO      ( ipVersion,            4, unsigned );  // 4=IPv4, 6=IPv6
-
-        SENF_PARSER_FIELD            ( tunnelProtocol,       UInt8Parser );
-        SENF_PARSER_FIELD_RO         ( fbipCount,            UInt8Parser );
+        SENF_PARSER_FIELD   ( tunnelProtocol, UInt8Parser );
+        SENF_PARSER_FIELD_RO( fbipCount,      UInt8Parser );
         //>pkgdraw: name=
-        SENF_PARSER_PRIVATE_FIELD    ( reserved1_,           UInt8Parser );  // must be zero
+        SENF_PARSER_PRIVATE_FIELD( reserved1_, UInt8Parser );  // must be zero
 
         // Go back to fbipCount so the variant has access to that field
         SENF_PARSER_GOTO( fbipCount );
 
-        SENF_PARSER_VARIANT          ( fbipList_,            ipVersion,
-                           ( ids(na, has_v4fbipList, init_v4fbipList,
-                                 key(4, DTCPIPv4AddressListParser)) )
-                           ( ids(na, has_v6fbipList, init_v6fbipList,
-                                 key(6, DTCPIPv6AddressListParser)) ) );
+        SENF_PARSER_VARIANT( fbipList_, ipVersion,
+                ( ids(na, has_v4fbipList, init_v4fbipList, key(4, DTCPIPv4AddressListParser)) )
+                ( ids(na, has_v6fbipList, init_v6fbipList, key(6, DTCPIPv6AddressListParser)) ) );
 
         // We define the two variant accessors ourselves so we can directly return the vector and
         // not the collection parser which contains the vector ...

@@ -56,7 +56,7 @@ namespace senf {
         SENF_PARSER_FIELD( length,      senf::UInt16Parser );
         SENF_PARSER_FIELD( checksum,    senf::UInt16Parser );
 
-        SENF_PARSER_FINALIZE(UDPPacketParser);
+        SENF_PARSER_FINALIZE( UDPPacketParser );
 
         boost::uint16_t calcChecksum() const; ///< calculate (pseudo-)header checksum
                                               /**< calculate and return the checksum of the

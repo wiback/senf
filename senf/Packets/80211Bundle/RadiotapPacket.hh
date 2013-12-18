@@ -47,16 +47,16 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_BITFIELD ( shortGI,        1, bool );
-        SENF_PARSER_BITFIELD ( badFCS,         1, bool );
-        SENF_PARSER_BITFIELD ( padding,        1, bool );
-        SENF_PARSER_BITFIELD_RO ( fcsAtEnd,    1, bool ); // Cannot change this (change packet size)
-        SENF_PARSER_BITFIELD ( fragmentation,  1, bool );
-        SENF_PARSER_BITFIELD ( wep,            1, bool );
-        SENF_PARSER_BITFIELD ( shortPreamble,  1, bool );
-        SENF_PARSER_BITFIELD ( cfp,            1, bool );
+        SENF_PARSER_BITFIELD   ( shortGI,       1, bool );
+        SENF_PARSER_BITFIELD   ( badFCS,        1, bool );
+        SENF_PARSER_BITFIELD   ( padding,       1, bool );
+        SENF_PARSER_BITFIELD_RO( fcsAtEnd,      1, bool ); // Cannot change this (change packet size)
+        SENF_PARSER_BITFIELD   ( fragmentation, 1, bool );
+        SENF_PARSER_BITFIELD   ( wep,           1, bool );
+        SENF_PARSER_BITFIELD   ( shortPreamble, 1, bool );
+        SENF_PARSER_BITFIELD   ( cfp,           1, bool );
 
-        SENF_PARSER_FINALIZE ( RadiotapPacket_FlagsParser );
+        SENF_PARSER_FINALIZE( RadiotapPacket_FlagsParser );
 
         friend struct RadiotapPacketParser;
     };
@@ -69,32 +69,31 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD     ( freq,          UInt16LSBParser );
+        SENF_PARSER_FIELD    ( freq,       UInt16LSBParser );
+        SENF_PARSER_BITFIELD ( flag2ghz,           1, bool );
+        SENF_PARSER_BITFIELD ( ofdm,               1, bool );
+        SENF_PARSER_BITFIELD ( cck,                1, bool );
+        SENF_PARSER_BITFIELD ( turbo,              1, bool );
+        SENF_PARSER_SKIP_BITS(                     4       );
+        SENF_PARSER_BITFIELD ( quarterRateChannel, 1, bool );
+        SENF_PARSER_BITFIELD ( halfRateChannel,    1, bool );
+        SENF_PARSER_BITFIELD ( gsm,                1, bool );
+        SENF_PARSER_BITFIELD ( staticTurbo,        1, bool );
+        SENF_PARSER_BITFIELD ( gfsk,               1, bool );
+        SENF_PARSER_BITFIELD ( cckOfdm,            1, bool );
+        SENF_PARSER_BITFIELD ( passive,            1, bool );
+        SENF_PARSER_BITFIELD ( flag5ghz,           1, bool );
 
-        SENF_PARSER_BITFIELD  ( flag2ghz,             1, bool  );
-        SENF_PARSER_BITFIELD  ( ofdm,                 1, bool  );
-        SENF_PARSER_BITFIELD  ( cck,                  1, bool  );
-        SENF_PARSER_BITFIELD  ( turbo,                1, bool  );
-        SENF_PARSER_SKIP_BITS ( 4                              );
-        SENF_PARSER_BITFIELD  ( quarterRateChannel,   1, bool  );
-        SENF_PARSER_BITFIELD  ( halfRateChannel,      1, bool  );
-        SENF_PARSER_BITFIELD  ( gsm,                  1, bool  );
-        SENF_PARSER_BITFIELD  ( staticTurbo,          1, bool  );
-        SENF_PARSER_BITFIELD  ( gfsk,                 1, bool  );
-        SENF_PARSER_BITFIELD  ( cckOfdm,              1, bool  );
-        SENF_PARSER_BITFIELD  ( passive,              1, bool  );
-        SENF_PARSER_BITFIELD  ( flag5ghz,             1, bool  );
-
-        SENF_PARSER_FINALIZE ( RadiotapPacket_ChannelOptionsParser );
+        SENF_PARSER_FINALIZE( RadiotapPacket_ChannelOptionsParser );
     };
 
     struct RadiotapPacket_RxFlagsParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_SKIP_BITS ( 6                              );
-        SENF_PARSER_BITFIELD  ( badPlcp,              1, bool  );
-        SENF_PARSER_SKIP_BITS ( 1                              );
+        SENF_PARSER_SKIP_BITS(          6       );
+        SENF_PARSER_BITFIELD ( badPlcp, 1, bool );
+        SENF_PARSER_SKIP_BITS(          1       );
 
         SENF_PARSER_FINALIZE( RadiotapPacket_RxFlagsParser );
     };
@@ -103,10 +102,10 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_SKIP_BITS ( 5                              );
-        SENF_PARSER_BITFIELD  ( txRts,                1, bool  );
-        SENF_PARSER_BITFIELD  ( txCts,                1, bool  );
-        SENF_PARSER_BITFIELD  ( fail,                 1, bool  );
+        SENF_PARSER_SKIP_BITS(        5       );
+        SENF_PARSER_BITFIELD ( txRts, 1, bool );
+        SENF_PARSER_BITFIELD ( txCts, 1, bool );
+        SENF_PARSER_BITFIELD ( fail,  1, bool );
 
         SENF_PARSER_FINALIZE( RadiotapPacket_TxFlagsParser );
     };
@@ -115,20 +114,19 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_SKIP_BITS ( 3                              );
-        SENF_PARSER_BITFIELD  ( fecTypeKnown,         1, bool  );
-        SENF_PARSER_BITFIELD  ( htFormatKnown,        1, bool  );
-        SENF_PARSER_BITFIELD  ( guardIntervalKnown,   1, bool  );
-        SENF_PARSER_BITFIELD  ( mcsIndexKnown,        1, bool  );
-        SENF_PARSER_BITFIELD  ( bandwidthKnown,       1, bool  );
+        SENF_PARSER_SKIP_BITS(                     3           );
+        SENF_PARSER_BITFIELD ( fecTypeKnown,       1, bool     );
+        SENF_PARSER_BITFIELD ( htFormatKnown,      1, bool     );
+        SENF_PARSER_BITFIELD ( guardIntervalKnown, 1, bool     );
+        SENF_PARSER_BITFIELD ( mcsIndexKnown,      1, bool     );
+        SENF_PARSER_BITFIELD ( bandwidthKnown,     1, bool     );
+        SENF_PARSER_SKIP_BITS(                     3           );
+        SENF_PARSER_BITFIELD ( fecType,            1, bool     );
+        SENF_PARSER_BITFIELD ( htFormat,           1, bool     );
+        SENF_PARSER_BITFIELD ( guardInterval,      1, bool     );
+        SENF_PARSER_BITFIELD ( bandwidth,          2, unsigned );
 
-        SENF_PARSER_SKIP_BITS ( 3                              );
-        SENF_PARSER_BITFIELD  ( fecType,              1, bool  );
-        SENF_PARSER_BITFIELD  ( htFormat,             1, bool  );
-        SENF_PARSER_BITFIELD  ( guardInterval,        1, bool  );
-        SENF_PARSER_BITFIELD  ( bandwidth,            2, unsigned  );
-
-        SENF_PARSER_FIELD     ( mcsIndex,          UInt8Parser );
+        SENF_PARSER_FIELD    ( mcsIndex,           UInt8Parser );
 
         SENF_PARSER_FINALIZE( RadiotapPacket_MCSParser );
     };
@@ -157,14 +155,14 @@ namespace senf {
         /*
          * mandatory fields
          */
-        SENF_PARSER_FIELD ( version, UInt8Parser     );
+        SENF_PARSER_FIELD( version, UInt8Parser     );
         //padding bits, currently unused, it simply aligns the fields onto natural word boundaries.
-        SENF_PARSER_SKIP  ( 1                        );
-        SENF_PARSER_FIELD ( length,  UInt16LSBParser );
+        SENF_PARSER_SKIP ( 1                        );
+        SENF_PARSER_FIELD( length,  UInt16LSBParser );
 
-        SENF_PARSER_PRIVATE_FIELD ( presentFlags, UInt32LSBParser );
+        SENF_PARSER_PRIVATE_FIELD( presentFlags, UInt32LSBParser );
 
-        SENF_PARSER_FINALIZE ( RadiotapPacket_HeaderParser );
+        SENF_PARSER_FINALIZE( RadiotapPacket_HeaderParser );
 
         enum PresentIndex {
             // Could use the the entries from radiotap.h but I don't know,
@@ -229,11 +227,11 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_SKIP_BITS(4);
+        SENF_PARSER_SKIP_BITS  (4                       );
         SENF_PARSER_BITFIELD_RO( frameType, 2, unsigned );
-        SENF_PARSER_SKIP_BITS(2);
+        SENF_PARSER_SKIP_BITS  (            2           );
 
-        SENF_PARSER_FINALIZE(RadiotapPacket_FrameTypeParser);
+        SENF_PARSER_FINALIZE( RadiotapPacket_FrameTypeParser );
     };
 
     struct RadiotapPacketParser : public RadiotapPacket_HeaderParser
@@ -297,7 +295,7 @@ namespace senf {
     private:
         static const size_type fixed_bytes = 0; // hide this member, just in case
 
-        typedef boost::array<size_type,MAX_INDEX+2> OffsetTable;
+        typedef boost::array<size_type, MAX_INDEX+2> OffsetTable;
         typedef std::map<boost::uint32_t, OffsetTable> OffsetMap;
 
         //-////////////////////////////////////////////////////////////////////////

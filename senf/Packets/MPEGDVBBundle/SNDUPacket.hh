@@ -54,11 +54,11 @@ namespace senf {
         /* We first define the fields as they appear in the field. Some of the fields are declared
            private. We provide custom accessors for those fields further down. */
 
-        SENF_PARSER_PRIVATE_BITFIELD ( d_bit_       ,  1 , unsigned );
-        SENF_PARSER_BITFIELD         ( length       , 15 , unsigned );
-        SENF_PARSER_FIELD            ( type         , UInt16Parser  );
-        SENF_PARSER_PRIVATE_VARIANT  ( destination_ , d_bit_        ,
-                                                      (MACAddressParser) (VoidPacketParser) );
+        SENF_PARSER_PRIVATE_BITFIELD( d_bit_,  1 , unsigned );
+        SENF_PARSER_BITFIELD        ( length, 15 , unsigned );
+        SENF_PARSER_FIELD           ( type,   UInt16Parser  );
+        SENF_PARSER_PRIVATE_VARIANT ( destination_, d_bit_,
+                (MACAddressParser) (VoidPacketParser) );
 
         SENF_PARSER_FINALIZE( SNDUPacketParser );
 
@@ -111,15 +111,10 @@ namespace senf {
 //        static key_t nextPacketKey(packet p);
 
         static void init(packet p);
-
         static factory_t nextPacketType(packet p);
-
         static optional_range nextPacketRange(packet p);
-
         static void dump(packet p, std::ostream & os);
-
         static PacketParserBase::size_type initSize();
-
         static PacketParserBase::size_type initHeadSize();
     };
 

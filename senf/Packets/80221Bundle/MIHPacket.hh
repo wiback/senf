@@ -53,33 +53,33 @@ namespace senf {
     {
     #   include SENF_PARSER()
 
-        SENF_PARSER_BITFIELD_RO ( version,       4,  unsigned );
-        SENF_PARSER_BITFIELD    ( ackRequest,    1,  bool     );
-        SENF_PARSER_BITFIELD    ( ackResponse,   1,  bool     );
-        SENF_PARSER_BITFIELD    ( uir,           1,  bool     );
-        SENF_PARSER_BITFIELD    ( moreFragment,  1,  bool     );
-        SENF_PARSER_BITFIELD    ( fragmentNr,    7,  unsigned );
-        SENF_PARSER_SKIP_BITS   ( 1                           );
+        SENF_PARSER_BITFIELD_RO( version,       4,  unsigned );
+        SENF_PARSER_BITFIELD   ( ackRequest,    1,  bool     );
+        SENF_PARSER_BITFIELD   ( ackResponse,   1,  bool     );
+        SENF_PARSER_BITFIELD   ( uir,           1,  bool     );
+        SENF_PARSER_BITFIELD   ( moreFragment,  1,  bool     );
+        SENF_PARSER_BITFIELD   ( fragmentNr,    7,  unsigned );
+        SENF_PARSER_SKIP_BITS  ( 1                           );
 
         // MIH message ID (MID)
-        SENF_PARSER_FIELD    ( messageId, UInt16Parser ); //<pkgdraw:hide
-        SENF_PARSER_GOTO     ( messageId               );
-        SENF_PARSER_BITFIELD ( sid,     4,  unsigned   );
-        SENF_PARSER_BITFIELD ( opcode,  2,  unsigned   );
-        SENF_PARSER_BITFIELD ( aid,    10,  unsigned   );
+        SENF_PARSER_FIELD   ( messageId, UInt16Parser ); //<pkgdraw:hide
+        SENF_PARSER_GOTO    ( messageId               );
+        SENF_PARSER_BITFIELD( sid,     4,  unsigned   );
+        SENF_PARSER_BITFIELD( opcode,  2,  unsigned   );
+        SENF_PARSER_BITFIELD( aid,    10,  unsigned   );
 
-        SENF_PARSER_SKIP_BITS ( 4                           );
-        SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
-        SENF_PARSER_FIELD_RO  ( payloadLength, UInt16Parser );
+        SENF_PARSER_SKIP_BITS( 4                           );
+        SENF_PARSER_BITFIELD ( transactionId, 12, unsigned );
+        SENF_PARSER_FIELD_RO ( payloadLength, UInt16Parser );
 
         SENF_PARSER_GOTO_OFFSET( 8, 8); // just to limit the offset calculation
 
         // Source MIHF Id
-        SENF_PARSER_FIELD ( src_mihfId, MIHFSrcIdTLVParser );
+        SENF_PARSER_FIELD( src_mihfId, MIHFSrcIdTLVParser );
         // Destination MIHF Id
-        SENF_PARSER_FIELD ( dst_mihfId, MIHFDstIdTLVParser );
+        SENF_PARSER_FIELD( dst_mihfId, MIHFDstIdTLVParser );
 
-        SENF_PARSER_FINALIZE ( MIHPacketParser );
+        SENF_PARSER_FINALIZE( MIHPacketParser );
 
         SENF_PARSER_INIT() {
             defaultInit();
@@ -130,8 +130,8 @@ namespace senf {
     struct MIHGenericPayloadPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_LIST ( tlvList, packetSize(), MIHGenericTLVParser );
-        SENF_PARSER_FINALIZE ( MIHGenericPayloadPacketParser );
+        SENF_PARSER_LIST( tlvList, packetSize(), MIHGenericTLVParser );
+        SENF_PARSER_FINALIZE( MIHGenericPayloadPacketParser );
     };
 
     struct MIHGenericPayloadPacketType
