@@ -42,9 +42,9 @@ namespace senf {
     {
     #   include SENF_PARSER()
 
-        SENF_PARSER_FIELD( timestamp,      UInt64LSBParser   );
-        SENF_PARSER_FIELD( beaconInterval, UInt16LSBParser   );
-        SENF_PARSER_SKIP ( 2, 2 ); //capability flags
+        SENF_PARSER_FIELD( timestamp,      UInt64LSBParser );
+        SENF_PARSER_FIELD( beaconInterval, UInt16LSBParser );
+        SENF_PARSER_SKIP ( 2, 2 );  // capability flags
 
         SENF_PARSER_FIELD( ssidIE, WLANSSIDInfoElementParser );
         WLANSSIDInfoElementParser::value_t ssid() const { return ssidIE().value(); }
@@ -54,10 +54,6 @@ namespace senf {
         SENF_PARSER_LIST ( ieList, packetSize(), WLANGenericInfoElementParser );
 
         SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
-
-        bool hasIE(boost::uint8_t typeId) const;
-        template <typename IEParser>
-        IEParser findIE();
     };
 
 
@@ -95,7 +91,7 @@ namespace senf {
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "WLANBeaconPacket.cci"
-#include "WLANBeaconPacket.ct"
+//#include "WLANBeaconPacket.ct"
 //#include "WLANBeaconPacket.cti"
 #endif
 

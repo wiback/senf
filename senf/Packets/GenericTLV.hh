@@ -33,11 +33,11 @@
 
 // Custom includes
 #include <boost/ptr_container/ptr_map.hpp>
-#include <senf/Packets/Packets.hh>
 #include <senf/Utils/type_traits.hh>
 #include <senf/Utils/singleton.hh>
+#include "Packets.hh"
 
-//#include "GenericTLV.hh.mpp"
+#include "GenericTLV.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace senf {
@@ -138,10 +138,10 @@ namespace senf {
     class GenericTLVParserBase : public Base
     {
     public:
-        GenericTLVParserBase(senf::PacketParserBase::data_iterator i, senf::PacketParserBase::state_type s)
+        GenericTLVParserBase(PacketParserBase::data_iterator i, PacketParserBase::state_type s)
             : Base(i,s) {}
 
-        senf::PacketParserBase::size_type bytes() const;
+        PacketParserBase::size_type bytes() const;
         void init() const;
 
         template <class Parser>
@@ -153,7 +153,7 @@ namespace senf {
         template <class Parser>
         bool is() const;
 
-        senf::PacketInterpreterBase::range value() const;
+        PacketInterpreterBase::range value() const;
 
         void dump(std::ostream & os) const;
 
@@ -185,35 +185,6 @@ namespace senf {
         Base const & self() const;
     };
 
-
-    namespace detail {
-        template <class BaseParser>
-        struct GenericTLVParserRegistry_EntryBase {
-            virtual ~GenericTLVParserRegistry_EntryBase() {}
-            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const = 0;
-            virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const = 0;
-            virtual std::string name() const = 0;
-        };
-
-        template <class BaseParser, class Parser>
-        struct GenericTLVParserRegistry_Entry
-            : GenericTLVParserRegistry_EntryBase<BaseParser>
-        {
-            virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
-            virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const;
-            virtual std::string name() const;
-        };
-
-        //Helper Functor for STL-compatible predicate (E.g. find_if, for_each ...)
-        template <class BaseParser, class Parser>
-        class Predicate
-        {
-            public:
-                bool operator() (BaseParser const &p) const {
-                    return p.template is<Parser>();
-                }
-        };
-    }
 
     /** \brief TLV parser registration facility
 
@@ -264,7 +235,7 @@ namespace senf {
      */
     template <class BaseParser, class Keytype = typename BaseParser::type_t::value_type>
     class GenericTLVParserRegistry
-        : public senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >
+        : public singleton<GenericTLVParserRegistry<BaseParser,Keytype> >
     {
         GenericTLVParserRegistry() {};
 
@@ -273,8 +244,8 @@ namespace senf {
         Map map_;
 
     public:
-        using senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >::instance;
-        friend class senf::singleton<GenericTLVParserRegistry<BaseParser,Keytype> >;
+        using singleton<GenericTLVParserRegistry<BaseParser,Keytype> >::instance;
+        friend class singleton<GenericTLVParserRegistry<BaseParser,Keytype> >;
 
         template <class PacketParser>
         struct RegistrationProxy {
@@ -306,6 +277,23 @@ namespace senf {
     };
 
 
+    template <class ListPolicy>
+    class TLVListParser
+        : public ListParser<ListPolicy>
+    {
+    public:
+        TLVListParser(PacketParserBase::data_iterator i, PacketParserBase::state_type s);
+        TLVListParser(ListPolicy policy, PacketParserBase::data_iterator i, PacketParserBase::state_type s);
+
+        template <typename TLVParser>
+        bool contains() const;
+        bool contains(typename ListPolicy::element_type::type_t::value_type typeId) const;
+
+        template <typename TLVParser>
+        TLVParser find() const;
+    };
+
+
     /** \brief Statically add an entry to a TLV parser registry
 
         This macro will declare an anonymous global variable in such a way, that constructing
@@ -319,7 +307,6 @@ namespace senf {
             ConreteTLVParser::Registry::RegistrationProxy<ConreteTLVParser>     \
                     BOOST_PP_CAT(tlvparserRegistration_, __LINE__);             \
         }
-
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

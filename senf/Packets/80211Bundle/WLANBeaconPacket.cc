@@ -41,16 +41,6 @@
 SENF_PACKET_REGISTRY_REGISTER( senf::WLANManagementSubtypes, 8u, senf::WLANBeaconPacket );
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::WLANBeaconPacket );
 
-prefix_ bool senf::WLANBeaconPacketParser::hasIE(boost::uint8_t typeId)
-    const
-{
-    ieList_t::container_type ieListContainer (ieList());
-    for (ieList_t::container_type::const_iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
-        if (i->type() == typeId)
-            return true;
-    return false;
-}
-
 prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);

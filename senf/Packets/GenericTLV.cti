@@ -153,16 +153,14 @@ prefix_ bool senf::GenericTLVParserRegistry<BaseParser,Keytype>::isRegistered(
         GenericTLVParser const & parser)
     const
 {
-    typename Map::const_iterator i (map_.find( parser.type()));
-    return i != map_.end();
+    return map_.find(parser.type()) != map_.end();
 }
 
 template <class BaseParser, class Keytype>
 prefix_ bool senf::GenericTLVParserRegistry<BaseParser,Keytype>::isRegistered(Keytype const & key)
     const
 {
-    typename Map::const_iterator i (map_.find( key));
-    return i != map_.end();
+    return map_.find(key) != map_.end();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,6 +173,56 @@ prefix_ senf::GenericTLVParserRegistry<BaseParser,Keytype>::RegistrationProxy<Pa
     GenericTLVParserRegistry<BaseParser,Keytype>::instance().template registerParser<PacketParser>();
 };
 
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::TLVListParser<ListPolicy>
+
+template <typename ListPolicy>
+prefix_ senf::TLVListParser<ListPolicy>::TLVListParser(PacketParserBase::data_iterator i, PacketParserBase::state_type s)
+    : ListParser<ListPolicy>(i,s)
+{}
+
+template <typename ListPolicy>
+prefix_ senf::TLVListParser<ListPolicy>::TLVListParser(ListPolicy policy, PacketParserBase::data_iterator i, PacketParserBase::state_type s)
+    : ListParser<ListPolicy>(policy, i,s)
+{}
+
+template <typename ListPolicy>
+template <typename TLVParser>
+prefix_ bool senf::TLVListParser<ListPolicy>::contains()
+    const
+{
+    typedef typename ListPolicy::container_type container_type;
+    container_type c (*this);
+    for (typename container_type::const_iterator i = c.begin(); i != c.end(); ++i)
+        if (i->template is<TLVParser>())
+            return true;
+    return false;
+}
+
+template <typename ListPolicy>
+prefix_ bool senf::TLVListParser<ListPolicy>::contains(typename ListPolicy::element_type::type_t::value_type typeId)
+    const
+{
+    typedef typename ListPolicy::container_type container_type;
+    container_type c (*this);
+    for (typename container_type::const_iterator i = c.begin(); i != c.end(); ++i)
+        if (i->type() == typeId)
+            return true;
+    return false;
+}
+
+template <typename ListPolicy>
+template <typename TLVParser>
+prefix_ TLVParser senf::TLVListParser<ListPolicy>::find()
+    const
+{
+    typedef typename ListPolicy::container_type container_type;
+    container_type c (*this);
+    for (typename container_type::const_iterator i = c.begin(); i != c.end(); ++i)
+        if (i->template is<TLVParser>())
+            return i->template as<TLVParser>();
+    throw InvalidPacketChainException();
+}
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

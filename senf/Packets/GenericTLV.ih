@@ -1,0 +1,100 @@
+// $Id$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.berlios.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//   Thorsten Horstmann <tho@berlios.de>
+
+/** \file
+    \brief GenericTLV internal header */
+
+#ifndef IH_SENF_Packets_GenericTLV_
+#define IH_SENF_Packets_GenericTLV_ 1
+
+// Custom includes
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+
+    template <class Base>
+    class GenericTLVParserBase;
+
+    template <class ListPolicy>
+    class TLVListParser;
+
+namespace detail {
+
+    template <class BaseParser>
+    struct GenericTLVParserRegistry_EntryBase {
+        virtual ~GenericTLVParserRegistry_EntryBase() {}
+        virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const = 0;
+        virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const = 0;
+        virtual std::string name() const = 0;
+    };
+
+    template <class BaseParser, class Parser>
+    struct GenericTLVParserRegistry_Entry
+        : GenericTLVParserRegistry_EntryBase<BaseParser>
+    {
+        virtual void dump(GenericTLVParserBase<BaseParser> const & parser, std::ostream & os) const;
+        virtual PacketParserBase::size_type bytes(GenericTLVParserBase<BaseParser> const & parser) const;
+        virtual std::string name() const;
+    };
+
+
+    // Helper Functor for STL-compatible predicate (E.g. find_if, for_each ...)
+    template <class BaseParser, class Parser>
+    struct Predicate
+    {
+        bool operator() (BaseParser const &p) const {
+            return p.template is<Parser>();
+        }
+    };
+
+    template <class BaseParser>
+    struct ListParserTraits<GenericTLVParserBase<BaseParser> >
+    {
+        template <class AuxPolicy, class AuxTag>
+        struct parser {
+            typedef senf::TLVListParser<
+                typename ListParserPolicy<GenericTLVParserBase<BaseParser>, AuxPolicy, AuxTag>::type > type;
+        };
+    };
+
+}}
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

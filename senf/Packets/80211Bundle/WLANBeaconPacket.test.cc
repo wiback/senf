@@ -41,21 +41,21 @@
 SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
 {
     unsigned char data[] = {
-        0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00, //timestamp
-        0x64, 0x00, //beacon interval
-        0x01, 0x05, //capability information
+        0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00,  // timestamp
+        0x64, 0x00,  // beacon interval
+        0x01, 0x05,  // capability information
         0x00, 0x05, 0x62, 0x6f, 0x78, 0x43, 0x31, //SSID
-        0x01, 0x08, 0x8c, 0x12, 0x98, 0x24, 0xb0, 0x48, 0x60, 0x6c, //supported rates
-        0x03, 0x01, 0x40, //DS parameter set
-        0x05, 0x04, 0x00, 0x01, 0x00, 0x00, //TIM
+        0x01, 0x08, 0x8c, 0x12, 0x98, 0x24, 0xb0, 0x48, 0x60, 0x6c,  // supported rates
+        0x03, 0x01, 0x40,  // DS parameter set
+        0x05, 0x04, 0x00, 0x01, 0x00, 0x00,  // TIM
         0x07, 0x2a, 0x4e, 0x41, 0x49, 0x24, 0x01, 0x11, 0x28, 0x01, 0x11,
         0x2c, 0x01, 0x11, 0x30, 0x01, 0x11, 0x34, 0x01, 0x17, 0x38, 0x01,
         0x17, 0x3c, 0x01, 0x17, 0x40, 0x01, 0x17, 0x95, 0x01, 0x1e, 0x99,
-        0x01, 0x1e, 0x9d, 0x01, 0x1e, 0xa1, 0x01, 0x1e, 0xa5, 0x01, 0x1e, //Country information
-        0x20, 0x01, 0x42, //power constraint
+        0x01, 0x1e, 0x9d, 0x01, 0x1e, 0xa1, 0x01, 0x1e, 0xa5, 0x01, 0x1e,  // Country information
+        0x20, 0x01, 0x42,  // power constraint
         0xdd, 0x18, 0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x88, 0x00, 0x02,
         0xa3, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00, 0x42, 0x43, 0x5e, 0x00,
-        0x62, 0x32, 0x2f, 0x00,  //vendor specific
+        0x62, 0x32, 0x2f, 0x00,   // vendor specific
     };
     senf::WLANBeaconPacket beacon (senf::WLANBeaconPacket::create(data));
 
@@ -65,24 +65,24 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     BOOST_CHECK_EQUAL( beacon->ssidIE().value().value(), "boxC1");
     BOOST_CHECK_EQUAL( beacon->ssid().value(), "boxC1");
 
-    BOOST_CHECK(  beacon->hasIE(senf::WLANPowerConstraintInfoElementParser::typeId+0) );
-    BOOST_CHECK(! beacon->hasIE(0xff) );
+    BOOST_CHECK(  beacon->ieList().contains<senf::WLANPowerConstraintInfoElementParser>() );
+    BOOST_CHECK(! beacon->ieList().contains(0xff) );
 
     typedef senf::WLANBeaconPacket::Parser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (beacon->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 5);
 
     ieListContainer_t::iterator i (ieListContainer.begin());
-    BOOST_CHECK_EQUAL( i->type(), 0x03); //DS parameter set
+    BOOST_CHECK_EQUAL( i->type(), 0x03);  // DS parameter set
     ++i;
-    BOOST_CHECK_EQUAL( i->type(), 0x05); //TIM
+    BOOST_CHECK_EQUAL( i->type(), 0x05);  // TIM
     ++i;
-    BOOST_CHECK_EQUAL( i->type(), 0x07); //Country information
+    BOOST_CHECK_EQUAL( i->type(), 0x07);  // Country information
     ++i;
     //power constraint
     BOOST_CHECK_EQUAL( i->type(), senf::WLANPowerConstraintInfoElementParser::typeId+0);
     BOOST_CHECK( i->is<senf::WLANPowerConstraintInfoElementParser>());
-    senf::WLANPowerConstraintInfoElementParser ie ( i->as<senf::WLANPowerConstraintInfoElementParser>());
+    senf::WLANPowerConstraintInfoElementParser ie (i->as<senf::WLANPowerConstraintInfoElementParser>());
     BOOST_CHECK_EQUAL( ie.value(), 0x42);
     ++i;
     BOOST_CHECK_EQUAL( i->type(), 0xdd); //vendor specific
@@ -117,12 +117,12 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
     p.finalizeThis();
 
     unsigned char data[] = {
-        0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00, //timestamp
-        0x64, 0x00, //beacon interval
-        0x00, 0x00, //capability information
+        0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00,  // timestamp
+        0x64, 0x00,  // beacon interval
+        0x00, 0x00,  // capability information
         0x00, 0x05, 0x62, 0x6f, 0x78, 0x43, 0x31, //SSID
-        0x01, 0x00, //supported rates
-        0x20, 0x01, 0x42, //power constraint
+        0x01, 0x00,  // supported rates
+        0x20, 0x01, 0x42,  // power constraint
     };
     SENF_CHECK_EQUAL_COLLECTIONS( p.data().begin(), p.data().end(),
             data, data+sizeof(data) );
@@ -197,8 +197,8 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
     ++i;
     BOOST_CHECK_EQUAL( i->type(), senf::WLANHTOperationInfoElementParser::typeId+0);
     BOOST_CHECK_EQUAL( i->length(), 22u);
-    BOOST_CHECK( beacon->hasIE(senf::WLANHTOperationInfoElementParser::typeId+0) );
-    senf::WLANHTOperationInfoElementParser htOpIE (beacon->findIE<senf::WLANHTOperationInfoElementParser>());
+    BOOST_CHECK( beacon->ieList().contains<senf::WLANHTOperationInfoElementParser>() );
+    senf::WLANHTOperationInfoElementParser htOpIE (beacon->ieList().find<senf::WLANHTOperationInfoElementParser>());
     BOOST_CHECK_EQUAL( htOpIE.primaryChannel(),                36u );
     BOOST_CHECK_EQUAL( htOpIE.operationInfo().channelWidth(), true );
 }
