@@ -67,18 +67,20 @@ namespace detail {
     template <class BaseParser, class Parser>
     struct Predicate
     {
-        bool operator() (BaseParser const &p) const {
+        bool operator() (BaseParser const & p) const {
             return p.template is<Parser>();
         }
     };
 
-    template <class BaseParser>
-    struct ListParserTraits<GenericTLVParserBase<BaseParser> >
+    struct GenericTLVParserBaseTag {};
+
+    template <class TLVParser>
+    struct ListParserTraits<TLVParser, typename boost::enable_if<boost::is_base_of<GenericTLVParserBaseTag, TLVParser> >::type>
     {
         template <class AuxPolicy, class AuxTag>
         struct parser {
             typedef senf::TLVListParser<
-                typename ListParserPolicy<GenericTLVParserBase<BaseParser>, AuxPolicy, AuxTag>::type > type;
+                typename ListParserPolicy<TLVParser, AuxPolicy, AuxTag>::type> type;
         };
     };
 

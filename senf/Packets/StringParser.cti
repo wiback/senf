@@ -81,6 +81,15 @@ prefix_ typename senf::StringParser<LengthParser> const & senf::StringParser<Len
 }
 
 template <class LengthParser>
+prefix_ bool senf::StringParser<LengthParser>::operator==(value_type const & other)
+    const
+{
+    if (other.size() > length())
+        return false;
+    return std::equal(other.begin(), other.end(), i()+senf::bytes(length()));
+}
+
+template <class LengthParser>
 prefix_ std::ostream & senf::operator<<(std::ostream & os, StringParser<LengthParser> const & value)
 {
     os << value.value();
@@ -116,6 +125,15 @@ prefix_ typename senf::FixedSizeStringParser<N> const & senf::FixedSizeStringPar
 {
     value(other);
     return *this;
+}
+
+template <std::string::size_type N>
+prefix_ bool senf::FixedSizeStringParser<N>::operator==(value_type const & other)
+    const
+{
+    if (other.size() > N)
+        return false;
+    return std::equal(other.begin(), other.end(), i());
 }
 
 template <std::string::size_type N>

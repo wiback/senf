@@ -51,7 +51,7 @@ namespace senf {
 
         SENF_PARSER_FIELD( supportedRatesIE, WLANSupportedRatesInfoElementParser );
 
-        SENF_PARSER_LIST ( ieList, packetSize(), WLANGenericInfoElementParser );
+        SENF_PARSER_TLV_LIST( ieList, packetSize(), WLANGenericInfoElementParser );
 
         SENF_PARSER_FINALIZE( WLANBeaconPacketParser );
     };

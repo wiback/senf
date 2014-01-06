@@ -43,13 +43,12 @@
 namespace {
     struct VoidPacket : public senf::PacketTypeBase
     {};
-
-    typedef senf::StringParser<senf::UInt16Parser> MyStringParser;
-    typedef senf::FixedSizeStringParser<4> MyFixedSizeStringParser;
 }
 
 SENF_AUTO_UNIT_TEST(stringParser)
 {
+    typedef senf::StringParser<senf::UInt16Parser> MyStringParser;
+
     senf::PacketInterpreterBase::byte data[] = { 0x00, 0x04, 'T', 'E', 'S', 'T' };
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
 
@@ -61,15 +60,20 @@ SENF_AUTO_UNIT_TEST(stringParser)
     BOOST_CHECK_EQUAL( p->data()[0], 0u );
     BOOST_CHECK_EQUAL( p->data()[1], 12u );
     BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()).value(), "Another Test" );
+    BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()), "Another Test" );
+    SENF_CHECK_NOT_EQUAL( MyStringParser(p->data().begin(), &p->data()), "Another Test 123" );
 }
 
 SENF_AUTO_UNIT_TEST(fixedSizeStringParser)
 {
+    typedef senf::FixedSizeStringParser<4> MyFixedSizeStringParser;
+
     senf::PacketInterpreterBase::byte data[] = { 'T', 'E', 'S', 'T' };
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
 
     BOOST_CHECK_EQUAL( p->data().size(), 4u );
     BOOST_CHECK_EQUAL( MyFixedSizeStringParser(p->data().begin(), &p->data()).value(), "TEST" );
+    BOOST_CHECK_EQUAL( MyFixedSizeStringParser(p->data().begin(), &p->data()), "TEST" );
 
     MyFixedSizeStringParser(p->data().begin(), &p->data()).value("ab");
     std::string s = "ab"; s += '\0'; s += '\0';

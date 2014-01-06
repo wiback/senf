@@ -31,7 +31,6 @@
 //#include "GenericTLV.ih"
 
 // Custom includes
-#include <boost/io/ios_state.hpp>
 #include <senf/Utils/hexdump.hh>
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/Format.hh>
@@ -46,9 +45,9 @@ template <class Base>
 template <class Parser>
 prefix_ Parser senf::GenericTLVParserBase<Base>::init()
 {
-    PacketParserBase::size_type oldSize (bytes() );
-    PacketParserBase::size_type newParserSize ( senf::init_bytes<Parser>::value );
-    this->resize(  oldSize, newParserSize);
+    PacketParserBase::size_type oldSize (bytes());
+    PacketParserBase::size_type newParserSize (senf::init_bytes<Parser>::value);
+    this->resize(oldSize, newParserSize);
     std::fill(this->i(), boost::next(this->i(), newParserSize), 0u);
     Parser concreteParser = Parser(this->i(), this->state() );
     concreteParser.init();
@@ -60,10 +59,9 @@ template <class Base>
 prefix_  void senf::GenericTLVParserBase<Base>::dump(std::ostream & os)
     const
 {
-    if (Base::Registry::instance().isRegistered( *this)) {
-        Base::Registry::instance().dump( *this, os);
+    if (Base::Registry::instance().isRegistered(*this)) {
+        Base::Registry::instance().dump(*this, os);
     } else {
-        boost::io::ios_all_saver ias(os);
         os << "  GenericTLVParser<" << prettyName(typeid(Base)) << ">\n"
            << "    type:   " << format::dumpint(this->type()) << "\n"
            << "    length: " << format::dumpint(this->length()) << "\n"
@@ -76,7 +74,7 @@ template <class Base>
 prefix_  senf::PacketInterpreterBase::range senf::GenericTLVParserBase<Base>::value()
     const
 {
-    PacketData::iterator begin ( boost::next(this->i(), senf::bytes( self())) );
+    PacketData::iterator begin (boost::next(this->i(), senf::bytes( self())) );
     return PacketInterpreterBase::range(begin, boost::next( begin, this->length()) );
 }
 
@@ -85,11 +83,11 @@ template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVParserBase<Base>::value_(ForwardReadableRange const &range)
 {
     //typename boost::range_difference<ForwardReadableRange>::type rangeSize ( boost::size(range));
-    unsigned rangeSize ( boost::size(range));
-    if ( rangeSize != this->length() )
+    unsigned rangeSize (boost::size(range));
+    if (rangeSize != this->length())
         Base::resize( bytes(), rangeSize + senf::bytes(self()) );
     std::copy( boost::begin(range), boost::end(range), boost::next(
-            this->i(), senf::bytes( self())) );
+            this->i(), senf::bytes(self())) );
     this->length_() = rangeSize;
 }
 

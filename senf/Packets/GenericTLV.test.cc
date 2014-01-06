@@ -52,7 +52,13 @@ namespace {
         typedef senf::GenericTLVParserRegistry<MyTLVParserBase> Registry;
     };
 
-    typedef senf::GenericTLVParserBase<MyTLVParserBase> MyGenericTLVParser;
+//    typedef senf::GenericTLVParserBase<MyTLVParserBase> MyGenericTLVParser;
+    struct MyGenericTLVParser
+        : public senf::GenericTLVParserBase<MyTLVParserBase>
+    {
+        MyGenericTLVParser(data_iterator i, state_type s)
+            : senf::GenericTLVParserBase<MyTLVParserBase>(i,s) {}
+    };
 
     struct MyConcreteTLVParser
         : public MyTLVParserBase
@@ -83,7 +89,7 @@ namespace {
     #   include SENF_PARSER()
         SENF_PARSER_INHERIT ( MyTLVParserBase             );
         SENF_PARSER_FIELD   ( myValue, senf::UInt32Parser );
-        SENF_PARSER_FINALIZE( MyConcrete2TLVParser         );
+        SENF_PARSER_FINALIZE( MyConcrete2TLVParser        );
 
         SENF_PARSER_INIT() {
             type() = typeId;
@@ -137,7 +143,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_parser)
     senf::DataPacket dataPacket (senf::DataPacket::create(data));
     MyGenericTLVParser genericTLVParser (dataPacket.data().begin(), &dataPacket.data());
 
-    BOOST_CHECK_EQUAL( senf::bytes( genericTLVParser), sizeof(data) );
+    BOOST_CHECK_EQUAL( senf::bytes(genericTLVParser), sizeof(data) );
     BOOST_CHECK_EQUAL( genericTLVParser.type(),   0x42 );
     BOOST_CHECK_EQUAL( genericTLVParser.length(), 0x04 );
     SENF_CHECK_EQUAL_COLLECTIONS( data+2, data+sizeof(data),
@@ -151,7 +157,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_parser)
 
     BOOST_CHECK( genericTLVParser.is<MyConcreteTLVParser>());
 
-    MyConcreteTLVParser concreteTLVParser ( genericTLVParser.as<MyConcreteTLVParser>());
+    MyConcreteTLVParser concreteTLVParser (genericTLVParser.as<MyConcreteTLVParser>());
     BOOST_CHECK_EQUAL( concreteTLVParser.type(),   0x42 );
     BOOST_CHECK_EQUAL( concreteTLVParser.length(), 0x04 );
     BOOST_CHECK_EQUAL( concreteTLVParser.myValue(), 0xabababab );
@@ -174,6 +180,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_packet)
     SENF_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
             p.data().begin(), p.data().end() );
 
+    std::cout << senf::prettyName(typeid(p->tlv_list())) << std::endl;
     BOOST_CHECK( boost::starts_with(
             senf::prettyName(typeid(p->tlv_list())), "senf::TLVListParser") );
 }
@@ -182,7 +189,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_packet)
 SENF_AUTO_UNIT_TEST(GenericTLV_registry)
 {
     typedef senf::GenericTLVParserRegistry<MyTLVParserBase> MyTLVParserRegistry;
-    MyTestPacket p ( MyTestPacket::create());
+    MyTestPacket p (MyTestPacket::create());
     MyTestPacket::Parser::tlv_list_t::container_type tlvContainer (p->tlv_list());
     MyConcreteTLVParser conreteTLVParser (
             tlvContainer.push_back_space().init<MyConcreteTLVParser>());
@@ -209,7 +216,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_registry)
 
 SENF_AUTO_UNIT_TEST(GenericTLV_predicate)
 {
-    MyTestPacket p ( MyTestPacket::create() );
+    MyTestPacket p (MyTestPacket::create() );
     MyTestPacket::Parser::tlv_list_t::container_type tlvContainer (p->tlv_list() );
     MyConcreteTLVParser conreteTLVParser (
             tlvContainer.push_back_space().init<MyConcreteTLVParser>());
@@ -222,7 +229,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_predicate)
 //     typedef senf::IPv6HopByHopOptionsPacket::Parser::options_t::container_type optContainer_t;
 //     optContainer_t optC (p->tlv_list() );
 
-    MyTestPacket::Parser::tlv_list_t::container_type testTlvContainer (p->tlv_list() );
+    MyTestPacket::Parser::tlv_list_t::container_type testTlvContainer (p->tlv_list());
     MyTestPacket::Parser::tlv_list_t::container_type::iterator it = std::find_if(
             testTlvContainer.begin(), testTlvContainer.end(),
             senf::detail::Predicate< senf::GenericTLVParserBase<MyTLVParserBase>, MyConcreteTLVParser>() );

@@ -42,8 +42,8 @@ template <class Base>
 prefix_ senf::PacketParserBase::size_type senf::GenericTLVParserBase<Base>::bytes()
     const
 {
-    if (Base::Registry::instance().isRegistered( *this))
-        return Base::Registry::instance().bytes( *this);
+    if (Base::Registry::instance().isRegistered(*this))
+        return Base::Registry::instance().bytes(*this);
     else
         return senf::bytes(self()) + this->length();
 }
@@ -92,7 +92,7 @@ prefix_ void senf::GenericTLVParserBase<Base>::value(
         ForwardReadableRange const & val,
         typename boost::disable_if<senf::is_pair<ForwardReadableRange> >::type *)
 {
-    value_( val);
+    value_(val);
 }
 
 template <class Base>
@@ -101,7 +101,7 @@ prefix_ void senf::GenericTLVParserBase<Base>::value(
         std::pair<First, Second> const & val,
         typename boost::disable_if<boost::is_convertible<First, typename Base::type_t::value_type> >::type *)
 {
-    value_( val);
+    value_(val);
 }
 
 template <class Base>
@@ -111,7 +111,7 @@ prefix_ void senf::GenericTLVParserBase<Base>::value(
         typename boost::enable_if<boost::is_convertible<Type, typename Base::type_t::value_type> >::type *)
 {
     this->type() = val.first;
-    value_( val.second);
+    value_(val.second);
 }
 
 #endif
@@ -134,7 +134,7 @@ senf::detail::GenericTLVParserRegistry_Entry<BaseParser, Parser>::bytes(
         GenericTLVParserBase<BaseParser> const & parser)
     const
 {
-    return senf::bytes( parser.template as<Parser>());
+    return senf::bytes(parser.template as<Parser>());
 }
 
 template <class BaseParser, class Parser>

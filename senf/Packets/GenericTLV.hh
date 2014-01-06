@@ -117,16 +117,16 @@ namespace senf {
 
         // listIter points to a MyGenericTLVParser, so you have generic access:
         listIter->type() = 0x42;
-        listIter->value( someRangeOfValueData);
+        listIter->value(someRangeOfValueData);
 
         // cast to an instance of MyConcreteTLVParser:
         if (listIter->is<MyConcreteTLVParser>()) {
-            MyConcreteTLVParser concreteTLVParser ( listIter->as<MyConcreteTLVParser>());
+            MyConcreteTLVParser concreteTLVParser (listIter->as<MyConcreteTLVParser>());
             concreteTLVParser.myValue() = 0xabababab;
         }
 
         // add a MyConcreteTLV to the list:
-        MyConcreteTLVParser tlv ( tlvContainer.push_back_space().init<MyConcreteTLVParser>());
+        MyConcreteTLVParser tlv (tlvContainer.push_back_space().init<MyConcreteTLVParser>());
         tlv.myValue() = 0xffff;
         \endcode
 
@@ -135,7 +135,9 @@ namespace senf {
             GenericTLVParserRegistry
      */
     template <class Base>
-    class GenericTLVParserBase : public Base
+    class GenericTLVParserBase
+        : private detail::GenericTLVParserBaseTag,
+          public Base
     {
     public:
         GenericTLVParserBase(PacketParserBase::data_iterator i, PacketParserBase::state_type s)
@@ -307,6 +309,8 @@ namespace senf {
             ConreteTLVParser::Registry::RegistrationProxy<ConreteTLVParser>     \
                     BOOST_PP_CAT(tlvparserRegistration_, __LINE__);             \
         }
+
+#   define SENF_PARSER_TLV_LIST SENF_PARSER_LIST
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -446,7 +446,7 @@ namespace senf {
     {
 #      include SENF_PARSER()
         SENF_PARSER_BITFIELD( reserved, 32, unsigned );// set to zero by default
-        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_TLV_LIST( options, packetSize(), NDPGenericOptionParser );
         SENF_PARSER_FINALIZE( NDPRouterSolicitationParser );
 
         SENF_PARSER_INIT() {
@@ -496,7 +496,7 @@ namespace senf {
         SENF_PARSER_FIELD( routerLifetime, UInt16Parser );
         SENF_PARSER_FIELD( reachableTime,  UInt32Parser );
         SENF_PARSER_FIELD( retransTimer,   UInt32Parser );
-        SENF_PARSER_LIST( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_TLV_LIST( options, packetSize(), NDPGenericOptionParser );
         SENF_PARSER_FINALIZE( NDPRouterAdvertisementParser );
 
         SENF_PARSER_INIT() {
@@ -541,7 +541,7 @@ namespace senf {
 #      include SENF_PARSER()
         SENF_PARSER_BITFIELD( reserved, 32, unsigned ); // set to zero by default
         SENF_PARSER_FIELD   ( target, INet6AddressParser );
-        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_TLV_LIST( options, packetSize(), NDPGenericOptionParser );
         SENF_PARSER_FINALIZE( NDPNeighborSolicitationParser );
 
         SENF_PARSER_INIT() {
@@ -589,7 +589,7 @@ namespace senf {
         SENF_PARSER_BITFIELD( o,         1, bool     );
         SENF_PARSER_BITFIELD( reserved, 29, unsigned ); // set to zero by default
         SENF_PARSER_FIELD   ( target, INet6AddressParser );
-        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_TLV_LIST( options, packetSize(), NDPGenericOptionParser );
         SENF_PARSER_FINALIZE( NDPNeighborAdvertisementParser );
 
         SENF_PARSER_INIT() {
@@ -635,7 +635,7 @@ namespace senf {
         SENF_PARSER_BITFIELD( reserved, 32, unsigned ); // set to zero by default
         SENF_PARSER_FIELD   ( target, INet6AddressParser );
         SENF_PARSER_FIELD   ( destination, INet6AddressParser );
-        SENF_PARSER_LIST    ( options, packetSize(), senf::NDPGenericOptionParser );
+        SENF_PARSER_TLV_LIST( options, packetSize(), NDPGenericOptionParser );
         SENF_PARSER_FINALIZE( NDPRedirectParser );
 
         SENF_PARSER_INIT() {

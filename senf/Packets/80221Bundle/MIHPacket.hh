@@ -130,7 +130,7 @@ namespace senf {
     struct MIHGenericPayloadPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_LIST( tlvList, packetSize(), MIHGenericTLVParser );
+        SENF_PARSER_TLV_LIST( tlvList, packetSize(), MIHGenericTLVParser );
         SENF_PARSER_FINALIZE( MIHGenericPayloadPacketParser );
     };
 

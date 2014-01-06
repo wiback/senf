@@ -83,13 +83,13 @@ namespace detail {
     struct ListParserPolicy
     {};
 
-    template <class ElementParser>
+    template <class ElementParser, typename Enable=void>
     struct ListParserTraits
     {
         template <class AuxPolicy, class AuxTag>
         struct parser {
             typedef senf::ListParser<
-                typename ListParserPolicy<ElementParser, AuxPolicy, AuxTag>::type > type;
+                typename ListParserPolicy<ElementParser, AuxPolicy, AuxTag>::type> type;
         };
     };
 
