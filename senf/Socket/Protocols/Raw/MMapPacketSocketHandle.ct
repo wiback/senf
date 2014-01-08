@@ -63,7 +63,7 @@ init_client(std::string iface, unsigned qlen, unsigned frameSize,
 {
     this->init_packetSocket(type, protocol);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
-    this->init_mmap(frameSize, 0, qlen, reserve);
+    this->init_mmap(frameSize, qlen, 0, reserve);
 }
 
 template <class Policy>
@@ -75,7 +75,7 @@ init_client(std::string iface, unsigned qlen, unsigned frameSize,
 {
     this->init_packetSocket(type, protocol);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
-    this->init_mmap(frameSize, qlen, 0, reserve);
+    this->init_mmap(frameSize, 0, qlen, reserve);
 }
 
 template <class Policy>
