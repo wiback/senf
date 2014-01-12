@@ -36,16 +36,15 @@
 // senf::MIHMessageRegistry
 
 template <typename MIHPacket>
-prefix_ void senf::MIHMessageRegistry::registerMessageType()
+prefix_ void senf::MIHMessageRegistry::registerMessageType(key_t messageId)
 {
-    key_t key (MIHPacket::type::MESSAGE_ID+0);
-    map_.insert(key, new detail::MIHMessageRegistryEntry<MIHPacket>() );
+    map_.insert(messageId, new detail::MIHMessageRegistryEntry<MIHPacket>() );
 }
 
 template <typename MIHPacket>
-prefix_ senf::MIHMessageRegistry::RegistrationProxy<MIHPacket>::RegistrationProxy()
+prefix_ senf::MIHMessageRegistry::RegistrationProxy<MIHPacket>::RegistrationProxy(key_t messageId)
 {
-    MIHMessageRegistry::instance().registerMessageType<MIHPacket>();
+    MIHMessageRegistry::instance().registerMessageType<MIHPacket>(messageId);
 }
 
 template <typename MIHPacket>

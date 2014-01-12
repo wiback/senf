@@ -58,11 +58,11 @@ namespace senf {
 
         template <typename MIHPacket>
         struct RegistrationProxy {
-            RegistrationProxy();
+            RegistrationProxy(key_t messageId);
         };
 
         template <typename MIHPacket>
-        void registerMessageType();
+        void registerMessageType(key_t messageId);
 
         void validate(key_t messageId, senf::Packet message);
 
@@ -72,12 +72,12 @@ namespace senf {
     };
 
 
-#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packet )                      \
+#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packet, messageId )           \
         SENF_PACKET_REGISTRY_REGISTER(                                      \
-            senf::MIHMessageRegistry, packet::type::MESSAGE_ID, packet )    \
+            senf::MIHMessageRegistry, messageId, packet )                   \
         namespace {                                                         \
             senf::MIHMessageRegistry::RegistrationProxy< packet >           \
-            BOOST_PP_CAT(mihPacketRegistration_, __LINE__);                 \
+            BOOST_PP_CAT(mihPacketRegistration_, __LINE__) (messageId);     \
         }
 
 }
