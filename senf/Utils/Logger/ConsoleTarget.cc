@@ -26,14 +26,14 @@
 //   Stefan Bund <g0dil@berlios.de>
 
 /** \file
-    \brief ConsoleTarget inline non-template implementation */
+    \brief ConsoleTarget non-inline non-template implementation */
 
-//#include "ConsoleTarget.ih"
+#include "ConsoleTarget.hh"
 
 // Custom includes
 #include <iostream>
 
-#define prefix_ inline
+#define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

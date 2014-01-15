@@ -55,14 +55,7 @@ namespace log {
     class ConsoleTarget : public IOStreamTarget
     {
     public:
-        //-////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        //\{
-
         static ConsoleTarget & instance();
-
-        //\}
-        //-////////////////////////////////////////////////////////////////////////
 
         static void logToStderr();
 
@@ -73,7 +66,7 @@ namespace log {
 }}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-#include "ConsoleTarget.cci"
+//#include "ConsoleTarget.cci"
 //#include "ConsoleTarget.ct"
 //#include "ConsoleTarget.cti"
 #endif

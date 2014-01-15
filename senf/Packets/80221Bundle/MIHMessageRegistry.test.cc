@@ -68,7 +68,7 @@ namespace test {
         using mixin::init;
         using mixin::initSize;
 
-        static const boost::uint16_t MESSAGE_ID;
+        static const boost::uint16_t messageId;
     };
 
     struct ValidatedTestMessagePacketType
@@ -83,7 +83,7 @@ namespace test {
         using mixin::init;
         using mixin::initSize;
 
-        static const boost::uint16_t MESSAGE_ID;
+        static const boost::uint16_t messageId;
 
         static void validate(packet message) {
             message->registerRequestCodeTLV().validate();
@@ -93,15 +93,15 @@ namespace test {
     typedef senf::ConcretePacket<TestMessagePacketType> TestMessagePacket;
     typedef senf::ConcretePacket<ValidatedTestMessagePacketType> ValidatedTestMessagePacket;
 
-    const boost::uint16_t TestMessagePacketType::MESSAGE_ID = 42;
-    const boost::uint16_t ValidatedTestMessagePacketType::MESSAGE_ID = 43;
+    const boost::uint16_t TestMessagePacketType::messageId = 42;
+    const boost::uint16_t ValidatedTestMessagePacketType::messageId = 43;
 }
 }
 
 using namespace senf;
 
-SENF_MIH_PACKET_REGISTRY_REGISTER( test::TestMessagePacket );
-SENF_MIH_PACKET_REGISTRY_REGISTER( test::ValidatedTestMessagePacket );
+SENF_MIH_PACKET_REGISTRY_REGISTER( test::TestMessagePacket, 42);
+SENF_MIH_PACKET_REGISTRY_REGISTER( test::ValidatedTestMessagePacket, 43 );
 
 
 SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
@@ -116,14 +116,14 @@ SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
     mihPacket.data().resize(mihPacket.size()-1);
     BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
     mihPacket.data().resize(mihPacket.size()+2);
-    mihPacket->messageId() = test::TestMessagePacketType::MESSAGE_ID;
+    mihPacket->messageId() = test::TestMessagePacketType::messageId;
     SENF_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
 
     {
         test::TestMessagePacket testMessage (test::TestMessagePacket::createAfter(mihPacket));
         mihPacket.finalizeAll();
         SENF_CHECK_NO_THROW( MIHPacketType::validate( mihPacket));
-        mihPacket->messageId() = test::ValidatedTestMessagePacketType::MESSAGE_ID;
+        mihPacket->messageId() = test::ValidatedTestMessagePacketType::messageId;
         BOOST_CHECK_THROW( MIHPacketType::validate( mihPacket), InvalidMIHPacketException);
     }
     {
