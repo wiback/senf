@@ -47,7 +47,7 @@ template <class LengthParser>
 prefix_ typename senf::StringParser<LengthParser>::size_type senf::StringParser<LengthParser>::bytes()
     const
 {
-    return length().value() + senf::bytes(length());
+    return length_().value() + senf::bytes(length_());
 }
 
 template <class LengthParser>
@@ -55,16 +55,16 @@ prefix_ typename senf::StringParser<LengthParser>::value_type senf::StringParser
     const
 {
     validate(bytes());
-    return std::string(i()+senf::bytes(length()), i()+bytes());
+    return std::string(i()+senf::bytes(length_()), i()+bytes());
 }
 
 template <class LengthParser>
 prefix_ void senf::StringParser<LengthParser>::value(value_type v)
 {
     validate(bytes());
-    resize(bytes(), v.size()+senf::bytes(length()));
-    length() << v.size();
-    std::copy(v.begin(), v.end(), i()+senf::bytes(length()));
+    resize(bytes(), v.size()+senf::bytes(length_()));
+    length_() << v.size();
+    std::copy(v.begin(), v.end(), i()+senf::bytes(length_()));
 }
 
 template <class LengthParser>
@@ -81,12 +81,27 @@ prefix_ typename senf::StringParser<LengthParser> const & senf::StringParser<Len
 }
 
 template <class LengthParser>
+prefix_ bool senf::StringParser<LengthParser>::empty()
+    const
+{
+    return length() == 0;
+}
+
+template <class LengthParser>
+prefix_ void senf::StringParser<LengthParser>::clear()
+{
+    validate(bytes());
+    resize(bytes(), senf::bytes(length_()));
+    length_() << 0;
+}
+
+template <class LengthParser>
 prefix_ bool senf::StringParser<LengthParser>::operator==(value_type const & other)
     const
 {
     if (other.size() > length())
         return false;
-    return std::equal(other.begin(), other.end(), i()+senf::bytes(length()));
+    return std::equal(other.begin(), other.end(), i()+senf::bytes(length_()));
 }
 
 template <class LengthParser>

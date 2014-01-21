@@ -234,7 +234,7 @@
             return parse<type>( SENF_PARSER_OFFSET(name) );                                       \
         }                                                                                         \
     access:                                                                                       \
-        BOOST_PP_CAT(name, _t)::value_type name() const {                                         \
+        typename BOOST_PP_CAT(name, _t)::value_type name() const {                                \
             return BOOST_PP_CAT(name,_)();                                                        \
         }
 #

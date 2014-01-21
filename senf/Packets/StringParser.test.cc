@@ -51,17 +51,28 @@ SENF_AUTO_UNIT_TEST(stringParser)
 
     senf::PacketInterpreterBase::byte data[] = { 0x00, 0x04, 'T', 'E', 'S', 'T' };
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
-
-    BOOST_CHECK_EQUAL( p->data().size(), 6u );
-    BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()).value(), "TEST" );
-
-    MyStringParser(p->data().begin(), &p->data()).value("Another Test");
-    BOOST_CHECK_EQUAL( p->data().size(), 14u );
-    BOOST_CHECK_EQUAL( p->data()[0], 0u );
-    BOOST_CHECK_EQUAL( p->data()[1], 12u );
-    BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()).value(), "Another Test" );
-    BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()), "Another Test" );
-    SENF_CHECK_NOT_EQUAL( MyStringParser(p->data().begin(), &p->data()), "Another Test 123" );
+    {
+        BOOST_CHECK_EQUAL( p->data().size(), 6u );
+        MyStringParser parser (p->data().begin(), &p->data());
+        BOOST_CHECK_EQUAL( parser.length(), 4 );
+        BOOST_CHECK_EQUAL( parser.value(), "TEST" );
+        BOOST_CHECK(! parser.empty() );
+    } {
+        MyStringParser(p->data().begin(), &p->data()).value("Another Test");
+        BOOST_CHECK_EQUAL( p->data().size(), 14u );
+        BOOST_CHECK_EQUAL( p->data()[0], 0u );
+        BOOST_CHECK_EQUAL( p->data()[1], 12u );
+        BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()).value(), "Another Test" );
+        BOOST_CHECK_EQUAL( MyStringParser(p->data().begin(), &p->data()), "Another Test" );
+        SENF_CHECK_NOT_EQUAL( MyStringParser(p->data().begin(), &p->data()), "Another Test 123" );
+    } {
+        MyStringParser(p->data().begin(), &p->data()).clear();
+        BOOST_CHECK_EQUAL( p->data().size(), 2u );
+        MyStringParser parser (p->data().begin(), &p->data());
+        BOOST_CHECK_EQUAL( parser.length(), 0 );
+        BOOST_CHECK_EQUAL( parser.value(), std::string() );
+        BOOST_CHECK( parser.empty() );
+    }
 }
 
 SENF_AUTO_UNIT_TEST(fixedSizeStringParser)

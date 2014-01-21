@@ -51,7 +51,7 @@ namespace senf {
         StringParser(data_iterator i, state_type s);
 
 #       include SENF_PARSER()
-        SENF_PARSER_PRIVATE_FIELD( length, LengthParser );
+        SENF_PARSER_FIELD_RO( length, LengthParser );
 
         typedef std::string value_type;
         static const size_type init_bytes = senf::init_bytes<LengthParser>::value;
@@ -61,6 +61,9 @@ namespace senf {
         void value(value_type v);
         operator value_type() const;
         StringParser const & operator=(value_type other);
+
+        bool empty() const;
+        void clear();
 
         bool operator==(value_type const & other) const;
     };
