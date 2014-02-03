@@ -241,7 +241,7 @@ namespace console {
      */
     void dump(std::ostream & os, DirectoryNode & dir=root());
 
-    void copy(DirectoryNode const & from, DirectoryNode & to);
+    void moveChildren(DirectoryNode & from, DirectoryNode & to);
 
 
     /** \brief Config/console node tree base-class

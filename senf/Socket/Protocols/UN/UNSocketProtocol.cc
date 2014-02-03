@@ -28,10 +28,9 @@
     \brief UNSocketProtocol non-inline non-template implementation */
 
 #include "UNSocketProtocol.hh"
-//#include "UNSocketProtocol.ih"
 
 // Custom includes
-#include <fstream>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
@@ -40,14 +39,13 @@
 #include <senf/Socket/ClientSocketHandle.hh>
 #include "UNAddressing.hh"
 
-//#include "UNSocketProtocol.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 prefix_ unsigned senf::UNSocketProtocol::available()
     const
 {
     int n;
-    if (::ioctl(fd(),SIOCINQ,&n) < 0)
+    if (::ioctl(fd(), SIOCINQ, &n) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("Could not call available() on UNSocket.");
     return n;
 }
@@ -88,7 +86,6 @@ prefix_ void senf::UNSocketProtocol::check_and_unlink()
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "UNSocketProtocol.mpp"
 
 
 // Local Variables:

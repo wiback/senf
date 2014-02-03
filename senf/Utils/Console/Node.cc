@@ -68,12 +68,13 @@ prefix_ void senf::console::dump(std::ostream & os, DirectoryNode & dir)
     dodump(os,0,dir);
 }
 
-prefix_ void senf::console::copy(DirectoryNode const & from, DirectoryNode & to)
+prefix_ void senf::console::moveChildren(DirectoryNode & from, DirectoryNode & to)
 {
-    DirectoryNode::child_iterator i (from.children().begin());
-    DirectoryNode::child_iterator const i_end (from.children().end());
-    for (; i != i_end; ++i) {
-        to.add(i->first, i->second);
+    DirectoryNode::child_iterator child (from.children().begin());
+    while (child != from.children().end()) {
+        std::string name (child->first);
+        ++child;
+        to.add(name, from.remove(name));
     }
 }
 
