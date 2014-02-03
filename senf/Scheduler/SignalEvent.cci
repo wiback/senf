@@ -31,7 +31,6 @@
 #include "SignalEvent.ih"
 
 // Custom includes
-#include <unistd.h>
 #include <senf/Utils/signalnames.hh>
 
 #define prefix_ inline

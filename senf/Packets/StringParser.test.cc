@@ -24,6 +24,7 @@
 //
 // Contributor(s):
 //   Stefan Bund <g0dil@berlios.de>
+//   Thorsten Horstmann <tho@berlios.de>
 
 /** \file
     \brief StringParser.test unit tests */
@@ -57,6 +58,16 @@ SENF_AUTO_UNIT_TEST(stringParser)
         BOOST_CHECK_EQUAL( parser.length(), 4 );
         BOOST_CHECK_EQUAL( parser.value(), "TEST" );
         BOOST_CHECK(! parser.empty() );
+        {
+            std::string maxStr (std::string(MyStringParser::length_t::max_value, 'x'));
+            parser.value( maxStr);
+            BOOST_CHECK_EQUAL( parser.length(), maxStr.size() );
+            BOOST_CHECK_EQUAL( parser.value(), maxStr );
+            std::string tooLongStr (std::string(MyStringParser::length_t::max_value+1, 'x'));
+            parser.value( tooLongStr);
+            BOOST_CHECK_EQUAL( parser.length(), maxStr.size() );
+            BOOST_CHECK_EQUAL( parser.value(), maxStr );
+        }
     } {
         MyStringParser(p->data().begin(), &p->data()).value("Another Test");
         BOOST_CHECK_EQUAL( p->data().size(), 14u );

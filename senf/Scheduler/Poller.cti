@@ -68,7 +68,6 @@ template <class Value>
 prefix_ typename senf::scheduler::detail::Poller<Value>::GetPollResult::result_type
 senf::scheduler::detail::Poller<Value>::GetPollResult::operator()(epoll_event const & ev)
     const
-
 {
     return std::make_pair(ev.events, static_cast<Value*>(ev.data.ptr));
 }

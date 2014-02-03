@@ -24,6 +24,7 @@
 //
 // Contributor(s):
 //   Stefan Bund <g0dil@berlios.de>
+//   Thorsten Horstmann <tho@berlios.de>
 
 /** \file
     \brief StringParser public header */
