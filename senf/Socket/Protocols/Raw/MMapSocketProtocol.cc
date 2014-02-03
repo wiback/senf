@@ -44,6 +44,9 @@
 #ifndef PACKET_TX_HAS_OFF
 #define PACKET_TX_HAS_OFF 19
 #endif
+#ifndef PACKET_QDISC_BYPASS
+#define PACKET_QDISC_BYPASS	20
+#endif
 
 prefix_ void senf::MMapSocketProtocol::close()
 {
@@ -109,6 +112,9 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
             SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TX_HAS_OFF");
 #endif
         size += req.tp_block_size;
+
+        v = 1;
+        setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
     }
 
     unsigned char * map (static_cast<unsigned char *>(
