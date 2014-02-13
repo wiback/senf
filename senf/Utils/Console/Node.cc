@@ -128,6 +128,13 @@ prefix_ bool senf::console::GenericNode::isChildOf(DirectoryNode & parent)
     return node.get() != 0;
 }
 
+prefix_ void senf::console::GenericNode::rename(std::string const & newName)
+{
+    DirectoryNode::ptr myParent (parent());
+    if (myParent)
+        myParent->add( newName, unlink());
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::LinkNode
 

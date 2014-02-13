@@ -60,6 +60,10 @@ SENF_AUTO_UNIT_TEST(genericNode)
     std::stringstream ss;
     node.help(ss);
     BOOST_CHECK_EQUAL( ss.str(), "help info\n" );
+    BOOST_CHECK(   console::root()["dir1"].hasChild("dir2") );
+    node.rename("dir2.2");
+    BOOST_CHECK( ! console::root()["dir1"].hasChild("dir2") );
+    BOOST_CHECK(   console::root()["dir1"].hasChild("dir2.2") );
 
     {
         console::GenericNode::ptr p (console::root()["dir1"].unlink());

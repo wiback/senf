@@ -294,6 +294,12 @@ namespace console {
                                         /**< You may either discard the return value and thereby
                                              dispose the node or may re-attach the node at some
                                              other place using DirectoryNode::add(). */
+        void rename(std::string const & newName);
+                                        ///< Rename node name in it's parent directory
+                                        /**< The renaming is done by unlinking the node from the
+                                             parent and re-adding it with the new name.
+                                             If the node is not linked to the tree, that is parent()
+                                             returns null, this is a no-op. */
 
         bool active() const;            ///< \c true, if node is attached to the root() node
 
