@@ -63,7 +63,7 @@ template <class LengthParser>
 prefix_ void senf::StringParser<LengthParser>::value(value_type v)
 {
     validate(bytes());
-    typename LengthParser::value_type sz (std::min<size_type>(v.size(), LengthParser::max_value));
+    typename LengthParser::value_type sz (std::min<size_type>(v.size(), LengthParser::max_value+0));
     resize(bytes(), sz+senf::bytes(length_()));
     length_() << sz;
     std::copy(v.begin(), boost::next(v.begin(),sz), i()+senf::bytes(length_()));
