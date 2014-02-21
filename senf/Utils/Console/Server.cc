@@ -183,7 +183,6 @@ senf::console::detail::DumbClientReader::clientData(senf::ReadHelper<ClientHandl
     showPrompt();
     ReadHelper<ClientHandle>::dispatch( handle(), 16384u, ReadUntil("\n"),
                                         senf::membind(&DumbClientReader::clientData, this) );
-
 }
 
 prefix_ void senf::console::detail::DumbClientReader::showPrompt()
@@ -279,7 +278,6 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_write(std::str
     writeHandler(scheduler::FdEvent::EV_WRITE);
     if (! sendQueue_.empty())
         writeevent_.enable();
-
 }
 
 prefix_ unsigned senf::console::detail::NoninteractiveClientReader::v_width()
@@ -337,7 +335,6 @@ senf::console::detail::NoninteractiveClientReader::writeHandler(int event)
     }
     if (sendQueue_.empty())
         writeevent_.disable();
-
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

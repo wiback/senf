@@ -146,7 +146,6 @@ prefix_ void senf::console::UDPServer::handleInput(int events)
             stream << '\0';
         handle_.writeto(address, stream.str());
     }
-
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

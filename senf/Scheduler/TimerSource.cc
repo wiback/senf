@@ -247,6 +247,7 @@ namespace {
     }
 
 }
+
 prefix_ bool senf::scheduler::detail::TimerFDTimerSource::haveTimerFD()
 {
     static TimerFdCheck check;

@@ -108,19 +108,28 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 
     v_connected();
     peer_->v_connected();
-
 }
 
 #ifndef SENF_PPI_NOTRACE
 senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::staticTraceState_ (
     senf::ppi::connector::Connector::NO_TRACING);
+std::string senf::ppi::connector::Connector::traceFilter_;
 
 prefix_ void senf::ppi::connector::Connector::trace(Packet const & p, char const * label)
 {
     if (tracingState() == NO_TRACING)
         return;
+
+    std::string type (prettyName(p.typeId().id()));
+    if (! traceFilter_.empty()) {
+        std::stringstream ss;
+        p.dump(ss);
+        std::string packetDump (ss.str());
+        if (! (boost::algorithm::ifind_first(type, traceFilter_) || boost::algorithm::ifind_first(packetDump, traceFilter_)))
+            return;
+    }
+
     SENF_LOG_BLOCK(({
-        std::string type (prettyName(p.typeId().id()));
         log << "PPI packet trace: " << label << " 0x" << std::hex << p.id() << " "
             << type.substr(21, type.size()-22) << " on " << & module() << " "
             << prettyName(typeid(module())) << " connector 0x" << this << "\n";
@@ -191,18 +200,19 @@ namespace {
                      "    connector-id    Unique connector id\n"
                      "    throttle-msg    Type of throttling event\n")
                 );
+        senf::ppi::ModuleManager::instance().consoleDir()
+            .add("tracingFilter", senf::console::factory::Command(
+                    &senf::ppi::connector::Connector::tracingFilter) );
 #endif
     }
 
     ConsoleRegister consoleRegister;
-
 }
 
 prefix_ void senf::ppi::connector::Connector::disconnect()
 {
     // Cannot disconnected a non-connected connector
-    SENF_ASSERT( peer_,
-                 "senf::ppi::connector::Connector::disconnect(): Not connected" );
+    SENF_ASSERT( peer_, "senf::ppi::connector::Connector::disconnect(): Not connected" );
 
     Connector & peer (*peer_);
     peer_ = 0;

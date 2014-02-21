@@ -60,6 +60,7 @@ namespace connector {
         explicit GenericActiveInputJack(GenericActiveInput & input);
 
         GenericActiveInput & connector(); ///< Get referenced connector
+        GenericActiveInput * operator->(); ///< Get referenced connector
 
         void reset(GenericActiveInput & input); ///< Change connector
                                         /**< Will update any existing connection accordingly */
@@ -77,6 +78,7 @@ namespace connector {
         explicit GenericActiveOutputJack(GenericActiveOutput & output);
 
         GenericActiveOutput & connector(); ///< Get referenced connector
+        GenericActiveOutput * operator->(); ///< Get referenced connector
 
         void reset(GenericActiveOutput & output); ///< Change connector
                                         /**< Will update any existing connection accordingly */
@@ -94,6 +96,7 @@ namespace connector {
         explicit GenericPassiveInputJack(GenericPassiveInput & input);
 
         GenericPassiveInput & connector(); ///< Get referenced connector
+        GenericPassiveInput * operator->(); ///< Get referenced connector
 
         void reset(GenericPassiveInput & input); ///< Change connector
                                         /**< Will update any existing connection accordingly */
@@ -111,6 +114,7 @@ namespace connector {
         explicit GenericPassiveOutputJack(GenericPassiveOutput & output);
 
         GenericPassiveOutput & connector(); ///< Get referenced connector
+        GenericPassiveOutput * operator->(); ///< Get referenced connector
 
         void reset(GenericPassiveOutput & output); ///< Change connector
                                         /**< Will update any existing connection accordingly */

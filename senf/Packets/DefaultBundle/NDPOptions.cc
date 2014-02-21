@@ -61,7 +61,6 @@ prefix_ void senf::NDPPrefixInformationTLVParser::dump(std::ostream & os) const
     os << senf::fieldName("Preferred Lifetime")                    << unsigned(preferredLifetime()) << "\n";
     os << senf::fieldName("Reserved(32Bit)")                       << unsigned(reserved2()) << "\n";
     os << senf::fieldName("Prefix")                                << prefix() << "\n";
-
 }
 
 prefix_ void senf::NDPMTUTLVParser::dump(std::ostream & os) const
@@ -69,7 +68,6 @@ prefix_ void senf::NDPMTUTLVParser::dump(std::ostream & os) const
     os << "MTU Information Option:" << "\n";
     os << senf::fieldName("MTU") << unsigned(mtu()) << "\n";
 }
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

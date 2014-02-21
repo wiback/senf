@@ -180,13 +180,16 @@ namespace connector {
 
         void disconnect();              ///< Disconnect connector from peer
 
-#       ifndef SENF_PPI_NOTRACE
+        console::DirectoryNode & consoleDir() const;
+
+#ifndef SENF_PPI_NOTRACE
         enum TraceState { NO_TRACING, TRACE_IDS, TRACE_CONTENTS };
 
         static void staticTracingState(TraceState state);
         void tracingState(TraceState state);
         TraceState tracingState() const;
-#       endif
+        static void tracingFilter(std::string const & traceFilter);
+#endif
 
     protected:
         Connector();
@@ -194,11 +197,10 @@ namespace connector {
 
         void connect(Connector & target);
 
-        console::DirectoryNode & consoleDir() const;
-#       ifndef SENF_PPI_NOTRACE
+#ifndef SENF_PPI_NOTRACE
         void trace(Packet const & p, char const * label);
         void throttleTrace(char const * label, char const * type);
-#       endif
+#endif
 
         void unregisterConnector();
 
@@ -215,10 +217,11 @@ namespace connector {
 
         console::ScopedDirectory<Connector> consoleDir_;
 
-#       ifndef SENF_PPI_NOTRACE
+#ifndef SENF_PPI_NOTRACE
         TraceState traceState_;
         static TraceState staticTraceState_;
-#       endif
+        static std::string traceFilter_;
+#endif
 
         friend class module::Module;
     };

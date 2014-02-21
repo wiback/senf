@@ -277,7 +277,6 @@ prefix_ void senf::Statistics::consoleCollect(std::vector<unsigned> & ranks)
 
     for (; i != i_end; ++i)
         stats = & (stats->collect(*i));
-
 }
 
 prefix_  boost::shared_ptr<senf::console::DirectoryNode>

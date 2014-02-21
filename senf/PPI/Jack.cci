@@ -47,6 +47,12 @@ senf::ppi::connector::GenericActiveInputJack::connector()
     return *input_;
 }
 
+prefix_ senf::ppi::connector::GenericActiveInput *
+senf::ppi::connector::GenericActiveInputJack::operator->()
+{
+    return input_;
+}
+
 prefix_ senf::ppi::connector::GenericActiveOutputJack::
 GenericActiveOutputJack(GenericActiveOutput & output)
     : output_ (&output)
@@ -56,6 +62,12 @@ prefix_ senf::ppi::connector::GenericActiveOutput &
 senf::ppi::connector::GenericActiveOutputJack::connector()
 {
     return *output_;
+}
+
+prefix_ senf::ppi::connector::GenericActiveOutput *
+senf::ppi::connector::GenericActiveOutputJack::operator->()
+{
+    return output_;
 }
 
 prefix_ senf::ppi::connector::GenericPassiveInputJack::
@@ -69,6 +81,12 @@ senf::ppi::connector::GenericPassiveInputJack::connector()
     return *input_;
 }
 
+prefix_ senf::ppi::connector::GenericPassiveInput *
+senf::ppi::connector::GenericPassiveInputJack::operator->()
+{
+    return input_;
+}
+
 prefix_ senf::ppi::connector::GenericPassiveOutputJack::
 GenericPassiveOutputJack(GenericPassiveOutput & output)
     : output_ (&output)
@@ -78,6 +96,12 @@ prefix_ senf::ppi::connector::GenericPassiveOutput &
 senf::ppi::connector::GenericPassiveOutputJack::connector()
 {
     return *output_;
+}
+
+prefix_ senf::ppi::connector::GenericPassiveOutput *
+senf::ppi::connector::GenericPassiveOutputJack::operator->()
+{
+    return output_;
 }
 
 prefix_ senf::ppi::connector::ActiveInputJack<senf::Packet>::
