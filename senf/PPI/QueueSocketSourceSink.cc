@@ -31,8 +31,9 @@
 
 prefix_ senf::ppi::module::QueueEthVLanFilter::QueueEthVLanFilter()
 {
-    route(input, output);
+    route(input, output).autoThrottling(false);
     input.onRequest(&QueueEthVLanFilter::request);
+    input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
 }
 
 prefix_ void senf::ppi::module::QueueEthVLanFilter::request()
