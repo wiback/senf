@@ -423,7 +423,7 @@
     directory and use the following subversion command
 
     <pre>
-    $ svn checkout https://senf.fokus.fraunhofer.de/trunk senf
+    $ svn checkout https://senf.fokus.fraunhofer.de/svn/senf/trunk senf
     </pre>
 
     This will create a new directory \c senf within the current directory. For further documentation
