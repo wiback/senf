@@ -20,9 +20,9 @@
 # The Modifications are Copyright (C) 2006,2007,2008,2009
 # Fraunhofer Institute for Open Communication Systems (FOKUS) 
 # Competence Center NETwork research (NET), St. Augustin, GERMANY 
-#     Stefan Bund <g0dil@berlios.de>
+#     Stefan Bund <senf@g0dil.de>
 
-# I (g0dil@berlios.de) have been fighting 4 problems in this
+# I (senf@g0dil.de) have been fighting 4 problems in this
 # implementation:
 # - A Directory target will *not* call any source scanners
 # - A Directory target will interpret the directory contents as

@@ -17,6 +17,3 @@ The main goals of this library are (in no particular order):
  - very low overhead for frequently called members
  - extensible design
  - concise interface
-
-
- -- Stefan Bund <senf-dev@lists.berlios.de>  Tue, 28 Aug 2007 10:02:23 +0200

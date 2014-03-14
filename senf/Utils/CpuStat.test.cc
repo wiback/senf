@@ -6,7 +6,7 @@
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
 // with the License. You may obtain a copy of the License at 
-// http://senf.berlios.de/license.html
+// http://senf.fokus.fraunhofer.de.de/license.html
 //
 // The Fraunhofer FOKUS Public License Version 1.0 is based on, 
 // but modifies the Mozilla Public License Version 1.1.
@@ -23,7 +23,7 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Jens Moedeker <jmo@berlios.de>
+//   Jens Moedeker <jens.moedeker@fokus.fraunhofer.de>
 
 /** \file
     \brief CpuStat unit tests */

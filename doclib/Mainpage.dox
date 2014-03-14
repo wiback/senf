@@ -6,7 +6,7 @@
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
 // with the License. You may obtain a copy of the License at 
-// http://senf.berlios.de/license.html
+// http://senf.fokus.fraunhofer.de.de/license.html
 //
 // The Fraunhofer FOKUS Public License Version 1.0 is based on, 
 // but modifies the Mozilla Public License Version 1.1.
@@ -22,7 +22,7 @@
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 //
 // Contributor(s):
-//   Stefan Bund <g0dil@berlios.de>
+//   Stefan Bund <senf@g0dil.de>
 
 
 /** \mainpage SENF: The Simple and Extensible Network Framework
@@ -46,10 +46,6 @@
 
     You may check the Downloads section for binary library releases. However, in all probability you
     will have to compile SENF for yourself.
-
-    If you are interested in SENF, feel free to subscribe to the <a
-    href="http://developer.berlios.de/mail/?group_id=7489">SENF mailing lists</a>. If you want to
-    contribute, read the docs and \e please adhere to the \ref senf_conventions.
 
     \see
         \ref senf_introduction \n
@@ -427,7 +423,7 @@
     directory and use the following subversion command
 
     <pre>
-    $ svn checkout http://svn.berlios.de/svnroot/repos/senf/trunk senf
+    $ svn checkout https://senf.fokus.fraunhofer.de/trunk senf
     </pre>
 
     This will create a new directory \c senf within the current directory. For further documentation

@@ -6,7 +6,7 @@
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
 // with the License. You may obtain a copy of the License at 
-// http://senf.berlios.de/license.html
+// http://senf.fokus.fraunhofer.de.de/license.html
 //
 // The Fraunhofer FOKUS Public License Version 1.0 is based on, 
 // but modifies the Mozilla Public License Version 1.1.
@@ -23,7 +23,7 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Stefan Bund <g0dil@berlios.de>
+//   Stefan Bund <senf@g0dil.de>
 
 /** \file
     \brief Server non-inline non-template implementation */
@@ -57,8 +57,8 @@
 namespace {
     senf::console::SysInfo::Proxy addSysInfo (
             "SENF: The Simple and Extensible Network Framework\n"
-            "  (c) 2006-2012 Fraunhofer Institute for Open Communication Systems (FOKUS)\n"
-            "  Contact: http://senf.berlios.de\n"
+            "  (c) 2006-2014 Fraunhofer Institute for Open Communication Systems (FOKUS)\n"
+            "  Contact: http://senf.fokus.fraunhofer.de.de\n"
             "  Version: " SENF_LIB_VERSION " Revision number: " SENF_REVISION "\n"
             "  Build-type: " BUILD_TYPE ", SenfLog compile time limit: " +
             senf::str(senf::log::LEVELNAMES[senf::SenfLog::compileLimit::value]), 0);
