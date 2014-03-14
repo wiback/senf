@@ -20,7 +20,7 @@ def CalculateRevision(env, local_revision_file=None):
             if m: 
                 rev = m.groups()[0]
             else:
-                rev = int( file(local_revision_file).read(), 16)
+                rev = file(local_revision_file).read()
         except:
             pass
     if rev is None:
