@@ -33,15 +33,15 @@
 // Custom includes
 #include <boost/foreach.hpp>
 #include "ScopedDirectory.hh"
-#include "Sysdir.hh"
 #include "ParsedCommand.hh"
+#include "Sysdir.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-prefix_ senf::console::SysInfo::Proxy::Proxy(std::string const & descr, int pos)
+prefix_ senf::console::SysInfo::Proxy::Proxy(std::string const & name, std::string const & entry, int pos)
 {
-    SysInfo::instance().addEntry( descr, pos);
+    SysInfo::instance().setEntry( name, entry, pos);
 }
 
 prefix_ senf::console::SysInfo::SysInfo()
@@ -49,17 +49,21 @@ prefix_ senf::console::SysInfo::SysInfo()
     sysdir().add("info", factory::Command(&SysInfo::dump, this));
 }
 
-prefix_ void senf::console::SysInfo::addEntry(std::string const & descr, int pos)
+prefix_ void senf::console::SysInfo::setEntry(std::string const & name, std::string const & entry, int pos)
 {
-    descr_.insert( std::make_pair(
-            pos < 0 ? std::numeric_limits<int>::max() : pos, descr));
+    for (Entries::iterator d (entries_.begin()); d != entries_.end(); ++d) {
+        if (d->first.second == name)
+            entries_.erase(d);
+    }
+    entries_.insert( std::make_pair( std::make_pair(
+            pos < 0 ? std::numeric_limits<int>::max() : pos, name), entry));
 }
 
 prefix_ void senf::console::SysInfo::dump(std::ostream & os)
     const
 {
-    BOOST_FOREACH( Descriptions::value_type const & d, descr_) {
-        os << d.second << std::endl;
+    BOOST_FOREACH( Entries::value_type const & entry, entries_) {
+        os << entry.second << std::endl;
     }
 }
 

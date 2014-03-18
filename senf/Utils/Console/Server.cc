@@ -55,7 +55,7 @@
 #endif
 
 namespace {
-    senf::console::SysInfo::Proxy addSysInfo (
+    senf::console::SysInfo::Proxy addSysInfo ("SENF",
             "SENF: The Simple and Extensible Network Framework\n"
             "  (c) 2006-2014 Fraunhofer Institute for Open Communication Systems (FOKUS)\n"
             "  Contact: http://senf.fokus.fraunhofer.de.de\n"

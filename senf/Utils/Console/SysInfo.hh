@@ -47,16 +47,16 @@ namespace console {
         friend class singleton<SysInfo>;
         using singleton<SysInfo>::instance;
 
-        void addEntry(std::string const & descr, int pos=-1);
+        void setEntry(std::string const & name, std::string const & entry, int pos = -1);
         void dump(std::ostream & os) const;
 
         struct Proxy {
-            Proxy(std::string const & descr, int pos=-1);
+            Proxy(std::string const & name, std::string const & entry, int pos = -1);
         };
 
     private:
-        typedef std::multimap<int, std::string> Descriptions;
-        Descriptions descr_;
+        typedef std::multimap<std::pair<int,std::string>, std::string> Entries;
+        Entries entries_;
 
         SysInfo();
     };
