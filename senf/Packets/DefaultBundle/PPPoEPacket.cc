@@ -64,10 +64,12 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::PPPoEPacketType::nextPacket
 {
     switch (p->pppProtocol()) {
     case 0x0021:
-        return IPv4Packet::factory();
+        if (p->code() == 0x0)
+            return IPv4Packet::factory();
         break;
     case 0x0057:
-        return IPv6Packet::factory();
+        if (p->code() == 0x0)
+            return IPv6Packet::factory();
         break;
     default:
         // there are other types, such as PAP, CHAP, LCP, etc....
