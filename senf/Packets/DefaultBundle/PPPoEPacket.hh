@@ -1,6 +1,6 @@
 // $Id: PPPoEPacket.hh 2056 2014-03-14 13:59:24Z tho $
 //
-// Copyright (C) 2007
+// Copyright (C) 2014
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
@@ -23,7 +23,7 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+//   Mathias Kretschmer <mathias.kretschmer@fokus.fraunhofer.de>
 
 /** \file
     \brief PPPOE public header */
@@ -52,7 +52,6 @@ namespace senf {
         SENF_PARSER_BITFIELD( type, 4,    unsigned );
         SENF_PARSER_FIELD( code,          UInt8Parser );
         SENF_PARSER_FIELD( sessionId,     UInt16Parser );
-
         SENF_PARSER_FIELD( length,        UInt16Parser );
         SENF_PARSER_FIELD( pppProtocol,   UInt16Parser );
 
@@ -66,46 +65,31 @@ namespace senf {
         }
     };
 
-    /** \brief PPPoE header
-
-        \todo document me
-
-        \par Packet type (typedef):
-            \ref PPPoEPacketType
-
-        \par Fields:
-            \ref PPPoEPacketParser
-
-        \par Associated registries:
-            \ref EtherTypes
-
-        \par Finalize action:
-            XXXX
-
-        \ingroup protocolbundle_default
-     */
-    struct PPPoEPacketType
+    template <typename PacketType>
+    struct PPPoEPacketTypeBase
         : public PacketTypeBase,
-          public PacketTypeMixin<PPPoEPacketType, EtherTypes>
+          public PacketTypeMixin<PacketType, EtherTypes>
     {
-        typedef PacketTypeMixin<PPPoEPacketType, EtherTypes> mixin;
-        typedef ConcretePacket<PPPoEPacketType> packet; ///< PPPoE packet typedef
-        typedef PPPoEPacketParser parser;               ///< typedef to the parser of PPPoE packet
+        typedef PacketTypeMixin<PacketType, EtherTypes> mixin;
+        typedef ConcretePacket<PacketType> packet;
+        typedef PPPoEPacketParser parser;
 
         using mixin::nextPacketRange;
         using mixin::initSize;
         using mixin::init;
 
         static factory_t nextPacketType(packet p);
-        /** \brief Dump given PPPoEPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
     };
 
-    /** \brief PPPoE packet typedef
-        \ingroup protocolbundle_default
-     */
-    typedef ConcretePacket<PPPoEPacketType> PPPoEPacket;
-    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( PPPoEPacket );
+    struct PPPoEDPacketType : public PPPoEPacketTypeBase<PPPoEDPacketType> {};
+    struct PPPoESPacketType : public PPPoEPacketTypeBase<PPPoESPacketType> {};
+
+    typedef ConcretePacket<PPPoEDPacketType> PPPoEDPacket;
+    typedef ConcretePacket<PPPoESPacketType> PPPoESPacket;
+
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( PPPoEDPacket );
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( PPPoESPacket );
 }
 
 

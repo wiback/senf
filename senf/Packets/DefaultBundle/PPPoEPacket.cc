@@ -1,6 +1,6 @@
 // $Id: PPPoEPacket.cc 2056 2014-03-14 13:59:24Z tho $
 //
-// Copyright (C) 2007
+// Copyright (C) 2014
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
@@ -23,7 +23,7 @@
 // All Rights Reserved.
 //
 // Contributor(s):
-//   Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+//   Mathias Kretschmer <mathias.kretschmer@fokus.fraunhofer.de>
 
 /** \file
     \brief PPPoEPacket non-inline non-template implementation */
@@ -33,34 +33,34 @@
 // Custom includes
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
-#include "EthernetPacket.hh"
 #include "IPv4Packet.hh"
 #include "IPv6Packet.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-// PPPoE Discovery
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8863, senf::PPPoEPacket);
-// PPPoE Session
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8864, senf::PPPoEPacket);
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8863, senf::PPPoEDPacket );  // PPPoE Discovery
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8864, senf::PPPoESPacket );  // PPPoE Session
 
-SENF_PACKET_INSTANTIATE_TEMPLATE( senf::PPPoEPacket );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::PPPoEDPacket );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::PPPoESPacket );
 
-prefix_ void senf::PPPoEPacketType::dump(packet p, std::ostream & os)
+template <typename PacketType>
+prefix_ void senf::PPPoEPacketTypeBase<PacketType>::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "PPPoE:\n"
        << std::hex << std::setfill('0') << std::right
-       << senf::fieldName("  version")     << "0x" << unsigned(p->version()) << "\n"
-       << senf::fieldName("  type")        << "0x" << unsigned(p->type()) << "\n"
+       << senf::fieldName("  version")     << "0x" << p->version() << "\n"
+       << senf::fieldName("  type")        << "0x" << p->type() << "\n"
        << senf::fieldName("  code")        << "0x" << unsigned(p->code()) << "\n"
-       << senf::fieldName("  sessionId")   << "0x" << unsigned(p->sessionId()) << "\n"
-       << senf::fieldName("  length")      << "0x" << unsigned(p->length()) << "\n"
-       << senf::fieldName("  pppProtocol") << "0x" << unsigned(p->pppProtocol()) << "\n";
+       << senf::fieldName("  sessionId")   << "0x" << p->sessionId() << "\n"
+       << senf::fieldName("  length")      << "0x" << p->length() << "\n"
+       << senf::fieldName("  pppProtocol") << "0x" << p->pppProtocol() << "\n";
 }
 
-prefix_ senf::PacketInterpreterBase::factory_t senf::PPPoEPacketType::nextPacketType(packet p)
+template <typename PacketType>
+prefix_ senf::PacketInterpreterBase::factory_t senf::PPPoEPacketTypeBase<PacketType>::nextPacketType(packet p)
 {
     switch (p->pppProtocol()) {
     case 0x0021:
@@ -75,7 +75,6 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::PPPoEPacketType::nextPacket
         // there are other types, such as PAP, CHAP, LCP, etc....
         break;
     }
-
     return no_factory();
 }
 
