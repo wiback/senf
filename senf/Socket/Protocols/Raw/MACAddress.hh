@@ -135,12 +135,13 @@ namespace senf {
         \related MACAddress
      */
     std::ostream & operator<<(std::ostream & os, MACAddress const & mac);
+
     /** \brief Try to initialize MACAddress instance from a string representation
         sets std::ios::failbit on the stream if an error occurred
         \see MACAddress from_string()
         \related MACAddress
      */
-    std::istream & operator>>(std::istream & os, MACAddress & mac);
+    std::istream & operator>>(std::istream & is, MACAddress & mac);
 
     bool operator==(MACAddress const & mac, EUI64 const & eui64);
     bool operator==(EUI64 const & eui64, MACAddress const & mac);

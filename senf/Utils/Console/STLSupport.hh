@@ -35,8 +35,10 @@
 #include <vector>
 #include <list>
 #include "Traits.hh"
+#ifdef SENF_CXX11_ENABLED
+#  include <tuple>
+#endif
 
-//#include "STLSupport.mpp"
 #include "STLSupport.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -128,6 +130,28 @@ namespace console {
         static void format(type const & value, std::ostream & os);
     };
 
+#ifdef SENF_CXX11_ENABLED
+
+    template<typename ...Types>
+    struct ArgumentTraits< std::tuple<Types...> >
+    {
+        typedef std::tuple<Types...> type;
+        static bool const singleToken = false;
+
+        static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
+        static std::string description();
+        static std::string str(type const & value);
+    };
+
+    template<typename ...Types>
+    struct ReturnValueTraits< std::tuple<Types...> >
+    {
+        typedef std::tuple<Types...> type;
+
+        static void format(type const & value, std::ostream & os);
+    };
+
+#endif
 #endif
 
 }}

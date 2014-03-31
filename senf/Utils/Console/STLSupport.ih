@@ -95,6 +95,26 @@ namespace detail {
         static void format(Collection const & value, std::ostream & os);
     };
 
+#ifdef SENF_CXX11_ENABLED
+
+    template <typename TupleType, std::size_t Index, std::size_t MaxIndex>
+    struct TupleHelper
+    {
+        static void parse(CheckedArgumentIteratorWrapper & arg, TupleType & out);
+        static void description(std::stringstream & ss);
+        static void format(TupleType const & value, std::ostream & os);
+    };
+
+    template <typename TupleType, std::size_t MaxIndex>
+    struct TupleHelper<TupleType, MaxIndex, MaxIndex>
+    {
+        static void parse(CheckedArgumentIteratorWrapper & arg, TupleType & out);
+        static void description(std::stringstream & ss);
+        static void format(TupleType const & value, std::ostream & os);
+    };
+
+#endif
+
 }}}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -26,9 +26,7 @@
 //   Stefan Bund <senf@g0dil.de>
 
 /** \file
-    \brief VectorSupport non-inline template implementation  */
-
-//#include "VectorSupport.ih"
+    \brief STLSupport non-inline template implementation  */
 
 // Custom includes
 #include <boost/format.hpp>
@@ -197,6 +195,91 @@ prefix_ void senf::console::ReturnValueTraits< std::pair<T1,T2> >::format(type c
        << " " << senf::console::str(value.second) << ")";
 }
 
+#ifdef SENF_CXX11_ENABLED
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// TupleHelper
+
+template <typename TupleType, std::size_t Index, std::size_t MaxIndex>
+prefix_ void senf::console::detail::TupleHelper<TupleType, Index, MaxIndex>::parse(CheckedArgumentIteratorWrapper & arg, TupleType & out)
+{
+    senf::console::parse( *(arg++), std::get<Index>(out) );
+    TupleHelper<TupleType, Index+1, MaxIndex>::parse(arg, out);
+}
+
+template <typename TupleType, std::size_t Index, std::size_t MaxIndex>
+prefix_ void senf::console::detail::TupleHelper<TupleType, Index, MaxIndex>::description(std::stringstream & ss)
+{
+    ss << senf::console::ArgumentTraits<typename std::tuple_element<Index, TupleType>::type>::description() << ',';
+    TupleHelper<TupleType, Index+1, MaxIndex>::description(ss);
+}
+
+template <typename TupleType, std::size_t Index, std::size_t MaxIndex>
+prefix_ void senf::console::detail::TupleHelper<TupleType, Index, MaxIndex>::format(TupleType const & value, std::ostream & os)
+{
+    os << senf::console::str(std::get<Index>(value)) << ' ';
+    TupleHelper<TupleType, Index+1, MaxIndex>::format(value, os);
+}
+
+template <typename TupleType, std::size_t MaxIndex>
+prefix_ void senf::console::detail::TupleHelper<TupleType, MaxIndex, MaxIndex>::parse(CheckedArgumentIteratorWrapper & arg, TupleType & out)
+{
+    senf::console::parse( *(arg++), std::get<MaxIndex>(out) );
+}
+
+template <typename TupleType, std::size_t MaxIndex>
+prefix_ void senf::console::detail::TupleHelper<TupleType, MaxIndex, MaxIndex>::description(std::stringstream & ss)
+{
+    ss << senf::console::ArgumentTraits<typename std::tuple_element<MaxIndex, TupleType>::type>::description();
+}
+
+template <typename TupleType, std::size_t MaxIndex>
+prefix_ void senf::console::detail::TupleHelper<TupleType, MaxIndex, MaxIndex>::format(TupleType const & value, std::ostream & os)
+{
+    os << senf::console::str(std::get<MaxIndex>(value));
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::console::ArgumentTraits< std::tuple<Types...> >
+
+template <typename ...Types>
+prefix_ void senf::console::ArgumentTraits< std::tuple<Types...> >::
+parse(ParseCommandInfo::TokensRange const & tokens, type & out)
+{
+    CheckedArgumentIteratorWrapper arg (tokens);
+    detail::TupleHelper<type, 0, std::tuple_size<type>::value - 1>::parse(arg, out);
+}
+
+template <typename ...Types>
+prefix_ std::string senf::console::ArgumentTraits< std::tuple<Types...> >::description()
+{
+    std::stringstream ss;
+    ss << "tuple<";
+    detail::TupleHelper<type, 0, std::tuple_size<type>::value - 1>::description(ss);
+    ss << '>';
+    return ss.str();
+}
+
+template <typename ...Types>
+prefix_ std::string senf::console::ArgumentTraits< std::tuple<Types...> >::str(type const & value)
+{
+    std::stringstream ss;
+    senf::console::format(value, ss);
+    return ss.str();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::console::ReturnValueTraits< std::tuple<Types...> >
+
+template <typename ...Types>
+prefix_ void senf::console::ReturnValueTraits< std::tuple<Types...> >::format(type const & value, std::ostream & os)
+{
+    os << '(';
+    detail::TupleHelper<type, 0, std::tuple_size<type>::value - 1>::format(value, os);
+    os << ')';
+}
+
+#endif
 #endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

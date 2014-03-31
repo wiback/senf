@@ -28,19 +28,18 @@
 /** \file
     \brief STLSupport inline template implementation */
 
-#include "STLSupport.ih"
-
 // Custom includes
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifndef DOXYGEN
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::detail::PushBackFunctor
 
 template <class Sequence, class ValueType>
-prefix_ void senf::console::detail::PushBackFunctor::add(Sequence & seq,
-                                                         ValueType const & value)
+prefix_ void senf::console::detail::PushBackFunctor::add(Sequence & seq, ValueType const & value)
 {
     seq.push_back(value);
 }
@@ -49,11 +48,12 @@ prefix_ void senf::console::detail::PushBackFunctor::add(Sequence & seq,
 // senf::console::detail::InsertFunctor
 
 template <class Collection, class ValueType>
-prefix_ void senf::console::detail::InsertFunctor::add(Collection & seq,
-                                                       ValueType const & value)
+prefix_ void senf::console::detail::InsertFunctor::add(Collection & seq, ValueType const & value)
 {
     seq.insert(value);
 }
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

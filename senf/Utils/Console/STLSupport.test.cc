@@ -28,9 +28,6 @@
 /** \file
     \brief STLSupport unit tests */
 
-//#include "STLSupport.test.hh"
-//#include "STLSupport.test.ih"
-
 // Custom includes
 #include <boost/assign/list_of.hpp>
 #include "Console.hh"
@@ -70,19 +67,19 @@ namespace {
 
 }
 
+namespace console = senf::console;
+
+
 SENF_AUTO_UNIT_TEST(vectorSupport)
 {
-    namespace fty = senf::console::factory;
-
-    senf::console::Executor executor;
-    senf::console::CommandParser parser;
-    senf::console::ScopedDirectory<> dir;
-    senf::console::root().add("test", dir);
+    console::Executor executor;
+    console::CommandParser parser;
+    console::ScopedDirectory<> dir;
+    console::root().add("test", dir);
 
     std::vector<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", fty::Command(&Summer<std::vector<int> >::test)
-        .arg("data", "test data", senf::console::kw::default_value = defv)
-        );
+    dir.add("test", console::factory::Command(&Summer<std::vector<int> >::test)
+        .arg("data", "test data", console::kw::default_value = defv) );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(
@@ -106,17 +103,14 @@ SENF_AUTO_UNIT_TEST(vectorSupport)
 
 SENF_AUTO_UNIT_TEST(listSupport)
 {
-    namespace fty = senf::console::factory;
-
-    senf::console::Executor executor;
-    senf::console::CommandParser parser;
-    senf::console::ScopedDirectory<> dir;
-    senf::console::root().add("test", dir);
+    console::Executor executor;
+    console::CommandParser parser;
+    console::ScopedDirectory<> dir;
+    console::root().add("test", dir);
 
     std::list<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", fty::Command(&Summer<std::list<int> >::test)
-        .arg("data", "test data", senf::console::kw::default_value = defv)
-        );
+    dir.add("test", console::factory::Command(&Summer<std::list<int> >::test)
+        .arg("data", "test data", console::kw::default_value = defv) );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(
@@ -140,17 +134,14 @@ SENF_AUTO_UNIT_TEST(listSupport)
 
 SENF_AUTO_UNIT_TEST(setSupport)
 {
-    namespace fty = senf::console::factory;
-
-    senf::console::Executor executor;
-    senf::console::CommandParser parser;
-    senf::console::ScopedDirectory<> dir;
-    senf::console::root().add("test", dir);
+    console::Executor executor;
+    console::CommandParser parser;
+    console::ScopedDirectory<> dir;
+    console::root().add("test", dir);
 
     std::set<int> defv (boost::assign::list_of(7)(2).to_container(defv));
-    dir.add("test", fty::Command(&Summer<std::set<int> >::test)
-        .arg("data", "test data", senf::console::kw::default_value = defv)
-        );
+    dir.add("test", console::factory::Command(&Summer<std::set<int> >::test)
+        .arg("data", "test data", console::kw::default_value = defv) );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(
@@ -174,18 +165,15 @@ SENF_AUTO_UNIT_TEST(setSupport)
 
 SENF_AUTO_UNIT_TEST(mapSupport)
 {
-    namespace fty = senf::console::factory;
-
-    senf::console::Executor executor;
-    senf::console::CommandParser parser;
-    senf::console::ScopedDirectory<> dir;
-    senf::console::root().add("test", dir);
+    console::Executor executor;
+    console::CommandParser parser;
+    console::ScopedDirectory<> dir;
+    console::root().add("test", dir);
 
     std::map<std::string, int> defv (
         boost::assign::map_list_of("foo bar",7)("bar",2).to_container(defv));
-    dir.add("test", fty::Command(&mapTest)
-        .arg("data", "test data", senf::console::kw::default_value = defv)
-        );
+    dir.add("test", console::factory::Command(&mapTest)
+        .arg("data", "test data", console::kw::default_value = defv) );
     std::stringstream ss;
 
     SENF_CHECK_NO_THROW(
@@ -207,6 +195,50 @@ SENF_AUTO_UNIT_TEST(mapSupport)
         "    data      test data\n"
         "        default: (bar=2 \"foo bar\"=7)\n" );
 }
+
+#ifdef SENF_CXX11_ENABLED
+
+namespace {
+
+    std::tuple<int, std::pair<int,int>, int> tupleTest(std::tuple<int, std::string, int> data)
+    {
+        return std::make_tuple(
+                std::get<0>(data),
+                std::make_pair(std::stoi(std::get<1>(data)), std::stoi(std::get<1>(data))),
+                std::get<0>(data) + std::get<2>(data) );
+    }
+}
+
+SENF_AUTO_UNIT_TEST(tupleSupport)
+{
+    console::Executor executor;
+    console::CommandParser parser;
+    console::ScopedDirectory<> dir;
+    console::root().add("test", dir);
+    dir.add("test", console::factory::Command(&tupleTest)
+        .arg("data", "test data", console::kw::default_value = std::make_tuple(0, "Test", 0)) );
+
+    std::stringstream ss;
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test (42 \"23\" 18)",
+                boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "(42 (23 23) 60)\n");
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("help test/test",
+                boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL(
+        ss.str(),
+        "Usage:\n"
+        "    test [data:tuple<int,string,int>]\n"
+        "\n"
+        "With:\n"
+        "    data      test data\n"
+        "        default: (0 Test 0)\n" );
+}
+
+#endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
