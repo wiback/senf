@@ -64,6 +64,43 @@ namespace {
     TestEnumKey testKey (TestEnumKey value) { return value; }
 }
 
+namespace testNS {
+
+    struct TestStruct
+    {
+        int a;
+        std::string b;
+        int c;
+    };
+
+    TestStruct testTupleParsing(TestStruct t)
+    {
+        t.a += t.a;
+        t.b += t.b;
+        t.c += t.c;
+        return t;
+    }
+}
+
+SENF_CONSOLE_PARSE_AND_FORMAT_AS_TUPLE( testNS::TestStruct, (a)(b)(c));
+
+SENF_AUTO_UNIT_TEST(parse_and_format_as_tuple_macros)
+{
+    namespace fty = senf::console::factory;
+
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+    dir.add("test",fty::Command(&testNS::testTupleParsing));
+
+    std::stringstream ss;
+    SENF_CHECK_NO_THROW(
+            parser.parse("test/test (42 \"a b c\" 23)",
+                    boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "(84 \"a b ca b c\" 46)\n" );
+}
+
 SENF_AUTO_UNIT_TEST(charTraits)
 {
     namespace fty = senf::console::factory;

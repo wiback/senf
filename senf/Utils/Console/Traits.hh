@@ -191,10 +191,10 @@ namespace console {
 
         \ingroup console_commands
      */
-#   define SENF_CONSOLE_REGISTER_ENUM(Type, Values) \
+#   define SENF_CONSOLE_REGISTER_ENUM(Type, Values)                                     \
         SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), BOOST_PP_EMPTY(), Type, Values)
 
-#   define SENF_CONSOLE_REGISTER_STRONG_ENUM(Type, Values) \
+#   define SENF_CONSOLE_REGISTER_STRONG_ENUM(Type, Values)                              \
         SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), Type::, Type, Values)
 
     /** \brief Register enum type for argument parsing
@@ -212,10 +212,10 @@ namespace console {
 
         \ingroup console_commands
      */
-#   define SENF_CONSOLE_REGISTER_ENUM_MEMBER(Class, Type, Values) \
+#   define SENF_CONSOLE_REGISTER_ENUM_MEMBER(Class, Type, Values)                       \
         SENF_CONSOLE_REGISTER_ENUM_(Class::, BOOST_PP_EMPTY(), Type, Values)
 
-#   define SENF_CONSOLE_REGISTER_STRONG_ENUM_MEMBER(Class, Type, Values) \
+#   define SENF_CONSOLE_REGISTER_STRONG_ENUM_MEMBER(Class, Type, Values)                \
         SENF_CONSOLE_REGISTER_ENUM_(Class::, Type::, Type, Values)
 
 
@@ -234,6 +234,16 @@ namespace console {
     /** \brief Format boolean value as \c 1 / \c 0 */
     void formatOneZero(bool value, std::ostream & os);
 
+
+#   define SENF_CONSOLE_PARSE_AS_TUPLE( Type, Members )                                 \
+        SENF_CONSOLE_PARSE_AS_TUPLE_(Type, Members)
+
+#   define SENF_CONSOLE_FORMAT_AS_TUPLE( Type, Members )                                \
+        SENF_CONSOLE_FORMAT_AS_TUPLE_(Type, Members)
+
+#   define SENF_CONSOLE_PARSE_AND_FORMAT_AS_TUPLE( Type, Members )                      \
+        SENF_CONSOLE_PARSE_AS_TUPLE_(Type, Members);                                    \
+        SENF_CONSOLE_FORMAT_AS_TUPLE_(Type, Members);
 
 #ifndef DOXYGEN
 
