@@ -32,6 +32,7 @@
 #define IH_SENF_PPI_MultiConnectorMixin_ 1
 
 // Custom includes
+#include <boost/ptr_container/ptr_unordered_map.hpp>
 #include "Setup.hh"
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ namespace detail {
     template <class KeyType, class ConnectorType>
     struct MultiConnectorDefaultContainer
     {
-        typedef boost::ptr_map<KeyType, ConnectorType> type;
+        typedef boost::ptr_unordered_map<KeyType, ConnectorType> type;
     };
 
     template <class Module, class Connector>
