@@ -141,9 +141,12 @@ namespace {
     struct IntAnnotation {
         int value;
         bool operator<(IntAnnotation const & other) const { return value < other.value; }
+        bool operator==(IntAnnotation const & other) const { return value == other.value; }
         IntAnnotation() {}
         IntAnnotation(int v) : value(v) {}
     };
+
+    std::size_t hash_value(IntAnnotation const & i) { return i.value; }
 
     std::ostream & operator<<(std::ostream & os, IntAnnotation const & value)
     { os << value.value; return os; }
