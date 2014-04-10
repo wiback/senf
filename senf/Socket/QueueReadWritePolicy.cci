@@ -297,6 +297,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
             case ENOTCONN:
             case ENETDOWN:
             case ENOBUFS:
+            case ENXIO:
                 break;  // TODO: might not be the best solution...
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("::send(MMAP)");
