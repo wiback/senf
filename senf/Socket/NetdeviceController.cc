@@ -77,7 +77,7 @@ prefix_ void senf::NetdeviceController::interfaceName(std::string const & newnam
     if (sizeof(newname) <= IFNAMSIZ) {
         struct ifreq ifr;
         ifrName(ifr);
-        strncpy(ifr. ifr_newname, newname.c_str(), IFNAMSIZ);
+        newname.copy(ifr.ifr_newname, IFNAMSIZ);
         doIoctl(ifr, SIOCSIFNAME, "Could not change the interface name. Is the interface really down?");
     }
     return;

@@ -170,10 +170,10 @@ prefix_ void senf::StatisticsBase::generateOutput()
             i->second.max = std::max( i->second.max, j->max);
             i->second.dev += j->dev;
         }
-        //i->second.min /= n;
-        i->second.avg /= n;
-        //i->second.max /= n;
-        i->second.dev /= n;
+        if (n > 0) {
+            i->second.avg /= n;
+            i->second.dev /= n;
+        }
         i->second.signal(i->second.cnt, i->second.min, i->second.avg, i->second.max, i->second.dev);
     }
 }

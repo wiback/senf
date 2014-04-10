@@ -283,8 +283,9 @@ prefix_ void senf::term::BaseEditor::write(std::string const & s)
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 prefix_ senf::term::LineEditor::LineEditor(AbstractTerminal & terminal, AcceptCallback cb)
-    : BaseEditor(terminal), enabled_ (false), prompt_ ("$"), promptWidth_ (1u), editWidth_ (0u),
-      text_ (""), point_ (0u), displayPos_ (0u), lastKey_ (0u), callback_ (cb), historyPoint_ (0u)
+    : BaseEditor(terminal), enabled_ (false), redisplayNeeded_ (false), prompt_ ("$"),
+      promptWidth_ (1u), editWidth_ (0u), text_ (""), point_ (0u), displayPos_ (0u),
+      lastKey_ (0u), callback_ (cb), historyPoint_ (0u)
 {
     defineKey(KeyParser::Return,    &bindings::accept);
     defineKey(KeyParser::Right,     &bindings::forwardChar);

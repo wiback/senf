@@ -52,8 +52,10 @@ prefix_ senf::console::SysInfo::SysInfo()
 prefix_ void senf::console::SysInfo::setEntry(std::string const & name, std::string const & entry, int pos)
 {
     for (Entries::iterator d (entries_.begin()); d != entries_.end(); ++d) {
-        if (d->first.second == name)
+        if (d->first.second == name) {
             entries_.erase(d);
+            break;
+        }
     }
     entries_.insert( std::make_pair( std::make_pair(
             pos < 0 ? std::numeric_limits<int>::max() : pos, name), entry));

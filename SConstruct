@@ -105,7 +105,7 @@ env.Append(
                                '--param','inline-unit-growth=10000' ],
     #INLINE_OPTS_GCC        = [ '-finline-limit=5000', '--param', 'inline-unit-growth=60' ],
     INLINE_OPTS            = [ '${str(CXX).split("/")[-1] == "g++" and "$INLINE_OPTS_GCC" or None}' ],
-    CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene', ],
+    CXXFLAGS_CLANG         = [ '-Wno-unneeded-internal-declaration', '-Wheader-hygiene', '-Wno-deprecated'],
     CXXFLAGS_GCC           = [ '${HAVE_GCC_47 and CXXFLAGS_GCC_47 or []}' ],
     HAVE_GCC_47            = False,
     CXXFLAGS_GCC_47        = [ '-Wdouble-promotion' ],

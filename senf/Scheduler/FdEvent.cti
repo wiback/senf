@@ -40,10 +40,9 @@
 
 template <class Handle>
 prefix_ senf::scheduler::FdEvent::FdEvent(std::string const & name, Callback const & cb,
-                                          Handle const & handle, int events,
-                                          bool initiallyEnabled)
+                                          Handle const & handle, int events, bool initiallyEnabled)
     : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (detail::get_descriptor(handle)),
-      pollable_ (true), events_ (events)
+      pollable_ (true), events_ (events), signaledEvents_ (0)
 {
     if (initiallyEnabled)
         enable();

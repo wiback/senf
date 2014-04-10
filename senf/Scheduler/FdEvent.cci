@@ -40,7 +40,8 @@
 // senf::scheduler::FdEvent
 
 prefix_ senf::scheduler::FdEvent::FdEvent(std::string const & name, Callback const & cb)
-    : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (-1), pollable_ (true), events_ (0)
+    : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (-1), pollable_ (true), events_ (0),
+      signaledEvents_ (0)
 {}
 
 prefix_ senf::scheduler::FdEvent::~FdEvent()

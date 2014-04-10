@@ -157,7 +157,7 @@ prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::events(int events)
     disable();
     events_ = events;
     if (en)
-        enabled();
+        enable();
     return *this;
 }
 

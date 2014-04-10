@@ -562,12 +562,14 @@ prefix_ std::ostream & senf::log::detail::operator<<(std::ostream & os,
     os << '(';
     if (pm.stream)
         os << pm.stream->v_name();
-    if (pm.area)
+    if (pm.area) {
         if (pm.stream) os << ' ';
         os << pm.area->v_name();
-    if (pm.level != NONE::value)
+    }
+    if (pm.level != NONE::value) {
         if (pm.stream || pm.area) os << ' ';
         os << levelNames[pm.level];
+    }
     os << ')';
     return os;
 }

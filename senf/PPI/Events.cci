@@ -46,7 +46,7 @@ prefix_ bool senf::ppi::EventDescriptor::enabled()
 // protected members
 
 prefix_ senf::ppi::EventDescriptor::EventDescriptor()
-    : enabled_(false), throttled_(false)
+    : enabled_(false), throttled_(false), binding_(NULL)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

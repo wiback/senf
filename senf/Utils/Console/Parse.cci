@@ -89,7 +89,7 @@ prefix_ bool senf::console::Token::operator!=(Token const & other)
 }
 
 prefix_ senf::console::Token::Token()
-    : type_ (None), token_ ()
+    : type_ (None), token_ (), line_ (0), column_ (0), index_ (0)
 {}
 
 prefix_ senf::console::Token::Token(TokenType type, std::string token)
