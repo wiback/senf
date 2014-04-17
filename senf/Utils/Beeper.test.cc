@@ -28,17 +28,18 @@
 /** \file
     \brief Beeper unit tests */
 
-// Custom includes
 #include "Beeper.hh"
+
+// Custom includes
 #include <senf/Scheduler/Scheduler.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(beep_beep)
+SENF_AUTO_TEST_CASE(beep_beep)
 {
     char const * enabled (getenv("SENF_BEEPER_TEST"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_BEEPER_TEST to run the Beeper unit test");

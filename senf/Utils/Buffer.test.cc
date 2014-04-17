@@ -28,21 +28,19 @@
 /** \file
     \brief Buffer unit tests */
 
-//#include "Buffer.test.hh"
-//#include "Buffer.test.ih"
+#include "Buffer.hh"
 
 // Custom includes
-#include "Buffer.hh"
 #include "IgnoreValue.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 #include "senf/Utils/IgnoreValue.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(buffer)
+SENF_AUTO_TEST_CASE(buffer)
 {
     int size (128);
 

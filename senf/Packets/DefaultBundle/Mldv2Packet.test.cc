@@ -32,11 +32,11 @@
 #include "ICMPv6TypePacket.hh"
 #include <senf/Packets/DataPacket.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 
-SENF_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
+SENF_AUTO_TEST_CASE(ICMPv6_MLDv2_Packet_packet)
 {
     unsigned char data[] = {
         0x00, 0x00, 0x00, 0x01, 0x04, 0x00, 0x00, 0x00,

@@ -28,18 +28,19 @@
 /** \file
     \brief ICMPv6Packet unit tests */
 
+#include "ICMPv6Packet.hh"
+
 // Custom includes
 #include <sstream>
-#include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
 #include "NDPOptions.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
+SENF_AUTO_TEST_CASE(ICMPv6Packet_packet)
 {
     unsigned char dataListenerReport[] = {
             0x8f, 0x00, 0x8d, 0x54, 0x00, 0x00, 0x00, 0x01,
@@ -265,7 +266,7 @@ SENF_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     SENF_CHECK_NO_THROW( pRedirect.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(ICMPv6Packet_create)
+SENF_AUTO_TEST_CASE(ICMPv6Packet_create)
 {
     std::ostringstream oss (std::ostringstream::out);
 

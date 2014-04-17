@@ -28,21 +28,18 @@
 /** \file
     \brief DebubgModules unit tests */
 
-//#include "DebubgModules.test.hh"
-//#include "DebubgModules.test.ih"
+#define SENF_LOG_CONF (( (senf)(log)(Debug), (_), VERBOSE ))
+
+#include "DebugModules.hh"
 
 // Custom includes
 #include <algorithm>
 #include <sstream>
-
-#define SENF_LOG_CONF (( (senf)(log)(Debug), (_), VERBOSE ))
-
 #include <senf/Packets/Packets.hh>
-#include "DebugModules.hh"
 #include "Setup.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +47,7 @@
 namespace debug = senf::ppi::module::debug;
 namespace ppi = senf::ppi;
 
-SENF_AUTO_UNIT_TEST(debugModules)
+SENF_AUTO_TEST_CASE(debugModules)
 {
     {
         debug::ActiveSource source;
@@ -100,7 +97,7 @@ SENF_AUTO_UNIT_TEST(debugModules)
     }
 }
 
-SENF_AUTO_UNIT_TEST(activeFeederSource)
+SENF_AUTO_TEST_CASE(activeFeederSource)
 {
     debug::ActiveFeederSource source;
     debug::PassiveSink sink;
@@ -114,7 +111,7 @@ SENF_AUTO_UNIT_TEST(activeFeederSource)
     BOOST_CHECK_EQUAL( sink.size(), 1u );
 }
 
-SENF_AUTO_UNIT_TEST(activeFeederSink)
+SENF_AUTO_TEST_CASE(activeFeederSink)
 {
     debug::PassiveSource source;
     debug::ActiveFeederSink sink;
@@ -133,7 +130,7 @@ SENF_AUTO_UNIT_TEST(activeFeederSink)
     BOOST_CHECK( source.empty() );
 }
 
-SENF_AUTO_UNIT_TEST(logSink)
+SENF_AUTO_TEST_CASE(logSink)
 {
     senf::log::StringTarget logTarget;
     logTarget.route<senf::log::Debug,senf::log::VERBOSE>();

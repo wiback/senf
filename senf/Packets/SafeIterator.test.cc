@@ -28,14 +28,12 @@
 /** \file
     \brief SafeIterator unit tests */
 
-//#include "SafeIterator.test.hh"
-//#include "SafeIterator.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +42,7 @@ namespace {
     struct VoidPacket : public senf::PacketTypeBase {};
 }
 
-SENF_AUTO_UNIT_TEST(safePacketParser)
+SENF_AUTO_TEST_CASE(safePacketParser)
 {
     senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type(6u)));

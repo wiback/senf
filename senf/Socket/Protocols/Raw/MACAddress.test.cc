@@ -28,23 +28,21 @@
 /** \file
     \brief MACAddress unit tests */
 
-//#include "MACAddress.test.hh"
-//#include "MACAddress.test.ih"
+#include "MACAddress.hh"
 
 // Custom includes
 #include <sstream>
-#include "MACAddress.hh"
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <senf/Utils/String.hh>
 #include "EUI64.hh"
-#include <senf/Socket/Protocols/AddressExceptions.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(macAddress)
+SENF_AUTO_TEST_CASE(macAddress)
 {
     using senf::MACAddress;
     using senf::AddressSyntaxException;
@@ -120,7 +118,7 @@ SENF_AUTO_UNIT_TEST(macAddress)
 #ifdef SENF_CXX11_ENABLED
 #include <unordered_map>
 
-SENF_AUTO_UNIT_TEST(macAddress_std_hash)
+SENF_AUTO_TEST_CASE(macAddress_std_hash)
 {
     std::unordered_map<senf::MACAddress, int> map;
     map.insert( std::make_pair(senf::MACAddress::Broadcast, 42));

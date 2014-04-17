@@ -28,22 +28,20 @@
 /** \file
     \brief FileTarget unit tests */
 
-//#include "FileTarget.test.hh"
-//#include "FileTarget.test.ih"
+#include "FileTarget.hh"
 
 // Custom includes
 #include <fstream>
 #include <boost/filesystem/operations.hpp>
-#include "FileTarget.hh"
 #include "Logger.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(fileTarget)
+SENF_AUTO_TEST_CASE(fileTarget)
 {
     std::string filename ("/tmp/senf_fileTarget_test.log");
     senf::log::FileTarget target (filename);

@@ -28,15 +28,12 @@
 /** \file
     \brief MMapPacketSocketHandle.test unit tests */
 
-//#include "MMapPacketSocketHandle.test.hh"
-//#include "MMapPacketSocketHandle.test.ih"
+#include "MMapPacketSocketHandle.hh"
 
 // Custom includes
 #include <sstream>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/format.hpp>
-#include "MMapPacketSocketHandle.hh"
-#include "TunTapSocketHandle.hh"
 #include <senf/Socket/NetdeviceController.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/UDPPacket.hh>
@@ -44,9 +41,10 @@
 #include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 #include <senf/Utils/hexdump.hh>
 #include <senf/Utils/String.hh>
+#include "TunTapSocketHandle.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -215,7 +213,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(connectedMMapPacketSocketHandle)
+SENF_AUTO_TEST_CASE(connectedMMapPacketSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
@@ -231,7 +229,7 @@ SENF_AUTO_UNIT_TEST(connectedMMapPacketSocketHandle)
     runTest(tap, pk);
 }
 
-SENF_AUTO_UNIT_TEST(connectedMMapReadPacketSocketHandle)
+SENF_AUTO_TEST_CASE(connectedMMapReadPacketSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
@@ -247,7 +245,7 @@ SENF_AUTO_UNIT_TEST(connectedMMapReadPacketSocketHandle)
     runTest(tap, pk);
 }
 
-SENF_AUTO_UNIT_TEST(connectedMMapWritePacketSocketHandle)
+SENF_AUTO_TEST_CASE(connectedMMapWritePacketSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
@@ -263,7 +261,7 @@ SENF_AUTO_UNIT_TEST(connectedMMapWritePacketSocketHandle)
     runTest(tap, pk);
 }
 
-SENF_AUTO_UNIT_TEST(connectedPacketSocketHandle)
+SENF_AUTO_TEST_CASE(connectedPacketSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");

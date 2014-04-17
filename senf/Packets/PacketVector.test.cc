@@ -28,15 +28,13 @@
 /** \file
     \brief PacketVector.test unit tests */
 
-//#include "PacketVector.test.hh"
-//#include "PacketVector.test.ih"
-
-// Custom includes
 #include "PacketVector.hh"
 
+// Custom includes
 #include <string>
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -60,7 +58,7 @@ namespace {
 
 #ifndef SENF_PACKET_STD_CONTAINER
 
-SENF_AUTO_UNIT_TEST(packetVector)
+SENF_AUTO_TEST_CASE(packetVector)
 {
     {
         senf::PacketVector vec;

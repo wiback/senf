@@ -28,14 +28,12 @@
 /** \file
     \brief ParseHelpers unit tests */
 
-//#include "ParseHelpers.test.hh"
-//#include "ParseHelpers.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +98,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(fixedParser)
+SENF_AUTO_TEST_CASE(fixedParser)
 {
     unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x83, 0x84, 0x07, 0x08 };
 
@@ -210,7 +208,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(variableParser)
+SENF_AUTO_TEST_CASE(variableParser)
 {
     unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x83, 0x84, 0x07, 0x08 };
 

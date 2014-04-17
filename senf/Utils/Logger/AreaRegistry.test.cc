@@ -28,19 +28,17 @@
 /** \file
     \brief AreaRegistry unit tests */
 
-//#include "AreaRegistry.test.hh"
-//#include "AreaRegistry.test.ih"
-
-// Custom includes
 #include "main.test.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(areaRegistry)
+SENF_AUTO_TEST_CASE(areaRegistry)
 {
     BOOST_CHECK( true );
 #if 0

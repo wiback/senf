@@ -28,22 +28,20 @@
 /** \file
     \brief CloneSource unit tests */
 
-//#include "CloneSource.test.hh"
-//#include "CloneSource.test.ih"
+#include "CloneSource.hh"
 
 // Custom includes
-#include "CloneSource.hh"
+#include <senf/Packets/Packets.hh>
 #include "DebugModules.hh"
 #include "Setup.hh"
-#include <senf/Packets/Packets.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(cloneSource)
+SENF_AUTO_TEST_CASE(cloneSource)
 {
     senf::PacketData::byte data[] = { 0xab };
     senf::Packet p (senf::DataPacket::create(data));

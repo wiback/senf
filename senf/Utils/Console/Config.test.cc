@@ -28,15 +28,12 @@
 /** \file
     \brief Config unit tests */
 
-//#include "Config.test.hh"
-//#include "Config.test.ih"
-
 // Custom includes
-#include "Console.hh"
 #include <boost/filesystem/operations.hpp>
+#include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +65,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(configBundle_empty)
+SENF_AUTO_TEST_CASE(configBundle_empty)
 {
     TempFile cfg ("test.cfg");
     cfg << TempFile::close;
@@ -82,7 +79,7 @@ SENF_AUTO_UNIT_TEST(configBundle_empty)
     SENF_CHECK_NO_THROW( bundle.parse() );
 }
 
-SENF_AUTO_UNIT_TEST(configBundle)
+SENF_AUTO_TEST_CASE(configBundle)
 {
     namespace fty = senf::console::factory;
 

@@ -28,19 +28,17 @@
 /** \file
     \brief Log unit tests */
 
-//#include "Log.test.hh"
-//#include "Log.test.ih"
-
-// Custom includes
 #include "main.test.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(logger)
+SENF_AUTO_TEST_CASE(logger)
 {
     senf::log::StringTarget target;
 

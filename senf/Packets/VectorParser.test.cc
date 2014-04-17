@@ -28,16 +28,14 @@
 /** \file
     \brief VectorParser unit tests */
 
-//#include "VectorParser.test.hh"
-//#include "VectorParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
-#include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+// Custom includes
 #include <boost/assign.hpp>
 #include <boost/foreach.hpp>
+
+// Unit test includes
+#include <senf/Utils/auto_unit_test.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +45,7 @@ namespace {
     {};
 }
 
-SENF_AUTO_UNIT_TEST(VectorParser)
+SENF_AUTO_TEST_CASE(VectorParser)
 {
     unsigned char data[] = { 0x03,                                   // size
                              0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
@@ -122,7 +120,7 @@ SENF_AUTO_UNIT_TEST(VectorParser)
     }
 }
 
-SENF_AUTO_UNIT_TEST(VectorParser_wrapper)
+SENF_AUTO_TEST_CASE(VectorParser_wrapper)
 {
     unsigned char data[] = { 0x03,                                   // size
                              0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
@@ -179,7 +177,7 @@ SENF_AUTO_UNIT_TEST(VectorParser_wrapper)
     BOOST_CHECK_EQUAL( w.parser().size(), 0u );
 }
 
-SENF_AUTO_UNIT_TEST(dynamicPolicyVector)
+SENF_AUTO_TEST_CASE(dynamicPolicyVector)
 {
     unsigned char data[] = { 0x03,                                   // size
                              0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
@@ -243,7 +241,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(vectorMacro_parse)
+SENF_AUTO_TEST_CASE(vectorMacro_parse)
 {
     unsigned char data[] = { 0x05,                   // size1
                              0x04,                   // size2
@@ -268,7 +266,7 @@ SENF_AUTO_UNIT_TEST(vectorMacro_parse)
 
 }
 
-SENF_AUTO_UNIT_TEST(vectorMacro_create)
+SENF_AUTO_TEST_CASE(vectorMacro_create)
 {
     TestVectorPacket p (TestVectorPacket::create());
     p->dummy() = 0x01020304u;
@@ -322,7 +320,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(vectorMacro_inherit)
+SENF_AUTO_TEST_CASE(vectorMacro_inherit)
 {
     unsigned char data[] = { 0x08,                   // size1
                              0x04,                   // size2
@@ -369,7 +367,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(vectorMacro_packetSize)
+SENF_AUTO_TEST_CASE(vectorMacro_packetSize)
 {
     unsigned char data[] = {
             0x05, 0xaa, 0xbb, 0xcc, 0xdd, 0xee,

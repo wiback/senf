@@ -28,14 +28,12 @@
 /** \file
     \brief PacketParser unit tests */
 
-//#include "PacketParser.test.hh"
-//#include "PacketParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +81,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(packetParserBase)
+SENF_AUTO_TEST_CASE(packetParserBase)
 {
     senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type(6u)));
@@ -107,7 +105,7 @@ SENF_AUTO_UNIT_TEST(packetParserBase)
     BOOST_CHECK_EQUAL( senf::init_bytes<BarParser>::value, 6u );
 }
 
-SENF_AUTO_UNIT_TEST(packetParser_insertion_operator)
+SENF_AUTO_TEST_CASE(packetParser_insertion_operator)
 {
     senf::PacketInterpreter<VoidPacket>::ptr pi1 (senf::PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type( FooParser::fixed_bytes)));

@@ -28,22 +28,20 @@
 /** \file
     \brief NetdeviceController unit tests */
 
-//#include "NetdeviceController.test.hh"
-//#include "NetdeviceController.test.ih"
+#include "NetdeviceController.hh"
 
 // Custom includes
-#include "NetdeviceController.hh"
 #include <net/if.h>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/IgnoreValue.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(NetdeviceController) {
+SENF_AUTO_TEST_CASE(NetdeviceController) {
 
     std::string ifname ("lo");
     senf::NetdeviceController ctrl (ifname);

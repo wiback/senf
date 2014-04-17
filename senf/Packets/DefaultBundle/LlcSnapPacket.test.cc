@@ -28,20 +28,18 @@
 /** \file
     \brief LlcSnapPacket unit tests */
 
-//#include "LlcSnapPacket.test.hh"
-//#include "LlcSnapPacket.test.ih"
+#include "LlcSnapPacket.hh"
 
 // Custom includes
-#include "LlcSnapPacket.hh"
 #include "EthernetPacket.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(llcsnap_parse)
+SENF_AUTO_TEST_CASE(llcsnap_parse)
 {
     senf::PacketData::byte data[] = {
         0xaa,             // DSAP
@@ -62,7 +60,7 @@ SENF_AUTO_UNIT_TEST(llcsnap_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
+SENF_AUTO_TEST_CASE(llcSnapPacket_ethernet)
 {
     senf::LlcSnapPacket llcsnap (senf::LlcSnapPacket::create());
     senf::EthernetPacket eth (senf::EthernetPacket::createAfter(llcsnap));

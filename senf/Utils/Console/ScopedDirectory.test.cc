@@ -28,16 +28,13 @@
 /** \file
     \brief ScopedDirectory unit tests */
 
-//#include "ScopedDirectory.test.hh"
-//#include "ScopedDirectory.test.ih"
-
 // Custom includes
 #include <sstream>
-#include "Console.hh"
 #include <boost/iterator/transform_iterator.hpp>
+#include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +54,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(scopedDirectory)
+SENF_AUTO_TEST_CASE(scopedDirectory)
 {
     {
         TestObject ob;
@@ -76,7 +73,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(scopedDirectoryVoid)
+SENF_AUTO_TEST_CASE(scopedDirectoryVoid)
 {
     namespace fty = senf::console::factory;
 
@@ -101,7 +98,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(scopedDirectoryBase)
+SENF_AUTO_TEST_CASE(scopedDirectoryBase)
 {
     namespace fty = senf::console::factory;
 

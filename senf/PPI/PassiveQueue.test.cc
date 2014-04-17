@@ -28,17 +28,15 @@
 /** \file
     \brief PassiveQueue unit tests */
 
-//#include "PassiveQueue.test.hh"
-//#include "PassiveQueue.test.ih"
+#include "PassiveQueue.hh"
 
 // Custom includes
-#include "PassiveQueue.hh"
+#include <senf/Packets/Packets.hh>
 #include "DebugModules.hh"
 #include "Setup.hh"
-#include <senf/Packets/Packets.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +46,7 @@ namespace connector = ppi::connector;
 namespace module = ppi::module;
 namespace debug = module::debug;
 
-SENF_AUTO_UNIT_TEST(passiveQueue)
+SENF_AUTO_TEST_CASE(passiveQueue)
 {
     debug::ActiveSource source;
     module::PassiveQueue queue;

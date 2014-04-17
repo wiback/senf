@@ -28,14 +28,12 @@
 /** \file
     \brief IdleEvent.test unit tests */
 
-//#include "IdleEvent.test.hh"
-//#include "IdleEvent.test.ih"
-
-// Custom includes
 #include "Scheduler.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +58,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(idleEvent)
+SENF_AUTO_TEST_CASE(idleEvent)
 {
     senf::scheduler::IdleEvent idle ("idle event unit test", &cb);
 

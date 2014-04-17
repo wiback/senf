@@ -28,19 +28,17 @@
 /** \file
     \brief QueueReadWritePolicy.test unit tests */
 
-//#include "QueueReadWritePolicy.test.hh"
-//#include "QueueReadWritePolicy.test.ih"
-
-// Custom includes
 #include "QueueReadWritePolicy.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(queueRxTx)
+SENF_AUTO_TEST_CASE(queueRxTx)
 {
     // Tested in MMapPacketSocketHandle.test.cc
     BOOST_CHECK( true );

@@ -28,17 +28,15 @@
 /** \file
     \brief MultiConnectorMixin.test unit tests */
 
-//#include "MultiConnectorMixin.test.hh"
-//#include "MultiConnectorMixin.test.ih"
+#include "MultiConnectorMixin.hh"
 
 // Custom includes
-#include "MultiConnectorMixin.hh"
+#include "AnnotationRouter.hh"
 #include "DebugModules.hh"
 #include "Joins.hh"
-#include "AnnotationRouter.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +150,7 @@ namespace {
     { os << value.value; return os; }
 }
 
-SENF_AUTO_UNIT_TEST(multiConnectorMixin_sequenceContainer)
+SENF_AUTO_TEST_CASE(multiConnectorMixin_sequenceContainer)
 {
     debug::ActiveSource source1;
     debug::ActiveSource source2;
@@ -180,7 +178,7 @@ SENF_AUTO_UNIT_TEST(multiConnectorMixin_sequenceContainer)
     BOOST_CHECK_EQUAL( module.count, 1u );
 }
 
-SENF_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
+SENF_AUTO_TEST_CASE(multiConnectorMixin_userContainer)
 {
     debug::ActiveSource source;
     UserContainerModule module;
@@ -205,7 +203,7 @@ SENF_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
     BOOST_CHECK_EQUAL( module.connectors().size(), 1u );
 }
 
-SENF_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
+SENF_AUTO_TEST_CASE(multiConnectorMixin_multipleModules)
 {
     debug::ActiveSource source;
     debug::PassiveSink sink;

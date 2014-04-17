@@ -28,18 +28,16 @@
 /** \file
     \brief SyslogUDPTarget unit tests */
 
-//#include "SyslogUDPTarget.test.hh"
-//#include "SyslogUDPTarget.test.ih"
+#include "SyslogUDPTarget.hh"
 
 // Custom includes
-#include "SyslogUDPTarget.hh"
-#include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <boost/format.hpp>
 #include "boost/date_time/gregorian/gregorian.hpp"
+#include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include "Logger.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +55,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(syslogUDPTarget)
+SENF_AUTO_TEST_CASE(syslogUDPTarget)
 {
     using namespace boost::gregorian;
 

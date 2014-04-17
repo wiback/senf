@@ -28,21 +28,19 @@
 /** \file
     \brief UDPPacket unit tests */
 
-//#include "UDPPacket.test.hh"
-//#include "UDPPacket.test.ih"
+#include "UDPPacket.hh"
 
 // Custom includes
-#include "UDPPacket.hh"
 #include "IPv4Packet.hh"
 #include "IPv6Packet.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(udpPacket_parse)
+SENF_AUTO_TEST_CASE(udpPacket_parse)
 {
 
     unsigned char data[] = {
@@ -60,7 +58,7 @@ SENF_AUTO_UNIT_TEST(udpPacket_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
+SENF_AUTO_TEST_CASE(udpPacket_in_ipv4_create)
 {
     unsigned char data[] = {
             0x45, 0x00, 0x00, 0x26, 0x00, 0x00, 0x40, 0x00,
@@ -91,7 +89,7 @@ SENF_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
     BOOST_CHECK( udp->validateChecksum() );
 }
 
-SENF_AUTO_UNIT_TEST(udpPacket_in_ipv6_parse)
+SENF_AUTO_TEST_CASE(udpPacket_in_ipv6_parse)
 {
     // captured udp packet generated with mgen send over ipv6
     unsigned char data[] = {

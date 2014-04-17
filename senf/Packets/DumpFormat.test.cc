@@ -28,19 +28,16 @@
 /** \file
     \brief DumpFormat.test unit tests */
 
-//#include "DumpFormat.test.hh"
-//#include "DumpFormat.test.ih"
-
 // Custom includes
 #include "Packets.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(dumpFormat)
+SENF_AUTO_TEST_CASE(dumpFormat)
 {
     BOOST_CHECK_EQUAL( senf::fieldName("test"), "  test                    : " );
     BOOST_CHECK_EQUAL( senf::fieldName("xxxxxxxxxxxxxxxxxxxxxxx"), "  xxxxxxxxxxxxxxxxxxxxxxx : " );

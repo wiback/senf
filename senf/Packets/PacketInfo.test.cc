@@ -28,19 +28,17 @@
 /** \file
     \brief PacketInfo.test unit tests */
 
-//#include "PacketInfo.test.hh"
-//#include "PacketInfo.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(packetInfo)
+SENF_AUTO_TEST_CASE(packetInfo)
 {
     {
         senf::PacketInfo ifo;

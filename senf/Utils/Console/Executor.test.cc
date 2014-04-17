@@ -28,16 +28,13 @@
 /** \file
     \brief Executor unit tests */
 
-//#include "Executor.test.hh"
-//#include "Executor.test.ih"
-
 // Custom includes
 #include <sstream>
 #include <vector>
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +49,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(executor)
+SENF_AUTO_TEST_CASE(executor)
 {
     namespace fty = senf::console::factory;
 
@@ -195,7 +192,7 @@ SENF_AUTO_UNIT_TEST(executor)
     senf::console::root().remove("dir2");
 }
 
-SENF_AUTO_UNIT_TEST(executorChroot)
+SENF_AUTO_TEST_CASE(executorChroot)
 {
     namespace fty = senf::console::factory;
 
@@ -232,7 +229,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(executorPolicy)
+SENF_AUTO_TEST_CASE(executorPolicy)
 {
     namespace fty = senf::console::factory;
 
@@ -266,7 +263,7 @@ SENF_AUTO_UNIT_TEST(executorPolicy)
     senf::console::root().remove("dir2");
 }
 
-SENF_AUTO_UNIT_TEST(executorAuto)
+SENF_AUTO_TEST_CASE(executorAuto)
 {
     namespace fty = senf::console::factory;
 

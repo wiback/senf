@@ -28,24 +28,22 @@
 /** \file
     \brief INet4Address unit tests */
 
-//#include "INet4Address.test.hh"
-//#include "INet4Address.test.ih"
+#include "INet4Address.hh"
 
 // Custom includes
 #include <arpa/inet.h>
 #include <sstream>
-#include "INet4Address.hh"
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <senf/Utils/String.hh>
 #include <senf/Utils/IgnoreValue.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(inet4Address)
+SENF_AUTO_TEST_CASE(inet4Address)
 {
     using senf::INet4Address;
     using senf::AddressSyntaxException;
@@ -98,7 +96,7 @@ SENF_AUTO_UNIT_TEST(inet4Address)
     }
 }
 
-SENF_AUTO_UNIT_TEST(inet4Network)
+SENF_AUTO_TEST_CASE(inet4Network)
 {
     senf::INet4Network net (senf::INet4Address::Loopback,8);
     BOOST_CHECK_EQUAL( net.address().address(), 0x7F000000u );

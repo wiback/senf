@@ -25,21 +25,15 @@
 // Contributor(s):
 //   Stefan Bund <senf@g0dil.de>
 
-
-// Definition of non-inline non-template functions
-
-//#include "test.hh"
-//#include "test.ih"
-
 // Custom includes
 #define BOOST_AUTO_TEST_MAIN
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(testMain)
+SENF_AUTO_TEST_CASE(testMain)
 {
     BOOST_CHECK( true );
 }

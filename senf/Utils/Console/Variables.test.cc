@@ -28,15 +28,12 @@
 /** \file
     \brief Variables unit tests */
 
-//#include "Variables.test.hh"
-//#include "Variables.test.ih"
-
 // Custom includes
 #include <sstream>
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +50,7 @@ namespace {
     { changed_ = true; }
 }
 
-SENF_AUTO_UNIT_TEST(variables)
+SENF_AUTO_TEST_CASE(variables)
 {
     namespace fty = senf::console::factory;
 
@@ -117,7 +114,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(memberVariables)
+SENF_AUTO_TEST_CASE(memberVariables)
 {
     Test2 test2ob;
     BOOST_CHECK( true );

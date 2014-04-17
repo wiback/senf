@@ -28,8 +28,7 @@
 /** \file
     \brief TCPSocketHandle unit tests */
 
-//#include "TCPSocketHandle.test.hh"
-//#include "TCPSocketHandle.test.ih"
+#include "TCPSocketHandle.hh"
 
 // Custom includes
 #include <sys/types.h>
@@ -38,11 +37,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "TCPSocketHandle.hh"
-#include "net.test.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+#include "net.test.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +111,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
+SENF_AUTO_TEST_CASE(tcpv4ClientSocketHandle)
 {
     {
         senf::TCPv4ClientSocketHandle sock;
@@ -184,7 +182,7 @@ SENF_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
     }
 }
 
-SENF_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
+SENF_AUTO_TEST_CASE(tcpv6ClientSocketHandle)
 {
     {
         senf::TCPv6ClientSocketHandle sock;
@@ -297,7 +295,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
+SENF_AUTO_TEST_CASE(tcpv4ServerSocketHandle)
 {
     try {
         alarm(10);
@@ -323,7 +321,7 @@ SENF_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
     }
 }
 
-SENF_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
+SENF_AUTO_TEST_CASE(tcpv6ServerSocketHandle)
 {
     try {
         alarm(10);

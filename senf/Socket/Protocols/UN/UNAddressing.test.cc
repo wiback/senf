@@ -28,22 +28,20 @@
 /** \file
     \brief UNAddressing unit tests */
 
-//#include "UNAddressing.test.hh"
-//#include "UNAddressing.test.ih"
+#include "UNAddressing.hh"
 
 // Custom includes
-#include "UNAddressing.hh"
-#include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <sstream>
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <senf/Utils/IgnoreValue.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(UNSocketAddress)
+SENF_AUTO_TEST_CASE(UNSocketAddress)
 {
     senf::UNSocketAddress addr;
     BOOST_CHECK( ! addr);

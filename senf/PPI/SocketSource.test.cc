@@ -28,19 +28,17 @@
 /** \file
     \brief SocketSource unit tests */
 
-//#include "SocketSource.test.hh"
-//#include "SocketSource.test.ih"
+#include "SocketSource.hh"
 
 // Custom includes
 #include <algorithm>
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <senf/Scheduler/Scheduler.hh>
-#include "SocketSource.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +71,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(socketSource)
+SENF_AUTO_TEST_CASE(socketSource)
 {
     senf::UDPv4ClientSocketHandle inputSocket;
     inputSocket.bind(senf::INet4SocketAddress(localhost4str(0)));

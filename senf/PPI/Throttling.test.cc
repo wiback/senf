@@ -28,16 +28,17 @@
 /** \file
     \brief Throttling unit tests */
 
-// Custom includes
 #include "Throttling.hh"
+
+// Custom includes
+#include <senf/Packets/Packets.hh>
 #include "Module.hh"
 #include "Connectors.hh"
 #include "DebugModules.hh"
-#include <senf/Packets/Packets.hh>
 #include "Setup.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +72,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(PPI_Queueing)
+SENF_AUTO_TEST_CASE(PPI_Queueing)
 {
     debug::ActiveSource source;
     QueueTester tester;

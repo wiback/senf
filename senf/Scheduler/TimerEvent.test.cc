@@ -28,17 +28,15 @@
 /** \file
     \brief TimerEvent unit tests */
 
-//#include "TimerEvent.test.hh"
-//#include "TimerEvent.test.ih"
+#include "TimerEvent.hh"
 
 // Custom includes
-#include "TimerEvent.hh"
-#include "Scheduler.hh"
 #include <boost/bind.hpp>
-
-#include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 #include <boost/random.hpp>
+#include "Scheduler.hh"
+
+// Unit test includes
+#include <senf/Utils/auto_unit_test.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +56,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(timerDispatcher)
+SENF_AUTO_TEST_CASE(timerDispatcher)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
@@ -163,7 +161,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(timerJitter)
+SENF_AUTO_TEST_CASE(timerJitter)
 {
     senf::scheduler::watchdogTimeout(0);
     std::cerr << "Epoll timers\n";

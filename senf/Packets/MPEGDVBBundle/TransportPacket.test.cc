@@ -28,21 +28,19 @@
 /** \file
     \brief TransportPacket unit tests */
 
-//#include "TransportPacket.test.hh"
-//#include "TransportPacket.test.ih"
-
-// Custom includes
 #include "TransportPacket.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 using namespace senf;
 
-SENF_AUTO_UNIT_TEST(transportPacket_parse)
+SENF_AUTO_TEST_CASE(transportPacket_parse)
 {
     // TransportStream-Packet containing a ULE encoded IPv6 ping packet,
     // captured with dvbsnoop
@@ -98,7 +96,7 @@ SENF_AUTO_UNIT_TEST(transportPacket_parse)
 }
 
 
-SENF_AUTO_UNIT_TEST(transportPacket_create_with_pusi)
+SENF_AUTO_TEST_CASE(transportPacket_create_with_pusi)
 {
     TransportPacket ts_packet (TransportPacket::create());
     ts_packet->setPUSI(true);

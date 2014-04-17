@@ -28,14 +28,12 @@
 /** \file
     \brief TypeInfo unit tests */
 
-//#include "TypeInfo.test.hh"
-//#include "TypeInfo.test.ih"
-
-// Custom includes
 #include "TypeInfo.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +51,7 @@ namespace test {
     enum Blub { A, B, C };
 }
 
-SENF_AUTO_UNIT_TEST(prettyName)
+SENF_AUTO_TEST_CASE(prettyName)
 {
     typedef test::Foo< test::Foo<test::Blub, 1>, 10> TestType;
     TestType ob;

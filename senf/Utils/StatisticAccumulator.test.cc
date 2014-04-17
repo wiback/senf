@@ -26,17 +26,19 @@
 //   Mathias Kretschmer <mathias.kretschmer@fokus.fraunhofer.de>
 //   Jens Moedeker <jens.moedeker@fokus.fraunhofer.de>
 
-// Custom includes
-
 #include "StatisticAccumulator.hh"
-#include "Statistics.hh"
-#include "auto_unit_test.hh"
-#include <boost/test/test_tools.hpp>
+
+// Custom includes
 #include <math.h>
+#include "Statistics.hh"
+
+// Unit test includes
+#include <senf/Utils/auto_unit_test.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
-SENF_AUTO_UNIT_TEST(StatisticAccumulator)
+
+SENF_AUTO_TEST_CASE(StatisticAccumulator)
 {
     senf::Statistics s;
 
@@ -65,5 +67,6 @@ SENF_AUTO_UNIT_TEST(StatisticAccumulator)
     BOOST_CHECK( ::isnan( sa.stddev()));
     BOOST_CHECK_EQUAL( sa.count(), 0);
 }
+
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_

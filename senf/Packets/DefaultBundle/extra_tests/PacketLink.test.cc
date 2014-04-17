@@ -28,20 +28,17 @@
 /** \file
     \brief PacketLink unit tests */
 
-//#include "PacketLink.test.hh"
-//#include "PacketLink.test.ih"
-
 // Custom includes
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(packetLink)
+SENF_AUTO_TEST_CASE(packetLink)
 {
     // This test shall test, whether referencing a packet (in this case IPv6Packet) as template
     // argument correctly includes the corresponding object file when linking

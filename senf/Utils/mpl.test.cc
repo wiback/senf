@@ -28,14 +28,12 @@
 /** \file
     \brief mpl unit tests */
 
-//#include "mpl.test.hh"
-//#include "mpl.test.ih"
-
-// Custom includes
 #include "mpl.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +73,7 @@ namespace {
     struct C {};
 }
 
-SENF_AUTO_UNIT_TEST(senfmpl)
+SENF_AUTO_TEST_CASE(senfmpl)
 {
     BOOST_CHECK( choice<A>::has_int_value );
     BOOST_CHECK( ! choice<A>::has_class_value );
@@ -109,7 +107,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(mplSlot)
+SENF_AUTO_TEST_CASE(mplSlot)
 {
     BOOST_CHECK_EQUAL( unsigned(Test::total), 8u );
 }

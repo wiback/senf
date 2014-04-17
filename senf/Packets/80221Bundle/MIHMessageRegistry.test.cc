@@ -28,15 +28,13 @@
 /** \file
     \brief MIH Message-Registry unit tests */
 
-//#include "MIHPacket.test.hh"
-//#include "MIHPacket.test.ih"
+#include "MIHMessageRegistry.hh"
 
 // Custom includes
-#include "MIHMessageRegistry.hh"
 #include "MIHPacket.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,7 +102,7 @@ SENF_MIH_PACKET_REGISTRY_REGISTER( test::TestMessagePacket, 42);
 SENF_MIH_PACKET_REGISTRY_REGISTER( test::ValidatedTestMessagePacket, 43 );
 
 
-SENF_AUTO_UNIT_TEST(MIHMessageRegistry_validate)
+SENF_AUTO_TEST_CASE(MIHMessageRegistry_validate)
 {
     MIHPacket mihPacket (MIHPacket::create());
     mihPacket->transactionId() = 21;

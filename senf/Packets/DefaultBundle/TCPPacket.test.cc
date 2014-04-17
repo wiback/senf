@@ -27,21 +27,19 @@
 /** \file
     \brief TCPPacket unit tests */
 
-//#include "TCPPacket.test.hh"
-//#include "TCPPacket.test.ih"
+#include "TCPPacket.hh"
 
 // Custom includes
-#include "TCPPacket.hh"
 #include "IPv4Packet.hh"
 #include "IPv6Packet.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(tcpPacket_parse)
+SENF_AUTO_TEST_CASE(tcpPacket_parse)
 {
     unsigned char data[] = {
             0x80, 0xA6, 0x00, 0x50, 0x2E, 0x93, 0x31, 0xB8, 0x66, 0xF9, 0xB7,
@@ -69,7 +67,7 @@ SENF_AUTO_UNIT_TEST(tcpPacket_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv4_parse)
+SENF_AUTO_TEST_CASE(tcpPacket_in_ipv4_parse)
 {
     unsigned char data[] = {
             //20 Byte IPv4-Header
@@ -103,7 +101,7 @@ SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv4_parse)
 }
 
 
-SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv6_parse)
+SENF_AUTO_TEST_CASE(tcpPacket_in_ipv6_parse)
 {
     unsigned char data[] = {
             // IPv6-Header
@@ -139,7 +137,7 @@ SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv6_parse)
     BOOST_CHECK( tcp->validateChecksum() );
 }
 
-SENF_AUTO_UNIT_TEST(tcpPacket_in_ipv6_create)
+SENF_AUTO_TEST_CASE(tcpPacket_in_ipv6_create)
 {
     unsigned char data[] = {
             // IPv6-Header

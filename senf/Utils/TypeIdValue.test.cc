@@ -28,20 +28,18 @@
 /** \file
     \brief TypeIdValue unit tests */
 
-//#include "TypeIdValue.test.hh"
-//#include "TypeIdValue.test.ih"
+#include "TypeIdValue.hh"
 
 // Custom includes
-#include "TypeIdValue.hh"
 #include "IgnoreValue.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(typeIdValue)
+SENF_AUTO_TEST_CASE(typeIdValue)
 {
     // We don't care for the ordering, just that the following compiles
     senf::IGNORE( senf::typeIdValue<int>() < senf::typeIdValue<float>() );

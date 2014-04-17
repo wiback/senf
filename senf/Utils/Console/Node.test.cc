@@ -28,22 +28,19 @@
 /** \file
     \brief Node unit tests */
 
-//#include "Node.test.hh"
-//#include "Node.test.ih"
+#include "Console.hh"
 
 // Custom includes
-#include <sstream>
-#include "Console.hh"
 #include <boost/iterator/transform_iterator.hpp>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 using namespace senf;
 
-SENF_AUTO_UNIT_TEST(genericNode)
+SENF_AUTO_TEST_CASE(genericNode)
 {
     namespace fty = console::factory;
 
@@ -86,7 +83,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(directoryNode)
+SENF_AUTO_TEST_CASE(directoryNode)
 {
     namespace fty = console::factory;
 
@@ -154,7 +151,7 @@ SENF_AUTO_UNIT_TEST(directoryNode)
                                      console::root().children().end()), 1 );
 }
 
-SENF_AUTO_UNIT_TEST(linkNode)
+SENF_AUTO_TEST_CASE(linkNode)
 {
     namespace fty = console::factory;
 
@@ -175,7 +172,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(factory)
+SENF_AUTO_TEST_CASE(factory)
 {
     namespace fty = console::factory;
 
@@ -200,7 +197,7 @@ SENF_AUTO_UNIT_TEST(factory)
     console::root().remove("fn2");
 }
 
-SENF_AUTO_UNIT_TEST(simpleCommandNode)
+SENF_AUTO_TEST_CASE(simpleCommandNode)
 {
     console::root().add("fn", console::SimpleCommandNode::create(&callback))
         .doc("help text");

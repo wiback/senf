@@ -28,14 +28,17 @@
 /** \file
     \brief RTPPacket unit tests */
 
-// Custom includes
 #include "RTPPacket.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
+#define prefix_
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(RTPPacket_packet)
+SENF_AUTO_TEST_CASE(RTPPacket_packet)
 {
     unsigned char data[] = {0x80 , 0x08 , 0x1b , 0xbb , 0x02 , 0xcb , 0xad , 0x80 , 0x50 , 0x48 , 0xa7, 0x8c };
 
@@ -54,3 +57,6 @@ SENF_AUTO_UNIT_TEST(RTPPacket_packet)
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_

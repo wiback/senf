@@ -28,19 +28,17 @@
 /** \file
     \brief parameter unit tests */
 
-//#include "parameter.test.hh"
-//#include "parameter.test.ih"
-
-// Custom includes
 #include "parameter.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(parameter)
+SENF_AUTO_TEST_CASE(parameter)
 {
     BOOST_CHECK( true );
 }

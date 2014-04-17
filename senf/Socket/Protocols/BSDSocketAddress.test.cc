@@ -28,20 +28,18 @@
 /** \file
     \brief BSDSocketAddress unit tests */
 
-//#include "BSDSocketAddress.test.hh"
-//#include "BSDSocketAddress.test.ih"
+#include "BSDSocketAddress.hh"
 
 // Custom includes
-#include "BSDSocketAddress.hh"
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(bsdSocketAddress)
+SENF_AUTO_TEST_CASE(bsdSocketAddress)
 {
     senf::GenericBSDSocketAddress g1;
     senf::GenericBSDSocketAddress g2 (senf::INet4SocketAddress("1.2.3.4:5678"));

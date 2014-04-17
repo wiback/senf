@@ -28,15 +28,12 @@
 /** \file
     \brief UDPServer.test unit tests */
 
-//#include "UDPServer.test.hh"
-//#include "UDPServer.test.ih"
-
 // Custom includes
-#include "Console.hh"
 #include <senf/Scheduler/Scheduler.hh>
+#include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +77,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(udpServer)
+SENF_AUTO_TEST_CASE(udpServer)
 {
     senf::console::UDPServer server (senf::INet4SocketAddress(localhost4str(0)));
     senf::ConnectedUDPv4ClientSocketHandle socket (senf::INet4SocketAddress(localhost4str(0)));

@@ -28,24 +28,22 @@
 /** \file
     \brief INet6Address unit tests */
 
-//#include "INet6Address.test.hh"
-//#include "INet6Address.test.ih"
+#include "INet6Address.hh"
 
 // Custom includes
-#include "INet6Address.hh"
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <senf/Socket/Protocols/Raw/EUI64.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
 #include <senf/Utils/String.hh>
 #include <senf/Utils/IgnoreValue.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(inet6Address)
+SENF_AUTO_TEST_CASE(inet6Address)
 {
     using senf::INet6Address;
     using senf::INet4Address;
@@ -179,7 +177,7 @@ SENF_AUTO_UNIT_TEST(inet6Address)
     }
 }
 
-SENF_AUTO_UNIT_TEST(inet6Network)
+SENF_AUTO_TEST_CASE(inet6Network)
 {
     using senf::INet6Address;
     using senf::INet6Network;

@@ -28,19 +28,17 @@
 /** \file
     \brief DiscardStream unit tests */
 
-//#include "DiscardStream.test.hh"
-//#include "DiscardStream.test.ih"
-
-// Custom includes
 #include "DiscardStream.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(discardStream)
+SENF_AUTO_TEST_CASE(discardStream)
 {
     senf::DiscardStream stream;
     SENF_CHECK_NO_THROW( stream << "discard me" );

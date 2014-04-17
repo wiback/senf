@@ -28,14 +28,12 @@
 /** \file
     \brief PacketData unit tests */
 
-//#include "PacketData.test.hh"
-//#include "PacketData.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +42,7 @@ namespace {
     struct VoidPacket : public senf::PacketTypeBase {};
 }
 
-SENF_AUTO_UNIT_TEST(packetData)
+SENF_AUTO_TEST_CASE(packetData)
 {
     // We cannot simply allocate a packetData instance .. we must go through PacketInterpreterBase
     // and PacketImpl.
@@ -98,7 +96,7 @@ SENF_AUTO_UNIT_TEST(packetData)
     BOOST_CHECK( d.empty() );
 }
 
-SENF_AUTO_UNIT_TEST(safePacketIterator)
+SENF_AUTO_TEST_CASE(safePacketIterator)
 {
     // We cannot simply allocate a packetData instance .. we must go through PacketInterpreterBase
     // and PacketImpl.

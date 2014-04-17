@@ -28,14 +28,11 @@
 /** \file
     \brief Traits unit tests */
 
-//#include "Traits.test.hh"
-//#include "Traits.test.ih"
-
 // Custom includes
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +81,7 @@ namespace testNS {
 
 SENF_CONSOLE_PARSE_AND_FORMAT_AS_TUPLE( testNS::TestStruct, (a)(b)(c));
 
-SENF_AUTO_UNIT_TEST(parse_and_format_as_tuple_macros)
+SENF_AUTO_TEST_CASE(parse_and_format_as_tuple_macros)
 {
     namespace fty = senf::console::factory;
 
@@ -101,7 +98,7 @@ SENF_AUTO_UNIT_TEST(parse_and_format_as_tuple_macros)
     BOOST_CHECK_EQUAL( ss.str(), "(84 \"a b ca b c\" 46)\n" );
 }
 
-SENF_AUTO_UNIT_TEST(charTraits)
+SENF_AUTO_TEST_CASE(charTraits)
 {
     namespace fty = senf::console::factory;
 
@@ -134,7 +131,7 @@ SENF_AUTO_UNIT_TEST(charTraits)
     ss.str("");
 }
 
-SENF_AUTO_UNIT_TEST(boolTraits)
+SENF_AUTO_TEST_CASE(boolTraits)
 {
     namespace fty = senf::console::factory;
 
@@ -177,14 +174,14 @@ SENF_AUTO_UNIT_TEST(boolTraits)
     BOOST_CHECK_EQUAL( ss.str(), "disabled\n" "enabled\n" );
 }
 
-SENF_AUTO_UNIT_TEST(stringTraits)
+SENF_AUTO_TEST_CASE(stringTraits)
 {
     BOOST_CHECK_EQUAL(
         senf::console::ArgumentTraits<std::string>::str("Test\nOf\nA \"String\"\x01\x7f\xa0\xff"),
         "\"Test\\x0aOf\\x0aA \\\"String\\\"\\x01\\x7f\\xa0\\xff\"" );
 }
 
-SENF_AUTO_UNIT_TEST(enumSupport)
+SENF_AUTO_TEST_CASE(enumSupport)
 {
     namespace fty = senf::console::factory;
 
@@ -273,7 +270,7 @@ SENF_AUTO_UNIT_TEST(enumSupport)
     BOOST_CHECK_EQUAL( senf::str(senf_console_format_enum(TWO)), "2");
 }
 
-SENF_AUTO_UNIT_TEST(singleToken)
+SENF_AUTO_TEST_CASE(singleToken)
 {
     BOOST_CHECK( senf::console::ArgumentTraits<std::string>::singleToken );
     BOOST_CHECK( senf::console::ArgumentTraits<int>::singleToken );

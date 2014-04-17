@@ -28,20 +28,18 @@
 /** \file
     \brief EUI64.test unit tests */
 
-//#include "EUI64.test.hh"
-//#include "EUI64.test.ih"
+#include "EUI64.hh"
 
 // Custom includes
-#include "EUI64.hh"
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(eui64)
+SENF_AUTO_TEST_CASE(eui64)
 {
     senf::EUI64 eui;
     BOOST_CHECK( !eui );
@@ -90,7 +88,7 @@ SENF_AUTO_UNIT_TEST(eui64)
     }
 }
 
-SENF_AUTO_UNIT_TEST(eui64_fillRight)
+SENF_AUTO_TEST_CASE(eui64_fillRight)
 {
     std::string eui64Str ("01:02:03:ff-fe:04:05:06");
     senf::EUI64 eui64 (senf::EUI64::from_string( eui64Str));

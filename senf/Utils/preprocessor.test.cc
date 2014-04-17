@@ -28,14 +28,12 @@
 /** \file
     \brief preprocessor unit tests */
 
-//#include "preprocessor.test.hh"
-//#include "preprocessor.test.ih"
-
-// Custom includes
 #include "preprocessor.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

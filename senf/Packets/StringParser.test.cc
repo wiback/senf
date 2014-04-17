@@ -29,14 +29,12 @@
 /** \file
     \brief StringParser.test unit tests */
 
-//#include "StringParser.test.hh"
-//#include "StringParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +44,7 @@ namespace {
     {};
 }
 
-SENF_AUTO_UNIT_TEST(stringParser)
+SENF_AUTO_TEST_CASE(stringParser)
 {
     typedef senf::StringParser<senf::UInt16Parser> MyStringParser;
 
@@ -86,7 +84,7 @@ SENF_AUTO_UNIT_TEST(stringParser)
     }
 }
 
-SENF_AUTO_UNIT_TEST(fixedSizeStringParser)
+SENF_AUTO_TEST_CASE(fixedSizeStringParser)
 {
     typedef senf::FixedSizeStringParser<4> MyFixedSizeStringParser;
 

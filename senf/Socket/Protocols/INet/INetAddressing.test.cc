@@ -28,22 +28,20 @@
 /** \file
     \brief INetAddressing unit tests */
 
-//#include "INetAddressing.test.hh"
-//#include "INetAddressing.test.ih"
+#include "INetAddressing.hh"
 
 // Custom includes
-#include "INetAddressing.hh"
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 #include <senf/Utils/String.hh>
 #include <senf/Utils/IgnoreValue.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(inet4SocketAddress)
+SENF_AUTO_TEST_CASE(inet4SocketAddress)
 {
     using senf::INet4SocketAddress;
     using senf::INet4Address;
@@ -101,7 +99,7 @@ SENF_AUTO_UNIT_TEST(inet4SocketAddress)
     }
 }
 
-SENF_AUTO_UNIT_TEST(inet6SocketAddress)
+SENF_AUTO_TEST_CASE(inet6SocketAddress)
 {
     using senf::INet6Address;
     using senf::INet6SocketAddress;

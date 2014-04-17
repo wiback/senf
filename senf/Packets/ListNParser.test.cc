@@ -28,14 +28,12 @@
 /** \file
     \brief ListNParser unit tests */
 
-//#include "ListNParser.test.hh"
-//#include "ListNParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +75,7 @@ namespace {
                 senf::UInt16Parser> > > MyListNParser;
 }
 
-SENF_AUTO_UNIT_TEST(ListNParser_container)
+SENF_AUTO_TEST_CASE(ListNParser_container)
 {
     VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
     MyListNParser(vp.data().begin(),&vp.data()).init();
@@ -106,7 +104,7 @@ SENF_AUTO_UNIT_TEST(ListNParser_container)
     }
 }
 
-SENF_AUTO_UNIT_TEST(ListNParser)
+SENF_AUTO_TEST_CASE(ListNParser)
 {
     VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
 
@@ -211,7 +209,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(listMacro)
+SENF_AUTO_TEST_CASE(listMacro)
 {
     unsigned char data[] = { 0x04,                   // size1
                              0x03,                   // size2
@@ -275,7 +273,7 @@ SENF_AUTO_UNIT_TEST(listMacro)
     }
 }
 
-SENF_AUTO_UNIT_TEST(listMacro_stress)
+SENF_AUTO_TEST_CASE(listMacro_stress)
 {
     TestListPacket testListPacket (TestListPacket::create());
     for (unsigned i=0; i<42; ++i) {

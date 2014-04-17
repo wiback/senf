@@ -28,14 +28,12 @@
 /** \file
     \brief PacketInterpreter unit tests */
 
-//#include "PacketInterpreter.test.hh"
-//#include "PacketInterpreter.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +46,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(packetInterpreterBase)
+SENF_AUTO_TEST_CASE(packetInterpreterBase)
 {
     {
         senf::PacketInterpreter<VoidPacket>::ptr pi2 (senf::PacketInterpreter<VoidPacket>::create());
@@ -107,7 +105,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(packetInterpreter)
+SENF_AUTO_TEST_CASE(packetInterpreter)
 {
     typedef senf::PacketInterpreterBase::size_type size_type;
     {
@@ -226,7 +224,7 @@ SENF_AUTO_UNIT_TEST(packetInterpreter)
 // fields() is tested in DefaultBundle/EthernetPacket.test.cc
 // initSize() and initHeadSize() are already tested indirectly above
 
-SENF_AUTO_UNIT_TEST(packetInterpreter_factory)
+SENF_AUTO_TEST_CASE(packetInterpreter_factory)
 {
     typedef senf::PacketInterpreterBase::size_type size_type;
 

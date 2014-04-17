@@ -4,14 +4,12 @@
 
 // Unit tests
 
-//#include "WriteHelper.test.hh"
-//#include "WriteHelper.test.ih"
-
-// Custom includes
 #include "WriteHelper.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

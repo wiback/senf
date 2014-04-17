@@ -25,13 +25,14 @@
 // Contributor(s):
 //   Philipp Batroff <philipp.batroff@fokus.fraunhofer.de>
 
-// Custom includes
 #include <senf/Packets/Packets.hh>
-#include "IPv6ExtOptions.hh"
 #include "ListOptionTypeParser.hh"
 
+// Custom includes
+#include "IPv6ExtOptions.hh"
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +56,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(ListOptionTypeParser)
+SENF_AUTO_TEST_CASE(ListOptionTypeParser)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             OptionParser::init_bytes));
@@ -80,7 +81,7 @@ SENF_AUTO_UNIT_TEST(ListOptionTypeParser)
     BOOST_CHECK_EQUAL( p.list().empty(), false );
 }
 
-SENF_AUTO_UNIT_TEST(ListOptionTypeParser_container)
+SENF_AUTO_TEST_CASE(ListOptionTypeParser_container)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             OptionParser::init_bytes));

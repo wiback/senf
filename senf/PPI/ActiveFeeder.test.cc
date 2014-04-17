@@ -28,18 +28,16 @@
 /** \file
     \brief ActiveFeeder unit tests */
 
-//#include "ActiveFeeder.test.hh"
-//#include "ActiveFeeder.test.ih"
+#include "ActiveFeeder.hh"
 
 // Custom includes
-#include "ActiveFeeder.hh"
+#include <senf/Scheduler/Scheduler.hh>
 #include "DebugModules.hh"
 #include "Setup.hh"
 #include "CloneSource.hh"
-#include <senf/Scheduler/Scheduler.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +54,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(activeFeeder)
+SENF_AUTO_TEST_CASE(activeFeeder)
 {
     senf::PacketData::byte data[] = { 0xab };
     senf::Packet p (senf::DataPacket::create(data));

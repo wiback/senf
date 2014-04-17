@@ -28,20 +28,17 @@
 /** \file
     \brief Parse unit tests */
 
-//#include "Parse.test.hh"
-//#include "Parse.test.ih"
-
 // #define BOOST_SPIRIT_DEBUG
 // #define BOOST_SPIRIT_DEBUG_TRACENODE 0
 
 // Custom includes
 #include <sstream>
+#include <senf/Utils/String.hh>
 #include "Console.hh"
 #include "Parse.ih"
-#include <senf/Utils/String.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +81,7 @@ namespace
     };
 }
 
-SENF_AUTO_UNIT_TEST(commandGrammar)
+SENF_AUTO_TEST_CASE(commandGrammar)
 {
     senf::console::detail::CommandGrammar<TestParseDispatcher>::Context context;
     std::stringstream ss;
@@ -205,7 +202,7 @@ namespace {
     { commands.push_back(i); }
 }
 
-SENF_AUTO_UNIT_TEST(commandParser)
+SENF_AUTO_TEST_CASE(commandParser)
 {
     senf::console::CommandParser parser;
 
@@ -297,7 +294,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(checkedArgumentIterator)
+SENF_AUTO_TEST_CASE(checkedArgumentIterator)
 {
     senf::console::CommandParser parser;
 
@@ -327,7 +324,7 @@ SENF_AUTO_UNIT_TEST(checkedArgumentIterator)
     commands.clear();
 }
 
-SENF_AUTO_UNIT_TEST(parseIncremental)
+SENF_AUTO_TEST_CASE(parseIncremental)
 {
     senf::console::CommandParser parser;
 
@@ -349,7 +346,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(parseExceptions)
+SENF_AUTO_TEST_CASE(parseExceptions)
 {
     senf::console::CommandParser parser;
     std::string msg;

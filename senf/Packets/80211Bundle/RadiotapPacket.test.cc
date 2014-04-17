@@ -29,16 +29,17 @@
 /** \file
     \brief RadiotapPacket unit tests */
 
-// Custom includes
-#include <sstream>
 #include "RadiotapPacket.hh"
 
+// Custom includes
+#include <sstream>
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(RadiotapPacket_fieldSizes)
+SENF_AUTO_TEST_CASE(RadiotapPacket_fieldSizes)
 {
     // This test only asserts, that nobody forgot to update the FIELD_SIZE table
     // when changing MAX_INDEX
@@ -46,7 +47,7 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_fieldSizes)
                      senf::RadiotapPacket_HeaderParser::MAX_INDEX] != 0 );
 }
 
-SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
+SENF_AUTO_TEST_CASE(RadiotapPacket_packet)
 {
     /* used madwifi 0.9.4 */
     unsigned char data[] = {
@@ -130,7 +131,7 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_packet)
                        "  fcs                     : 0\n" );
 }
 
-SENF_AUTO_UNIT_TEST(RadiotapPacket_create)
+SENF_AUTO_TEST_CASE(RadiotapPacket_create)
 {
     senf::RadiotapPacket p (senf::RadiotapPacket::create());
 
@@ -224,7 +225,7 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_create)
     }
 }
 
-SENF_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
+SENF_AUTO_TEST_CASE(RadiotapPacket_packet_ath9k)
 {
     /* radiotap packet from ath9k with atheros card*/
     unsigned char data[] = {
@@ -251,7 +252,7 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
     BOOST_CHECK_EQUAL( p->antenna(), 0u);
 }
 
-SENF_AUTO_UNIT_TEST(RadiotapPacket_parsetest)
+SENF_AUTO_TEST_CASE(RadiotapPacket_parsetest)
 {
     unsigned char data[] = {
         0x00, 0x00, 0x20, 0x00, 0x2f, 0x48, 0x00, 0x00,
@@ -322,7 +323,7 @@ SENF_AUTO_UNIT_TEST(RadiotapPacket_parsetest)
 }
 
 
-SENF_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k_mcs)
+SENF_AUTO_TEST_CASE(RadiotapPacket_packet_ath9k_mcs)
 {
     unsigned char data[] = {
             0x00, 0x00, 0x15, 0x00, 0x2a, 0x48, 0x08, 0x00,

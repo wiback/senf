@@ -32,8 +32,8 @@
 #include <boost/assign/list_of.hpp>
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ namespace {
 namespace console = senf::console;
 
 
-SENF_AUTO_UNIT_TEST(vectorSupport)
+SENF_AUTO_TEST_CASE(vectorSupport)
 {
     console::Executor executor;
     console::CommandParser parser;
@@ -101,7 +101,7 @@ SENF_AUTO_UNIT_TEST(vectorSupport)
         "        default: (7 2)\n" );
 }
 
-SENF_AUTO_UNIT_TEST(listSupport)
+SENF_AUTO_TEST_CASE(listSupport)
 {
     console::Executor executor;
     console::CommandParser parser;
@@ -132,7 +132,7 @@ SENF_AUTO_UNIT_TEST(listSupport)
         "        default: (7 2)\n" );
 }
 
-SENF_AUTO_UNIT_TEST(setSupport)
+SENF_AUTO_TEST_CASE(setSupport)
 {
     console::Executor executor;
     console::CommandParser parser;
@@ -163,7 +163,7 @@ SENF_AUTO_UNIT_TEST(setSupport)
         "        default: (2 7)\n" );
 }
 
-SENF_AUTO_UNIT_TEST(mapSupport)
+SENF_AUTO_TEST_CASE(mapSupport)
 {
     console::Executor executor;
     console::CommandParser parser;
@@ -209,7 +209,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(tupleSupport)
+SENF_AUTO_TEST_CASE(tupleSupport)
 {
     console::Executor executor;
     console::CommandParser parser;

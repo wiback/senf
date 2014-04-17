@@ -28,17 +28,15 @@
 /** \file
     \brief ClientSocketHandle unit tests */
 
-//#include "ClientSocketHandle.test.hh"
-//#include "ClientSocketHandle.test.ih"
+#include "ClientSocketHandle.hh"
 
 // Custom includes
 #include "SocketPolicy.test.hh"
 #include "SocketProtocol.test.hh"
-#include "ClientSocketHandle.hh"
 #include "AddressingPolicy.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +56,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(clientSocketHandle)
+SENF_AUTO_TEST_CASE(clientSocketHandle)
 {
     BOOST_CHECKPOINT("Constructing socket handle");
     MySocketHandle myh;

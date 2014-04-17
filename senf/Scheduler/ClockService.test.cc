@@ -28,15 +28,13 @@
 /** \file
     \brief ClockService unit tests */
 
-//#include "ClockService.test.hh"
-//#include "ClockService.test.ih"
+#include "ClockService.hh"
 
 // Custom includes
-#include "ClockService.hh"
 #include <errno.h>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +57,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(clockService)
+SENF_AUTO_TEST_CASE(clockService)
 {
     BOOST_CHECK( senf::ClockService::abstime(senf::ClockService::clock_type(0)).is_not_a_date_time());
 

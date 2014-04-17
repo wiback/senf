@@ -26,16 +26,7 @@
 //   Stefan Bund <senf@g0dil.de>
 
 /** \file
-    \brief Boost.Test auto unit test compatibility across Boost V 1.33 and 1.34
-
-    This header file will allows to consistently use the Boost Version 1.33 syntax for defining auto
-    unit tests. If the available Boost version is 1.34, this file will automatically take care of
-    any necessary workarounds.
-
-    So, instead of <tt>\#include <boost/test/auto_unit_test.hpp></tt>, you should always write
-    <pre>
-    \#include "../Utils/auto_unit_test.hh"
-    </pre> (with possibliy adjusted path).
+    \brief Boost.Test extensions
  */
 
 #ifndef HH_SENF_Utils_auto_unit_test_
@@ -43,19 +34,12 @@
 
 // Custom includes
 #include <iostream>
-#include <boost/version.hpp>
 
-//#include "auto_unit_test.mpp"
 #include "auto_unit_test.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if BOOST_VERSION >= 103400
-
-#   define BOOST_AUTO_UNIT_TEST BOOST_AUTO_TEST_CASE
-
-#endif
-
 #include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
 /** \defgroup unittest Boost.Test extensions
 
@@ -137,9 +121,9 @@ namespace test {
     \hideinitializer
     \ingroup unittest
  */
-#define SENF_AUTO_UNIT_TEST(name)                                                               \
+#define SENF_AUTO_TEST_CASE(name)                                                               \
     void senf_test_body_##name();                                                               \
-    BOOST_AUTO_UNIT_TEST(name)                                                                  \
+    BOOST_AUTO_TEST_CASE(name)                                                                  \
     {                                                                                           \
         try {                                                                                   \
             senf_test_body_##name();                                                            \

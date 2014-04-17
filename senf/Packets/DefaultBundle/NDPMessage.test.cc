@@ -33,11 +33,11 @@
 #include "ICMPv6TypePacket.hh"
 #include "NDPOptions.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-SENF_AUTO_UNIT_TEST(NDPMessage_create)
+SENF_AUTO_TEST_CASE(NDPMessage_create)
 {
     senf::dumpPacketRegistries(std::cout);
 

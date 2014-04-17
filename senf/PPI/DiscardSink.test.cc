@@ -28,21 +28,19 @@
 /** \file
     \brief DiscardSink unit tests */
 
-//#include "DiscardSink.test.hh"
-//#include "DiscardSink.test.ih"
+#include "DiscardSink.hh"
 
 // Custom includes
-#include "DiscardSink.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(discardSink)
+SENF_AUTO_TEST_CASE(discardSink)
 {
     // here we really can just validate that everything compiles ...
 

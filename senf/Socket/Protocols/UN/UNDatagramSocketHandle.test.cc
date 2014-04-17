@@ -27,19 +27,17 @@
 /** \file
     \brief UNDatagramSocketHandle unit tests */
 
-//#include "UNDatagramSocketHandle.test.hh"
-//#include "UNDatagramSocketHandle.test.ih"
-
-// Custom includes
 #include "UNDatagramSocketHandle.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(unDatagramSocketHandle)
+SENF_AUTO_TEST_CASE(unDatagramSocketHandle)
 {
     std::string testString ("Hallo Welt.");
     std::string socketPath (".socket-UNDatagramSocketHandle.test");

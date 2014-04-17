@@ -28,20 +28,18 @@
 /** \file
     \brief MIHTypes unit tests */
 
-//#include "MIHTypes.test.hh"
-//#include "MIHTypes.test.ih"
-
-// Custom includes
 #include "MIHTypes.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 using namespace senf;
 
-SENF_AUTO_UNIT_TEST(mihfId)
+SENF_AUTO_TEST_CASE(mihfId)
 {
     MIHFId id ( MACAddress::from_string("01:02:03:04:05:06"));
     BOOST_CHECK_EQUAL( id.type(), MIHFId::MACAddress);

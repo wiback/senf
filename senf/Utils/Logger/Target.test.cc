@@ -28,15 +28,13 @@
 /** \file
     \brief Target unit tests */
 
-//#include "Target.test.hh"
-//#include "Target.test.ih"
+#include "main.test.hh"
 
 // Custom includes
 #include <sstream>
-#include "main.test.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +58,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(target)
+SENF_AUTO_TEST_CASE(target)
 {
     senf::log::StringTarget target;
 

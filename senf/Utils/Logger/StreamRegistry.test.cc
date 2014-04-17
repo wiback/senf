@@ -28,19 +28,15 @@
 /** \file
     \brief StreamRegistry unit tests */
 
-//#include "StreamRegistry.test.hh"
-//#include "StreamRegistry.test.ih"
-
-// Custom includes
 #include "main.test.hh"
 
+// Custom includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(streamRegistry)
+SENF_AUTO_TEST_CASE(streamRegistry)
 {
     char const * streams[] =
         { "senf::SenfLog", "senf::log::Debug", "senf::log::test::myStream" };

@@ -28,21 +28,19 @@
 /** \file
     \brief ThrottleBarrier unit tests */
 
-//#include "ThrottleBarrier.test.hh"
-//#include "ThrottleBarrier.test.ih"
+#include "ThrottleBarrier.hh"
 
 // Custom includes
-#include "ThrottleBarrier.hh"
-#include "DebugModules.hh"
 #include <senf/Packets/Packets.hh>
+#include "DebugModules.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(throttleBarrier)
+SENF_AUTO_TEST_CASE(throttleBarrier)
 {
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::ThrottleBarrier barrier;

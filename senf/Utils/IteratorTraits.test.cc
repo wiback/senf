@@ -28,21 +28,19 @@
 /** \file
     \brief IteratorTraits unit tests */
 
-//#include "IteratorTraits.test.hh"
-//#include "IteratorTraits.test.ih"
+#include "IteratorTraits.hh"
 
 // Custom includes
-#include "IteratorTraits.hh"
 #include <vector>
 #include <string>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(iteratorTraits)
+SENF_AUTO_TEST_CASE(iteratorTraits)
 {
     BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<int*>::value, true );
     BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<void>::value, false );

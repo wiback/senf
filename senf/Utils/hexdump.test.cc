@@ -28,20 +28,18 @@
 /** \file
     \brief hexdump unit tests */
 
-//#include "hexdump.test.hh"
-//#include "hexdump.test.ih"
+#include "hexdump.hh"
 
 // Custom includes
-#include "hexdump.hh"
 #include <sstream>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(hExDuMp)
+SENF_AUTO_TEST_CASE(hExDuMp)
 {
     char data[] = { 0x18, 0x19, 0x20, 0x21, 0x7c, 0x7d, 0x7e, 0x7f };
     std::stringstream s;

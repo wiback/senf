@@ -28,19 +28,17 @@
 /** \file
     \brief Poller unit tests */
 
-//#include "Poller.test.hh"
-//#include "Poller.test.ih"
-
-// Custom includes
 #include "Poller.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(poller)
+SENF_AUTO_TEST_CASE(poller)
 {
     BOOST_CHECK( true );
 }

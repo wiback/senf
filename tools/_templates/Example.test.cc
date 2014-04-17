@@ -27,14 +27,12 @@
 /** \file
     \brief @NAME@ unit tests */
 
-//#include "@NAME@.test.hh"
-//#include "@NAME@.test.ih"
-
-// Custom includes
 #include "@NAME@.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

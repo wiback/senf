@@ -28,16 +28,14 @@
 /** \file
     \brief membind unit tests */
 
-//#include "membind.test.hh"
-//#include "membind.test.ih"
+#include "membind.hh"
 
 // Custom includes
 #include <sstream>
 #include <string>
-#include "membind.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +56,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(membind)
+SENF_AUTO_TEST_CASE(membind)
 {
     Test instance;
     boost::function<char const * ()> f1 (senf::membind(&Test::meth1,instance));

@@ -28,14 +28,11 @@
 /** \file
     \brief Utility.test unit tests */
 
-//#include "Utility.test.hh"
-//#include "Utility.test.ih"
-
 // Custom includes
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +49,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(charAsString)
+SENF_AUTO_TEST_CASE(charAsString)
 {
     namespace fty = senf::console::factory;
 
@@ -73,7 +70,7 @@ SENF_AUTO_UNIT_TEST(charAsString)
     BOOST_CHECK_EQUAL( ss.str(), "\x01\n" );
 }
 
-SENF_AUTO_UNIT_TEST(flagCollection)
+SENF_AUTO_TEST_CASE(flagCollection)
 {
     namespace fty = senf::console::factory;
 

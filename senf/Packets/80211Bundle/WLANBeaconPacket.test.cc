@@ -29,16 +29,17 @@
 /** \file
     \brief 802.11 WLAN Beacon Packet unit tests */
 
-// Custom includes
 #include "WLANBeaconPacket.hh"
+
+// Custom includes
 #include "WLANPacket.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
+SENF_AUTO_TEST_CASE(WLANBeaconPacket_parse)
 {
     unsigned char data[] = {
         0x3a, 0x30, 0xaa, 0x4c, 0x9c, 0x00, 0x00, 0x00,  // timestamp
@@ -101,7 +102,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse)
     SENF_CHECK_NO_THROW( beacon.dump( oss ));
 }
 
-SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
+SENF_AUTO_TEST_CASE(WLANBeaconPacket_create)
 {
     senf::WLANBeaconPacket p (senf::WLANBeaconPacket::create());
     p->timestamp() << 0x0000009C4CAA303AuLL;
@@ -134,7 +135,7 @@ SENF_AUTO_UNIT_TEST(WLANBeaconPacket_create)
     BOOST_CHECK_EQUAL( mgt->subtype(), 8u);
 }
 
-SENF_AUTO_UNIT_TEST(WLANBeaconPacket_parse_ht)
+SENF_AUTO_TEST_CASE(WLANBeaconPacket_parse_ht)
 {
     unsigned char data[] = {
             0x62, 0xb0, 0x82, 0x04, 0x00, 0x00, 0x00, 0x00,

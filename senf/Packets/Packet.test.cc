@@ -28,17 +28,15 @@
 /** \file
     \brief Packet unit tests */
 
-//#include "Packet.test.hh"
-//#include "Packet.test.ih"
+#include "Packets.hh"
 
 // Custom includes
 #include <sstream>
 #include <boost/static_assert.hpp>
 #include <boost/cstdint.hpp>
-#include "Packets.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 #include <boost/test/execution_monitor.hpp>
 
 #define prefix_
@@ -192,7 +190,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(packet)
+SENF_AUTO_TEST_CASE(packet)
 {
     BOOST_CHECK(! senf::Packet().is<BarPacket>() );
     senf::Packet packet (FooPacket::create());
@@ -380,7 +378,7 @@ SENF_AUTO_UNIT_TEST(packet)
     SENF_CHECK_NO_THROW( BarPacket::create(senf::noinit).dump(s));
 }
 
-SENF_AUTO_UNIT_TEST(concretePacket)
+SENF_AUTO_TEST_CASE(concretePacket)
 {
     senf::PacketData::byte data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
 
@@ -436,7 +434,7 @@ SENF_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
 }
 
-SENF_AUTO_UNIT_TEST(packetExternalMemory)
+SENF_AUTO_TEST_CASE(packetExternalMemory)
 {
     senf::Packet::byte storage[] = "\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x11";
     BarPacket bar (BarPacket::create(storage, 8, 12, 4));
@@ -470,7 +468,7 @@ SENF_AUTO_UNIT_TEST(packetExternalMemory)
     BOOST_CHECK_EQUAL( foo->data()[9], 6u );
 }
 
-SENF_AUTO_UNIT_TEST(packetAssign)
+SENF_AUTO_TEST_CASE(packetAssign)
 {
     BarPacket bar1 (BarPacket::create());
     BarPacket bar2 (BarPacket::create());
@@ -488,7 +486,7 @@ void movePacket(senf::Packet packet)
     BOOST_CHECK(! packet.is_shared());
 }
 
-SENF_AUTO_UNIT_TEST(packet_move)
+SENF_AUTO_TEST_CASE(packet_move)
 {
     senf::Packet packet (FooPacket::create());
     movePacket(std::move(packet));
@@ -497,7 +495,7 @@ SENF_AUTO_UNIT_TEST(packet_move)
 
 #endif
 
-SENF_AUTO_UNIT_TEST(packetAnnotation)
+SENF_AUTO_TEST_CASE(packetAnnotation)
 {
     typedef senf::detail::AnnotationRegistry Reg;
 

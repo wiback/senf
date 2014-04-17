@@ -28,19 +28,16 @@
 /** \file
     \brief MulticastSocketProtocol unit tests */
 
-//#include "MulticastSocketProtocol.test.hh"
-//#include "MulticastSocketProtocol.test.ih"
-
 // Custom includes
 #include "UDPSocketHandle.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(multicastSocketProtocol)
+SENF_AUTO_TEST_CASE(multicastSocketProtocol)
 {
     senf::UDPv4ClientSocketHandle sock;
 

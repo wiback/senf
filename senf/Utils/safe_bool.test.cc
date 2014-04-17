@@ -28,14 +28,12 @@
 /** \file
     \brief safe_bool unit tests */
 
-//#include "safe_bool.test.hh"
-//#include "safe_bool.test.ih"
-
-// Custom includes
 #include "safe_bool.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +57,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(safeBool)
+SENF_AUTO_TEST_CASE(safeBool)
 {
     BOOST_CHECK( TestTrue() );
     BOOST_CHECK( ! TestFalse() );

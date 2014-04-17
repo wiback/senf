@@ -28,21 +28,19 @@
 /** \file
     \brief MIHPacket unit tests */
 
-//#include "MIHPacket.test.hh"
-//#include "MIHPacket.test.ih"
+#include "MIHPacket.hh"
 
 // Custom includes
-#include "MIHPacket.hh"
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 using namespace senf;
 
-SENF_AUTO_UNIT_TEST(MIHPacket_msgId)
+SENF_AUTO_TEST_CASE(MIHPacket_msgId)
 {
     MIHPacket mihPacket (MIHPacket::create());
     mihPacket->sid() = 4;
@@ -51,7 +49,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_msgId)
     BOOST_CHECK_EQUAL( mihPacket->messageId(), 0x4c2a );
 }
 
-SENF_AUTO_UNIT_TEST(MIHPacket_create_eth)
+SENF_AUTO_TEST_CASE(MIHPacket_create_eth)
 {
     EthernetPacket eth (EthernetPacket::create());
     MIHPacket mihPacket (MIHPacket::createAfter(eth));
@@ -61,7 +59,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_eth)
     SENF_CHECK_NO_THROW( eth.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
+SENF_AUTO_TEST_CASE(MIHPacket_create_string)
 {
     MIHPacket mihPacket (MIHPacket::create());
     // set some fields
@@ -127,7 +125,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_string)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHPacket_create_mac)
+SENF_AUTO_TEST_CASE(MIHPacket_create_mac)
 {
     MACAddress srcMac ( MACAddress::from_string("01:02:03:04:05:06"));
     MACAddress dstMac ( MACAddress::from_string("07:08:09:0a:0b:0c"));
@@ -160,7 +158,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_mac)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHPacket_create_inet4)
+SENF_AUTO_TEST_CASE(MIHPacket_create_inet4)
 {
     MIHPacket mihPacket (MIHPacket::create());
     // set some fields
@@ -193,7 +191,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_inet4)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHPacket_create_inet6)
+SENF_AUTO_TEST_CASE(MIHPacket_create_inet6)
 {
     MIHPacket mihPacket (MIHPacket::create());
     // set some fields
@@ -234,7 +232,7 @@ SENF_AUTO_UNIT_TEST(MIHPacket_create_inet6)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHPayload_parse)
+SENF_AUTO_TEST_CASE(MIHPayload_parse)
 {
     unsigned char data[] = {
             // MIH header
@@ -284,7 +282,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_parse)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHPayload_create)
+SENF_AUTO_TEST_CASE(MIHPayload_create)
 {
     MIHPacket mihPacket (MIHPacket::create());
     mihPacket->fragmentNr() = 42;
@@ -336,7 +334,7 @@ SENF_AUTO_UNIT_TEST(MIHPayload_create)
             mihPacket.data().begin(), mihPacket.data().end() );
 }
 
-SENF_AUTO_UNIT_TEST(Test_MIHFIdTLV)
+SENF_AUTO_TEST_CASE(Test_MIHFIdTLV)
 {
     unsigned char data[] = {
             // MIH header
@@ -355,7 +353,7 @@ SENF_AUTO_UNIT_TEST(Test_MIHFIdTLV)
 
 }
 
-SENF_AUTO_UNIT_TEST(Test_InvalidMIHFIdTLV)
+SENF_AUTO_TEST_CASE(Test_InvalidMIHFIdTLV)
 {
     unsigned char data[] = {
             0x3c, 0xbd, 0x7c, 0xca, 0x3a, 0x1a, 0x84, 0x7b,

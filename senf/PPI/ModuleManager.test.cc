@@ -28,19 +28,17 @@
 /** \file
     \brief ModuleManager unit tests */
 
-//#include "ModuleManager.test.hh"
-//#include "ModuleManager.test.ih"
-
-// Custom includes
 #include "ModuleManager.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(moduleManager)
+SENF_AUTO_TEST_CASE(moduleManager)
 {
     // Tested in Module.test.cc
     BOOST_CHECK( true );

@@ -28,27 +28,25 @@
 /** \file
     \brief String unit tests */
 
-//#include "String.test.hh"
-//#include "String.test.ih"
+#include "String.hh"
 
 // Custom includes
-#include "String.hh"
 #include <iomanip>
 
+// Unit test includes
 #include "auto_unit_test.hh"
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(stringJoin)
+SENF_AUTO_TEST_CASE(stringJoin)
 {
     char const * seq[] = { "foo", "bar", "baz" };
     BOOST_CHECK_EQUAL( senf::stringJoin(std::make_pair(seq, seq+sizeof(seq)/sizeof(seq[0])), "::"),
                        "foo::bar::baz" );
 }
 
-SENF_AUTO_UNIT_TEST(lexicalCast)
+SENF_AUTO_TEST_CASE(lexicalCast)
 {
     SENF_CHECK_NO_THROW(
         BOOST_CHECK_EQUAL(

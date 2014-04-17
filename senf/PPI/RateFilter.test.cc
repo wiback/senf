@@ -28,15 +28,16 @@
 /** \file
     \brief RateFilter unit tests */
 
+#include "RateFilter.hh"
+
 // Custom includes
 #include <senf/Scheduler/Scheduler.hh>
-#include "RateFilter.hh"
+#include <senf/Utils/membind.hh>
 #include "DebugModules.hh"
 #include "Setup.hh"
-#include <senf/Utils/membind.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +53,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(rateFilter)
+SENF_AUTO_TEST_CASE(rateFilter)
 {
     module::RateFilter rateFilter ( senf::ClockService::milliseconds(200) );
     debug::PassiveSource source;
@@ -84,7 +85,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(rateFilter_changeInterval)
+SENF_AUTO_TEST_CASE(rateFilter_changeInterval)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     if (! enabled) {

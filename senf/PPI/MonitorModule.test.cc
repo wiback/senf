@@ -28,15 +28,13 @@
 /** \file
     \brief MonitorModule unit tests */
 
-//#include "MonitorModule.test.hh"
-//#include "MonitorModule.test.ih"
+#include "MonitorModule.hh"
 
 // Custom includes
-#include "MonitorModule.hh"
 #include "DebugModules.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +52,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(monitorModulePassthrough)
+SENF_AUTO_TEST_CASE(monitorModulePassthrough)
 {
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::debug::PassiveSink sink;
@@ -78,7 +76,7 @@ SENF_AUTO_UNIT_TEST(monitorModulePassthrough)
     BOOST_CHECK( source );
 }
 
-SENF_AUTO_UNIT_TEST(monitorModuleNoPassthrough)
+SENF_AUTO_TEST_CASE(monitorModuleNoPassthrough)
 {
     senf::ppi::module::debug::ActiveSource source;
     PacketCounter counter;
@@ -95,7 +93,7 @@ SENF_AUTO_UNIT_TEST(monitorModuleNoPassthrough)
     BOOST_CHECK( source );
 }
 
-SENF_AUTO_UNIT_TEST(monitorModuleDynamicConnect)
+SENF_AUTO_TEST_CASE(monitorModuleDynamicConnect)
 {
     senf::ppi::module::debug::ActiveSource source;
     PacketCounter counter;

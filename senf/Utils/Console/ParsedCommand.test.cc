@@ -28,15 +28,12 @@
 /** \file
     \brief ParsedCommand unit tests */
 
-//#include "ParsedCommand.test.hh"
-//#include "ParsedCommand.test.ih"
-
 // Custom includes
 #include <sstream>
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +57,7 @@ namespace {
     { os << "formatter"; }
 }
 
-SENF_AUTO_UNIT_TEST(parsedCommand)
+SENF_AUTO_TEST_CASE(parsedCommand)
 {
     namespace fty = senf::console::factory;
 
@@ -269,7 +266,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(memberParsedCommand)
+SENF_AUTO_TEST_CASE(memberParsedCommand)
 {
     senf::console::Executor executor;
     senf::console::CommandParser parser;
@@ -301,7 +298,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(directoryReturn)
+SENF_AUTO_TEST_CASE(directoryReturn)
 {
     namespace fty = senf::console::factory;
 

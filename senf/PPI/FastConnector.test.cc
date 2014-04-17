@@ -28,17 +28,15 @@
 /** \file
     \brief FastConnector.test unit tests */
 
-//#include "FastConnector.test.hh"
-//#include "FastConnector.test.ih"
-
-// Custom includes
 #include "FastConnector.hh"
 
+// Custom includes
 #include <deque>
-#include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 #include "Module.hh"
 #include "Setup.hh"
+
+// Unit test includes
+#include <senf/Utils/auto_unit_test.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -109,7 +107,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(fastConnector)
+SENF_AUTO_TEST_CASE(fastConnector)
 {
     FastActiveSource<> source;
     FastPassiveSink<> target;

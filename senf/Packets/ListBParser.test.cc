@@ -28,14 +28,12 @@
 /** \file
     \brief ListBParser unit tests */
 
-//#include "ListBParser.test.hh"
-//#include "ListBParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +73,7 @@ namespace {
             senf::detail::PrefixAuxParserPolicy<senf::UInt16Parser> > > MyListBParser;
 }
 
-SENF_AUTO_UNIT_TEST(ListBParser)
+SENF_AUTO_TEST_CASE(ListBParser)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             MyListBParser::init_bytes));
@@ -96,7 +94,7 @@ SENF_AUTO_UNIT_TEST(ListBParser)
     BOOST_CHECK( ! p.empty() );
 }
 
-SENF_AUTO_UNIT_TEST(ListBParser_container)
+SENF_AUTO_TEST_CASE(ListBParser_container)
 {
     senf::PacketInterpreterBase::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
             MyListBParser::init_bytes));
@@ -206,7 +204,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(listBytesMacro)
+SENF_AUTO_TEST_CASE(listBytesMacro)
 {
     unsigned char data[] = {    8,                   // size1
                                18,                   // size2
@@ -284,7 +282,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
+SENF_AUTO_TEST_CASE(listBytesParser_packetSize)
 {
     unsigned char data[] = { 0x01,                   // list()[0].vec().size()
                              0x05, 0x06,             // list()[0].vec()[0]
@@ -372,7 +370,7 @@ SENF_AUTO_UNIT_TEST(listBytesParser_packetSize)
     }
 }
 
-SENF_AUTO_UNIT_TEST(listBytesMacro_stress)
+SENF_AUTO_TEST_CASE(listBytesMacro_stress)
 {
     TestListPacket testListPacket (TestListPacket::create());
     for (unsigned i=0; i<12; ++i) {
@@ -399,7 +397,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(list_copy_value)
+SENF_AUTO_TEST_CASE(list_copy_value)
 {
     senf::DataPacket p (senf::DataPacket::create(TestPacketSizeList::init_bytes));
     TestPacketSizeList parser (p.data().begin(), &p.data());
@@ -421,7 +419,7 @@ SENF_AUTO_UNIT_TEST(list_copy_value)
     }
 }
 
-SENF_AUTO_UNIT_TEST(list_copy_non_value)
+SENF_AUTO_TEST_CASE(list_copy_non_value)
 {
     unsigned char data[] = { 0x01, 0xaa,
                              0x02, 0xbb, 0xcc,

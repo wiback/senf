@@ -28,14 +28,12 @@
 /** \file
     \brief Terminfo unit tests */
 
-//#include "Terminfo.test.hh"
-//#include "Terminfo.test.ih"
-
-// Custom includes
 #include "Terminfo.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +51,7 @@ namespace std {
     }
 }
 
-SENF_AUTO_UNIT_TEST(terminfo)
+SENF_AUTO_TEST_CASE(terminfo)
 {
     senf::term::Terminfo ifo ("vt220");
     senf::term::KeyParser kp (ifo);

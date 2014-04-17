@@ -28,8 +28,7 @@
 /** \file
     \brief Daemon unit tests */
 
-//#include "Daemon.test.hh"
-//#include "Daemon.test.ih"
+#include "Daemon.hh"
 
 // Custom includes
 #include <unistd.h>
@@ -38,13 +37,12 @@
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem/operations.hpp>
-#include "Daemon.hh"
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/Backtrace.hh>
 #include <senf/Scheduler/Scheduler.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +122,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(testDaemon)
+SENF_AUTO_TEST_CASE(testDaemon)
 {
     char const * args[] = { "run",
                             "--console-log=testDaemon.log",

@@ -28,16 +28,17 @@
 /** \file
     \brief WLANPacket unit tests */
 
-// Custom includes
 #include "WLANPacket.hh"
+
+// Custom includes
 #include "WLANBeaconPacket.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 /* test parser with a data frame */
-SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
+SENF_AUTO_TEST_CASE(WLANPacket_dataFrame_packet)
 {
     unsigned char data[] = {
             0x88, 0x01, 0x00, 0x00, 0x00, 0x1a,             //header
@@ -87,7 +88,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
 
 
 /* test parser with creating a data frame*/
-SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
+SENF_AUTO_TEST_CASE(WLANPacket_dataFrame_create)
 {
     senf::WLANPacket_DataFrame p (senf::WLANPacket_DataFrame::create());
 
@@ -100,7 +101,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_dataFrame_create)
 
 
 /* test parser with a beacon frame */
-SENF_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
+SENF_AUTO_TEST_CASE(WLANPacket_beaconFrame_packet)
 {
     unsigned char data[] = {
             0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff,
@@ -154,7 +155,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
 
 
 /* test parser with creating a beacon frame*/
-SENF_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
+SENF_AUTO_TEST_CASE(WLANPacket_mgtFrame_create)
 {
     senf::WLANPacket_MgtFrame p (senf::WLANPacket_MgtFrame::create());
 
@@ -178,7 +179,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_mgtFrame_create)
 
 
 /* test parser with an ACK frame*/
-SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
+SENF_AUTO_TEST_CASE(WLANPacket_ctrlFrame_packet)
 {
     unsigned char data[] = {
             0xd4, 0x00, 0x00, 0x00,
@@ -207,7 +208,7 @@ SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
 }
 
 /* test parser with creating an ACK frame*/
-SENF_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_create)
+SENF_AUTO_TEST_CASE(WLANPacket_ctrlFrame_create)
 {
     senf::WLANPacket_CtrlFrame p (senf::WLANPacket_CtrlFrame::create()) ;
     p->receiverAddress() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c");

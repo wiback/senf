@@ -28,15 +28,13 @@
 /** \file
     \brief intrusive_refcount unit tests */
 
-//#include "intrusive_refcount.test.hh"
-//#include "intrusive_refcount.test.ih"
+#include "intrusive_refcount.hh"
 
 // Custom includes
-#include "intrusive_refcount.hh"
 #include <boost/intrusive_ptr.hpp>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +73,7 @@ namespace {
     unsigned TesterCustom::refs = 0;
 }
 
-SENF_AUTO_UNIT_TEST(intrusive_refcount)
+SENF_AUTO_TEST_CASE(intrusive_refcount)
 {
     BOOST_CHECK_EQUAL(Tester::counter,0u);
 
@@ -99,7 +97,7 @@ SENF_AUTO_UNIT_TEST(intrusive_refcount)
     BOOST_CHECK_EQUAL(Tester::counter,0u);
 }
 
-SENF_AUTO_UNIT_TEST(intrusive_refcount_t)
+SENF_AUTO_TEST_CASE(intrusive_refcount_t)
 {
     BOOST_CHECK_EQUAL(TesterCustom::counter,0u);
     BOOST_CHECK_EQUAL(TesterCustom::refs,0u);

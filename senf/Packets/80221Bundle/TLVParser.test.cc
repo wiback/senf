@@ -28,16 +28,14 @@
 /** \file
     \brief TLVParser unit tests */
 
-//#include "TLVParser.test.hh"
-//#include "TLVParser.test.ih"
+#include "TLVParser.hh"
 
 // Custom includes
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
-#include "TLVParser.hh"
 #include "Exceptions.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +60,7 @@ namespace {
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_simple_length)
+SENF_AUTO_TEST_CASE(MIHGenericTLVParser_parse_with_simple_length)
 {
     PacketInterpreterBase::byte data[] = {
         0x01, // type
@@ -75,7 +73,7 @@ SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_simple_length)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_extended_length)
+SENF_AUTO_TEST_CASE(MIHGenericTLVParser_parse_with_extended_length)
 {
     PacketInterpreterBase::byte data[] = {
         0x01, // type
@@ -102,7 +100,7 @@ SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_parse_with_extended_length)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_simple_length)
+SENF_AUTO_TEST_CASE(MIHGenericTLVParser_create_with_simple_length)
 {
     PacketInterpreterBase::byte value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
@@ -126,7 +124,7 @@ SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_simple_length)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
+SENF_AUTO_TEST_CASE(MIHGenericTLVParser_create_with_extended_length)
 {
     PacketInterpreterBase::byte value[255];
     for (unsigned i=0; i<sizeof(value); i++)
@@ -152,7 +150,7 @@ SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_with_extended_length)
 }
 
 
-SENF_AUTO_UNIT_TEST(MIHGenericTLVParser_create_invalid)
+SENF_AUTO_TEST_CASE(MIHGenericTLVParser_create_invalid)
 {
     PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(
             senf::PacketInterpreterBase::size_type(2u)));
@@ -200,7 +198,7 @@ namespace {
     typedef ConcretePacket<TestMacAddressTLVPacketType> TestMacAddressTLVPacket;
 }
 
-SENF_AUTO_UNIT_TEST(TestMacAddressTLVPacket_create)
+SENF_AUTO_TEST_CASE(TestMacAddressTLVPacket_create)
 {
     TestMacAddressTLVPacket tlvPacket (TestMacAddressTLVPacket::create());
     tlvPacket->type() = 42;

@@ -28,21 +28,19 @@
 /** \file
     \brief LLAddressing unit tests */
 
-//#include "LLAddressing.test.hh"
-//#include "LLAddressing.test.ih"
+#include "LLAddressing.hh"
 
 // Custom includes
-#include "LLAddressing.hh"
 #include <senf/Utils/String.hh>
 #include <senf/Socket/Protocols/AddressExceptions.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(llAddress)
+SENF_AUTO_TEST_CASE(llAddress)
 {
     using senf::LLSocketAddress;
 

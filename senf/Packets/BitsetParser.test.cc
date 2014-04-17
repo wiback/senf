@@ -28,11 +28,12 @@
 /** \file
     \brief BitseParser unit tests */
 
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +45,7 @@ namespace {
     {};
 }
 
-SENF_AUTO_UNIT_TEST(parse_bitset)
+SENF_AUTO_TEST_CASE(parse_bitset)
 {
     typedef BitsetParser<7,LSB0Endianness> LSB0BitsetParser7;
     typedef BitsetParser<8,LSB0Endianness> LSB0BitsetParser8;

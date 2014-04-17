@@ -28,15 +28,13 @@
 /** \file
     \brief ProtocolServerSocketHandle unit tests */
 
-//#include "ProtocolServerSocketHandle.test.hh"
-//#include "ProtocolServerSocketHandle.test.ih"
+#include "ProtocolServerSocketHandle.hh"
 
 // Custom includes
-#include "ProtocolServerSocketHandle.hh"
-#include "SocketProtocol.test.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+#include "SocketProtocol.test.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +48,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(protocolServerSocketHandle)
+SENF_AUTO_TEST_CASE(protocolServerSocketHandle)
 {
     typedef senf::ProtocolServerSocketHandle<MySocketProtocol> MySocketHandle;
 

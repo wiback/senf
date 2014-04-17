@@ -28,21 +28,19 @@
 /** \file
     \brief Exception unit tests */
 
-//#include "Exception.test.hh"
-//#include "Exception.test.ih"
+#include "Exception.hh"
 
 // Custom includes
-#include "Exception.hh"
 #include <boost/format.hpp>
 #include <errno.h>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(wrapException)
+SENF_AUTO_TEST_CASE(wrapException)
 {
     bool bad_cast (false);
 
@@ -76,7 +74,7 @@ SENF_AUTO_UNIT_TEST(wrapException)
     BOOST_CHECK( bad_cast );
 }
 
-SENF_AUTO_UNIT_TEST(errnoException)
+SENF_AUTO_TEST_CASE(errnoException)
 {
     try {
         try {

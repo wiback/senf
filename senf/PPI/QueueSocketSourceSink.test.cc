@@ -28,36 +28,27 @@
 /** \file
     \brief QueueSocketSourceSink.test unit tests */
 
-//#include "QueueSocketSourceSink.test.hh"
-//#include "QueueSocketSourceSink.test.ih"
+#include "QueueSocketSourceSink.hh"
 
 // Custom includes
 #include <deque>
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
-#include "QueueSocketSourceSink.hh"
-#include <senf/Socket/ClientSocketHandle.hh>
-#include <senf/Socket/SocketPolicy.hh>
-#include <senf/Socket/ReadWritePolicy.hh>
-#include <senf/Socket/FramingPolicy.hh>
-#include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Scheduler/ClockService.hh>
 #include <senf/Scheduler/Scheduler.hh>
-#include <senf/Scheduler/FdEvent.hh>
-#include <senf/Scheduler/TimerEvent.hh>
 #include <senf/Packets.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/IPv4Packet.hh>
 #include <senf/Packets/DefaultBundle/UDPPacket.hh>
 #include <senf/Socket/Protocols/Raw/TunTapSocketHandle.hh>
 #include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
-#include <senf/Socket/NetdeviceController.hh>
+#include <senf/Socket/Socket.hh>
 #include <senf/PPI/FastConnector.hh>
 #include <senf/PPI/Setup.hh>
 #include <senf/Utils/membind.hh>
-#include <senf/Scheduler/ClockService.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -149,7 +140,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(queueSocketSourceSink)
+SENF_AUTO_TEST_CASE(queueSocketSourceSink)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE( false,
@@ -255,7 +246,7 @@ SENF_AUTO_UNIT_TEST(queueSocketSourceSink)
 
 }
 
-SENF_AUTO_UNIT_TEST(queueSocketSourceSink_fast)
+SENF_AUTO_TEST_CASE(queueSocketSourceSink_fast)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE( false,

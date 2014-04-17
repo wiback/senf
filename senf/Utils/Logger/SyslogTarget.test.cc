@@ -28,19 +28,17 @@
 /** \file
     \brief SyslogTarget unit tests */
 
-//#include "SyslogTarget.test.hh"
-//#include "SyslogTarget.test.ih"
-
-// Custom includes
 #include "Logger.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(syslogTarget)
+SENF_AUTO_TEST_CASE(syslogTarget)
 {
     senf::log::SyslogTarget syslog;
 

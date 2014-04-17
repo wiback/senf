@@ -28,14 +28,11 @@
 /** \file
     \brief ProgramOptions unit tests */
 
-//#include "ProgramOptions.test.hh"
-//#include "ProgramOptions.test.ih"
-
 // Custom includes
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +48,7 @@ namespace {
     { val2 = true; }
 }
 
-SENF_AUTO_UNIT_TEST(programOptions)
+SENF_AUTO_TEST_CASE(programOptions)
 {
     namespace fty = senf::console::factory;
 

@@ -28,19 +28,17 @@
 /** \file
     \brief Setup unit tests */
 
-//#include "Setup.test.hh"
-//#include "Setup.test.ih"
-
-// Custom includes
 #include "Setup.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(setup)
+SENF_AUTO_TEST_CASE(setup)
 {
     // Tested in nearly all other modules ...
     BOOST_CHECK( true );

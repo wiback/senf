@@ -28,23 +28,21 @@
 /** \file
     \brief Format.test unit tests */
 
-//#include "Format.test.hh"
-//#include "Format.test.ih"
+#include "Format.hh"
 
 // Custom includes
 #include <sstream>
 #include <iomanip>
-#include "Format.hh"
 #include <boost/cstdint.hpp>
 #include "String.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(formatEng)
+SENF_AUTO_TEST_CASE(formatEng)
 {
     std::stringstream ss;
 
@@ -137,7 +135,7 @@ SENF_AUTO_UNIT_TEST(formatEng)
                        "  12.35+-067.00E+00" );
 }
 
-SENF_AUTO_UNIT_TEST(dumpint)
+SENF_AUTO_TEST_CASE(dumpint)
 {
     std::stringstream ss;
 
@@ -168,7 +166,7 @@ namespace {
         os << indent << "f2_3\n";
     }
 }
-SENF_AUTO_UNIT_TEST(indent)
+SENF_AUTO_TEST_CASE(indent)
 {
     std::stringstream ss;
     f2(ss);

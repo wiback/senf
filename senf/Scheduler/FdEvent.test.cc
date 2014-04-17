@@ -28,8 +28,7 @@
 /** \file
     \brief FdEvent unit tests */
 
-//#include "FdEvent.test.hh"
-//#include "FdEvent.test.ih"
+#include "FdEvent.hh"
 
 // Custom includes
 #include <sys/types.h>
@@ -42,13 +41,10 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
-
-#include "FdEvent.hh"
-
 #include <boost/bind.hpp>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,7 +165,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(fdDispatcher)
+SENF_AUTO_TEST_CASE(fdDispatcher)
 {
     senf::scheduler::detail::FdManager::instance().timeout(1000);
 
@@ -251,7 +247,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(fileDispatcher)
+SENF_AUTO_TEST_CASE(fileDispatcher)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");

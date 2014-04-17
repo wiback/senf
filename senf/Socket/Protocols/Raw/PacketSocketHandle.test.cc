@@ -28,25 +28,23 @@
 /** \file
     \brief PacketSocketHandle unit tests */
 
-//#include "PacketSocketHandle.test.hh"
-//#include "PacketSocketHandle.test.ih"
+#include "PacketSocketHandle.hh"
 
 // Custom includes
 #include <unistd.h>
-#include "PacketSocketHandle.hh"
-#include "TunTapSocketHandle.hh"
 #include <senf/Socket/NetdeviceController.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/UDPPacket.hh>
 #include <senf/Packets/DefaultBundle/IPv4Packet.hh>
+#include "TunTapSocketHandle.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(packetSocketHandle)
+SENF_AUTO_TEST_CASE(packetSocketHandle)
 {
     // We have a Problem here .. packet sockets are only allowed for root
     if (getuid() != 0) {

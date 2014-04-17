@@ -28,17 +28,15 @@
 /** \file
     \brief FileHandle unit tests */
 
-//#include "FileHandle.test.hh"
-//#include "FileHandle.test.ih"
+#include "FileHandle.hh"
 
 // Custom includes
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
-#include "FileHandle.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +61,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(fileHandle)
+SENF_AUTO_TEST_CASE(fileHandle)
 {
     try {
         {

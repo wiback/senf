@@ -28,20 +28,18 @@
 /** \file
     \brief Statistics unit tests */
 
-//#include "Statistics.test.hh"
-//#include "Statistics.test.ih"
+#include "Statistics.hh"
 
 // Custom includes
-#include "Statistics.hh"
-#include "StatisticsTargets.hh"
 #include <boost/tokenizer.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <senf/Utils/Logger.hh>
+#include "StatisticsTargets.hh"
 
-#include "auto_unit_test.hh"
-#include <boost/test/test_tools.hpp>
+// Unit test includes
 #include <boost/test/floating_point_comparison.hpp>
+#include "auto_unit_test.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +108,7 @@ namespace {
 #define CHECK_STATS(a, b) CHECK_CLOSE_RANGES(splitFloats(a),splitFloats(b),0.001f)
 #define CHECK_STATS_STR(a,b) BOOST_CHECK_EQUAL(a,b)
 
-SENF_AUTO_UNIT_TEST(statistics)
+SENF_AUTO_TEST_CASE(statistics)
 {
     senf::Statistics stats;
     senf::log::StringTarget statslog;

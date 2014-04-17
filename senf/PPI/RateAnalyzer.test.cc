@@ -28,18 +28,16 @@
 /** \file
     \brief RateAnalyzer unit tests */
 
-//#include "RateAnalyzer.test.hh"
-//#include "RateAnalyzer.test.ih"
+#include "RateAnalyzer.hh"
 
 // Custom includes
 #include <senf/Scheduler/Scheduler.hh>
-#include "RateAnalyzer.hh"
 #include "CloneSource.hh"
 #include "RateFilter.hh"
 #include "Setup.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
 #define prefix_
@@ -80,7 +78,7 @@ namespace {
     }
 }
 
-SENF_AUTO_UNIT_TEST(rateAnalyzer)
+SENF_AUTO_TEST_CASE(rateAnalyzer)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     if (! enabled) {

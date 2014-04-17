@@ -28,19 +28,17 @@
 /** \file
     \brief VariantParser unit tests */
 
-//#include "VariantParser.test.hh"
-//#include "VariantParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(VariantParser)
+SENF_AUTO_TEST_CASE(VariantParser)
 {
     typedef senf::ArrayParser<10, senf::UInt8Parser> Array10;
     typedef senf::VariantParser< senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1>,
@@ -122,7 +120,7 @@ namespace VariantParser_test_cc_anon_namespace {
 }
 using namespace VariantParser_test_cc_anon_namespace;
 
-SENF_AUTO_UNIT_TEST(VariantParserMacro)
+SENF_AUTO_TEST_CASE(VariantParserMacro)
 {
     senf::DataPacket p (senf::DataPacket::create(senf::init_bytes<TestParser>::value));
 

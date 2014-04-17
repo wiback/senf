@@ -28,8 +28,7 @@
 /** \file
     \brief Module unit tests */
 
-//#include "Module.test.hh"
-//#include "Module.test.ih"
+#include "Module.hh"
 
 // Custom includes
 #include <boost/scoped_ptr.hpp>
@@ -38,11 +37,9 @@
 #include "DebugEvent.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
-#include "Module.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
-#include <boost/type_traits.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +71,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(module)
+SENF_AUTO_TEST_CASE(module)
 {
     // route and registerEvent are tested in Route.test.cc
 
@@ -117,7 +114,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(delayedInit)
+SENF_AUTO_TEST_CASE(delayedInit)
 {
     MakeInit maker;
     senf::scheduler::TimerEvent timer (

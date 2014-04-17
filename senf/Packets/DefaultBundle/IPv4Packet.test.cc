@@ -28,22 +28,20 @@
 /** \file
     \brief IPv4Packet unit tests */
 
-//#include "IPv4Packet.test.hh"
-//#include "IPv4Packet.test.ih"
+#include "IPv4Packet.hh"
 
 // Custom includes
-#include "IPv4Packet.hh"
 #include "UDPPacket.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 using namespace senf;
 
-SENF_AUTO_UNIT_TEST(ipV4Packet_parse)
+SENF_AUTO_TEST_CASE(ipV4Packet_parse)
 {
     unsigned char data[] = {
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
@@ -72,7 +70,7 @@ SENF_AUTO_UNIT_TEST(ipV4Packet_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(ipV4Packet_create)
+SENF_AUTO_TEST_CASE(ipV4Packet_create)
 {
     senf::IPv4Packet ip (senf::IPv4Packet::create());
 

@@ -28,18 +28,16 @@
 /** \file
     \brief SocketPolicy unit tests */
 
-#include "SocketPolicy.test.hh"
-//#include "SocketPolicy.test.ih"
+#include "SocketPolicy.hh"
 
 // Custom includes
 #include <boost/mpl/assert.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/utility.hpp> // enable_if
 
-#include "SocketPolicy.hh"
-
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+#include "SocketPolicy.test.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +83,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(socketPolicy)
+SENF_AUTO_TEST_CASE(socketPolicy)
 {
     // Most of these checks are really compile-time checks ...
 

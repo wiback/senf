@@ -28,17 +28,15 @@
 /** \file
     \brief Duplicators unit tests */
 
-//#include "Duplicators.test.hh"
-//#include "Duplicators.test.ih"
+#include "Duplicators.hh"
 
 // Custom includes
-#include "Duplicators.hh"
+#include <senf/Packets/Packets.hh>
 #include "DebugModules.hh"
 #include "Setup.hh"
-#include <senf/Packets/Packets.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +46,7 @@ namespace connector = ppi::connector;
 namespace module = ppi::module;
 namespace debug = module::debug;
 
-SENF_AUTO_UNIT_TEST(activeDuplicator)
+SENF_AUTO_TEST_CASE(activeDuplicator)
 {
     debug::ActiveSource source;
     module::ActiveDuplicator duplicator;

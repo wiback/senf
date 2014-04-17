@@ -28,15 +28,12 @@
 /** \file
     \brief OverloadedCommand unit tests */
 
-//#include "OverloadedCommand.test.hh"
-//#include "OverloadedCommand.test.ih"
-
 // Custom includes
 #include <sstream>
 #include "Console.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +57,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(overladedCommand)
+SENF_AUTO_TEST_CASE(overladedCommand)
 {
     senf::console::OverloadedCommandNode & cmd (
         senf::console::root()

@@ -28,25 +28,21 @@
 /** \file
     \brief CpuStat unit tests */
 
-//#include "CpuStat.test.hh"
-//#include "CpuStat.test.ih"
-
-// Custom includes
 #include "CpuStat.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(CpuStat)
+SENF_AUTO_TEST_CASE(CpuStat)
 {
-
     senf::CpuStatProb csp;
 
     std::cerr << csp.cpuStat() << std::endl;
-
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

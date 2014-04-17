@@ -32,13 +32,13 @@
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(packetLink)
+SENF_AUTO_TEST_CASE(packetLink)
 {
     // This test shall test, if there is now duplicated packet registration in AllBundles.
     // The test will fail at the start with an assertion error in this case.

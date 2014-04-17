@@ -28,8 +28,7 @@
 /** \file
     \brief Scheduler unit tests */
 
-//#include "Scheduler.test.hh"
-//#include "Scheduler.test.ih"
+#include "Scheduler.hh"
 
 // Custom includes
 #include <sys/types.h>
@@ -43,10 +42,8 @@
 #include <iostream>
 #include <boost/bind.hpp>
 
-#include "Scheduler.hh"
-
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -339,13 +336,13 @@ void schedulerTest()
     BOOST_CHECK (stop_server(pid));
 }
 
-SENF_AUTO_UNIT_TEST(testSchedulerPollTimers)
+SENF_AUTO_TEST_CASE(testSchedulerPollTimers)
 {
     BOOST_CHECK( ! senf::scheduler::usingHiresTimers() );
     schedulerTest();
 }
 
-SENF_AUTO_UNIT_TEST(testSchedulerHiresTimers)
+SENF_AUTO_TEST_CASE(testSchedulerHiresTimers)
 {
     if (senf::scheduler::haveScalableHiresTimers())
         BOOST_MESSAGE( "Using timerfd() hires timers" );
@@ -358,7 +355,7 @@ SENF_AUTO_UNIT_TEST(testSchedulerHiresTimers)
     BOOST_CHECK( ! senf::scheduler::usingHiresTimers() );
 }
 
-SENF_AUTO_UNIT_TEST(testSchedulerPOSIXTimers)
+SENF_AUTO_TEST_CASE(testSchedulerPOSIXTimers)
 {
     if (senf::scheduler::haveScalableHiresTimers()) {
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().timerSource(
@@ -386,7 +383,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(blockSignals)
+SENF_AUTO_TEST_CASE(blockSignals)
 {
     char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
     BOOST_WARN_MESSAGE(enabled, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");

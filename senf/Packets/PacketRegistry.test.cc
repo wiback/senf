@@ -28,16 +28,14 @@
 /** \file
     \brief PacketRegistry unit tests */
 
-//#include "PacketRegistry.test.hh"
-//#include "PacketRegistry.test.ih"
+#include "Packets.hh"
 
 // Custom includes
 #include <string>
 #include <sstream>
-#include "Packets.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +70,7 @@ namespace {
 SENF_PACKET_REGISTRY_REGISTER(StringTag, "foo", OtherPacket);
 SENF_PACKET_REGISTRY_REGISTER_PRIORITY(StringTag, "foo", 1, FooPacket);
 
-SENF_AUTO_UNIT_TEST(packetRegistry_test)
+SENF_AUTO_TEST_CASE(packetRegistry_test)
 {
     {
         PacketRegistry<StringTag>::registerPacket<BarPacket>("bar");

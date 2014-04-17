@@ -28,21 +28,19 @@
 /** \file
     \brief IPv6Packet unit tests */
 
-//#include "IPv6Packet.test.hh"
-//#include "IPv6Packet.test.ih"
+#include "IPv6Packet.hh"
 
 // Custom includes
-#include "IPv6Packet.hh"
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
 #include <senf/Packets/DataPacket.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(ipV6Packet_parse)
+SENF_AUTO_TEST_CASE(ipV6Packet_parse)
 {
     unsigned char data[] = {
             0x60, 0x12, 0x20, 0x30,
@@ -75,7 +73,7 @@ SENF_AUTO_UNIT_TEST(ipV6Packet_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(ipV6Packet_create)
+SENF_AUTO_TEST_CASE(ipV6Packet_create)
 {
     senf::IPv6Packet ip (senf::IPv6Packet::create());
 

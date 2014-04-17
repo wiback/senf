@@ -27,16 +27,17 @@
 /** \file
     \brief RawINetSocketHandle unit tests */
 
+#include "RawINetSocketHandle.hh"
+
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "RawINetSocketHandle.hh"
-#include "net.test.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+#include "net.test.hh"
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -98,7 +99,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(RawV4ClientSocketHandle)
+SENF_AUTO_TEST_CASE(RawV4ClientSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::RawV4SocketHandle as non-root user");
@@ -128,7 +129,7 @@ SENF_AUTO_UNIT_TEST(RawV4ClientSocketHandle)
     }
 }
 
-SENF_AUTO_UNIT_TEST(RawV6ClientSocketHandle)
+SENF_AUTO_TEST_CASE(RawV6ClientSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::RawV6SocketHandle as non-root user");

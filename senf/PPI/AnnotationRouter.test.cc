@@ -28,15 +28,13 @@
 /** \file
     \brief AnnotationRouter unit tests */
 
-//#include "AnnotationRouter.test.hh"
-//#include "AnnotationRouter.test.ih"
+#include "AnnotationRouter.hh"
 
 // Custom includes
-#include "AnnotationRouter.hh"
 #include "DebugModules.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +65,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(annotationRouter)
+SENF_AUTO_TEST_CASE(annotationRouter)
 {
     debug::ActiveSource source;
     debug::PassiveSink sink1;

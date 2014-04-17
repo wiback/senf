@@ -28,8 +28,7 @@
 /** \file
     \brief UDPSocketHandle unit tests */
 
-//#include "UDPSocketHandle.test.hh"
-//#include "UDPSocketHandle.test.ih"
+#include "UDPSocketHandle.hh"
 
 // Custom includes
 #include <sys/types.h>
@@ -38,11 +37,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "UDPSocketHandle.hh"
-#include "net.test.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+#include "net.test.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +97,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
+SENF_AUTO_TEST_CASE(udpv4ClientSocketHandle)
 {
     try {
         alarm(10);

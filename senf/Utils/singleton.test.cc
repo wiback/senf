@@ -28,16 +28,14 @@
 /** \file
     \brief singleton unit tests */
 
-//#include "singleton.test.hh"
-//#include "singleton.test.ih"
+#include "singleton.hh"
 
 // Custom includes
 #include <iostream>
-#include "singleton.hh"
 #include "IgnoreValue.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +58,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(sInGlEtOn)
+SENF_AUTO_TEST_CASE(sInGlEtOn)
 {
     BOOST_CHECK_EQUAL( Test::instance().foo(), 1234 );
     BOOST_CHECK( Test::alive() );
@@ -130,7 +128,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(singletonAlive)
+SENF_AUTO_TEST_CASE(singletonAlive)
 {
     senf::IGNORE( AliveTest1::instance() );
     senf::IGNORE( AliveTest2::instance() );

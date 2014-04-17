@@ -28,17 +28,15 @@
 /** \file
     \brief ServerSocketHandle unit tests */
 
-//#include "ServerSocketHandle.test.hh"
-//#include "ServerSocketHandle.test.ih"
+#include "ServerSocketHandle.hh"
 
 // Custom includes
-#include "ServerSocketHandle.hh"
 #include "ClientSocketHandle.hh"
-#include "SocketProtocol.test.hh"
 #include "AddressingPolicy.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
+#include "SocketProtocol.test.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +56,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(serverSocketHandle)
+SENF_AUTO_TEST_CASE(serverSocketHandle)
 {
     typedef senf::MakeSocketPolicy<
         senf::test::SomeFramingPolicy,

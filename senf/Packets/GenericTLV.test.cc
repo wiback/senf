@@ -34,8 +34,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <senf/Packets/DefaultBundle/IPv6Extensions.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ namespace {
 }
 
 
-SENF_AUTO_UNIT_TEST(GenericTLV_parser)
+SENF_AUTO_TEST_CASE(GenericTLV_parser)
 {
     BOOST_CHECK_EQUAL( senf::init_bytes<MyGenericTLVParser>::value,
             senf::init_bytes<MyTLVParserBase>::value) ;
@@ -163,7 +163,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_parser)
     BOOST_CHECK_EQUAL( concreteTLVParser.myValue(), 0xabababab );
 }
 
-SENF_AUTO_UNIT_TEST(GenericTLV_packet)
+SENF_AUTO_TEST_CASE(GenericTLV_packet)
 {
     MyTestPacket p (MyTestPacket::create());
     MyTestPacket::Parser::tlv_list_t::container_type tlvContainer (p->tlv_list());
@@ -186,7 +186,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_packet)
 }
 
 
-SENF_AUTO_UNIT_TEST(GenericTLV_registry)
+SENF_AUTO_TEST_CASE(GenericTLV_registry)
 {
     typedef senf::GenericTLVParserRegistry<MyTLVParserBase> MyTLVParserRegistry;
     MyTestPacket p (MyTestPacket::create());
@@ -214,7 +214,7 @@ SENF_AUTO_UNIT_TEST(GenericTLV_registry)
     BOOST_CHECK_EQUAL( ss.str().substr(0,21), "  MyConcreteTLVParser" );
 }
 
-SENF_AUTO_UNIT_TEST(GenericTLV_predicate)
+SENF_AUTO_TEST_CASE(GenericTLV_predicate)
 {
     MyTestPacket p (MyTestPacket::create() );
     MyTestPacket::Parser::tlv_list_t::container_type tlvContainer (p->tlv_list() );

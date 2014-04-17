@@ -28,15 +28,13 @@
 /** \file
     \brief pool_alloc_mixin unit tests */
 
-//#include "pool_alloc_mixin.test.hh"
-//#include "pool_alloc_mixin.test.ih"
+#include "pool_alloc_mixin.hh"
 
 // Custom includes
-#include "pool_alloc_mixin.hh"
 #include <boost/scoped_ptr.hpp>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +44,7 @@ namespace {
     {};
 }
 
-SENF_AUTO_UNIT_TEST(poolAllocMixin)
+SENF_AUTO_TEST_CASE(poolAllocMixin)
 {
 #ifdef SENF_DEBUG
     BOOST_CHECK_EQUAL( Test::allocCounter(), 0u );

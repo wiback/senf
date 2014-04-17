@@ -37,8 +37,8 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <boost/format.hpp>
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace {

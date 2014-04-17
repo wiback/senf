@@ -28,16 +28,14 @@
 /** \file
     \brief TimerEventProxy.test non-inline non-template implementation */
 
-//#include "TimerEventProxy.test.hh"
-//#include "TimerEventProxy.test.ih"
+#include "TimerEventProxy.hh"
 
 // Custom includes
-#include "TimerEventProxy.hh"
+#include <boost/random.hpp>
 #include "Scheduler.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
-#include <boost/random.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +58,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(timerEventProxy)
+SENF_AUTO_TEST_CASE(timerEventProxy)
 {
 //    // abort on watchdog timeout
 //    scheduler::watchdogAbort( true);

@@ -28,23 +28,20 @@
 /** \file
     \brief TunTapSocketHandle unit tests */
 
-//#include "TunTapSocketHandle.test.hh"
-//#include "TunTapSocketHandle.test.ih"
+#include "TunTapSocketHandle.hh"
 
 // Custom includes
 #include <unistd.h>
 #include <stdlib.h>
-
-#include "TunTapSocketHandle.hh"
 #include "PacketSocketHandle.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(tapSocketHandle)
+SENF_AUTO_TEST_CASE(tapSocketHandle)
 {
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot test senf::TunTapSocketHandle as non-root user");

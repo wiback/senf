@@ -28,19 +28,17 @@
 /** \file
     \brief IpChecksum unit tests */
 
-//#include "IpChecksum.test.hh"
-//#include "IpChecksum.test.ih"
-
-// Custom includes
 #include "IpChecksum.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(ipChecksum)
+SENF_AUTO_TEST_CASE(ipChecksum)
 {
     unsigned char data[] = { 0x45, 0x00, 0x00, 0x28, 0x49, 0x44, 0x40, 0x00,
                     0x40, 0x06, 0x00, 0x00, 0x0a, 0xc1, 0x01, 0x06,

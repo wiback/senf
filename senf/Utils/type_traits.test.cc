@@ -28,16 +28,14 @@
 /** \file
     \brief type_traits unit tests */
 
-//#include "type_traits.test.hh"
-//#include "type_traits.test.ih"
+#include "type_traits.hh"
 
 // Custom includes
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include "type_traits.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +44,7 @@ namespace {
     struct Class;
 }
 
-SENF_AUTO_UNIT_TEST(typeTraits)
+SENF_AUTO_TEST_CASE(typeTraits)
 {
     typedef boost::function_traits<void (int, double)> traits;
 

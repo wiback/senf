@@ -28,14 +28,12 @@
 /** \file
     \brief ArrayParser unit tests */
 
-//#include "ArrayParser.test.hh"
-//#include "ArrayParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +66,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(ArrayParser_test)
+SENF_AUTO_TEST_CASE(ArrayParser_test)
 {
     senf::PacketParserBase::byte data[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));

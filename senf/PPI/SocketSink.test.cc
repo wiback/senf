@@ -28,8 +28,7 @@
 /** \file
     \brief SocketSink unit tests */
 
-//#include "SocketSink.test.hh"
-//#include "SocketSink.test.ih"
+#include "SocketSink.hh"
 
 // Custom includes
 #include <senf/Scheduler/Scheduler.hh>
@@ -37,11 +36,10 @@
 #include <senf/Socket/Protocols/INet/ConnectedUDPSocketHandle.hh>
 #include "SocketSource.hh"
 #include "DebugModules.hh"
-#include "SocketSink.hh"
 #include "Setup.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +68,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(passiveSocketSink)
+SENF_AUTO_TEST_CASE(passiveSocketSink)
 {
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
         senf::INet4SocketAddress(localhost4str(0)));
@@ -90,7 +88,7 @@ SENF_AUTO_UNIT_TEST(passiveSocketSink)
     BOOST_CHECK_EQUAL( data, input );
 }
 
-SENF_AUTO_UNIT_TEST(activeSocketSink)
+SENF_AUTO_TEST_CASE(activeSocketSink)
 {
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
         senf::INet4SocketAddress(localhost4str(0)));

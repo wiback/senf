@@ -28,21 +28,19 @@
 /** \file
     \brief AuxParser unit tests */
 
-//#include "AuxParser.test.hh"
-//#include "AuxParser.test.ih"
-
-// Custom includes
 #include "Packets.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 // The other aux policies are tested with the corresponding container classes
 
-SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy)
+SENF_AUTO_TEST_CASE(vectorPacketSizeAuxPolicy)
 {
     unsigned char data[] = { 0x10, 0x11,  0x12, 0x13,  0x14, 0x15,
                              0x20, 0x21,  0x22, 0x23,  0x24, 0x25 };
@@ -79,7 +77,7 @@ SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy)
     }
 }
 
-SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
+SENF_AUTO_TEST_CASE(vectorPacketSizeAuxPolicy_transformed)
 {
     unsigned char data[] = { 0x10, 0x11,  0x12, 0x13,  0x14, 0x15,
                              0x20, 0x21,  0x22, 0x23,  0x24, 0x25 };
@@ -124,7 +122,7 @@ SENF_AUTO_UNIT_TEST(vectorPacketSizeAuxPolicy_transformed)
     }
 }
 
-SENF_AUTO_UNIT_TEST(listPacketSizeAuxPolicy)
+SENF_AUTO_TEST_CASE(listPacketSizeAuxPolicy)
 {
     unsigned char data[] = { 0x10, 0x11,  0x12, 0x13,  0x14, 0x15,
                              0x20, 0x21,  0x22, 0x23,  0x24, 0x25 };

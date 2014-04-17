@@ -28,19 +28,17 @@
 /** \file
     \brief EventManager unit tests */
 
-//#include "EventManager.test.hh"
-//#include "EventManager.test.ih"
-
-// Custom includes
 #include "EventManager.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(eventManager)
+SENF_AUTO_TEST_CASE(eventManager)
 {
     // Tested indirectly by Route.test.cc and Module.test.cc
     BOOST_CHECK( true );

@@ -28,24 +28,22 @@
 /** \file
     \brief IPv6Extensions unit tests */
 
-//#include "IPv6Extensions.test.hh"
-//#include "IPv6Extensions.test.ih"
+#include "IPv6Extensions.hh"
 
 // Custom includes
-#include "IPv6Extensions.hh"
 #include "IPv6Packet.hh"
 #include "UDPPacket.hh"
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
 #include "EthernetPacket.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(ipv6Extensions_fragment)
+SENF_AUTO_TEST_CASE(ipv6Extensions_fragment)
 {
     // Just for the fun of it, we test a nice chain: A fragment of a fragmented UDP packet
     unsigned char Fragment_packetData[] = {
@@ -107,7 +105,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_fragment)
 }
 
 
-SENF_AUTO_UNIT_TEST(ipv6Extensions_routing)
+SENF_AUTO_TEST_CASE(ipv6Extensions_routing)
 {
     unsigned char Routing_packetData[] = {
         // IP header
@@ -164,7 +162,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_routing)
 }
 
 
-SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
+SENF_AUTO_TEST_CASE(ipv6Extensions_hopByHop_parse)
 {
     unsigned char HopByHop_packetData[] = {
         0x60, 0x00, 0x00, 0x00, // IP version, class, flow label
@@ -227,7 +225,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
 }
 
 
-SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
+SENF_AUTO_TEST_CASE(ipv6Extensions_hopByHop_create)
 {
     std::ostringstream oss (std::ostringstream::out);
     unsigned char HopByHop_packetData[] = {
@@ -331,7 +329,7 @@ namespace {
     };
 }
 
-SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
+SENF_AUTO_TEST_CASE(ipv6Extensions_hopByHop_create_SN)
 {
     senf::IPv6HopByHopOptionsPacket p ( senf::IPv6HopByHopOptionsPacket::create() );
     p->nextHeader() = 0x3a;
@@ -357,7 +355,7 @@ SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create_SN)
 }
 
 
-SENF_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse_SN)
+SENF_AUTO_TEST_CASE(ipv6Extensions_hopByHop_parse_SN)
 {
     unsigned char data[] = {
             0x3a, 0x01,  // Hop-By-Hop Header (nextHeader, length)

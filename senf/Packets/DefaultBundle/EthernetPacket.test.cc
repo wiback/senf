@@ -28,22 +28,20 @@
 /** \file
     \brief EthernetPacket unit tests */
 
-//#include "EthernetPacket.test.hh"
-//#include "EthernetPacket.test.ih"
+#include "EthernetPacket.hh"
 
 // Custom includes
-#include "EthernetPacket.hh"
 #include "LlcSnapPacket.hh"
 #include "IPv4Packet.hh"
 #include "UDPPacket.hh"
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(ethernetPacket_parse)
+SENF_AUTO_TEST_CASE(ethernetPacket_parse)
 {
     senf::PacketData::byte data[] = {
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
@@ -68,7 +66,7 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_parse)
     BOOST_CHECK( p->source().null() );
 }
 
-SENF_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
+SENF_AUTO_TEST_CASE(ethernetPacket_parse_chain)
 {
     unsigned char data[] = {
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
@@ -93,7 +91,7 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-SENF_AUTO_UNIT_TEST(ethernetPacket_create)
+SENF_AUTO_TEST_CASE(ethernetPacket_create)
 {
     senf::EthernetPacket eth (senf::EthernetPacket::create());
     BOOST_CHECK( eth->source().null() );
@@ -126,7 +124,7 @@ SENF_AUTO_UNIT_TEST(ethernetPacket_create)
     eth.dump(std::cout);
 }
 
-SENF_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
+SENF_AUTO_TEST_CASE(ethernetPacket_llcsnap)
 {
     senf::EthernetPacket eth (senf::EthernetPacket::create());
     eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");

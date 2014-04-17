@@ -28,14 +28,12 @@
 /** \file
     \brief Parameters unit tests */
 
-//#include "Parameters.test.hh"
-//#include "Parameters.test.ih"
-
-// Custom includes
 #include "main.test.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -28,24 +28,22 @@
 /** \file
     \brief MPESection unit tests */
 
-//#include "MPESection.test.hh"
-//#include "MPESection.test.ih"
+#include "MPESection.hh"
 
 // Custom includes
-#include "MPESection.hh"
 #include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DefaultBundle/IPv4Packet.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 using namespace senf;
 
-SENF_AUTO_UNIT_TEST(MPESection_parse_chain)
+SENF_AUTO_TEST_CASE(MPESection_parse_chain)
 {
     // MPE section captured with dvbsnoop
     unsigned char data[] = {
@@ -136,7 +134,7 @@ SENF_AUTO_UNIT_TEST(MPESection_parse_chain)
 }
 
 
-SENF_AUTO_UNIT_TEST(MPESection_create)
+SENF_AUTO_TEST_CASE(MPESection_create)
 {
     MPESection sec (MPESection::create());
     sec->real_time_parameters().delta_t()        = 0x027u;

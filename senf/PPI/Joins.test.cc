@@ -28,17 +28,15 @@
 /** \file
     \brief Joins unit tests */
 
-//#include "Joins.test.hh"
-//#include "Joins.test.ih"
+#include "Joins.hh"
 
 // Custom includes
-#include "Joins.hh"
+#include <senf/Packets/Packets.hh>
 #include "DebugModules.hh"
 #include "Setup.hh"
-#include <senf/Packets/Packets.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +55,7 @@ namespace {
 
 }
 
-SENF_AUTO_UNIT_TEST(passiveJoin)
+SENF_AUTO_TEST_CASE(passiveJoin)
 {
     debug::ActiveSource source1;
     debug::ActiveSource source2;
@@ -94,7 +92,7 @@ SENF_AUTO_UNIT_TEST(passiveJoin)
     BOOST_CHECK_EQUAL( join.connectors().size(), 2u);
 }
 
-SENF_AUTO_UNIT_TEST(priorityJoin)
+SENF_AUTO_TEST_CASE(priorityJoin)
 {
     debug::PassiveSource source1;
     debug::PassiveSource source2;
@@ -165,7 +163,7 @@ namespace {
     };
 }
 
-//SENF_AUTO_UNIT_TEST(jack_passiveJoin)
+//SENF_AUTO_TEST_CASE(jack_passiveJoin)
 //{
 //    ActiveJackSource jackSource;
 //    PassiveJoin join;

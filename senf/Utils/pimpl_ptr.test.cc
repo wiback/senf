@@ -28,14 +28,12 @@
 /** \file
     \brief pimpl_ptr.test unit tests */
 
-//#include "pimpl_ptr.test.hh"
-//#include "pimpl_ptr.test.ih"
-
-// Custom includes
 #include "pimpl_ptr.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +67,7 @@ namespace {
 
 }
 
-BOOST_AUTO_UNIT_TEST(pimpl_ptr)
+SENF_AUTO_TEST_CASE(pimpl_ptr)
 {
     {
         PimplTest ob1 (1);

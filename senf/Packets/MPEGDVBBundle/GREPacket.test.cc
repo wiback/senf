@@ -27,21 +27,19 @@
 /** \file
     \brief GREPacket unit tests */
 
-//#include "GREPacket.test.hh"
-//#include "GREPacket.test.ih"
-
-// Custom includes
 #include "GREPacket.hh"
 
+// Custom includes
+
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 using namespace senf;
 
-SENF_AUTO_UNIT_TEST(GREPacket_packet)
+SENF_AUTO_TEST_CASE(GREPacket_packet)
 {
     senf::GREPacket p (senf::GREPacket::create());
 

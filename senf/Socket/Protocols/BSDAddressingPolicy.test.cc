@@ -28,20 +28,18 @@
 /** \file
     \brief BSDAddressingPolicy unit tests */
 
-//#include "BSDAddressingPolicy.test.hh"
-//#include "BSDAddressingPolicy.test.ih"
+#include "BSDAddressingPolicy.hh"
 
 // Custom includes
-#include "BSDAddressingPolicy.hh"
 #include <senf/Socket/Protocols/INet/TCPSocketHandle.hh>
 
+// Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
-#include <boost/test/test_tools.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_AUTO_UNIT_TEST(bsdAddressingPolicy)
+SENF_AUTO_TEST_CASE(bsdAddressingPolicy)
 {
     typedef senf::ClientSocketHandle<senf::MakeSocketPolicy<
         senf::BSDAddressingPolicy>::policy> BSDHandle;
