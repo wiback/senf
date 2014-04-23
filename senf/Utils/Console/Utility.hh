@@ -100,15 +100,15 @@ namespace console {
     /** \brief Value range
 
         A value range may be represented in the console either by a single value (setting both \a
-        low and \a high to the same value) or as a lower and upper bound separated by a colon.
+        lower and \a upper to the same value) or as a lower and upper bound separated by a colon.
 
         \ingroup senf_console_utilities
      */
     template <class T>
     struct ValueRange
     {
-        T low;
-        T high;
+        T lower;
+        T upper;
     };
 
 #ifndef DOXYGEN

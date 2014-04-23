@@ -87,10 +87,10 @@ parse(ParseCommandInfo::TokensRange const & tokens, type & out)
     std::string::size_type i (v.find(':'));
     try {
         if (i == std::string::npos)
-            out.low = out.high = boost::lexical_cast<T>(v);
+            out.lower = out.upper = boost::lexical_cast<T>(v);
         else {
-            out.low = boost::lexical_cast<T>(v.substr(0,i));
-            out.high = boost::lexical_cast<T>(v.substr(i+1));
+            out.lower = boost::lexical_cast<T>(v.substr(0,i));
+            out.upper = boost::lexical_cast<T>(v.substr(i+1));
         }
     }
     catch (std::bad_cast & ex) {
@@ -121,9 +121,9 @@ template <class T>
 prefix_ void senf::console::ReturnValueTraits< senf::console::ValueRange<T> >::
 format(type const & value, std::ostream & os)
 {
-    os << senf::console::str(value.low);
-    if (value.low != value.high)
-        os << ':' << senf::console::str(value.high);
+    os << senf::console::str(value.lower);
+    if (value.lower != value.upper)
+        os << ':' << senf::console::str(value.upper);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
