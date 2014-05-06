@@ -551,9 +551,20 @@ namespace senf {
         byte const & operator[](size_type index) const;
         Parser const & operator= (value_type const & other);
 
-        bool operator==(ValueType const & other) const;
         bool operator==(Parser const & other) const;
     };
+
+    template <class Parser, typename ValueType>
+    bool operator==(ArrayValueParserBase<Parser, ValueType> const & parser, ValueType const & value);
+
+    template <class Parser, typename ValueType>
+    bool operator!=(ArrayValueParserBase<Parser, ValueType> const & parser, ValueType const & value);
+
+    template <class Parser, typename ValueType>
+    bool operator==(ValueType const & value, ArrayValueParserBase<Parser, ValueType> const & parser);
+
+    template <class Parser, typename ValueType>
+    bool operator!=(ValueType const & value, ArrayValueParserBase<Parser, ValueType> const & parser);
 
 }
 

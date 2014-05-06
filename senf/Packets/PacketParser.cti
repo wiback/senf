@@ -119,14 +119,12 @@ prefix_ Parser senf::operator<<(Parser target, Value const & value)
 {}
 #endif
 
-
 template <class Parser>
 prefix_ senf::PacketParserBase::size_type
 senf::detail::packetParserSize(Parser const & p, int, senf::mpl::take_uint<Parser::init_bytes> *)
 {
     return p.bytes();
 }
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ArrayValueParserBase<Parser, ValueType, FixedBytes>
@@ -166,10 +164,27 @@ prefix_ Parser const & senf::ArrayValueParserBase<Parser, ValueType>::operator= 
 }
 
 template <class Parser, typename ValueType>
-prefix_ bool senf::ArrayValueParserBase<Parser, ValueType>::operator==(ValueType const & other)
-    const
+prefix_ bool senf::operator==(ArrayValueParserBase<Parser, ValueType> const & parser, ValueType const & value)
 {
-    return std::equal(other.begin(), other.end(), i());
+    return std::equal(value.begin(), value.end(), parser.i());
+}
+
+template <class Parser, typename ValueType>
+prefix_ bool senf::operator!=(ArrayValueParserBase<Parser, ValueType> const & parser, ValueType const & value)
+{
+    return not std::equal(value.begin(), value.end(), parser.i());
+}
+
+template <class Parser, typename ValueType>
+prefix_ bool senf::operator==(ValueType const & value, ArrayValueParserBase<Parser, ValueType> const & parser)
+{
+    return std::equal(value.begin(), value.end(), parser.i());
+}
+
+template <class Parser, typename ValueType>
+prefix_ bool senf::operator!=(ValueType const & value, ArrayValueParserBase<Parser, ValueType> const & parser)
+{
+    return not std::equal(value.begin(), value.end(), parser.i());
 }
 
 template <class Parser, typename ValueType>

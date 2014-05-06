@@ -54,8 +54,10 @@ SENF_AUTO_TEST_CASE(ethernetPacket_parse)
     BOOST_CHECK( ! p->source().broadcast() );
     BOOST_CHECK_EQUAL( p->destination()[3], 0x04 );
     BOOST_CHECK_EQUAL( p->source()[0], 0x07 );
+    BOOST_CHECK_EQUAL( p->source(), senf::MACAddress(0x0708090a0b0c) );
     BOOST_CHECK_EQUAL( p->type_length(), 0x1011 );
     SENF_CHECK_NOT_EQUAL( p->source(), p->destination() );
+    BOOST_CHECK( p->source() != senf::MACAddress::None );
 
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( p.dump( oss));
