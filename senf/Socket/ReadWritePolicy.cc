@@ -128,6 +128,7 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle & handle,
                 break;
             case ENOTCONN:
             case ENETDOWN:
+            case ENXIO:
                 // TODO: The below might not be the best solution for all use cases, but it's ok for WiBACK 
                 // Pretend that we have written out such frames
                 rv = size;
