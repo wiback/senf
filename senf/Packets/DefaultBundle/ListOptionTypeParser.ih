@@ -54,8 +54,8 @@ namespace senf {
             typedef PacketParserBase::size_type size_type;
 
             typedef ElementParser element_type;
-            typedef ListParser< ListOptionTypeParser_Policy > parser_type;
-            typedef ListParser_Container< container_policy > container_type;
+            typedef ListParser<ListOptionTypeParser_Policy> parser_type;
+            typedef ListParser_Container<container_policy> container_type;
 
             static const size_type init_bytes = 6u + AuxPolicy::aux_bytes;
 

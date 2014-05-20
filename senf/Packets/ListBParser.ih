@@ -79,8 +79,8 @@ namespace detail {
         typedef PacketParserBase::size_type size_type;
 
         typedef ElementParser element_type;
-        typedef ListParser< ListBParser_Policy > parser_type;
-        typedef ListParser_Container< container_policy > container_type;
+        typedef ListParser<ListBParser_Policy> parser_type;
+        typedef ListParser_Container<container_policy> container_type;
 
         static const size_type init_bytes = AuxPolicy::aux_bytes;
 

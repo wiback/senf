@@ -28,7 +28,6 @@
 /** \file
     \brief Algorithm inline non-template implementation */
 
-
 // Custom includes
 
 #define prefix_ inline

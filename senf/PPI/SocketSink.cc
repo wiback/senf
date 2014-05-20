@@ -193,15 +193,19 @@ prefix_ int senf::ppi::IPv6SourceForcingDgramWriter::sendtoandfrom(
 }
 
 
-prefix_ senf::ppi::LLSocketWriter::LLSocketWriter()
-{
-}
-
-prefix_ void senf::ppi::LLSocketWriter::source(Handle & handle, senf::LLSocketAddress source)
+prefix_ void senf::ppi::LLSocketWriter::source(Handle & handle, LLSocketAddress source)
 {
     ::bind(handle.fd(),
            const_cast<sockaddr *>(source.sockaddr_p()),
            source.socklen());
 }
+
+prefix_ void senf::ppi::TargetLLSocketWriter::target(LLSocketAddress const & target)
+{
+    target_ = target;
+}
+
+prefix_ senf::ppi::TargetLLSocketWriter::TargetLLSocketWriter()
+{}
 
 #undef prefix_

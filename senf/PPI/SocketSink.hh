@@ -39,10 +39,11 @@
 #include <senf/Socket/ReadWritePolicy.hh>
 #include <senf/Socket/FramingPolicy.hh>
 #include <senf/Socket/CommunicationPolicy.hh>
-#include "Module.hh"
-#include "Connectors.hh"
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
 #include <senf/Socket/Protocols/Raw/LLAddressing.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include "Module.hh"
+#include "Connectors.hh"
 #include "IOEvent.hh"
 
 //#include "SocketSink.mpp"
@@ -163,15 +164,13 @@ namespace ppi {
     };
 
 
-    class LLSocketWriter : ConnectedDgramWriter
+    class LLSocketWriter
     {
     public:
-        LLSocketWriter();
         typedef senf::PacketSocketHandle Handle;
-                                        ///< Handle type supported by this writer
         typedef Packet PacketType;
 
-        void source(Handle &, senf::LLSocketAddress source);
+        void source(Handle &, LLSocketAddress source);
 
         bool operator()(Handle & handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
@@ -179,6 +178,23 @@ namespace ppi {
                                              handle.
                                              \param[in] handle Handle to write data to
                                              \param[in] packet Packet to write */
+    };
+
+
+    class TargetLLSocketWriter
+    {
+    public:
+        typedef PacketSocketHandle Handle;
+        typedef EthernetPacket PacketType;
+
+        TargetLLSocketWriter();
+
+        void target(LLSocketAddress const & target);
+
+        bool operator()(Handle & handle, EthernetPacket const & packet);
+
+    private:
+        LLSocketAddress target_;
     };
 
 }}

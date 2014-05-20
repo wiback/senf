@@ -81,7 +81,7 @@ namespace senf {
 
     }
 
-    typedef std::map< std::string, detail::StreamableString > SocketStateMap;
+    typedef std::map<std::string, detail::StreamableString> SocketStateMap;
 
     namespace detail {
         /** \brief Helper to convert SocketStateMap to multiline string representation
