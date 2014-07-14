@@ -77,11 +77,15 @@ prefix_ void senf::ppi::ModuleManager::run()
 
 prefix_ void senf::ppi::ModuleManager::registerModule(module::Module & module)
 {
+    if (not alive_)
+        return;
     moduleRegistry_.push_back(&module);
 }
 
 prefix_ void senf::ppi::ModuleManager::unregisterModule(module::Module & module)
 {
+    if (not alive_)
+        return;
     moduleRegistry_.erase(
         std::remove(moduleRegistry_.begin(), moduleRegistry_.end(), & module),
         moduleRegistry_.end());
@@ -89,6 +93,8 @@ prefix_ void senf::ppi::ModuleManager::unregisterModule(module::Module & module)
 
 prefix_ void senf::ppi::ModuleManager::registerInitializable(Initializable & i)
 {
+    if (not alive_)
+        return;
     initQueue_.push_back(&i);
     initRunner_.enable();
     // This call ensures, that the senf::ppi::init() handler is called as next handler
@@ -99,6 +105,8 @@ prefix_ void senf::ppi::ModuleManager::registerInitializable(Initializable & i)
 
 prefix_ void senf::ppi::ModuleManager::unregisterInitializable(Initializable & i)
 {
+    if (not alive_)
+        return;
     initQueue_.erase(
         std::remove(initQueue_.begin(), initQueue_.end(), &i),
         initQueue_.end());
@@ -108,6 +116,7 @@ prefix_ void senf::ppi::ModuleManager::unregisterInitializable(Initializable & i
 
 prefix_ senf::ppi::ModuleManager::ModuleManager()
     : running_(false),
+      alive_(true),
       initRunner_("senf::ppi::init", membind(&ModuleManager::init, this), scheduler::EventHook::PRE, false)
 {
     console::sysdir().add("ppi", consoleDir_);
@@ -126,6 +135,11 @@ prefix_ senf::ppi::ModuleManager::ModuleManager()
                   "          | python tools/drawmodules.py | dot -Tpng /dev/fd/0 >modules.png\n")
             );
     consoleDir_.add("modules", console::factory::Directory());
+}
+
+prefix_ senf::ppi::ModuleManager::~ModuleManager()
+{
+    alive_ = false;
 }
 
 prefix_ void senf::ppi::ModuleManager::dumpModules(std::ostream & os)

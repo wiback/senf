@@ -92,6 +92,7 @@ namespace ppi {
 
     private:
         ModuleManager();
+        ~ModuleManager();
 
         void registerModule(module::Module & module);
         void unregisterModule(module::Module & module);
@@ -112,6 +113,7 @@ namespace ppi {
 
         ModuleRegistry moduleRegistry_;
         bool running_;
+        bool alive_;
 
         InitQueue initQueue_;
 
