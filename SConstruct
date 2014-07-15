@@ -111,7 +111,7 @@ env.Append(
     CXXFLAGS_GCC_47        = [ '-Wdouble-promotion' ],
     CXXFLAGS               = [ '-Wall', '-Wextra', '-Werror',
                                '-Woverloaded-virtual', '-Wnon-virtual-dtor', '-Wcast-align', '-Winit-self',
-                               '-Wdisabled-optimization', '-Wpointer-arith',
+                               '-Wdisabled-optimization', '-Wpointer-arith', '-Wcast-qual', '-Wsign-promo',
                                '-Wno-long-long', '-Wno-unused-parameter',
                                '$INLINE_OPTS', '-pipe', '$CXXFLAGS_', '-fno-strict-aliasing',
                                '${profile and "-pg" or None}',

@@ -93,7 +93,7 @@ prefix_ int senf::ppi::IPv4SourceForcingDgramWriter::sendtoandfrom(
     pi->ipi_ifindex = 0;
     memcpy(&pi->ipi_addr, &src->s_addr, sizeof(src->s_addr));
 
-    iov.iov_base = (void *)data;
+    iov.iov_base = const_cast<void *>(data);
     iov.iov_len = dataLen;
 
     sockaddr_in dstpeer;
@@ -172,7 +172,7 @@ prefix_ int senf::ppi::IPv6SourceForcingDgramWriter::sendtoandfrom(
     pi->ipi6_ifindex = 0;
     memcpy(&pi->ipi6_addr, src, 16);
 
-    iov.iov_base = (void *)data;
+    iov.iov_base = const_cast<void *>(data);
     iov.iov_len = dataLen;
 
     sockaddr_in6 dstpeer;
