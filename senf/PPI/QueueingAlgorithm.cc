@@ -45,7 +45,6 @@ SENF_PPI_REGISTER_QALGORITHM( "NoneQueueingAlgorithm", senf::ppi::NoneQueueingAl
 // senf::ppi::QueueingAlgorithm
 
 prefix_ senf::ppi::QueueingAlgorithm::QueueingAlgorithm()
-    : dir_(this)
 {
     namespace fty = console::factory;
     dir_.add("size", fty::Command( &QueueingAlgorithm::size, this));

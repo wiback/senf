@@ -62,7 +62,7 @@ class DVBSocketController : boost::noncopyable
 {
 public:
 
-    console::ScopedDirectory<DVBSocketController> dir;
+    console::ScopedDirectory<> dir;
 
     typedef boost::function<void (const struct dvb_frontend_event & )> Callback;
                                         ///< Callback which is called when an asynchronous tuning succeeds.

@@ -451,7 +451,7 @@ namespace senf {
     {
     public:
 #ifndef SENF_DISABLE_CONSOLE
-        console::ScopedDirectory<Statistics> dir;
+        console::ScopedDirectory<> dir;
 #endif
 
         Statistics();

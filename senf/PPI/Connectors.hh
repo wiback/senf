@@ -215,7 +215,7 @@ namespace connector {
         Connector * peer_;
         module::Module * module_;
 
-        console::ScopedDirectory<Connector> consoleDir_;
+        console::ScopedDirectory<> consoleDir_;
 
 #ifndef SENF_PPI_NOTRACE
         TraceState traceState_;

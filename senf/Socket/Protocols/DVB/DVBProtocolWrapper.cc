@@ -53,7 +53,7 @@ namespace senf {
 }
 
 prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh)
-    : protocol(sh.protocol()), dir(this)
+    : protocol(sh.protocol())
 {
     namespace kw = console::kw;
     namespace fty = console::factory;
@@ -100,11 +100,10 @@ prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemu
 
 
 prefix_ senf::DVBPESProtocolWrapper::DVBPESProtocolWrapper(senf::DVBDemuxPESHandle sh)
-    : protocol(sh.protocol()), dir(this)
+    : protocol(sh.protocol())
 {
     namespace kw = console::kw;
     namespace fty = console::factory;
-
     dir.add("filter",
             fty::Command<void (unsigned short int,
                                     dmx_input_t,

@@ -55,7 +55,7 @@ namespace module {
         typedef typename Writer::PacketType PacketType;
 
         connector::PassiveInput<PacketType> input; ///< Input connector from which data is received
-        console::ScopedDirectory<PassiveQueueingSocketSink<Writer> > dir;
+        console::ScopedDirectory<> dir;
 
         explicit PassiveQueueingSocketSink(Handle const & handle, QueueingAlgorithm::ptr qAlgorithm);
 

@@ -41,10 +41,9 @@
 
 template <class Writer>
 prefix_ senf::ppi::module::PassiveQueueingSocketSink<Writer>::PassiveQueueingSocketSink(Handle const & handle, QueueingAlgorithm::ptr qAlgorithm)
-    : dir( this),
-      handle_( handle), writer_( ),
-      qAlgo_( qAlgorithm.release()),
-      event_( handle_, IOEvent::Write)
+    : handle_(handle), writer_(),
+      qAlgo_(qAlgorithm.release()),
+      event_(handle_, IOEvent::Write)
 {
     namespace fty = console::factory;
     dir.add( "active", qAlgo_->consoleDir());

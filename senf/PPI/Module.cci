@@ -90,7 +90,6 @@ prefix_ senf::ClockService::clock_type senf::ppi::module::Module::now()
 // protected members
 
 prefix_ senf::ppi::module::Module::Module()
-    : sysConsoleDir_(this)
 {
     moduleManager().registerModule(*this);
 }

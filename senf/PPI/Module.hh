@@ -342,7 +342,7 @@ namespace module {
         typedef boost::ptr_vector<RouteBase> RouteInfoBase;
         RouteInfoBase routes_;
 
-        console::ScopedDirectory<Module> sysConsoleDir_;
+        console::ScopedDirectory<> sysConsoleDir_;
 
         template <class Source, class Target>
         friend struct detail::RouteHelper;

@@ -43,7 +43,7 @@
 // senf::ppi::connector::Connector
 
 prefix_ senf::ppi::connector::Connector::Connector()
-    : peer_(SENF_NULLPTR), module_(SENF_NULLPTR), consoleDir_(this)
+    : peer_(SENF_NULLPTR), module_(SENF_NULLPTR)
 #   ifndef SENF_PPI_NOTRACE
     , traceState_(NO_TRACING)
 #   endif

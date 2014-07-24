@@ -193,9 +193,6 @@ prefix_ void senf::StatisticsBase::OutputEntry::consoleList(std::ostream & os)
 // senf::Statistics
 
 prefix_ senf::Statistics::Statistics()
-#ifndef SENF_DISABLE_CONSOLE
-    : dir (this)
-#endif
 {
 #ifndef SENF_DISABLE_CONSOLE
     namespace fty = console::factory;

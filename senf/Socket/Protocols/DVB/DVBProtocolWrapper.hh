@@ -51,7 +51,7 @@ namespace senf {
             ONESHOT = DMX_ONESHOT,
             IMMEDIATE_START = DMX_IMMEDIATE_START,
             KERNEL_CLIENT = DMX_KERNEL_CLIENT};
-        senf::console::ScopedDirectory<DVBSectionProtocolWrapper> dir;
+        senf::console::ScopedDirectory<> dir;
 
         DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh);
         ~DVBSectionProtocolWrapper() { }
@@ -80,7 +80,7 @@ namespace senf {
             ONESHOT = DMX_ONESHOT,
             IMMEDIATE_START = DMX_IMMEDIATE_START,
             KERNEL_CLIENT = DMX_KERNEL_CLIENT};
-        senf::console::ScopedDirectory<DVBPESProtocolWrapper> dir;
+        senf::console::ScopedDirectory<> dir;
 
         DVBPESProtocolWrapper(senf::DVBDemuxPESHandle sh);
         ~DVBPESProtocolWrapper() { };

@@ -44,7 +44,7 @@ namespace ppi {
     class QueueingAlgorithm
         : private boost::noncopyable
     {
-        console::ScopedDirectory<QueueingAlgorithm> dir_;
+        console::ScopedDirectory<> dir_;
 
     public:
         typedef SENF_SMART_PTR<QueueingAlgorithm> ptr;

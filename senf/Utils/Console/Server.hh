@@ -39,9 +39,9 @@
 #include <senf/Socket/Protocols/INet/INetAddressing.hh>
 #include <senf/Utils/Logger.hh>
 #include <senf/Utils/intrusive_refcount.hh>
+#include "ScopedDirectory.hh"
 #include "Executor.hh"
 
-//#include "Server.mpp"
 #include "Server.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -129,10 +129,13 @@ namespace console {
 
         void newClient(int event);
         void removeClient(Client & client);
+        boost::shared_ptr<DirectoryNode> consoleSelf(std::ostream & os);
+        static DirectoryNode & sysConsoleDir();
 
         ServerHandle handle_;
         scheduler::FdEvent event_;
         DirectoryNode::ptr root_;
+        static ScopedDirectory<> sysConsoleDir_;
         Mode mode_;
 
         typedef std::set< boost::intrusive_ptr<Client> > Clients;
@@ -217,7 +220,9 @@ namespace console {
                                              If the width obtained this way is smaller than \a
                                              minWidth, \a defaultValue will be returned instead. */
 
-    protected:
+        void setProperty(std::string const & key, std::string const & value);
+        std::string getProperty(std::string const & key, std::string const & defaultValue) const;
+        boost::optional<std::string> getProperty(std::string const & key) const;
 
     private:
         Client(Server & server, ClientHandle handle);
@@ -230,6 +235,9 @@ namespace console {
                              std::string const & area, unsigned level,
                              std::string const & message);
 
+        void dumpProperties(std::ostream & os) const;
+
+        ScopedDirectory<> dir_;
         Server & server_;
         ClientHandle handle_;
         scheduler::FdEvent readevent_;
@@ -240,6 +248,8 @@ namespace console {
         boost::scoped_ptr<detail::ClientReader> reader_;
         Server::Mode mode_;
         std::string backtrace_;
+        typedef std::map<std::string, std::string> PropertyMap;
+        PropertyMap properties_;
 
         friend class Server;
         friend class detail::ClientReader;

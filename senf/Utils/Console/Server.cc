@@ -86,6 +86,15 @@ prefix_ std::streamsize senf::console::detail::SocketStreamSink::write(const cha
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::Server
 
+senf::console::ScopedDirectory<> senf::console::Server::sysConsoleDir_;
+
+prefix_ senf::console::DirectoryNode & senf::console::Server::sysConsoleDir()
+{
+    if (not sysdir().hasChild("console"))
+        sysdir().add("console", sysConsoleDir_);
+    return sysConsoleDir_.node();
+}
+
 prefix_ senf::console::Server &
 senf::console::Server::start(senf::INet4SocketAddress const & address)
 {
@@ -119,7 +128,18 @@ prefix_ senf::console::Server::Server(ServerHandle handle)
               handle_, scheduler::FdEvent::EV_READ),
       root_ (senf::console::root().thisptr()), mode_ (Automatic),
       name_ (::program_invocation_short_name)
-{}
+{
+    namespace fty = console::factory;
+    sysConsoleDir().add("self", fty::Command(&Server::consoleSelf, this)
+             .doc("Get the directory of the current network client. Example usage:\n"
+                  "\n"
+                  "Just get the directory\n"
+                  "    $ /sys/console/self\n"
+                  "    <Directory '/sys/console/client-xxx.xxx.xxx.xxx:xxx'>\n"
+                  "\n"
+                  "Get all properties of the currently connected client\n"
+                  "    $ /sys/console/self { properties; }") );
+}
 
 prefix_ void senf::console::Server::newClient(int event)
 {
@@ -152,6 +172,11 @@ prefix_ senf::console::Server & senf::console::Server::welcomeMessage(std::strin
     return *this;
 }
 
+prefix_ boost::shared_ptr<senf::console::DirectoryNode> senf::console::Server::consoleSelf(std::ostream & os)
+{
+    return Client::get(os).dir_.node().thisptr();
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::detail::DumbClientReader
 
@@ -159,8 +184,8 @@ prefix_ senf::console::detail::DumbClientReader::DumbClientReader(Client & clien
     : ClientReader(client), promptLen_ (0), promptActive_ (false)
 {
     showPrompt();
-    ReadHelper<ClientHandle>::dispatch( handle(), 16384u, ReadUntil("\n"),
-                                        senf::membind(&DumbClientReader::clientData, this) );
+    ReadHelper<ClientHandle>::dispatch(
+            handle(), 16384u, ReadUntil("\n"), senf::membind(&DumbClientReader::clientData, this) );
 }
 
 prefix_ void
@@ -177,12 +202,12 @@ senf::console::detail::DumbClientReader::clientData(senf::ReadHelper<ClientHandl
 
     std::string data (tail_ + helper->data());
     tail_ = helper->tail();
-    boost::trim(data); // Gets rid of superfluous  \r or \n characters
+    boost::trim(data); // Gets rid of superfluous \r or \n characters
     handleInput(data);
 
     showPrompt();
-    ReadHelper<ClientHandle>::dispatch( handle(), 16384u, ReadUntil("\n"),
-                                        senf::membind(&DumbClientReader::clientData, this) );
+    ReadHelper<ClientHandle>::dispatch(
+            handle(), 16384u, ReadUntil("\n"), senf::membind(&DumbClientReader::clientData, this) );
 }
 
 prefix_ void senf::console::detail::DumbClientReader::showPrompt()
@@ -368,6 +393,19 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
         timer_.enable();
         break;
     }
+
+    namespace kw = console::kw;
+    namespace fty = console::factory;
+    Server::sysConsoleDir().add( "client-" + senf::str(handle.peer()), dir_);
+    dir_.add("log", fty::Link(consoleDir()) );
+    dir_.add("property", fty::Command<std::string (std::string const &)>(
+            boost::bind(SENF_MEMFNP(std::string, Client, getProperty, (std::string const &, std::string const &) const), this, _1, ""))
+            .doc("Get a property for this client")
+            .arg("key", "property key") );
+    dir_.add("property", fty::Command(&Client::setProperty, this) );
+    dir_.add("properties", fty::Command(&Client::dumpProperties, this) );
+    dir_.add("backtrace", fty::Command(&Client::backtrace, this)
+            .doc("Display the backtrace of the last exception") );
 }
 
 prefix_ void senf::console::Client::setInteractive()
@@ -375,7 +413,8 @@ prefix_ void senf::console::Client::setInteractive()
     readevent_.disable();
     timer_.disable();
     mode_ = Server::Interactive;
-    reader_.reset(new detail::LineEditorSwitcher (*this));
+    properties_["mode"] = "Interactive";
+    reader_.reset(new detail::LineEditorSwitcher(*this));
     executor_.autocd(true).autocomplete(true);
     if (! server_.welcomeMsg_.empty())
         write( server_.welcomeMsg_);
@@ -386,6 +425,7 @@ prefix_ void senf::console::Client::setNoninteractive()
     readevent_.disable();
     timer_.disable();
     mode_ = Server::Noninteractive;
+    properties_["mode"] = "NonInteractive";
     detail::NoninteractiveClientReader * newReader (new detail::NoninteractiveClientReader(*this));
     reader_.reset( newReader);
     consoleDir().add( "streamBuffer", factory::Command( senf::membind(
@@ -403,13 +443,11 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
 
     try {
         if (incremental)
-            n = parser_.parseIncremental(data, boost::bind<void>( boost::ref(executor_),
-                                                                  boost::ref(stream()),
-                                                                  _1 ));
+            n = parser_.parseIncremental(data, boost::bind<void>(
+                    boost::ref(executor_), boost::ref(stream()), _1 ));
         else
-            parser_.parse(data, boost::bind<void>( boost::ref(executor_),
-                                                   boost::ref(stream()),
-                                                   _1 ));
+            parser_.parse(data, boost::bind<void>(
+                    boost::ref(executor_), boost::ref(stream()), _1 ));
     }
     catch (Executor::ExitException &) {
         // This generates an EOF condition on the Handle. This EOF condition is expected to be
@@ -459,12 +497,40 @@ prefix_ unsigned senf::console::Client::getWidth(std::ostream & os, unsigned def
     return rv < minWidth ? defaultWidth : rv;
 }
 
+prefix_ void senf::console::Client::setProperty(std::string const & key, std::string const & value)
+{
+    properties_[key] = value;
+}
+
+prefix_ boost::optional<std::string> senf::console::Client::getProperty(std::string const & key)
+    const
+{
+    PropertyMap::const_iterator entry (properties_.find(key));
+    return entry != properties_.end() ? boost::make_optional(entry->second) : boost::none;
+}
+
+prefix_ std::string senf::console::Client::getProperty(std::string const & key, std::string const & defaultValue)
+    const
+{
+    PropertyMap::const_iterator entry (properties_.find(key));
+    return entry != properties_.end() ? entry->second : defaultValue;
+}
+
+prefix_ void senf::console::Client::dumpProperties(std::ostream & os)
+    const
+{
+    for (PropertyMap::const_iterator entry (properties_.begin()); entry != properties_.end(); ++entry)
+        os << entry->first << " : " << entry->second << std::endl;
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::Client::SysBacktrace
+
 prefix_ senf::console::Client::SysBacktrace::SysBacktrace()
 {
-    sysdir().add("backtrace", factory::Command(&SysBacktrace::backtrace)
-                 .doc("Display the backtrace of the last error / exception in this console") );
+    Server::sysConsoleDir().add("backtrace", factory::Command(&SysBacktrace::backtrace)
+        .doc("Display the backtrace of the last error / exception in this console") );
 }
 
 prefix_ void senf::console::Client::SysBacktrace::backtrace(std::ostream & os)

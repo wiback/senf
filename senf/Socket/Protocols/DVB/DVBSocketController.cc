@@ -45,8 +45,7 @@ unsigned int senf::DVBSocketController::controllerNr(0);
 
 senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_,
                                                const Callback & cb_)
-    : dir( this ),
-      frontendHandle( frontendHandle_ ),
+    : frontendHandle( frontendHandle_ ),
       type( frontendHandle.protocol().getInfo().type ),
       parser( type ),
       cb( cb_ ),
