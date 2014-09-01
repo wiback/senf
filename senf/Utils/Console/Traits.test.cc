@@ -61,7 +61,7 @@ namespace {
     TestEnumKey testKey (TestEnumKey value) { return value; }
 }
 
-namespace testNS {
+namespace myTest {
 
     struct TestStruct
     {
@@ -70,7 +70,10 @@ namespace testNS {
         int c;
     };
 
-    TestStruct testTupleParsing(TestStruct t)
+    struct TestStruct2 : public TestStruct {};
+
+    template <typename T>
+    T testParsing(T t)
     {
         t.a += t.a;
         t.b += t.b;
@@ -79,7 +82,8 @@ namespace testNS {
     }
 }
 
-SENF_CONSOLE_PARSE_AND_FORMAT_AS_TUPLE( testNS::TestStruct, (a)(b)(c));
+SENF_CONSOLE_PARSE_AND_FORMAT_AS_TUPLE( myTest::TestStruct, (a)(b)(c));
+SENF_CONSOLE_PARSE_AND_FORMAT_AS_MAP( myTest::TestStruct2, (("a", a))(("b", b))(("c", c)));
 
 SENF_AUTO_TEST_CASE(parse_and_format_as_tuple_macros)
 {
@@ -89,13 +93,32 @@ SENF_AUTO_TEST_CASE(parse_and_format_as_tuple_macros)
     senf::console::CommandParser parser;
     senf::console::ScopedDirectory<> dir;
     senf::console::root().add("test", dir);
-    dir.add("test",fty::Command(&testNS::testTupleParsing));
+    dir.add("tuple",fty::Command(&myTest::testParsing<myTest::TestStruct>));
+    dir.add("map",fty::Command(&myTest::testParsing<myTest::TestStruct2>));
 
-    std::stringstream ss;
-    SENF_CHECK_NO_THROW(
-            parser.parse("test/test (42 \"a b c\" 23)",
-                    boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-    BOOST_CHECK_EQUAL( ss.str(), "(84 \"a b ca b c\" 46)\n" );
+    {
+        std::stringstream ss;
+        SENF_CHECK_NO_THROW(
+                parser.parse("test/tuple (42 \"a b c\" 23)",
+                        boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_EQUAL( ss.str(), "(84 \"a b ca b c\" 46)\n" );
+    } {
+        std::stringstream ss;
+        SENF_CHECK_NO_THROW(
+                parser.parse("test/map (a=42 b=\"a b c\" c=23)",
+                        boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_EQUAL( ss.str(), "(a=84 b=\"a b ca b c\" c=46)\n" );
+    } {
+        std::stringstream ss;
+        BOOST_CHECK_THROW(
+                parser.parse("test/map (x=42 b=\"a b c\" c=23)",
+                        boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
+                senf::console::SyntaxErrorException );
+        BOOST_CHECK_THROW(
+                parser.parse("test/map (a=42 b=\"a b c\")",
+                        boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
+                senf::console::SyntaxErrorException );
+    }
 }
 
 SENF_AUTO_TEST_CASE(charTraits)

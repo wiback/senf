@@ -204,6 +204,81 @@ namespace detail {
             };                                                                                  \
         }}
 
+#   define SENF_CONSOLE_PARSE_AS_MAP_ELT(r, d, i, KeyMemberTuple)                               \
+        if (key == BOOST_PP_TUPLE_ELEM(2, 0, KeyMemberTuple))  {                                \
+            senf::console::parse( *(arg++), out. BOOST_PP_TUPLE_ELEM(2, 1, KeyMemberTuple));    \
+            keyBitmap &= ~(1 << i);                                                             \
+            continue;                                                                           \
+        }
+
+#   define SENF_CONSOLE_PARSE_AS_MAP_ERROR_ELT(r, d, i, KeyMemberTuple)                         \
+        if (ffs(keyBitmap) == i+1)                                                              \
+            throw SyntaxErrorException("Key missing: ")                                         \
+                    << BOOST_PP_TUPLE_ELEM(2, 0, KeyMemberTuple);
+
+#   define SENF_CONSOLE_FORMAT_AS_MAP_ELT(r, d, i, KeyMemberTuple)                              \
+        os << BOOST_PP_IF(i, " ", "")                                                           \
+           << senf::console::str(BOOST_PP_TUPLE_ELEM(2, 0, KeyMemberTuple)) << '='              \
+           << senf::console::str(value.BOOST_PP_TUPLE_ELEM(2, 1, KeyMemberTuple));
+
+#   define SENF_CONSOLE_PARSE_AS_MAP_(Type, KeyMemberTuples)                                    \
+        namespace senf {                                                                        \
+        namespace console {                                                                     \
+            template <>                                                                         \
+            struct ArgumentTraits<Type>                                                         \
+            {                                                                                   \
+                typedef Type type;                                                              \
+                static bool const singleToken = false;                                          \
+                static void parse(ParseCommandInfo::TokensRange const & tokens, Type & out)     \
+                {                                                                               \
+                    int keyBitmap = (1 << BOOST_PP_SEQ_SIZE(KeyMemberTuples)) - 1;              \
+                    std::string key;                                                            \
+                    CheckedArgumentIteratorWrapper arg (tokens);                                \
+                    while (arg) {                                                               \
+                        senf::console::parse( *(arg++), key );                                  \
+                        ParseCommandInfo::TokensRange sep (*(arg++));                           \
+                        if (sep.size() != 1 || sep[0].type() != Token::OtherPunctuation         \
+                                            || sep[0].value() != "=")                           \
+                            throw SyntaxErrorException("'=' expected");                         \
+                        BOOST_PP_SEQ_FOR_EACH_I(                                                \
+                                SENF_CONSOLE_PARSE_AS_MAP_ELT, _, KeyMemberTuples );            \
+                        throw SyntaxErrorException("Unknown Key: " + key);                      \
+                    }                                                                           \
+                    if (keyBitmap != 0) {                                                       \
+                        BOOST_PP_SEQ_FOR_EACH_I(                                                \
+                                SENF_CONSOLE_PARSE_AS_MAP_ERROR_ELT, _, KeyMemberTuples );      \
+                    }                                                                           \
+                }                                                                               \
+                static std::string description()                                                \
+                {                                                                               \
+                    return prettyBaseName(typeid(Type));                                        \
+                }                                                                               \
+                static std::string str(Type const & value)                                      \
+                {                                                                               \
+                    std::stringstream ss;                                                       \
+                    senf::console::format(value, ss);                                           \
+                    return ss.str();                                                            \
+                }                                                                               \
+            };                                                                                  \
+        }}
+
+#   define SENF_CONSOLE_FORMAT_AS_MAP_(Type, KeyMemberTuples)                                   \
+        namespace senf {                                                                        \
+        namespace console {                                                                     \
+            template <>                                                                         \
+            struct ReturnValueTraits<Type>                                                      \
+            {                                                                                   \
+                typedef Type type;                                                              \
+                static void format(Type const & value, std::ostream & os)                       \
+                {                                                                               \
+                    os << '(';                                                                  \
+                    BOOST_PP_SEQ_FOR_EACH_I(                                                    \
+                            SENF_CONSOLE_FORMAT_AS_MAP_ELT, _, KeyMemberTuples );               \
+                    os << ')';                                                                  \
+                }                                                                               \
+            };                                                                                  \
+        }}
+
 #endif
 
 }}}
