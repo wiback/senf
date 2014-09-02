@@ -245,8 +245,8 @@ namespace console {
         SENF_CONSOLE_PARSE_AS_TUPLE_(Type, Members);                                    \
         SENF_CONSOLE_FORMAT_AS_TUPLE_(Type, Members);
 
-#   define SENF_CONSOLE_PARSE_AS_MAP Type, Members )                                    \
-        SENF_CONSOLE_PARSE_AS_MAP_(Type, Members)
+#   define SENF_CONSOLE_PARSE_AS_MAP( Type, KeyMemberTuples )                           \
+        SENF_CONSOLE_PARSE_AS_MAP_(Type, KeyMemberTuples)
 
 #   define SENF_CONSOLE_FORMAT_AS_MAP( Type, KeyMemberTuples )                          \
         SENF_CONSOLE_FORMAT_AS_MAP_(Type, KeyMemberTuples)
