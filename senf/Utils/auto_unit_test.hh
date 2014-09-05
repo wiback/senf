@@ -152,6 +152,13 @@ namespace test {
 #endif
 #endif
 
+#define SENF_RETURN_NO_ROOT_PRIVILEGES(msg)                                                     \
+    if (getuid() != 0) {                                                                        \
+        BOOST_WARN_MESSAGE(false, msg);                                                         \
+        BOOST_CHECK(true);                                                                      \
+        return;                                                                                 \
+    }
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "auto_unit_test.cci"
 //#include "auto_unit_test.ct"

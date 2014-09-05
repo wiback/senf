@@ -142,13 +142,9 @@ namespace {
 
 SENF_AUTO_TEST_CASE(queueSocketSourceSink)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE( false,
-                            "Cannot test senf::ppi::module::ActiveQueueSocketSource "
-                            "/ senf::ppi::module::PassiveQueueSocketSink as non-root user" );
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES(
+            "Cannot test senf::ppi::module::ActiveQueueSocketSource "
+            "/ senf::ppi::module::PassiveQueueSocketSink as non-root user" );
 
     senf::TapSocketHandle tap1;
     senf::NetdeviceController tapCtl1 (tap1.protocol().ifaceName());
@@ -248,13 +244,9 @@ SENF_AUTO_TEST_CASE(queueSocketSourceSink)
 
 SENF_AUTO_TEST_CASE(queueSocketSourceSink_fast)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE( false,
-                            "Cannot test senf::ppi::module::ActiveQueueSocketSource "
-                            "/ senf::ppi::module::PassiveQueueSocketSink as non-root user" );
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES(
+            "Cannot test senf::ppi::module::ActiveQueueSocketSource "
+            "/ senf::ppi::module::PassiveQueueSocketSink as non-root user" );
 
     senf::TapSocketHandle tap1;
     senf::NetdeviceController tapCtl1 (tap1.protocol().ifaceName());

@@ -47,11 +47,7 @@
 SENF_AUTO_TEST_CASE(packetSocketHandle)
 {
     // We have a Problem here .. packet sockets are only allowed for root
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::PacketSocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::PacketSocketHandle as non-root user");
 
     senf::TapSocketHandle tap;
     senf::NetdeviceController tapCtl (tap.protocol().ifaceName());

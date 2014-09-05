@@ -215,11 +215,7 @@ namespace {
 
 SENF_AUTO_TEST_CASE(connectedMMapPacketSocketHandle)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::MMapPacketSocketHandle as non-root user");
 
     senf::TapSocketHandle tap;
     senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
@@ -231,11 +227,7 @@ SENF_AUTO_TEST_CASE(connectedMMapPacketSocketHandle)
 
 SENF_AUTO_TEST_CASE(connectedMMapReadPacketSocketHandle)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::MMapPacketSocketHandle as non-root user");
 
     senf::TapSocketHandle tap;
     senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
@@ -247,11 +239,7 @@ SENF_AUTO_TEST_CASE(connectedMMapReadPacketSocketHandle)
 
 SENF_AUTO_TEST_CASE(connectedMMapWritePacketSocketHandle)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::MMapPacketSocketHandle as non-root user");
 
     senf::TapSocketHandle tap;
     senf::NetdeviceController tapCtl (tap.protocol().ifaceName());
@@ -263,11 +251,7 @@ SENF_AUTO_TEST_CASE(connectedMMapWritePacketSocketHandle)
 
 SENF_AUTO_TEST_CASE(connectedPacketSocketHandle)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::MMapPacketSocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::MMapPacketSocketHandle as non-root user");
 
     senf::TapSocketHandle tap;
     senf::NetdeviceController tapCtl (tap.protocol().ifaceName());

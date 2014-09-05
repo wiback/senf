@@ -61,10 +61,7 @@ SENF_AUTO_TEST_CASE(NetdeviceController) {
 
     BOOST_CHECK( ctrl.isUp());
 
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot run some tests of senf::NetdeviceController as non-root user");
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot run some tests of senf::NetdeviceController as non-root user");
 
     SENF_CHECK_NO_THROW( ctrl.mtu(oldMTU-16));
     BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU-16);

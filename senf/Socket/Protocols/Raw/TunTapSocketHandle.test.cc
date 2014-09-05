@@ -43,11 +43,7 @@
 
 SENF_AUTO_TEST_CASE(tapSocketHandle)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::TunTapSocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::TunTapSocketHandle as non-root user");
 
     senf::TapSocketHandle handle ("tap_unittest");
     int ret = system( "/sbin/ifconfig tap_unittest up");

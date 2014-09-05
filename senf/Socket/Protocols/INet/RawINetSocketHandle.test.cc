@@ -101,11 +101,8 @@ namespace {
 
 SENF_AUTO_TEST_CASE(RawV4ClientSocketHandle)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::RawV4SocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::RawV4SocketHandle as non-root user");
+
     try {
         std::string test = "TEST-WRITE";
         alarm(10);
@@ -131,11 +128,8 @@ SENF_AUTO_TEST_CASE(RawV4ClientSocketHandle)
 
 SENF_AUTO_TEST_CASE(RawV6ClientSocketHandle)
 {
-    if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test senf::RawV6SocketHandle as non-root user");
-        BOOST_CHECK( true );
-        return;
-    }
+    SENF_RETURN_NO_ROOT_PRIVILEGES("Cannot test senf::RawV6SocketHandle as non-root user");
+
     try {
         std::string test = "TEST-WRITE";
         alarm(5);
