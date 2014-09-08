@@ -138,7 +138,7 @@ parse(ParseCommandInfo::TokensRange const & tokens, type & out)
     while (arg) {
         Enum v;
         console::parse( *(arg++), v);
-        out.value |= v;
+        out.value |= static_cast<typename type::underlying_type>(v);
     }
 }
 
@@ -168,7 +168,7 @@ format(type const & value, std::ostream & os)
     unsigned n (0);
     std::stringstream ss;
     unsigned long flag (1);
-    for (unsigned bit (0); bit<sizeof(value.value)*CHAR_BIT; ++bit, flag<<=1) {
+    for (unsigned bit (0); bit < sizeof(value.value)*CHAR_BIT; ++bit, flag<<=1) {
         if (value.value & flag) {
             if (n++) ss << " ";
             console::format(static_cast<Enum>(flag), ss);

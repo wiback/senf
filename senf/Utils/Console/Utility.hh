@@ -132,6 +132,18 @@ namespace console {
         static void format(type const & value, std::ostream & os);
     };
 
+    namespace detail {
+        template <typename FlagType>
+        struct UnderlyingFlagType
+        {
+#           ifdef SENF_CXX11_ENABLED
+                typedef typename std::underlying_type<FlagType>::type type;
+#           else
+                typedef unsigned long type;
+#           endif
+        };
+    }
+
 #endif
 
     /** \brief Bit-mask flag argument type
@@ -176,14 +188,18 @@ namespace console {
 
         \ingroup senf_console_utilities
      */
-    template <class Enum>
+    template <typename Enum>
     struct FlagCollection
     {
-        operator unsigned long() const { return value; }
+        typedef typename detail::UnderlyingFlagType<Enum>::type underlying_type;
+
+        operator underlying_type() const { return value; }
+
         FlagCollection() : value (0) {}
-        FlagCollection(unsigned long value_) : value (value_) {}
-        FlagCollection(Enum value_) : value (value_) {}
-        unsigned long value;
+        FlagCollection(underlying_type v) : value (v) {}
+        FlagCollection(Enum v) : value (static_cast<underlying_type>(v)) {}
+
+        underlying_type value;
     };
 
 #ifndef DOXYGEN
