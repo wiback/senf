@@ -29,10 +29,13 @@
 #define HH_SENF_Utils_Cpp11Support_cast_ 1
 
 // Custom includes
+#include <senf/autoconf.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef SENF_CXX11_ENABLED
+
+#include <type_traits>
 
 namespace senf {
 
