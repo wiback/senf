@@ -124,6 +124,9 @@ namespace senf {
         bool broadcast() const;         ///< \c true, if address is the broadcast address
         bool boolean_test() const;      ///< \c true, if address is not the zero address
 
+        void local(bool flag);
+        void multicast(bool flag);
+
         boost::uint32_t oui() const;    ///< Return first 3 bytes of the address
         boost::uint32_t nic() const;    ///< Return last 3 bytes of the address
 

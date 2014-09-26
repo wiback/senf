@@ -131,6 +131,13 @@ prefix_  senf::SystemException::~SystemException()
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::InvalidArgumentException
+
+prefix_ senf::InvalidArgumentException::InvalidArgumentException(std::string const & what_arg)
+    : WrapException<std::invalid_argument>(std::invalid_argument(what_arg))
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
 

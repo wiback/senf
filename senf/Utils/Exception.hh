@@ -213,6 +213,13 @@ namespace senf {
     WrapException<BaseException> make_WrapException(BaseException const & base);
 
 
+    struct InvalidArgumentException
+        : public WrapException<std::invalid_argument>
+    {
+        InvalidArgumentException(std::string const & what_arg);
+    };
+
+
     /** \brief Wrap a non-senf exception
 
         This macro allows to wrap a non-senf exception adding functionality from ExceptionMixin

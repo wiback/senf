@@ -72,20 +72,28 @@ SENF_AUTO_TEST_CASE(macAddress)
         str << mac;
         BOOST_CHECK_EQUAL( str.str(), "a1:b2:c3:d4:e5:f6" );
         str >> mac;
-        BOOST_CHECK( ! str.fail() );
+        BOOST_CHECK( not str.fail() );
     }
 
     BOOST_CHECK_EQUAL(mac, MACAddress::from_string(test));
-    BOOST_CHECK( ! mac.local() );
+    BOOST_CHECK( not mac.local() );
     BOOST_CHECK( mac.multicast() );
-    BOOST_CHECK( ! mac.broadcast() );
+    BOOST_CHECK( not mac.broadcast() );
     BOOST_CHECK( mac );
+    mac.local(true);
+    BOOST_CHECK_EQUAL(mac, MACAddress::from_string("A3-b2-C3:d4:E5:f6"));
+    mac.local(false);
+    BOOST_CHECK_EQUAL(mac, MACAddress::from_string(test));
+    mac.multicast(false);
+    BOOST_CHECK_EQUAL(mac, MACAddress::from_string("A0-b2-C3:d4:E5:f6"));
+    mac.multicast(true);
+    BOOST_CHECK_EQUAL(mac, MACAddress::from_string(test));
     BOOST_CHECK_EQUAL( mac.oui(), 0xa1b2c3u );
     BOOST_CHECK_EQUAL( mac.nic(), 0xd4e5f6u );
     BOOST_CHECK_EQUAL( mac.eui64(), 0xa1b2c3fffed4e5f6llu );
 
     MACAddress mac2;
-    BOOST_CHECK( ! mac2 );
+    BOOST_CHECK( not mac2 );
     mac2 = MACAddress::from_string("ff:ff:ff:ff:ff:ff");
     BOOST_CHECK( mac2.broadcast() );
     BOOST_CHECK_EQUAL( mac2, MACAddress::Broadcast );
