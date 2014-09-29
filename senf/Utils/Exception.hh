@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <exception>
+#include <stdexcept>
 #include <string>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
