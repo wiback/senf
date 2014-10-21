@@ -466,7 +466,6 @@ namespace senf {
 #   else
     /** \brief Generic parser copying
 
-
         This operator allows to copy the values of identical parsers. This operation does \e not
         depend on the parsers detailed implementation, it will just replace the data bytes of the
         target parser with those from the source parser. This allows to easily copy around complex

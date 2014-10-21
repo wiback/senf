@@ -47,9 +47,9 @@ namespace {
 
 SENF_AUTO_TEST_CASE(parse_bitset)
 {
-    typedef BitsetParser<7,LSB0Endianness> LSB0BitsetParser7;
-    typedef BitsetParser<8,LSB0Endianness> LSB0BitsetParser8;
-    typedef BitsetParser<9,LSB0Endianness> LSB0BitsetParser9;
+    typedef BitsetParser<7, LSB0Endianness> LSB0BitsetParser7;
+    typedef BitsetParser<8, LSB0Endianness> LSB0BitsetParser8;
+    typedef BitsetParser<9, LSB0Endianness> LSB0BitsetParser9;
     BOOST_CHECK_EQUAL( LSB0BitsetParser7::fixed_bytes+0, 1);
     BOOST_CHECK_EQUAL( LSB0BitsetParser8::fixed_bytes+0, 1);
     BOOST_CHECK_EQUAL( LSB0BitsetParser9::fixed_bytes+0, 2);
@@ -62,7 +62,7 @@ SENF_AUTO_TEST_CASE(parse_bitset)
 
     {   // least significant bit first
         PacketInterpreterBase::ptr p (PacketInterpreter<VoidPacket>::create(data));
-        BitsetParser<2*8,LSB0Endianness> bitset (p->data().begin(), &p->data());
+        BitsetParser<2*8, LSB0Endianness> bitset (p->data().begin(), &p->data());
 
         for (std::size_t i(0); i < bitset.size(); i++) {
             BOOST_CHECK_EQUAL( bitset.test(i), bits[15-i] );
