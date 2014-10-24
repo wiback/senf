@@ -109,7 +109,7 @@ prefix_ bool senf::scheduler::detail::TimerDispatcher::empty()
 }
 
 prefix_ void senf::scheduler::detail::TimerDispatcher::
-timerSource(std::auto_ptr<TimerSource> timerSource)
+timerSource(SENF_SMART_PTR<TimerSource> timerSource)
 {
     source_.reset(timerSource.release());
 }

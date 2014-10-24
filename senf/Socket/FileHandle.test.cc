@@ -47,11 +47,9 @@ namespace {
     public:
         FHandle() {}
         FHandle(int fd)
-            : senf::FileHandle(std::auto_ptr<senf::FileBody>(
-                                          new senf::FileBody(fd))) {}
+            : senf::FileHandle(SENF_SMART_PTR<senf::FileBody>(new senf::FileBody(fd))) {}
         FHandle(std::string const & name)
-            : senf::FileHandle(std::auto_ptr<senf::FileBody>(
-                                          new senf::FileBody()))
+            : senf::FileHandle(SENF_SMART_PTR<senf::FileBody>(new senf::FileBody()))
             {
                 int rv = ::open(name.c_str(),O_RDWR|O_NONBLOCK) ;
                 if (rv<0)
@@ -63,53 +61,44 @@ namespace {
 
 SENF_AUTO_TEST_CASE(fileHandle)
 {
-    try {
-        {
-            FHandle fh("/dev/null");
-            BOOST_CHECK(fh.fd() != -1);
-            BOOST_CHECK(fh.valid());
-            BOOST_CHECK(fh);
-            BOOST_CHECK(!!fh);
+    {
+        FHandle fh("/dev/null");
+        BOOST_CHECK(fh.fd() != -1);
+        BOOST_CHECK(fh.valid());
+        BOOST_CHECK(fh);
+        BOOST_CHECK(!!fh);
 
-            FHandle fh2;
-            BOOST_CHECK( ! fh2.valid() );
-            fh2 = fh;
-            BOOST_CHECK_EQUAL(fh.fd(), fh2.fd());
+        FHandle fh2;
+        BOOST_CHECK( ! fh2.valid() );
+        fh2 = fh;
+        BOOST_CHECK_EQUAL(fh.fd(), fh2.fd());
 
-            BOOST_CHECK(fh.writeable());
-            SENF_CHECK_NO_THROW(fh.close());
-            BOOST_CHECK_THROW(fh.close(),senf::SystemException);
-            SENF_CHECK_NO_THROW(fh.terminate());
-        }
+        BOOST_CHECK(fh.writeable());
+        SENF_CHECK_NO_THROW(fh.close());
+        BOOST_CHECK_THROW(fh.close(),senf::SystemException);
+        SENF_CHECK_NO_THROW(fh.terminate());
+    } {
+        FHandle fh("/dev/zero");
+        BOOST_CHECK(fh.readable());
+    } {
+        int fds[2];
+        BOOST_REQUIRE(pipe(fds) == 0);
 
-        {
-            FHandle fh("/dev/zero");
-            BOOST_CHECK(fh.readable());
-        }
+        FHandle fh(fds[0]);
+        BOOST_CHECK(!fh.readable());
 
-        {
-            int fds[2];
-            BOOST_REQUIRE(pipe(fds) == 0);
+        // Set non-blocking IO and fill the pipe buffer
+        int flags = fcntl(fds[1],F_GETFL,0);
+        if (flags == -1)
+            BOOST_FAIL(strerror(errno));
+        if (fcntl(fds[1],F_SETFL,flags|O_NONBLOCK) == -1)
+            BOOST_FAIL(strerror(errno));
+        char buffer[1024];
+        ::memset(buffer, 0, sizeof(buffer));
+        while (write(fds[1],buffer,1024) == 1024) ;
 
-            FHandle fh(fds[0]);
-            BOOST_CHECK(!fh.readable());
-
-            // Set non-blocking IO and fill the pipe buffer
-            int flags = fcntl(fds[1],F_GETFL,0);
-            if (flags == -1)
-                BOOST_FAIL(strerror(errno));
-            if (fcntl(fds[1],F_SETFL,flags|O_NONBLOCK) == -1)
-                BOOST_FAIL(strerror(errno));
-            char buffer[1024];
-            ::memset(buffer, 0, sizeof(buffer));
-            while (write(fds[1],buffer,1024) == 1024) ;
-
-            FHandle fh2(fds[1]);
-            BOOST_CHECK(!fh.writeable());
-        }
-    }
-    catch (std::exception const & ex) {
-        BOOST_FAIL(ex.what());
+        FHandle fh2(fds[1]);
+        BOOST_CHECK(!fh.writeable());
     }
 }
 

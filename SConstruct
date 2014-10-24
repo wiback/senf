@@ -173,6 +173,7 @@ senfutil.ParseDefaultArguments(
     BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
     BoolVariable('sparse_tests', 'Link tests against object files and not the senf lib', False),
     BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
+    BoolVariable('asan', 'build with enabled AddressSanitizer', False),
 )
 
 # Handle 'test_changes'
@@ -185,6 +186,12 @@ if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
         Exit(0)
 
 if env.has_key('only_tests') : env['sparse_tests'] = True
+
+if env['asan']:
+    env.Append(
+        LIBS               = [ 'asan' ],
+        CXXFLAGS           = [ '-fsanitize=address', '-fPIC' ],    
+    )
 
 if env['builddir']:
     env.Replace(
