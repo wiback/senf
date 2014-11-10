@@ -50,7 +50,9 @@ prefix_ senf::StatisticsData::StatisticsData(float singleValue)
 
 prefix_ void senf::StatisticsData::clear()
 {
-    min = avg = max = stddev = 0.0f;
+    min = 0.0f;
+    max = 0.0f;
+    avg = stddev = 0.0f;
     cnt = 0;
 }
 

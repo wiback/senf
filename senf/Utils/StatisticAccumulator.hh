@@ -84,10 +84,6 @@ namespace senf {
         void accumulate(T value);       ///< Gather value to be accumulated.
                                         /**< This method accumulates a value.
                                              \param[in] value to be accumulated value */
-        void setLastAvg(T value);       ///< If no real data was collected, this method specifies the min/avg/max value to be returned.
-                                        /**< This method specifies the the min/avg/max value to
-                                             be returned if no real data was collected
-                                             \param[in] value to be returned */
 
         T     min() const;              ///< Returns current minimal value.
                                         /**< This method returns the minimal value of the
@@ -101,9 +97,6 @@ namespace senf {
         float rms() const;              ///< Returns root mean square value.
                                         /**< This method returns the root mean square value of the
                                              current accumulation.*/
-        float last_avg() const;         ///< Returns former average value.
-                                        /**< This method returns the average value of the
-                                             former accumulation period.*/
         float stddev() const;           ///< Returns standard deviation value.
                                         /**< This method returns the standard deviation
                                              value of the current accumulation.*/
@@ -122,7 +115,6 @@ namespace senf {
         T sum_;
         T min_;
         T max_;
-        float last_avg_;
         unsigned cnt_;
     };
 
