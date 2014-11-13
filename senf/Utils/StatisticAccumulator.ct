@@ -41,12 +41,12 @@
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
-    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0)
+    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0), last_avg_(0)
 {}
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T sum, T sumSquared, T min, T max, unsigned count)
-    : sum_squared_(sumSquared), sum_(sum), min_(min), max_(max), cnt_(count)
+    : sum_squared_(sumSquared), sum_(sum), min_(min), max_(max), cnt_(count), last_avg_(0)
 {}
 
 template <class T>
@@ -57,9 +57,9 @@ prefix_ float senf::StatisticAccumulator<T>::stddev()
         return NAN;
     if (cnt_ == 1)
         return 0.0f;
-    double _avg (avg());
+    float _avg (avg());
     // std::max avoid rounding errors, that might cause a sqrt(<0)
-    return sqrt( ( std::max(0.0, double(sum_squared_) / double( cnt_) ) - (_avg * _avg) ));
+    return sqrt( ( std::max(0.0f, float(sum_squared_) / float( cnt_) ) - (_avg * _avg) ));
 }
 
 template <class T>
@@ -70,13 +70,16 @@ prefix_ void senf::StatisticAccumulator<T>::accumulate(T value)
     cnt_++;
     if (value < min_)
         min_ = value;
-    if (value > max_)
+    else if (value > max_)
         max_ = value;
 }
 
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::clear()
 {
+    if (cnt_ > 0) {
+        last_avg_ = avg();
+    }
     cnt_ = 0;
     sum_squared_ = 0;
     sum_ = 0;
@@ -89,11 +92,9 @@ prefix_ void senf::StatisticAccumulator<T>::data(StatisticsData & data_)
     const
 {
     if (cnt_ == 0) {
-        data_.avg = 0.0f;
-        data_.stddev = 0.0f;
+        data_.min = data_.avg = data_.max = last_avg_;
+        data_.stddev = NAN;
         data_.cnt = 0;
-        data_.min = 0.0f;
-        data_.max = 0.0f;  
     } else {
         data_.min = (float) min_;
         data_.avg = avg();
@@ -108,7 +109,7 @@ prefix_ senf::StatisticsData senf::StatisticAccumulator<T>::data()
     const
 {
     StatisticsData tmp;
-    data( tmp);
+    data(tmp);
     return tmp;
 }
 

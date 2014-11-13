@@ -103,7 +103,10 @@ namespace senf {
         unsigned count() const;         ///< Returns count of accumulated values.
                                         /**< This method returns count of accumulated
                                              values of the current accumulation.*/
-        void data(StatisticsData & data_) const;
+        float last_avg() const;         ///< Returns former average value.
+                                        /**< This method returns the average value of the
+                                             former accumulation period.*/
+         void data(StatisticsData & data_) const;
                                         ///< Returns the accumulated data as a tuple
                                         /**< This method returns the accumulated information
                                              as a tuple.*/
@@ -116,6 +119,7 @@ namespace senf {
         T min_;
         T max_;
         unsigned cnt_;
+        float last_avg_;
     };
 
 }

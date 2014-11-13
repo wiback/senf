@@ -72,6 +72,14 @@ prefix_ unsigned senf::StatisticAccumulator<T>::count()
     return cnt_;
 }
 
+template <class T>
+prefix_ float senf::StatisticAccumulator<T>::last_avg()
+    const
+{
+    return last_avg_;
+}
+
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
