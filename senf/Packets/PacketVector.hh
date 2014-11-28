@@ -105,6 +105,8 @@ namespace senf {
 
         void erase(iterator pos);
         void erase(iterator first, iterator last);
+        void truncateFront(iterator pos);
+        void truncateBack(iterator pos);
 
         void insert(iterator pos, value_type v);
         void insert(iterator pos, size_type n, value_type v);

@@ -136,6 +136,7 @@ namespace senf {
         void erase(iterator pos);
         void erase(iterator first, iterator last);
         void clear(); ///< All bytes of the packet data dropped, leaving the container with a size of 0. */
+        void zero(iterator first, iterator last);
 
         void resize(size_type n, byte v=0);
 
@@ -212,4 +213,3 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
-

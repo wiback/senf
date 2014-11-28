@@ -22,6 +22,7 @@ env.Install('$CONFINSTALLDIR', conf)
 cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', env['PACKET_BUNDLES'],
                               NAME="AllBundles")
 env.Default(cobject)
+env.Alias('bundles', cobject)
 env.Install('${OBJINSTALLDIR}', cobject)
 
 ### checkIncludeGuards.py

@@ -164,6 +164,9 @@ namespace senf {
 
         void reparse();
 
+        template <class Type>
+        typename PacketInterpreter<Type>::ptr replaceAs(difference_type offset, difference_type tailOffset);
+
         //\}
 
         ///\name Data access
@@ -297,7 +300,8 @@ namespace senf {
         static ptr createAfter(PacketInterpreterBase::ptr const & packet);
         static ptr createAfter(PacketInterpreterBase::ptr const & packet, senf::NoInit_t);
         static ptr createAfter(PacketInterpreterBase::ptr const & packet, size_type size);
-        static ptr createAfter(PacketInterpreterBase::ptr const & packet, size_type size, senf::NoInit_t);
+        static ptr createAfter(PacketInterpreterBase::ptr const & packet, size_type size,
+                               senf::NoInit_t);
         template <class ForwardReadableRange>
         static ptr createAfter(PacketInterpreterBase::ptr const & packet,
                                ForwardReadableRange const & range);
@@ -305,7 +309,8 @@ namespace senf {
         // Create packet as new packet (header) before a given packet
 
         static ptr createBefore(PacketInterpreterBase::ptr const & spacket);
-        static ptr createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t);
+        static ptr createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t,
+                                size_type space=0, size_type tailSpace=0);
 
         static ptr createInsertBefore(PacketInterpreterBase::ptr const & packet);
         static ptr createInsertBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t);

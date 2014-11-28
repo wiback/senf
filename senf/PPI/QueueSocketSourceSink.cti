@@ -33,6 +33,7 @@
 // Custom includes
 #include <senf/Utils/membind.hh>
 #include <senf/Packets/PacketInfo.hh>
+#include "SocketSource.hh"
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,12 +139,15 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
 
         PacketInfo ifo;
         {
-            Packet pk (Packet::create(
+           Packet pk (Packet::create(
                            buf->frameBegin(),
                            buf->size(),
                            buf->frameSize(),
                            buf->dataOffset()));
             pk.template annotation<senf::ppi::QueueBufferAnnotation>().value = &(*buf);
+#ifdef SENF_PPI_READ_TIMESTAMP
+            pk.template annotation<senf::ppi::ReadTimestamp>().value = senf::ClockService::now();
+#endif
             ifo = PacketInfo(pk);
             output(pk);
         }

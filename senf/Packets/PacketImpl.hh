@@ -175,6 +175,11 @@ namespace detail {
         void truncateInterpreters (PacketInterpreterBase * p);
         void truncateInterpretersBackwards (PacketInterpreterBase * p);
 
+        // This one is DANGEROUS:
+        // a) if called without a Guard in place, this will destroy the PacketImpl
+        // b) this will invalidate ALL (!!) packet's referencing this data
+        void clearInterpreters();
+
         // Data container
 
         iterator begin();
@@ -188,6 +193,9 @@ namespace detail {
 
         void erase(PacketData * self, iterator pos);
         void erase(PacketData * self, iterator first, iterator last);
+        void truncateDataBackwards(PacketData * self, iterator pos);
+        iterator truncateRawDataBackwards(iterator pos);
+        void truncateRawDataForward(iterator pos);
         void clear(PacketData * self);
 
         // Annotations

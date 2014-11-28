@@ -199,6 +199,21 @@ prefix_ Annotation const & senf::Packet::annotation()
     return ptr()->annotation<Annotation>();
 }
 
+template <class OtherPacket>
+prefix_ OtherPacket senf::Packet::replaceAs(difference_type offset, difference_type tailOffset)
+{
+    OtherPacket res (ptr()->replaceAs<typename OtherPacket::type>(offset, tailOffset));
+    packet_.reset();
+    return res;
+}
+
+template <class PacketType, class Parser>
+prefix_ Parser senf::operator<<(Parser target, ConcretePacket<PacketType> const & packet)
+{
+    target << packet.parser();
+    return target;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ConcretePacket<PacketType>
 
@@ -321,9 +336,10 @@ senf::ConcretePacket<PacketType>::createBefore(Packet const & packet)
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createBefore(Packet const & packet, senf::NoInit_t)
+senf::ConcretePacket<PacketType>::createBefore(Packet const & packet, senf::NoInit_t,
+                                               size_type space, size_type tailSpace)
 {
-    return ConcretePacket(interpreter::createBefore(packet.ptr(), senf::noinit));
+    return ConcretePacket(interpreter::createBefore(packet.ptr(), senf::noinit, space, tailSpace));
 }
 
 template <class PacketType>

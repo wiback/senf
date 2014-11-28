@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.fokus.fraunhofer.de.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -55,6 +55,19 @@ senf::PacketInterpreterBase::parseNextAs()
     typename PacketInterpreter<Type>::ptr pi
         (PacketInterpreter<Type>::create(&impl(),r->begin(),r->end(),Append));
     return pi;
+}
+
+template <class Type>
+prefix_ typename senf::PacketInterpreter<Type>::ptr
+senf::PacketInterpreterBase::replaceAs(difference_type offset, difference_type tailOffset)
+{
+    { static typename PacketInterpreter<Type>::factory_t _ (PacketInterpreter<Type>::factory()); (void) _;}
+    iterator b (data().begin() + offset);
+    size_type sz (data().size() - offset + tailOffset);
+    detail::PacketImpl::Guard p (&impl());
+    p.p->clearInterpreters();
+    b = p.p->truncateRawDataBackwards(b);
+    return senf::PacketInterpreter<Type>::create(p.p, b, b + sz, Append);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,21 +160,34 @@ template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr const & packet)
 {
-    ptr pi (createBefore(packet, senf::noinit));
-    pi->data().insert(pi->data().begin(),initHeadSize(),byte(0x00u));
-    pi->data().insert(pi->data().end(),initSize()-initHeadSize(),byte(0x00u));
+    ptr pi (createBefore(packet, senf::noinit, initHeadSize(), initSize() - initHeadSize()));
+    pi->data().zero(pi->data().begin(), packet->data().begin());
+    pi->data().zero(packet->data().end(), pi->data().end());
     pi->init();
     return pi;
 }
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t)
+senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr const & packet,
+                                                  senf::NoInit_t, size_type space,
+                                                  size_type tailSpace)
 {
     if (packet->prev())
         packet->impl().truncateInterpretersBackwards(packet->prevP());
-
-    return create(&packet->impl(),packet->data().begin(),packet->data().end(),Prepend);
+    size_type room (std::distance(packet->impl().begin(), packet->data().begin()));
+    ptr pi (create(&packet->impl(), packet->impl().begin(), packet->data().end(), Prepend));
+    if (room > space)
+        packet->impl().truncateDataBackwards(& pi->data(), packet->data().begin() - space);
+    else if (room < space)
+        pi->data().insert(pi->data().begin(), space - room, byte(0x00u));
+    // For the tail-space it's much simpler: since we have pruned the interpreter chain with the
+    // current packet, pi must be the most-outside packet interpreter. This means, there can be no
+    // packet which has data after pi. We can thus change the underlying data container without
+    // updating any other packet interpreter (that is the data offsets therein).
+    packet->impl().truncateRawDataForward(pi->data().end());
+    pi->data().insert(pi->data().end(), tailSpace, byte(0x00u));
+    return pi;
 }
 
 template <class PacketType>

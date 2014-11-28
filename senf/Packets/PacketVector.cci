@@ -132,6 +132,18 @@ prefix_ void senf::PacketVector::erase(iterator first, iterator last)
     e_ -= last - first;
 }
 
+prefix_ void senf::PacketVector::truncateFront(iterator pos)
+{
+    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::truncateFront" );
+    b_ = pos;
+}
+
+prefix_ void senf::PacketVector::truncateBack(iterator pos)
+{
+    SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::truncateBack" );
+    e_ = pos;
+}
+
 prefix_ void senf::PacketVector::insert(iterator pos, value_type v)
 {
     SENF_ASSERT( pos >= b_ && pos <= e_, "invalid iterator passed to PacketVector::insert" );

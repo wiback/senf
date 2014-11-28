@@ -431,7 +431,24 @@ SENF_AUTO_TEST_CASE(concretePacket)
     BOOST_CHECK_EQUAL( packet.prev().prev().prev().size(), 14u );
 
     SENF_CHECK_NOT_EQUAL( packet.clone(), packet );
+
+    {
+        *(packet.next().data().begin() - 1) = 0x0Au;
+        *(packet.next().data().begin() - 2) = 0x0Bu;
+        BOOST_CHECK_EQUAL( packet.next().size(), 6u );
+        FooPacket other (FooPacket::createBefore(packet.next(), senf::noinit, 2, 2));
+        BOOST_CHECK_EQUAL( other.size(), 6 + 2 + 2 );
+        BOOST_CHECK_EQUAL( other.data()[0], 0x0Bu );
+        BOOST_CHECK_EQUAL( other.data()[1], 0x0Au );
+
+        BarPacket bar (other.replaceAs<BarPacket>(1));
+        BOOST_CHECK( ! other );
+        BOOST_CHECK_EQUAL( bar.size(), 6 + 2 + 2 - 1 );
+        BOOST_CHECK_EQUAL( bar.data()[0], 0x0Au );
+    }
+
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
+
 }
 
 SENF_AUTO_TEST_CASE(packetExternalMemory)

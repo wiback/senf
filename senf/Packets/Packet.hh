@@ -153,6 +153,7 @@ namespace senf {
         typedef void type;              ///< Type of the packet.
         typedef senf::detail::packet::byte byte;
         typedef senf::detail::packet::size_type size_type;
+        typedef senf::detail::packet::difference_type difference_type;
                                         ///< Unsigned type to represent packet size
         typedef PacketInterpreterBase::factory_t factory_t; ///< Packet factory type (see below)
 
@@ -321,6 +322,18 @@ namespace senf {
                                         /**< This member will throw away the packet chain after the
                                              current packet. The payload will be reparsed
                                              automatically when calling next() */
+
+        template <class OtherPacket>
+        OtherPacket replaceAs(difference_type offset=0, difference_type tailOffset=0);
+                                        ///< Replace the complete packet chain with a new chain
+                                        /**< This will invalidate the all the current packets and
+                                             replace them with a new packet of the given type. If an
+                                             offset is given, the new packet will be created at that
+                                             offset from the start of the current packet. The new
+                                             packet will not be explicitly initialized since it is
+                                             expected that the data already present is to be
+                                             interpreted in a different manner. */
+
         //\}
 
         ///\name Data access
@@ -739,7 +752,8 @@ namespace senf {
                                                  headers before \a packet and replace them with the
                                                  new header.
                                              \param[in] packet Packet to prepend new packet to. */
-        static ConcretePacket createBefore(Packet const & packet, senf::NoInit_t);
+        static ConcretePacket createBefore(Packet const & packet, senf::NoInit_t, size_type space=0,
+                                           size_type tailSpace=0);
                                         ///< Create uninitialized empty packet before \a packet
                                         /**< Creates a completely empty and uninitialized packet. It
                                              will be prepended as previous header/interpreter before
@@ -862,4 +876,3 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
-

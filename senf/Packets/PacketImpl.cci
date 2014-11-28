@@ -348,6 +348,11 @@ prefix_ void senf::detail::PacketImpl::truncateInterpretersBackwards(PacketInter
     eraseInterpreters(interpreters_.begin(),boost::next(interpreter_list::s_iterator_to(*p)));
 }
 
+prefix_ void senf::detail::PacketImpl::clearInterpreters()
+{
+    interpreters_.clear();
+}
+
 // Data container
 
 prefix_ senf::detail::PacketImpl::iterator senf::detail::PacketImpl::begin()
@@ -394,6 +399,52 @@ prefix_ void senf::detail::PacketImpl::erase(PacketData * self, iterator first, 
     data_.erase(first,last);
     updateIterators(self,ix,-delta);
 }
+
+#ifdef SENF_PACKET_STD_CONTAINER
+
+prefix_ void senf::detail::PacketImpl::truncateDataBackwards(PacketData * self, iterator pos)
+{
+    erase(self, begin(), pos);
+}
+
+prefix_ senf::detail::PacketImpl::iterator
+senf::detail::PacketImpl::truncateRawDataBackwards(iterator pos)
+{
+    SENF_ASSERT( interpreters_.empty(),
+                 "truncateRawDataBackwards called with non-empty interpreter chain" );
+    data_.erase(data_.begin(), pos);
+    return data_.begin();
+}
+
+prefix_ void senf::detail::PacketImpl::truncateRawDataForward(iterator pos)
+{
+    data_.erase(pos, data_.end());
+}
+
+#else
+
+prefix_ void senf::detail::PacketImpl::truncateDataBackwards(PacketData * self, iterator pos)
+{
+    difference_type delta (std::distance(begin(),pos));
+    data_.truncateFront(pos);
+    updateIterators(self,0,-delta);
+}
+
+prefix_ senf::detail::PacketImpl::iterator
+senf::detail::PacketImpl::truncateRawDataBackwards(iterator pos)
+{
+    SENF_ASSERT( interpreters_.empty(),
+                 "truncateRawDataBackwards called with non-empty interpreter chain" );
+    data_.truncateFront(pos);
+    return pos;
+}
+
+prefix_ void senf::detail::PacketImpl::truncateRawDataForward(iterator pos)
+{
+    data_.truncateBack(pos);
+}
+
+#endif
 
 // Annotations
 
