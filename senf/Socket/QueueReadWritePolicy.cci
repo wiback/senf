@@ -193,7 +193,8 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
-    for (;;) {
+    // unsigned char * initialHead (qi.rx.head);
+    for (unsigned count (0); count < 2*(qi.rx.end - qi.ex.begin)/qi.frameSize; ++ count) {
         if ((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL) {
             Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize, qi.hdrlen);
             struct ::sockaddr_ll & sa (
@@ -204,6 +205,9 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
                 pk.tp_status = TP_STATUS_KERNEL;
                 if (qi.rx.idle)
                     qi.rx.tail = qi.rx.head;
+                // if (qi.rx.head == initialHead)
+                //     SENF_LOG(("QueueReadPolicy: rx queue wraparound after " << count
+                //               << " frames"));
                 continue;
             }
             qi.rx.idle = false;
