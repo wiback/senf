@@ -198,7 +198,7 @@ def SetupForSENF(env, senf_path = [], flavor=None, exit_if_not_found=False, vars
     )
     env.Append(
         CPPDEFINES        = [ '$expandLogOption' ],
-        CXXFLAGS          = [ '-Wno-long-long', '-fno-strict-aliasing' ],
+        CXXFLAGS          = [ '-Wno-long-long', '-fno-strict-aliasing', '-Wno-deprecated' ],
         LINKFLAGS         = [ '-rdynamic' ],
         LIBS              = [ 'senf$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB',
                               '$BOOSTSIGNALSLIB', '$BOOSTFSLIB', '$BOOSTSYSTEMLIB',

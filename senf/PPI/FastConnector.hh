@@ -147,8 +147,9 @@ namespace connector {
     private:
         virtual void v_init();
 
-        friend void senf::ppi::connect<>(connector::FastActiveOutput<PacketType> &,
-                                         connector::FastPassiveInput<PacketType> &);
+        template <class PT>
+        friend void senf::ppi::connect(connector::FastActiveOutput<PT> &,
+                                       connector::FastPassiveInput<PT> &);
     };
 
     ///\}
