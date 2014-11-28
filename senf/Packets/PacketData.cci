@@ -119,7 +119,7 @@ prefix_ void senf::PacketData::clear()
 
 prefix_ void senf::PacketData::zero(iterator first, iterator last)
 {
-    ::memset(first, last-first, 0);
+    ::memset(first, 0, last-first);
 }
 
 prefix_ bool senf::PacketData::usingExternalMemory()
