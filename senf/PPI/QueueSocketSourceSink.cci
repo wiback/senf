@@ -65,6 +65,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
 {
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
+    input.throttlingDisc( ThrottlingDiscipline::NONE);
     registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
     ioEvent_.enabled(false);
 }
@@ -83,6 +84,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
 {
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
+    input.throttlingDisc( ThrottlingDiscipline::NONE);
     registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
     ioEvent_.enabled(false);
 }
