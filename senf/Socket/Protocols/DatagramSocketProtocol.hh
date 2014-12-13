@@ -50,7 +50,7 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        ClockService::clock_type timestamp_system() const; ///< Return packet timestamp of last packet
+        void timestamp(struct timespec * spec) const; ///< Return packet timestamp of last packet
 
         ClockService::clock_type timestamp() const; ///< Return packet timestamp of last packet
                                         /**< The returned timestamp represents the time, at which
