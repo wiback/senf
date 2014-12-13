@@ -148,6 +148,12 @@ prefix_ senf::ClockService::clock_type senf::SocketQueueBuffer::timestamp()
     return ClockService::from_time_t(hdr().tp_sec) + ClockService::nanoseconds(hdr().tp_nsec);
 }
 
+prefix_ std::uint32_t const * senf::SocketQueueBuffer::timestampPtr()
+    const
+{
+    return &(hdr().tp_sec);
+}
+
 prefix_ senf::LLSocketAddress senf::SocketQueueBuffer::address()
     const
 {

@@ -86,6 +86,8 @@ namespace senf {
 
         senf::ClockService::clock_type timestamp() const;
                                         ///< return packet receive timestamp
+        std::uint32_t const * timestampPtr() const;
+                                        ///< return a pointer to the tp_hdr sec/nsec fieldes
         senf::LLSocketAddress address() const;
                                         ///< return incoming interface address
         boost::optional<unsigned> vlan() const;
