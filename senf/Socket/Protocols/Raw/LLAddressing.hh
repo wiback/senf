@@ -161,6 +161,7 @@ namespace senf {
 
         using BSDAddressingPolicyMixin<LLSocketAddress>::local;
         using BSDAddressingPolicyMixin<LLSocketAddress>::bind;
+        using BSDAddressingPolicyMixin<LLSocketAddress>::connect;
     };
 
     //\}
