@@ -113,8 +113,8 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
 #endif
         size += req.tp_block_size;
 
-        v = 1;
-        setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
+//        v = 1;
+//        setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
     }
 
     unsigned char * map (static_cast<unsigned char *>(
