@@ -304,12 +304,12 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
             switch (errno) {
             case EINTR:
             case EAGAIN:
+            case EMSGSIZE:  // the trigerring frame will be marked by the kernel as WRONG_FORMAT
                 continue;
             case ENOTCONN:
             case ENETDOWN:
             case ENOBUFS:
             case ENXIO:
-            case EMSGSIZE:
                 break;  // TODO: might not be the best solution...
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("::send(MMAP)");
