@@ -52,7 +52,7 @@ prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp()
 prefix_ void senf::DatagramSocketProtocol::timestamp(struct timespec *spec)
     const
 {
-    if (::ioctl(fd(), SIOCGSTAMPNS, &spec) < 0)
+    if (::ioctl(fd(), SIOCGSTAMPNS, spec) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not get timestamp in DatagramSocketProtocol");
 }
 
