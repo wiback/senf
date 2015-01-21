@@ -92,7 +92,7 @@ namespace module {
         unsigned maxBurst() const;
         void maxBurst(unsigned burst);
 
-        void release();
+        void flush();
 
 #ifdef SENF_DEBUG
         unsigned burstMax();

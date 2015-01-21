@@ -199,22 +199,16 @@ prefix_ boost::optional<senf::QueueReadPolicy::Buffer>
 senf::QueueReadPolicy::dequeue(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
-    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
-    // unsigned char * initialHead (qi.rx.head);
     for (unsigned count (0); count < 2*(qi.rx.end - qi.rx.begin)/qi.frameSize; ++ count) {
+        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
         if ((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL) {
             Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize, qi.hdrlen);
-            struct ::sockaddr_ll & sa (
-                * reinterpret_cast<struct ::sockaddr_ll *>(
-                    qi.rx.head + qi.hdrlen));
+            struct ::sockaddr_ll & sa (* reinterpret_cast<struct ::sockaddr_ll *>(qi.rx.head + qi.hdrlen));
             qi.inc(qi.rx.head, qi.rx);
             if (sa.sll_pkttype >= PACKET_OUTGOING || bf.end() > bf.frameEnd()) {
                 pk.tp_status = TP_STATUS_KERNEL;
                 if (qi.rx.idle)
                     qi.rx.tail = qi.rx.head;
-                // if (qi.rx.head == initialHead)
-                //     SENF_LOG(("QueueReadPolicy: rx queue wraparound after " << count
-                //               << " frames"));
                 continue;
             }
             qi.rx.idle = false;
