@@ -137,6 +137,8 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         qi_.tx.idle = true;
    }
 
+    qi_.txWrongFormat = 0;
+
     senf::FileHandleAccess::extraPtr(fh(), &qi_);
 }
 

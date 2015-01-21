@@ -1,3 +1,4 @@
+
 // $Id$
 //
 // Copyright (C) 2013
@@ -270,7 +271,7 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
-    if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && (pk.tp_status == TP_STATUS_AVAILABLE || pk.tp_status == TP_STATUS_WRONG_FORMAT)) {
+    if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && (pk.tp_status == TP_STATUS_AVAILABLE)) {
         ::memset(&pk, 0, qi.hdrlen);
         pk.tp_mac = pk.tp_net = qi.hdrlen
 #ifdef SENF_ENABLE_TPACKET_OFFSET
@@ -304,7 +305,17 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
             switch (errno) {
             case EINTR:
             case EAGAIN:
-            case EMSGSIZE:  // the trigerring frame will be marked by the kernel as WRONG_FORMAT
+                continue;
+            case EMSGSIZE:
+                // the trigerring frame(s) will be marked by the kernel as WRONG_FORMAT
+                // we just clear this flag, marking the frame(s) as available - effectively dropped such frames
+                for (unsigned char * buf = qi.tx.head; buf < qi.tx.end; buf += qi.frameSize) { 
+                    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buf));
+                    if (pk.tp_status == TP_STATUS_WRONG_FORMAT) {
+                        pk.tp_status = TP_STATUS_AVAILABLE;
+                        qi.txWrongFormat++;
+                    }
+                }
                 continue;
             case ENOTCONN:
             case ENETDOWN:

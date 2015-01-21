@@ -63,6 +63,8 @@ namespace detail {
         Queue rx;
         Queue tx;
 
+        unsigned txWrongFormat;
+
         void inc(unsigned char * & ptr, Queue const & q);
     };
 
