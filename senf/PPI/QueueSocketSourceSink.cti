@@ -62,6 +62,8 @@ ActiveQueueSocketSource(Handle const & handle, unsigned burst)
     : handle_ (handle)
     , event_ (handle_, IOEvent::Read)
     , maxBurst_ (burst)
+    , burst_(0)
+    , flushPending_(false)
 #ifdef SENF_DEBUG
     , burstMax_ (0)
     , sharedPackets_ (0)
@@ -103,8 +105,12 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::maxBu
 template <class Packet, class Connector>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::flush()
 {
-    while (handle_.dequeue());
-    handle_.release();
+    if (burst_ == 0) { // not in read() loop
+        while (handle_.dequeue());
+        handle_.release();
+    } else {
+        flushPending_ = true;
+    }
 }
 
 #ifdef SENF_DEBUG
@@ -130,8 +136,7 @@ prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::s
 template <class Packet, class Connector>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
 {
-    unsigned burst (0);
-    for (; burst < maxBurst_; ++ burst) {
+    for (burst_ = 1; burst_ <= maxBurst_ && !flushPending_; burst_++) {
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
         if (! buf)
             break;
@@ -160,10 +165,18 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         }
     }
 #ifdef SENF_DEBUG
-    if (burst > burstMax_)
-        burstMax_ = burst;
+    if (burst_ > burstMax_)
+        burstMax_ = burst_;
 #endif
-    handle_.release();
+
+    burst_ = 0;  // done 
+
+    if (flushPending_)
+        flush();
+    else
+        handle_.release();
+
+    flushPending_ = false;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

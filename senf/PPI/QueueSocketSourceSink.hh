@@ -103,6 +103,8 @@ namespace module {
         Handle handle_;
         IOEvent event_;
         unsigned maxBurst_;
+        unsigned burst_;
+        bool flushPending_;
 
 #ifdef SENF_DEBUG
         unsigned burstMax_;
