@@ -280,6 +280,21 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
     return boost::none;
 }
 
+prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
+{
+    detail::QueueInfo & qi (* qinfo(handle));
+    while (! qi.tx.idle || qi.tx.tail != qi.tx.head) {
+        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
+        pk.tp_status = TP_STATUS_AVAILABLE;        
+        qi.inc(qi.tx.tail, qi.tx);
+        // We set qi.tx.idle prematurely but this is safe: when the while loop is done,
+        // the queue is indeed idle. After the first loop iteration, it is impossible for
+        // the queue to be still completely filled (that is head == tail) so the while
+        // condition above is now correct with idle = true
+        qi.tx.idle = true;
+    }
+}
+
 prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));

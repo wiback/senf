@@ -147,6 +147,7 @@ namespace senf {
 
         static boost::optional<Buffer> enqueue(FileHandle & handle);
         static void send(FileHandle & handle);
+        static void flush(FileHandle & handle);
 
         // classic write API
         static unsigned write(FileHandle & handle, char const * buffer, unsigned size);

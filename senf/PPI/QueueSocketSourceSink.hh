@@ -136,6 +136,7 @@ namespace module {
         void qAlgorithm(QueueingAlgorithm::ptr qAlgorithm);
 
         void send();
+        void flush();
 
 #ifdef SENF_DEBUG
         unsigned burstMax();

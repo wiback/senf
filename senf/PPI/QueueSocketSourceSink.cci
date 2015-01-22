@@ -135,13 +135,23 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
         qAlgo_->enqueue(packet);
         return;
     }
-    boost::optional<QueueReadPolicy::Buffer> buf (handle_.enqueue());
+    boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
     if (! buf) {
-        if (qAlgo_->enqueue(packet) && !ioEvent_.enabled())
+        eventHook_.enable();
+        if (qAlgo_->enqueue(packet))
             ioEvent_.enabled( true);
         return;
     }
     writePacket(packet, *buf);
+}
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::flush()
+{
+//    QueueWritePolicy::flush(handle_);
+    qAlgo_->clear();
+    ioEvent_.enabled(false);
+    eventHook_.disable();
 }
 
 template <class Connector>
@@ -160,14 +170,13 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(s
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
 {
-    while (qAlgo_->size() != 0) {
-        boost::optional<QueueReadPolicy::Buffer> buf (handle_.enqueue());
+    while (qAlgo_->size() > 0) {
+        boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
         if (! buf)
             break;
         writePacket(qAlgo_->dequeue(), *buf);
     }
-    if (qAlgo_->size() == 0)
-        ioEvent_.enabled(false);
+    ioEvent_.enabled(qAlgo_->size() > 0);
 }
 
 template <class Connector>
