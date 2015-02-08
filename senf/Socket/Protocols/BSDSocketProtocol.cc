@@ -36,6 +36,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <netinet/ip.h>
+
 
 //#include "BSDSocketProtocol.mpp"
 #define prefix_
@@ -141,6 +143,12 @@ prefix_ void senf::BSDSocketProtocol::do_attachSocketFilter(::sock_filter * filt
     sockArg.filter = filter;
     sockArg.len = len;
     if (::setsockopt(fd(), SOL_SOCKET, SO_ATTACH_FILTER, &sockArg, sizeof(sockArg)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
+}
+
+prefix_ void senf::BSDSocketProtocol::mtuDiscovery(int mode)
+{
+    if (::setsockopt(fd(), IPPROTO_IP, IP_MTU_DISCOVER, &mode, sizeof(mode)) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
 }
 
