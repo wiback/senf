@@ -429,7 +429,7 @@ namespace console {
                                              void formatter(ReturnType const & value, std::ostream & os);
                                              \endcode
                                              The \a formatter takes the return value of the call \a
-                                             value and writes it properly formated to \a os. */
+                                             value and writes it properly formatted to \a os. */
 
     protected:
         ParsedArgumentAttributorBase(typename Overload::ptr overload, unsigned index);

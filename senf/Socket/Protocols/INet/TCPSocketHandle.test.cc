@@ -158,7 +158,7 @@ SENF_AUTO_TEST_CASE(tcpv4ClientSocketHandle)
         // Since this is a TCP socket, most of the calls will fail or
         // are at least not sensible ...
         // I'll have to move those to a UDPSocket test ... they should
-        // realy only be in the UDP Protocol implementation
+        // really only be in the UDP Protocol implementation
 //        SENF_CHECK_NO_THROW( sock.protocol().mcTTL() );
 //        BOOST_CHECK_THROW( sock.protocol().mcTTL(1), senf::SystemException );
 //        SENF_CHECK_NO_THROW( sock.protocol().mcLoop() );

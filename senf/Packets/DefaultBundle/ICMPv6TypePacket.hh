@@ -320,7 +320,7 @@ namespace senf {
     {
 #      include SENF_PARSER()
         //need a variant here
-        // a.) maxResponseCode < 32768 =>Interger
+        // a.) maxResponseCode < 32768 =>Integer
         // b.) maxResponseCode >=32768 => float (is there a float parser???)
         /*
         float value as followed:

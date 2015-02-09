@@ -134,7 +134,7 @@ namespace factory {
                                                  void formatter(Variable const & value, std::ostream & os);
                                              \endcode
                                                  The \a formatter takes the return value of the call \a
-                                                 value and writes it properly formated to \a os. */
+                                                 value and writes it properly formatted to \a os. */
         VariableFactory parser(Parser parser); ///< Set argument parser
                                         /**< The parser is an arbitrary callable object with
                                              the signature

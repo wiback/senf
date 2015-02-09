@@ -110,7 +110,7 @@ namespace detail {
         ParseDispatcher & dispatcher;
 
         //-/////////////////////////////////////////////////////////////////////////////////////////
-        // charachter sets
+        // character sets
 
         static boost_spirit::chset<> & special_p() {
             static boost_spirit::chset<> p ("/(){};\"");

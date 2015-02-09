@@ -186,39 +186,39 @@ senf::DVBConfigParser::getFrontendParamDVB_T(const tokenizer & tokens)
     isst.str(words[p_Frequency]);
     isst >> number;
     if (isst.fail())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse frequency");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse frequency");
     frontend.frequency = number;
 
     if (params.inversion.find(words[p_Inversion]) == params.inversion.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse inversion");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse inversion");
     frontend.inversion = params.inversion.find(words[p_Inversion])->second;
 
     if (params.bandwidth.find(words[p_Bandwidth]) == params.bandwidth.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse bandwidth");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse bandwidth");
     frontend.u.ofdm.bandwidth = params.bandwidth.find(words[p_Bandwidth])->second;
 
     if (params.code_rate.find(words[p_hp_code_rate]) == params.code_rate.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse high priority stream code rate");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse high priority stream code rate");
     frontend.u.ofdm.code_rate_HP = params.code_rate.find(words[p_hp_code_rate])->second;
 
     if (params.code_rate.find(words[p_lp_code_rate]) == params.code_rate.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse low priority stream code rate");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse low priority stream code rate");
     frontend.u.ofdm.code_rate_LP = params.code_rate.find(words[p_lp_code_rate])->second;
 
     if (params.modulation.find(words[p_Mudualtion]) == params.modulation.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse modulation");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse modulation");
     frontend.u.ofdm.constellation = params.modulation.find(words[p_Mudualtion])->second;
 
     if (params.transmit_mode.find(words[p_Transmission]) == params.transmit_mode.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse transmission mode");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse transmission mode");
     frontend.u.ofdm.transmission_mode = params.transmit_mode.find(words[p_Transmission])->second;
 
     if (params.guard_interval.find(words[p_guard]) == params.guard_interval.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse guard interval");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse guard interval");
     frontend.u.ofdm.guard_interval = params.guard_interval.find(words[p_guard])->second;
 
     if (params.hierarchy.find(words[p_hierarchy]) == params.hierarchy.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse hierarchy");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse hierarchy");
     frontend.u.ofdm.hierarchy_information = params.hierarchy.find(words[p_hierarchy])->second;
 
     return frontend;
@@ -241,21 +241,21 @@ senf::DVBConfigParser::getFrontendParamDVB_S(const tokenizer & tokens)
     isst.str(words[p_Frequency]);
     isst >> number;
     if (isst.fail())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse frequency");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse frequency");
     frontend.frequency = number;
 
     if (params.inversion.find(words[p_Inversion]) == params.inversion.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse inversion");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse inversion");
     frontend.inversion = params.inversion.find(words[p_Inversion])->second;
 
     isst.str(words[p_Symbole]);
     isst >> number;
     if (isst.fail())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse symbole rate");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse symbole rate");
     frontend.u.qpsk.symbol_rate = number;
 
     if (params.code_rate.find(words[p_code_rate]) == params.code_rate.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse code rate");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse code rate");
     frontend.u.qpsk.fec_inner = params.code_rate.find(words[p_code_rate])->second;
 
     return frontend;
@@ -278,25 +278,25 @@ senf::DVBConfigParser::getFrontendParamDVB_C(const tokenizer & tokens)
     isst.str(words[p_Frequency]);
     isst >> number;
     if (isst.fail())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse frequency");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse frequency");
     frontend.frequency = number;
 
     if (params.inversion.find(words[p_Inversion]) == params.inversion.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse inversion");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse inversion");
     frontend.inversion = params.inversion.find(words[p_Inversion])->second;
 
     isst.str(words[p_Symbole]);
     isst >> number;
     if (isst.fail())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse symbole rate");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse symbole rate");
     frontend.u.qam.symbol_rate = number;
 
     if (params.code_rate.find(words[p_code_rate]) == params.code_rate.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse code rate");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse code rate");
     frontend.u.qam.fec_inner = params.code_rate.find(words[p_code_rate])->second;
 
     if (params.modulation.find(words[p_modulation]) == params.modulation.end())
-        SENF_THROW_SYSTEM_EXCEPTION("Cant parse modulation");
+        SENF_THROW_SYSTEM_EXCEPTION("Can't parse modulation");
     frontend.u.qam.modulation = params.modulation.find(words[p_modulation])->second;
 
     return frontend;

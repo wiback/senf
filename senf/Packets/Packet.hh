@@ -181,7 +181,7 @@ namespace senf {
         Packet(ConcretePacket<PacketType> const & packet);
                                         ///< Copy-construct Packet from ConcretePacket
                                         /**< This constructor allows to convert an arbitrary
-                                             ConcretePacket into a general Packet, loosing the
+                                             ConcretePacket into a general Packet, losing the
                                              protocol specific interface. */
 
         //\}

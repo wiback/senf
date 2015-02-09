@@ -223,7 +223,7 @@
     respectively).
 
     Additionally, the connectors must be type-compatible: Either one (or both) of the connectors
-    must be untyped (they accept arbitrary senf::Packet's, the optional tempalte argument is empty),
+    must be untyped (they accept arbitrary senf::Packet's, the optional template argument is empty),
     or they both accept the same type of packet. This check is performed at runtime.
 
     To complete our simplified example: Lets connect senf::ppi::module::ActiveSocketReader and
@@ -342,7 +342,7 @@
     scheduled time of the event, file handle state and so on). This information is passed to the
     callback.
 
-    Additionaly, events are valid routing targets. This feature allows events to be disabled and
+    Additionally, events are valid routing targets. This feature allows events to be disabled and
     enabled by throtling notifications. For the sake of routing, an event may be used like an active
     input or output. Iit is \e active from the PPI's point of view since it is signaled from the
     outside and not by some module. It may be either input or output depending on the operation the

@@ -123,7 +123,7 @@ namespace log {
 
         bool syslog() const;            ///< \c true, if using syslog format, \c false otherwise
                                         /**< When syslog format is disabled, messages are not
-                                             formated as valid syslog messages but sent using plain
+                                             formatted as valid syslog messages but sent using plain
                                              UDP. */
         void syslog(bool enabled=true); ///< Set syslog format
 
