@@ -112,6 +112,8 @@ namespace senf {
         /// Dump given EthernetPacket in readable form to given output stream
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
+
+        static const unsigned minPayloadSize = 64u;
     };
 
     /** \brief Ethernet packet typedef
