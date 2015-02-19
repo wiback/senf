@@ -36,13 +36,17 @@
 
 std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & _data)
 {
-    os << "(" 
-       << "min "    << _data.min    << ", "
-       << "avg "    << _data.avg    << ", " 
-       << "max "    << _data.max    << ", "
-       << "stddev " << _data.stddev << ", "
-       << "cnt "    << _data.cnt
-       << ")";
+    if (_data.cnt > 0) {
+        os << "(" 
+           << "min "    << _data.min    << ", "
+           << "avg "    << _data.avg    << ", " 
+           << "max "    << _data.max    << ", "
+           << "stddev " << _data.stddev << ", "
+           << "cnt "    << _data.cnt
+           << ")";
+    } else { 
+        os << "(-- no-stats-data --)";
+    }
     return os;
 };
 
