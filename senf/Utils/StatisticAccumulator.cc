@@ -45,7 +45,7 @@ std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & 
            << "cnt "    << _data.cnt
            << ")";
     } else { 
-        os << "(-- no-stats-data --)";
+        os << "(no-data)";
     }
     return os;
 };
