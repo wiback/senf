@@ -104,7 +104,10 @@ namespace senf {
         void attachSocketFilter(::sock_filter (&filter)[N]);
         void detachSocketFilter();
 
-        void mtuDiscovery(int mode);
+        void mtuDiscovery(int mode) const;
+
+        void rcvLowat(unsigned lowWat) const;
+        void sndLowat(unsigned lowWat) const;
 
     private:
         void do_attachSocketFilter(::sock_filter * filter, unsigned short len);

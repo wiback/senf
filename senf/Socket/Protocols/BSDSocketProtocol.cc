@@ -146,9 +146,24 @@ prefix_ void senf::BSDSocketProtocol::do_attachSocketFilter(::sock_filter * filt
         SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
 }
 
-prefix_ void senf::BSDSocketProtocol::mtuDiscovery(int mode)
+prefix_ void senf::BSDSocketProtocol::mtuDiscovery(int mode) 
+    const
 {
     if (::setsockopt(fd(), IPPROTO_IP, IP_MTU_DISCOVER, &mode, sizeof(mode)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
+}
+
+prefix_ void senf::BSDSocketProtocol::sndLowat(unsigned lowat)
+    const
+{
+    if (::setsockopt(fd(), SOL_SOCKET,SO_SNDLOWAT, &lowat, sizeof(lowat)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
+}
+
+prefix_ void senf::BSDSocketProtocol::rcvLowat(unsigned lowat)
+    const
+{
+    if (::setsockopt(fd(), SOL_SOCKET,SO_RCVLOWAT, &lowat, sizeof(lowat)) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
 }
 

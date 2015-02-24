@@ -30,6 +30,7 @@
 
 // Custom includes
 #include <ostream>
+#include "Format.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,13 +38,12 @@
 std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & _data)
 {
     if (_data.cnt > 0) {
-        os << "(" 
-           << "min "    << _data.min    << ", "
-           << "avg "    << _data.avg    << ", " 
-           << "max "    << _data.max    << ", "
-           << "stddev " << _data.stddev << ", "
-           << "cnt "    << _data.cnt
-           << ")";
+        os << "(";
+        os << "min "  << format::eng(_data.min).setw().setprecision(5).showpoint().showbase();
+        os << ", "    << format::eng(_data.avg, _data.stddev).setw().setprecision(5).showpoint().showbase();
+        os << ",max " << format::eng(_data.max).setw().setprecision(5).showpoint().showbase();
+        os << ",cnt " << _data.cnt;
+        os << ")";
     } else { 
         os << "(no-data)";
     }
