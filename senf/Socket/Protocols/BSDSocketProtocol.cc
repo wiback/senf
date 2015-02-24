@@ -28,6 +28,7 @@
 /** \file
     \brief BSDSocketProtocol non-inline non-template implementation */
 
+#include <senf/Utils/String.hh>
 #include "BSDSocketProtocol.hh"
 //#include "BSDSocketProtocol.ih"
 
@@ -79,7 +80,7 @@ prefix_ void senf::BSDSocketProtocol::priority(boost::uint8_t value)
 {
     int ivalue (value);
     if (::setsockopt(fd(),SOL_SOCKET,SO_PRIORITY,&ivalue,sizeof(ivalue)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_PRIORITY");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_PRIORITY to "  + senf::str(value));
 }
 
 prefix_ int senf::BSDSocketProtocol::error()
@@ -108,7 +109,7 @@ prefix_ void senf::BSDSocketProtocol::rcvbuf(unsigned size)
     const
 {
     if (::setsockopt(fd(),SOL_SOCKET,SO_RCVBUF,&size,sizeof(size)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_RCVBUF");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_RCVBUF to" + senf::str(size));
 }
 
 prefix_ unsigned senf::BSDSocketProtocol::sndbuf()
@@ -127,7 +128,7 @@ prefix_ void senf::BSDSocketProtocol::sndbuf(unsigned size)
     const
 {
     if (::setsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_SNDBUF");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set socketopt SO_SNDBUF to " + senf::str(size));
 }
 
 prefix_ void senf::BSDSocketProtocol::detachSocketFilter()
@@ -150,21 +151,21 @@ prefix_ void senf::BSDSocketProtocol::mtuDiscovery(int mode)
     const
 {
     if (::setsockopt(fd(), IPPROTO_IP, IP_MTU_DISCOVER, &mode, sizeof(mode)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
+        SENF_THROW_SYSTEM_EXCEPTION("could not set IP_MTU_DISCOVER mode to " + senf::str(mode));
 }
 
 prefix_ void senf::BSDSocketProtocol::sndLowat(unsigned lowat)
     const
 {
-    if (::setsockopt(fd(), SOL_SOCKET,SO_SNDLOWAT, &lowat, sizeof(lowat)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
+    if (::setsockopt(fd(), SOL_SOCKET, SO_SNDLOWAT, &lowat, sizeof(lowat)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("could not set SO_SNDLOWAT to " + senf::str(lowat));
 }
 
 prefix_ void senf::BSDSocketProtocol::rcvLowat(unsigned lowat)
     const
 {
-    if (::setsockopt(fd(), SOL_SOCKET,SO_RCVLOWAT, &lowat, sizeof(lowat)) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("could not attach socket filter");
+    if (::setsockopt(fd(), SOL_SOCKET, SO_RCVLOWAT, &lowat, sizeof(lowat)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("could not set SO_RCVLOWAT to " + senf::str(lowat));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
