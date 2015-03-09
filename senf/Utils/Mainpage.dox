@@ -86,7 +86,7 @@ namespace senf {
     \section typeinfo C++ Type interface
 
     <table class="listing">
-    <tr><td>\ref prettyName()</td><td>an interface to the C++ demangler of g++ to get formated type
+    <tr><td>\ref prettyName()</td><td>an interface to the C++ demangler of g++ to get formatted type
     names from typeinfo objects</td></tr>
 
     <tr><td>\ref TypeIdValue</td><td>class wrapping a typeid in a way that it can be used like any
@@ -101,7 +101,7 @@ namespace senf {
 
     <tr><td>\ref senf_statistics</td><td>statistics functionality</td></tr>
 
-    <tr><td>\ref hexdump</td><td>a simple but usefull function to write binary data in in
+    <tr><td>\ref hexdump</td><td>a simple but useful function to write binary data in in
     hexadecimal format.</td></tr>
 
     <tr><td>\ref IpChecksum</td><td>calculating the 16 bit checksum used in the IP

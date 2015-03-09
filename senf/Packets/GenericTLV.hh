@@ -143,6 +143,8 @@ namespace senf {
         GenericTLVParserBase(PacketParserBase::data_iterator i, PacketParserBase::state_type s)
             : Base(i,s) {}
 
+        static PacketParserBase::size_type const init_bytes = senf::init_bytes<Base>::value;
+
         PacketParserBase::size_type bytes() const;
         void init() const;
 
