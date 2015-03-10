@@ -39,9 +39,9 @@ std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & 
 {
     if (_data.cnt > 0) {
         os << "(";
-        os << "min "  << format::eng(_data.min);
-        os << ", "    << format::eng(_data.avg, _data.stddev);
-        os << ",max " << format::eng(_data.max);
+        os << "min "  << format::eng(_data.min).setprecision(5);
+        os << ", "    << format::eng(_data.avg, _data.stddev).setprecision(5);
+        os << ",max " << format::eng(_data.max).setprecision(5);
         os << ",cnt " << _data.cnt;
         os << ")";
     } else { 

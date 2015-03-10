@@ -313,8 +313,9 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
             switch (errno) {
             case EINTR:
-            case EAGAIN:
                 continue;
+            case EAGAIN:
+                break;
             case EMSGSIZE:
                 // the trigerring frame(s) will be marked by the kernel as WRONG_FORMAT
                 // we just clear this flag, thus marking the frame(s) as available, effectively dropped such frames !!!

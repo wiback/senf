@@ -95,7 +95,7 @@ prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle & handle, char const
         if (rv < 0)
             switch (errno) {
             case EINTR:
-                break;
+                continue;
             case EAGAIN:
             case ENOBUFS:
                 // According to the man page this should not happen, since packets are just silently being dropped.
@@ -125,7 +125,7 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle & handle,
         if (rv < 0)
             switch (errno) {
             case EINTR:
-                break;
+                continue;
             case ENOTCONN:
             case ENETDOWN:
             case ENXIO:
