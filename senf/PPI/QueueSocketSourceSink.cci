@@ -79,8 +79,10 @@ prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink<Connector>::burstMax(
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 {
-    eventHook_.disable();
     handle_.send();
+    eventHook_.disable();
+    ioEvent_.enabled(qAlgo_->size() > 0);
+
 #ifdef SENF_DEBUG
     if (burst_ > burstMax_)
         burstMax_ = burst_;
@@ -132,8 +134,11 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
 {
     while (qAlgo_->size() > 0) {
         boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
-        if (! buf)
-            break;
+        if (! buf) {
+            eventHook_.enable();
+            ioEvent_.enabled(false);
+            return;
+        }
         writePacket(qAlgo_->dequeue(), *buf);
     }
     ioEvent_.enabled(qAlgo_->size() > 0);

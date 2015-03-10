@@ -318,7 +318,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
                 break;
             case EMSGSIZE:
                 // the trigerring frame(s) will be marked by the kernel as WRONG_FORMAT
-                // we just clear this flag, thus marking the frame(s) as available, effectively dropped such frames !!!
+                // we just clear this flag, thus marking the frame(s) as available, effectively dropping such frames !!!
                 for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) { 
                     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buf));
                     if (pk.tp_status & TP_STATUS_WRONG_FORMAT) {
