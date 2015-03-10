@@ -1,0 +1,272 @@
+// $Id$
+//
+// Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//   Stefan Bund <senf@g0dil.de>
+
+/** \file
+    \brief QueueSocketSourceSink non-inline template implementation */
+
+#include "QueueSocketSourceSink.ih"
+
+// Custom includes
+#include <senf/Utils/membind.hh>
+#include <senf/Packets/PacketInfo.hh>
+#include "SocketSource.hh"
+
+#define prefix_
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::ActiveQueueSocketSource<Packet>
+
+template <class Packet, class Connector>
+prefix_
+senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::ActiveQueueSocketSource(unsigned burst)
+    : handle_ ()
+    , event_ ()
+    , maxBurst_ (burst)
+#ifdef SENF_DEBUG
+    , burstMax_ (0)
+    , sharedPackets_ (0)
+#endif
+{
+    registerEvent(event_, &ActiveQueueSocketSource::read);
+    route(event_, output);
+}
+
+template <class Packet, class Connector>
+prefix_ senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::
+ActiveQueueSocketSource(Handle const & handle, unsigned burst)
+    : handle_ (handle)
+    , event_ (handle_, IOEvent::Read)
+    , maxBurst_ (burst)
+    , burst_(0)
+    , flushPending_(false)
+#ifdef SENF_DEBUG
+    , burstMax_ (0)
+    , sharedPackets_ (0)
+#endif
+{
+    registerEvent(event_, &ActiveQueueSocketSource::read);
+    noroute(output);
+    senf::ppi::detail::RouteConnector<Connector>::route(*this, event_, output);
+}
+
+template <class Packet, class Connector>
+prefix_ typename senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::Handle
+senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handle()
+    const
+{
+    return handle_;
+}
+
+template <class Packet, class Connector>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handle(Handle const & handle)
+{
+    handle_ = handle;
+    event_.set(handle_, IOEvent::Read);
+}
+
+#ifdef SENF_DEBUG
+
+template <class Packet, class Connector>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::burstMax()
+{
+    unsigned res (burstMax_);
+    burstMax_ = 0;
+    return res;
+}
+
+template <class Packet, class Connector>
+prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::sharedPackets()
+{
+    unsigned res (sharedPackets_);
+    sharedPackets_ = 0;
+    return res;
+}
+
+#endif
+
+template <class Packet, class Connector>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
+{
+    for (burst_ = 1; burst_ <= maxBurst_ && !flushPending_; burst_++) {
+        boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
+        if (! buf)
+            break;
+        if (buf->size() == 0)
+            continue;
+
+        PacketInfo ifo;
+        {
+           Packet pk (Packet::create(
+                           buf->frameBegin(),
+                           buf->size(),
+                           buf->frameSize(),
+                           buf->dataOffset()));
+            pk.template annotation<senf::ppi::QueueBufferAnnotation>().value = &(*buf);
+#ifdef SENF_PPI_READ_TIMESTAMP
+            pk.template annotation<senf::ppi::ReadTimestamp>().value = senf::ClockService::now();
+#endif
+            ifo = PacketInfo(pk);
+            output(pk);
+        }
+        if (ifo.is_shared()) {
+            ifo.releaseExternalMemory();
+#ifdef SENF_DEBUG
+            ++ sharedPackets_;
+#endif
+        }
+    }
+#ifdef SENF_DEBUG
+    if (burst_ > burstMax_)
+        burstMax_ = burst_;
+#endif
+
+    burst_ = 0;  // done 
+
+    if (flushPending_)
+        flush();
+    else
+        handle_.release();
+
+    flushPending_ = false;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::PassiveQueueSocketSink
+
+template <class Connector>
+prefix_ typename senf::ppi::module::PassiveQueueSocketSink<Connector>::Handle
+senf::ppi::module::PassiveQueueSocketSink<Connector>::handle()
+    const
+{
+    return handle_;
+}
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::handle(Handle const & handle)
+{
+    handle_ = handle;
+    ioEvent_.set( handle_, IOEvent::Write);
+    qAlgo_->clear();
+}
+
+#ifdef SENF_DEBUG
+template <class Connector>
+prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink<Connector>::burstMax()
+{
+    unsigned res (burstMax_);
+    burstMax_ = 0;
+    return res;
+}
+#endif
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
+{
+    handle_.send();
+    eventHook_.disable();
+    ioEvent_.enabled(qAlgo_->size() > 0);
+
+#ifdef SENF_DEBUG
+    if (burst_ > burstMax_)
+        burstMax_ = burst_;
+    burst_ = 0;
+#endif
+}
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
+{
+    Packet const & packet (input());
+    if (qAlgo_->size() > 0) {
+        qAlgo_->enqueue(packet);
+        return;
+    }
+    boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
+    if (! buf) {
+        if (qAlgo_->enqueue(packet))
+            ioEvent_.enabled( true);
+        return;
+    }
+    writePacket(packet, *buf);
+}
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(senf::Packet const & packet, QueueReadPolicy::Buffer & buf)
+{
+    SENF_ASSERT( packet.data().size(), "cannot send empty packet" );
+    unsigned sz (std::min(packet.data().size(), buf.frameSize()));
+    buf.resize(sz);
+    ::memcpy(buf.begin(), packet.data().begin(), sz);
+    eventHook_.enable();
+#ifdef SENF_DEBUG
+    ++ burst_;
+#endif
+}
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
+{
+    handle_.send();
+    while (qAlgo_->size() > 0) {
+        boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
+        if (! buf) {
+            eventHook_.enable();
+            ioEvent_.enabled(false);
+            return;
+        }
+        writePacket(qAlgo_->dequeue(), *buf);
+    }
+    ioEvent_.enabled(qAlgo_->size() > 0);
+}
+
+template <class Connector>
+prefix_ senf::ppi::QueueingAlgorithm & senf::ppi::module::PassiveQueueSocketSink<Connector>::qAlgorithm()
+    const
+{
+    return *qAlgo_;
+}
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::qAlgorithm(QueueingAlgorithm::ptr qAlgorithm)
+{
+    qAlgo_.reset( qAlgorithm.release());
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

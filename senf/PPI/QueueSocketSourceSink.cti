@@ -42,54 +42,6 @@
 // senf::ppi::module::ActiveQueueSocketSource<Packet>
 
 template <class Packet, class Connector>
-prefix_
-senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::ActiveQueueSocketSource(unsigned burst)
-    : handle_ ()
-    , event_ ()
-    , maxBurst_ (burst)
-#ifdef SENF_DEBUG
-    , burstMax_ (0)
-    , sharedPackets_ (0)
-#endif
-{
-    registerEvent(event_, &ActiveQueueSocketSource::read);
-    route(event_, output);
-}
-
-template <class Packet, class Connector>
-prefix_ senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::
-ActiveQueueSocketSource(Handle const & handle, unsigned burst)
-    : handle_ (handle)
-    , event_ (handle_, IOEvent::Read)
-    , maxBurst_ (burst)
-    , burst_(0)
-    , flushPending_(false)
-#ifdef SENF_DEBUG
-    , burstMax_ (0)
-    , sharedPackets_ (0)
-#endif
-{
-    registerEvent(event_, &ActiveQueueSocketSource::read);
-    noroute(output);
-    senf::ppi::detail::RouteConnector<Connector>::route(*this, event_, output);
-}
-
-template <class Packet, class Connector>
-prefix_ typename senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::Handle
-senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handle()
-    const
-{
-    return handle_;
-}
-
-template <class Packet, class Connector>
-prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handle(Handle const & handle)
-{
-    handle_ = handle;
-    event_.set(handle_, IOEvent::Read);
-}
-
-template <class Packet, class Connector>
 prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::maxBurst()
     const
 {
@@ -113,70 +65,16 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::flush
     }
 }
 
-#ifdef SENF_DEBUG
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::PassiveQueueSocketSink
 
-template <class Packet, class Connector>
-prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::burstMax()
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::flush()
 {
-    unsigned res (burstMax_);
-    burstMax_ = 0;
-    return res;
-}
-
-template <class Packet, class Connector>
-prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::sharedPackets()
-{
-    unsigned res (sharedPackets_);
-    sharedPackets_ = 0;
-    return res;
-}
-
-#endif
-
-template <class Packet, class Connector>
-prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
-{
-    for (burst_ = 1; burst_ <= maxBurst_ && !flushPending_; burst_++) {
-        boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
-        if (! buf)
-            break;
-        if (buf->size() == 0)
-            continue;
-
-        PacketInfo ifo;
-        {
-           Packet pk (Packet::create(
-                           buf->frameBegin(),
-                           buf->size(),
-                           buf->frameSize(),
-                           buf->dataOffset()));
-            pk.template annotation<senf::ppi::QueueBufferAnnotation>().value = &(*buf);
-#ifdef SENF_PPI_READ_TIMESTAMP
-            pk.template annotation<senf::ppi::ReadTimestamp>().value = senf::ClockService::now();
-#endif
-            ifo = PacketInfo(pk);
-            output(pk);
-        }
-        if (ifo.is_shared()) {
-            ifo.releaseExternalMemory();
-#ifdef SENF_DEBUG
-            ++ sharedPackets_;
-#endif
-        }
-    }
-#ifdef SENF_DEBUG
-    if (burst_ > burstMax_)
-        burstMax_ = burst_;
-#endif
-
-    burst_ = 0;  // done 
-
-    if (flushPending_)
-        flush();
-    else
-        handle_.release();
-
-    flushPending_ = false;
+//    QueueWritePolicy::flush(handle_);
+    qAlgo_->clear();
+    ioEvent_.enabled(false);
+//    eventHook_.disable();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

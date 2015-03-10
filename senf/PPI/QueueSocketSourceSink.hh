@@ -177,7 +177,7 @@ namespace module {
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "QueueSocketSourceSink.cci"
-//#include "QueueSocketSourceSink.ct"
+#include "QueueSocketSourceSink.ct"
 #include "QueueSocketSourceSink.cti"
 #endif
 
