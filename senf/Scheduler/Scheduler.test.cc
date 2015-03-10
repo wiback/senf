@@ -210,8 +210,10 @@ namespace {
 
     void blockingHandler()
     {
+        SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
         delay(2200);
         senf::scheduler::terminate();
+        SENF_SCHEDULER_WATCHDOG_CHECKPOINT_CLEAR();
     }
 
     unsigned eventCount (0);

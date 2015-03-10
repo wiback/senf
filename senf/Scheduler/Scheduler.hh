@@ -34,6 +34,7 @@
 
 // Custom includes
 #include <boost/noncopyable.hpp>
+#include <senf/Utils/Cpp11Support/features.hh>
 #include <senf/Utils/Logger/TimeSource.hh>
 #include "FdEvent.hh"
 #include "TimerEvent.hh"
@@ -99,7 +100,7 @@ namespace senf {
 
     The event is defined as a class member variable. When the event member is initialized in the
     constructor, the event is automatically registered (except if the optional \a initiallyEnabled
-    flag argument is set to \c false). The Destructor will automatically remove the event from the
+    flag argument is set to \c false). The destructor will automatically remove the event from the
     %scheduler and ensure, that no dead code is called accidentally.
 
     The process is the same for the other event types or when registering multiple events. For
@@ -397,6 +398,13 @@ namespace scheduler {
     };
 
 }}
+
+#define SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET()                                            \
+        senf::scheduler::detail::FIFORunner::instance().watchdogCheckpoint(                 \
+                __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__));
+
+#define SENF_SCHEDULER_WATCHDOG_CHECKPOINT_CLEAR()                                          \
+        senf::scheduler::detail::FIFORunner::instance().watchdogCheckpoint(SENF_NULLPTR);
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Scheduler.cci"

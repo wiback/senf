@@ -25,7 +25,6 @@
 
 // Custom includes
 
-//#include "QueueSocketSourceSink.mpp"
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,8 +51,48 @@ prefix_ void senf::ppi::module::QueueEthVLanFilter::request()
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::PassiveQueueSocketSink
+
+template <class Connector>
+prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocketSink()
+    : handle_ ()
+    , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+              senf::scheduler::EventHook::POST, false)
+    , ioEvent_( handle_, IOEvent::Write)
+    , qAlgo_( new NoneQueueingAlgorithm())
+#ifdef SENF_DEBUG
+    , burst_ (0)
+    , burstMax_ (0)
+#endif
+{
+    noroute(input);
+    input.onRequest(&PassiveQueueSocketSink::write);
+    input.throttlingDisc( ThrottlingDiscipline::NONE);
+    registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
+    ioEvent_.enabled(false);
+}
+
+template <class Connector>
+prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocketSink(Handle const & handle)
+    : handle_ (handle)
+    , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
+              senf::scheduler::EventHook::POST, false)
+    , ioEvent_( handle_, IOEvent::Write)
+    , qAlgo_( new NoneQueueingAlgorithm())
+#ifdef SENF_DEBUG
+    , burst_ (0)
+    , burstMax_ (0)
+#endif
+{
+    noroute(input);
+    input.onRequest(&PassiveQueueSocketSink::write);
+    input.throttlingDisc( ThrottlingDiscipline::NONE);
+    registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
+    ioEvent_.enabled(false);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
-//#include "QueueSocketSourceSink.mpp"
 
 
 // Local Variables:

@@ -53,7 +53,8 @@
 
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000),
-      watchdogAbort_ (false), runningTask_(SENF_NULLPTR), watchdogCount_(0), hangCount_ (0), yield_ (false)
+      watchdogAbort_ (false), watchdogCheckpoint_(SENF_NULLPTR), runningTask_(SENF_NULLPTR),
+      watchdogCount_(0), hangCount_ (0), yield_ (false)
 {
     struct sigevent ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -302,6 +303,10 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
         senf::IGNORE( write(1, runningTask_->name().c_str(), runningTask_->name().size()) );
     else
         senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
+    if (watchdogCheckpoint_) {
+        senf::IGNORE( write(1, "  Last Checkpoint: ", 19));
+        senf::IGNORE( write(1, watchdogCheckpoint_, strlen(watchdogCheckpoint_)));
+    }
 /*    senf::IGNORE( write(1, " at\n ", 3) );
 #ifdef SENF_BACKTRACE
     static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

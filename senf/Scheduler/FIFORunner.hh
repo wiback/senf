@@ -109,6 +109,8 @@ namespace detail {
         void startWatchdog();
         void stopWatchdog();
 
+        void watchdogCheckpoint(const char * checkpoint);
+
         unsigned hangCount();
 
         iterator begin() const;
@@ -148,6 +150,7 @@ namespace detail {
         bool watchdogRunning_;
         unsigned watchdogMs_;
         bool watchdogAbort_;
+        const char * watchdogCheckpoint_;
 
         TaskInfo * runningTask_;
         std::string runningName_;

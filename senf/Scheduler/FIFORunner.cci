@@ -170,6 +170,11 @@ prefix_ void senf::scheduler::detail::FIFORunner::yield()
     yield_ = true;
 }
 
+prefix_ void senf::scheduler::detail::FIFORunner::watchdogCheckpoint(const char * checkpoint)
+{
+    watchdogCheckpoint_ = checkpoint;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
