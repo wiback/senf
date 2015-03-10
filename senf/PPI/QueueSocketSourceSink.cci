@@ -132,6 +132,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(s
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
 {
+    handle_.send();
     while (qAlgo_->size() > 0) {
         boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
         if (! buf) {

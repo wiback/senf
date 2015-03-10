@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <senf/Utils/Logger.hh>
+#include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,6 +298,8 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
 
 prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 {
+    SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
+
     detail::QueueInfo & qi (* qinfo(handle));
     while (! qi.tx.idle || qi.tx.tail != qi.tx.head) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
@@ -309,8 +312,12 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         // condition above is now correct with idle = true
         qi.tx.idle = true;
     }
+
+    SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
+
     for (;;) {
         if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
+            SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
             switch (errno) {
             case EINTR:
                 continue;
@@ -338,6 +345,8 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         }
         break;
     }
+
+    SENF_SCHEDULER_WATCHDOG_CHECKPOINT_CLEAR();
 }
 
 prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const * buffer,
