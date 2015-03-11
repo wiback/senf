@@ -113,8 +113,9 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
 #endif
         size += req.tp_block_size;
 
-//        v = 1;
-//        setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
+        // supposedly this should speed up TX, but for us it rather costs us 10% 
+        // v = 1;
+        // setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
     }
 
     unsigned char * map (static_cast<unsigned char *>(
