@@ -298,8 +298,6 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
 
 prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 {
-    SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
-
     detail::QueueInfo & qi (* qinfo(handle));
     while (! qi.tx.idle || qi.tx.tail != qi.tx.head) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
@@ -313,17 +311,17 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         qi.tx.idle = true;
     }
 
-    SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
-
     for (;;) {
         if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
             SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
             switch (errno) {
             case EINTR:
-                continue;
+		// We break here as 3.16.x seems to throw tons of those and 'continue' causes a busy-loop
+                break;
             case EAGAIN:
                 break;
             case EMSGSIZE:
+	        SENF_SCHEDULER_WATCHDOG_CHECKPOINT_SET();
                 // the trigerring frame(s) will be marked by the kernel as WRONG_FORMAT
                 // we just clear this flag, thus marking the frame(s) as available, effectively dropping such frames !!!
                 for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) { 
