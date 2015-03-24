@@ -1,0 +1,9 @@
+
+This directory contains all SENF modules that make up the emulator layer:
+  - PPI modules (meta data, packet flow analyzer, loss, latency, etc)
+  - topology information (node position, links & link groups)
+  - logging, measurement 
+
+To compile this, check NetEmu out directly into the PPI folder of a SENF checkout
+and rebuild SENF (with a complete rebuild, NetEmu will be added to the documentation
+menu)

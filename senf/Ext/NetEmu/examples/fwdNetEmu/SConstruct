@@ -1,0 +1,19 @@
+# -*- python -*-
+
+import os
+import sys
+try: sys.path.append(((_ for _ in (os.path.join(os.path.sep.join(('..' for _ in range(_))),d,
+     'site_scons') for d in ('senf','Senf') for _ in range(len(os.getcwd().split('/'))))
+     if os.path.exists(_))).next())
+except: pass
+import senfutil
+
+env = Environment()
+senfutil.SetupForSENF(env, exit_if_not_found=True)
+senfutil.NetEmu.SetupForNetEmu(env)
+senfutil.DefaultOptions(env)
+env.Append(CXXFLAGS = ['-Wno-missing-field-initializers', '-g'],
+           LINKFLAGS = ['-g'])
+env.Replace(LINKFLAGS_normal = [])
+
+env.Default(env.Program('fwNetEmu', ['main.cc']))

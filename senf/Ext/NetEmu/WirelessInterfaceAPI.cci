@@ -1,0 +1,232 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief WirelessInterfaceAPI inline non-template implementation */
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WirelessInterface::Frequency
+
+prefix_ senf::emu::WirelessInterface::Frequency::Frequency(unsigned frequencyLower_,
+                                                           unsigned frequencyUpper_,
+                                                           unsigned bandwidthLower_,
+                                                           unsigned bandwidthUpper_)
+    : frequencyLower(frequencyLower_), frequencyUpper(frequencyUpper_), bandwidthLower(bandwidthLower_),
+      bandwidthUpper(bandwidthUpper_)
+{}
+
+prefix_ senf::emu::WirelessInterface::Frequency::Frequency(unsigned frequency_,
+                                                           unsigned bandwidth_)
+    : frequencyLower(frequency_), frequencyUpper(frequency_), bandwidthLower(bandwidth_),
+      bandwidthUpper(bandwidth_)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WirelessInterface
+
+prefix_ unsigned senf::emu::WirelessInterface::frequency()
+    const
+{
+    return v_frequency();
+}
+
+prefix_ unsigned senf::emu::WirelessInterface::bandwidth()
+    const
+{
+    return v_bandwidth();
+}
+
+prefix_ void senf::emu::WirelessInterface::frequency(unsigned freq)
+{
+    unsigned bw (bandwidth());
+    lookupFrequency(freq, bw);
+    v_frequency(freq, bw);
+}
+
+prefix_ void senf::emu::WirelessInterface::frequency(unsigned freq, unsigned bw)
+{
+    lookupFrequency(freq, bw);
+    v_frequency(freq, bw);
+}
+
+prefix_ senf::emu::WirelessInterface::FrequenciesRange
+senf::emu::WirelessInterface::frequencies()
+    const
+{
+    frequency_is_whitelisted predicate (whitelistedFrequencies_);
+    return boost::make_iterator_range(
+            make_filter_iterator( predicate, frequencies_.begin(), frequencies_.end()),
+            make_filter_iterator( predicate, frequencies_.end(),   frequencies_.end()) );
+}
+
+prefix_ senf::emu::WirelessInterface::WirelessInterface()
+{}
+
+prefix_ void senf::emu::WirelessInterface::coverageRange(unsigned distance)
+{
+    v_coverageRange(distance);
+}
+
+prefix_ void senf::emu::WirelessInterface::clearRegisteredFrequencies()
+{
+    frequencies_.clear();
+}
+
+prefix_ void senf::emu::WirelessInterface::clearRegisteredModulations()
+{
+    modulationIds_.clear();
+}
+
+prefix_ void senf::emu::WirelessInterface::registerFrequency(unsigned frequency,
+                                                             unsigned bandwidth)
+{
+    frequencies_.insert(Frequency(frequency, bandwidth));
+}
+
+prefix_ void senf::emu::WirelessInterface::registerFrequency(unsigned frequencyLower,
+                                                             unsigned frequencyUpper,
+                                                             unsigned bandwidthLower,
+                                                             unsigned bandwidthUpper)
+{
+    SENF_ASSERT( frequencyLower <= frequencyUpper,
+                 "Reversed frequency parameters in "
+                 "senf::emu::WirelessInterface::registerFrequency()");
+    SENF_ASSERT( bandwidthLower <= bandwidthUpper,
+                 "Reversed frequency parameters in "
+                 "senf::emu::WirelessInterface::registerFrequency()");
+    frequencies_.insert(Frequency(frequencyLower, frequencyUpper, bandwidthLower, bandwidthUpper));
+}
+
+prefix_ senf::emu::WirelessInterface::ModulationParameterIds const &
+senf::emu::WirelessInterface::modulationParameterIds()
+    const
+{
+    return modulationIds_;
+}
+
+prefix_ void senf::emu::WirelessInterface::registerModulation(ModulationParameter::id_t id)
+{
+    ModulationParameterRegistry::instance().findModulationById(id); // throws if id is not registered
+    modulationIds_.insert(id);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WirelessReceiver
+
+prefix_
+senf::emu::WirelessReceiver::WirelessReceiver(ppi::connector::ActiveOutput<> & output)
+    : Receiver (output)
+{}
+
+prefix_ senf::emu::WirelessReceiver::
+WirelessReceiver(ppi::connector::ActiveOutput<EthernetPacket> & output)
+    : Receiver (output)
+{}
+
+prefix_ senf::emu::WirelessReceiver::
+WirelessReceiver(ppi::connector::ActiveOutputJack<> & output)
+    : Receiver (output)
+{}
+
+prefix_ senf::emu::WirelessReceiver::
+WirelessReceiver(ppi::connector::ActiveOutputJack<EthernetPacket> & output)
+    : Receiver (output)
+{}
+
+prefix_ void senf::emu::WirelessReceiver::init()
+{
+    Receiver::init();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WirelessTransmitter::TxPower
+
+prefix_ senf::emu::WirelessTransmitter::TxPower::TxPower(int _lower, int _upper)
+    : lower(_lower), upper(_upper)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WirelessTransmitter
+
+prefix_ int senf::emu::WirelessTransmitter::txPower()
+    const
+{
+    return v_txPower();
+}
+
+prefix_ void senf::emu::WirelessTransmitter::txPower(int power)
+{
+    TxPowers::const_iterator i (txPowers_.lower_bound(power));
+    if (i == txPowers_.end() || i->lower > power)
+        throw InvalidArgumentException("invalid txPower ") << power;
+    v_txPower(power);
+}
+
+prefix_ senf::emu::WirelessTransmitter::TxPowersRange senf::emu::WirelessTransmitter::txPowers()
+    const
+{
+    return boost::make_iterator_range(txPowers_.begin(), txPowers_.end());
+}
+
+prefix_ senf::emu::WirelessTransmitter::
+WirelessTransmitter(ppi::connector::PassiveInput<> & input)
+    : Transmitter (input)
+{}
+
+prefix_ senf::emu::WirelessTransmitter::
+WirelessTransmitter(ppi::connector::PassiveInput<EthernetPacket> & input)
+    : Transmitter (input)
+{}
+
+prefix_ senf::emu::WirelessTransmitter::
+WirelessTransmitter(ppi::connector::PassiveInputJack<> & input)
+    : Transmitter (input)
+{}
+
+prefix_ senf::emu::WirelessTransmitter::
+WirelessTransmitter(ppi::connector::PassiveInputJack<EthernetPacket> & input)
+    : Transmitter (input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

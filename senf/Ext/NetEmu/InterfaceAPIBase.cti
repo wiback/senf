@@ -1,0 +1,855 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief InterfaceAPIBase inline template implementation */
+
+//#include "InterfaceAPIBase.ih"
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wired,Bidirectional,void >
+
+template <class Output, class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional>::
+InterfaceAPIBase(Output & output, Input & input)
+    : WiredReceiver(output), WiredTransmitter(input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wired,Bidirectional,Hardware >
+
+template <class Output, class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Hardware>::
+InterfaceAPIBase(Output & output, Input & input)
+    : BidirectionalWiredInterface(output, input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wired,ReceiveOnly,Hardware >
+
+template <class Output>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Hardware>::
+InterfaceAPIBase(Output & output)
+    : WiredReceiver(output)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wired,TransmitOnly,Hardware >
+
+template <class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Hardware>::
+InterfaceAPIBase(Input & input)
+    : WiredTransmitter(input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wireless,Bidirectional,void >
+
+template <class Output, class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional>::
+InterfaceAPIBase(Output & output, Input & input)
+    : WirelessReceiver(output), WirelessTransmitter(input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wireless,Bidirectional,Hardware >
+
+template <class Output, class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Hardware>::
+InterfaceAPIBase(Output & output, Input & input)
+    : BidirectionalWirelessInterface(output, input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wireless,ReceiveOnly,Hardware >
+
+template <class Output>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Hardware>::
+InterfaceAPIBase(Output & output)
+    : WirelessReceiver(output)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wireless,TransmitOnly,Hardware >
+
+template <class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Hardware>::
+InterfaceAPIBase(Input & input)
+    : WirelessTransmitter(input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wired,Bidirectional,Emulated >
+
+template <class Base>
+template <class Output, class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+InterfaceAPIBase(Output & output, Input & input)
+    : Base(output, input)
+{}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enable()
+{
+    enableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_disable()
+{
+    disableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enabled()
+    const
+{
+    return emulatedInterfaceEnabled();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_initEmulationInterface()
+{
+    initEmulatedReceiver();
+    initEmulatedTransmitter();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_deinitEmulationInterface()
+{
+    deinitEmulatedTransmitter();
+    deinitEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_promisc()
+    const
+{
+    return promiscEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_promisc(bool v)
+{
+    promiscEmulatedReceiver(v);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mcAdd(senf::MACAddress const & address)
+{
+    mcAddEmulatedReceiver(address);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mcDrop(senf::MACAddress const & address)
+{
+    mcDropEmulatedReceiver(address);
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mtu()
+    const
+{
+    return mtuEmulatedTransmitter();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mtu(unsigned v)
+{
+    mtuEmulatedTransmitter(v);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+init()
+{
+    Base::init();
+    EmulatedWiredInterface::init();
+    EmulatedWiredReceiver::init();
+    EmulatedWiredTransmitter::init();
+}
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wired,ReceiveOnly,Emulated >
+
+template <class Output>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated>::
+InterfaceAPIBase(Output & output)
+    : WiredReceiver(output)
+{}
+
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wired,TransmitOnly,Emulated >
+
+template <class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated>::
+InterfaceAPIBase(Input & input)
+    : WiredTransmitter(input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wireless,Bidirectional,Emulated >
+
+template <class Base>
+template <class Output, class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+InterfaceAPIBase(Output & output, Input & input)
+    : Base(output, input)
+{}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enable()
+{
+    enableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_disable()
+{
+    disableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enabled()
+    const
+{
+    return emulatedInterfaceEnabled();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_initEmulationInterface()
+{
+    initEmulatedReceiver();
+    initEmulatedTransmitter();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_deinitEmulationInterface()
+{
+    deinitEmulatedTransmitter();
+    deinitEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_promisc()
+    const
+{
+    return promiscEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_promisc(bool v)
+{
+    promiscEmulatedReceiver(v);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mcAdd(senf::MACAddress const & address)
+{
+    mcAddEmulatedReceiver(address);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mcDrop(senf::MACAddress const & address)
+{
+    mcDropEmulatedReceiver(address);
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mtu()
+    const
+{
+    return mtuEmulatedTransmitter();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mtu(unsigned v)
+{
+    mtuEmulatedTransmitter(v);
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_frequency()
+    const
+{
+    return emulatedFrequency();
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_bandwidth()
+    const
+{
+    return emulatedBandwidth();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_frequency(unsigned frequency, unsigned bandwidth)
+{
+    emulatedFrequency(frequency, bandwidth);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_coverageRange(unsigned distance)
+{
+    emulatedCoverageRange(distance);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+init()
+{
+    Base::init();
+    EmulatedWirelessInterface::init();
+    EmulatedWirelessReceiver::init();
+    EmulatedWirelessTransmitter::init();
+}
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wireless,ReceiveOnly,Emulated >
+
+template <class Base>
+template <class Output>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+InterfaceAPIBase(Output & output)
+    : WirelessReceiver(output)
+{}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enable()
+{
+    enableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_disable()
+{
+    disableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enabled()
+    const
+{
+    return emulatedInterfaceEnabled();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_initEmulationInterface()
+{
+    initEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_deinitEmulationInterface()
+{
+    deinitEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_promisc()
+    const
+{
+    return promiscEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_promisc(bool v)
+{
+    promiscEmulatedReceiver(v);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mcAdd(senf::MACAddress const & address)
+{
+    mcAddEmulatedReceiver(address);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mcDrop(senf::MACAddress const & address)
+{
+    mcDropEmulatedReceiver(address);
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_frequency()
+    const
+{
+    return emulatedFrequency();
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_bandwidth()
+    const
+{
+    return emulatedBandwidth();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_frequency(unsigned frequency, unsigned bandwidth)
+{
+    emulatedFrequency(frequency, bandwidth);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_coverageRange(unsigned distance)
+{
+    emulatedCoverageRange(distance);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+init()
+{
+    Base::init();
+    WirelessReceiver::init();
+    EmulatedWirelessInterface::init();
+    EmulatedWirelessReceiver::init();
+}
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceAPIBase< Wireless,TransmitOnly,Emulated >
+
+template <class Base>
+template <class Input>
+prefix_
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+InterfaceAPIBase(Input & input)
+    : WirelessTransmitter(input)
+{}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enable()
+{
+    enableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_disable()
+{
+    disableEmulatedInterface();
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_enabled()
+    const
+{
+    return emulatedInterfaceEnabled();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_initEmulationInterface()
+{
+    initEmulatedTransmitter();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_deinitEmulationInterface()
+{
+    deinitEmulatedTransmitter();
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mtu()
+    const
+{
+    return mtuEmulatedTransmitter();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_mtu(unsigned v)
+{
+    mtuEmulatedTransmitter(v);
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_frequency()
+    const
+{
+    return emulatedFrequency();
+}
+
+template <class Base>
+prefix_ unsigned
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_bandwidth()
+    const
+{
+    return emulatedBandwidth();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_frequency(unsigned frequency, unsigned bandwidth)
+{
+    emulatedFrequency(frequency, bandwidth);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_coverageRange(unsigned distance)
+{
+    emulatedCoverageRange(distance);
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::TransmitOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+init()
+{
+    Base::init();
+    WirelessTransmitter::init();
+    EmulatedWirelessInterface::init();
+    EmulatedWirelessTransmitter::init();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

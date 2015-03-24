@@ -1,0 +1,311 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief InterfaceAPI inline non-template implementation */
+
+#include "InterfaceAPI.ih"
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::Interface
+
+prefix_ senf::emu::Interface::~Interface()
+{}
+
+prefix_ bool senf::emu::Interface::canTransmit()
+    const
+{
+    try {
+        return dynamic_cast<Transmitter const *>(this);
+    }
+    SENF_WRAP_EXC(std::bad_cast)
+}
+
+prefix_ bool senf::emu::Interface::canReceive()
+    const
+{
+    try {
+        return dynamic_cast<Receiver const *>(this);
+    }
+    SENF_WRAP_EXC(std::bad_cast)
+}
+
+prefix_ void senf::emu::Interface::enable()
+{
+    v_enable();
+}
+
+prefix_ void senf::emu::Interface::disable()
+{
+    v_disable();
+}
+
+prefix_ bool senf::emu::Interface::enabled()
+    const
+{
+    return v_enabled();
+}
+
+prefix_ senf::MACAddress senf::emu::Interface::id()
+    const
+{
+    if (! id_)
+        id_ = v_id();
+    return id_;
+}
+
+prefix_ unsigned senf::emu::Interface::index()
+    const
+{
+    return index_;
+}
+
+prefix_ unsigned senf::emu::Interface::nodeId()
+{
+    return nodeId_;
+}
+
+prefix_ void senf::emu::Interface::nodeId(unsigned id)
+{
+    nodeId_ = id;
+}
+
+prefix_ void senf::emu::Interface::deviceId(InterfaceDeviceId id)
+{
+    deviceId_ = id;
+}
+
+prefix_ senf::emu::InterfaceDeviceId senf::emu::Interface::deviceId()
+    const
+{
+    return deviceId_;
+}
+
+prefix_ boost::uint8_t senf::emu::Interface::linkTypeId()
+    const
+{
+    return v_linkTypeId();
+}
+
+prefix_ senf::console::DirectoryNode & senf::emu::Interface::consoleDir()
+    const
+{
+    return consoleDir_.node();
+}
+
+prefix_ senf::console::DirectoryNode & senf::emu::Interface::statisticsDir()
+    const
+{
+    return consoleDir()["stats"];
+}
+
+prefix_ senf::emu::Interface::Interface()
+{}
+
+prefix_ std::string senf::emu::Interface::interfaceTypeName()
+    const
+{
+    return senf::prettyName(typeid(*const_cast<Interface*>(this)));
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::Receiver
+
+prefix_ senf::emu::Receiver::~Receiver()
+{}
+
+prefix_ bool senf::emu::Receiver::promisc()
+    const
+{
+    return v_promisc();
+}
+
+prefix_ void senf::emu::Receiver::promisc(bool v)
+{
+    v_promisc(v);
+}
+
+prefix_ void senf::emu::Receiver::flushRxQueues()
+{
+    v_flushRxQueues();
+}
+
+prefix_ void senf::emu::Receiver::mcAdd(MACAddress const & address)
+{
+    v_mcAdd(address);
+}
+
+prefix_ void senf::emu::Receiver::mcDrop(MACAddress const & address)
+{
+    v_mcDrop(address);
+}
+
+prefix_ senf::emu::Receiver::Receiver(ppi::connector::ActiveOutput<> & output)
+    : output (output)
+{}
+
+prefix_ senf::emu::Receiver::
+Receiver(ppi::connector::ActiveOutput<EthernetPacket> & output)
+    : output (output)
+{}
+
+prefix_ senf::emu::Receiver::Receiver(ppi::connector::ActiveOutputJack<> & output)
+    : output (output)
+{}
+
+prefix_ senf::emu::Receiver::
+Receiver(ppi::connector::ActiveOutputJack<EthernetPacket> & output)
+    : output (output)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::Transmitter
+
+prefix_ senf::emu::Transmitter::~Transmitter()
+{}
+
+prefix_ unsigned senf::emu::Transmitter::mtu()
+    const
+{
+    return v_mtu();
+}
+
+prefix_ void senf::emu::Transmitter::mtu(unsigned v)
+{
+    v_mtu(v);
+}
+
+prefix_ void senf::emu::Transmitter::flushTxQueues()
+{
+    v_flushTxQueues();
+}
+
+prefix_ senf::emu::Transmitter::Transmitter(ppi::connector::PassiveInput<> & input)
+    : input (input)
+{}
+
+prefix_ senf::emu::Transmitter::
+Transmitter(ppi::connector::PassiveInput<EthernetPacket> & input)
+    : input (input)
+{}
+
+prefix_ senf::emu::Transmitter::Transmitter(ppi::connector::PassiveInputJack<> & input)
+    : input (input)
+{}
+
+prefix_ senf::emu::Transmitter::
+Transmitter(ppi::connector::PassiveInputJack<EthernetPacket> & input)
+    : input (input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WiredReceiver
+
+prefix_
+senf::emu::WiredReceiver::WiredReceiver(ppi::connector::ActiveOutput<> & output)
+    : Receiver (output)
+{}
+
+prefix_ senf::emu::WiredReceiver::
+WiredReceiver(ppi::connector::ActiveOutput<EthernetPacket> & output)
+    : Receiver (output)
+{}
+
+prefix_ senf::emu::WiredReceiver::
+WiredReceiver(ppi::connector::ActiveOutputJack<> & output)
+    : Receiver (output)
+{}
+
+prefix_ senf::emu::WiredReceiver::
+WiredReceiver(ppi::connector::ActiveOutputJack<EthernetPacket> & output)
+    : Receiver (output)
+{}
+
+prefix_ void senf::emu::WiredReceiver::init()
+{
+    Receiver::init();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WiredInterface
+
+prefix_ void senf::emu::WiredInterface::init()
+{
+    Interface::init();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::WiredTransmitter
+prefix_ senf::emu::WiredTransmitter::
+WiredTransmitter(ppi::connector::PassiveInput<> & input)
+    : Transmitter (input)
+{}
+
+prefix_ senf::emu::WiredTransmitter::
+WiredTransmitter(ppi::connector::PassiveInput<EthernetPacket> & input)
+    : Transmitter (input)
+{}
+
+prefix_ senf::emu::WiredTransmitter::
+WiredTransmitter(ppi::connector::PassiveInputJack<> & input)
+    : Transmitter (input)
+{}
+
+prefix_ senf::emu::WiredTransmitter::
+WiredTransmitter(ppi::connector::PassiveInputJack<EthernetPacket> & input)
+    : Transmitter (input)
+{}
+
+prefix_ void senf::emu::WiredTransmitter::init()
+{
+    Transmitter::init();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::HardwareInterface
+
+prefix_ void senf::emu::HardwareInterface::init()
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

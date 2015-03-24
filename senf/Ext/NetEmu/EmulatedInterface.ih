@@ -1,0 +1,198 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief EmulatedInterface internal header */
+
+#ifndef IH_SENF_Ext_NetEmu_EmulatedInterface_
+#define IH_SENF_Ext_NetEmu_EmulatedInterface_ 1
+
+// Custom includes
+#include <senf/PPI/MonitorModule.hh>
+#include <senf/PPI/IntervalTimer.hh>
+#include "Packets.hh"
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+namespace emu {
+
+    class EmulatedReceiver;
+    class EmulatedTransmitter;
+    class ChannelGroupTable;
+
+namespace detail {
+
+    /** \brief Internal: Emulated interface receive filter */
+    class EmulatedInterfaceReceiveFilter
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(EmulatedInterfaceReceiveFilter);
+    public:
+        ppi::connector::PassiveInput<PacketHeader> input;
+        ppi::connector::ActiveOutput<> output;
+
+        explicit EmulatedInterfaceReceiveFilter(EmulatedReceiver & receiver);
+
+    private:
+        void request();
+
+        EmulatedReceiver & receiver_;
+    };
+
+    /** \brief Internal: Emulated interface transmit filter */
+    class EmulatedInterfaceTransmitFilter
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(EmulatedInterfaceTransmitFilter);
+    public:
+        ppi::connector::PassiveInput<> input;
+        ppi::connector::ActiveOutput<PacketHeader> output;
+
+        explicit EmulatedInterfaceTransmitFilter(EmulatedTransmitter & transmitter);
+
+        unsigned mtu() const;
+        void mtu(unsigned v);
+
+    private:
+        void request();
+
+        EmulatedTransmitter & transmitter_;
+        unsigned seqNr_;
+        unsigned mtu_;
+    };
+
+    /**  \brief Sequence number validation
+
+        This module will validate the sequence number of all packets. The sequence number is
+        monitored for each peer. If sequence numbers are reversed or missing the module generates an
+        appropriate message.
+     */
+    class DroppedPacketChecker
+        : public ppi::module::MonitorModule<PacketHeader>
+    {
+        SENF_PPI_MODULE(DroppedPacketChecker);
+        SENF_LOG_CLASS_AREA();
+    public:
+        DroppedPacketChecker();
+
+        unsigned droppedPackets() const; ///< Number of dropped packets
+
+        /** \brief DroppedPacketChecker statistics
+            \see DroppedPacketChecker */
+        struct Statistics {
+            boost::signals2::signal<void (float)> droppedPacketsPerSecond;
+            boost::signals2::signal<void (unsigned)> numPeers;
+        } signals;
+
+        void startStatistics(ClockService::clock_type pollInterval);
+                                        ///< Start statistics generation or change interval
+
+    private:
+        virtual void v_handlePacket(PacketHeader const & p);
+        void statisticsUpdate();
+
+        typedef std::map<std::pair<unsigned,unsigned>, boost::uint32_t> SeqNoMap;
+        SeqNoMap seqNos_;
+        unsigned droppedPackets_;
+        ppi::IntervalTimer statisticsTimer_;
+        unsigned lastDroppedPackets_;
+        float factor_;
+    };
+
+    /** \brief Check raw packet transmit time
+
+        This module will check the time each packet takes from the time it is sent until it is
+        received against a maximum value. Excessively delayed packets will be logged.
+     */
+    class DelayTimeChecker
+        : public ppi::module::MonitorModule<PacketHeader>
+    {
+        SENF_PPI_MODULE(DelayTimeChecker);
+        SENF_LOG_CLASS_AREA();
+    public:
+        DelayTimeChecker(
+            ClockService::clock_type maxDelay = ClockService::milliseconds(10));
+
+        void maxDelay(ClockService::clock_type maxDelay);
+                                        ///< Set maximum allowed packet delay
+        ClockService::clock_type maxDelay() const;
+                                        ///< Get current maxDelay() value
+
+        unsigned delayedPackets() const; ///< Number of packets with delay > maxDelay()
+        ClockService::clock_type maxPacketDelay() const;
+                                        ///< Maximum packet delay encountered
+
+        /** \brief DelayTimeChecker statistics
+            \see DelayTimeChecker */
+        struct Statistics {
+            boost::signals2::signal<void (float,float,float)> packetDelay;
+        } signals;
+
+        void startStatistics(ClockService::clock_type pollInterval);
+
+    private:
+        virtual void v_handlePacket(PacketHeader const & p);
+        void statisticsUpdate();
+
+        ClockService::clock_type maxDelay_;
+        unsigned delayedPackets_;
+        ClockService::clock_type maxPacketDelay_;
+        ppi::IntervalTimer statisticsTimer_;
+        ClockService::clock_type minDelayStat_, totalDelayStat_, maxDelayStat_;
+        unsigned nPackets_;
+    };
+
+    class AdvancePacket
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(AdvancePacket);
+    public:
+        ppi::connector::PassiveInput<PacketHeader> input;
+        ppi::connector::ActiveOutput<> output;
+
+        AdvancePacket();
+
+    private:
+        void request();
+    };
+
+}}}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

@@ -1,0 +1,196 @@
+// $Id:$
+//
+// Copyright (C) 2008
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief Annotations inline non-template implementation */
+
+//#include "Annotations.ih"
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::annotations::Interface
+
+prefix_ senf::emu::annotations::Interface::Interface()
+    : value ()
+{}
+
+prefix_ senf::emu::annotations::Interface::Interface(MACAddress const & v)
+    : value (v)
+{}
+
+prefix_ bool senf::emu::annotations::Interface::operator<(Interface const & other)
+    const
+{
+    return value < other.value;
+}
+
+prefix_ bool senf::emu::annotations::Interface::operator==(Interface const & other)
+    const
+{
+    return value == other.value;
+}
+
+prefix_ std::ostream & senf::emu::annotations::operator<<(std::ostream & os, Interface const & annotation)
+{
+    os << annotation.value;
+    return os;
+}
+
+prefix_ std::size_t senf::emu::annotations::hash_value(Interface const & annotation) SENF_NOEXCEPT
+{
+    return senf::hash_value(annotation.value);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::annotations::Quality
+
+prefix_ senf::emu::annotations::Quality::Quality()
+    : snr (0), rssi (0), noise(0)
+{
+    memset(&flags, 0, sizeof(flags));
+}
+
+prefix_ bool senf::emu::annotations::Quality::operator<(Quality const & other)
+    const
+{
+    return (snr < other.snr || (snr == other.snr && (rssi < other.rssi)));
+}
+
+prefix_ void senf::emu::annotations::Quality::setLoss(unsigned loss)
+{
+    flags.framePredecessorLost = std::min(255u, loss); 
+}
+
+
+prefix_ std::ostream & senf::emu::annotations::operator<<(std::ostream & os,
+                                                          Quality const & annotation)
+{
+    os << "(snr:" << annotation.snr
+       << " rssi:" << annotation.rssi
+       << " noise:" << annotation.noise
+       << " flags:" << annotation.flags.frameCorrupt << "," << annotation.flags.frameRetransmitted 
+       << "," << annotation.flags.frameDuplicate << "," << annotation.flags.framePredecessorLost << "," << annotation.flags.frameLength
+       << ")";
+    return os;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::annotations::Timestamp
+
+prefix_ senf::emu::annotations::Timestamp::Timestamp()
+{
+}
+
+prefix_ bool senf::emu::annotations::Timestamp::operator<(Timestamp const & other)
+    const
+{
+    return as_clock_type() < other.as_clock_type();
+}
+
+prefix_ std::ostream & senf::emu::annotations::operator<<(std::ostream & os,
+                                                          Timestamp const & annotation)
+{
+    os << ClockService::abstime(annotation.as_clock_type());
+    return os;
+}
+
+prefix_ senf::emu::annotations::Timestamp & senf::emu::annotations::Timestamp::operator=(Timestamp const & other)
+{
+    ::memcpy(timestamp, other.timestamp, sizeof(timestamp));
+    return *this;
+}
+
+prefix_ void senf::emu::annotations::Timestamp::fromSocketProtocol(senf::DatagramSocketProtocol const & protocol)
+{
+    struct timespec spec;
+    protocol.timestamp(&spec);
+    timestamp[0]= spec.tv_sec;
+    timestamp[1]= spec.tv_nsec;
+}
+
+prefix_ void senf::emu::annotations::Timestamp::fromQueueBuffer(senf::SocketQueueBuffer const & buffer)
+{
+    ::memcpy(timestamp, buffer.timestampPtr(), sizeof(timestamp));
+}
+
+prefix_ void senf::emu::annotations::Timestamp::fromWallClock()
+{
+    struct timespec spec;
+    clock_gettime(CLOCK_REALTIME_COARSE, &spec);
+    timestamp[0]= spec.tv_sec;
+    timestamp[1]= spec.tv_nsec;
+}
+
+prefix_ senf::ClockService::clock_type senf::emu::annotations::Timestamp::as_clock_type() 
+    const
+{
+    return ClockService::from_time_t(timestamp[0]) + ClockService::nanoseconds(timestamp[1]);
+}
+
+prefix_ std::uint32_t senf::emu::annotations::Timestamp::as_milli_seconds(std::uint32_t modulo) 
+    const
+{
+    return ((timestamp[0] * 1000) + (timestamp[1] / 1000000)) % modulo;
+}
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::annotations::WirelessModulation
+
+prefix_ senf::emu::annotations::WirelessModulation::WirelessModulation()
+    : id(0)
+{}
+
+prefix_ bool senf::emu::annotations::WirelessModulation::operator<(WirelessModulation const & other)
+    const
+{
+    return id < other.id;
+}
+
+prefix_ std::ostream & senf::emu::annotations::operator<<(std::ostream & os, WirelessModulation const & annotation)
+{
+    os << annotation.id;
+    return os;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

@@ -1,0 +1,258 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief EmulatedWirelessInterface inline non-template implementation */
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::EmulatedWirelessInterfaceTransmitFilter
+
+prefix_
+senf::emu::detail::EmulatedWirelessInterfaceTransmitFilter::
+EmulatedWirelessInterfaceTransmitFilter(EmulatedWirelessTransmitter & iface)
+    : iface_ (iface)
+{
+    route(input,output);
+    input.onRequest(&EmulatedWirelessInterfaceTransmitFilter::request);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::EmulatedWirelessInterfaceReceiveFilter
+
+prefix_
+senf::emu::detail::EmulatedWirelessInterfaceReceiveFilter::
+EmulatedWirelessInterfaceReceiveFilter(EmulatedWirelessReceiver & iface)
+    : iface_ (iface)
+{
+    route(input,output);
+    input.onRequest(&EmulatedWirelessInterfaceReceiveFilter::request);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedFrequencyRegistry::Entry
+
+prefix_ senf::emu::EmulatedFrequencyRegistry::Entry::Entry()
+    : frequency (), bandwidth (), address (), nUsers (), ownerNodeId ()
+{}
+
+prefix_ senf::emu::EmulatedFrequencyRegistry::Entry::Entry(unsigned frequency_,
+                                                           unsigned bandwidth_)
+    : frequency (frequency_), bandwidth (bandwidth_), address (), nUsers (), ownerNodeId ()
+{}
+
+prefix_ senf::emu::EmulatedFrequencyRegistry::Entry::Entry(unsigned frequency_,
+                                                           unsigned bandwidth_,
+                                                           UDPClientHandle::Address address_,
+                                                           unsigned nUsers_,
+                                                           unsigned ownerNodeId_)
+    : frequency (frequency_), bandwidth (bandwidth_), address (address_), nUsers (nUsers_),
+      ownerNodeId (ownerNodeId_)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedFrequencyRegistry::User
+
+prefix_ senf::emu::EmulatedFrequencyRegistry::User::User()
+    : entry(), interfaceId(), callback()
+{}
+
+prefix_ senf::emu::EmulatedFrequencyRegistry::User::
+User(Entries::index_iterator<ByFrequency>::type entry_, unsigned interfaceId_, UserCallback callback_)
+    : entry(entry_), interfaceId(interfaceId_), callback(callback_)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedFrequencyRegistry::AddrCompare
+
+prefix_ bool senf::emu::EmulatedFrequencyRegistry::AddrCompare::
+operator()(Entries::index_iterator<ByFrequency>::type a,
+           Entries::index_iterator<ByFrequency>::type b)
+    const
+{
+    return &*a < &*b;
+}
+
+prefix_ bool senf::emu::EmulatedFrequencyRegistry::AddrCompare::
+operator()(Entries::index_iterator<ByFrequency>::type a, Entry const * b)
+    const
+{
+    return &*a < b;
+}
+
+prefix_ bool senf::emu::EmulatedFrequencyRegistry::AddrCompare::
+operator()(Entry const * a, Entries::index_iterator<ByFrequency>::type b)
+    const
+{
+    return a < &*b;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedFrequencyRegistry
+
+prefix_ senf::emu::UDPClientHandle::Address senf::emu::EmulatedFrequencyRegistry::consoleGroup()
+    const
+{
+    return group_;
+}
+
+prefix_ void
+senf::emu::EmulatedFrequencyRegistry::consoleGroup(UDPClientHandle::Address const & group)
+{
+    group_ = group;
+    /// FIXME: How to change the group address after entering the scheduler ??
+    /// (need to change the address of a running socket)
+}
+
+prefix_ std::pair<senf::INet4Network, unsigned> senf::emu::EmulatedFrequencyRegistry::addressRange()
+    const
+{
+    return std::make_pair(channelGroupRange_, portbase_);
+}
+
+prefix_ void senf::emu::EmulatedFrequencyRegistry::addressRange(INet4Network const & range,
+                                                                unsigned portbase)
+{
+    channelGroupRange_ = range;
+    portbase_ = portbase;
+}
+
+prefix_ void senf::emu::EmulatedFrequencyRegistry::nextAddress(unsigned index)
+{
+    lastAddress_ = index-1;
+}
+
+prefix_ void senf::emu::EmulatedFrequencyRegistry::collisionCallback(CollisionCallback cb)
+{
+    cb_ = cb;
+}
+
+prefix_ senf::emu::EmulatedFrequencyRegistry::EntriesRange
+senf::emu::EmulatedFrequencyRegistry::entries()
+    const
+{
+    return boost::make_iterator_range(
+        entries_.get<ByFrequency>().begin(), entries_.get<ByFrequency>().end());
+}
+
+prefix_ senf::emu::EmulatedFrequencyRegistry::UsersRange
+senf::emu::EmulatedFrequencyRegistry::users(EntriesRange::iterator i)
+    const
+{
+    return users_.get<ByEntry>().equal_range(i);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedWirelessInterface
+
+prefix_ void senf::emu::EmulatedWirelessInterface::registerFrequency(unsigned frequency,
+                                                                     unsigned bandwidth)
+{
+    interface().registerFrequency(frequency, bandwidth);
+}
+
+prefix_ void senf::emu::EmulatedWirelessInterface::registerFrequency(unsigned frequencyLower,
+                                                                     unsigned frequencyUpper,
+                                                                     unsigned bandwidthLower,
+                                                                     unsigned bandwidthUpper)
+{
+    interface().registerFrequency(frequencyLower, frequencyUpper, bandwidthLower, bandwidthUpper);
+}
+
+prefix_ senf::emu::EmulatedWirelessInterface::EmulatedWirelessInterface()
+    : frequency_ (0u), bandwidth_ (0u), index_ (0u), distanceCallback_()
+{}
+
+prefix_ unsigned senf::emu::EmulatedWirelessInterface::emulatedFrequency()
+    const
+{
+    return frequency_;
+}
+
+prefix_ unsigned senf::emu::EmulatedWirelessInterface::emulatedBandwidth()
+    const
+{
+    return bandwidth_;
+}
+
+prefix_ void senf::emu::EmulatedWirelessInterface::distanceCallback(DistanceCallback cb)
+{
+    distanceCallback_ = cb;
+}
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedWirelessReceiver
+
+prefix_ senf::emu::EmulatedWirelessReceiver::EmulatedWirelessReceiver()
+    : receiverJack(filter_.output), filter_ (*this),
+      rssiRandomnessRange_(0), noiseRandomnessRange_(0)
+{
+    ppi::connect(EmulatedReceiver::receiverJack, filter_);
+}
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedWirelessTransmitter
+
+prefix_ void senf::emu::EmulatedWirelessTransmitter::registerTxPower(int power)
+{
+    basei::interface().transmitter().registerTxPower(power);
+}
+
+prefix_ void senf::emu::EmulatedWirelessTransmitter::registerTxPower(int powerLow,
+                                                                     int powerHigh)
+{
+    basei::interface().transmitter().registerTxPower(powerLow, powerHigh);
+}
+
+prefix_ senf::emu::EmulatedWirelessTransmitter::EmulatedWirelessTransmitter()
+    : transmitterJack(filter_.input), filter_ (*this)
+{
+    ppi::connect(filter_, EmulatedTransmitter::transmitterJack);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+prefix_ senf::emu::EmulatedFrequencyRegistry & senf::emu::emulatedFrequencyRegistry()
+{
+    return EmulatedFrequencyRegistry::instance();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

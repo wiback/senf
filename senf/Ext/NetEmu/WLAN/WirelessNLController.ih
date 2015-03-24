@@ -1,0 +1,467 @@
+// $Id:$
+//
+// Copyright (C) 2012
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+
+/** \file
+    \brief WirelessNLController public header */
+
+#ifndef IH_SENF_Ext_NetEmu_WLAN_WirelessNLController_
+#define IH_SENF_Ext_NetEmu_WLAN_WirelessNLController_ 1
+
+// Custom includes
+//#include <netlink/netlink.h>
+//#include <boost/unordered_map.hpp>
+//#include <boost/assign.hpp>
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+namespace emu {
+namespace detail {
+
+    //
+    // this functions are just useful during the development to dump netlink attributes of a message
+    //
+#   define MapEntry(x) (x, BOOST_PP_STRINGIZE(x))
+
+//    static inline std::string nl80211_attrToString(int attr) {
+//        static const boost::unordered_map<int, const char*> attrToString = boost::assign::map_list_of
+//                MapEntry( NL80211_ATTR_UNSPEC)
+//
+//                MapEntry( NL80211_ATTR_WIPHY)
+//                MapEntry( NL80211_ATTR_WIPHY_NAME)
+//
+//                MapEntry( NL80211_ATTR_IFINDEX)
+//                MapEntry( NL80211_ATTR_IFNAME)
+//                MapEntry( NL80211_ATTR_IFTYPE)
+//
+//                MapEntry( NL80211_ATTR_MAC)
+//
+//                MapEntry( NL80211_ATTR_KEY_DATA)
+//                MapEntry( NL80211_ATTR_KEY_IDX)
+//                MapEntry( NL80211_ATTR_KEY_CIPHER)
+//                MapEntry( NL80211_ATTR_KEY_SEQ)
+//                MapEntry( NL80211_ATTR_KEY_DEFAULT)
+//
+//                MapEntry( NL80211_ATTR_BEACON_INTERVAL)
+//                MapEntry( NL80211_ATTR_DTIM_PERIOD)
+//                MapEntry( NL80211_ATTR_BEACON_HEAD)
+//                MapEntry( NL80211_ATTR_BEACON_TAIL)
+//
+//                MapEntry( NL80211_ATTR_STA_AID)
+//                MapEntry( NL80211_ATTR_STA_FLAGS)
+//                MapEntry( NL80211_ATTR_STA_LISTEN_INTERVAL)
+//                MapEntry( NL80211_ATTR_STA_SUPPORTED_RATES)
+//                MapEntry( NL80211_ATTR_STA_VLAN)
+//                MapEntry( NL80211_ATTR_STA_INFO)
+//
+//                MapEntry( NL80211_ATTR_WIPHY_BANDS)
+//
+//                MapEntry( NL80211_ATTR_MNTR_FLAGS)
+//
+//                MapEntry( NL80211_ATTR_MESH_ID)
+//                MapEntry( NL80211_ATTR_STA_PLINK_ACTION)
+//                MapEntry( NL80211_ATTR_MPATH_NEXT_HOP)
+//                MapEntry( NL80211_ATTR_MPATH_INFO)
+//
+//                MapEntry( NL80211_ATTR_BSS_CTS_PROT)
+//                MapEntry( NL80211_ATTR_BSS_SHORT_PREAMBLE)
+//                MapEntry( NL80211_ATTR_BSS_SHORT_SLOT_TIME)
+//
+//                MapEntry( NL80211_ATTR_HT_CAPABILITY)
+//
+//                MapEntry( NL80211_ATTR_SUPPORTED_IFTYPES)
+//
+//                MapEntry( NL80211_ATTR_REG_ALPHA2)
+//                MapEntry( NL80211_ATTR_REG_RULES)
+//
+//                MapEntry( NL80211_ATTR_MESH_CONFIG)
+//
+//                MapEntry( NL80211_ATTR_BSS_BASIC_RATES)
+//
+//                MapEntry( NL80211_ATTR_WIPHY_TXQ_PARAMS)
+//                MapEntry( NL80211_ATTR_WIPHY_FREQ)
+//                MapEntry( NL80211_ATTR_WIPHY_CHANNEL_TYPE)
+//
+//                MapEntry( NL80211_ATTR_KEY_DEFAULT_MGMT)
+//
+//                MapEntry( NL80211_ATTR_MGMT_SUBTYPE)
+//                MapEntry( NL80211_ATTR_IE)
+//
+//                MapEntry( NL80211_ATTR_MAX_NUM_SCAN_SSIDS)
+//
+//                MapEntry( NL80211_ATTR_SCAN_FREQUENCIES)
+//                MapEntry( NL80211_ATTR_SCAN_SSIDS)
+//                MapEntry( NL80211_ATTR_GENERATION) /* replaces old SCAN_GENERATION */
+//                MapEntry( NL80211_ATTR_BSS)
+//
+//                MapEntry( NL80211_ATTR_REG_INITIATOR)
+//                MapEntry( NL80211_ATTR_REG_TYPE)
+//
+//                MapEntry( NL80211_ATTR_SUPPORTED_COMMANDS)
+//
+//                MapEntry( NL80211_ATTR_FRAME)
+//                MapEntry( NL80211_ATTR_SSID)
+//                MapEntry( NL80211_ATTR_AUTH_TYPE)
+//                MapEntry( NL80211_ATTR_REASON_CODE)
+//
+//                MapEntry( NL80211_ATTR_KEY_TYPE)
+//
+//                MapEntry( NL80211_ATTR_MAX_SCAN_IE_LEN)
+//                MapEntry( NL80211_ATTR_CIPHER_SUITES)
+//
+//                MapEntry( NL80211_ATTR_FREQ_BEFORE)
+//                MapEntry( NL80211_ATTR_FREQ_AFTER)
+//
+//                MapEntry( NL80211_ATTR_FREQ_FIXED)
+//
+//
+//                MapEntry( NL80211_ATTR_WIPHY_RETRY_SHORT)
+//                MapEntry( NL80211_ATTR_WIPHY_RETRY_LONG)
+//                MapEntry( NL80211_ATTR_WIPHY_FRAG_THRESHOLD)
+//                MapEntry( NL80211_ATTR_WIPHY_RTS_THRESHOLD)
+//
+//                MapEntry( NL80211_ATTR_TIMED_OUT)
+//
+//                MapEntry( NL80211_ATTR_USE_MFP)
+//
+//                MapEntry( NL80211_ATTR_STA_FLAGS2)
+//
+//                MapEntry( NL80211_ATTR_CONTROL_PORT)
+//
+//                MapEntry( NL80211_ATTR_TESTDATA)
+//
+//                MapEntry( NL80211_ATTR_PRIVACY)
+//
+//                MapEntry( NL80211_ATTR_DISCONNECTED_BY_AP)
+//                MapEntry( NL80211_ATTR_STATUS_CODE)
+//
+//                MapEntry( NL80211_ATTR_CIPHER_SUITES_PAIRWISE)
+//                MapEntry( NL80211_ATTR_CIPHER_SUITE_GROUP)
+//                MapEntry( NL80211_ATTR_WPA_VERSIONS)
+//                MapEntry( NL80211_ATTR_AKM_SUITES)
+//
+//                MapEntry( NL80211_ATTR_REQ_IE)
+//                MapEntry( NL80211_ATTR_RESP_IE)
+//
+//                MapEntry( NL80211_ATTR_PREV_BSSID)
+//
+//                MapEntry( NL80211_ATTR_KEY)
+//                MapEntry( NL80211_ATTR_KEYS)
+//
+//                MapEntry( NL80211_ATTR_PID)
+//
+//                MapEntry( NL80211_ATTR_4ADDR)
+//
+//                MapEntry( NL80211_ATTR_SURVEY_INFO)
+//
+//                MapEntry( NL80211_ATTR_PMKID)
+//                MapEntry( NL80211_ATTR_MAX_NUM_PMKIDS)
+//
+//                MapEntry( NL80211_ATTR_DURATION)
+//
+//                MapEntry( NL80211_ATTR_COOKIE)
+//
+//                MapEntry( NL80211_ATTR_WIPHY_COVERAGE_CLASS)
+//
+//                MapEntry( NL80211_ATTR_TX_RATES)
+//
+//                MapEntry( NL80211_ATTR_FRAME_MATCH)
+//
+//                MapEntry( NL80211_ATTR_ACK)
+//
+//                MapEntry( NL80211_ATTR_PS_STATE)
+//
+//                MapEntry( NL80211_ATTR_CQM)
+//
+//                MapEntry( NL80211_ATTR_LOCAL_STATE_CHANGE)
+//
+//                MapEntry( NL80211_ATTR_AP_ISOLATE)
+//
+//                MapEntry( NL80211_ATTR_WIPHY_TX_POWER_SETTING)
+//                MapEntry( NL80211_ATTR_WIPHY_TX_POWER_LEVEL)
+//
+//                MapEntry( NL80211_ATTR_TX_FRAME_TYPES)
+//                MapEntry( NL80211_ATTR_RX_FRAME_TYPES)
+//                MapEntry( NL80211_ATTR_FRAME_TYPE)
+//
+//                MapEntry( NL80211_ATTR_CONTROL_PORT_ETHERTYPE)
+//                MapEntry( NL80211_ATTR_CONTROL_PORT_NO_ENCRYPT)
+//
+//                MapEntry( NL80211_ATTR_SUPPORT_IBSS_RSN)
+//
+//                MapEntry( NL80211_ATTR_WIPHY_ANTENNA_TX)
+//                MapEntry( NL80211_ATTR_WIPHY_ANTENNA_RX)
+//
+//                MapEntry( NL80211_ATTR_MCAST_RATE)
+//
+//                MapEntry( NL80211_ATTR_OFFCHANNEL_TX_OK)
+//
+//                MapEntry( NL80211_ATTR_BSS_HT_OPMODE)
+//
+//                MapEntry( NL80211_ATTR_KEY_DEFAULT_TYPES)
+//
+//                MapEntry( NL80211_ATTR_MAX_REMAIN_ON_CHANNEL_DURATION)
+//
+//                MapEntry( NL80211_ATTR_MESH_SETUP)
+//
+//                MapEntry( NL80211_ATTR_WIPHY_ANTENNA_AVAIL_TX)
+//                MapEntry( NL80211_ATTR_WIPHY_ANTENNA_AVAIL_RX)
+//
+//                MapEntry( NL80211_ATTR_SUPPORT_MESH_AUTH)
+//                MapEntry( NL80211_ATTR_STA_PLINK_STATE)
+//
+//                MapEntry( NL80211_ATTR_WOWLAN_TRIGGERS)
+//                MapEntry( NL80211_ATTR_WOWLAN_TRIGGERS_SUPPORTED)
+//
+//                MapEntry( NL80211_ATTR_SCHED_SCAN_INTERVAL)
+//
+//                MapEntry( NL80211_ATTR_INTERFACE_COMBINATIONS)
+//                MapEntry( NL80211_ATTR_SOFTWARE_IFTYPES)
+//
+//                MapEntry( NL80211_ATTR_REKEY_DATA)
+//
+//                MapEntry( NL80211_ATTR_MAX_NUM_SCHED_SCAN_SSIDS)
+//                MapEntry( NL80211_ATTR_MAX_SCHED_SCAN_IE_LEN)
+//
+//                MapEntry( NL80211_ATTR_SCAN_SUPP_RATES)
+//
+//                MapEntry( NL80211_ATTR_HIDDEN_SSID)
+//
+//                MapEntry( NL80211_ATTR_IE_PROBE_RESP)
+//                MapEntry( NL80211_ATTR_IE_ASSOC_RESP)
+//
+//                MapEntry( NL80211_ATTR_STA_WME)
+//                MapEntry( NL80211_ATTR_SUPPORT_AP_UAPSD)
+//
+//                MapEntry( NL80211_ATTR_ROAM_SUPPORT)
+//
+//                MapEntry( NL80211_ATTR_SCHED_SCAN_MATCH)
+//                MapEntry( NL80211_ATTR_MAX_MATCH_SETS)
+//
+//                MapEntry( NL80211_ATTR_PMKSA_CANDIDATE)
+//
+//                MapEntry( NL80211_ATTR_TX_NO_CCK_RATE)
+//
+//                MapEntry( NL80211_ATTR_TDLS_ACTION)
+//                MapEntry( NL80211_ATTR_TDLS_DIALOG_TOKEN)
+//                MapEntry( NL80211_ATTR_TDLS_OPERATION)
+//                MapEntry( NL80211_ATTR_TDLS_SUPPORT)
+//                MapEntry( NL80211_ATTR_TDLS_EXTERNAL_SETUP)
+//
+//                MapEntry( NL80211_ATTR_DEVICE_AP_SME)
+//
+//                MapEntry( NL80211_ATTR_DONT_WAIT_FOR_ACK)
+//
+//                MapEntry( NL80211_ATTR_FEATURE_FLAGS)
+//
+//                MapEntry( NL80211_ATTR_PROBE_RESP_OFFLOAD)
+//
+//                MapEntry( NL80211_ATTR_PROBE_RESP)
+//
+//                MapEntry( NL80211_ATTR_DFS_REGION)
+//
+//                MapEntry( NL80211_ATTR_DISABLE_HT)
+//                MapEntry( NL80211_ATTR_HT_CAPABILITY_MASK)
+//
+//                MapEntry( NL80211_ATTR_NOACK_MAP)
+//
+//                MapEntry( NL80211_ATTR_INACTIVITY_TIMEOUT)
+//
+//                MapEntry( NL80211_ATTR_RX_SIGNAL_DBM)
+//
+//                MapEntry( NL80211_ATTR_BG_SCAN_PERIOD)
+//
+//                MapEntry( NL80211_ATTR_WDEV)
+//
+//                MapEntry( NL80211_ATTR_USER_REG_HINT_TYPE)
+//
+//                MapEntry( NL80211_ATTR_CONN_FAILED_REASON)
+//
+//                MapEntry( NL80211_ATTR_SAE_DATA)
+//
+//                MapEntry( NL80211_ATTR_VHT_CAPABILITY)
+//
+//                MapEntry( NL80211_ATTR_SCAN_FLAGS)
+//
+//                MapEntry( NL80211_ATTR_CHANNEL_WIDTH)
+//                MapEntry( NL80211_ATTR_CENTER_FREQ1)
+//                MapEntry( NL80211_ATTR_CENTER_FREQ2)
+//
+//                MapEntry( NL80211_ATTR_P2P_CTWINDOW)
+//                MapEntry( NL80211_ATTR_P2P_OPPPS)
+//
+//                MapEntry( NL80211_ATTR_LOCAL_MESH_POWER_MODE)
+//
+//                MapEntry( NL80211_ATTR_ACL_POLICY)
+//
+//                MapEntry( NL80211_ATTR_MAC_ADDRS)
+//
+//                MapEntry( NL80211_ATTR_MAC_ACL_MAX)
+//
+//                MapEntry( NL80211_ATTR_RADAR_EVENT)
+//
+//                MapEntry( NL80211_ATTR_EXT_CAPA)
+//                MapEntry( NL80211_ATTR_EXT_CAPA_MASK)
+//
+//                MapEntry( NL80211_ATTR_STA_CAPABILITY)
+//                MapEntry( NL80211_ATTR_STA_EXT_CAPABILITY)
+//
+//                MapEntry( NL80211_ATTR_PROTOCOL_FEATURES)
+//                MapEntry( NL80211_ATTR_SPLIT_WIPHY_DUMP)
+//
+//                MapEntry( NL80211_ATTR_DISABLE_VHT)
+//                MapEntry( NL80211_ATTR_VHT_CAPABILITY_MASK)
+//
+//                MapEntry( NL80211_ATTR_MDID)
+//                MapEntry( NL80211_ATTR_IE_RIC)
+//
+//                MapEntry( NL80211_ATTR_CRIT_PROT_ID)
+//                MapEntry( NL80211_ATTR_MAX_CRIT_PROT_DURATION)
+//
+//                MapEntry( NL80211_ATTR_PEER_AID)
+//
+//                MapEntry( NL80211_ATTR_COALESCE_RULE)
+//
+//                MapEntry( NL80211_ATTR_CH_SWITCH_COUNT)
+//                MapEntry( NL80211_ATTR_CH_SWITCH_BLOCK_TX)
+//                MapEntry( NL80211_ATTR_CSA_IES)
+//                MapEntry( NL80211_ATTR_CSA_C_OFF_BEACON)
+//                MapEntry( NL80211_ATTR_CSA_C_OFF_PRESP)
+//
+//                MapEntry( NL80211_ATTR_RXMGMT_FLAGS)
+//
+//                MapEntry( NL80211_ATTR_STA_SUPPORTED_CHANNELS)
+//
+//                MapEntry( NL80211_ATTR_STA_SUPPORTED_OPER_CLASSES)
+//
+//                MapEntry( NL80211_ATTR_HANDLE_DFS)
+//
+//                MapEntry( NL80211_ATTR_SUPPORT_5_MHZ)
+//                MapEntry( NL80211_ATTR_SUPPORT_10_MHZ)
+//
+//                MapEntry( NL80211_ATTR_OPMODE_NOTIF)
+//
+//                MapEntry( NL80211_ATTR_VENDOR_ID)
+//                MapEntry( NL80211_ATTR_VENDOR_SUBCMD)
+//                MapEntry( NL80211_ATTR_VENDOR_DATA)
+//                MapEntry( NL80211_ATTR_VENDOR_EVENTS)
+//
+//                MapEntry( NL80211_ATTR_QOS_MAP)
+//
+//                MapEntry( NL80211_ATTR_MAC_HINT)
+//                MapEntry( NL80211_ATTR_WIPHY_FREQ_HINT)
+//
+//                MapEntry( NL80211_ATTR_MAX_AP_ASSOC_STA)
+//
+//                MapEntry( NL80211_ATTR_TDLS_PEER_CAPABILITY)
+//
+//                MapEntry( NL80211_ATTR_IFACE_SOCKET_OWNER);
+//
+//
+//        return attrToString.count(attr) > 0 ? attrToString.at(attr) : boost::lexical_cast<std::string>(attr);
+//    }
+//
+//    static inline void dumpMsgAttributes(nlattr ** msgAttr, std::ostream & os, std::string sep = "\n") {
+//        for (unsigned i = 0; i<NL80211_ATTR_MAX; ++i) {
+//            if (msgAttr[i])
+//                os << nl80211_attrToString(i) << sep;
+//        }
+//    }
+//
+//    static inline std::string nl80211_freqAttrToString(int attr) {
+//        static const boost::unordered_map<int, const char*> attrToString = boost::assign::map_list_of
+//                MapEntry( __NL80211_FREQUENCY_ATTR_INVALID)
+//                MapEntry( NL80211_FREQUENCY_ATTR_FREQ)
+//                MapEntry( NL80211_FREQUENCY_ATTR_DISABLED)
+//                MapEntry( NL80211_FREQUENCY_ATTR_NO_IR)
+//                MapEntry( __NL80211_FREQUENCY_ATTR_NO_IBSS)
+//                MapEntry( NL80211_FREQUENCY_ATTR_RADAR)
+//                MapEntry( NL80211_FREQUENCY_ATTR_MAX_TX_POWER)
+//                MapEntry( NL80211_FREQUENCY_ATTR_DFS_STATE)
+//                MapEntry( NL80211_FREQUENCY_ATTR_DFS_TIME)
+//                MapEntry( NL80211_FREQUENCY_ATTR_NO_HT40_MINUS)
+//                MapEntry( NL80211_FREQUENCY_ATTR_NO_HT40_PLUS)
+//                MapEntry( NL80211_FREQUENCY_ATTR_NO_80MHZ)
+//                MapEntry( NL80211_FREQUENCY_ATTR_NO_160MHZ)
+//                MapEntry( NL80211_FREQUENCY_ATTR_DFS_CAC_TIME)
+//                MapEntry( NL80211_FREQUENCY_ATTR_INDOOR_ONLY)
+//                MapEntry( NL80211_FREQUENCY_ATTR_GO_CONCURRENT)
+//                MapEntry( NL80211_FREQUENCY_ATTR_NO_20MHZ)
+//                MapEntry( NL80211_FREQUENCY_ATTR_NO_10MHZ);
+//
+//        return attrToString.count(attr) > 0 ? attrToString.at(attr) : boost::lexical_cast<std::string>(attr);
+//    }
+//
+//    static inline void dumpFreqAttributes(nlattr ** msgAttr, std::ostream & os, std::string sep = "\n") {
+//        for (unsigned i = 0; i<NL80211_FREQUENCY_ATTR_MAX; ++i) {
+//            if (msgAttr[i])
+//                os << nl80211_freqAttrToString(i) << sep;
+//        }
+//    }
+//
+//    static inline std::string nl80211_bandAttrToString(int attr) {
+//        static const boost::unordered_map<int, const char*> attrToString = boost::assign::map_list_of
+//                MapEntry( __NL80211_BAND_ATTR_INVALID)
+//                MapEntry( NL80211_BAND_ATTR_FREQS)
+//                MapEntry( NL80211_BAND_ATTR_RATES)
+//
+//                MapEntry( NL80211_BAND_ATTR_HT_MCS_SET)
+//                MapEntry( NL80211_BAND_ATTR_HT_CAPA)
+//                MapEntry( NL80211_BAND_ATTR_HT_AMPDU_FACTOR)
+//                MapEntry( NL80211_BAND_ATTR_HT_AMPDU_DENSITY)
+//
+//                MapEntry( NL80211_BAND_ATTR_VHT_MCS_SET)
+//                MapEntry( NL80211_BAND_ATTR_VHT_CAPA);
+//
+//        return attrToString.count(attr) > 0 ? attrToString.at(attr) : boost::lexical_cast<std::string>(attr);
+//    }
+//
+//    static inline void dumpBandAttributes(nlattr ** msgAttr, std::ostream & os, std::string sep = "\n") {
+//        for (unsigned i = 0; i<NL80211_BAND_ATTR_MAX; ++i) {
+//            if (msgAttr[i])
+//                os << nl80211_bandAttrToString(i) << sep;
+//        }
+//    }
+
+}}}
+
+#undef MapEntry
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

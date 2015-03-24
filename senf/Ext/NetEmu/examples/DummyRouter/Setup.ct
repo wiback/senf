@@ -1,0 +1,123 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief Setup non-inline template implementation  */
+
+//#include "Setup.ih"
+
+// Custom includes
+#include <senf/Ext/NetEmu/EmulatedInterface.hh>
+
+#define prefix_
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class Decoration>
+template <class IfaceType>
+prefix_ senf::console::DirectoryNode::ptr wiback::Setup<Decoration>::createInterface()
+{
+    typedef typename Decoration::template apply<IfaceType>::type DecoInterface;
+    interfaces_.push_back(new DecoInterface());
+    Interface & newIface (interfaces_.back());
+    return newIface.interface().consoleDir().thisptr();
+}
+
+template <class Decoration>
+template <class IfaceType, class Arg>
+prefix_ senf::console::DirectoryNode::ptr
+wiback::Setup<Decoration>::createInterface(Arg const & arg)
+{
+    typedef typename Decoration::template apply<IfaceType>::type DecoInterface;
+    interfaces_.push_back(new DecoInterface(arg));
+    Interface & newIface (interfaces_.back());
+    return newIface.interface().consoleDir().thisptr();
+}
+
+template <class Decoration>
+template <class IfaceType>
+prefix_ void wiback::Setup<Decoration>::registerInterfaceType(std::string const & name)
+{
+    namespace fty = senf::console::factory;
+
+    senf::emu::interfaceDir()
+        .add(name,
+             fty::Command(SENF_MEMBINDFNP(senf::console::DirectoryNode::ptr,Setup,
+                                          template createInterface<IfaceType>, ()))
+             .doc("Create new interface of type " + senf::prettyName(typeid(IfaceType))) );
+}
+
+template <class Decoration>
+template <class IfaceType, class Arg>
+prefix_ void wiback::Setup<Decoration>::registerInterfaceType(std::string const & name,
+                                                              std::string const & arg,
+                                                              std::string doc)
+{
+    namespace fty = senf::console::factory;
+
+    // Can't use the SENF_MEMBINDFNP macro since there is a non-parenthesized comma
+    // in 'template createInterface<IfaceType,Arg>'
+    senf::emu::interfaceDir()
+        .add(name,
+             fty::Command(
+                 static_cast<senf::console::DirectoryNode::ptr (Setup::*)(Arg const &)>(
+                     &Setup::template createInterface<IfaceType,Arg>),
+                 this)
+             .arg(arg,doc)
+             .doc("Create new interface of type " + senf::prettyName(typeid(IfaceType))) );
+}
+
+template <class Decoration>
+template <class Config>
+prefix_ void wiback::Setup<Decoration>::init(Config & config)
+{
+    InterfaceRange::iterator i (interfaces_.begin());
+    InterfaceRange::iterator const i_end (interfaces_.end());
+    for (; i != i_end; ++i) {
+        if (i->canReceive())
+            senf::ppi::connect(i->receiverDecorator(), join_);
+        if (i->canTransmit())
+            senf::ppi::connect(director_, i->interface().id(), i->transmitterDecorator());
+        if (i->canReceive())
+            Decoration::receiveModule(*i).init(config);
+        if (i->canTransmit())
+            Decoration::transmitModule(*i).init(config);
+    }
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -U"
+// End:

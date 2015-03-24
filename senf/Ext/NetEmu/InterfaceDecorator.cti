@@ -1,0 +1,257 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief InterfaceDecorator inline template implementation */
+
+//#include "InterfaceDecorator.ih"
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::ReceiverDecorator
+
+template <class Connector>
+prefix_ senf::emu::ReceiverDecorator::ReceiverDecorator(Connector & connector)
+    : output (connector)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::TransmitterDecorator
+
+template <class Connector>
+prefix_ senf::emu::TransmitterDecorator::TransmitterDecorator(Connector & connector)
+    : input (connector)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::TypedInterfaceDecorator<InterfaceType,Base>
+
+template <class InterfaceType, class Base>
+prefix_ InterfaceType & senf::emu::TypedInterfaceDecorator<InterfaceType,Base>::interface()
+{
+    return dynamic_cast<InterfaceType &>(Base::interface());
+}
+
+template <class InterfaceType, class Base>
+prefix_ InterfaceType const &
+senf::emu::TypedInterfaceDecorator<InterfaceType,Base>::interface()
+    const
+{
+    return dynamic_cast<InterfaceType const &>(Base::interface());
+}
+
+template <class InterfaceType, class Base>
+prefix_ senf::emu::TypedInterfaceDecorator<InterfaceType,Base>::
+TypedInterfaceDecorator(InterfaceType & interface)
+    : Base (interface)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::ReceiverDecoratorImplementation<DecoratorType,ReceiveModule>
+
+template <class ReceiveModule>
+template <class Interface>
+prefix_
+senf::emu::ReceiverDecoratorImplementation<ReceiveModule>::
+ReceiverDecoratorImplementation(Interface & interface)
+    : ModuleMember (boost::ref(interface)), ReceiverDecorator (ModuleMember::member.output)
+{
+    ppi::connect(interface, ModuleMember::member);
+}
+
+template <class ReceiveModule>
+prefix_ ReceiveModule &
+senf::emu::ReceiverDecoratorImplementation<ReceiveModule>::receiveModule()
+{
+    return ModuleMember::member;
+}
+
+template <class ReceiveModule>
+prefix_ ReceiveModule const &
+senf::emu::ReceiverDecoratorImplementation<ReceiveModule>::receiveModule()
+    const
+{
+    return ModuleMember::member;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::ReceiverDecoratorImplementation<DecoratorType, senf::mpl::nil>
+
+template <class Interface>
+prefix_
+senf::emu::ReceiverDecoratorImplementation<senf::mpl::nil>::
+ReceiverDecoratorImplementation(Interface & interface)
+    : ReceiverDecorator (interface.output)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::TransmitterDecoratorImplementation<DecoratorType,TransmitModule>
+
+template <class TransmitModule>
+template <class Interface>
+prefix_
+senf::emu::TransmitterDecoratorImplementation<TransmitModule>::
+TransmitterDecoratorImplementation(Interface & interface)
+    : ModuleMember (boost::ref(interface)), TransmitterDecorator (ModuleMember::member.input)
+{
+    ppi::connect(ModuleMember::member, interface);
+}
+
+template <class TransmitModule>
+prefix_ TransmitModule &
+senf::emu::TransmitterDecoratorImplementation<TransmitModule>::transmitModule()
+{
+    return ModuleMember::member;
+}
+
+template <class TransmitModule>
+prefix_ TransmitModule const &
+senf::emu::TransmitterDecoratorImplementation<TransmitModule>::transmitModule()
+    const
+{
+    return ModuleMember::member;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::TransmitterDecoratorImplementation<DecoratorType, senf::mpl::nil>
+
+template <class Interface>
+prefix_
+senf::emu::TransmitterDecoratorImplementation<senf::mpl::nil>::
+TransmitterDecoratorImplementation(Interface & interface)
+    : TransmitterDecorator(interface.input)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::NoDecorator
+
+template <class Interface>
+prefix_ senf::emu::detail::NoDecorator::NoDecorator(Interface & interface)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::InterfaceDecoratorImplementation<InterfaceType,ReceiveModule,TransmitModule>
+
+template <class InterfaceType, class ReceiveModule, class TransmitModule>
+prefix_
+senf::emu::InterfaceDecoratorImplementation<InterfaceType,ReceiveModule,TransmitModule>::
+InterfaceDecoratorImplementation()
+    : InterfaceType::Decorator (InterfaceBase::member),
+      ReceiverDecoratorBase (InterfaceBase::member),
+      TransmitterDecoratorBase (InterfaceBase::member)
+{}
+
+template <class InterfaceType, class ReceiveModule, class TransmitModule>
+template <class A1>
+prefix_
+senf::emu::InterfaceDecoratorImplementation<InterfaceType,ReceiveModule,TransmitModule>::
+InterfaceDecoratorImplementation(A1 const & a1)
+    : InterfaceBase(a1),
+      InterfaceType::Decorator (InterfaceBase::member),
+      ReceiverDecoratorBase (InterfaceBase::member),
+      TransmitterDecoratorBase (InterfaceBase::member)
+{}
+
+template <class InterfaceType, class ReceiveModule, class TransmitModule>
+template <class A1, class A2>
+prefix_
+senf::emu::InterfaceDecoratorImplementation<InterfaceType,ReceiveModule,TransmitModule>::
+InterfaceDecoratorImplementation(A1 const & a1, A2 const & a2)
+    : InterfaceBase(a1, a2),
+      InterfaceType::Decorator (InterfaceBase::member),
+      ReceiverDecoratorBase (InterfaceBase::member),
+      TransmitterDecoratorBase (InterfaceBase::member)
+{}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::ApplyInterfaceDecorator<ReceiveModule,TransmitModule>
+
+template <class ReceiveModule, class TransmitModule>
+prefix_ ReceiveModule &
+senf::emu::ApplyInterfaceDecorator<ReceiveModule,TransmitModule>::
+receiveModule(InterfaceDecorator & interface)
+{
+    try {
+        return dynamic_cast<ReceiverDecoratorImplementation<ReceiveModule>&>(
+            interface.receiverDecorator()).receiveModule();
+    }
+    SENF_WRAP_EXC(std::bad_cast)
+}
+
+template <class ReceiveModule, class TransmitModule>
+prefix_ ReceiveModule const &
+senf::emu::ApplyInterfaceDecorator<ReceiveModule,TransmitModule>::
+receiveModule(InterfaceDecorator const & interface)
+{
+    try {
+        return dynamic_cast<ReceiverDecoratorImplementation<ReceiveModule> const &>(
+            interface.receiverDecorator()).receiveModule();
+    }
+    SENF_WRAP_EXC(std::bad_cast)
+}
+
+template <class ReceiveModule, class TransmitModule>
+prefix_ TransmitModule &
+senf::emu::ApplyInterfaceDecorator<ReceiveModule,TransmitModule>::
+transmitModule(InterfaceDecorator & interface)
+{
+    try {
+        return dynamic_cast<TransmitterDecoratorImplementation<TransmitModule> &>(
+            interface.transmitterDecorator()).transmitModule();
+    }
+    SENF_WRAP_EXC(std::bad_cast)
+}
+
+template <class ReceiveModule, class TransmitModule>
+prefix_ TransmitModule const &
+senf::emu::ApplyInterfaceDecorator<ReceiveModule,TransmitModule>::
+transmitModule(InterfaceDecorator const & interface)
+{
+    try {
+        return dynamic_cast<TransmitterDecoratorImplementation<TransmitModule> const &>(
+            interface.transmitterDecorator()).transmitModule();
+    }
+    SENF_WRAP_EXC(std::bad_cast)
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

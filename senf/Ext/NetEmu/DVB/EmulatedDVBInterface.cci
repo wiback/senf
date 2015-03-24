@@ -1,0 +1,213 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Christian Niephaus <cni@berlios.de>
+
+/** \file
+    \brief EmulatedDVBInterface inline non-template implementation */
+
+#include "EmulatedDVBInterface.ih"
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::EmulatedDVBInterface
+
+prefix_ void senf::emu::EmulatedDVBInterface::v_id(MACAddress const & id)
+{
+    id_ = id;
+}
+
+prefix_ senf::MACAddress senf::emu::EmulatedDVBInterface::v_id()
+    const
+{
+    return id_;
+}
+
+prefix_ void senf::emu::EmulatedDVBInterface::v_enable()
+{
+    enableEmulatedInterface();
+}
+
+prefix_ void senf::emu::EmulatedDVBInterface::v_disable()
+{
+    disableEmulatedInterface();
+}
+
+prefix_ bool senf::emu::EmulatedDVBInterface::v_enabled()
+    const
+{
+    return emulatedInterfaceEnabled();
+}
+
+prefix_ unsigned senf::emu::EmulatedDVBInterface::v_frequency()
+    const
+{
+    return emulatedFrequency();
+}
+
+prefix_ unsigned senf::emu::EmulatedDVBInterface::v_bandwidth()
+    const
+{
+    return emulatedBandwidth();
+}
+
+prefix_ void senf::emu::EmulatedDVBInterface::v_frequency(unsigned frequency, unsigned bandwidth)
+{
+    emulatedFrequency(frequency, bandwidth);
+}
+
+prefix_ void senf::emu::EmulatedDVBInterface::v_coverageRange(unsigned distance)
+{
+    emulatedCoverageRange(distance);
+}
+
+prefix_ void senf::emu::EmulatedDVBInterface::registerFrequency(unsigned frequency)
+{
+    registerFrequency(frequency, frequency);
+}
+
+prefix_ void senf::emu::EmulatedDVBInterface::registerFrequency(unsigned frequencyLower, unsigned frequencyUpper)
+{
+    WirelessInterface::registerFrequency(frequencyLower, frequencyUpper, 8000, 8000); // we assume a fixed bandwidth of 8 MHz
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::EmulatedDVBSenderInterfaceNet
+
+prefix_ senf::emu::EmulatedDVBSenderInterface &
+senf::emu::detail::EmulatedDVBSenderInterfaceNet::self()
+{
+    return *static_cast<EmulatedDVBSenderInterface *>(this);
+}
+
+prefix_ senf::emu::EmulatedDVBSenderInterface const &
+senf::emu::detail::EmulatedDVBSenderInterfaceNet::self()
+    const
+{
+    return *static_cast<EmulatedDVBSenderInterface const *>(this);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedDVBSenderInterface
+
+prefix_ int senf::emu::EmulatedDVBSenderInterface::v_txPower()
+    const
+{
+    return power_;
+}
+
+prefix_ void senf::emu::EmulatedDVBSenderInterface::v_txPower(int power)
+{
+    power_ = power;
+}
+
+prefix_ unsigned senf::emu::EmulatedDVBSenderInterface::v_mtu()
+    const
+{
+    return mtuEmulatedTransmitter();
+}
+
+prefix_ void senf::emu::EmulatedDVBSenderInterface::v_mtu(unsigned v)
+{
+    mtuEmulatedTransmitter(v);
+}
+
+prefix_ void senf::emu::EmulatedDVBSenderInterface::v_initEmulationInterface()
+{
+    initEmulatedTransmitter();
+}
+
+prefix_ void senf::emu::EmulatedDVBSenderInterface::v_deinitEmulationInterface()
+{
+    deinitEmulatedTransmitter();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::EmulatedDVBReceiverInterfaceNet
+
+prefix_ senf::emu::EmulatedDVBReceiverInterface &
+senf::emu::detail::EmulatedDVBReceiverInterfaceNet::self()
+{
+    return *static_cast<EmulatedDVBReceiverInterface *>(this);
+}
+
+prefix_ senf::emu::EmulatedDVBReceiverInterface const &
+senf::emu::detail::EmulatedDVBReceiverInterfaceNet::self()
+    const
+{
+    return *static_cast<EmulatedDVBReceiverInterface const *>(this);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedDVBReceiverInterface
+
+prefix_ void senf::emu::EmulatedDVBReceiverInterface::v_initEmulationInterface()
+{
+    initEmulatedReceiver();
+}
+
+prefix_ void senf::emu::EmulatedDVBReceiverInterface::v_deinitEmulationInterface()
+{
+    deinitEmulatedReceiver();
+}
+
+prefix_ bool senf::emu::EmulatedDVBReceiverInterface::v_promisc()
+    const
+{
+    return promiscEmulatedReceiver();
+}
+
+prefix_ void senf::emu::EmulatedDVBReceiverInterface::v_promisc(bool v)
+{
+    promiscEmulatedReceiver(v);
+}
+
+prefix_ void senf::emu::EmulatedDVBReceiverInterface::v_mcAdd(MACAddress const & address)
+{
+    mcAddEmulatedReceiver(address);
+}
+
+prefix_ void senf::emu::EmulatedDVBReceiverInterface::v_mcDrop(MACAddress const & address)
+{
+    mcDropEmulatedReceiver(address);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

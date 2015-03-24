@@ -1,0 +1,118 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Christian Niephaus <christian.niephaus@fokus.fraunhofer.de>
+
+/** \file
+    \brief EmulatedEthernetInterface internal header */
+
+#ifndef IH_SENF_Ext_NetEmu_Ethernet_EmulatedEthernetInterface_
+#define IH_SENF_Ext_NetEmu_Ethernet_EmulatedEthernetInterface_ 1
+
+// Custom includes
+#include <senf/Ext/NetEmu/Packets.hh>
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+namespace emu {
+
+    class EmulatedEthernetInterface;
+
+namespace detail {
+
+
+    /** \brief Internal: Input filter of emulated Ethernet interface */
+    class EmulatedEthernetReceiveFilter
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(EmulatedEthernetReceiveFilter);
+    public:
+        ppi::connector::PassiveInput<EthernetPacketHeader> input;
+        ppi::connector::ActiveOutput<EthernetPacket> output;
+
+        explicit EmulatedEthernetReceiveFilter(EmulatedEthernetInterface & iface);
+
+    private:
+        void request();
+        EmulatedEthernetInterface & iface_;
+    };
+
+    /** \brief Internal: Transmit filter of emulated Ethernet interface */
+    class EmulatedEthernetTransmitFilter
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(EmulatedEthernetTransmitFilter);
+    public:
+        ppi::connector::PassiveInput<EthernetPacket> input;
+        ppi::connector::ActiveOutput<EthernetPacketHeader> output;
+
+        explicit EmulatedEthernetTransmitFilter(EmulatedEthernetInterface & iface);
+
+    private:
+        void request();
+
+        EmulatedEthernetInterface & iface_;
+    };
+
+    /** \brief Internal: Internal PPI Network of emulated Ethernet interface */
+    struct EmulatedEthernetInterfaceNet
+    {
+        // Input chain
+        EmulatedEthernetReceiveFilter receiveFilter_;
+
+        // Output chain
+        EmulatedEthernetTransmitFilter transmitFilter_;
+
+        //-/////////////////////////////////////////////////////////////////////////////////////////
+
+        ppi::connector::PassiveInputJack<EthernetPacketHeader> receiveInput;
+        ppi::connector::ActiveOutputJack<EthernetPacket> receiveOutput;
+
+        ppi::connector::PassiveInputJack<EthernetPacket> transmitInput;
+        ppi::connector::ActiveOutputJack<EthernetPacketHeader> transmitOutput;
+
+        EmulatedEthernetInterfaceNet();
+
+        EmulatedEthernetInterface & self();
+        EmulatedEthernetInterface const & self() const;
+
+    };
+
+}}}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

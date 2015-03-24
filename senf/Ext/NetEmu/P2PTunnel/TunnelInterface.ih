@@ -1,0 +1,131 @@
+// $Id:$
+//
+// Copyright (C) 2012
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Thorsten Horstmann <Thorsten.Horstmann@fokus.fraunhofer.de>
+
+/** \file
+    \brief TunnelInterface internal header */
+
+#ifndef IH_SENF_Ext_NetEmu_P2PTunnel_TunnelInterface_
+#define IH_SENF_Ext_NetEmu_P2PTunnel_TunnelInterface_ 1
+
+// Custom includes
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+namespace emu {
+
+    class TunnelInterfaceBase;
+
+namespace detail {
+
+    template <class Controller> class TunnelInterfaceNet;
+
+    class TunnelInterfaceAnnotater
+        : public senf::ppi::module::Module
+    {
+        SENF_PPI_MODULE(TunnelInterfaceAnnotater);
+
+    public:
+        ppi::connector::PassiveInput<> input;
+        ppi::connector::ActiveOutput<> output;
+
+        TunnelInterfaceAnnotater(TunnelInterfaceBase const & interface);
+
+    private:
+        void request();
+
+        TunnelInterfaceBase const & interface_;
+    };
+
+
+    template <class Controller>
+    class TunnelIOHelper
+    {
+    public:
+        TunnelIOHelper(TunnelControllerBase & ctrl, TunnelInterfaceNet<Controller> const & tif);
+
+        // implement PPI Source-Reader / Sink-Writer API
+        typedef TunnelControllerBase::Handle Handle;
+        typedef TunnelControllerBase::PacketType PacketType;
+
+        PacketType operator()(Handle & handle);
+        bool operator()(Handle & handle, PacketType const & packet);
+
+    private:
+        TunnelControllerBase & ctrl_;
+        TunnelInterfaceNet<Controller> const & tunnelIface_;
+    };
+
+
+    /** \brief Internal: Tunnel Interface PPI network */
+    template <class Controller>
+    struct TunnelInterfaceNet
+    {
+        UDPv6ClientSocketHandle socket;
+        Controller tunnelCtrl;
+
+        ppi::module::ActiveSocketSource<TunnelIOHelper<Controller> > source;
+        ppi::module::PassiveSocketSink<TunnelIOHelper<Controller> > sink;
+
+        TunnelInterfaceAnnotater annotater_;
+
+        ppi::connector::ActiveOutputJack<EthernetPacket> netOutput;
+        ppi::connector::PassiveInputJack<EthernetPacket> netInput;
+
+        unsigned mtu_;
+
+        TunnelInterfaceNet(typename Controller::Interface & interface);
+
+        void assignSocket(UDPv6ClientSocketHandle socket);
+
+        unsigned mtu() const;
+        void mtu(unsigned v);
+
+        unsigned rcvBuf();
+        void rcvBuf(unsigned);
+        unsigned sndBuf();
+        void sndBuf(unsigned);
+    };
+
+    typedef TunnelInterfaceNet<TunnelServerController> TunnelServerInterfaceNet;
+    typedef TunnelInterfaceNet<TunnelClientController> TunnelClientInterfaceNet;
+
+}}}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

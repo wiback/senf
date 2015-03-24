@@ -1,0 +1,109 @@
+# -*- python -*-
+# $Id:$
+#
+# Copyright (C) 2008
+# Fraunhofer Institute for Open Communication Systems (FOKUS)
+#
+# The contents of this file are subject to the Fraunhofer FOKUS Public License
+# Version 1.0 (the "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at 
+# http://senf.fokus.fraunhofer.de.de/license.html
+#
+# The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+# but modifies the Mozilla Public License Version 1.1.
+# See the full license text for the amendments.
+#
+# Software distributed under the License is distributed on an "AS IS" basis, 
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+# for the specific language governing rights and limitations under the License.
+#
+# The Original Code is Fraunhofer FOKUS code.
+#
+# The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+# (registered association), Hansastrasse 27 c, 80686 Munich, Germany.
+# All Rights Reserved.
+
+Import('env')
+import SENFSCons
+import glob
+import os
+import re
+
+###########################################################################
+
+emusharksources          = [ 'emushark.cc' ]
+bundlesources            = [ 'Packets.cc', 'P2PTunnel/TunnelCtrlPacket.cc' ]
+
+sources, tests, includes = SENFSCons.Glob(env,
+                                  exclude = emusharksources + bundlesources,
+                                  subdirs = ['WLAN', "Ethernet", "DVB", "P2PTunnel", "Modules"] )
+subscripts               = sorted(env.Glob("*/SConscript", strings=True))
+doxyfile                 = env.Glob("Doxyfile")
+
+bundleobjects = env.Object(bundlesources)
+cobject = env.CombinedObject('${LOCALLIBDIR}/NetEmuBundle${OBJADDSUFFIX}', bundleobjects)
+sobundle = env.SharedLibrary('${LOCALLIBDIR}/NetEmuBundle${OBJADDSUFFIX}', bundlesources,
+                             LIBS=[], SHLIBPREFIX='')
+objects = env.Object(sources) + bundleobjects
+
+if not env.GetOption('clean'):
+    if not env['cxx11']:
+        env.Fail( 'No C++11 standard enabled, which is required by NetEmu. Please compile SENF with std=c++11:\n'
+                  '  $ scons cxx11=1 ...\n')
+    env.Append(
+       EXTRA_LIBS = env.Flatten(env.subst_list('$LIBNL_LIBS')),
+       CPPPATH = env.subst('$LIBNL_CPPPATH') )
+
+emushark = env.Program( 'emushark', emusharksources + [ '${ALLBUNDLES}' ],
+                EXTRA_LIBS = ['$EXTRA_LIBS', 'dl'] )
+
+# Create Version.hh
+env.CreateVersionFile( "Version.hh", source=
+        '// Copyright (C) 2015\n'
+        '// Fraunhofer Institute for Open Communication Systems (FOKUS)\n'
+        '//\n'
+        '// The contents of this file are subject to the Fraunhofer FOKUS Public License\n'
+        '// Version 1.0 (the "License"); you may not use this file except in compliance\n'
+        '// with the License. You may obtain a copy of the License at \n'
+        '// http://senf.fokus.fraunhofer.de.de/license.html\n'
+        '//\n'
+        '// The Fraunhofer FOKUS Public License Version 1.0 is based on, \n'
+        '// but modifies the Mozilla Public License Version 1.1.\n'
+        '// See the full license text for the amendments.\n'
+        '//\n'
+        '// Software distributed under the License is distributed on an "AS IS" basis, \n'
+        '// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License \n'
+        '// for the specific language governing rights and limitations under the License.\n'
+        '//\n'
+        '// The Original Code is Fraunhofer FOKUS code.\n'
+        '//\n'
+        '// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. \n'
+        '// (registered association), Hansastrasse 27 c, 80686 Munich, Germany.\n'
+        '// All Rights Reserved.\n'
+        '//\n'
+        '// auto-generated file.\n\n'
+        '#ifndef HH_SENF_Ext_NetEmu_Version_\n'
+        '#define HH_SENF_Ext_NetEmu_Version_ 1\n\n'
+        '// %(name)s_VERSION %% 100000 is the revision number\n'
+        '// %(name)s_VERSION / 100000 %% 100 is the minor version\n'
+        '// %(name)s_VERSION / 10000000 is the major version\n'
+        '#define %(name)s_VERSION %(major_version)d%(minor_version)02d%(revision)05d\n\n'
+        '#define %(name)s_LIB_VERSION "%(major_version)d.%(minor_version)02d"\n\n'
+        '#endif\n',
+        name='SENF_NETEMU', major_version=1, minor_version=2,
+        directory = env.Dir('#/senf/Ext/NetEmu').abspath )
+
+env.Default(cobject)
+env.Default(sobundle)
+#env.Default(emushark)
+env.Append(ALLOBJECTS = objects, PACKET_BUNDLES = cobject)
+env.Install('$OBJINSTALLDIR', cobject)
+env.Install('$OBJINSTALLDIR', sobundle)
+env.Install('$BININSTALLDIR', emushark)
+
+if tests                 : env.BoostUnitTest('test', tests + ['#/senf/Packets/80211Bundle/radiotap.o'],
+                                 TEST_EXTRA_LIBS = ['$TEST_EXTRA_LIBS'] )
+if includes              : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+if doxyfile              : env.Depends( SENFSCons.Doxygen(env), env.Value(env['SENF_NETEMU_REVISION']))
+if subscripts            : SConscript(subscripts)
+

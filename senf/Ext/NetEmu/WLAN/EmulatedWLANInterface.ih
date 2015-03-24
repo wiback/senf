@@ -1,0 +1,148 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief EmulatedWLANInterface internal header */
+
+#ifndef IH_SENF_Ext_NetEmu_WLAN_EmulatedWLANInterface_
+#define IH_SENF_Ext_NetEmu_WLAN_EmulatedWLANInterface_ 1
+
+// Custom includes
+#include <senf/Packets/80211Bundle/RadiotapPacket.hh>
+#include <senf/Packets/80211Bundle/WLANPacket.hh>
+#include <senf/Ext/NetEmu/Packets.hh>
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+namespace emu {
+
+    class EmulatedWLANInterface;
+
+namespace detail {
+
+    /** \brief Internal: Beacon generator for emulated WLAN interface*/
+    class EmulatedWLANBeaconGenerator
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(EmulatedWLANBeaconGenerator);
+    public:
+        ppi::connector::ActiveOutput<> output;
+
+        explicit EmulatedWLANBeaconGenerator(EmulatedWLANInterface & iface);
+
+        void beaconInterval(ClockService::clock_type interval);
+        ClockService::clock_type beaconInterval();
+
+    private:
+        void tick();
+        void init();
+
+        ppi::IntervalTimer timer_;
+        EmulatedWLANInterface & iface_;
+        RadiotapPacket beacon_;
+    };
+
+    /** \brief Internal: Input filter of emulated WLAN interface */
+    class EmulatedWLANReceiveFilter
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(EmulatedWLANReceiveFilter);
+    public:
+        ppi::connector::PassiveInput<WLANPacketHeader> input;
+        ppi::connector::ActiveOutput<EthernetPacket> output;
+        ppi::connector::ActiveOutput<RadiotapPacket> monitor;
+
+        explicit EmulatedWLANReceiveFilter(EmulatedWLANInterface & iface);
+
+    private:
+        void request();
+    };
+
+    /** \brief Internal: Transmit filter of emulated WLAN interface */
+    class EmulatedWLANTransmitFilter
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(EmulatedWLANTransmitFilter);
+    public:
+        ppi::connector::PassiveInput<EthernetPacket> input;
+        ppi::connector::ActiveOutput<WLANPacketHeader> output;
+        ppi::connector::PassiveInput<RadiotapPacket> beaconInput;
+
+        explicit EmulatedWLANTransmitFilter(EmulatedWLANInterface & iface);
+
+    private:
+        void request();
+        void beaconRequest();
+
+        EmulatedWLANInterface & iface_;
+    };
+
+    /** \brief Internal: Internal PPI Network of emulated WLAN interface */
+    struct EmulatedWLANInterfaceNet
+    {
+        // Input chain
+        EmulatedWLANReceiveFilter receiveFilter_;
+
+        // Output chain
+        EmulatedWLANTransmitFilter transmitFilter_;
+        EmulatedWLANBeaconGenerator beaconGenerator_;
+
+        //-/////////////////////////////////////////////////////////////////////////////////////////
+
+        ppi::connector::PassiveInputJack<WLANPacketHeader> receiveInput;
+        ppi::connector::ActiveOutputJack<EthernetPacket> receiveOutput;
+
+        ppi::connector::PassiveInputJack<EthernetPacket> transmitInput;
+        ppi::connector::ActiveOutputJack<WLANPacketHeader> transmitOutput;
+
+        ppi::connector::ActiveOutputJack<RadiotapPacket> monitor;
+
+        EmulatedWLANInterfaceNet();
+
+        EmulatedWLANInterface & self();
+        EmulatedWLANInterface const & self() const;
+
+        void beaconInterval(ClockService::clock_type interval);
+        ClockService::clock_type beaconInterval();
+    };
+
+}}}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

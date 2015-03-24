@@ -1,0 +1,70 @@
+// $Id:$
+//
+// Copyright (C) 2014
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastrasse 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+import sys, os, os.path
+try: sys.path.append(((_ for _ in (os.path.join(os.path.sep.join(('..' for _ in range(_))),d,
+     'site_scons') for d in ('senf','Senf') for _ in range(len(os.getcwd().split('/'))))
+     if os.path.exists(_))).next())
+except: pass
+import os.path, glob, senfutil
+
+env = Environment(ENV = os.environ)
+senfutil.parseArguments(env)
+senfutil.SetupForSENF(env)
+senfutil.NetEmu.SetupForNetEmu(env)
+senfutil.DefaultOptions(env)
+
+rev = 'r' + os.popen("svnversion").read().strip().lower()
+if rev == 'rexported':
+    rev = os.popen("gitsvnversion").read().strip().lower()
+
+env.Replace(
+    LOGLEVELS_normal = [ 'senf::log::Debug||VERBOSE' ],
+    LOGLEVELS_debug  = [ '$LOGLEVELS_normal' ],
+
+    PROJECTNAME      = 'CARMEN dummy router',
+    COPYRIGHT        = "2009 FOCUS.NetBi",
+    DOCLINKS         = [ ('NetForge', 'https://netforge.fokus.fraunhofer.de/projects/show/netemu') ],
+    REVISION         = rev,
+)
+
+sources, tests = senfutil.Glob(env, exclude=[ 'main.cc' ])
+objects        = env.Object(sources)
+
+carmen         = env.Program('carmen', objects + [ 'main.cc' ], LIBS = ['$LIBS'])
+if tests       : env.BoostUnitTest('test', objects + tests)
+
+env.Default(carmen)
+
+senfutil.Doxygen(env)
+
+env.Alias('all', [ 'test', carmen, 'doc' ])
+
+
+# Local Variables:
+# mode: python
+# fill-column: 100
+# indent-tabs-mode: nil
+# ispell-local-dictionary: "american"
+# End:

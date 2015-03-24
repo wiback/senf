@@ -1,0 +1,280 @@
+// $Id:$
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Stefan Bund <g0dil@berlios.de>
+
+/** \file
+    \brief EmulatedInterface inline non-template implementation */
+
+#include "EmulatedInterface.ih"
+
+// Custom includes
+
+#define prefix_ inline
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::EmulatedInterfaceReceiveFilter
+
+prefix_ senf::emu::detail::EmulatedInterfaceReceiveFilter::
+EmulatedInterfaceReceiveFilter(EmulatedReceiver & receiver)
+    : receiver_ (receiver)
+{
+    route(input, output);
+    input.onRequest(&EmulatedInterfaceReceiveFilter::request);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::EmulatedInterfaceTransmitFilter::
+
+prefix_ senf::emu::detail::EmulatedInterfaceTransmitFilter::
+EmulatedInterfaceTransmitFilter(EmulatedTransmitter & transmitter)
+    : transmitter_ (transmitter), mtu_ (0u)
+{
+    route(input, output);
+    input.onRequest(&EmulatedInterfaceTransmitFilter::request);
+}
+
+prefix_ unsigned senf::emu::detail::EmulatedInterfaceTransmitFilter::mtu()
+    const
+{
+    return mtu_;
+}
+
+prefix_ void senf::emu::detail::EmulatedInterfaceTransmitFilter::mtu(unsigned v)
+{
+    if (v > SENF_EMU_MAXMTU)
+        throw senf::SystemException( "mtu too large: ", EINVAL)
+            << v << ", max. emulated mtu is " << SENF_EMU_MAXMTU;
+    mtu_ = v;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::DroppedPacketChecker
+
+prefix_ unsigned senf::emu::detail::DroppedPacketChecker::droppedPackets()
+    const
+{
+    return droppedPackets_;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::DelayTimeChecker
+
+prefix_ void senf::emu::detail::DelayTimeChecker::maxDelay(ClockService::clock_type maxDelay)
+{
+    maxDelay_ = maxDelay;
+}
+
+prefix_ senf::ClockService::clock_type senf::emu::detail::DelayTimeChecker::maxDelay()
+    const
+{
+    return maxDelay_;
+}
+
+prefix_ unsigned senf::emu::detail::DelayTimeChecker::delayedPackets()
+    const
+{
+    return delayedPackets_;
+}
+
+prefix_ senf::ClockService::clock_type senf::emu::detail::DelayTimeChecker::maxPacketDelay()
+    const
+{
+    return maxPacketDelay_;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::detail::AdvancePacket
+
+prefix_ senf::emu::detail::AdvancePacket::AdvancePacket()
+{
+    route(input, output);
+    input.onRequest(&AdvancePacket::request);
+}
+
+prefix_ void senf::emu::detail::AdvancePacket::request()
+{
+    output(input().next(senf::nothrow));
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedInterface
+
+prefix_ senf::emu::EmulatedInterface::EmulatedInterface()
+    : socket_ (senf::noinit), enabled_ (false)
+{}
+
+prefix_ senf::emu::EmulatedInterface::~EmulatedInterface()
+{}
+
+prefix_ bool senf::emu::EmulatedInterface::emulatedInterfaceEnabled()
+    const
+{
+    return enabled_;
+}
+
+prefix_ senf::emu::UDPClientHandle senf::emu::EmulatedInterface::emulationSocket()
+    const
+{
+    return socket_;
+}
+
+prefix_ senf::emu::UDPClientHandle::Address senf::emu::EmulatedInterface::emulationAddress()
+    const
+{
+    return address_;
+}
+
+prefix_ void senf::emu::EmulatedInterface::emulationInterface(std::string const & interface)
+{
+    interface_ = interface;
+    emulationAddress(address_);
+}
+
+prefix_ std::string const & senf::emu::EmulatedInterface::emulationInterface()
+    const
+{
+    return interface_;
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedReceiver
+
+prefix_ void
+senf::emu::EmulatedReceiver::startStatistics(ClockService::clock_type interval)
+{
+    dropChecker_.startStatistics(interval);
+    delayChecker_.startStatistics(interval);
+}
+
+prefix_ void senf::emu::EmulatedReceiver::maxDelay(ClockService::clock_type maxDelay)
+{
+    delayChecker_.maxDelay(maxDelay);
+}
+
+prefix_ senf::ClockService::clock_type senf::emu::EmulatedReceiver::maxDelay()
+    const
+{
+    return delayChecker_.maxDelay();
+}
+
+prefix_ unsigned senf::emu::EmulatedReceiver::delayedPackets()
+    const
+{
+    return delayChecker_.delayedPackets();
+}
+
+prefix_ senf::ClockService::clock_type senf::emu::EmulatedReceiver::maxPacketDelay()
+    const
+{
+    return delayChecker_.maxPacketDelay();
+}
+
+prefix_ unsigned senf::emu::EmulatedReceiver::droppedPackets()
+    const
+{
+    return dropChecker_.droppedPackets();
+}
+
+prefix_ void senf::emu::EmulatedReceiver::deinitEmulatedReceiver()
+{
+    source_.handle(UDPClientHandle(senf::noinit));
+}
+
+prefix_ bool senf::emu::EmulatedReceiver::promiscEmulatedReceiver()
+    const
+{
+    return promisc_;
+}
+
+prefix_ void senf::emu::EmulatedReceiver::promiscEmulatedReceiver(bool v)
+{
+    promisc_ = v;
+}
+
+prefix_ void senf::emu::EmulatedReceiver::mcAddEmulatedReceiver(MACAddress const & address)
+{
+    mcSet_.insert(address);
+}
+
+prefix_ void senf::emu::EmulatedReceiver::mcDropEmulatedReceiver(MACAddress const & address)
+{
+    mcSet_.erase(address);
+}
+
+prefix_ double senf::emu::EmulatedReceiver::lossRate()
+    const
+{
+    return dropper_.lossRate();
+}
+
+prefix_ void senf::emu::EmulatedReceiver::lossRate(double lossRate)
+{
+    dropper_.lossRate(lossRate);
+}
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::EmulatedTransmitter
+
+prefix_ void senf::emu::EmulatedTransmitter::delay(ClockService::clock_type delay)
+{
+    delayer_.delay(delay);
+}
+
+prefix_ senf::ClockService::clock_type senf::emu::EmulatedTransmitter::delay()
+    const
+{
+    return delayer_.delay();
+}
+
+prefix_ void senf::emu::EmulatedTransmitter::deinitEmulatedTransmitter()
+{
+    sink_.handle(UDPClientHandle(senf::noinit));
+}
+
+prefix_ unsigned senf::emu::EmulatedTransmitter::mtuEmulatedTransmitter()
+    const
+{
+    return filter_.mtu();
+}
+
+prefix_ void senf::emu::EmulatedTransmitter::mtuEmulatedTransmitter(unsigned v)
+{
+    filter_.mtu(v);
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

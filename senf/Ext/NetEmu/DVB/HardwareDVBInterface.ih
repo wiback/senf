@@ -1,0 +1,125 @@
+// $Id:$
+//
+// Copyright (C) 2013
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+//
+// The contents of this file are subject to the Fraunhofer FOKUS Public License
+// Version 1.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at 
+// http://senf.fokus.fraunhofer.de.de/license.html
+//
+// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// but modifies the Mozilla Public License Version 1.1.
+// See the full license text for the amendments.
+//
+// Software distributed under the License is distributed on an "AS IS" basis, 
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// for the specific language governing rights and limitations under the License.
+//
+// The Original Code is Fraunhofer FOKUS code.
+//
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// (registered association), Hansastraße 27 c, 80686 Munich, Germany.
+// All Rights Reserved.
+//
+// Contributor(s):
+//       Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+
+/** \file
+    \brief HardwareDVBInterface internal header */
+
+#ifndef IH_SENF_Ext_NetEmu_Ethernet_HardwareDVBInterface_
+#define IH_SENF_Ext_NetEmu_Ethernet_HardwareDVBInterface_ 1
+
+// Custom includes
+#include <senf/Socket/Protocols/Raw/PacketSocketHandle.hh>
+#include <senf/Socket/Protocols/DVB.hh>
+#include <senf/Packets/MPEGDVBBundle/MPESection.hh>
+#include <senf/PPI/SocketSource.hh>
+#include <senf/PPI/SocketSink.hh>
+#include "ForwardSwitch.hh"
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace senf {
+namespace emu {
+
+    class HardwareDVBSenderInterface;
+    class HardwareDVBReceiverInterface;
+
+namespace detail {
+
+    struct HardwareDVBSenderInterfaceNet
+    {
+        HardwareDVBSenderInterfaceNet(std::string const & iface);
+
+        PacketSocketHandle socket;
+        ppi::module::PassiveSocketSink<ppi::TargetDgramWriter<PacketSocketHandle> > sink;
+        ForwardSwitch forwardSwitch;
+    };
+
+
+    class ActiveDVBSocketSource
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE( ActiveDVBSocketSource );
+        SENF_LOG_CLASS_AREA();
+
+    public:
+        ppi::connector::ActiveOutput<EthernetPacket> output;
+
+        typedef ppi::DgramReader<MPESection> Reader;
+        typedef Reader::Handle Handle;
+
+        ActiveDVBSocketSource(Handle handle);
+
+    private:
+        void read(ppi::IOEvent::Event event);
+        void outputMPE2Eth(MPESection mpei);
+
+        Handle handle_;
+        Reader reader_;
+        ppi::IOEvent event_;
+    };
+
+    class DVBReceiverInterfaceAnnotator
+        : public senf::ppi::module::Module
+    {
+        SENF_PPI_MODULE(DVBReceiverInterfaceAnnotator);
+
+    public:
+        ppi::connector::PassiveInput<> input;
+        ppi::connector::ActiveOutput<> output;
+
+        explicit DVBReceiverInterfaceAnnotator(HardwareDVBReceiverInterface const & interface, DVBSocketController const & dvbSocketCtrl);
+
+    private:
+        void request();
+
+        HardwareDVBReceiverInterface const & interface_;
+        DVBSocketController const & dvbSocketCtrl_;
+        senf::ClockService::clock_type lastSNRUpdate_;
+        unsigned snr_;
+    };
+
+
+    struct HardwareDVBReceiverInterfaceNet
+    {
+        HardwareDVBReceiverInterfaceNet();
+        void initHandle();
+
+        HardwareDVBReceiverInterface const & self() const;
+
+        DVBDemuxSectionHandle dvbSourceHandle;
+        DVBDemuxPESHandle dvbControlHandle;
+        DVBDvrHandle dvbStuffingHandle;
+        ActiveDVBSocketSource dvbSource;
+        DVBReceiverInterfaceAnnotator annotator;
+        ForwardSwitch forwardSwitch;
+    };
+
+
+}}}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+#endif

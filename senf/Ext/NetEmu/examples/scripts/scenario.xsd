@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+		unit convention: - frequency - MHz - transmit power - dbm - direction
+		- degree (0=north, clockwise) - half beam width - degree -
+		propagationDelay - ms - capacity Mbit/s
+	-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<!-- definition of elements based on build-in-datatypes -->
+
+	<xs:element name="latitude" type="xs:float" />
+	<xs:element name="longitude" type="xs:float" />
+
+	<xs:element name="enabled" type="xs:boolean" />
+
+	<xs:element name="gain" type="xs:nonNegativeInteger" />
+	<xs:element name="direction" type="xs:nonNegativeInteger" />
+	<xs:element name="hbw" type="xs:nonNegativeInteger" />
+
+	<xs:element name="frequency" type="frequencyEnumType" />
+	<xs:element name="bandwidth" type="bandwithEnumType" />
+	<xs:element name="txPower" type="txPowerEnumType" />
+	<xs:element name="modulation" type="modulationEnumType" />
+
+	<xs:element name="capacity" type="xs:nonNegativeInteger" />
+	<xs:element name="propagationDelay" type="xs:nonNegativeInteger" />
+	<xs:element name="pathloss" type="xs:nonNegativeInteger" />
+
+	<xs:element name="phyLinkId" type="xs:nonNegativeInteger" />
+
+	<xs:element name="collisionDomain" type="xs:nonNegativeInteger" />
+	<xs:element name="srcNode" type="xs:normalizedString" />
+	<xs:element name="dstNode" type="xs:normalizedString" />
+	<xs:element name="srcIf" type="xs:normalizedString" />
+	<xs:element name="dstIf" type="xs:normalizedString" />
+
+	<xs:element name="countryCode" type="xs:nonNegativeInteger" />
+	<xs:element name="emulatedMulticast" type="xs:boolean" />
+
+	<xs:element name="mtu" type="xs:nonNegativeInteger" />
+	<xs:element name="delay" type="xs:nonNegativeInteger" />
+	<xs:element name="lossrate" type="xs:double" />
+
+	<!-- definition of simple attributes -->
+	<xs:attribute name="nodeId" type="xs:normalizedString" />
+	<xs:attribute name="name" type="xs:normalizedString" />
+
+	<xs:attribute name="id" type="xs:nonNegativeInteger" />
+
+	<!--definition of simple types-->
+	<xs:simpleType name="interfaceRoleEnumType">
+		<xs:restriction base="xs:normalizedString">
+			<xs:enumeration value="MESH" /> <!--gateway-->
+			<xs:enumeration value="AP" /> <!--access point-->
+			<xs:enumeration value="BACKBONE" /> <!--mesh point-->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="macTypeEnumType">
+		<xs:restriction base="xs:normalizedString">
+			<xs:enumeration value="DVB_SENDER" />
+			<xs:enumeration value="DVB_RECEIVER" />
+			<xs:enumeration value="WIMAX" />
+			<xs:enumeration value="WLAN_TDMA" />
+			<xs:enumeration value="WLAN_EDCA" />
+			<xs:enumeration value="WLAN_DCF" />
+			<xs:enumeration value="ETHERNET" />
+			<xs:enumeration value="SATELLITE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="modulationEnumType">
+		<xs:restriction base="xs:normalizedString">
+			<xs:enumeration value="BPSK_1/2" />
+			<xs:enumeration value="BPSK_3/4" />
+			<xs:enumeration value="QPSK_1/2" />
+			<xs:enumeration value="QPSK_3/4" />
+			<xs:enumeration value="16QAM_1/2" />
+			<xs:enumeration value="16QAM_3/4" />
+			<xs:enumeration value="64QAM_2/3" />
+			<xs:enumeration value="64QAM_3/4" />
+			<xs:enumeration value="AUTO" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="frequencyEnumType">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<!-- 700MHz band -->
+			<xs:enumeration value="763" /><!-- mapped to channel 4 -->
+			<xs:enumeration value="768" /><!-- mapped to channel 5 -->
+			<xs:enumeration value="773" /><!-- mapped to channel 6 -->
+			<xs:enumeration value="778" /><!-- mapped to channel 7 -->
+			<!-- g-band -->
+			<xs:enumeration value="2412" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2417" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2422" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2427" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2432" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2437" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2442" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2447" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2452" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2457" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2462" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="2467" /><!-- EU,Japan -->
+			<xs:enumeration value="2472" /><!-- EU,Japan -->
+			<xs:enumeration value="2484" /><!-- Japan -->
+			<!-- a-band -->
+			<xs:enumeration value="5180" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="5200" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="5220" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="5240" /><!-- EU,USA,Japan -->
+			<xs:enumeration value="5260" /><!-- EU,USA -->
+			<xs:enumeration value="5280" /><!-- EU,USA -->
+			<xs:enumeration value="5300" /><!-- EU,USA -->
+			<xs:enumeration value="5500" /><!-- EU,USA -->
+			<xs:enumeration value="5520" /><!-- EU -->
+			<xs:enumeration value="5540" /><!-- EU -->
+			<xs:enumeration value="5560" /><!-- EU -->
+			<xs:enumeration value="5580" /><!-- EU -->
+			<xs:enumeration value="5600" /><!-- EU -->
+			<xs:enumeration value="5620" /><!-- EU -->
+			<xs:enumeration value="5640" /><!-- EU -->
+			<xs:enumeration value="5660" /><!-- EU -->
+			<xs:enumeration value="5680" /><!-- EU -->
+			<xs:enumeration value="5700" /><!-- EU -->
+			<xs:enumeration value="5735" /><!-- USA -->
+			<xs:enumeration value="5755" /><!-- USA -->
+			<xs:enumeration value="5755" /><!-- USA -->
+			<xs:enumeration value="5835" /><!-- USA -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="txPowerEnumType">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:enumeration value="0" />
+			<xs:enumeration value="5" />
+			<xs:enumeration value="10" />
+			<xs:enumeration value="15" />
+			<xs:enumeration value="20" />
+			<xs:enumeration value="25" />
+			<xs:enumeration value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="bandwithEnumType">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:enumeration value="5" />
+			<xs:enumeration value="10" />
+			<xs:enumeration value="20" />
+			<xs:enumeration value="40" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!--48Bit MAC addr-->
+	<xs:simpleType name="macAddrType">
+		<xs:restriction base="xs:normalizedString">
+			<!--mac address in hex format with ':' between each byte-->
+			<xs:pattern value="([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="l2AddrType">
+		<xs:union memberTypes="macAddrType">
+			<xs:simpleType>
+				<xs:restriction base="xs:normalizedString">
+					<xs:enumeration value="RANDOM" />
+					<xs:enumeration value="DEFAULT" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+
+	<!--
+		real (double-precision floating point) literal, Content is the value
+		in "scientific" notation
+	-->
+	<xs:simpleType name="scientificNotationNumeral">
+		<xs:restriction base="xs:double">
+			<xs:pattern value="-?\d(\.\d+)?(E|e)(\+|\-)\d+" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- definition of complex types -->
+	<xs:complexType name="gpsCoordinatesType">
+		<xs:sequence>
+			<xs:element ref="latitude" />
+			<xs:element ref="longitude" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="frequencyListType">
+		<xs:sequence>
+			<xs:element ref="frequency" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="bandwidthListType">
+		<xs:sequence>
+			<xs:element ref="bandwidth" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="modulationListType">
+		<xs:sequence>
+			<xs:element ref="modulation" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="txPowerListType">
+		<xs:sequence>
+			<xs:element ref="txPower" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="antennaType">
+		<xs:sequence>
+			<xs:element ref="gain" />
+			<xs:element ref="direction" />
+			<xs:element ref="hbw" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="preConfigType">
+		<xs:sequence>
+			<xs:element ref="frequency" />
+			<xs:element ref="bandwidth" />
+			<xs:element ref="modulation" />
+			<xs:element ref="txPower" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="trafficClassType">
+		<xs:sequence>
+			<xs:element ref="mtu" />
+			<xs:element ref="delay" /> <!--maybe some work is needed here-->
+			<xs:element ref="lossrate" />
+			<xs:element ref="cost" />
+		</xs:sequence>
+		<xs:attribute ref="name" use="required" />
+	</xs:complexType>
+
+	<!--defintion of elements based on own types-->
+	<xs:element name="l2Addr" type="l2AddrType" />
+	<xs:element name="role" type="interfaceRoleEnumType" />
+	<xs:element name="macType" type="macTypeEnumType" />
+
+	<xs:element name="availableFrequencies" type="frequencyListType" />
+	<xs:element name="availableBandwidths" type="bandwidthListType" />
+	<xs:element name="availableModulations" type="modulationListType" />
+	<xs:element name="availableTxpower" type="txPowerListType" />
+
+	<xs:element name="antenna" type="antennaType" />
+	<xs:element name="preConfig" type="preConfigType" />
+
+	<xs:element name="gpsCoordinates" type="gpsCoordinatesType" />
+
+	<xs:element name="from" type="macAddrType" />
+	<xs:element name="to" type="macAddrType" />
+	<xs:element name="trafficClass" type="trafficClassType" />
+	<xs:element name="cost" type="scientificNotationNumeral" />
+
+
+	<!--defintion of groups-->
+	<xs:group name="radioFeatureGroup">
+		<xs:sequence>
+			<xs:element ref="availableFrequencies" />
+			<xs:element ref="availableBandwidths" />
+			<xs:element ref="availableModulations" />
+			<xs:element ref="availableTxpower" />
+		</xs:sequence>
+	</xs:group>
+
+	<!--defintion of elements with inline type defs-->
+	<xs:element name="emulatedRadio">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="radioFeatureGroup" />
+				<xs:element ref="preConfig" minOccurs="0" />
+				<xs:element ref="antenna" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="realRadio">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="preConfig" minOccurs="0" />
+				<xs:element ref="antenna" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="emulatedFixed">
+	</xs:element>
+
+	<xs:element name="realFixed">
+	</xs:element>
+
+	<!--descritption of an interface-->
+	<xs:element name="interface">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="macType" />
+				<xs:element ref="enabled" />
+				<xs:element ref="l2Addr" />
+				<xs:element ref="role" />
+				<xs:choice>
+					<xs:element ref="emulatedRadio" />
+					<xs:element ref="emulatedFixed" />
+					<xs:element ref="realRadio" />
+					<xs:element ref="realFixed" />
+				</xs:choice>
+			</xs:sequence>
+			<xs:attribute ref="name" use="required" />
+		</xs:complexType>
+
+		<!--
+			definition of identity constraints ids has to be unique within the
+			scope of an interface
+		-->
+
+		<xs:key name="frequencyKey">
+			<xs:selector xpath="radio/availableFrequencies/frequency" />
+			<xs:field xpath="." />
+		</xs:key>
+		<xs:key name="bandwidthKey">
+			<xs:selector xpath="radio/availableBandwidths/bandwidth" />
+			<xs:field xpath="." />
+		</xs:key>
+		<xs:key name="modulationKey">
+			<xs:selector xpath="radio/availableModulations/modulation" />
+			<xs:field xpath="." />
+		</xs:key>
+		<xs:key name="txpowerKey">
+			<xs:selector xpath="radio/availableTxpower/txPower" />
+			<xs:field xpath="." />
+		</xs:key>
+
+
+		<xs:keyref name="frequencyKeyRef" refer="frequencyKey">
+			<xs:selector xpath="radio/preConfig" />
+			<xs:field xpath="frequency" />
+		</xs:keyref>
+		<xs:keyref name="bandwidthKeyRef" refer="bandwidthKey">
+			<xs:selector xpath="radio/preConfig" />
+			<xs:field xpath="bandwidth" />
+		</xs:keyref>
+		<xs:keyref name="modulationKeyRef" refer="modulationKey">
+			<xs:selector xpath="radio/preConfig" />
+			<xs:field xpath="modulation" />
+		</xs:keyref>
+		<xs:keyref name="txpowerKeyRef" refer="txpowerKey">
+			<xs:selector xpath="radio/preConfig" />
+			<xs:field xpath="txPower" />
+		</xs:keyref>
+
+	</xs:element>
+
+	<!--description of a node-->
+	<xs:element name="node">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="gpsCoordinates" />
+				<xs:element ref="countryCode" minOccurs="0" />
+				<xs:element ref="interface" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute ref="nodeId" use="required" />
+		</xs:complexType>
+
+
+		<!--
+			interface name must exist and has to be unique within the scope of a
+			node
+		-->
+		<xs:key name="interfaceNameKey">
+			<xs:selector xpath="interface" />
+			<xs:field xpath="@name" />
+		</xs:key>
+
+	</xs:element>
+
+	<!--
+		description of a fixed link, since fixed link capabilities are not
+		discovered by WP2/4
+	-->
+	<xs:element name="fixedLink">
+		<xs:complexType>
+			<xs:sequence>
+				<!--
+					same collisionDomain indicates that two links share some resources
+					e.g. satellite downlink
+				-->
+				<xs:element ref="collisionDomain" />
+				<xs:element ref="srcNode" />
+				<xs:element ref="dstNode" />
+				<xs:element ref="srcIf" />
+				<xs:element ref="dstIf" />
+				<xs:element ref="capacity" />
+				<xs:element ref="propagationDelay" />
+				<xs:element ref="pathloss" />
+			</xs:sequence>
+			<xs:attribute ref="id" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+	<!--description of a physical link-->
+	<xs:element name="phyLink">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="from" />
+				<xs:element ref="to" />
+				<xs:element ref="capacity" />
+				<xs:element ref="propagationDelay" />
+				<xs:element ref="pathloss" />
+			</xs:sequence>
+			<xs:attribute ref="id" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+	<!--description of a logical link-->
+	<xs:element name="logLink">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="from" />
+				<xs:element ref="to" />
+				<xs:element ref="trafficClass" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute ref="id" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="linkGroup">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="capacity" />
+				<xs:element ref="emulatedMulticast" />
+				<xs:element ref="logLink" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute ref="id" />
+		</xs:complexType>
+
+		<!--id of a logLink must exist has to be unique within the linkGroup-->
+		<xs:key name="logLinkIdKey">
+			<xs:selector xpath="link" />
+			<xs:field xpath="@id" />
+		</xs:key>
+
+	</xs:element>
+
+	<!--root element-->
+	<xs:element name="scenario">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node" maxOccurs="unbounded" />
+				<xs:element ref="fixedLink" minOccurs='0' maxOccurs="unbounded" />
+				<xs:element ref="phyLink" maxOccurs="unbounded" />
+				<xs:element ref="linkGroup" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<!--
+			nodeID must exist and has to be unique within the complete scenario
+		-->
+		<xs:key name="nodeIdKey">
+			<xs:selector xpath="node" />
+			<xs:field xpath="@nodeId" />
+		</xs:key>
+
+		<!--
+			id of a fixed link must exist has to be unique within the complete
+			scenario
+		-->
+		<xs:key name="fixedLinkIdKey">
+			<xs:selector xpath="fixedLink" />
+			<xs:field xpath="@id" />
+		</xs:key>
+
+		<!--
+			id of a phyLink must exist has to be unique within the complete
+			scenario
+		-->
+		<xs:key name="phyLinkIdKey">
+			<xs:selector xpath="phyLink" />
+			<xs:field xpath="@id" />
+		</xs:key>
+
+		<!--
+			id of a linkGroup must exist has to be unique within the complete
+			scenario
+		-->
+		<xs:key name="linkGroupIdKey">
+			<xs:selector xpath="linkGroup" />
+			<xs:field xpath="@id" />
+		</xs:key>
+
+		<!--srcNode of fixed link description must refer to a valid nodeID-->
+		<xs:keyref name="srcNodeIdKeyRef" refer="nodeIdKey">
+			<xs:selector xpath="fixedLink" />
+			<xs:field xpath="srcNode" />
+		</xs:keyref>
+
+		<!--dstNode of fixed link description must refer to a valid nodeID-->
+		<xs:keyref name="dstNodeIdKeyRef" refer="nodeIdKey">
+			<xs:selector xpath="fixedLink" />
+			<xs:field xpath="dstNode" />
+		</xs:keyref>
+
+		<!--
+			fixedLinkId of phyLink description must refer to a valid fixedLinkID
+			if it is set
+		-->
+		<xs:keyref name="phyLinkIdKeyRef" refer="phyLinkIdKey">
+			<xs:selector xpath="linkGroup/logLink" />
+			<xs:field xpath="phyLinkId" />
+		</xs:keyref>
+
+	</xs:element>
+
+</xs:schema>
