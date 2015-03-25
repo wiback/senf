@@ -46,7 +46,7 @@ sobundle = env.SharedLibrary('${LOCALLIBDIR}/NetEmuBundle${OBJADDSUFFIX}', bundl
                              LIBS=[], SHLIBPREFIX='')
 objects = env.Object(sources) + bundleobjects
 
-if not env.GetOption('clean') and not env.GetOption('all_docs'):
+if not env.GetOption('clean'):
     if not env['cxx11']:
         env.Fail( 'No C++11 standard enabled, which is required by NetEmu. Please compile SENF with std=c++11:\n'
                   '  $ scons cxx11=1 ...\n')
