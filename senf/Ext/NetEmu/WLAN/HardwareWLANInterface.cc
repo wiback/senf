@@ -625,6 +625,9 @@ prefix_ int senf::emu::HardwareWLANInterface::v_txPower()
 
 prefix_ void senf::emu::HardwareWLANInterface::v_txPower(int power)
 {
+    if (power == txPower_)
+        return;
+
     try {
         wnlc_.set_txpower(WirelessNLController::TxPowerSetting::Fixed, power);
     } catch (NetlinkException & ex) {
