@@ -259,8 +259,8 @@ SENF_AUTO_TEST_CASE(queueSocketSourceSink_fast)
     senf::ConnectedMMapPacketSocketHandle pack2 (tap2.protocol().ifaceName(), 128, 128);
 
     module::ActiveQueueSocketSource<senf::EthernetPacket,
-                                    ppi::connector::FastActiveOutput<senf::EthernetPacket> > source (pack1, 8);
-    module::PassiveQueueSocketSink<ppi::connector::FastPassiveInput<senf::EthernetPacket> > sink (pack2);
+                                    ppi::connector::ActiveOutput<senf::EthernetPacket> > source (pack1, 8);
+    module::PassiveQueueSocketSink<ppi::connector::PassiveInput<senf::EthernetPacket> > sink (pack2);
 
     ppi::connect(source, sink);
 

@@ -33,25 +33,13 @@
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef __clang__
-#  if __has_feature(cxx_decltype)
-#    define SENF_DECLTYPE decltype
-#  else
-#    define SENF_DECLTYPE typeof
-#  endif
-#else
-#  ifdef BOOST_HAS_DECLTYPE
-#    define SENF_DECLTYPE decltype
-#  else
-#    define SENF_DECLTYPE typeof
-#  endif
-#endif
-
 #ifdef SENF_CXX11_ENABLED
+#  define SENF_DECLTYPE  decltype
 #  define SENF_NULLPTR   nullptr
 #  define SENF_CONSTEXPR constexpr
 #  define SENF_NOEXCEPT  noexcept
 #else
+#  define SENF_DECLTYPE  typeof
 #  define SENF_NULLPTR   NULL
 #  define SENF_CONSTEXPR
 #  define SENF_NOEXCEPT
