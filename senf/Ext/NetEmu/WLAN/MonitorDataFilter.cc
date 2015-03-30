@@ -192,6 +192,8 @@ prefix_ void senf::emu::MonitorDataFilter::resetTimer()
             timeout = i.second.timeout;
     }
 
+    timeout = std::max(timeout, senf::ClockService::now() + maxReorderDelay_ / 8);
+
     reorderQueueTimer_.timeout(timeout);
     reorderQueueTimer_.enable();
 }
