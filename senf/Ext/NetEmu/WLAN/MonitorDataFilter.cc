@@ -121,7 +121,7 @@ prefix_ std::string senf::emu::MonitorDataFilterStatistics::dump()
 // senf::emu::MonitorDataFilter
 
 prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const & id)
-    : maxReorderDelay_ (senf::ClockService::milliseconds(100)),
+    : maxReorderDelay_ (senf::ClockService::milliseconds(32)),
       reorderQueueTimer_ (maxReorderDelay_ / 2),
       id_(id), promisc_(false),
       modulationRegistry_(WLANModulationParameterRegistry::instance()),
@@ -589,6 +589,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
 prefix_ void senf::emu::MonitorDataFilter::dumpState(std::ostream & os)
     const
 {
+    os << "reorderMap.size() = " << reorderMap_.size() << ", reorderQueueTimer is " << senf::str(reorderQueueTimer_.enabled()) << std::endl;
     for (auto const & seqNo : sequenceNumberMap_) {
         ReorderMap::const_iterator i (reorderMap_.find(seqNo.first));
         os << std::hex << "0x" << seqNo.first << std::dec << " => " << seqNo.second << ", queueSize: " << (i==reorderMap_.end() ? "(none)" : senf::str(i->second.queue.size())) << std::endl;
