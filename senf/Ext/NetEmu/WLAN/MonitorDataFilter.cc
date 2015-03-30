@@ -134,7 +134,7 @@ prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const &
     input.throttlingDisc( ppi::ThrottlingDiscipline::NONE);
 
     registerEvent(reorderQueueTimer_, &MonitorDataFilter::reorderQueueTick);
-    reorderQueueTimer_.enabled(true);
+    reorderQueueTimer_.enabled(false);
 }
 
 prefix_ void senf::emu::MonitorDataFilter::dropUnknownMCS(bool q)
@@ -196,11 +196,13 @@ prefix_ void senf::emu::MonitorDataFilter::reorderQueueTick(senf::ppi::IntervalT
         else
             ++ i;
     }
+    reorderQueueTimer_.enabled(!reorderMap_.empty());
 }
 
 prefix_ void senf::emu::MonitorDataFilter::flushQueues()
 {
     reorderMap_.clear();
+    reorderQueueTimer_.enabled(false);
     sequenceNumberMap_.clear();
     stats_.reset();
 }
@@ -216,6 +218,7 @@ prefix_ void senf::emu::MonitorDataFilter::flushQueue(SequenceNumberMap::key_typ
         }
     }
     reorderMap_.erase(key);
+    reorderQueueTimer_.enabled(!reorderMap_.empty());
     sequenceNumberMap_.erase(key);
 }
 
@@ -232,6 +235,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
         // We know that seqNo must be at least 2 packets ahead of lastSeqNo, otherwise
         // handleReorderPacket would not have been called.
         i = reorderMap_.insert(std::make_pair(key, ReorderRecord())).first;
+        reorderQueueTimer_.enabled(true);
         i->second.nextExpectedSeqNo = (lastSeqNo + 1) & 0x0FFF;
         i->second.queue.push_back(senf::EthernetPacket());
         lastSeqNo = NO_SEQ_NO;
@@ -293,6 +297,8 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
         else
             record.timeout = senf::ClockService::now() + maxReorderDelay_;
     }
+
+    reorderQueueTimer_.enabled(!reorderMap_.empty());
 }
 
 prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket & rtp)
