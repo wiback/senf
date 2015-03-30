@@ -36,7 +36,7 @@
 #include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 #include <senf/PPI/Module.hh>
-#include <senf/PPI/IntervalTimer.hh>
+#include <senf/Scheduler/TimerEvent.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/80211Bundle/RadiotapPacket.hh>
 #include <senf/Packets/80211Bundle/WLANPacket.hh>
@@ -126,7 +126,7 @@ namespace emu {
         typedef boost::unordered_map<boost::uint64_t, ReorderRecord> ReorderMap;
 
         senf::ClockService::clock_type maxReorderDelay_;
-        senf::ppi::IntervalTimer reorderQueueTimer_;
+        senf::scheduler::TimerEvent reorderQueueTimer_;
         SequenceNumberMap sequenceNumberMap_;
         ReorderMap reorderMap_;
 
@@ -138,7 +138,8 @@ namespace emu {
         bool dropUnknownMCS_;
         bool detailedAnnotations_;
 
-        void reorderQueueTick(senf::ppi::IntervalTimerEventInfo const & ifo);
+        void resetTimer();
+        void reorderQueueTick();
         void handleReorderedPacket(SequenceNumberMap::key_type key, unsigned & lastSeqNo, unsigned seqNo, senf::EthernetPacket & ethp);
         void flushQueue(SequenceNumberMap::key_type key);
 
