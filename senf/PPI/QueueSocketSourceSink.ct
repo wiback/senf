@@ -273,6 +273,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
     while (qAlgo_->size() > 0) {
         boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
         if (! buf) {
+	    eventHook_.enable();
             ioEvent_.enabled(false);
             return;
         }
