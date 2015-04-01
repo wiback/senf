@@ -70,7 +70,7 @@ prefix_ void senf::StatisticAccumulator<T>::accumulate(T value)
     cnt_++;
     if (value < min_)
         min_ = value;
-    else if (value > max_)
+    if (value > max_)
         max_ = value;
 }
 
