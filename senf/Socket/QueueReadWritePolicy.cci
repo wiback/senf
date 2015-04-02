@@ -311,8 +311,10 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         qi.tx.idle = true;
     }
 
+//    senf::ClockService::clock_type start (senf::ClockService::now());
     for (;;) {
         if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
+//            std::cerr << "send() return with errno " << unsigned(errno) << std::endl;
             switch (errno) {
             case EINTR:
 		// We break here as 3.16.x seems to throw tons of those and 'continue' causes a busy-loop
@@ -341,6 +343,12 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         }
         break;
     }
+  /*  
+    senf::ClockService::clock_type diff (senf::ClockService::now() - start);
+    if (senf::ClockService::in_milliseconds(diff) > 10) {
+        std::cerr << "send() took " << senf::ClockService::in_milliseconds(diff) << "ms." << std::endl;
+    }
+  */
 }
 
 prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const * buffer,

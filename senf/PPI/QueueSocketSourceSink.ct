@@ -227,7 +227,6 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 {
     handle_.send();
     eventHook_.disable();
-    ioEvent_.enabled(qAlgo_->size() > 0);
 
 #ifdef SENF_DEBUG
     if (burst_ > burstMax_)
@@ -240,14 +239,15 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
 {
     Packet const & packet (input());
-    if (qAlgo_->size() > 0) {
+    if (!qAlgo_->empty()) {
         qAlgo_->enqueue(packet);
+	ioEvent_.enabled(!qAlgo_->empty());
         return;
     }
     boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
     if (! buf) {
-        if (qAlgo_->enqueue(packet))
-            ioEvent_.enabled( true);
+        qAlgo_->enqueue(packet);
+        ioEvent_.enabled(!qAlgo_->empty());
         return;
     }
     writePacket(packet, *buf);
@@ -270,16 +270,14 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
 {
     handle_.send();
-    while (qAlgo_->size() > 0) {
+    while (!qAlgo_->empty()) {
         boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
         if (! buf) {
-	    eventHook_.enable();
-            ioEvent_.enabled(false);
             return;
         }
         writePacket(qAlgo_->dequeue(), *buf);
     }
-    ioEvent_.enabled(qAlgo_->size() > 0);
+    ioEvent_.enabled(!qAlgo_->empty());
 }
 
 template <class Connector>
