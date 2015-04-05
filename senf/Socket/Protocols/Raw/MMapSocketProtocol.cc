@@ -136,7 +136,12 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         qi_.tx.begin = qi_.tx.head = qi_.tx.tail = map;
         qi_.tx.end = map + frameSize * txqlen;
         qi_.tx.idle = true;
-   }
+    }
+
+    // supposedly this should speed up TX. And it does (<5% increase), when our non-blocking patch is applied. 
+    // Otherwise it seems to rather costs us 10% 
+    v = 1;
+    setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
 
     qi_.txWrongFormat = 0;
 
