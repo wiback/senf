@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <senf/Utils/Logger.hh>
+#include <senf/Utils/senflikely.hh>
 #include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_ inline
@@ -49,7 +50,7 @@ prefix_ senf::detail::QueueInfo * senf::detail::QueuePolicyBase::qinfo(FileHandl
 prefix_ void senf::detail::QueueInfo::inc(unsigned char * & ptr, Queue const & q)
 {
     ptr += frameSize;
-    if (ptr == q.end)
+    if (SENF_UNLIKELY(ptr == q.end))
         ptr = q.begin;
 }
 
@@ -317,7 +318,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 //            std::cerr << "send() return with errno " << unsigned(errno) << std::endl;
             switch (errno) {
             case EINTR:
-		// We break here as 3.16.x seems to throw tons of those and 'continue' causes a busy-loop
+                // We break here as 3.16.x seems to throw tons of those and 'continue' causes a busy-loop
                 break;
             case EAGAIN:
                 break;

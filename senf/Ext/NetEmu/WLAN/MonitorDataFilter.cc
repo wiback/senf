@@ -528,14 +528,14 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         */
 
         // Catch frames with bad FCS...
-        if (rtParser.flags().badFCS()) {
+        if (SENF_UNLIKELY(rtParser.flags().badFCS())) {
             handle_badFCS(rtPacket);
             return;
         }
         
         unsigned radiotapLength (senf::bytes(rtParser));
         senf::WLANPacket_DataFrameParser wlan (rtPacket.data().begin() + radiotapLength, &rtPacket.data());
-        if (wlan.type() != 2 || wlan.subtype() != 8) {
+        if (SENF_UNLIKELY(wlan.type() != 2 || wlan.subtype() != 8)) {
             handle_NonDataFrame(rtPacket);
             return;
         }
@@ -545,12 +545,12 @@ prefix_ void senf::emu::MonitorDataFilter::request()
 
         /*
         // TSFT Histogram
-        if (tsftHistogram_.enabled()) {
+        if (SENF_UNLIKELY(tsftHistogram_.enabled())) {
             tsftHistogram_.update( src, rtParser.tsft());
         }
         */
 
-        if (dst != id_ && !dst.multicast() && !promisc_)
+        if (SENF_UNLIKELY(dst != id_ && !dst.multicast() && !promisc_))
             return;
 
         // We have 16 unused bits in the 'key' since the MAC address is only 48 bits.
@@ -576,7 +576,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         SequenceNumberMap::iterator i (sequenceNumberMap_.find(key));
         if (i != sequenceNumberMap_.end()) {
             int delta (seqNoDelta(i->second, seqNo));
-            if (delta == 1) {
+            if (SENF_LIKELY(delta == 1)) {
                 i->second = seqNo;
             } 
             else if (delta < -REORDER_MAX) {

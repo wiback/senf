@@ -33,6 +33,7 @@
 // Custom includes
 #include <senf/Utils/membind.hh>
 #include <senf/Packets/PacketInfo.hh>
+#include <senf/Utils/senflikely.hh>
 #include "SocketSource.hh"
 
 #define prefix_
@@ -114,9 +115,9 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
 {
     for (burst_ = 1; burst_ <= maxBurst_ && !flushPending_; burst_++) {
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
-        if (! buf)
+        if (SENF_UNLIKELY(!buf))
             break;
-        if (buf->size() == 0)
+        if (SENF_UNLIKELY(buf->size() == 0))
             continue;
 
         PacketInfo ifo;
@@ -133,7 +134,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             ifo = PacketInfo(pk);
             output(pk);
         }
-        if (ifo.is_shared()) {
+        if (SENF_UNLIKELY(ifo.is_shared())) {
             ifo.releaseExternalMemory();
 #ifdef SENF_DEBUG
             ++ sharedPackets_;
@@ -147,7 +148,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
 
     burst_ = 0;  // done
 
-    if (flushPending_)
+    if (SENF_UNLIKELY(flushPending_))
         flush();
     else
         handle_.release();
@@ -239,13 +240,13 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
 {
     Packet const & packet (input());
-    if (!qAlgo_->empty()) {
+    if (SENF_UNLIKELY(!qAlgo_->empty())) {
         qAlgo_->enqueue(packet);
-	ioEvent_.enabled(!qAlgo_->empty());
+        ioEvent_.enabled(!qAlgo_->empty());
         return;
     }
     boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
-    if (! buf) {
+    if (SENF_UNLIKELY(!buf)) {
         qAlgo_->enqueue(packet);
         ioEvent_.enabled(!qAlgo_->empty());
         return;
@@ -272,7 +273,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
     handle_.send();
     while (!qAlgo_->empty()) {
         boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
-        if (! buf) {
+        if (SENF_UNLIKELY(!buf)) {
             return;
         }
         writePacket(qAlgo_->dequeue(), *buf);
