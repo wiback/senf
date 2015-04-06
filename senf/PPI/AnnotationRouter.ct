@@ -59,7 +59,7 @@ prefix_ void senf::ppi::module::AnnotationRouter<AnnotationType>::request()
     Packet const & p (input());
     typename AnnotationRouter::ContainerType::iterator i (
         this->connectors().find(p.annotation<AnnotationType>()));
-    if (i == this->connectors().end())
+    if (SENF_UNLIKELY(i == this->connectors().end()))
         defaultOutput.write(p);
     else
         i->second->write(p);

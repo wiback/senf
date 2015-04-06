@@ -54,19 +54,14 @@ prefix_ void senf::scheduler::terminate()
     terminate_ = true;
 }
 
-prefix_ void senf::scheduler::yield()
-{
-    detail::FIFORunner::instance().yield();
-}
-
 prefix_ bool senf::scheduler::running()
 {
     return running_;
 }
 
-prefix_ senf::ClockService::clock_type senf::scheduler::now()
+prefix_ void senf::scheduler::yield()
 {
-    return running() ? eventTime() : ClockService::now();
+    detail::FIFORunner::instance().yield();
 }
 
 namespace {

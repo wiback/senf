@@ -44,6 +44,11 @@ prefix_ senf::ClockService::clock_type senf::scheduler::eventTime()
     return scheduler::detail::FdManager::instance().eventTime();
 }
 
+prefix_ senf::ClockService::clock_type senf::scheduler::now()
+{
+    return SENF_LIKELY(running()) ? eventTime() : ClockService::now();
+}
+
 prefix_ void senf::scheduler::watchdogTimeout(unsigned ms)
 {
     scheduler::detail::FIFORunner::instance().taskTimeout(ms);
@@ -89,6 +94,7 @@ prefix_ bool senf::scheduler::usingHiresTimers()
     return dynamic_cast<detail::PollTimerSource*>(
             detail::TimerDispatcher::instance().timerSource()) == 0;
 }
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::scheduler::BlockSignals

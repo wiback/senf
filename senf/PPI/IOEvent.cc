@@ -60,7 +60,7 @@ prefix_ void senf::ppi::IOEvent::v_disable()
 
 prefix_ void senf::ppi::IOEvent::cb(int event)
 {
-    if ((event & ~event_.events()) != 0) {
+    if (SENF_UNLIKELY((event & ~event_.events()) != 0)) {
         if (event & Err) {
             int err (0);
             socklen_t len (sizeof(err));

@@ -33,6 +33,7 @@
 // Custom includes
 #include <errno.h>
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/senflikely.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,9 +70,8 @@ template <class Value>
 prefix_ typename senf::scheduler::detail::Poller<Value>::range senf::scheduler::detail::Poller<Value>::wait()
 {
     static epoll_event events[NumEvents];
-    int rv (0);
-    rv = epoll_wait(epollFd_, events, NumEvents, timeout_);
-    if (rv == -1) {
+    int rv (epoll_wait(epollFd_, events, NumEvents, timeout_));
+    if (SENF_UNLIKELY(rv == -1)) {
         if (errno == EINTR)
             rv = 0;
         else
