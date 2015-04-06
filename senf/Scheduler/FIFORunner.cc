@@ -45,6 +45,7 @@
 #include "senf/Utils/IgnoreValue.hh"
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include <senf/Utils/Console/ParsedCommand.hh>
+#include <senf/Utils/senflikely.hh>
 #include "ConsoleDir.hh"
 
 //#include "FIFORunner.mpp"
@@ -187,7 +188,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
         TaskList::iterator f (tasks_.begin());
         TaskList::iterator l (TaskList::s_iterator_to(highPriorityEnd_));
         run(f, l);
-        if (yield_) {
+        if (SENF_UNLIKELY(yield_)) {
             yield_ = false;
             continue;
         }
@@ -195,7 +196,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
         f = l; ++f;
         l = TaskList::s_iterator_to(normalPriorityEnd_);
         run(f, l);
-        if (yield_) {
+        if (SENF_UNLIKELY(yield_)) {
             yield_ = false;
             continue;
         }
@@ -203,7 +204,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
         f = l; ++f;
         l = tasks_.end();
         run(f, l);
-        if (yield_) {
+        if (SENF_UNLIKELY(yield_)) {
             yield_ = false;
             continue;
         }
@@ -213,7 +214,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
 
 prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, TaskList::iterator l)
 {
-    if (f == l)
+    if (SENF_UNLIKELY(f == l))
         // We'll have problems inserting NullTask between f and l below, so just explicitly bail out
         return;
 
@@ -244,7 +245,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
                 watchdogCount_ = 1;
                 yield_ = false;
                 runningTask_->run();
-                if (yield_) {
+                if (SENF_UNLIKELY(yield_)) {
                     tasks_.erase(end);
                     return;
                 }

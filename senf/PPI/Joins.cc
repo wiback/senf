@@ -79,7 +79,7 @@ prefix_ void senf::ppi::module::PriorityJoin::request()
     PriorityJoin::ContainerType::iterator i (
         std::find_if(connectors().begin(), connectors().end(),
                      ! bind(&connector::GenericActiveInput::throttled, _1)));
-    if (i != connectors().end())
+    if (SENF_LIKELY(i != connectors().end()))
         output((*i)());
 }
 

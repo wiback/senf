@@ -172,7 +172,7 @@ prefix_ void senf::emu::MonitorDataFilter::handle_DuplicateFrame(EthernetPacket 
 
 static inline int seqNoDelta(unsigned last, boost::uint16_t current)
 {
-    if (last == NO_SEQ_NO) return INT_MAX;
+    if (SENF_UNLIKELY(last == NO_SEQ_NO)) return INT_MAX;
     // modulo subtraction with 12-bit sign extension
     // see https://graphics.stanford.edu/~seander/bithacks.html
     return (((current - last) & 0x0FFF) ^ 0x0800) - 0x0800;
@@ -543,13 +543,11 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         senf::MACAddress src (wlan.sourceAddress());
         senf::MACAddress dst (wlan.destinationAddress());
 
-        /*
         // TSFT Histogram
         if (SENF_UNLIKELY(tsftHistogram_.enabled())) {
             tsftHistogram_.update( src, rtParser.tsft());
         }
-        */
-
+ 
         if (SENF_UNLIKELY(dst != id_ && !dst.multicast() && !promisc_))
             return;
 
@@ -574,7 +572,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         eth->destination() << dst;
         
         SequenceNumberMap::iterator i (sequenceNumberMap_.find(key));
-        if (i != sequenceNumberMap_.end()) {
+        if (SENF_LIKELY(i != sequenceNumberMap_.end())) {
             int delta (seqNoDelta(i->second, seqNo));
             if (SENF_LIKELY(delta == 1)) {
                 i->second = seqNo;

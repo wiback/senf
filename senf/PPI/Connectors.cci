@@ -31,6 +31,7 @@
 // Custom includes
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/senfassert.hh>
+#include <senf/Utils/senflikely.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,14 +115,14 @@ prefix_ bool senf::ppi::connector::PassiveConnector::throttled()
 prefix_ void senf::ppi::connector::PassiveConnector::emitThrottle()
 {
     SENF_PPI_THROTTLE_TRACE("OUT", "throttle");
-    if (connected())
+    if (SENF_LIKELY(connected()))
         peer().notifyThrottle();
 }
 
 prefix_ void senf::ppi::connector::PassiveConnector::emitUnthrottle()
 {
     SENF_PPI_THROTTLE_TRACE("OUT", "unthrottle");
-    if (connected()) {
+    if (SENF_LIKELY(connected())) {
         peer().notifyUnthrottle();
         v_unthrottleEvent();
     }
@@ -129,7 +130,7 @@ prefix_ void senf::ppi::connector::PassiveConnector::emitUnthrottle()
 
 prefix_ void senf::ppi::connector::PassiveConnector::notifyThrottle()
 {
-    if (!throttled()) {
+    if (SENF_LIKELY(!throttled())) {
         remoteThrottled_ = true;
         emitThrottle();
     }
@@ -147,7 +148,7 @@ prefix_ bool senf::ppi::connector::PassiveConnector::nativeThrottled()
 
 prefix_ void senf::ppi::connector::PassiveConnector::throttle()
 {
-    if (!throttled()) {
+    if (SENF_LIKELY(!throttled())) {
         nativeThrottled_ = true;
         emitThrottle();
     } else
@@ -171,7 +172,7 @@ prefix_ void senf::ppi::connector::PassiveConnector::emit()
 {
     // No event callback has been registered (onRequest() call missing)
     SENF_ASSERT(callback_, "senf::ppi::connector::PassiveConnector: missing onRequest()");
-    if (!throttled()) {
+    if (SENF_LIKELY(!throttled())) {
         callback_();
     } else {
         SENF_PPI_THROTTLE_TRACE("IN ", "queueing packet");
@@ -251,7 +252,7 @@ prefix_ senf::ppi::connector::InputConnector::InputConnector()
 
 prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
 {
-    if (queue_.empty()) {
+    if (SENF_LIKELY(queue_.empty())) {
         fastPacket_ = &p;
         try {
             v_enqueueEvent();
@@ -262,7 +263,7 @@ prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
             }
             throw e;
         }
-        if (fastPacket_) {
+        if (SENF_UNLIKELY(fastPacket_)) {
             queue_.push_front(p);
             fastPacket_ = SENF_NULLPTR;
         }
@@ -271,6 +272,7 @@ prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
         v_enqueueEvent();
     }
 }
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::OutputConnector
@@ -285,7 +287,7 @@ prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConne
 prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet const & p)
 {
     SENF_PPI_TRACE(p, "OUT");
-    if (connected())
+    if (SENF_LIKELY(connected()))
         peer().enqueue(p);
 }
 
@@ -364,7 +366,7 @@ prefix_ bool senf::ppi::connector::GenericActiveInput::boolean_test()
 
 prefix_ void senf::ppi::connector::GenericActiveInput::request()
 {
-    if (connected())
+    if (SENF_LIKELY(connected()))
         peer().emit();
 }
 
