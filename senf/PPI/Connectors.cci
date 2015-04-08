@@ -231,7 +231,8 @@ prefix_ senf::ppi::connector::InputConnector::size_type
 senf::ppi::connector::InputConnector::queueSize()
     const
 {
-    return queue_.size() + (fastPacket_ ? 1 : 0);
+//    return queue_.size() + (fastPacket_ ? 1 : 0);
+    return queue_.size() + bool(fastPacket_);
 }
 
 prefix_ bool senf::ppi::connector::InputConnector::empty()

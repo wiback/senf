@@ -96,6 +96,8 @@ namespace emu {
         bool autoBw() const;
         std::uint32_t flags() const;
 
+        bool operator==(RegulatoryRule const & other) const;
+
     private:
         // starting frequency for the regulatory rule in KHz;
         // this is *not* a center of frequency but an actual regulatory band edge:
@@ -138,6 +140,8 @@ namespace emu {
         RegulatoryDomain() { 
             dfsRegion = DFSRegion::Unset; 
         };
+
+        bool isEqual(RegulatoryDomain const & other) const;
     };
 
     SENF_CONSOLE_REGISTER_STRONG_ENUM_MEMBER( RegulatoryDomain, DFSRegion,

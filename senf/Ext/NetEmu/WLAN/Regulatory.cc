@@ -147,6 +147,36 @@ prefix_ senf::emu::RegulatoryRule & senf::emu::RegulatoryRule::flags(std::uint32
     return *this;
 }
 
+prefix_ bool senf::emu::RegulatoryRule::operator==(RegulatoryRule const & other)
+    const
+{
+    return frequencyRangeBegin_ == other.frequencyRangeBegin_ &&
+        frequencyRangeEnd_      == other.frequencyRangeEnd_   && 
+        maxBandwidth_           == other.maxBandwidth_        &&
+        maxAntennaGain_         == other.maxAntennaGain_      &&
+        maxEIRP_                == other.maxEIRP_             &&
+        flags_                  == other.flags_               &&
+        cacTime_                == other.cacTime_;
+}
+
+prefix_ bool senf::emu::RegulatoryDomain::isEqual(RegulatoryDomain const & other) 
+    const
+{
+    if (dfsRegion != other.dfsRegion)
+        return false;
+
+    if (rules.size() != other.rules.size())
+        return false;
+
+    for(unsigned n = 0; n < rules.size(); n++) {
+        if (!(rules[n] == other.rules[n]))
+            return false;
+    }
+
+    return true;
+}
+
+
 prefix_ std::ostream & senf::emu::operator<<(std::ostream & os, RegulatoryRule const & rule)
 {
     os << '(' << rule.frequencyRangeBegin() << ' ' << rule.frequencyRangeEnd() << ' '
