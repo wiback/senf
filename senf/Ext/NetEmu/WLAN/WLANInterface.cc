@@ -34,6 +34,7 @@
 #include <boost/foreach.hpp>
 #include <senf/Packets/80211Bundle/MCSInfo.hh>
 #include <senf/Utils/String.hh>
+#include <senf/Utils/senflikely.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,9 +129,9 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS(unsigned mcsIndex, bool ht40, bool shortGI)
     const
 {
-    if (mcsIndex+3 > mcsParametersToId_.size())
+    if (SENF_UNLIKELY(mcsIndex+3 > mcsParametersToId_.size()))
         return 0;
-    return mcsParametersToId_[(mcsIndex * 4) + (ht40 ? 2 : 0) + (shortGI ? 1 : 0)];
+    return mcsParametersToId_[(mcsIndex * 4) + (ht40 * 2u) + (shortGI * 1u)];
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAuto()
