@@ -503,29 +503,26 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             q.flags.frameLength = rtPacket.size() - rtParser.length();
         }
 
-        /*
         // determine MCS (rate)
-        if (rtParser.mcsPresent()) {
+        if (SENF_LIKELY(rtParser.mcsPresent())) {
             stats_.ht++;
             rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS(
             rtParser.mcs().mcsIndex(),
                     rtParser.mcs().bandwidth(),
                     rtParser.mcs().guardInterval() );
-            }
-            else if (rtParser.ratePresent()) {
+        }
+        else if (rtParser.ratePresent()) {
                 stats_.legacy++;
                 rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByLegacyRate( rtParser.rate() * 500);
-            }
-            else {
-                stats_.unknownMCS++;
-                if (dropUnknownMCS_) {
-                    SENF_LOG( (WlanLogArea) (senf::log::IMPORTANT)
-                              ( "(" << id_ << ") dropping packet with unknown datarate "));
-                    return;
-                }
+        }
+        else {
+            stats_.unknownMCS++;
+            if (dropUnknownMCS_) {
+                SENF_LOG( (WlanLogArea) (senf::log::IMPORTANT)
+                          ( "(" << id_ << ") dropping packet with unknown datarate "));
+                return;
             }
         }
-        */
 
         // Catch frames with bad FCS...
         if (SENF_UNLIKELY(rtParser.flags().badFCS())) {

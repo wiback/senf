@@ -71,10 +71,10 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::flush
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::flush()
 {
-//    QueueWritePolicy::flush(handle_);
+    QueueWritePolicy::flush(handle_);
     qAlgo_->clear();
     ioEvent_.enabled(false);
-//    eventHook_.disable();
+    eventHook_.disable();
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
