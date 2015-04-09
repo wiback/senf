@@ -343,9 +343,26 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
                     }
                 }
 		qi.tx.head = qi.tx.tail = last_tail;
-		qi.tx.idle = true;
                 break;
             case ENOBUFS:
+                // similar to the above, some frames might have been sent, hence we first have to reset and then advance tx.tail accordingly
+                qi.tx.tail = last_tail;
+                while (qi.tx.tail != qi.tx.head) {
+                    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
+                    if (pk.tp_status != TP_STATUS_SEND_REQUEST)
+                        qi.inc(qi.tx.tail, qi.tx);
+                    else
+                        break;
+                }
+		// We flush our queue, to avoid a busy loop, effectively dropping all frames !!!
+                for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) {
+                    struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buf));
+                    if (pk.tp_status == TP_STATUS_SEND_REQUEST) {
+                        pk.tp_status = TP_STATUS_AVAILABLE;
+                    }
+                }
+                // reset tx.head effectily dropping all unsent frames
+                qi.tx.head = qi.tx.tail;
                 break;
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("::send(MMAP)");
