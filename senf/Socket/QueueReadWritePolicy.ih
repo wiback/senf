@@ -64,6 +64,7 @@ namespace detail {
         Queue tx;
 
         unsigned txWrongFormat;
+        unsigned txDropped;
 
         void inc(unsigned char * & ptr, Queue const & q);
     };

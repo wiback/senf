@@ -329,6 +329,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
                     if (pk.tp_status & TP_STATUS_WRONG_FORMAT) {
                         pk.tp_status = TP_STATUS_AVAILABLE;
                         qi.txWrongFormat++;
+                        qi.txDropped++;
                     }
                 }
                 continue;
@@ -337,7 +338,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
             case ENXIO:
             case ENOBUFS:
                 // Some frames might have been sent, hence we first have to reset and then advance tx.tail accordingly
-		// We flush our queue, to avoid a busy loop, effectively dropping all frames !!!
+                // We flush our queue, to avoid a busy loop, effectively dropping all frames !!!
                 qi.tx.tail = last_tail;
                 while (qi.tx.tail != qi.tx.head) {
                     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
@@ -346,11 +347,12 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
                     else
                         break;
                 }
-		// We flush our queue, to avoid a busy loop, effectively dropping all frames !!!
+                // We flush our queue, to avoid a busy loop, effectively dropping all frames !!!
                 for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) {
                     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buf));
                     if (pk.tp_status == TP_STATUS_SEND_REQUEST) {
                         pk.tp_status = TP_STATUS_AVAILABLE;
+                        qi.txDropped++;
                     }
                 }
                 // reset tx.head effectily dropping all unsent frames
