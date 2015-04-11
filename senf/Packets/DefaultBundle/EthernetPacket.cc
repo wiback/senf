@@ -35,6 +35,7 @@
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
 #include <senf/Utils/Format.hh>
+#include <senf/Utils/senflikely.hh>
 #include "LlcSnapPacket.hh"
 
 #define prefix_
@@ -68,17 +69,17 @@ prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPacketType(packet p)
 {
-    if      (p->type_length() >= 1536) return lookup(p->type_length());
-    else if (p->type_length() <= 1500) return LlcSnapPacket::factory();
-    else                               return no_factory();
+    if      (SENF_LIKELY(p->type_length() >= 1536)) return lookup(p->type_length());
+    else if (p->type_length() <= 1500)              return LlcSnapPacket::factory();
+    else                                            return no_factory();
 }
 
 prefix_ void senf::EthernetPacketType::finalize(packet p)
 {
     Packet n (p.next(nothrow));
-    if (n) {
+    if (SENF_LIKELY(n)) {
         optional_key_t k (key(n));
-        if (k)
+        if (SENF_LIKELY(k))
             p->type_length() << k;
         else if (n.is<LlcSnapPacket>())
             p->type_length() << n.data().size();
@@ -121,7 +122,7 @@ prefix_ void senf::EthOUIExtensionPacketType::dump(packet p, std::ostream & os)
 prefix_ void senf::EthOUIExtensionPacketType::finalize(packet p)
 {
     optional_key_t k (key(p.next(nothrow)));
-    if (k) {
+    if (SENF_LIKELY(k)) {
         p->oui() << EtherOUIExtTypes::oui(*k);
         p->ext_type() << EtherOUIExtTypes::ext_type(*k);
     }

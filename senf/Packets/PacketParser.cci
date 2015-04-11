@@ -86,7 +86,7 @@ prefix_ bool senf::PacketParserBase::check(size_type size)
 prefix_ void senf::PacketParserBase::validate(size_type size)
    const
 {
-    if (! check(size))
+    if (SENF_UNLIKELY(!check(size)))
         throw TruncatedPacketException();
 }
 

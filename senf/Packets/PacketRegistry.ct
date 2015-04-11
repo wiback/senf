@@ -35,6 +35,7 @@
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/Format.hh>
 #include <senf/Utils/senfassert.hh>
+#include <senf/Utils/senflikely.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +124,7 @@ prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::key_t
 senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type)
 {
     boost::optional<KeyType> k (key(type,true));
-    if (! k)
+    if (SENF_UNLIKELY(!k))
         throw PacketTypeNotRegisteredException();
     return *k;
 }
@@ -133,7 +134,7 @@ prefix_ boost::optional<typename senf::detail::PacketRegistryImpl<KeyType>::key_
 senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type, bool)
 {
     typename RegistryByType::const_iterator i (registryByType_.find(type.id()));
-    if (i == registryByType_.end())
+    if (SENF_UNLIKELY(i == registryByType_.end()))
         return boost::optional<key_t>();
     return (*i)->key;
 }
@@ -144,7 +145,7 @@ senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key)
     const
 {
     Entry const * e (lookup(key, true));
-    if (!e)
+    if (SENF_UNLIKELY(!e))
         throw PacketTypeNotRegisteredException();
     return *e;
 }
@@ -155,7 +156,7 @@ senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key, bool)
     const
 {
     typename RegistryByKey::const_iterator i (registryByKey_.lower_bound(key));
-    if (i == registryByKey_.end() || (*i)->key != key)
+    if (SENF_UNLIKELY(i == registryByKey_.end() || (*i)->key != key))
         return 0;
     return i->get();
 }
