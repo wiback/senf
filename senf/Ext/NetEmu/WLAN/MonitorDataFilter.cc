@@ -553,7 +553,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         // If we have a QoSData frame, we need to keep separate seq# counters per TID (bits 0...3) for UNICAST traffic
         // If we have a regular Data frame, we use the same queue as for bcast and management frames
         unsigned seqNo (wlan.sequenceNumber());
-        SequenceNumberMap::key_type key (MAC_AND_TC_TO_KEY(src, wlan.qosField()));
+        SequenceNumberMap::key_type key (MAC_AND_TC_TO_KEY(wlan.sourceAddress(), wlan.qosField()));
 
         // flag retransmission
         {
