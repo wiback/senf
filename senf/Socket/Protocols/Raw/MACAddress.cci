@@ -130,11 +130,9 @@ prefix_ boost::uint64_t senf::MACAddress::eui64()
 prefix_ boost::uint64_t senf::MACAddress::uint64()
     const
 {
-    // this is equivalent to below, but twice as fast
-    return be64toh((std::uint64_t(*((std::uint32_t const *)&(*this)[0]))<<16) | (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<48));
+    // this is equivalent to the below, but twice as fast
+    // return be64toh((std::uint64_t(*((std::uint32_t const *)&(*this)[0]))<<16) | (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<48));
     
-    // See EthernetPacket.cci
-    /*
     return
         (boost::uint64_t( (*this)[0] ) << 40) |
         (boost::uint64_t( (*this)[1] ) << 32) |
@@ -142,7 +140,6 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
         (boost::uint64_t( (*this)[3] ) << 16) |
         (boost::uint64_t( (*this)[4] ) <<  8) |
         (boost::uint64_t( (*this)[5] )      );
-    */
 }
 
 prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
@@ -159,17 +156,16 @@ prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
 
 prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) SENF_NOEXCEPT
 {
-    if (sizeof(std::size_t) == sizeof(boost::uint64_t))
+# if __SIZEOF_SIZE_T__ == 8
         return boost::hash<boost::uint64_t>().operator()(
                 (boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) |
                  boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&mac[4])) );
-    if (sizeof(std::size_t) == sizeof(boost::uint32_t))
+#elif  __SIZEOF_SIZE_T__ == 4
         return boost::hash<boost::uint32_t>().operator()(
                 *reinterpret_cast<boost::uint32_t const *>(&mac[2]) );
-    BOOST_STATIC_ASSERT_MSG(
-            sizeof(std::size_t) != sizeof(boost::uint64_t) ||
-            sizeof(std::size_t) != sizeof(boost::uint32_t),
-            "unknown sizeof(std::size_t)");
+#else
+        BOOST_STATIC_ASSERT_MSG(true, "unknown sizeof(std::size_t)");
+#endif
 }
 
 

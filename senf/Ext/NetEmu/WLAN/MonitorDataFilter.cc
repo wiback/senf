@@ -43,7 +43,6 @@
 
 const short DEFAULT_WLAN_NOISE=-110;
 
-#define MAC_AND_TC_TO_KEY(mac,tc) ((mac.uint64() << 8) | unsigned(tc))
 #define NO_SEQ_NO INT_MAX
 #define REORDER_MAX 64
 
@@ -327,40 +326,43 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
 
     MACAddress src (senf::MACAddress::None);
     try {
+        SequenceNumberMap::key_type key;
+
         WLANPacket_DataFrame data (rtp.next<WLANPacket_DataFrame>(senf::nothrow));
         if (data && (data.size() >= WLANPacket_DataFrameParser::init_bytes)) {
+            data->sourceAddress().hash(&key);
             src = data->sourceAddress();
         } else {
             WLANPacket_MgtFrame mgt (rtp.next<WLANPacket_MgtFrame>(senf::nothrow));
             if (mgt && (mgt.size() >= WLANPacket_MgtFrameParser::init_bytes)) {
+                mgt->sourceAddress().hash(&key);
                 src = mgt->sourceAddress();
             } else {
                 WLANPacket_CtrlFrame ctrl (rtp.next<WLANPacket_CtrlFrame>(senf::nothrow));
                 if (ctrl && ctrl->is_rts() && (ctrl.size() >= WLANPacket_CtrlFrameParser::init_bytes)) {
+                    ctrl->sourceAddress().hash(&key);
                     src = ctrl->sourceAddress();
                 }
             }
+        }
+        
+        // Check if we know this SRC so that we can assume it to be valid....
+        if (src) {
+            boost::uint16_t qos;
+            for (qos = 0; qos < 8; qos++) {
+                *(((std::uint16_t *)&key)+3) = qos;  // see EthernetPacket.cci
+                if (sequenceNumberMap_.find(key) != sequenceNumberMap_.end()) {
+                    break;
+                }
+            }
+            if (qos == 8) 
+                src = MACAddress::None;
         }
     }
     catch (...) {
         // catch any possible exception here.
         // If we catch one, we assume that we failed to extract a valid/usefull source address
         src = senf::MACAddress::None;
-    }
-
-    // Check if we know this SRC so that we can assume it to be valid....
-    if (src != senf::MACAddress::None) {
-        unsigned qos;
-        for (qos = 0; qos < 8; qos++) {
-            if (sequenceNumberMap_.find( MAC_AND_TC_TO_KEY(src, qos)) != sequenceNumberMap_.end()) {
-                break;
-            }
-        }
-        
-        if (qos == 8) {
-            // ...else, we use None
-            src = MACAddress::None;
-        }
     }
 
     // build a fake ethernet frame which has the original annotations and the original size
@@ -409,14 +411,6 @@ prefix_ bool senf::emu::MonitorDataFilter::handle_ManagementFrame(RadiotapPacket
         stats_.truncated++;
         return false;
     }
-
-    /*
-    // (DE)AUTH Frame
-    if (mgt->subtype() == 11 && mgt->destinationAddress() == id_) {
-        for (boost::uint16_t tc (0); tc < 65535; tc++)
-        sequenceNumberMap_.erase( MAC_AND_TC_TO_KEY( mgt->sourceAddress(), tc));
-    }
-    */
 
     stats_.management++;
     if (monitor.connected())
@@ -553,7 +547,8 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         // If we have a QoSData frame, we need to keep separate seq# counters per TID (bits 0...3) for UNICAST traffic
         // If we have a regular Data frame, we use the same queue as for bcast and management frames
         unsigned seqNo (wlan.sequenceNumber());
-        SequenceNumberMap::key_type key (MAC_AND_TC_TO_KEY(wlan.sourceAddress(), wlan.qosField()));
+        SequenceNumberMap::key_type key;
+        wlan.sourceAddress().hash(&key, wlan.qosField());
 
         // flag retransmission
         {

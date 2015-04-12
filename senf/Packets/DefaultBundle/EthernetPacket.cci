@@ -62,25 +62,22 @@ prefix_ bool senf::MACAddressParser::null()
     return std::find_if(i(), i(6), _1 != 0x00u) == i(6);
 }
 
-prefix_ boost::uint64_t senf::MACAddressParser::uint64()
+prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash)
     const
 {
-    // this is the fastest, but endianess is honored - do we care ? 
-    // return (std::uint64_t(*((std::uint32_t*)&(*this)[0]))<<16) | (std::uint64_t(*((std::uint16_t*)&(*this)[4]))<<48);
-
-    // this is equivalent to below, but twice as fast
-    return be64toh((std::uint64_t(*((std::uint32_t const *)&(*this)[0]))<<16) | (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<48));
-
-    /*
-    return
-        (boost::uint64_t( (*this)[0] ) << 40) |
-        (boost::uint64_t( (*this)[1] ) << 32) |
-        (boost::uint64_t( (*this)[2] ) << 24) |
-        (boost::uint64_t( (*this)[3] ) << 16) |
-        (boost::uint64_t( (*this)[4] ) <<  8) |
-        (boost::uint64_t( (*this)[5] )      );
-    */
+    *(((std::uint32_t *)hash)+0) = (*((std::uint32_t const *)&(*this)[0]));
+    *(((std::uint16_t *)hash)+2) = (*((std::uint16_t const *)&(*this)[4]));
+//    return (std::uint64_t(*((std::uint32_t const *)&(*this)[0]))) + (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<32);
 }
+
+prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash, boost::uint16_t const & otherKey)
+    const
+{
+    *(((std::uint32_t *)hash)+0) = (*((std::uint32_t const *)&(*this)[0]));
+    *(((std::uint16_t *)hash)+2) = (*((std::uint16_t const *)&(*this)[4]));
+    *(((std::uint16_t *)hash)+3) = otherKey;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
