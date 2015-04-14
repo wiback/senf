@@ -36,9 +36,9 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <class Parser>
-prefix_ Parser senf::RadiotapPacketParser::parseField(unsigned index)
+prefix_ Parser senf::RadiotapPacketParser::parseField(unsigned index, unsigned extIndex)
 {
-    return parse<Parser>(currentTable()[index]);
+    return parse<Parser>(currentTable()[(extIndex+1)*index]);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

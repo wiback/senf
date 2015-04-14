@@ -43,6 +43,7 @@ SENF_AUTO_TEST_CASE(RadiotapPacket_fieldSizes)
 {
     // This test only asserts, that nobody forgot to update the FIELD_SIZE table
     // when changing MAX_INDEX
+    // (Thank you g0dil :) )
     BOOST_CHECK( senf::RadiotapPacket_HeaderParser::FIELD_SIZE[
                      senf::RadiotapPacket_HeaderParser::MAX_INDEX] != 0 );
 }
@@ -114,21 +115,21 @@ SENF_AUTO_TEST_CASE(RadiotapPacket_packet)
 
     /* dump */
     std::stringstream ss;
-    p.dump(ss);
+    p.dump(ss, senf::withoutAnnotations);
     BOOST_CHECK_EQUAL( ss.str(),
-                       "Radiotap:\n"
-                       "  version                 : 0\n"
-                       "  length                  : 26\n"
-                       "  MAC timestamp           : 81059833346\n"
-                       "  flags                   : FCSatEnd ShortPreamble \n"
-                       "  rate                    : 12\n"
-                       "  channel frequency       : 5320\n"
-                       "  channel flags           : OFDM 5GHz \n"
-                       "  antenna signal (dBm)    : -61\n"
-                       "  antenna noise (dBm)     : -96\n"
-                       "  antenna                 : 2\n"
-                       "  antenna signal (dB)     : 35\n"
-                       "  fcs                     : 0\n" );
+            "Radiotap:\n"
+            "  version                 : 0\n"
+            "  length                  : 26\n"
+            "  MAC timestamp           : 81059833346\n"
+            "  flags                   : FCSatEnd ShortPreamble \n"
+            "  rate                    : 12\n"
+            "  channel frequency       : 5320\n"
+            "  channel flags           : OFDM 5GHz \n"
+            "  antenna signal (dBm)    : -61\n"
+            "  antenna noise (dBm)     : -96\n"
+            "  antenna                 : 2\n"
+            "  antenna signal (dB)     : 35\n"
+            "  fcs                     : 0\n" );
 }
 
 SENF_AUTO_TEST_CASE(RadiotapPacket_create)
@@ -162,21 +163,21 @@ SENF_AUTO_TEST_CASE(RadiotapPacket_create)
     BOOST_CHECK_EQUAL( p.size(), 30u );
 
     std::stringstream ss;
-    p.dump(ss);
+    p.dump(ss, senf::withoutAnnotations);
     BOOST_CHECK_EQUAL( ss.str(),
-                       "Radiotap:\n"
-                       "  version                 : 0\n"
-                       "  length                  : 26\n"
-                       "  MAC timestamp           : 81059833346\n"
-                       "  flags                   : FCSatEnd ShortPreamble \n"
-                       "  rate                    : 12\n"
-                       "  channel frequency       : 5320\n"
-                       "  channel flags           : OFDM 5GHz \n"
-                       "  antenna signal (dBm)    : -61\n"
-                       "  antenna noise (dBm)     : -96\n"
-                       "  antenna                 : 2\n"
-                       "  antenna signal (dB)     : 35\n"
-                       "  fcs                     : 0\n" );
+            "Radiotap:\n"
+            "  version                 : 0\n"
+            "  length                  : 26\n"
+            "  MAC timestamp           : 81059833346\n"
+            "  flags                   : FCSatEnd ShortPreamble \n"
+            "  rate                    : 12\n"
+            "  channel frequency       : 5320\n"
+            "  channel flags           : OFDM 5GHz \n"
+            "  antenna signal (dBm)    : -61\n"
+            "  antenna noise (dBm)     : -96\n"
+            "  antenna                 : 2\n"
+            "  antenna signal (dB)     : 35\n"
+            "  fcs                     : 0\n" );
 
     {
         unsigned char data[] = {
@@ -294,7 +295,7 @@ SENF_AUTO_TEST_CASE(RadiotapPacket_parsetest)
     senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
 
     std::stringstream ss;
-    p.dump(ss);
+    p.dump(ss, senf::withoutAnnotations);
     std::string radiotapDump (
             "Radiotap:\n"
             "  version                 : 0\n"
@@ -344,10 +345,32 @@ SENF_AUTO_TEST_CASE(RadiotapPacket_packet_ath9k_mcs)
     BOOST_CHECK_EQUAL( p->mcs().bandwidth(),     0);
     BOOST_CHECK_EQUAL( p->mcs().guardInterval(), 0);
     BOOST_CHECK_EQUAL( p->mcs().mcsIndex(),      7);
-
-    p.dump(std::cout);
 }
 
+SENF_AUTO_TEST_CASE(RadiotapPacket_parse_ext)
+{
+    unsigned char data[] = {
+            0x00, 0x00, 0x29, 0x00, 0x2b, 0x40, 0x08, 0xa0,
+            0x20, 0x08, 0x00, 0xa0, 0x20, 0x08, 0x00, 0x00,
+            0xf2, 0x46, 0x6c, 0xbe, 0x00, 0x00, 0x00, 0x00,
+            0x10, 0x00, 0xa0, 0x14, 0x40, 0x01, 0xb4, 0x00,
+            0x00, 0x00, 0x27, 0x00, 0x03, 0xb4, 0x00, 0xa4,
+            0x01
+    };
+    senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
+
+    BOOST_CHECK_EQUAL( p->version(), 0u   );
+    BOOST_CHECK_EQUAL( p->length(),  41u  );
+
+    BOOST_CHECK( p->has_dbmAntennaSignal());
+    BOOST_CHECK_EQUAL( int(p->dbmAntennaSignal().value()), -76);
+
+    BOOST_CHECK( p->has_dbmAntennaSignal(1));
+    BOOST_CHECK_EQUAL( int(p->dbmAntennaSignal(1).value()), -76);
+
+    BOOST_CHECK( p->has_dbmAntennaSignal(2));
+    BOOST_CHECK_EQUAL( int(p->dbmAntennaSignal(2).value()), -92);
+}
 
 
 // Local Variables:

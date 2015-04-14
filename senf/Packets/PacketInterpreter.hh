@@ -44,6 +44,9 @@
 
 namespace senf {
 
+    enum DumpPacketAnnotations_t { dumpAnnotations, withoutAnnotations };
+
+
     template <class PacketType> class PacketInterpreter;
 
     void intrusive_ptr_add_ref(PacketInterpreterBase const * p);
@@ -193,7 +196,7 @@ namespace senf {
         optional_range nextPacketRange();
         void finalizeThis();
         void finalizeTo(ptr other);
-        void dump(std::ostream & os);
+        void dump(std::ostream & os, DumpPacketAnnotations_t dumpAnnotationsSwitch);
         void memDebug(std::ostream & os);
         TypeIdValue typeId();
         factory_t factory();

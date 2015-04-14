@@ -34,6 +34,7 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
+#include <boost/unordered_map.hpp>
 #include <boost/array.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,6 +165,9 @@ namespace senf {
 
         SENF_PARSER_FINALIZE( RadiotapPacket_HeaderParser );
 
+        SENF_PARSER_PRIVATE_FIELD( presentFlags_ext1, UInt32LSBParser );
+        SENF_PARSER_PRIVATE_FIELD( presentFlags_ext2, UInt32LSBParser );
+
         enum PresentIndex {
             // Could use the the entries from radiotap.h but I don't know,
             // if I want to pollute the global and macro namespace even more ...
@@ -186,8 +190,10 @@ namespace senf {
             RTS_RETRIES_INDEX       = 16,
             DATA_RETRIES_INDEX      = 17,
             MCS_INDEX               = 19,
+            A_MPDU_STATUS_INDEX     = 20,
+            VHT_INDEX               = 21,
 
-            MAX_INDEX               = 19,
+            MAX_INDEX               = 21,
 
             RADIOTOP_NS_INDEX       = 29,
             VENDOR_NS_INDEX         = 30,
@@ -214,6 +220,8 @@ namespace senf {
             RTS_RETRIES_FLAG        = (1<<RTS_RETRIES_INDEX),
             DATA_RETRIES_FLAG       = (1<<DATA_RETRIES_INDEX),
             MCS_FLAG                = (1<<MCS_INDEX),
+            A_MPDU_STATUS_FLAG      = (1<<A_MPDU_STATUS_INDEX),
+            VHT_FLAG                = (1<<VHT_INDEX),
 
             RADIOTOP_NS_FLAG        = (1<<RADIOTOP_NS_INDEX),
             VENDOR_NS_FLAG          = (1<<VENDOR_NS_INDEX),
@@ -244,21 +252,21 @@ namespace senf {
 
         //-////////////////////////////////////////////////////////////////////////
 
-#       define FIELD(name,type,index)                                   \
-            typedef type name ## _t;                                    \
-            type name() { return parseField<type>(index); }             \
-            bool has_ ## name() { return currentTable()[index]; }       \
-            bool name ## Present() { return has_ ## name(); }           \
-            type init_ ## name() { initField(index); return name(); }   \
+#       define FIELD(name,type,index)                                                                \
+            typedef type name ## _t;                                                                 \
+            type name(unsigned extIndex = 0) { return parseField<type>(index, extIndex); }           \
+            bool has_ ## name(unsigned extIndex = 0) { return currentTable()[(extIndex+1)*index]; }  \
+            bool name ## Present(unsigned extIndex = 0) { return has_ ## name(extIndex); }           \
+            type init_ ## name() { initField(index); return name(); }                                \
             void disable_ ## name() { disableField(index); }
 
         FIELD( tsft,              UInt64LSBParser,                      TSFT_INDEX              );
 
         // flags is special: disabling 'flags' must also disable the 'fcs' field
         typedef RadiotapPacket_FlagsParser flags_t;
-        flags_t flags() { return parseField<flags_t>(FLAGS_INDEX); }
-        bool has_flags() { return currentTable()[FLAGS_INDEX]; }
-        bool flagsPresent() { return has_flags(); }
+        flags_t flags(unsigned extIndex = 0) { return parseField<flags_t>(FLAGS_INDEX, extIndex); }
+        bool has_flags(unsigned extIndex = 0) { return currentTable()[(extIndex+1)*FLAGS_INDEX]; }
+        bool flagsPresent(unsigned extIndex = 0) { return has_flags(extIndex); }
         flags_t init_flags() { initField(FLAGS_INDEX); return flags(); }
         void disable_flags() { disable_fcs(); disableField(FLAGS_INDEX); }
 
@@ -295,13 +303,13 @@ namespace senf {
     private:
         static const size_type fixed_bytes = 0; // hide this member, just in case
 
-        typedef boost::array<size_type, MAX_INDEX+2> OffsetTable;
-        typedef std::map<boost::uint32_t, OffsetTable> OffsetMap;
+        typedef boost::array<size_type, MAX_INDEX * 3 + 2> OffsetTable;
+        typedef boost::array<boost::uint32_t, 3> OffsetKey;
+        typedef boost::unordered_map<OffsetKey, OffsetTable> OffsetMap;
 
         //-////////////////////////////////////////////////////////////////////////
         // Offset table handling
 
-        static OffsetTable & offsetTable(boost::uint32_t presentFlags);
         // Fills the offset table based on a packet
         static void parseOffsetTable(boost::uint8_t * data, int maxLength, OffsetTable & table);
         // Generate an offset table just from the present flags
@@ -313,7 +321,7 @@ namespace senf {
         OffsetTable const & getTable(boost::uint32_t presentFlags) const;
 
         template <class Parser>
-        Parser parseField(unsigned index);
+        Parser parseField(unsigned index, unsigned extIndex);
         void initField(unsigned index);
         void disableField(unsigned index);
 

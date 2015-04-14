@@ -61,26 +61,24 @@ SENF_PACKET_INSTANTIATE_TEMPLATE( senf::RadiotapPacket );
 
 senf::RadiotapPacketParser::OffsetMap senf::RadiotapPacketParser::offsetMap_;
 
-prefix_ senf::RadiotapPacketParser::OffsetTable &
-senf::RadiotapPacketParser::offsetTable(boost::uint32_t presentFlags)
-{
-    OffsetMap::iterator i (offsetMap_.find(presentFlags));
-    if (i == offsetMap_.end())
-        i = offsetMap_.insert(std::make_pair(presentFlags, OffsetTable())).first;
-    return i->second;
-}
-
 prefix_ void senf::RadiotapPacketParser::parseOffsetTable(boost::uint8_t * data, int maxLength,
-                                                          OffsetTable & table)
+        OffsetTable & table)
 {
     ieee80211_radiotap_iterator iter;
     ieee80211_radiotap_iterator_init(
             &iter, reinterpret_cast<ieee80211_radiotap_header *>(data), maxLength, 0);
     unsigned size (8u);
+    unsigned extIndex = 0;
+    int last_index = 255;
     while (ieee80211_radiotap_iterator_next(&iter) == 0) {
-        if (iter.is_radiotap_ns &&
-            iter.this_arg_index <= int(RadiotapPacketParser::MAX_INDEX))
-            table[iter.this_arg_index] = iter.this_arg - data;
+        if (not iter.is_radiotap_ns)
+            continue;
+        if (iter.this_arg_index > int(RadiotapPacketParser::MAX_INDEX))
+            continue;
+        if (iter.this_arg_index < last_index)
+            extIndex++;
+        last_index = iter.this_arg_index;
+        table[extIndex * iter.this_arg_index] = iter.this_arg - data;
         // We need to set size here in the loop since the iter fields are only valid
         // when at least one present bit is set ...
         size = iter.this_arg - data + iter.this_arg_size;
@@ -114,7 +112,7 @@ prefix_ void senf::RadiotapPacketParser::buildOffsetTable(boost::uint32_t presen
 // senf::RadiotapPacketParser
 
 unsigned const senf::RadiotapPacket_HeaderParser::FIELD_SIZE[] = {
-    8, 1, 1, 4, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 0, 3 };
+    8, 1, 1, 4, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 0, 3, 8, 12 };
 
 prefix_ senf::UInt32Parser senf::RadiotapPacketParser::init_fcs()
 {
@@ -138,13 +136,13 @@ prefix_ senf::RadiotapPacketParser::OffsetTable const &
 senf::RadiotapPacketParser::getTable(boost::uint32_t presentFlags)
     const
 {
-    OffsetTable & table(offsetTable(presentFlags));
+    OffsetTable & table (offsetMap_[{presentFlags,0,0}]);
     if (! table[MAX_INDEX+1])
         buildOffsetTable(presentFlags, table);
     return table;
 }
 
-prefix_ void senf::RadiotapPacketParser::insertRemoveBytes(unsigned from , unsigned to, int bytes)
+prefix_ void senf::RadiotapPacketParser::insertRemoveBytes(unsigned from, unsigned to, int bytes)
 {
     data_iterator b (i() + from);
     data_iterator e (i() + to);

@@ -81,11 +81,11 @@ prefix_ void senf::PacketInterpreterBase::reparse()
 
 // Access to the abstract interface
 
-prefix_ void senf::PacketInterpreterBase::dump(std::ostream & os)
+prefix_ void senf::PacketInterpreterBase::dump(std::ostream & os, DumpPacketAnnotations_t dumpAnnotationsSwitch)
 {
     try {
-        if (detail::AnnotationRegistry::instance().begin()
-            != detail::AnnotationRegistry::instance().end()) {
+        if (dumpAnnotationsSwitch == dumpAnnotations &&
+                detail::AnnotationRegistry::instance().begin() != detail::AnnotationRegistry::instance().end()) {
             os << "Annotations:\n";
             impl().dumpAnnotations(os);
         }

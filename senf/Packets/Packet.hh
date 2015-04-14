@@ -492,7 +492,8 @@ namespace senf {
                                              headers before \c this, it will \e only process inner
                                              headers. */
 
-        void dump(std::ostream & os) const; ///< Write out a printable packet representation
+        void dump(std::ostream & os, DumpPacketAnnotations_t dumpAnnotationsSwitch = dumpAnnotations) const;
+                                        ///< Write out a printable packet representation
                                         /**< This method is provided mostly to help debugging packet
                                              problems. Each concrete packet should implement a dump
                                              method writing out all fields of the packet in a

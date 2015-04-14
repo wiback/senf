@@ -56,11 +56,11 @@ prefix_ senf::Packet senf::Packet::getLast()
     return p;
 }
 
-prefix_ void senf::Packet::dump(std::ostream & os)
+prefix_ void senf::Packet::dump(std::ostream & os, DumpPacketAnnotations_t dumpAnnotationsSwitch)
     const
 {
     last(); // Make sure the packet is complete
-    ptr()->dump(os);
+    ptr()->dump(os, dumpAnnotationsSwitch);
 }
 
 prefix_ void senf::Packet::memDebug(std::ostream & os)

@@ -162,9 +162,7 @@ prefix_ void senf::emu::MonitorDataFilter::handle_DuplicateFrame(EthernetPacket 
 {
     stats_.duplicated++;
     if (promisc_) {
-        {
-            eth.annotation<annotations::Quality>().flags.frameDuplicate = true;
-        }
+        eth.annotation<annotations::Quality>().flags.frameDuplicate = true;
         output(eth);
     }
 }

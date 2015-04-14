@@ -41,7 +41,14 @@
 prefix_ senf::RadiotapPacketParser::RadiotapPacketParser(data_iterator i, state_type s)
     : RadiotapPacket_HeaderParser(i,s)
 {
-    OffsetTable & table (offsetTable(presentFlags()));
+    OffsetKey offsetKey = { presentFlags(), 0, 0 };
+    if (offsetKey[0] & EXTENDED_BITMASK_FLAG) {
+        offsetKey[1] = presentFlags_ext1();
+        if (offsetKey[1] & EXTENDED_BITMASK_FLAG) {
+            offsetKey[2] = presentFlags_ext2();
+        }
+    }
+    OffsetTable & table (offsetMap_[offsetKey]);
     if (! table[MAX_INDEX+1])
         parseOffsetTable(&(*data().begin()), data().size(), table);
     currentTable_ = &table;
