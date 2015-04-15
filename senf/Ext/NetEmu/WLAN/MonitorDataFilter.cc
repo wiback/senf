@@ -272,7 +272,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
                 handle_DuplicateFrame(ethp);
                 return;
             }
-            ethp.data().releaseExternalMemory();
+//            ethp.data().releaseExternalMemory();
             record.queue.at(delta) = ethp;
             
             while (! record.queue.empty() && record.queue.front()) {
@@ -488,10 +488,13 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         // Set annotations: Quality
         {
             annotations::Quality & q (rtPacket.annotation<annotations::Quality>());
-            q.rssi  = std::min( short(0), short(rtParser.dbmAntennaSignal()));
+            if (SENF_LIKELY(rtParser.dbmAntennaSignalPresent(1) && rtParser.dbmAntennaSignalPresent(2)))
+                q.rssi  = (rtParser.dbmAntennaSignal(1) + rtParser.dbmAntennaSignal(2)) / 2;
+            else
+                q.rssi  = short(rtParser.dbmAntennaSignal());
 //            q.noise = (rtParser.dbmAntennaNoisePresent() ? short(rtParser.dbmAntennaNoise()) : short(DEFAULT_WLAN_NOISE));
             q.noise = short(DEFAULT_WLAN_NOISE);
-            q.snr   = std::max( short(0), (short(q.rssi - q.noise)));
+            q.snr   = short(q.rssi - q.noise);
             q.flags.frameLength = rtPacket.size() - rtParser.length();
         }
 
@@ -499,9 +502,9 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         if (SENF_LIKELY(rtParser.mcsPresent())) {
             stats_.ht++;
             rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS(
-            rtParser.mcs().mcsIndex(),
-                    rtParser.mcs().bandwidth(),
-                    rtParser.mcs().guardInterval() );
+                rtParser.mcs().mcsIndex(),
+                rtParser.mcs().bandwidth(),
+                rtParser.mcs().guardInterval() );
         }
         else if (rtParser.ratePresent()) {
                 stats_.legacy++;
