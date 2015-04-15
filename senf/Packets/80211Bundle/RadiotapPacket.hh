@@ -36,6 +36,7 @@
 #include <senf/Packets/Packets.hh>
 #include <boost/unordered_map.hpp>
 #include <boost/array.hpp>
+#include <boost/functional/hash.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf {

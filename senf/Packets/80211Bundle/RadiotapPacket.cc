@@ -137,7 +137,7 @@ senf::RadiotapPacketParser::getTable(boost::uint32_t presentFlags)
     const
 {
     OffsetTable & table (offsetMap_[{presentFlags,0,0}]);
-    if (! table[MAX_INDEX+1])
+    if (SENF_UNLIKELY(! table[MAX_INDEX+1]))
         buildOffsetTable(presentFlags, table);
     return table;
 }
@@ -207,13 +207,13 @@ prefix_ void senf::RadiotapPacketParser::updatePresentFlags(boost::uint32_t flag
 
 prefix_ unsigned senf::RadiotapPacketParser::rateInKbps()
 {
-    if (ratePresent())
-        return rate() * 1000 / 2;
-    if (mcsPresent())
+    if (SENF_LIKELY(mcsPresent()))
         return WLAN_MCSInfo::getRate(
                 mcs().mcsIndex(),
                 mcs().bandwidth() == 1 ? 40 : 20,
                 mcs().guardInterval());
+    if (ratePresent())
+        return rate() * 1000 / 2;
     return 0;
 }
 
