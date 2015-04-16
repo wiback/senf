@@ -488,10 +488,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         // Set annotations: Quality
         {
             annotations::Quality & q (rtPacket.annotation<annotations::Quality>());
-            if (SENF_LIKELY(rtParser.dbmAntennaSignalPresent(1) && rtParser.dbmAntennaSignalPresent(2)))
-                q.rssi  = (rtParser.dbmAntennaSignal(1) + rtParser.dbmAntennaSignal(2)) / 2;
-            else
-                q.rssi  = short(rtParser.dbmAntennaSignal());
+            q.rssi  = short(rtParser.dbmAntennaSignal());
 //            q.noise = (rtParser.dbmAntennaNoisePresent() ? short(rtParser.dbmAntennaNoise()) : short(DEFAULT_WLAN_NOISE));
             q.noise = short(DEFAULT_WLAN_NOISE);
             q.snr   = short(q.rssi - q.noise);
