@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.fokus.fraunhofer.de.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -141,11 +141,11 @@ SENF_AUTO_TEST_CASE(RadiotapPacket_create)
     SENF_CHECK_NO_THROW( p->init_tsft()             = 81059833346uLL );
     BOOST_CHECK_EQUAL( p.size(), senf::RadiotapPacket_HeaderParser::fixed_bytes +
             senf::RadiotapPacketParser::tsft_t::fixed_bytes );
-    SENF_CHECK_NO_THROW( p->init_rate()             =          12u   );
-    SENF_CHECK_NO_THROW( p->init_dbmAntennaSignal() =         -61    );
-    SENF_CHECK_NO_THROW( p->init_dbmAntennaNoise()  =         -96    );
-    SENF_CHECK_NO_THROW( p->init_antenna()          =           2u   );
-    SENF_CHECK_NO_THROW( p->init_dbAntennaSignal()  =          35    );
+    SENF_CHECK_NO_THROW( p->init_rate()             = 12u   );
+    SENF_CHECK_NO_THROW( p->init_dbmAntennaSignal() = -61   );
+    SENF_CHECK_NO_THROW( p->init_dbmAntennaNoise()  = -96   );
+    SENF_CHECK_NO_THROW( p->init_antenna()          =  2u   );
+    SENF_CHECK_NO_THROW( p->init_dbAntennaSignal()  =  35   );
 
     SENF_CHECK_NO_THROW( p->init_flags());
     SENF_CHECK_NO_THROW( p->flags().shortPreamble() = true);

@@ -305,8 +305,7 @@ namespace senf {
         static const size_type fixed_bytes = 0; // hide this member, just in case
 
         typedef boost::array<size_type, MAX_INDEX * 3 + 2> OffsetTable;
-        typedef boost::array<boost::uint32_t, 3> OffsetKey;
-        typedef boost::unordered_map<OffsetKey, OffsetTable> OffsetMap;
+        typedef boost::unordered_map<std::size_t, OffsetTable> OffsetMap;
 
         //-////////////////////////////////////////////////////////////////////////
         // Offset table handling
