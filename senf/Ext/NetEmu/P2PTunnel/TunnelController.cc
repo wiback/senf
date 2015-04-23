@@ -61,13 +61,13 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
 
     handle.readfrom(thdr.data(), addr, SENF_EMU_MAXMTU);
 
-    if ((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes +  senf::EthernetPacketParser::fixed_bytes)) or 
-        (thdr->reserved() != TunnelHeaderPacketType::reservedMagic))
+    if (SENF_UNLIKELY((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes +  senf::EthernetPacketParser::fixed_bytes)) or 
+        (thdr->reserved() != TunnelHeaderPacketType::reservedMagic)))
         return EthernetPacket();
 
     senf::EthernetPacket eth(thdr.next<senf::EthernetPacket>());
 
-    if (isTunnelCtrlPacket(eth)) {
+    if (SENF_UNLIKELY(isTunnelCtrlPacket(eth))) {
         try {
             v_handleCtrlPacket( eth, addr, handle);
         } catch (TruncatedPacketException &) {}
@@ -84,7 +84,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     q.snr   = q.rssi - q.noise;
     q.flags.frameLength = eth.size();
 
-    if (diff == 1) {
+    if (SENF_LIKELY(diff == 1)) {
         // all is fine
     }
     else if ( diff == 0) {
@@ -486,7 +486,7 @@ prefix_ senf::emu::detail::TunnelClientController::TunnelClientController(Tunnel
 prefix_ signed senf::emu::detail::TunnelClientController::v_processSequenceNumber(TunnelHeaderPacket const & thdr, INet6SocketAddress const & srcAddr)
 {
     signed diff;
-    if (rxSeqNo_ == 0xffffffff) {
+    if (SENF_UNLIKELY(rxSeqNo_ == 0xffffffff)) {
         diff = 1;
     } else {
         diff = TunnelHeaderPacketType::seqNoDiff(thdr->sequenceNumber(), rxSeqNo_);
@@ -538,7 +538,7 @@ prefix_ void senf::emu::detail::TunnelClientController::v_handleCtrlPacket(
 
 prefix_ bool senf::emu::detail::TunnelClientController::v_writePacket(Handle & handle, EthernetPacket & eth)
 {
-    if (established_) {
+    if (SENF_LIKELY(established_)) {
         return sendPkt( handle, serverMAC_, eth);
     }
 

@@ -63,7 +63,7 @@ namespace detail {
     class TunnelControllerBase
     {
     public:
-        static const unsigned TunnelOverhead = 46u; // IPv4 (20) + UDP (8) + TunnelHeader (4) + eth of payload (14)
+        static const unsigned TunnelOverhead = 64u; // IPv4 (20) + UDP (8) + TunnelHeader (4) + eth of payload (14)
 
         typedef UDPv6ClientSocketHandle Handle;
         typedef EthernetPacket PacketType;
