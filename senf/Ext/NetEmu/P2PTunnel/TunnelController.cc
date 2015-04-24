@@ -110,16 +110,12 @@ prefix_ void senf::emu::detail::TunnelControllerBase::do_sendPkt(Handle & handle
             v_prependTHdr(pkt);
             handle.writeto(txInfo.first,pkt.prev().data());
         } else {
-            // this is sick, but ensure that we can write the whole fragmented frame
-            unsigned sndbuf (handle.protocol().sndbuf());
-            handle.protocol().sndbuf(sndbuf + SENF_EMU_MAXMTU);
             std::vector<senf::EthernetPacket> frags;
             fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
             for (auto & frag : frags) {
                 v_prependTHdr(frag);
                 handle.writeto(txInfo.first,frag.prev().data());
             }
-            handle.protocol().sndbuf(sndbuf);
         }
     }
     catch(...) {
