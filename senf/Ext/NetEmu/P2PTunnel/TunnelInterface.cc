@@ -105,7 +105,7 @@ prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::assignSocket(UDP
 {
     socket = socket_;
     source.handle(socket);
-    source.maxBurst(16);
+//    source.maxBurst(16);
     sink.handle(socket);
 }
 
