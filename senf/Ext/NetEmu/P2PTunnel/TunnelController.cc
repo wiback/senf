@@ -110,15 +110,20 @@ prefix_ void senf::emu::detail::TunnelControllerBase::do_sendPkt(Handle & handle
             v_prependTHdr(pkt);
             handle.writeto(txInfo.first,pkt.prev().data());
         } else {
+            // this is sick, but ensure that we can write the whole fragmented frame
+            unsigned sndbuf (handle.protocol().sndbuf());
+            handle.protocol().sndbuf(sndbuf + SENF_EMU_MAXMTU);
             std::vector<senf::EthernetPacket> frags;
             fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
             for (auto & frag : frags) {
                 v_prependTHdr(frag);
                 handle.writeto(txInfo.first,frag.prev().data());
             }
+            handle.protocol().sndbuf(sndbuf);
         }
     }
-    catch(...) {};
+    catch(...) {
+    };
 }
 
 prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, MACAddress const & dstMAC, senf::EthernetPacket pkt)
@@ -231,7 +236,7 @@ prefix_ senf::emu::detail::TunnelServerController::TunnelServerController(Tunnel
 prefix_ bool senf::emu::detail::TunnelServerController::v_writePacket(Handle & handle, EthernetPacket & eth)
 {
     MACAddress dst (eth->destination());
-    if (dst.multicast()) {
+    if (SENF_UNLIKELY(dst.multicast())) {
         for (Clients_by_macAddr::iterator client = clients_by_macAddr_.begin(); client != clients_by_macAddr_.end(); client++) {
             sendPkt(handle, client->macAddr, eth.clone());
         }
@@ -249,7 +254,7 @@ prefix_ void senf::emu::detail::TunnelServerController::v_prependTHdr(EthernetPa
 {
     TunnelHeaderPacket thdr (TunnelHeaderPacket::createBefore(eth));
 
-    if (!isTunnelCtrlPacket(eth)) {
+    if (SENF_LIKELY(!isTunnelCtrlPacket(eth))) {
         Clients_by_macAddr::iterator client (clients_by_macAddr_.find(eth.annotation<annotations::Interface>().value));
         if (client != clients_by_macAddr_.end()) {
             thdr->sequenceNumber() = client->txSeqNo;
@@ -265,7 +270,7 @@ prefix_ std::pair<senf::INet6SocketAddress,unsigned> senf::emu::detail::TunnelSe
     const
 {
     Clients_by_macAddr::iterator client (clients_by_macAddr_.find(eth.annotation<annotations::Interface>().value));
-    if (client != clients_by_macAddr_.end()) {
+    if (SENF_LIKELY(client != clients_by_macAddr_.end())) {
         return std::make_pair(client->inetAddr, client->fragmentationThreshold);
     }
 
@@ -277,9 +282,9 @@ prefix_ signed senf::emu::detail::TunnelServerController::v_processSequenceNumbe
 {
     Clients_by_inetAddr::iterator client (clients_by_inetAddr_.find(srcAddr));
 
-    if (client != clients_by_inetAddr_.end()) {
+    if (SENF_LIKELY(client != clients_by_inetAddr_.end())) {
         signed diff;
-        if (client->rxSeqNo == 0xffffffff) {
+        if (SENF_UNLIKELY(client->rxSeqNo == 0xffffffff)) {
             diff = 1;
         } else {
             diff = TunnelHeaderPacketType::seqNoDiff(thdr->sequenceNumber(), client->rxSeqNo);
@@ -548,7 +553,7 @@ prefix_ bool senf::emu::detail::TunnelClientController::v_writePacket(Handle & h
 prefix_ void senf::emu::detail::TunnelClientController::v_prependTHdr(EthernetPacket & eth)
 {
     TunnelHeaderPacket thdr (TunnelHeaderPacket::createBefore(eth));
-    if (!isTunnelCtrlPacket(eth)) {
+    if (SENF_LIKELY(!isTunnelCtrlPacket(eth))) {
         thdr->sequenceNumber() = txSeqNo_;
         txSeqNo_ = (txSeqNo_ + 1) % 0x20000;
     } else {
