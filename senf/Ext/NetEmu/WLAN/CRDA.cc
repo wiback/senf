@@ -28,7 +28,8 @@ prefix_ senf::emu::CRDA & senf::emu::CRDA::instance()
 
 prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_("AA"),
-      dfsMode_(true)
+      dfsMode_(true),
+      regDomainFd_(unsigned(-1))
 {
     namespace fty = senf::console::factory;
     dir.add("setRegulatory",    fty::Command(&CRDA::setCurrentRegulatory, this));
@@ -108,6 +109,12 @@ prefix_ senf::emu::CRDA::CRDA()
     }
 }
 
+prefix_ bool senf::emu::CRDA::createTmpFile(std::string const & filename)
+{
+    regDomainFd_ = ::open(filename.c_str(), O_WRONLY);
+    return regDomainFd_ != unsigned(-1); 
+}
+
 prefix_ bool senf::emu::CRDA::setRegDomainFromKernel()
 {
     bool rtn (false);
@@ -129,10 +136,8 @@ prefix_ senf::emu::RegulatoryDomain const & senf::emu::CRDA::regulatoryDomain()
     return currentRegDomain_;
 }
 
-prefix_ void senf::emu::CRDA::regulatoryDomain(senf::emu::RegulatoryDomain const & regDomain)
+prefix_ bool senf::emu::CRDA::regulatoryDomain(senf::emu::RegulatoryDomain const & regDomain)
 {
-    currentRegDomain_ = regDomain;
-
     // remove DFS related flags
     if (!dfsMode_) {
         for (auto & rule : currentRegDomain_.rules) {
@@ -141,6 +146,24 @@ prefix_ void senf::emu::CRDA::regulatoryDomain(senf::emu::RegulatoryDomain const
         }
     }
 
+    if (regDomainFd_ != (unsigned(-1))) {
+        ::lseek(regDomainFd_, 0, SEEK_SET);
+        std::stringstream ss;
+        senf::console::format(regDomain, ss);
+        senf::IGNORE(::write(regDomainFd_, ss.str().c_str(), ss.str().size()));
+    }
+
+    // we might need to revert, if the below fails
+    senf::emu::RegulatoryDomain old (currentRegDomain_);
+    
+    // set the new regDomain first, to avoid possible race conditions with the kernel CRDA upcall
+    currentRegDomain_ = regDomain;
+    if (setNextDummyRegCountry()) {
+        return true;
+    }
+    
+    currentRegDomain_ = old;
+    return false;
 }
 
 prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)

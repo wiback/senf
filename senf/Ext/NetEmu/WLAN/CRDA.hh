@@ -27,9 +27,11 @@ namespace emu {
         int  run(int argc, char const ** argv);
 
         bool setNextDummyRegCountry();
-        void regulatoryDomain(senf::emu::RegulatoryDomain const & regDomain);
+        bool regulatoryDomain(senf::emu::RegulatoryDomain const & regDomain);
         senf::emu::RegulatoryDomain const & regulatoryDomain() const;
         bool setRegDomainFromKernel();
+
+        bool createTmpFile(std::string const & filename);
 
     private:
         CRDA();
@@ -49,6 +51,7 @@ namespace emu {
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
         bool dfsMode_;
+        unsigned regDomainFd_;
     };
 }}
 
