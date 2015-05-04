@@ -195,7 +195,7 @@ prefix_ bool senf::emu::CRDA::setNextDummyRegCountry()
 
 prefix_ void senf::emu::CRDA::setWorldRegulatory(std::string const & alpha2Country)
 {
-    auto regDomain = worldRegDomain_;
+    auto regDomain = currentRegDomain_.rules.empty() ? worldRegDomain_ : currentRegDomain_;
     regDomain.alpha2Country = alpha2Country;
     setRegulatory(regDomain);
 }
@@ -207,6 +207,11 @@ prefix_ void senf::emu::CRDA::setCurrentRegulatory(std::string const & alpha2Cou
         regDomain = worldRegDomain_;
     regDomain.alpha2Country = alpha2Country;
     setRegulatory(regDomain);
+}
+
+prefix_ void senf::emu::CRDA::setRegDomain(senf::emu::RegulatoryDomain const & regDomain)
+{
+    currentRegDomain_ = regDomain;
 }
 
 prefix_ void senf::emu::CRDA::setRegulatory(senf::emu::RegulatoryDomain const & regDomain)
@@ -275,7 +280,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & cmdDir (senf::console::root().add("init", fty::Directory()));
     cmdDir.add("help",          fty::Command( &CRDA::help, &crda) );
-    cmdDir.add("setRegDomain",  fty::Command( &CRDA::setRegulatory, &crda) );
+    cmdDir.add("regDomain",     fty::Command( &CRDA::setRegDomain, &crda) );
     cmdDir.add("setRegCountry", fty::Command( &CRDA::setRegCountry, &crda) );
     cmdDir.add("setRegulatory", fty::Command( &CRDA::setWorldRegulatory, &crda) );
     cmdDir.add("getRegulatory", fty::Command( &CRDA::dumpRegulatory, &crda) );
@@ -284,6 +289,8 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     nodeDir.add("crda", crda.dir);
 
     crda.logTarget_.route<senf::log::MESSAGE>();
+
+    parseConfigFile("/tmp/NetEMU-CRDA.reg");
 
     std::vector<std::string> nonOptions;
     senf::console::ProgramOptions cmdlineOptions (argc, argv, cmdDir);

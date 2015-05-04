@@ -39,8 +39,9 @@ namespace emu {
         bool setRegCountry(std::string alpha2Country);
         void setWorldRegulatory(std::string const & alpha2Country);
         void setCurrentRegulatory(std::string const & alpha2Country);
-        void setRegulatory(senf::emu::RegulatoryDomain const & regDomain);
         void dumpRegulatory(std::ostream & os);
+        void setRegDomain(senf::emu::RegulatoryDomain const & regDomain);
+        void setRegulatory(senf::emu::RegulatoryDomain const & regDomain);
 
         void parseConfigFile(std::string const & filename);
         void help();
