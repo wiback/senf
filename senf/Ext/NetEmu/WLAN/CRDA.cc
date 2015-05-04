@@ -138,6 +138,12 @@ prefix_ senf::emu::RegulatoryDomain const & senf::emu::CRDA::regulatoryDomain()
 
 prefix_ bool senf::emu::CRDA::regulatoryDomain(senf::emu::RegulatoryDomain const & regDomain)
 {
+    // we might need to revert, if the below fails
+    senf::emu::RegulatoryDomain old (currentRegDomain_);
+    
+    // set the new regDomain first, to avoid possible race conditions with the kernel CRDA upcall
+    currentRegDomain_ = regDomain;
+
     // remove DFS related flags
     if (!dfsMode_) {
         for (auto & rule : currentRegDomain_.rules) {
@@ -149,15 +155,12 @@ prefix_ bool senf::emu::CRDA::regulatoryDomain(senf::emu::RegulatoryDomain const
     if (regDomainFd_ != (unsigned(-1))) {
         ::lseek(regDomainFd_, 0, SEEK_SET);
         std::stringstream ss;
-        senf::console::format(regDomain, ss);
+        ss << "regDomain ";
+        senf::console::format(currentRegDomain_, ss);
+        ss << ";" << std::endl;
         senf::IGNORE(::write(regDomainFd_, ss.str().c_str(), ss.str().size()));
     }
 
-    // we might need to revert, if the below fails
-    senf::emu::RegulatoryDomain old (currentRegDomain_);
-    
-    // set the new regDomain first, to avoid possible race conditions with the kernel CRDA upcall
-    currentRegDomain_ = regDomain;
     if (setNextDummyRegCountry()) {
         return true;
     }
@@ -186,6 +189,7 @@ prefix_ bool senf::emu::CRDA::setNextDummyRegCountry()
             dummyCountry_[0] = 'A';
         }
     }
+
     return setRegCountry(dummyCountry_);
 }
 
@@ -271,6 +275,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & cmdDir (senf::console::root().add("init", fty::Directory()));
     cmdDir.add("help",          fty::Command( &CRDA::help, &crda) );
+    cmdDir.add("setRegDomain",  fty::Command( &CRDA::setRegulatory, &crda) );
     cmdDir.add("setRegCountry", fty::Command( &CRDA::setRegCountry, &crda) );
     cmdDir.add("setRegulatory", fty::Command( &CRDA::setWorldRegulatory, &crda) );
     cmdDir.add("getRegulatory", fty::Command( &CRDA::dumpRegulatory, &crda) );
