@@ -12,6 +12,7 @@
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include <senf/Utils/Logger/SyslogTarget.hh>
 #include <senf/Ext/NetEmu/WLAN/Regulatory.hh>
+#include <senf/Ext/NetEmu/WLAN/WirelessNLController.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
@@ -30,24 +31,27 @@ namespace emu {
         bool regDomain(senf::emu::RegulatoryDomain regDomain);
         senf::emu::RegulatoryDomain const & regDomain() const;
 
-        bool equalsKernel() const;
+        bool equalsKernel();
 
     private:
         CRDA();
 
+        // Common
         bool setRegCountry(std::string alpha2Country);
         void kernelRegDomain(std::ostream & os);
-        void setRegulatory(senf::emu::RegulatoryDomain const & regDomain);
 
+        // Slave CRDA only
+        void setRegulatory();
         void help(int exit_status);
-        void setRegulatory_();
-
+        
+        WirelessNLController wnlc_;
         senf::log::SyslogTarget logTarget_;
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
         bool dfsMode_;
-        std::string regDbFile;
+        std::string regDbFile_;
+        bool nonWirelessBox_;
     };
 }}
 
