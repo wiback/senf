@@ -27,7 +27,7 @@ namespace emu {
         bool init(std::string const & filename, bool create = false);
         int  run(int argc, char const ** argv);
 
-        bool regDomain(senf::emu::RegulatoryDomain const & regDomain);
+        bool regDomain(senf::emu::RegulatoryDomain regDomain);
         senf::emu::RegulatoryDomain const & regDomain() const;
 
         bool equalsKernel() const;

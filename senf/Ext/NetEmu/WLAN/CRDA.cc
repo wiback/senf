@@ -159,8 +159,11 @@ prefix_ bool senf::emu::CRDA::equalsKernel()
     return true;
 }
 
-prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain const & regDomain)
+prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
 {
+    if (!regDomain)
+        regDomain = worldRegDomain_;
+
     // we might need to revert, if the below fails
     senf::emu::RegulatoryDomain old (currentRegDomain_);
     
