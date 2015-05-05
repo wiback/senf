@@ -159,6 +159,13 @@ prefix_ bool senf::emu::RegulatoryRule::operator==(RegulatoryRule const & other)
         cacTime_                == other.cacTime_;
 }
 
+prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
+    const
+{
+    return frequencyRangeBegin_ < other.frequencyRangeBegin_;
+}
+
+
 prefix_ bool senf::emu::RegulatoryDomain::isEqual(RegulatoryDomain const & other) 
     const
 {
@@ -168,21 +175,36 @@ prefix_ bool senf::emu::RegulatoryDomain::isEqual(RegulatoryDomain const & other
     if (rules.size() != other.rules.size())
         return false;
 
-    for(unsigned n = 0; n < rules.size(); n++) {
-        if (!(rules[n] == other.rules[n]))
+    for(auto const & r: rules) {
+        if (other.rules.find(r) == other.rules.end())
             return false;
     }
 
     return true;
 }
 
+prefix_ senf::emu::RegulatoryDomain::operator bool()
+    const
+{
+    return !rules.empty();
+}
+
+prefix_ std::ostream & senf::emu::operator<<(std::ostream & os, RegulatoryDomain const & regDomain)
+{
+    senf::console::format(regDomain, os);
+    return os;
+}
 
 prefix_ std::ostream & senf::emu::operator<<(std::ostream & os, RegulatoryRule const & rule)
 {
     os << '(' << rule.frequencyRangeBegin() << ' ' << rule.frequencyRangeEnd() << ' '
        << rule.maxBandwidth() << ' ' << rule.maxEIRP() << ' ' << rule.cacTime() << ' ';
     senf::console::FlagCollection<RegulatoryRule::Flags> flags (rule.flags());
-    senf::console::format(flags, os);
+    if (rule.flags() != 0) {
+        os << '('; senf::console::format(flags, os); os << ')';
+    } else {
+        os << "()";
+    }
     os << ')';
     return os;
 }
@@ -195,6 +217,7 @@ prefix_ void senf::console::ArgumentTraits<senf::emu::RegulatoryRule>::parse(
     senf::console::parse( *(arg++), rule.frequencyRangeEnd_ );
     senf::console::parse( *(arg++), rule.maxBandwidth_ );
     senf::console::parse( *(arg++), rule.maxEIRP_ );
+    senf::console::parse( *(arg++), rule.cacTime_ );
     senf::console::FlagCollection<senf::emu::RegulatoryRule::Flags> flags;
     senf::console::parse( *(arg++), flags );
     rule.flags_ = flags;

@@ -24,35 +24,30 @@ namespace emu {
 
         senf::console::ScopedDirectory<> dir;
 
+        bool init(std::string const & filename, bool create = false);
         int  run(int argc, char const ** argv);
 
-        bool setNextDummyRegCountry();
-        bool regulatoryDomain(senf::emu::RegulatoryDomain const & regDomain);
-        senf::emu::RegulatoryDomain const & regulatoryDomain() const;
-        bool setRegDomainFromKernel();
+        bool regDomain(senf::emu::RegulatoryDomain const & regDomain);
+        senf::emu::RegulatoryDomain const & regDomain() const;
 
-        bool createTmpFile(std::string const & filename);
+        bool equalsKernel() const;
 
     private:
         CRDA();
 
         bool setRegCountry(std::string alpha2Country);
-        void setWorldRegulatory(std::string const & alpha2Country);
-        void setCurrentRegulatory(std::string const & alpha2Country);
-        void dumpRegulatory(std::ostream & os);
-        void setRegDomain(senf::emu::RegulatoryDomain const & regDomain);
+        void kernelRegDomain(std::ostream & os);
         void setRegulatory(senf::emu::RegulatoryDomain const & regDomain);
 
-        void parseConfigFile(std::string const & filename);
-        void help();
-        void print_help(int exit_status);
+        void help(int exit_status);
+        void setRegulatory_();
 
         senf::log::SyslogTarget logTarget_;
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
         bool dfsMode_;
-        unsigned regDomainFd_;
+        std::string regDbFile;
     };
 }}
 

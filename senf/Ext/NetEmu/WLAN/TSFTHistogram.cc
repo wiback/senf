@@ -32,6 +32,7 @@
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/Console/ParsedCommand.hh>
 #include <senf/Utils/Console/Variables.hh>
+#include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -97,6 +97,7 @@ namespace emu {
         std::uint32_t flags() const;
 
         bool operator==(RegulatoryRule const & other) const;
+        bool operator<(RegulatoryRule const & other) const;
 
     private:
         // starting frequency for the regulatory rule in KHz;
@@ -135,14 +136,18 @@ namespace emu {
 
         std::string alpha2Country;
         DFSRegion dfsRegion;
-        std::vector<RegulatoryRule> rules;
+        std::set<RegulatoryRule> rules;
 
         RegulatoryDomain() { 
             dfsRegion = DFSRegion::Unset; 
         };
 
+        explicit operator bool() const;
+
         bool isEqual(RegulatoryDomain const & other) const;
     };
+
+    std::ostream & operator<<(std::ostream & os, RegulatoryDomain const & regDomain);
 
     SENF_CONSOLE_REGISTER_STRONG_ENUM_MEMBER( RegulatoryDomain, DFSRegion,
             (key("DFS_Unset", Unset))(key("DFS_FCC", FCC))(key("DFS_ETSI", ETSI))(key("DFS_JP", JP)) );

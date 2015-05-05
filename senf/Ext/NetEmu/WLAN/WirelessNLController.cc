@@ -391,9 +391,9 @@ prefix_ void senf::emu::WirelessNLController::set_regulatory(RegulatoryDomain co
     NLA_PUT_U8    ( msg, NL80211_ATTR_DFS_REGION, underlying_type_cast(regDomain.dfsRegion));
     {
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_REG_RULES);
-        for (std::size_t i = 0; i < regDomain.rules.size(); i++) {
-            nl_nested_attr_ptr params (msg, i);
-            RegulatoryRule const & rule (regDomain.rules[i]);
+        unsigned i = 0;
+        for (auto const & rule : regDomain.rules) {
+            nl_nested_attr_ptr params (msg, i++);
             NLA_PUT_U32( msg, NL80211_ATTR_REG_RULE_FLAGS,         rule.flags());
             NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_START,       rule.frequencyRangeBegin());
             NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_END,         rule.frequencyRangeEnd());
@@ -584,12 +584,14 @@ prefix_ int senf::emu::WirelessNLController::getRegDomain_cb(nl_msg * msg)
         GET_RULE_ATTR_OR_SKIP( max_bw_khz,       NL80211_ATTR_FREQ_RANGE_MAX_BW       );
         GET_RULE_ATTR_OR_SKIP( max_ant_gain_mbi, NL80211_ATTR_POWER_RULE_MAX_ANT_GAIN );
         GET_RULE_ATTR_OR_SKIP( max_eirp_mbm,     NL80211_ATTR_POWER_RULE_MAX_EIRP     );
+//        GET_RULE_ATTR_OR_SKIP( cac_time_ms,      NL80211_FREQUENCY_ATTR_DFS_CAC_TIME  );
 
-        regDomain_.rules.push_back( RegulatoryRule()
+        regDomain_.rules.insert( RegulatoryRule()
                 .frequencyRange(start_freq_khz, end_freq_khz)
                 .maxBandwidth(max_bw_khz)
                 .maxAntennaGain(max_ant_gain_mbi)
                 .maxEIRP(max_eirp_mbm)
+//                .cacTime(cac_time_ms)
                 .flags(flags) );
     }
 
