@@ -63,8 +63,6 @@ namespace {
     }
 }
 
-//int run(int argc, char const * argv[]);
-
 int run(int argc, char const * argv[])
 {
     std::string iface;
@@ -100,42 +98,43 @@ int run(int argc, char const * argv[])
     if (iface.empty())
         print_usage_and_exit();
 
-
-    std::cout << "Current regDomain: "; 
-    senf::console::format(senf::emu::CRDA::instance().regulatoryDomain(), std::cout);
-    std::cout << std::endl;
-
     // only allow DFS channels
     senf::emu::RegulatoryDomain dfsRegDomain_;
-    dfsRegDomain_.alpha2Country = "AA";
+    dfsRegDomain_.alpha2Country = "XX";
     dfsRegDomain_.dfsRegion = senf::emu::RegulatoryDomain::DFSRegion::ETSI;
-    dfsRegDomain_.rules.push_back(senf::emu::RegulatoryRule()
-                                  .frequencyRange(5250000, 5330000)
-                                  .maxBandwidth(40000)
-                                  .maxEIRP(3000)
-                                  .noIR(true)
-                                  .dfsRequired(true) );
-    dfsRegDomain_.rules.push_back(senf::emu::RegulatoryRule()
-                                  .frequencyRange(5490000, 5730000)
-                                  .maxBandwidth(40000)
-                                  .maxEIRP(3000)
-                                  .noIR(true)
-                                  .dfsRequired(true) );
-    
-    std::cout << "Settings DFS-only regDomain...";
-    senf::emu::CRDA::instance().regulatoryDomain(dfsRegDomain_);
-    if (!senf::emu::CRDA::instance().setNextDummyRegCountry()) {
-        std::cout << "Failed !" << std::endl;
-        return 1;
+    dfsRegDomain_.rules.insert(senf::emu::RegulatoryRule()
+                               .frequencyRange(5250000, 5330000)
+                               .maxBandwidth(40000)
+                               .maxEIRP(3000)
+                               .noIR(true)
+                               .dfsRequired(true) );
+    dfsRegDomain_.rules.insert(senf::emu::RegulatoryRule()
+                               .frequencyRange(5490000, 5730000)
+                               .maxBandwidth(40000)
+                               .maxEIRP(3000)
+                               .noIR(true)
+                               .dfsRequired(true) );
+
+    if (!senf::emu::CRDA::instance().regDomain().isEqual(dfsRegDomain_)) {    
+        std::cout << "Settings DFS-only regDomain...";
+        if (!senf::emu::CRDA::instance().regDomain(dfsRegDomain_)) {
+            std::cout << "Failed !" << std::endl;
+            return 1;
+        } else {
+            std::cout << "OK" << std::endl;
+        }
+
+        sleep(2);
+
+        if (senf::emu::CRDA::instance().equalsKernel()) {
+            std::cout << "Current regDomain updated to " << senf::emu::CRDA::instance().regDomain() << std::endl;
+        } else {
+            std::cout << "Requested regDomain does not match the kernel's regDomain !!!" << std::endl;
+            return 1;
+        }
     } else {
-        std::cout << "OK" << std::endl;
+        std::cout << "Current regDomain is already " << senf::emu::CRDA::instance().regDomain() << std::endl;
     }
-
-    sleep(2);
-
-    std::cout << "Current regDomain: "; 
-    senf::console::format(senf::emu::CRDA::instance().regulatoryDomain(), std::cout);
-    std::cout << std::endl;
 
     senf::emu::WirelessNLController wnlc (iface);
 
@@ -217,8 +216,13 @@ int run(int argc, char const * argv[])
 
 int main(int argc, char const * argv[])
 {
-    if (boost::filesystem::path(argv[0]).filename() == "wiback-crda")
+    if (boost::filesystem::path(argv[0]).filename() == "wiback-crda") {
+        senf::emu::CRDA::instance().init("/dev/shm/NetEMU-CRDA.reg");
         return senf::emu::CRDA::instance().run(argc, argv);
+    }
+
+    // true ==> MasterMode
+    senf::emu::CRDA::instance().init("/dev/shm/NetEMU-CRDA.reg", true);
 
     try {
         return run( argc, argv);

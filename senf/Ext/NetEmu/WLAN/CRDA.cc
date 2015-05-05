@@ -132,17 +132,19 @@ prefix_ bool senf::emu::CRDA::init(std::string const & filename, bool masterMode
 
     if (masterMode) {
         try {
-            currentRegDomain_ = wnlc_.get_regulatory();
+            WirelessNLController wnlc;
+            currentRegDomain_ = wnlc.get_regulatory();
             SENF_LOG( ("currentRegDomain initialized from kernel to " << currentRegDomain_) );
-        } catch (senf::ExceptionMixin & e) {
+        } catch (...) {
             nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
             SENF_LOG( ("No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
         }
     } else {
         try {
-            wnlc_.get_regulatory();
-        } catch (senf::ExceptionMixin & e) {
+            WirelessNLController wnlc;
+            wnlc.get_regulatory();
+        } catch (...) {
             nonWirelessBox_ = true;
             SENF_LOG( ("No Wireless Subsystem found.") );
         }
@@ -160,7 +162,8 @@ prefix_ senf::emu::RegulatoryDomain const & senf::emu::CRDA::regDomain()
 prefix_ bool senf::emu::CRDA::equalsKernel()
 {
     try {
-        return currentRegDomain_.isEqual(wnlc_.get_regulatory());
+        WirelessNLController wnlc;
+        return currentRegDomain_.isEqual(wnlc.get_regulatory());
     }
     catch(...) {
         SENF_LOG( ("No Wireless Subsystem found. This node might be a non-wireless box. Hence equalsKernel() is always true") );
@@ -228,7 +231,8 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
     }
     
     try {
-        wnlc_.set_regulatory_request(alpha2Country);
+        WirelessNLController wnlc;
+        wnlc.set_regulatory_request(alpha2Country);
     } catch (senf::ExceptionMixin & e) {
         SENF_LOG( ("Setting Regulatory Country to " << alpha2Country << " failed: " << e.message()) );
         return false;
@@ -240,8 +244,9 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
 prefix_ void senf::emu::CRDA::kernelRegDomain(std::ostream & os)
 {
     try {
-        os << wnlc_.get_regulatory() << std::endl;
-    } catch (senf::ExceptionMixin & e) {
+        WirelessNLController wnlc;
+        os << wnlc.get_regulatory() << std::endl;
+    } catch (...) {
         os << "No Wireless Subsystem found. This node might be a non-wireless box." << std::endl;
     }
 }
@@ -257,7 +262,8 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     regDomain.alpha2Country = !!a2 ? a2 : DUMMY_COUNTRY;
 
     try {
-        wnlc_.set_regulatory(regDomain);
+        WirelessNLController wnlc;
+        wnlc.set_regulatory(regDomain);
     } catch (senf::ExceptionMixin & e) {
         SENF_LOG( ("Setting Regulatory Domain failed: " << e.message()) );
         return;

@@ -44,7 +44,6 @@ namespace emu {
         void setRegulatory();
         void help(int exit_status);
         
-        WirelessNLController wnlc_;
         senf::log::SyslogTarget logTarget_;
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
