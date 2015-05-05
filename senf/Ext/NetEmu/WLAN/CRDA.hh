@@ -25,7 +25,7 @@ namespace emu {
 
         senf::console::ScopedDirectory<> dir;
 
-        bool init(std::string const & filename, bool create = false);
+        bool init(std::string const & filename, bool MasterMode = false);
         int  run(int argc, char const ** argv);
 
         bool regDomain(senf::emu::RegulatoryDomain regDomain);
@@ -50,7 +50,7 @@ namespace emu {
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
         bool dfsMode_;
-        std::string regDbFile_;
+        std::string regDbFilename_;
         bool nonWirelessBox_;
     };
 }}

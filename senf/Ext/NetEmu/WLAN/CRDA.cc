@@ -45,6 +45,8 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("worldRegDomain",   fty::Variable(boost::cref(worldRegDomain_)));
     dir.add("regDomain",        fty::Variable(boost::cref(currentRegDomain_)));
     dir.add("dfsMode",          fty::Variable(boost::cref(dfsMode_)));
+    dir.add("nonWirelessBox",   fty::Variable(boost::cref(nonWirelessBox_)));
+    dir.add("regDbFilename",    fty::Variable(boost::cref(regDbFilename_)));
 
     // sync our CRDA behavior with the kernel setting (boot time argument, for now)
     int fd (::open("/proc/cmdline", O_RDONLY));
@@ -115,12 +117,12 @@ prefix_ bool senf::emu::CRDA::init(std::string const & filename, bool masterMode
 {
     if (filename.empty())
         return false;
-    regDbFile_ = filename;
+    regDbFilename_ = filename;
 
     if (masterMode) {
         try {
             std::fstream fs;
-            fs.open(regDbFile_, std::fstream::out | std::fstream::trunc);
+            fs.open(regDbFilename_, std::fstream::out | std::fstream::trunc);
             fs.close();
         }
         catch(...) {
@@ -217,7 +219,7 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
 
     try {
         std::fstream fs;
-        fs.open(regDbFile_, std::fstream::out | std::fstream::trunc);
+        fs.open(regDbFilename_, std::fstream::out | std::fstream::trunc);
         fs << "regDomain " << currentRegDomain_ << ";" << std::endl;
         fs.close();
     }
@@ -295,7 +297,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     try {
         // Try to read and parse the redDBFile written by the main main process
         // If present and valid, this will call setRegDomain
-        senf::console::ConfigFile regDb (regDbFile_);
+        senf::console::ConfigFile regDb (regDbFilename_);
         regDb.ignoreMissing();
         regDb.parse(senf::console::root());
     }
