@@ -74,6 +74,10 @@ prefix_ senf::emu::CRDA::CRDA()
         // DFS-aware world regulatory domain
         worldRegDomain_.alpha2Country = "";
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
+       worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(700000, 800000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2402000, 2472000)
                                      .maxBandwidth(40000)
@@ -83,6 +87,10 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxBandwidth(20000)
                                      .maxEIRP(3000)
                                      .noIR(true) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(3000000, 4000000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5170000, 5250000)
                                      .maxBandwidth(40000)
@@ -110,7 +118,15 @@ prefix_ senf::emu::CRDA::CRDA()
         worldRegDomain_.alpha2Country = "";
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(700000, 800000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2402000, 2482000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(3000000, 4000000)
                                      .maxBandwidth(40000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
