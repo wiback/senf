@@ -174,7 +174,8 @@ format(type const & value, std::ostream & os)
             console::format(static_cast<Enum>(flag), ss);
         }
     }
-    os << (n != 1 ? "(" + ss.str() + ")" : ss.str());
+    os << "(" + ss.str() + ")";
+//    os << (n != 1 ? "(" + ss.str() + ")" : ss.str());
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

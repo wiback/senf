@@ -35,6 +35,12 @@ prefix_ senf::emu::CRDA & senf::emu::CRDA::instance()
     return instance_;
 }
 
+prefix_ std::string senf::emu::CRDA::slaveName()
+    const
+{
+    return CRDA_SLAVE_NAME;
+}
+
 prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_(DUMMY_COUNTRY),
       dfsMode_(true),
@@ -46,7 +52,8 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("regDomain",        fty::Variable(boost::cref(currentRegDomain_)));
     dir.add("dfsMode",          fty::Variable(boost::cref(dfsMode_)));
     dir.add("nonWirelessBox",   fty::Variable(boost::cref(nonWirelessBox_)));
-    dir.add("regDbFilename",    fty::Variable(boost::cref(regDbFilename_)));
+    dir.add("syncFilename",    fty::Variable(boost::cref(syncFilename_)));
+    dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
 
     // sync our CRDA behavior with the kernel setting (boot time argument, for now)
     int fd (::open("/proc/cmdline", O_RDONLY));
@@ -113,16 +120,16 @@ prefix_ senf::emu::CRDA::CRDA()
     }
 }
 
-prefix_ bool senf::emu::CRDA::init(std::string const & filename, bool masterMode)
+prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename)
 {
     if (filename.empty())
         return false;
-    regDbFilename_ = filename;
+    syncFilename_ = filename;
 
     if (masterMode) {
         try {
             std::fstream fs;
-            fs.open(regDbFilename_, std::fstream::out | std::fstream::trunc);
+            fs.open(syncFilename_, std::fstream::out | std::fstream::trunc);
             fs.close();
         }
         catch(...) {
@@ -134,7 +141,8 @@ prefix_ bool senf::emu::CRDA::init(std::string const & filename, bool masterMode
         try {
             WirelessNLController wnlc;
             currentRegDomain_ = wnlc.get_regulatory();
-            SENF_LOG( ("currentRegDomain initialized from kernel to " << currentRegDomain_) );
+            dummyCountry_ = currentRegDomain_.alpha2Country;
+            SENF_LOG( ("currentRegDomain initialized from kernel to " << currentRegDomain_ << ". DummyCountry initialized to " << dummyCountry_ << ".") );
         } catch (...) {
             nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
@@ -222,7 +230,7 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
 
     try {
         std::fstream fs;
-        fs.open(regDbFilename_, std::fstream::out | std::fstream::trunc);
+        fs.open(syncFilename_, std::fstream::out | std::fstream::trunc);
         fs << "regDomain " << currentRegDomain_ << ";" << std::endl;
         fs.close();
     }
@@ -303,7 +311,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     try {
         // Try to read and parse the redDBFile written by the main main process
         // If present and valid, this will call setRegDomain
-        senf::console::ConfigFile regDb (regDbFilename_);
+        senf::console::ConfigFile regDb (syncFilename_);
         regDb.ignoreMissing();
         regDb.parse(senf::console::root());
     }

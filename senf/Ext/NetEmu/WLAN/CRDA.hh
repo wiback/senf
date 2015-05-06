@@ -18,6 +18,9 @@
 namespace senf {
 namespace emu {
 
+#define DEFAULT_CRDA_SYNC_FILE "/dev/shm/NetEMU-CRDA.sync"
+#define CRDA_SLAVE_NAME        "wiback-crda"
+
     class CRDA
     {
     public:
@@ -25,8 +28,10 @@ namespace emu {
 
         senf::console::ScopedDirectory<> dir;
 
-        bool init(std::string const & filename, bool MasterMode = false);
+        bool init(bool MasterMode = false, std::string const & filename = DEFAULT_CRDA_SYNC_FILE);
         int  run(int argc, char const ** argv);
+        
+        std::string slaveName() const;
 
         bool regDomain(senf::emu::RegulatoryDomain regDomain);
         senf::emu::RegulatoryDomain const & regDomain() const;
@@ -44,12 +49,13 @@ namespace emu {
         void setRegulatory();
         void help(int exit_status);
         
+        
         senf::log::SyslogTarget logTarget_;
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
         bool dfsMode_;
-        std::string regDbFilename_;
+        std::string syncFilename_;
         bool nonWirelessBox_;
     };
 }}

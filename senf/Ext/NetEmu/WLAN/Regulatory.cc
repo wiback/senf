@@ -200,11 +200,7 @@ prefix_ std::ostream & senf::emu::operator<<(std::ostream & os, RegulatoryRule c
     os << '(' << rule.frequencyRangeBegin() << ' ' << rule.frequencyRangeEnd() << ' '
        << rule.maxBandwidth() << ' ' << rule.maxEIRP() << ' ' << rule.cacTime() << ' ';
     senf::console::FlagCollection<RegulatoryRule::Flags> flags (rule.flags());
-    if (rule.flags() != 0) {
-        os << '('; senf::console::format(flags, os); os << ')';
-    } else {
-        os << "()";
-    }
+    senf::console::format(flags, os);
     os << ')';
     return os;
 }

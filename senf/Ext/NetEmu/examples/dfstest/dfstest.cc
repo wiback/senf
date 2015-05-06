@@ -216,13 +216,16 @@ int run(int argc, char const * argv[])
 
 int main(int argc, char const * argv[])
 {
-    if (boost::filesystem::path(argv[0]).filename() == "wiback-crda") {
-        senf::emu::CRDA::instance().init("/dev/shm/NetEMU-CRDA.reg");
+    if (boost::filesystem::path(argv[0]).filename() == senf::emu::CRDA::instance().slaveName()) {
+        senf::emu::CRDA::instance().init();
         return senf::emu::CRDA::instance().run(argc, argv);
     }
 
     // true ==> MasterMode
-    senf::emu::CRDA::instance().init("/dev/shm/NetEMU-CRDA.reg", true);
+    if (!senf::emu::CRDA::instance().init(true)) {
+        std::cerr << "Failed to init CRDA ?!?" << std::endl;
+        return 2;
+    }
 
     try {
         return run( argc, argv);
