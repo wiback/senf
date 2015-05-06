@@ -183,8 +183,20 @@ prefix_ bool senf::emu::CRDA::equalsKernel()
 
 prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
 {
-    if (!regDomain)
+    std::string alpha2Country;
+
+    if (!regDomain) {
         regDomain = worldRegDomain_;
+        alpha2Country = DUMMY_COUNTRY;
+    } else {
+        if (dummyCountry_[1]++ == 'Z') {
+            dummyCountry_[1] = 'A';
+            if (dummyCountry_[0]++ == 'Z') {
+                dummyCountry_[0] = 'A';
+            }
+        }
+        alpha2Country = dummyCountry_;
+    }
 
     // we might need to revert, if the below fails
     RegulatoryDomain old (currentRegDomain_);
@@ -204,14 +216,7 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
         }
     }
     
-    if (dummyCountry_[1]++ == 'Z') {
-        dummyCountry_[1] = 'A';
-        if (dummyCountry_[0]++ == 'Z') {
-            dummyCountry_[0] = 'A';
-        }
-    }
-
-    if (setRegCountry(dummyCountry_)) {
+    if (setRegCountry(alpha2Country)) {
         return true;
     }
     
