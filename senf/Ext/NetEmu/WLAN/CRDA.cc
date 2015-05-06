@@ -72,7 +72,7 @@ prefix_ senf::emu::CRDA::CRDA()
 
     if (dfsMode_) {
         // DFS-aware world regulatory domain
-        worldRegDomain_.alpha2Country = DUMMY_COUNTRY;
+        worldRegDomain_.alpha2Country = "";
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2402000, 2472000)
@@ -107,7 +107,7 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .noIR(true) );
     } else {
         // DFS-disabled world regulatory domain
-        worldRegDomain_.alpha2Country = DUMMY_COUNTRY;
+        worldRegDomain_.alpha2Country = "";
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2402000, 2482000)
@@ -146,6 +146,7 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
         } catch (...) {
             nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
+            currentRegDomain_.alpha2Country = DUMMY_COUNTRY;
             SENF_LOG( ("No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
         }
     } else {
@@ -253,9 +254,11 @@ prefix_ void senf::emu::CRDA::kernelRegDomain(std::ostream & os)
 {
     try {
         WirelessNLController wnlc;
-        os << wnlc.get_regulatory() << std::endl;
+        os        << wnlc.get_regulatory() << std::endl;
+        std::cout << wnlc.get_regulatory() << std::endl;
     } catch (...) {
-        os << "No Wireless Subsystem found. This node might be a non-wireless box." << std::endl;
+        os        << "No Wireless Subsystem found. This node might be a non-wireless box." << std::endl;
+        std::cout << "No Wireless Subsystem found. This node might be a non-wireless box." << std::endl;
     }
 }
 
