@@ -24,6 +24,7 @@ namespace {
     {
         std::cerr << "usage: dfstest \n"
                   << "  -i, --interface=<adhoc_iface>\n"
+                  << "  -n  --nloops=<loops over frequency range>\n"
                   << "  -w, --wait=<wait time in sec per frequency>\n"
                   << "  -t, --time=<total time in sec (0 for endless)>\n"
                   << "  -f, --frequencies=<frequencies to scan>\n" << std::endl;
@@ -41,22 +42,24 @@ namespace {
     {
         SENF_LOG_BLOCK( ({
             log << "RadarEvent received for frequency " << event.frequency
-                << " type: ";
+                << "000 type: ";
             switch (event.type) {
             case senf::emu::RadarEvent::RadarDetected:
-                log << "Radar Detected "  << event.frequency;
+                log << "Radar Detected";
                 break;
             case senf::emu::RadarEvent::CACFinished:
-                log << "CAC Finished" << event.frequency;
+                log << "CAC Finished";
+                senf::scheduler::terminate();
                 break;
             case senf::emu::RadarEvent::CACAborted:
-                log << "CAC Aborted" << event.frequency;
+                log << "CAC Aborted";
+                senf::scheduler::terminate();
                 break;
             case senf::emu::RadarEvent::RadarNopFinished:
-                log << "Radar-Nop Finished" << event.frequency;
+                log << "Radar-Nop Finished";
                 break;
             default:
-                log << "Unknown: " << int(event.type) << " " << event.frequency;
+                log << "Unknown: " << int(event.type);
                 break;
             }
         }) );
@@ -66,6 +69,7 @@ namespace {
 int run(int argc, char const * argv[])
 {
     std::string iface;
+    unsigned nloops = 100000000;
     unsigned waitTime = 60;
     unsigned totalTime = 0;
     senf::console::ValueRange<unsigned> frequencyRange = { 0, 0 };
@@ -73,6 +77,7 @@ int run(int argc, char const * argv[])
     namespace fty = senf::console::factory;
     senf::console::root().add("help",        fty::Command(&print_usage_and_exit));
     senf::console::root().add("interface",   fty::Variable(iface));
+    senf::console::root().add("nloops",      fty::Variable(nloops));
     senf::console::root().add("wait",        fty::Variable(waitTime));
     senf::console::root().add("time",        fty::Variable(totalTime));
     senf::console::root().add("frequencies", fty::Variable(frequencyRange));
@@ -82,6 +87,7 @@ int run(int argc, char const * argv[])
     senf::console::ProgramOptions cmdlineOptions (argc, argv);
     cmdlineOptions
         .alias('i', "--interface", true)
+        .alias('n', "--nloops", true)
         .alias('w', "--wait", true)
         .alias('t', "--time", true)
         .alias('f', "--frequencies", true)
@@ -186,7 +192,7 @@ int run(int argc, char const * argv[])
                 "dfstest total timeout", boost::bind(::exit, 0),
                 senf::ClockService::now() + senf::ClockService::seconds(totalTime));
 
-    while (true) {
+    while (nloops-- > 0) {
         for (unsigned freq : dfsFreqs) {
             switch (wnlc.dfsState(freq)) {
             case senf::emu::WirelessNLController::DFSState::Usable:
