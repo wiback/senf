@@ -31,12 +31,13 @@
 
 // Custom includes
 #include <senf/Utils/membind.hh>
+#include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename IdType>
-prefix_ senf::scheduler::TimerEventProxy<IdType>::ChangeTimeout::ChangeTimeout(senf::ClockService::clock_type t)
+prefix_ senf::scheduler::TimerEventProxy<IdType>::ChangeTimeout::ChangeTimeout(senf::ClockService::clock_type const & t)
     : timeout_(t)
 {}
 
@@ -72,7 +73,7 @@ prefix_ void senf::scheduler::TimerEventProxy<IdType>::timerEvent()
 
 template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::add(
-        ClockService::clock_type timeout, IdType const & id, Callback cb)
+        ClockService::clock_type const &timeout, IdType const & id, Callback cb)
 {
     // insert new entry or replace the timeout of an entry already indexed
     typename EntrySetById_t::iterator it = entrySetById_.find(id);
@@ -96,7 +97,7 @@ prefix_ bool senf::scheduler::TimerEventProxy<IdType>::remove(IdType const & id)
 }
 
 template<typename IdType>
-prefix_ senf::ClockService::clock_type senf::scheduler::TimerEventProxy<IdType>::timeout(IdType const & id)
+prefix_ senf::ClockService::clock_type const & senf::scheduler::TimerEventProxy<IdType>::timeout(IdType const & id)
     const
 {
     typename EntrySetById_t::const_iterator it (entrySetById_.find( id));

@@ -56,13 +56,13 @@ namespace scheduler {
     class TimerEventProxy
     {
     public:
-        typedef boost::function<void(ClockService::clock_type, IdType const &)> Callback;
+        typedef boost::function<void(ClockService::clock_type const &, IdType const &)> Callback;
 
         TimerEventProxy(std::string const & description = "");
                                         ///< Instantiate a TimerEventProxy
                                         /**< \param[in] description Descriptive name (purely informational) */
 
-        void add(ClockService::clock_type timeout, IdType const & id, Callback cb);
+        void add(ClockService::clock_type const & timeout, IdType const & id, Callback cb);
                                         ///< Add new deadline timer
 
         bool remove(IdType const & id); ///< Remove timer by given \a id.
@@ -70,7 +70,7 @@ namespace scheduler {
         std::vector<std::pair<ClockService::clock_type, IdType> > list() const;
                                         ///< Returns a vector of all active timers with timeout and id.
 
-        ClockService::clock_type timeout(IdType const & id) const;
+        ClockService::clock_type const & timeout(IdType const & id) const;
                                         ///< Returns timeout for given id
                                         /**< if no timer for this id is registered \a 0 is returned. */
 
@@ -85,12 +85,12 @@ namespace scheduler {
             IdType id;
             Callback cb;
 
-            Entry(ClockService::clock_type _timeout, IdType _id, Callback _cb)
+            Entry(ClockService::clock_type const & _timeout, IdType _id, Callback _cb)
                 : timeout(_timeout), id(_id), cb(_cb) { }
         };
         struct ChangeTimeout {
             senf::ClockService::clock_type timeout_;
-            ChangeTimeout(senf::ClockService::clock_type t);
+            ChangeTimeout(senf::ClockService::clock_type const & t);
             void operator()(Entry & entry);
         };
         struct Timeout {};
