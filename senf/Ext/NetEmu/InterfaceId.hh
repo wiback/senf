@@ -52,6 +52,8 @@ namespace emu {
         InterfaceDeviceId(Bus_t b, boost::uint16_t v, boost::uint16_t d);
         InterfaceDeviceId(boost::uint8_t b, boost::uint16_t v, boost::uint16_t d);
 
+        static const InterfaceDeviceId None;
+
         static InterfaceDeviceId get(senf::MACAddress const & addr);
 
         bool operator<(InterfaceDeviceId const & other) const;

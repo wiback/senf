@@ -69,6 +69,8 @@ namespace {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::InterfaceDeviceId
 
+prefix_ senf::emu::InterfaceDeviceId const senf::emu::InterfaceDeviceId::None (InterfaceDeviceId(0,0,0));
+
 prefix_ senf::emu::InterfaceDeviceId::InterfaceDeviceId()
     : bus_(Unknown), vendor_(0), device_(0)
 {}
