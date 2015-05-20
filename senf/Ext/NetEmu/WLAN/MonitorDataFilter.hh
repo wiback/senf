@@ -76,6 +76,7 @@ namespace emu {
         unsigned reorderResync;
         unsigned reordered;
         unsigned reorderedTimedOut;
+        unsigned seqNoExpired;
 
         MonitorDataFilterStatistics();
         senf::ClockService::clock_type duration() const{
@@ -122,7 +123,13 @@ namespace emu {
             senf::ClockService::clock_type timeout;
             std::deque<senf::EthernetPacket> queue;
         };
-        typedef boost::unordered_map<boost::uint64_t, unsigned> SequenceNumberMap;
+        struct SequenceNumber
+        {
+            unsigned number;
+            senf::ClockService::clock_type expired;
+            SequenceNumber( unsigned number_, senf::ClockService::clock_type expired_) : number(number_), expired(expired_) {}
+        };
+        typedef boost::unordered_map<boost::uint64_t, SequenceNumber> SequenceNumberMap;
         typedef boost::unordered_map<boost::uint64_t, ReorderRecord> ReorderMap;
 
         senf::ClockService::clock_type maxReorderDelay_;
