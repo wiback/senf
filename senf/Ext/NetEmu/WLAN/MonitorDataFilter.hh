@@ -126,8 +126,8 @@ namespace emu {
         struct SequenceNumber
         {
             unsigned number;
-            senf::ClockService::clock_type expired;
-            SequenceNumber( unsigned number_, senf::ClockService::clock_type expired_) : number(number_), expired(expired_) {}
+            senf::ClockService::clock_type last;
+            SequenceNumber( unsigned number_, senf::ClockService::clock_type const & last_) : number(number_), last(last_) {}
         };
         typedef boost::unordered_map<boost::uint64_t, SequenceNumber> SequenceNumberMap;
         typedef boost::unordered_map<boost::uint64_t, ReorderRecord> ReorderMap;

@@ -45,7 +45,7 @@ const short DEFAULT_WLAN_NOISE=-110;
 
 #define NO_SEQ_NO INT_MAX
 #define REORDER_MAX 64
-#define SEQ_EXPIRE 10
+#define SEQ_EXPIRE 1
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::MonitorDataFilterStatistics
@@ -558,7 +558,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         senf::EthernetPacket eth (
             rtPacket.replaceAs<senf::EthernetPacket>(
                 radiotapLength + senf::bytes(wlan) + senf::LlcSnapPacketParser::fixed_bytes
-                - senf::EthernetPacketParser::fixed_bytes, -4));
+                - senf::EthernetPacketParser::fixed_bytes, signed(rtParser.has_fcs()) * -4));
         
         eth->source() << src;
         eth->destination() << dst;
@@ -568,28 +568,28 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             int delta (seqNoDelta(i->second.number, seqNo));
             if (SENF_LIKELY(delta == 1)) {
                 i->second.number = seqNo;
-                i->second.expired = senf::ClockService::now() + senf::ClockService::seconds( SEQ_EXPIRE) ;
+                i->second.last = senf::scheduler::now();
             } 
-            else if (delta < -REORDER_MAX) {
-                stats_.reorderResync++;
-                flushQueue(key);
-                sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::ClockService::now() + senf::ClockService::seconds( SEQ_EXPIRE))));
-            }
-            else if (i->second.expired > senf::ClockService::now()) {
-                stats_.seqNoExpired++;
-                flushQueue(key);
-                sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::ClockService::now() + senf::ClockService::seconds( SEQ_EXPIRE))));
-            }
             else if (delta > 1) {
                 handleReorderedPacket(key, i->second.number, seqNo, eth);
                 return;
             } 
+            else if (delta < -REORDER_MAX) {
+                stats_.reorderResync++;
+                flushQueue(key);
+                sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
+            }
+            else if ((i->second.last + senf::ClockService::seconds( SEQ_EXPIRE)) < (senf::scheduler::now())) {
+                stats_.seqNoExpired++;
+                flushQueue(key);
+                sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
+            }
             else {
                 handle_DuplicateFrame(eth);
                 return;
             }
         } else {
-            sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::ClockService::now() + senf::ClockService::seconds( SEQ_EXPIRE))));
+            sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
         }
 
         stats_.data++;
@@ -606,7 +606,8 @@ prefix_ void senf::emu::MonitorDataFilter::dumpState(std::ostream & os)
     os << "reorderMap.size() = " << reorderMap_.size() << ", reorderQueueTimer is " << senf::str(reorderQueueTimer_.enabled()) << std::endl;
     for (auto const & seqNo : sequenceNumberMap_) {
         ReorderMap::const_iterator i (reorderMap_.find(seqNo.first));
-        os << std::hex << "0x" << seqNo.first << std::dec << " => " << seqNo.second.number << " " << senf::ClockService::in_milliseconds( seqNo.second.expired - senf::ClockService::now()) << "msec., queueSize: " << (i==reorderMap_.end() ? "(none)" : senf::str(i->second.queue.size())) << std::endl;
+        os << std::hex << "0x" << seqNo.first << std::dec << " => " << seqNo.second.number << " " << senf::ClockService::in_milliseconds(senf::scheduler::now() - seqNo.second.last) << "ms"
+           << ", queueSize: " << (i==reorderMap_.end() ? "(none)" : senf::str(i->second.queue.size())) << std::endl;
     } 
 }
 
