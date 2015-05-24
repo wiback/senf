@@ -45,7 +45,7 @@ const short DEFAULT_WLAN_NOISE=-110;
 
 #define NO_SEQ_NO INT_MAX
 #define REORDER_MAX 64
-#define SEQ_EXPIRE 1
+#define SEQ_EXPIRE 4
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::MonitorDataFilterStatistics
@@ -569,18 +569,18 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             if (SENF_LIKELY(delta == 1)) {
                 i->second.number = seqNo;
                 i->second.last = senf::scheduler::now();
-            } 
+            }
+            else if ((i->second.last + senf::ClockService::seconds( SEQ_EXPIRE)) < (senf::scheduler::now())) {
+	        stats_.seqNoExpired++;
+		flushQueue(key);
+		sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
+	    }
             else if (delta > 1) {
                 handleReorderedPacket(key, i->second.number, seqNo, eth);
                 return;
             } 
             else if (delta < -REORDER_MAX) {
                 stats_.reorderResync++;
-                flushQueue(key);
-                sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
-            }
-            else if ((i->second.last + senf::ClockService::seconds( SEQ_EXPIRE)) < (senf::scheduler::now())) {
-                stats_.seqNoExpired++;
                 flushQueue(key);
                 sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
             }
