@@ -131,6 +131,7 @@ namespace emu {
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 
+        WirelessNLController::DFSState::Enum dfsState(unsigned freq, unsigned bw);
 
         bool spectralScanStart();
         bool spectralScanStop(senf::StatisticsData *sd);

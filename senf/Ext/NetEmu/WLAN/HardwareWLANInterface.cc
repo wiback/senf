@@ -589,7 +589,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
             bw_ = MHZ_TO_KHZ(20);
             break;
         case MHZ_TO_KHZ(40):
-            wnlc.set_frequency( freq-frequencyOffset_-10000, WirelessNLController::ChannelType::HT40Plus);
+            wnlc.set_frequency( freq-frequencyOffset_-MHZ_TO_KHZ(10), WirelessNLController::ChannelType::HT40Plus);
             bw_ = MHZ_TO_KHZ(40);
             break;
         default:
@@ -835,6 +835,37 @@ prefix_ bool senf::emu::HardwareWLANInterface::spectralScanStop(senf::Statistics
     }
 
     return spectralScanner_.stop(sd);
+}
+
+prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANInterface::dfsState(unsigned freq, unsigned bandwidth)
+{
+    WirelessNLController wnlc (monitorDev_.empty() ? dev_ : monitorDev_);
+
+    if (freq == 0 or bandwidth == 0)
+        return WirelessNLController::DFSState::NoDFS;
+
+    if (bandwidth == MHZ_TO_KHZ(20))
+        return wnlc.dfsState(freq - frequencyOffset_);
+
+    if (bandwidth == MHZ_TO_KHZ(40)) {
+        /*             | noDFS  | usable    | available | unavailable
+         *       noDFS | noDFS  | usable    | available | unavailable
+         *      usable |        | usable    | usable    | unavailable
+         *   available |        |           | available | unavailable
+         * unavailable |        |           |           | unavailable
+         */
+        WirelessNLController::DFSState::Enum state1 (wnlc.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
+        WirelessNLController::DFSState::Enum state2 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(30)));
+        if (state1 == WirelessNLController::DFSState::NoDFS and state2 == WirelessNLController::DFSState::NoDFS)
+            return WirelessNLController::DFSState::NoDFS;
+        if (state1 == WirelessNLController::DFSState::Unavailable or state2 == WirelessNLController::DFSState::Unavailable)
+            return WirelessNLController::DFSState::Unavailable;
+        if (state1 == WirelessNLController::DFSState::Usable or state2 == WirelessNLController::DFSState::Usable)
+            return WirelessNLController::DFSState::Usable;
+        return WirelessNLController::DFSState::Available;
+    }
+
+    throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
 }
 
 #undef MHZ_TO_KHZ
