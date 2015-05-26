@@ -855,7 +855,7 @@ prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANI
          * unavailable |        |           |           | unavailable
          */
         WirelessNLController::DFSState::Enum state1 (wnlc.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
-        WirelessNLController::DFSState::Enum state2 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(30)));
+        WirelessNLController::DFSState::Enum state2 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
         if (state1 == WirelessNLController::DFSState::NoDFS and state2 == WirelessNLController::DFSState::NoDFS)
             return WirelessNLController::DFSState::NoDFS;
         if (state1 == WirelessNLController::DFSState::Unavailable or state2 == WirelessNLController::DFSState::Unavailable)
