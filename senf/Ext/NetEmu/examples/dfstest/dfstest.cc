@@ -27,7 +27,8 @@ namespace {
                   << "  -n  --nloops=<loops over frequency range>\n"
                   << "  -w, --wait=<wait time in sec per frequency>\n"
                   << "  -t, --time=<total time in sec (0 for endless)>\n"
-                  << "  -f, --frequencies=<frequencies to scan>\n" << std::endl;
+                  << "  -f, --frequencies=<frequencies to scan>\n"
+                  << "      --htmode=<NoHT|HT20|HT40Minus|HT40Plus>\n" << std::endl;
         exit(1);
     }
 
@@ -66,6 +67,14 @@ namespace {
     }
 }
 
+namespace senf { namespace emu {
+
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER(
+            WirelessNLController::ChannelType, Enum, (NoHT)(HT20)(HT40Minus)(HT40Plus) );
+}}
+
+namespace emu = senf::emu;
+
 int run(int argc, char const * argv[])
 {
     std::string iface;
@@ -73,6 +82,7 @@ int run(int argc, char const * argv[])
     unsigned waitTime = 60;
     unsigned totalTime = 0;
     senf::console::ValueRange<unsigned> frequencyRange = { 0, 0 };
+    emu::WirelessNLController::ChannelType::Enum htMode = emu::WirelessNLController::ChannelType::NoHT;
 
     namespace fty = senf::console::factory;
     senf::console::root().add("help",        fty::Command(&print_usage_and_exit));
@@ -81,7 +91,8 @@ int run(int argc, char const * argv[])
     senf::console::root().add("wait",        fty::Variable(waitTime));
     senf::console::root().add("time",        fty::Variable(totalTime));
     senf::console::root().add("frequencies", fty::Variable(frequencyRange));
-    senf::console::root().add("crda",        senf::emu::CRDA::instance().dir);
+    senf::console::root().add("htmode",      fty::Variable(htMode));
+    senf::console::root().add("crda",        emu::CRDA::instance().dir);
 
     std::vector<std::string> nonOptions;
     senf::console::ProgramOptions cmdlineOptions (argc, argv);
@@ -105,25 +116,25 @@ int run(int argc, char const * argv[])
         print_usage_and_exit();
 
     // only allow DFS channels
-    senf::emu::RegulatoryDomain dfsRegDomain_;
+    emu::RegulatoryDomain dfsRegDomain_;
     dfsRegDomain_.alpha2Country = "XX";
-    dfsRegDomain_.dfsRegion = senf::emu::RegulatoryDomain::DFSRegion::ETSI;
-    dfsRegDomain_.rules.insert(senf::emu::RegulatoryRule()
+    dfsRegDomain_.dfsRegion = emu::RegulatoryDomain::DFSRegion::ETSI;
+    dfsRegDomain_.rules.insert(emu::RegulatoryRule()
                                .frequencyRange(5250000, 5330000)
                                .maxBandwidth(40000)
                                .maxEIRP(3000)
                                .noIR(true)
                                .dfsRequired(true) );
-    dfsRegDomain_.rules.insert(senf::emu::RegulatoryRule()
+    dfsRegDomain_.rules.insert(emu::RegulatoryRule()
                                .frequencyRange(5490000, 5730000)
                                .maxBandwidth(40000)
                                .maxEIRP(3000)
                                .noIR(true)
                                .dfsRequired(true) );
 
-    if (!senf::emu::CRDA::instance().regDomain().isEqual(dfsRegDomain_)) {    
+    if (not emu::CRDA::instance().regDomain().isEqual(dfsRegDomain_)) {
         std::cout << "Settings DFS-only regDomain...";
-        if (!senf::emu::CRDA::instance().regDomain(dfsRegDomain_)) {
+        if (not emu::CRDA::instance().regDomain(dfsRegDomain_)) {
             std::cout << "Failed !" << std::endl;
             return 1;
         } else {
@@ -132,17 +143,17 @@ int run(int argc, char const * argv[])
 
         sleep(2);
 
-        if (senf::emu::CRDA::instance().equalsKernel()) {
-            std::cout << "Current regDomain updated to " << senf::emu::CRDA::instance().regDomain() << std::endl;
+        if (emu::CRDA::instance().equalsKernel()) {
+            std::cout << "Current regDomain updated to " << emu::CRDA::instance().regDomain() << std::endl;
         } else {
             std::cout << "Requested regDomain does not match the kernel's regDomain !!!" << std::endl;
             return 1;
         }
     } else {
-        std::cout << "Current regDomain is already " << senf::emu::CRDA::instance().regDomain() << std::endl;
+        std::cout << "Current regDomain is already " << emu::CRDA::instance().regDomain() << std::endl;
     }
 
-    senf::emu::WirelessNLController wnlc (iface);
+    emu::WirelessNLController wnlc (iface);
 
     auto frequencies (wnlc.frequencies());
     std::set<unsigned> dfsFreqs (frequencies.begin(), frequencies.end());
@@ -155,7 +166,7 @@ int run(int argc, char const * argv[])
             dfsFreqs.erase(f++);
             continue;
         }
-        if (wnlc.dfsState(*f) == senf::emu::WirelessNLController::DFSState::NoDFS) {
+        if (wnlc.dfsState(*f) == emu::WirelessNLController::DFSState::NoDFS) {
             dfsFreqs.erase(f++);
             continue;
         }
@@ -180,7 +191,7 @@ int run(int argc, char const * argv[])
         senf::NetdeviceController ctrl (iface);
         if (not ctrl.isUp())
             ctrl.up();
-        if (not senf::emu::WirelessExtController(iface).ssid().empty())
+        if (not emu::WirelessExtController(iface).ssid().empty())
             wnlc.ibss_leave();
     }
 
@@ -195,17 +206,18 @@ int run(int argc, char const * argv[])
     while (nloops-- > 0) {
         for (unsigned freq : dfsFreqs) {
             switch (wnlc.dfsState(freq)) {
-            case senf::emu::WirelessNLController::DFSState::Usable:
-                SENF_LOG( ("Performing CAC for frequency " << freq) );
-                wnlc.start_radarDetection(freq);
+            case emu::WirelessNLController::DFSState::Usable:
+                SENF_LOG( ("Performing CAC for frequency " << freq << " (" << senf_console_format_enum(htMode) << ")") );
+                wnlc.start_radarDetection(freq, htMode);
                 runScheduler(senf::ClockService::seconds(61));
                 continue;
-            case senf::emu::WirelessNLController::DFSState::Unavailable:
+            case emu::WirelessNLController::DFSState::Unavailable:
                 SENF_LOG( ("DFS state for frequency " << freq << " is Unavailable; skipping frequency.") );
                 continue;
-            case senf::emu::WirelessNLController::DFSState::Available:
-                SENF_LOG( ("Join cell on frequency " << freq << " and wait " << waitTime << " seconds for radar events.") );
-                wnlc.ibss_join("DFS_test", freq, senf::emu::WirelessNLController::ChannelType::NoHT)
+            case emu::WirelessNLController::DFSState::Available:
+                SENF_LOG( ("Join cell on frequency " << freq << " (" << senf_console_format_enum(htMode)
+                        << ") and wait " << waitTime << " seconds for radar events.") );
+                wnlc.ibss_join("DFS_test", freq, htMode)
                         ->handleDFS(true);
                 runScheduler(senf::ClockService::seconds(waitTime));
                 break;
@@ -222,13 +234,13 @@ int run(int argc, char const * argv[])
 
 int main(int argc, char const * argv[])
 {
-    if (boost::filesystem::path(argv[0]).filename() == senf::emu::CRDA::instance().slaveName()) {
-        senf::emu::CRDA::instance().init();
-        return senf::emu::CRDA::instance().run(argc, argv);
+    if (boost::filesystem::path(argv[0]).filename() == emu::CRDA::instance().slaveName()) {
+        emu::CRDA::instance().init();
+        return emu::CRDA::instance().run(argc, argv);
     }
 
     // true ==> MasterMode
-    if (!senf::emu::CRDA::instance().init(true)) {
+    if (!emu::CRDA::instance().init(true)) {
         std::cerr << "Failed to init CRDA ?!?" << std::endl;
         return 2;
     }
