@@ -661,6 +661,7 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpTxStats(std::ostream & os)
     if (HardwareWLANInterfaceNet::txSocket.valid()) {
         auto stats (HardwareWLANInterfaceNet::txSocket.protocol().txStats());
         os << "MMAP Tx stats: " 
+           << "sent " << stats.sent << ", "
            << "wrongFormat " << stats.wrongFormat << ", "
            << "overrun " << stats.overrun << ", "
            << "dropped " << stats.dropped << std::endl;

@@ -372,6 +372,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpTxStats(std::ostream & os
     if (HardwareEthernetInterfaceNet::socket.valid()) {
         auto stats (HardwareEthernetInterfaceNet::socket.protocol().txStats());
         os << "MMAP Tx stats: " 
+           << "sent " << stats.sent << ", "
            << "wrongFormat " << stats.wrongFormat << ", "
            << "overrun " << stats.overrun << ", "
            << "dropped " << stats.dropped << std::endl;

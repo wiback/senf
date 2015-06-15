@@ -64,6 +64,7 @@ namespace detail {
         Queue tx;
 
         struct TxStats {
+            unsigned sent;
             unsigned wrongFormat;
             unsigned dropped;
             unsigned overrun;
