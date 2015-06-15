@@ -148,6 +148,9 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
              fty::Command(SENF_MEMBINDFNP(std::string, HardwareEthernetInterface, device, () const))
              .overloadDoc("Get Ethernet network device name.") );
     consoleDir()
+        .add("txStats", fty::Command( &HardwareEthernetInterface::dumpTxStats, this)
+        .doc("dumps and resets the MMAP TX statistics"));
+    consoleDir()
         .add("sndBuf", fty::Command(
                  SENF_MEMBINDFNP(void, HardwareEthernetInterface, sndBuf, (unsigned)))
              .doc( "set the send socket buffer size in bytes"));
@@ -363,6 +366,20 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::sharedPackets()
 {
     return source.sharedPackets();
 }
+
+prefix_ void senf::emu::HardwareEthernetInterface::dumpTxStats(std::ostream & os)
+{
+    if (HardwareEthernetInterfaceNet::socket.valid()) {
+        auto stats (HardwareEthernetInterfaceNet::socket.protocol().txStats());
+        os << "MMAP Tx stats: " 
+           << "wrongFormat " << stats.wrongFormat << ", "
+           << "overrun " << stats.overrun << ", "
+           << "dropped " << stats.dropped << std::endl;
+    } else {
+        os << "Socket closed. Not stats available." << std::endl;
+    }
+}
+
 
 #endif
 

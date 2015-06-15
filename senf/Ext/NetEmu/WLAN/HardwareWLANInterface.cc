@@ -194,6 +194,9 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         .add("filterStats", fty::Command( &HardwareWLANInterface::dumpFilterStats, this)
         .doc("dumps and resets the WLAN Data Filter statistics"));
     consoleDir()
+        .add("txStats", fty::Command( &HardwareWLANInterface::dumpTxStats, this)
+        .doc("dumps and resets the MMAP TX statistics"));
+    consoleDir()
         .add("frequencyOffset", fty::Command(
                 SENF_MEMBINDFNP(void, HardwareWLANInterface, frequencyOffset, (int)))
         .doc("set the frequency offset"));
@@ -651,6 +654,19 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpFilterStats(std::ostream & os
 {
     HardwareWLANInterfaceNet::monitorDataFilter.stats().dump(os);
     HardwareWLANInterfaceNet::monitorDataFilter.dumpState(os);
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::dumpTxStats(std::ostream & os)
+{
+    if (HardwareWLANInterfaceNet::txSocket.valid()) {
+        auto stats (HardwareWLANInterfaceNet::txSocket.protocol().txStats());
+        os << "MMAP Tx stats: " 
+           << "wrongFormat " << stats.wrongFormat << ", "
+           << "overrun " << stats.overrun << ", "
+           << "dropped " << stats.dropped << std::endl;
+    } else {
+        os << "Socket closed. Not stats available." << std::endl;
+    }
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::frequencyOffset(int offset)

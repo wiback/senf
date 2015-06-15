@@ -143,9 +143,6 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
     v = 1;
     setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
 
-    qi_.txWrongFormat = 0;
-    qi_.txDropped = 0;
-
     senf::FileHandleAccess::extraPtr(fh(), &qi_);
 }
 
@@ -168,6 +165,12 @@ prefix_ void senf::MMapSocketProtocol::terminate_mmap()
     ::memset(&qi_, 0, sizeof(qi_));
 }
 
+prefix_ senf::detail::QueueInfo::TxStats senf::MMapSocketProtocol::txStats()
+{
+    detail::QueueInfo::TxStats txStats (qi_.txStats);
+    ::memset(&qi_.txStats, 0, sizeof(qi_.txStats));
+    return txStats;
+}
 
 prefix_ unsigned senf::MMapReadableSocketProtocol::available()
     const
@@ -176,6 +179,7 @@ prefix_ unsigned senf::MMapReadableSocketProtocol::available()
     // value here without race conditions. Thus we always return the frame size
     return static_cast<detail::QueueInfo *>(senf::FileHandleAccess::extraPtr(fh()))->frameSize;
 }
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

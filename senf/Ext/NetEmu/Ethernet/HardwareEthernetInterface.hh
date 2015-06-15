@@ -109,6 +109,8 @@ namespace emu {
 
         virtual MACAddress v_id() const;
 
+        void dumpTxStats(std::ostream & os);
+
         std::string dev_;
         EthernetController ctrl_;
 

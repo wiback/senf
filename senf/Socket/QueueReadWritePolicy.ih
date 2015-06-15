@@ -63,8 +63,13 @@ namespace detail {
         Queue rx;
         Queue tx;
 
-        unsigned txWrongFormat;
-        unsigned txDropped;
+        struct TxStats {
+            unsigned wrongFormat;
+            unsigned dropped;
+            unsigned overrun;
+        };
+
+        TxStats txStats;
 
         void inc(unsigned char * & ptr, Queue const & q);
     };

@@ -165,6 +165,7 @@ namespace emu {
         virtual void v_flushTxQueues();
         virtual void v_coverageRange(unsigned distance);
 
+        void dumpTxStats(std::ostream & os);
         void dumpFilterStats(std::ostream & os);
         void do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters);
 
