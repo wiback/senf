@@ -318,7 +318,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
             switch (errno) {
             case EINTR:
                 // We used to break here as 3.16.x seems to throw tons of those and 'continue' caused a busy-loop
-                // This should be fix with out patch which made it into Linux 4.1
+                // This should be fix by our patch which made it into Linux 4.1
                 continue;
             case EAGAIN:
                 break;
