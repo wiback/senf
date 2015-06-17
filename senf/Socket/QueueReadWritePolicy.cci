@@ -208,7 +208,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
             Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize, qi.hdrlen);
             struct ::sockaddr_ll & sa (* reinterpret_cast<struct ::sockaddr_ll *>(qi.rx.head + qi.hdrlen));
             qi.inc(qi.rx.head, qi.rx);
-            if (sa.sll_pkttype >= PACKET_OUTGOING || bf.end() > bf.frameEnd() || bf.empty()) {
+            if (SENF_UNLIKELY(sa.sll_pkttype >= PACKET_OUTGOING || bf.end() > bf.frameEnd() || bf.empty())) {
                 qi.rxStats.ignored++;
                 pk.tp_status = TP_STATUS_KERNEL;
                 if (qi.rx.idle)
