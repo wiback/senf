@@ -117,8 +117,6 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
         if (SENF_UNLIKELY(!buf))
             break;
-        if (SENF_UNLIKELY(buf->size() == 0))
-            continue;
 
         PacketInfo ifo;
         {

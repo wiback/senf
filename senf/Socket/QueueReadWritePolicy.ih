@@ -49,8 +49,9 @@ namespace detail {
         unsigned hdrlen;
         unsigned frameSize;
         unsigned reserveSize;
-
+        
         struct Queue {
+            unsigned qlen;          // number of blocks in queue 
             unsigned char * begin;  // first buffer in queue
             unsigned char * end;    // after last buffer in queue
             unsigned char * head;   // next buffer in queue
@@ -69,9 +70,14 @@ namespace detail {
             unsigned dropped;
             unsigned overrun;
         };
+        struct RxStats {
+            unsigned received;
+            unsigned ignored;
+        };
 
         TxStats txStats;
-
+        RxStats rxStats;
+        
         void inc(unsigned char * & ptr, Queue const & q);
     };
 

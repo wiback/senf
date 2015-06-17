@@ -201,13 +201,15 @@ prefix_ boost::optional<senf::QueueReadPolicy::Buffer>
 senf::QueueReadPolicy::dequeue(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
-    for (unsigned count (0); count < 2*(qi.rx.end - qi.rx.begin)/qi.frameSize; ++ count) {
+    for (unsigned count (0); count < 2*qi.rx.qlen; ++count) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
-        if ((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL) {
+        if (SENF_LIKELY((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL)) {  // we assume bursts => likely
+            qi.rxStats.received++;
             Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize, qi.hdrlen);
             struct ::sockaddr_ll & sa (* reinterpret_cast<struct ::sockaddr_ll *>(qi.rx.head + qi.hdrlen));
             qi.inc(qi.rx.head, qi.rx);
-            if (sa.sll_pkttype >= PACKET_OUTGOING || bf.end() > bf.frameEnd()) {
+            if (sa.sll_pkttype >= PACKET_OUTGOING || bf.end() > bf.frameEnd() || bf.empty()) {
+                qi.rxStats.ignored++;
                 pk.tp_status = TP_STATUS_KERNEL;
                 if (qi.rx.idle)
                     qi.rx.tail = qi.rx.head;
@@ -224,7 +226,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
 prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
-    while (! qi.rx.idle || qi.rx.tail != qi.rx.head) {
+    while (SENF_LIKELY(!qi.rx.idle || qi.rx.tail != qi.rx.head)) {  // we assume bursts => likely
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.rx.tail));
         pk.tp_status = TP_STATUS_KERNEL;
         qi.inc(qi.rx.tail, qi.rx);
@@ -300,7 +302,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));
     unsigned char * last_tail (qi.tx.tail);
-    while (! qi.tx.idle || qi.tx.tail != qi.tx.head) {
+    while (SENF_LIKELY(!qi.tx.idle || qi.tx.tail != qi.tx.head)) {  // we assume bursts >> likely
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
         SENF_ASSERT(pk.tp_len, "missing call to Buffer::resize()");
         pk.tp_status = TP_STATUS_SEND_REQUEST;

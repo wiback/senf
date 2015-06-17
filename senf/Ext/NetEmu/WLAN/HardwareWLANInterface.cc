@@ -194,8 +194,8 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         .add("filterStats", fty::Command( &HardwareWLANInterface::dumpFilterStats, this)
         .doc("dumps and resets the WLAN Data Filter statistics"));
     consoleDir()
-        .add("txStats", fty::Command( &HardwareWLANInterface::dumpTxStats, this)
-        .doc("dumps and resets the MMAP TX statistics"));
+        .add("mmapStats", fty::Command( &HardwareWLANInterface::dumpMmapStats, this)
+        .doc("dumps and resets the MMAP RX/TX statistics"));
     consoleDir()
         .add("frequencyOffset", fty::Command(
                 SENF_MEMBINDFNP(void, HardwareWLANInterface, frequencyOffset, (int)))
@@ -656,15 +656,19 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpFilterStats(std::ostream & os
     HardwareWLANInterfaceNet::monitorDataFilter.dumpState(os);
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::dumpTxStats(std::ostream & os)
+prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
 {
-    if (HardwareWLANInterfaceNet::txSocket.valid()) {
-        auto stats (HardwareWLANInterfaceNet::txSocket.protocol().txStats());
+    if (HardwareWLANInterfaceNet::txSocket.valid() and HardwareWLANInterfaceNet::rxSocket.valid()) {
+        auto rs (HardwareWLANInterfaceNet::rxSocket.protocol().rxStats());
+        os << "MMAP Rx stats: " 
+           << "received " << rs.received << ", "
+           << "ignored "  << rs.ignored  << ". ";
+        auto ts (HardwareWLANInterfaceNet::txSocket.protocol().txStats());
         os << "MMAP Tx stats: " 
-           << "sent " << stats.sent << ", "
-           << "wrongFormat " << stats.wrongFormat << ", "
-           << "overrun " << stats.overrun << ", "
-           << "dropped " << stats.dropped << std::endl;
+           << "sent "        << ts.sent << ", "
+           << "wrongFormat " << ts.wrongFormat << ", "
+           << "overrun "     << ts.overrun << ", "
+           << "dropped "     << ts.dropped << std::endl;
     } else {
         os << "Socket closed. Not stats available." << std::endl;
     }

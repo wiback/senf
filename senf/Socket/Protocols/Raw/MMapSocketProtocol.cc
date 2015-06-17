@@ -124,11 +124,11 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         SENF_THROW_SYSTEM_EXCEPTION("::mmap()");
 
     qi_.map = map;
-
     if (rxqlen > 0) {
         qi_.rx.begin = qi_.rx.head = qi_.rx.tail = map;
         qi_.rx.end = map + frameSize * rxqlen;
         qi_.rx.idle = true;
+        qi_.rx.qlen = rxqlen;
         map = qi_.rx.end;
     }
 
@@ -136,6 +136,7 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         qi_.tx.begin = qi_.tx.head = qi_.tx.tail = map;
         qi_.tx.end = map + frameSize * txqlen;
         qi_.tx.idle = true;
+        qi_.tx.qlen = txqlen;
     }
 
     // supposedly this should speed up TX. And it does (<5% increase), when our non-blocking patch is applied. 
@@ -170,6 +171,13 @@ prefix_ senf::detail::QueueInfo::TxStats senf::MMapSocketProtocol::txStats()
     detail::QueueInfo::TxStats txStats (qi_.txStats);
     ::memset(&qi_.txStats, 0, sizeof(qi_.txStats));
     return txStats;
+}
+
+prefix_ senf::detail::QueueInfo::RxStats senf::MMapSocketProtocol::rxStats()
+{
+    detail::QueueInfo::RxStats rxStats (qi_.rxStats);
+    ::memset(&qi_.rxStats, 0, sizeof(qi_.rxStats));
+    return rxStats;
 }
 
 prefix_ unsigned senf::MMapReadableSocketProtocol::available()

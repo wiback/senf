@@ -148,8 +148,8 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
              fty::Command(SENF_MEMBINDFNP(std::string, HardwareEthernetInterface, device, () const))
              .overloadDoc("Get Ethernet network device name.") );
     consoleDir()
-        .add("txStats", fty::Command( &HardwareEthernetInterface::dumpTxStats, this)
-        .doc("dumps and resets the MMAP TX statistics"));
+        .add("mmapStats", fty::Command( &HardwareEthernetInterface::dumpMmapStats, this)
+        .doc("dumps and resets the MMAP RX/TX statistics"));
     consoleDir()
         .add("sndBuf", fty::Command(
                  SENF_MEMBINDFNP(void, HardwareEthernetInterface, sndBuf, (unsigned)))
@@ -367,15 +367,19 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::sharedPackets()
     return source.sharedPackets();
 }
 
-prefix_ void senf::emu::HardwareEthernetInterface::dumpTxStats(std::ostream & os)
+prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & os)
 {
-    if (HardwareEthernetInterfaceNet::socket.valid()) {
-        auto stats (HardwareEthernetInterfaceNet::socket.protocol().txStats());
+    if (HardwareWLANInterfaceNet::socket.valid()) {
+        auto rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
+        os << "MMAP Rx stats: " 
+           << "received " << rs.received << ", "
+           << "ignored "  << rs.ignored  << ". ";
+        auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
         os << "MMAP Tx stats: " 
-           << "sent " << stats.sent << ", "
-           << "wrongFormat " << stats.wrongFormat << ", "
-           << "overrun " << stats.overrun << ", "
-           << "dropped " << stats.dropped << std::endl;
+           << "sent "        << ts.sent << ", "
+           << "wrongFormat " << ts.wrongFormat << ", "
+           << "overrun "     << ts.overrun << ", "
+           << "dropped "     << ts.dropped << std::endl;
     } else {
         os << "Socket closed. Not stats available." << std::endl;
     }
