@@ -369,7 +369,7 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::sharedPackets()
 
 prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & os)
 {
-    if (HardwareWLANInterfaceNet::socket.valid()) {
+    if (HardwareEthernetInterfaceNet::socket.valid()) {
         auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
         os << "MMAP Rx stats: " 
            << "received " << rs.received << ", "
