@@ -370,11 +370,11 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::sharedPackets()
 prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & os)
 {
     if (HardwareWLANInterfaceNet::socket.valid()) {
-        auto rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
+        auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
         os << "MMAP Rx stats: " 
            << "received " << rs.received << ", "
            << "ignored "  << rs.ignored  << ". ";
-        auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
+        auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
         os << "MMAP Tx stats: " 
            << "sent "        << ts.sent << ", "
            << "wrongFormat " << ts.wrongFormat << ", "
