@@ -118,8 +118,20 @@ prefix_ senf::emu::CRDA::CRDA()
         worldRegDomain_.alpha2Country = "";
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(180000, 6200000)
-                                     .maxBandwidth(80000)
+                                     .frequencyRange(700000, 800000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(2402000, 2494000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(3000000, 4000000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(4900000, 6100000)
+                                     .maxBandwidth(40000)
                                      .maxEIRP(3000) );
     }
 }
