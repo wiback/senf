@@ -148,7 +148,7 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
              fty::Command(SENF_MEMBINDFNP(std::string, HardwareEthernetInterface, device, () const))
              .overloadDoc("Get Ethernet network device name.") );
     consoleDir()
-        .add("mmapStats", fty::Command( &HardwareEthernetInterface::dumpMmapStats, this)
+        .add("mmapStats", fty::Command(&HardwareEthernetInterface::dumpMmapStats, this)
         .doc("dumps and resets the MMAP RX/TX statistics"));
     consoleDir()
         .add("sndBuf", fty::Command(
@@ -355,6 +355,24 @@ prefix_ void senf::emu::HardwareEthernetInterface::maxBurst(unsigned maxBurst)
     source.maxBurst(maxBurst);
 }
 
+prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & os)
+{
+    if (HardwareEthernetInterfaceNet::socket.valid()) {
+        auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
+        os << "MMAP Rx stats: "
+           << "received " << rs.received << ", "
+           << "ignored "  << rs.ignored  << ". ";
+        auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
+        os << "MMAP Tx stats: "
+           << "sent "        << ts.sent << ", "
+           << "wrongFormat " << ts.wrongFormat << ", "
+           << "overrun "     << ts.overrun << ", "
+           << "dropped "     << ts.dropped << std::endl;
+    } else {
+        os << "Socket closed. Not stats available." << std::endl;
+    }
+}
+
 #ifdef SENF_DEBUG
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::burstMax()
@@ -366,25 +384,6 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::sharedPackets()
 {
     return source.sharedPackets();
 }
-
-prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & os)
-{
-    if (HardwareEthernetInterfaceNet::socket.valid()) {
-        auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
-        os << "MMAP Rx stats: " 
-           << "received " << rs.received << ", "
-           << "ignored "  << rs.ignored  << ". ";
-        auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
-        os << "MMAP Tx stats: " 
-           << "sent "        << ts.sent << ", "
-           << "wrongFormat " << ts.wrongFormat << ", "
-           << "overrun "     << ts.overrun << ", "
-           << "dropped "     << ts.dropped << std::endl;
-    } else {
-        os << "Socket closed. Not stats available." << std::endl;
-    }
-}
-
 
 #endif
 
