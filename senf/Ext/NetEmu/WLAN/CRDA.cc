@@ -52,8 +52,9 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("regDomain",        fty::Variable(boost::cref(currentRegDomain_)));
     dir.add("dfsMode",          fty::Variable(boost::cref(dfsMode_)));
     dir.add("nonWirelessBox",   fty::Variable(boost::cref(nonWirelessBox_)));
-    dir.add("syncFilename",    fty::Variable(boost::cref(syncFilename_)));
+    dir.add("syncFilename",     fty::Variable(boost::cref(syncFilename_)));
     dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
+    dir.add("cachedRegDomains", fty::Command(&CRDA::cachedRegDomains, this));
 
     // sync our CRDA behavior with the kernel setting (boot time argument, for now)
     int fd (::open("/proc/cmdline", O_RDONLY));
@@ -178,6 +179,16 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
     return true;
 }
 
+prefix_ void senf::emu::CRDA::cachedRegDomains(std::ostream & os)
+    const
+{
+    os << "Number of cached regDomains: " << cachedRegDomains_.size() << std::endl;
+
+    for (auto const & rd : cachedRegDomains_){
+        os << rd << std::endl;
+    }
+}
+
 prefix_ senf::emu::RegulatoryDomain const & senf::emu::CRDA::regDomain()
     const
 {
@@ -199,20 +210,29 @@ prefix_ bool senf::emu::CRDA::equalsKernel()
 
 prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
 {
-    std::string alpha2Country;
-
     if (!regDomain) {
         regDomain = worldRegDomain_;
-        alpha2Country = DUMMY_COUNTRY;
-    } else {
-        if (dummyCountry_[1]++ == 'Z') {
-            dummyCountry_[1] = 'A';
-            if (dummyCountry_[0]++ == 'Z') {
-                dummyCountry_[0] = 'A';
+        regDomain.alpha2Country = DUMMY_COUNTRY;
+    }  else {
+        // check if we already have a mapping for this regDomain
+        auto const it (cachedRegDomains_.find(regDomain));
+        if (it != cachedRegDomains_.end()) {
+            // yes: re-use the alpha2Country
+            regDomain.alpha2Country = it->alpha2Country;
+        } else {
+            // no: generate a new alpha2country
+            if (dummyCountry_[1]++ == 'Z') {
+                dummyCountry_[1] = 'A';
+                if (dummyCountry_[0]++ == 'Z') {
+                    dummyCountry_[0] = 'A';
+                }
             }
+            regDomain.alpha2Country = dummyCountry_;
         }
-        alpha2Country = dummyCountry_;
     }
+    
+    // store the new mapping (if the mapping already exists, this does nothing)
+    cachedRegDomains_.insert(regDomain);
 
     // we might need to revert, if the below fails
     RegulatoryDomain old (currentRegDomain_);
@@ -232,7 +252,7 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
         }
     }
     
-    if (setRegCountry(alpha2Country)) {
+    if (setRegCountry(regDomain.alpha2Country)) {
         return true;
     }
     

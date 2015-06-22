@@ -144,6 +144,8 @@ namespace emu {
 
         explicit operator bool() const;
 
+        bool operator<(RegulatoryDomain const & other) const;
+
         bool isEqual(RegulatoryDomain const & other) const;
     };
 
@@ -151,7 +153,6 @@ namespace emu {
 
     SENF_CONSOLE_REGISTER_STRONG_ENUM_MEMBER( RegulatoryDomain, DFSRegion,
             (key("DFS_Unset", Unset))(key("DFS_FCC", FCC))(key("DFS_ETSI", ETSI))(key("DFS_JP", JP)) );
-
 }
 
 namespace console {

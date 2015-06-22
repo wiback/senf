@@ -189,6 +189,13 @@ prefix_ senf::emu::RegulatoryDomain::operator bool()
     return !rules.empty();
 }
 
+prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & other) 
+    const
+{
+    return alpha2Country < other.alpha2Country;
+}
+
+
 prefix_ std::ostream & senf::emu::operator<<(std::ostream & os, RegulatoryDomain const & regDomain)
 {
     senf::console::format(regDomain, os);

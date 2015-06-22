@@ -9,6 +9,7 @@
 #define HH_SENF_Ext_NetEmu_WLAN_CRDA_ 1
 
 // Custom includes
+#include <boost/functional/hash.hpp>
 #include <senf/Utils/Console/ScopedDirectory.hh>
 #include <senf/Utils/Logger/SyslogTarget.hh>
 #include <senf/Ext/NetEmu/WLAN/Regulatory.hh>
@@ -41,6 +42,9 @@ namespace emu {
     private:
         CRDA();
 
+        // Master only
+        void cachedRegDomains(std::ostream & os) const;
+
         // Common
         bool setRegCountry(std::string alpha2Country);
         void kernelRegDomain(std::ostream & os);
@@ -49,7 +53,6 @@ namespace emu {
         void setRegulatory();
         void help(int exit_status);
         
-        
         senf::log::SyslogTarget logTarget_;
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
@@ -57,7 +60,10 @@ namespace emu {
         bool dfsMode_;
         std::string syncFilename_;
         bool nonWirelessBox_;
-    };
+
+        // here we keep a cache of regDomains <=> alpha2 mapping which we have already pushed into the kernel
+        std::set<senf::emu::RegulatoryDomain> cachedRegDomains_;
+    };    
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
