@@ -192,7 +192,22 @@ prefix_ senf::emu::RegulatoryDomain::operator bool()
 prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & other) 
     const
 {
-    return alpha2Country < other.alpha2Country;
+    //
+    // It's not quite cleat what '<'means for this object, but std::set requires this operator
+    //
+    
+    if (int(dfsRegion) < int(other.dfsRegion))
+        return true;
+
+    if (rules.size() < other.rules.size())
+        return true;
+
+    for(auto const & r: other.rules) {
+        if (rules.find(r) == rules.end())
+            return true;
+    }
+
+    return false;
 }
 
 
