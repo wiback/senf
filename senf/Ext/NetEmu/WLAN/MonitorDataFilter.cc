@@ -45,7 +45,7 @@ const short DEFAULT_WLAN_NOISE=-110;
 
 #define NO_SEQ_NO INT_MAX
 #define REORDER_MAX 64
-#define SEQ_EXPIRE 500
+#define SEQ_EXPIRE 100
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::MonitorDataFilterStatistics
