@@ -93,6 +93,7 @@ namespace detail {
         ppi::module::PassiveSocketSink<TunnelIOHelper<Controller> > sink;
 
         TunnelInterfaceAnnotater annotater_;
+        EthernetReassembler reassembler_;
 
         ppi::connector::ActiveOutputJack<EthernetPacket> netOutput;
         ppi::connector::PassiveInputJack<EthernetPacket> netInput;

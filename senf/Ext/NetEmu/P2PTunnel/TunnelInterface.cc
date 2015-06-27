@@ -97,7 +97,8 @@ prefix_ senf::emu::detail::TunnelInterfaceNet<Controller>::TunnelInterfaceNet(ty
       source(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)), sink(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)),
       annotater_(interface), netOutput(annotater_.output), netInput(sink.input), mtu_(1500u)
 {
-    ppi::connect(source.output, annotater_.input);
+    ppi::connect(source, reassembler_);
+    ppi::connect(reassembler_, annotater_);
 }
 
 template <class Controller>
