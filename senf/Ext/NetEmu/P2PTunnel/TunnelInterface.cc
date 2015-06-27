@@ -55,8 +55,6 @@ prefix_ senf::emu::detail::TunnelInterfaceAnnotater::TunnelInterfaceAnnotater(Tu
 prefix_ void senf::emu::detail::TunnelInterfaceAnnotater::request()
 {
     Packet packet (input());
-    if (SENF_UNLIKELY(!packet))
-        return;
 
     packet.annotation<annotations::Interface>().value = interface_.id();
 
