@@ -96,10 +96,10 @@ template <class Controller>
 prefix_ senf::emu::detail::TunnelInterfaceNet<Controller>::TunnelInterfaceNet(typename Controller::Interface & interface)
     : socket(senf::noinit), tunnelCtrl(interface),
       source(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)), sink(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)),
-      annotater_(interface), netOutput(reassembler_.output), netInput(sink.input), mtu_(1500u)
+      annotator_(interface), netOutput(reassembler_.output), netInput(sink.input), mtu_(1500u)
 {
     ppi::connect(source, annotator_);
-    ppi::connect(annotater_, reassembler_);
+    ppi::connect(annotator_, reassembler_);
 }
 
 template <class Controller>
