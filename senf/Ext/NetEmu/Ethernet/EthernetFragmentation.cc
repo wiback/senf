@@ -209,10 +209,7 @@ namespace {
 
 prefix_ void senf::emu::EthernetReassembler::onRequest()
 {
-    senf::EthernetPacket const & eth (input.read());
-
-    if (SENF_UNLIKELY(!eth))
-        return;
+    senf::EthernetPacket const & eth (input());
 
     if (eth->type_length() != senf::EthOUIExtensionPacketType::etherType &&
         (eth->type_length() != senf::EthVLanPacketType::etherType || eth.next<senf::EthVLanPacket>()->type_length() != senf::EthOUIExtensionPacketType::etherType)) {

@@ -56,6 +56,9 @@ prefix_ void senf::emu::detail::TunnelInterfaceAnnotater::request()
 {
     Packet packet (input());
 
+    if (SENF_UNLIKELY(!packet))
+        return;
+
     packet.annotation<annotations::Interface>().value = interface_.id();
 
     output(packet);
@@ -93,10 +96,10 @@ template <class Controller>
 prefix_ senf::emu::detail::TunnelInterfaceNet<Controller>::TunnelInterfaceNet(typename Controller::Interface & interface)
     : socket(senf::noinit), tunnelCtrl(interface),
       source(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)), sink(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)),
-      annotater_(interface), netOutput(annotater_.output), netInput(sink.input), mtu_(1500u)
+      annotater_(interface), netOutput(reassembler_.output), netInput(sink.input), mtu_(1500u)
 {
-    ppi::connect(source, reassembler_);
-    ppi::connect(reassembler_, annotater_);
+    ppi::connect(source, annotator_);
+    ppi::connect(annotater_, reassembler_);
 }
 
 template <class Controller>
