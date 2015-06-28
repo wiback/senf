@@ -166,6 +166,8 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             currentRegDomain_.alpha2Country = DUMMY_COUNTRY;
             SENF_LOG( ("No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
         }
+        // store the new mapping (if the mapping already exists, this does nothing)
+        cachedRegDomains_.insert(currentRegDomain_);
     } else {
         try {
             WirelessNLController wnlc;
@@ -252,7 +254,7 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
         }
     }
     
-    if (setRegCountry(regDomain.alpha2Country)) {
+    if (setRegCountry(currentRegDomain_.alpha2Country)) {
         return true;
     }
     

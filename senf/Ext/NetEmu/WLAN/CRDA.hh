@@ -61,7 +61,7 @@ namespace emu {
         std::string syncFilename_;
         bool nonWirelessBox_;
 
-        // here we keep a cache of regDomains <=> alpha2 mapping which we have already pushed into the kernel
+        // here we keep a cache of known regDomains which we have already pushed into the kernel
         std::set<senf::emu::RegulatoryDomain> cachedRegDomains_;
     };    
 }}
