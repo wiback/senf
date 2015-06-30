@@ -162,7 +162,16 @@ prefix_ bool senf::emu::RegulatoryRule::operator==(RegulatoryRule const & other)
 prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
     const
 {
-    return frequencyRangeBegin_ < other.frequencyRangeBegin_;
+    if (frequencyRangeBegin_ < other.frequencyRangeBegin_)
+        return true;
+
+    if (frequencyRangeEnd_ < other.frequencyRangeEnd_)
+        return true;
+
+    if (flags_ < other.flags_)
+        return true;
+    
+    return false;
 }
 
 
@@ -193,19 +202,23 @@ prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & oth
     const
 {
     //
-    // It's not quite cleat what '<'means for this object, but std::set requires this operator
-    //
+    // It's not quite cleat what '<' means for this object, but std::set requires this operator
+    // 
     
-    if (int(dfsRegion) < int(other.dfsRegion))
-        return true;
+    auto left  (rules.begin());
+    auto right (other.rules.begin());
+    while (left != rules.end() && right != other.rules.end()) {
+        if (*left < *right)
+            return true;
+        left++;
+        right++;
+    }
 
     if (rules.size() < other.rules.size())
         return true;
 
-    for(auto const & r: other.rules) {
-        if (rules.find(r) == rules.end())
-            return true;
-    }
+    if (int(dfsRegion) < int(other.dfsRegion))
+        return true;
 
     return false;
 }
