@@ -168,8 +168,11 @@ prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
     if (frequencyRangeEnd_ < other.frequencyRangeEnd_)
         return true;
 
-    if (flags_ < other.flags_)
-        return true;
+//    if (maxBandwidth_ < other.maxBandwidth_)
+//        return true;   
+
+//    if (flags_ < other.flags_)
+//        return true;
     
     return false;
 }
