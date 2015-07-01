@@ -321,7 +321,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
             case EINTR:
                 // We used to break here as 3.16.x seems to throw tons of those and 'continue' caused a busy-loop
                 // This should be fix by our patch which made it into Linux 4.1
-                continue;
+                break;  // mtk 01-jul-2015: let's break here again for older kernels
             case EAGAIN:
                 break;
             case EMSGSIZE:
