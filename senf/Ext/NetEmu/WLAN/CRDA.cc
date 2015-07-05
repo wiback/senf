@@ -216,11 +216,13 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
         regDomain = worldRegDomain_;
         regDomain.alpha2Country = DUMMY_COUNTRY;
     }  else {
+        SENF_LOG( ("CRDA regDomain cache lookup for " << regDomain) );
         // check if we already have a mapping for this regDomain
         auto const it (cachedRegDomains_.find(regDomain));
         if (it != cachedRegDomains_.end()) {
             // yes: re-use the alpha2Country
             regDomain.alpha2Country = it->alpha2Country;
+            SENF_LOG( ("CRDA cached regDomain found as " << *it) );
         } else {
             // no: generate a new alpha2country
             if (dummyCountry_[1]++ == 'Z') {
@@ -230,11 +232,15 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
                 }
             }
             regDomain.alpha2Country = dummyCountry_;
+            SENF_LOG( ("CRDA cached regDomain not found. Creating new regDomain as " << regDomain) );
         }
     }
     
     // store the new mapping (if the mapping already exists, this does nothing)
-    cachedRegDomains_.insert(regDomain);
+    auto res (cachedRegDomains_.insert(regDomain));
+    if (!res.second) {
+        SENF_LOG( ("CRDA failed to add regDomain " << regDomain << " to cache, as entry " << *(res.first) << " is already present") );
+    }
 
     // we might need to revert, if the below fails
     RegulatoryDomain old (currentRegDomain_);
@@ -273,6 +279,7 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
         return true;
 
     try {
+        SENF_LOG( ("CRDA writing regDomain tmpfile " << currentRegDomain_) );
         std::fstream fs;
         fs.open(syncFilename_, std::fstream::out | std::fstream::trunc);
         fs << "regDomain " << currentRegDomain_ << ";" << std::endl;
