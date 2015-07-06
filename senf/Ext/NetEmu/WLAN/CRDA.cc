@@ -27,7 +27,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-#define DUMMY_COUNTRY "AA"
+#define WORLD_REG_ALPHA "AA"
 
 prefix_ senf::emu::CRDA & senf::emu::CRDA::instance()
 {
@@ -42,7 +42,7 @@ prefix_ std::string senf::emu::CRDA::slaveName()
 }
 
 prefix_ senf::emu::CRDA::CRDA()
-    : dummyCountry_(DUMMY_COUNTRY),
+    : dummyCountry_(WORLD_REG_ALPHA),
       dfsMode_(true),
       nonWirelessBox_(false)
 {
@@ -65,7 +65,7 @@ prefix_ senf::emu::CRDA::CRDA()
             buf[rd] = '\0';
             dfsMode_ = strstr(buf, "WiBACK-CRDA") == NULL;
             if (!dfsMode_) {
-                SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] WiBACK-CRDA mode enabled.") );
+                SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] WiBACK-CRDA mode enabled.") );
             }
         }
         ::close(fd);
@@ -159,12 +159,12 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             WirelessNLController wnlc;
             currentRegDomain_ = wnlc.get_regulatory();
             dummyCountry_ = currentRegDomain_.alpha2Country;
-            SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] currentRegDomain initialized from kernel to " << currentRegDomain_ << ". DummyCountry initialized to " << dummyCountry_ << ".") );
+            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] currentRegDomain initialized from kernel to " << currentRegDomain_ << ". 'DummyCountry' initialized to " << dummyCountry_ << ".") );
         } catch (...) {
             nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
-            currentRegDomain_.alpha2Country = DUMMY_COUNTRY;
-            SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
+            currentRegDomain_.alpha2Country = WORLD_REG_ALPHA;
+            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
         }
         // store the new mapping (if the mapping already exists, this does nothing)
         cachedRegDomains_.insert(currentRegDomain_);
@@ -174,7 +174,7 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             wnlc.get_regulatory();
         } catch (...) {
             nonWirelessBox_ = true;
-            SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] No Wireless Subsystem found.") );
+            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] No Wireless Subsystem found.") );
         }
     }
     
@@ -204,7 +204,7 @@ prefix_ bool senf::emu::CRDA::equalsKernel()
         return currentRegDomain_.isEqual(wnlc.get_regulatory());
     }
     catch(...) {
-        SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] No Wireless Subsystem found. This node might be a non-wireless box. Hence equalsKernel() is always true") );
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] No Wireless Subsystem found. This node might be a non-wireless box. Hence equalsKernel() is always true") );
     }
 
     return true;
@@ -214,15 +214,15 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
 {
     if (!regDomain) {
         regDomain = worldRegDomain_;
-        regDomain.alpha2Country = DUMMY_COUNTRY;
+        regDomain.alpha2Country = WORLD_REG_ALPHA;
     }  else {
-        SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] regDomain cache lookup for " << regDomain) );
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] regDomain cache lookup for " << regDomain) );
         // check if we already have a mapping for this regDomain
         auto const it (cachedRegDomains_.find(regDomain));
         if (it != cachedRegDomains_.end()) {
             // yes: re-use the alpha2Country
             regDomain.alpha2Country = it->alpha2Country;
-            SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] cached regDomain found as " << *it) );
+            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] cached regDomain found as " << *it) );
         } else {
             // no: generate a new alpha2country
             if (dummyCountry_[1]++ == 'Z') {
@@ -232,14 +232,14 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
                 }
             }
             regDomain.alpha2Country = dummyCountry_;
-            SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] cached regDomain not found. Creating new regDomain as " << regDomain) );
+            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] regDomain not found in cache. Creating new regDomain as " << regDomain) );
         }
     }
     
     // store the new mapping (if the mapping already exists, this does nothing)
     auto res (cachedRegDomains_.insert(regDomain));
     if (!res.second) {
-        SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] failed to add regDomain " << regDomain << " to cache, as entry " << *(res.first) << " is already present") );
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] not adding regDomain " << regDomain << " to cache, as entry " << *(res.first) << " is already present.") );
     }
 
     // we might need to revert, if the below fails
@@ -271,7 +271,7 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
 prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
 {
     if (alpha2Country.empty())
-        alpha2Country = DUMMY_COUNTRY;
+        alpha2Country = WORLD_REG_ALPHA;
 
     currentRegDomain_.alpha2Country = alpha2Country;
 
@@ -279,7 +279,7 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
         return true;
 
     try {
-        SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] writing regDomain tmpfile " << currentRegDomain_) );
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] writing regDomain tmpfile " << currentRegDomain_) );
         std::fstream fs;
         fs.open(syncFilename_, std::fstream::out | std::fstream::trunc);
         fs << "regDomain " << currentRegDomain_ << ";" << std::endl;
@@ -320,7 +320,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
 {
     auto regDomain (currentRegDomain_ ? currentRegDomain_ : worldRegDomain_);
     char *a2 (getenv("COUNTRY"));
-    regDomain.alpha2Country = !!a2 ? a2 : DUMMY_COUNTRY;
+    regDomain.alpha2Country = !!a2 ? a2 : WORLD_REG_ALPHA;
 
     try {
         WirelessNLController wnlc;
@@ -329,7 +329,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] setting Regulatory Domain failed: " << e.message()) );
         return;
     }
-    SENF_LOG( (senf::log::MESSAGE) ("[senf::emu::CRDA] regulatory rules pushed to kernel") );
+    SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] regulatory rules pushed to kernel as " << regDomain) );
 }
 
 prefix_ void senf::emu::CRDA::help(int exit_status)
