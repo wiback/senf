@@ -578,7 +578,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
 
 prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsigned bandwidth)
 {
-    IGNORE_EXCPETION( wnlc_.ibss_leave(); )
+//    IGNORE_EXCPETION( wnlc_.ibss_leave(); )
     if (! monitorDev_.empty())
         IGNORE_EXCPETION( netctl_.down(); )
 
@@ -753,12 +753,12 @@ senf::emu::HardwareWLANInterface::joinAdhocNetwork(std::string const & ssid, uns
 
 prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters)
 {
-    IGNORE_EXCPETION( wnlc_.ibss_leave(); )
-    if (! monitorDev_.empty())
-        IGNORE_EXCPETION( netctl_.down(); )
+//    IGNORE_EXCPETION( wnlc_.ibss_leave(); )
+//    if (! monitorDev_.empty())
+//        IGNORE_EXCPETION( netctl_.down(); )
     if (! monitorDev_.empty())
         netctl_.up();
-
+    
     wnlc_.do_ibss_join(parameters);
     joined_ = true;
     bw_ = parameters.channelType_ == WirelessNLController::ChannelType::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);

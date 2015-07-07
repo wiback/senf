@@ -319,6 +319,8 @@ namespace emu {
         static std::string if_nameto_phy_name(std::string const & ifname);
         static int phy_nametoindex(std::string const & phyname);
 
+        std::string cmdAsString(std::uint8_t cmd) const;
+
         void init();
         void initNlSock(nl_sock_ptr & sock);
         void initNlCache(nl_sock_ptr & sock, nl_cache_ptr & cache);
