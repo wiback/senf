@@ -84,8 +84,6 @@ prefix_ bool senf::emu::detail::TunnelIOHelper<Controller>::operator()(Handle & 
     if (SENF_LIKELY(packet.size() <= tunnelIface_.mtu()))
         return ctrl_.writePacket(handle, packet.as<EthernetPacket>());
 
-//    std::cerr << "MTU exceeded. packet size: " << packet.size() << ", mtu: " <<  tunnelIface_.mtu() << std::endl;
-
     return true;
 }
 

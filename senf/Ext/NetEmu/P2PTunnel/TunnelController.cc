@@ -79,7 +79,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
 
     eth.annotation<annotations::Timestamp>().fromSocketProtocol(handle.protocol());
     annotations::Quality & q (eth.annotation<annotations::Quality>());
-    q.rssi  =  127;
+    q.rssi  =  126; // one step below Ethernet to ensure native Ethernet Links yield a better SNR - this requires more thinking/integration
     q.noise = -128;
     q.snr   = q.rssi - q.noise;
     q.flags.frameLength = eth.size();
