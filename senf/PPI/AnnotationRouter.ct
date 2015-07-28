@@ -50,7 +50,7 @@ connectorSetup(connector::ActiveOutput<> & conn, AnnotationType const & key)
 {
     if (this->connectors().find(key) != this->connectors().end())
         throw DuplicateKeyException(key);
-    route(input, conn);
+    route(input, conn).autoThrottling( false);
     return key;
 }
 

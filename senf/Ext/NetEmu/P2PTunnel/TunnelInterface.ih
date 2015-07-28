@@ -88,8 +88,8 @@ namespace detail {
         UDPv6ClientSocketHandle socket;
         Controller tunnelCtrl;
 
-//        ppi::module::ActiveBurstSocketSource<TunnelIOHelper<Controller> > source;
-        ppi::module::ActiveSocketSource<TunnelIOHelper<Controller> > source;
+        ppi::module::ActiveBurstSocketSource<TunnelIOHelper<Controller> > source;
+//        ppi::module::ActiveSocketSource<TunnelIOHelper<Controller> > source;
         ppi::module::PassiveSocketSink<TunnelIOHelper<Controller> > sink;
 
         TunnelInterfaceAnnotater annotator_;

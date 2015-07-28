@@ -136,10 +136,9 @@ prefix_ unsigned senf::ppi::module::ActiveBurstSocketSource<Reader>::maxBurst()
 template <class Reader>
 prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::read()
 {
-    output(reader_(handle_));
     for (unsigned int i = 0; i < maxBurst_; ++i) {
         typename Reader::PacketType p (reader_(handle_));
-        if (p.data().size() > 0)
+        if (SENF_LIKELY(p and (p.data().size() > 0)))
             output( p);
         else
             break;
@@ -150,10 +149,7 @@ template <class Reader>
 prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::flush()
 {
     try {
-        while (true) {
-            typename Reader::PacketType p(reader_(handle_));
-            if (p.data().size() <= 0)
-                break;
+        while (reader_(handle_));
         }
     }
     catch (...) {};
