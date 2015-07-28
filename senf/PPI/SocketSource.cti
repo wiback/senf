@@ -58,35 +58,6 @@ prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::handle(Handle const 
     event_.set(handle_, IOEvent::Read);
 }
 
-template <class Reader>
-prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::read()
-{
-    output(reader_(handle_));
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::ActiveBurstSocketSource<Reader>
-
-template <class Reader>
-prefix_ Reader & senf::ppi::module::ActiveBurstSocketSource<Reader>::reader()
-{
-    return reader_;
-}
-
-template <class Reader>
-prefix_ typename senf::ppi::module::ActiveBurstSocketSource<Reader>::Handle
-senf::ppi::module::ActiveBurstSocketSource<Reader>::handle()
-{
-    return handle_;
-}
-
-template <class Reader>
-prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::handle(Handle const & handle)
-{
-    handle_ = handle;
-    event_.set(handle_, IOEvent::Read);
-}
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
