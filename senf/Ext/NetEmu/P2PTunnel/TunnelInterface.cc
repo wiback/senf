@@ -154,6 +154,20 @@ prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::mtu(unsigned v)
     mtu_ = v;
 }
 
+template <class Controller>
+prefix_ unsigned senf::emu::detail::TunnelInterfaceNet<Controller>::maxBurst()
+    const
+{
+    return source.maxBurst();
+}
+
+template <class Controller>
+prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::maxBurst(unsigned v)
+{
+    source.maxBurst(v);
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::TunnelInterfaceBase
 
@@ -344,6 +358,14 @@ prefix_ senf::emu::TunnelServerInterface::TunnelServerInterface(INet6SocketAddre
         .add("fragmentationThreshold", fty::Command(
                  SENF_MEMBINDFNP(unsigned, TunnelServerInterface, fragmentationThreshold, (MACAddress const &) const))
              .doc( "get the fragmentationThreshold for the specified client in bytes"));
+    consoleDir()
+        .add("maxBurst", fty::Command(
+                 SENF_MEMBINDFNP(void, TunnelServerInterface, maxBurst, (unsigned)))
+             .doc( "set the maxBurst limit when receiving packets"));
+    consoleDir()
+        .add("maxBurst", fty::Command(
+                 SENF_MEMBINDFNP(unsigned, TunnelServerInterface, maxBurst, () const))
+             .doc( "get the maxBurst limit when receiving packets"));
 }
 
 prefix_ void senf::emu::TunnelServerInterface::v_enable()
@@ -419,6 +441,17 @@ prefix_ void senf::emu::TunnelServerInterface::v_mtu(unsigned v)
     TunnelInterfaceNet::mtu(v);
 }
 
+prefix_ unsigned senf::emu::TunnelServerInterface::maxBurst()
+    const
+{
+    return TunnelInterfaceNet::maxBurst();
+}
+
+prefix_ void senf::emu::TunnelServerInterface::maxBurst(unsigned v)
+{
+    TunnelInterfaceNet::maxBurst(v);
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::TunnelClientInterface
@@ -467,6 +500,14 @@ prefix_ senf::emu::TunnelClientInterface::TunnelClientInterface(INet6SocketAddre
         .add("fragmentationThreshold", fty::Command(
                  SENF_MEMBINDFNP(unsigned, TunnelClientInterface, fragmentationThreshold, () const))
              .doc( "get the fragmentationThreshold for this tunnel in bytes"));
+    consoleDir()
+        .add("maxBurst", fty::Command(
+                 SENF_MEMBINDFNP(void, TunnelClientInterface, maxBurst, (unsigned)))
+             .doc( "set the maxBurst limit when receiving packets"));
+    consoleDir()
+        .add("maxBurst", fty::Command(
+                 SENF_MEMBINDFNP(unsigned, TunnelClientInterface, maxBurst, () const))
+             .doc( "get the maxBurst limit when receiving packets"));
 
     capacity_[tunnel::FromClientToServer] = 100000u;
     capacity_[tunnel::FromServerToClient] = 100000u;
@@ -575,6 +616,18 @@ prefix_ void senf::emu::TunnelClientInterface::v_mtu(unsigned v)
 {
     TunnelInterfaceNet::mtu(v);
 }
+
+prefix_ unsigned senf::emu::TunnelClientInterface::maxBurst()
+    const
+{
+    return TunnelInterfaceNet::maxBurst();
+}
+
+prefix_ void senf::emu::TunnelClientInterface::maxBurst(unsigned v)
+{
+    TunnelInterfaceNet::maxBurst(v);
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

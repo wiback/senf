@@ -150,7 +150,6 @@ prefix_ void senf::ppi::module::ActiveBurstSocketSource<Reader>::flush()
 {
     try {
         while (reader_(handle_));
-        }
     }
     catch (...) {};
 }

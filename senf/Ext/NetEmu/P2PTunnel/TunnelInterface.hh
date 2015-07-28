@@ -113,6 +113,9 @@ namespace emu {
         unsigned fragmentationThreshold(MACAddress const & client) const;
         void fragmentationThreshold(MACAddress const & client, unsigned mtu);
 
+        unsigned maxBurst() const;
+        void maxBurst(unsigned v);
+
     private:
         // interface API
         virtual void v_enable();
@@ -152,6 +155,9 @@ namespace emu {
 
         unsigned fragmentationThreshold() const;
         void fragmentationThreshold(unsigned mtu);
+        
+        unsigned maxBurst() const;
+        void maxBurst(unsigned v);
 
     private:
         // interface API
