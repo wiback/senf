@@ -282,8 +282,8 @@ prefix_ void senf::emu::EmulatedInterface::openSocket()
 {
     socket_ = UDPClientHandle();
     socket_.blocking(false);
-    socket_.protocol().sndbuf( 65536);
-    socket_.protocol().rcvbuf( 65536);
+    socket_.protocol().sndbuf(  48*1024);
+    socket_.protocol().rcvbuf( 128*1024);
     v_initEmulationInterface();
 }
 
@@ -305,6 +305,8 @@ prefix_ senf::emu::EmulatedReceiver::EmulatedReceiver()
     ppi::connect(dropChecker_, delayChecker_);
     ppi::connect(delayChecker_, dropper_);
     ppi::connect(dropper_, advance_);
+
+    source_.maxBurst(8);
 }
 
 prefix_ void senf::emu::EmulatedReceiver::init()
