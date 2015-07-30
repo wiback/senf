@@ -42,26 +42,6 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::emu::detail::TunnelInterfaceAnnotater
-
-prefix_ senf::emu::detail::TunnelInterfaceAnnotater::TunnelInterfaceAnnotater(TunnelInterfaceBase const & interface)
-    : interface_ (interface)
-{
-    route(input, output).autoThrottling( false);
-    input.onRequest(&TunnelInterfaceAnnotater::request);
-    input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
-}
-
-prefix_ void senf::emu::detail::TunnelInterfaceAnnotater::request()
-{
-    Packet packet (input());
-
-    packet.annotation<annotations::Interface>().value = interface_.id();
-
-    output(packet);
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::emu::detail::TunnelIOHelper
 
 template <class Controller>
@@ -80,9 +60,10 @@ prefix_ bool senf::emu::detail::TunnelIOHelper<Controller>::operator()(Handle & 
 {
     if (SENF_LIKELY(packet.size() <= tunnelIface_.mtu()))
         return ctrl_.writePacket(handle, packet.as<EthernetPacket>());
-
+    
     return true;
 }
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::detail::TunnelInterfaceNet
@@ -91,10 +72,9 @@ template <class Controller>
 prefix_ senf::emu::detail::TunnelInterfaceNet<Controller>::TunnelInterfaceNet(typename Controller::Interface & interface)
     : socket(senf::noinit), tunnelCtrl(interface),
       source(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)), sink(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)),
-      annotator_(interface), netOutput(reassembler_.output), netInput(sink.input), mtu_(1500u)
+      netOutput(reassembler_.output), netInput(sink.input), mtu_(1500u)
 {
-    ppi::connect(source, annotator_);
-    ppi::connect(annotator_, reassembler_);
+    ppi::connect(source, reassembler_);
 }
 
 template <class Controller>

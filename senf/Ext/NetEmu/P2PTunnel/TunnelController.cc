@@ -56,6 +56,9 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::isTunnelCtrlPacket(Etherne
 
 prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket(Handle & handle)
 {
+    // use this as a trigger to flush our write queue
+    flushQueue(handle);
+    
     TunnelHeaderPacket thdr (TunnelHeaderPacket::create(senf::noinit));
     INet6SocketAddress addr;
 
@@ -77,6 +80,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     // Ctrl Frames do not have a seqNo, so perform the here where we only see Data frames
     signed diff = v_processSequenceNumber(thdr, addr);
 
+    eth.annotation<annotations::Interface>().value = interface_.id();
     eth.annotation<annotations::Timestamp>().fromSocketProtocol(handle.protocol());
     annotations::Quality & q (eth.annotation<annotations::Quality>());
     q.rssi  =  126; // one step below Ethernet to ensure native Ethernet Links yield a better SNR - this requires more thinking/integration
