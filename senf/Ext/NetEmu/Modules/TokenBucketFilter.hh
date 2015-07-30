@@ -73,6 +73,7 @@ namespace emu {
 
         void onTimeout();
         void onRequest();
+        void byPass();
         void fillBucket();
         void setTimeout();
         bool queuePacket(Packet const & packet, Packet::size_type packetSize);

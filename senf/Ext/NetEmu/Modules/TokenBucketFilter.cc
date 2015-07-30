@@ -45,7 +45,10 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
       rate_( _rate)
 {
     route( input, output).autoThrottling( false);
-    input.onRequest( &TokenBucketFilter::onRequest);
+    if (rate_ == 0)
+        input.onRequest( &TokenBucketFilter::byPass);
+    else
+        input.onRequest( &TokenBucketFilter::onRequest);
     input.throttlingDisc( ppi::ThrottlingDiscipline::NONE);
 
     namespace fty = console::factory;
@@ -73,9 +76,13 @@ prefix_ unsigned senf::emu::TokenBucketFilter::rate()
 prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 {
     rate_ = bits_per_second;
+
     if (rate_ == 0u) {
         // we have to flush the queue now
         queueAlgo_->clear();
+        input.onRequest( &TokenBucketFilter::byPass);
+    }  else {
+        input.onRequest( &TokenBucketFilter::onRequest);
     }
 }
 
@@ -116,7 +123,7 @@ prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
     ClockService::clock_type now (scheduler::now());
     ClockService::int64_type delta (ClockService::in_microseconds(now - lastToken_));
-    if (delta == 0)
+    if (SENF_UNLIKELY(delta == 0))
         return;
 
     lastToken_ = now;
@@ -128,14 +135,15 @@ prefix_ void senf::emu::TokenBucketFilter::fillBucket()
         bucketSize_ = bucketLimit_;
 }
 
+prefix_ void senf::emu::TokenBucketFilter::byPass()
+{
+    output(input());
+}
+
 prefix_ void senf::emu::TokenBucketFilter::onRequest()
 {
     Packet const & packet (input.read());
-    if (rate_ == 0) {
-        // forward the packet immediatly
-        output.write(packet);
-        return;
-    }
+
     Packet::size_type packetSize (packet.size());
     if (! queueAlgo_->empty()) {
         queueAlgo_->enqueue( packet);
