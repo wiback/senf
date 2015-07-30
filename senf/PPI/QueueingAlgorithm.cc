@@ -96,10 +96,11 @@ prefix_ senf::Packet senf::ppi::FIFOQueueingAlgorithm::v_dequeue()
     return Packet();
 }
 
-prefix_ bool senf::ppi::FIFOQueueingAlgorithm::v_enqueue(Packet const & packet)
+prefix_ bool senf::ppi::FIFOQueueingAlgorithm::v_enqueue(Packet const & packet, bool force)
 {
-    if (queue_.size() >= max_size_)
-        queue_.pop();
+    if (!force and (queue_.size() >= max_size_))
+        return false;
+    
     queue_.push( packet);
     return true;
 }

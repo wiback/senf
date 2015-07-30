@@ -57,7 +57,7 @@ namespace emu {
 
     private:
         senf::Packet v_dequeue();
-        bool v_enqueue(senf::Packet const & packet);
+        bool v_enqueue(senf::Packet const & packet, bool force);
         unsigned v_size() const;
         unsigned v_frontPacketSize() const;
         void v_clear();

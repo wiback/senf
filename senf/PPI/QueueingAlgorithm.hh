@@ -53,7 +53,7 @@ namespace ppi {
 
         console::DirectoryNode & consoleDir();
         Packet dequeue();
-        bool enqueue(Packet const & packet);
+        bool enqueue(Packet const & packet, bool force = false);
         unsigned size() const;
         unsigned frontPacketSize() const;
         void clear();
@@ -63,7 +63,7 @@ namespace ppi {
         QueueingAlgorithm();
 
         virtual Packet v_dequeue() = 0;
-        virtual bool v_enqueue(Packet const & packet) = 0;
+        virtual bool v_enqueue(Packet const & packet, bool force) = 0;
         virtual unsigned v_size() const = 0;
         virtual unsigned v_frontPacketSize() const = 0;
         virtual void v_clear() = 0;
@@ -130,7 +130,7 @@ namespace ppi {
         FIFOQueueingAlgorithm();
 
         virtual Packet v_dequeue();
-        virtual bool v_enqueue(Packet const & packet);
+        virtual bool v_enqueue(Packet const & packet, bool force);
         virtual unsigned v_size() const;
         virtual unsigned v_frontPacketSize() const;
         virtual void v_clear();
@@ -144,7 +144,7 @@ namespace ppi {
     class NoneQueueingAlgorithm : public QueueingAlgorithm
     {
         virtual Packet v_dequeue();
-        virtual bool v_enqueue(Packet const & packet);
+        virtual bool v_enqueue(Packet const & packet, bool force);
         virtual unsigned v_size() const;
         virtual unsigned v_frontPacketSize() const;
         virtual void v_clear();

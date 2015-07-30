@@ -66,9 +66,9 @@ prefix_ senf::Packet senf::ppi::QueueingAlgorithm::dequeue()
     return v_dequeue();
 }
 
-prefix_ bool senf::ppi::QueueingAlgorithm::enqueue(Packet const & packet)
+prefix_ bool senf::ppi::QueueingAlgorithm::enqueue(Packet const & packet, bool force)
 {
-    return v_enqueue( packet);
+    return v_enqueue( packet, force);
 }
 
 
@@ -116,7 +116,7 @@ prefix_ senf::Packet senf::ppi::NoneQueueingAlgorithm::v_dequeue()
     return Packet();
 }
 
-prefix_ bool senf::ppi::NoneQueueingAlgorithm::v_enqueue(Packet const & packet)
+prefix_ bool senf::ppi::NoneQueueingAlgorithm::v_enqueue(Packet const & packet, bool force)
 {
     return false;
 }

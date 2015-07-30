@@ -60,9 +60,9 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
         .doc( "return the current RED queue size (usage) in bytes"));
 }
 
-prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet)
+prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool force)
 {
-    if (queueSize_ > lowThresh_) {
+    if (!force and (queueSize_ > lowThresh_)) {
         if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_)) <= (queueSize_ - lowThresh_) ) {
             packetsDropped_++;
             return false;  // no additional packet added to queue
@@ -78,7 +78,7 @@ prefix_ senf::Packet senf::emu::REDQueue::v_dequeue()
 {
     Packet tmp (queue_.front());
     queue_.pop();
-    if (tmp) {
+    if (SENF_LIKELY(tmp)) {
         queueSize_ -= tmp.size();
     }
     return tmp;
