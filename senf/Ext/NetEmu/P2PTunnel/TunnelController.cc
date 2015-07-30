@@ -105,42 +105,60 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     return eth;
 }
 
-prefix_ void senf::emu::detail::TunnelControllerBase::do_sendPkt(Handle & handle, senf::EthernetPacket & pkt)
-{
-    auto txInfo (v_getTxInfo(pkt));
 
+prefix_ void senf::emu::detail::TunnelControllerBase::do_sendPkt(Handle & handle, senf::EthernetPacket & pkt, std::pair<senf::INet6SocketAddress,unsigned> const & txInfo)
+{
     try{
-        if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
-            v_prependTHdr(pkt);
-            handle.writeto(txInfo.first,pkt.prev().data());
-        } else {
-            std::vector<senf::EthernetPacket> frags;
-            fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
-            for (auto & frag : frags) {
-                v_prependTHdr(frag);
-                handle.writeto(txInfo.first,frag.prev().data());
-            }
-        }
+        v_prependTHdr(pkt);
+        handle.writeto(txInfo.first,pkt.prev().data());
     }
     catch(...) {
     };
 }
 
+prefix_ void senf::emu::detail::TunnelControllerBase::do_sendPkt(Handle & handle, senf::EthernetPacket & pkt)
+{
+    do_sendPkt( handle, pkt, v_getTxInfo(pkt));
+}
+
 prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, MACAddress const & dstMAC, senf::EthernetPacket pkt)
 {
-    pkt.annotation<annotations::Interface>().value = dstMAC;
-    
     // first, flush any possibly pending packets
     flushQueue(handle);
 
-    if (qAlgo_->empty()) {
+    pkt.annotation<annotations::Interface>().value = dstMAC;
+    auto txInfo (v_getTxInfo(pkt));
+
+    if (!qAlgo_->empty()) {
+        if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
+            qAlgo_->enqueue(pkt);
+        } else {
+            std::vector<senf::EthernetPacket> frags;
+            fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
+            for (auto & frag : frags) {
+                qAlgo_->enqueue(frag);
+            }
+        }
+        return true;
+    }
+
+    if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
         if (handle.writeable()) {
-            do_sendPkt(handle, pkt);
+            do_sendPkt(handle, pkt, txInfo);
         } else {
             qAlgo_->enqueue(pkt);
         }
-    } else {
-        qAlgo_->enqueue(pkt);
+        return true;
+    }
+
+    std::vector<senf::EthernetPacket> frags;
+    fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
+    for (auto & frag : frags) {
+        if (handle.writeable()) {
+            do_sendPkt(handle, frag, txInfo);
+        } else {
+            qAlgo_->enqueue(frag);
+        }
     }
     
     return true;

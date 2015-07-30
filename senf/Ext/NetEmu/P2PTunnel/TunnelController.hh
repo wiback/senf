@@ -86,6 +86,7 @@ namespace detail {
         virtual ~TunnelControllerBase() {};
 
         bool sendPkt(Handle & handle, MACAddress const & dstMAC, senf::EthernetPacket pkt);
+        void do_sendPkt(Handle & handle, senf::EthernetPacket & pkt, std::pair<senf::INet6SocketAddress,unsigned> const & txInfo);
         void do_sendPkt(Handle & handle, senf::EthernetPacket & pkt);
         void flushQueue(Handle & handle);
 
