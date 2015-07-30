@@ -38,7 +38,7 @@
 
 prefix_ senf::ppi::QueueingAlgorithm::ptr senf::emu::REDQueue::create()
 {
-    return ppi::QueueingAlgorithm::ptr(new REDQueue(1024, 0));
+    return ppi::QueueingAlgorithm::ptr(new REDQueue(4096, 0));
 }
 
 prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t lowThreshPrecentage)
@@ -62,21 +62,16 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
 
 prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet)
 {
-    // to add some 'randomess' in case of MMAP socket source burst mode operation, where senf:scheduler::now() is not updated
-    static boost::uint32_t pktCnt (0);
-
-    bool rtn = true;
     if (queueSize_ > lowThresh_) {
-        if ( ((boost::uint32_t(ClockService::in_nanoseconds(scheduler::now())) + pktCnt++) % (queueLimit_ - lowThresh_)) <= (queueSize_ - lowThresh_) ) {
-            v_dequeue();
+        if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_)) <= (queueSize_ - lowThresh_) ) {
             packetsDropped_++;
-            rtn = false;  // no additional packet added to queue (we're replacing an old one)
+            return false;  // no additional packet added to queue
         }
     }
 
-    queue_.push( packet);
+    queue_.push(packet);
     queueSize_ += packet.size();
-    return rtn;
+    return true;
 }
 
 prefix_ senf::Packet senf::emu::REDQueue::v_dequeue()
