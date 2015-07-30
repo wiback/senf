@@ -129,14 +129,17 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
     pkt.annotation<annotations::Interface>().value = dstMAC;
     auto txInfo (v_getTxInfo(pkt));
 
+    // the following code is a bit tricky as we need to ensure that we either send/enqueue all fragments of a frame or drop the complete sequence of fragments!
+    
     if (!qAlgo_->empty()) {
         if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
             qAlgo_->enqueue(pkt);
         } else {
             std::vector<senf::EthernetPacket> frags;
             fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
+            bool force (false);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
             for (auto & frag : frags) {
-                qAlgo_->enqueue(frag);
+                force = qAlgo_->enqueue(frag, force);
             }
         }
         return true;
@@ -153,11 +156,13 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
 
     std::vector<senf::EthernetPacket> frags;
     fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
+    bool force (false);
     for (auto & frag : frags) {
         if (handle.writeable()) {
             do_sendPkt(handle, frag, txInfo);
+            force = true;  // one a seqment has been sent, force enqueue()ing for remaining frags (if required)
         } else {
-            qAlgo_->enqueue(frag);
+            force = qAlgo_->enqueue(frag, force);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
         }
     }
     
