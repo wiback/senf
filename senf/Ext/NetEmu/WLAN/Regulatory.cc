@@ -155,8 +155,8 @@ prefix_ bool senf::emu::RegulatoryRule::operator==(RegulatoryRule const & other)
         maxBandwidth_           == other.maxBandwidth_        &&
         maxAntennaGain_         == other.maxAntennaGain_      &&
         maxEIRP_                == other.maxEIRP_             &&
-        flags_                  == other.flags_               &&
-        cacTime_                == other.cacTime_;
+        cacTime_                == other.cacTime_             &&
+        flags_                  == other.flags_;
 }
 
 prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
@@ -177,10 +177,10 @@ prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
     if (maxEIRP_ < other.maxEIRP_)
         return true;   
 
-    if (flags_ < other.flags_)
-        return true;
-    
     if (cacTime_ < other.cacTime_)
+        return true;
+
+    if (flags_ < other.flags_)
         return true;
 
     return false;
@@ -196,11 +196,6 @@ prefix_ bool senf::emu::RegulatoryDomain::isEqual(RegulatoryDomain const & other
     if (rules.size() != other.rules.size())
         return false;
 
-    for(auto const & r: rules) {
-        if (other.rules.find(r) == other.rules.end())
-            return false;
-    }
-
     return true;
 }
 
@@ -208,6 +203,23 @@ prefix_ senf::emu::RegulatoryDomain::operator bool()
     const
 {
     return !rules.empty();
+}
+
+prefix_ bool senf::emu::RegulatoryDomain:operator==(RegulatoryDomain const & other)
+    const
+{
+    if (dfsRegion != other.dfsRegion)
+        return false;
+
+    if (rules.size() != other.rules.size())
+        return false;
+
+    for(auto const & r: rules) {
+        if (other.rules.find(r) == other.rules.end())
+            return false;
+    }
+
+    return true;
 }
 
 prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & other) 

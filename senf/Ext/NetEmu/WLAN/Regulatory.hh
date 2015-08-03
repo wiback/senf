@@ -145,6 +145,7 @@ namespace emu {
         explicit operator bool() const;
 
         bool operator<(RegulatoryDomain const & other) const;
+        bool operator==(RegulatoryDomain const & other) const;
 
         bool isEqual(RegulatoryDomain const & other) const;
     };
