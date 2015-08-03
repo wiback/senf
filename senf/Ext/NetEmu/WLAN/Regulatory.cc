@@ -205,7 +205,7 @@ prefix_ senf::emu::RegulatoryDomain::operator bool()
     return !rules.empty();
 }
 
-prefix_ bool senf::emu::RegulatoryDomain:operator==(RegulatoryDomain const & other)
+prefix_ bool senf::emu::RegulatoryDomain::operator==(RegulatoryDomain const & other)
     const
 {
     if (dfsRegion != other.dfsRegion)
