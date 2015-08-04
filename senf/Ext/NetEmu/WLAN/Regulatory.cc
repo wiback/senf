@@ -165,24 +165,6 @@ prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
     if (frequencyRangeBegin_ < other.frequencyRangeBegin_)
         return true;
 
-    if (frequencyRangeEnd_ < other.frequencyRangeEnd_)
-        return true;
-
-    if (maxBandwidth_ < other.maxBandwidth_)
-        return true;   
-
-    if (maxAntennaGain_ < other.maxAntennaGain_)
-        return true;   
-
-    if (maxEIRP_ < other.maxEIRP_)
-        return true;   
-
-    if (cacTime_ < other.cacTime_)
-        return true;
-
-    if (flags_ < other.flags_)
-        return true;
-
     return false;
 }
 
@@ -227,22 +209,22 @@ prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & oth
     const
 {
     //
-    // It's not quite cleat what '<' means for this object, but std::set requires this operator
+    // It's not quite clear what '<' means for this object, but std::set requires this operator
     // 
-    
-    std::set<RegulatoryRule>::iterator left (rules.begin());
-    std::set<RegulatoryRule>::iterator right (other.rules.begin());
+        
+    auto left (rules.begin());
+    auto right (other.rules.begin());
     while ((left != rules.end()) && (right != other.rules.end())) {
         if (*left < *right)
             return true;
         left++;
         right++;
     }
-
-    if (rules.size() < other.rules.size())
+    
+    if (int(dfsRegion) < int(other.dfsRegion))
         return true;
 
-    if (int(dfsRegion) < int(other.dfsRegion))
+    if (rules.size() < other.rules.size())
         return true;
 
     return false;
@@ -271,7 +253,6 @@ prefix_ bool senf::emu::RegulatoryDomain::isEqualKernel(RegulatoryDomain const &
     
     return true;
 }
-
 
 prefix_ std::ostream & senf::emu::operator<<(std::ostream & os, RegulatoryDomain const & regDomain)
 {

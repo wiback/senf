@@ -373,7 +373,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
         regDb.parse(senf::console::root());
     }
     catch(...) {};
-
+    
     std::vector<std::string> nonOptions;
     senf::console::ProgramOptions cmdlineOptions (argc, argv, senf::console::root());
     cmdlineOptions.nonOptions(nonOptions);
