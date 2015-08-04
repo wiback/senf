@@ -230,9 +230,9 @@ prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & oth
     // It's not quite cleat what '<' means for this object, but std::set requires this operator
     // 
     
-    auto left  (rules.begin());
-    auto right (other.rules.begin());
-    while (left != rules.end() && right != other.rules.end()) {
+    std::set<RegulatoryRule>::iterator left (rules.begin());
+    std::set<RegulatoryRule>::iterator right (other.rules.begin());
+    while ((left != rules.end()) && (right != other.rules.end())) {
         if (*left < *right)
             return true;
         left++;
