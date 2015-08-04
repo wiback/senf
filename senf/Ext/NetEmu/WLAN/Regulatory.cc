@@ -186,17 +186,18 @@ prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
     return false;
 }
 
-
-prefix_ bool senf::emu::RegulatoryDomain::isEqual(RegulatoryDomain const & other) 
+prefix_ bool senf::emu::RegulatoryRule::isEqualKernel(RegulatoryRule const & other)
     const
 {
-    if (dfsRegion != other.dfsRegion)
-        return false;
-
-    if (rules.size() != other.rules.size())
-        return false;
-
-    return true;
+    //
+    // The kernel (at least 3.16.x) does not set/report CAC time and maxAntennaGain properly.
+    // Hence we skip those in the comparison
+    //
+    return frequencyRangeBegin_ == other.frequencyRangeBegin_ &&
+        frequencyRangeEnd_      == other.frequencyRangeEnd_   && 
+        maxBandwidth_           == other.maxBandwidth_        &&
+        maxEIRP_                == other.maxEIRP_             &&
+        flags_                  == other.flags_;
 }
 
 prefix_ senf::emu::RegulatoryDomain::operator bool()
@@ -245,6 +246,30 @@ prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & oth
         return true;
 
     return false;
+}
+
+prefix_ bool senf::emu::RegulatoryDomain::isEqualKernel(RegulatoryDomain const & other) 
+    const
+{
+    if (dfsRegion != other.dfsRegion)
+        return false;
+
+    if (rules.size() != other.rules.size())
+        return false;
+
+    for(auto const & r: rules) {
+        bool match (false);
+        for(auto const & o: other.rules) {
+            if (r.isEqualKernel(o)){
+                match = true;
+                break;
+            }
+        }
+        if (!match)
+            return false;
+    }
+    
+    return true;
 }
 
 

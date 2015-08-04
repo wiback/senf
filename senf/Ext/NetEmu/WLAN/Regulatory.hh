@@ -98,6 +98,7 @@ namespace emu {
 
         bool operator==(RegulatoryRule const & other) const;
         bool operator<(RegulatoryRule const & other) const;
+        bool isEqualKernel(RegulatoryRule const & other) const;
 
     private:
         // starting frequency for the regulatory rule in KHz;
@@ -146,8 +147,7 @@ namespace emu {
 
         bool operator<(RegulatoryDomain const & other) const;
         bool operator==(RegulatoryDomain const & other) const;
-
-        bool isEqual(RegulatoryDomain const & other) const;
+        bool isEqualKernel(RegulatoryDomain const & other) const;
     };
 
     std::ostream & operator<<(std::ostream & os, RegulatoryDomain const & regDomain);

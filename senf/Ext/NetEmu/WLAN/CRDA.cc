@@ -201,7 +201,11 @@ prefix_ bool senf::emu::CRDA::equalsKernel()
 {
     try {
         WirelessNLController wnlc;
-        return currentRegDomain_.isEqual(wnlc.get_regulatory());
+        if (!currentRegDomain_.isEqualKernel(wnlc.get_regulatory())) {
+            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Kernel regDomain " << wnlc.get_regulatory() << " does not match CRDA regDoamin " << currentRegDomain_) );
+            return false;
+        }
+        return true;
     }
     catch(...) {
         SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] No Wireless Subsystem found. This node might be a non-wireless box. Hence equalsKernel() is always true") );
