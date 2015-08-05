@@ -282,6 +282,11 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::v_mtu()
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_mtu(unsigned v)
 {
+    if ((ctrl_.speed() < 1000) and (v > 1500)) {
+        SENF_THROW_SYSTEM_EXCEPTION("EthernetController: interface/link in non-Jumbo mode. MTU > 1500 not allowed.");
+        return;
+    }
+    
     ctrl_.mtu(v);
 }
 
