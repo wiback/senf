@@ -31,8 +31,11 @@
 // Custom includes
 #include <senf/PPI.hh>
 #include <senf/Scheduler/Scheduler.hh>
-#include <senf/Ext/NetEmu/WLAN/MmapSocketSourceRadioTap.hh>
+#include <senf/Ext/NetEmu/config.hh>
 #include <senf/Ext/NetEmu/WLAN/MonitorDataFilter.hh>
+#include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
+#include <senf/PPI/QueueSocketSourceSink.hh>
+
 #include "MGENAnalyzer.hh"
 
 #define prefix_
@@ -119,16 +122,16 @@ int main(int argc, char const * argv[])
     }
     SENF_LOG((senf::log::IMPORTANT)("Determined MAC address for " << configuration.monitorDevice << " is " << mac));
 
-    senf::PacketSocketHandle socket;
-    socket.bind(senf::LLSocketAddress( configuration.monitorDevice));
-    socket.blocking(false);  // make sure we operate in non-blocking mode to avoid queueing on kernel tx problems
-    senf::MmapSocketSourceRadioTap source (socket, 2048);
+    senf::ConnectedMMapReadPacketSocketHandle socket(configuration.monitorDevice, 1024, SENF_EMU_MAXMTU);
+    senf::ppi::module::ActiveQueueSocketSource<senf::RadiotapPacket> source(socket);
+    socket.protocol().rcvbuf(4096);
+
     senf::emu::MonitorDataFilter filter (mac);
     filter.promisc(configuration.promisc);
-    if (configuration.reorderTimeout > senf::ClockService::milliseconds(0))
+    /*
+    if (configuration.reorderBufferSize > senf::ClockService::milliseconds(0))
         filter.reorderTimeout(configuration.reorderTimeout);
-
-    filter.reorderPackets(configuration.reorderPackets || configuration.reorderTimeout > senf::ClockService::milliseconds(0));
+    */
     senf::emu::MonitorDataFilter::filterMonitorTxFrames(socket);
 
     if (configuration.tsftHistogram) {
@@ -152,7 +155,7 @@ int main(int argc, char const * argv[])
 
     senf::ppi::run();
 
-    unsigned dropped (source.dropped());
+    unsigned dropped (socket.protocol().rxQueueDropped());
     if (dropped > 0) {
         SENF_LOG((senf::log::IMPORTANT)("Dropped " << dropped << " frames during the capture! CPU overload ?"));
     }
