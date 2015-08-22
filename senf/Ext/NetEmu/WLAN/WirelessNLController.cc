@@ -293,14 +293,14 @@ senf::emu::WirelessNLController::nlMsgHeader(uint8_t cmd, CmdIdBy idBy, int flag
         break;
     }
 
-    SENF_LOG( (senf::log::IMPORTANT) ("Created msg 0x" << senf::str((void*) msg.get()) << " with cmd = " << cmdAsString(cmd) << "(" << unsigned(cmd) << ")") );
+//    SENF_LOG( (senf::log::IMPORTANT) ("Created msg 0x" << senf::str((void*) msg.get()) << " with cmd = " << cmdAsString(cmd) << "(" << unsigned(cmd) << ")") );
 
     return msg;
 }
 
 prefix_ void senf::emu::WirelessNLController::send_and_wait4response(nl_msg_ptr const & msg, CallbackMemPtr cb)
 {
-    SENF_LOG( (senf::log::IMPORTANT) ("Sending msg 0x" << senf::str((void*) msg.get())) );
+//    SENF_LOG( (senf::log::IMPORTANT) ("Sending msg 0x" << senf::str((void*) msg.get())) );
 
     callback_ = cb;
     int r;
