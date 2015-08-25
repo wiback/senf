@@ -149,6 +149,7 @@ namespace emu {
 
     class WirelessNLController
     {
+    public:
         SENF_LOG_CLASS_AREA();
 
     public:
