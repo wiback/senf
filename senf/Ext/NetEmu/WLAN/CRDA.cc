@@ -158,8 +158,9 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
         try {
             WirelessNLController wnlc;
             currentRegDomain_ = wnlc.get_regulatory();
-            dummyCountry_ = currentRegDomain_.alpha2Country;
-            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] currentRegDomain initialized from kernel to " << currentRegDomain_ << ". 'DummyCountry' initialized to " << dummyCountry_ << ".") );
+            // wofuer ist das hier????(jmo) dummyCountry_ = currentRegDomain_.alpha2Country;
+            //SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] currentRegDomain initialized from kernel to " << currentRegDomain_ << ". 'DummyCountry' initialized to " << dummyCountry_ << ".") );
+            SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] currentRegDomain initialized from kernel to " << currentRegDomain_ << ".") );
         } catch (...) {
             nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
@@ -327,11 +328,11 @@ prefix_ void senf::emu::CRDA::setRegulatory()
 
     std::string c2( a2 ? a2 : WORLD_REG_ALPHA);
 
-    if( ! currentRegDomain_)
+    if( currentRegDomain_.alpha2Country.empty())
             regDomain.alpha2Country = c2;
 
-    if( c2.length() != 2 or ! c2.compare( regDomain.alpha2Country)) {
-        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country is not the same: "<< c2 << " expected. Ignoring."<<  regDomain.alpha2Country) );
+    if( c2.length() != 2 or c2.compare( regDomain.alpha2Country) != 0) {
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country is not the same: "<< c2 << " expected "<<  regDomain.alpha2Country << ". Ignore request.") );
         return;
     }
 
