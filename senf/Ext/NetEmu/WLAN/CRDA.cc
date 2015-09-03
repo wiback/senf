@@ -327,7 +327,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
 
     std::string c2( a2 ? a2 : WORLD_REG_ALPHA);
 
-    if( regDomain.alpha2Country.compare( WORLD_REG_ALPHA) && c2.compare( "00") )
+    if( ! currentRegDomain_)
             regDomain.alpha2Country = c2;
 
     if( c2.length() != 2 or ! c2.compare( regDomain.alpha2Country)) {
