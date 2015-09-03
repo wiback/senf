@@ -323,8 +323,17 @@ prefix_ void senf::emu::CRDA::kernelRegDomain(std::ostream & os)
 prefix_ void senf::emu::CRDA::setRegulatory()
 {
     auto regDomain (currentRegDomain_ ? currentRegDomain_ : worldRegDomain_);
-    char *a2 (getenv("COUNTRY"));
-    regDomain.alpha2Country = !!a2 ? a2 : WORLD_REG_ALPHA;
+    char *a2 = getenv("COUNTRY");
+
+    std::string c2( a2 ? a2 : WORLD_REG_ALPHA);
+
+    if( regDomain.alpha2Country.compare( WORLD_REG_ALPHA) && c2.compare( "00") )
+            regDomain.alpha2Country = c2;
+
+    if( c2.length() != 2 or ! c2.compare( regDomain.alpha2Country)) {
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country is not the same: "<< c2 << " expected. Ignoring."<<  regDomain.alpha2Country) );
+        return;
+    }
 
     try {
         WirelessNLController wnlc;
@@ -374,6 +383,19 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     }
     catch(...) {};
     
+    // udev rule file will add '--setRegulatory' arg to command line
+    //    declare -x ACTION="change"
+    //    declare -x COUNTRY="AA"
+    //    declare -x DEVPATH="/devices/platform/regulatory.0"
+    //    declare -x MODALIAS="platform:regulatory"
+    //    declare -x OLDPWD
+    //    declare -x PWD="/"
+    //    declare -x SEQNUM="1699"
+    //    declare -x SHLVL="1"
+    //    declare -x SUBSYSTEM="platform"
+    //    declare -x UDEV_LOG="3"
+    //    declare -x USEC_INITIALIZED="62694593"
+
     std::vector<std::string> nonOptions;
     senf::console::ProgramOptions cmdlineOptions (argc, argv, senf::console::root());
     cmdlineOptions.nonOptions(nonOptions);
