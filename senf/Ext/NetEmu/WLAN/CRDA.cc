@@ -323,12 +323,20 @@ prefix_ void senf::emu::CRDA::kernelRegDomain(std::ostream & os)
 
 prefix_ void senf::emu::CRDA::setRegulatory()
 {
-    auto regDomain (currentRegDomain_ ? currentRegDomain_ : worldRegDomain_);
     char *a2 = getenv("COUNTRY");
+
+    if( !a2) {
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] No a2 country code provided. Ignore request") );
+        return;
+    }
 
     std::string c2( a2 ? a2 : WORLD_REG_ALPHA);
 
-    if( currentRegDomain_.alpha2Country.empty())
+    auto regDomain (currentRegDomain_ && c2.compare("00") != 0 ? currentRegDomain_ : worldRegDomain_);
+
+//    SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country: "<< a2 << " fallback:"<< c2  << " intended:"<<currentRegDomain_.alpha2Country) );
+
+    if( regDomain.alpha2Country.empty())
             regDomain.alpha2Country = c2;
 
     if( c2.length() != 2 or c2.compare( regDomain.alpha2Country) != 0) {
@@ -340,10 +348,10 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         WirelessNLController wnlc;
         wnlc.set_regulatory(regDomain);
     } catch (senf::ExceptionMixin & e) {
-        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] setting Regulatory Domain failed: " << e.message()) );
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Setting regulatory domain failed: " << e.message() << ", " << regDomain) );
         return;
     }
-    SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] regulatory rules pushed to kernel as " << regDomain) );
+    SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Regulatory rules pushed to kernel as " << regDomain) );
 }
 
 prefix_ void senf::emu::CRDA::help(int exit_status)
