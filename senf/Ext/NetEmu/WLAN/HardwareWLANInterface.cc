@@ -528,7 +528,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_flushRxQueues()
 
 prefix_ void senf::emu::HardwareWLANInterface::v_flushTxQueues()
 {
-    HardwareWLANInterfaceNet::sink.flush();
+//    HardwareWLANInterfaceNet::sink.flush();
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::HardwareWLANInterface::v_modulationId()

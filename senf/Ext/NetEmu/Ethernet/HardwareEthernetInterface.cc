@@ -306,7 +306,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_flushRxQueues()
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_flushTxQueues()
 {
-    HardwareEthernetInterfaceNet::sink.flush();
+//    HardwareEthernetInterfaceNet::sink.flush();
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::sndBuf(unsigned sndbuf)
