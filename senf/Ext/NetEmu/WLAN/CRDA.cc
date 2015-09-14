@@ -291,6 +291,7 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
         fs.close();
     }
     catch(...) {
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] error creating regDomain tmpfile at " << syncFilename_ << ". Reason given: " << strerror(errno)) );
         return false;
     }
     
