@@ -325,6 +325,7 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
         return;
 
     MACAddress src (senf::MACAddress::None);
+    MACAddress dst (senf::MACAddress::Broadcast);
     try {
         SequenceNumberMap::key_type key;
 
@@ -364,6 +365,26 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
         // If we catch one, we assume that we failed to extract a valid/usefull source address
         src = senf::MACAddress::None;
     }
+    
+    try {
+        WLANPacket_DataFrame data (rtp.next<WLANPacket_DataFrame>(senf::nothrow));
+        if (data && (data.size() >= WLANPacket_DataFrameParser::init_bytes)) {
+            dst = data->destinationAddress();
+        } else {
+            WLANPacket_MgtFrame mgt (rtp.next<WLANPacket_MgtFrame>(senf::nothrow));
+            if (mgt && (mgt.size() >= WLANPacket_MgtFrameParser::init_bytes)) {
+                dst = mgt->destinationAddress();
+            }
+        }
+
+        if( dst != id_)
+            dst = senf::MACAddress::Broadcast;
+    }
+    catch (...) {
+        // catch any possible exception here.
+        // If we catch one, we assume that we failed to extract a valid/usefull destination address
+        dst = senf::MACAddress::Broadcast;
+    }
 
     // build a fake ethernet frame which has the original annotations and the original size
     // the source is either the actual source, or None (any)
@@ -384,7 +405,7 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
 
     EthernetPacket eth (EthernetPacket::create( pkt.size() < EthernetPacketParser::fixed_bytes ? EthernetPacketParser::fixed_bytes : pkt.size()));
     eth->source() = src;
-    eth->destination() = MACAddress::Broadcast;
+    eth->destination() = dst;
     eth->type_length() = 0xffff; // reserved
 
     eth.annotation<annotations::Quality>()               = rtp.annotation<annotations::Quality>();
