@@ -37,6 +37,7 @@
 #include <senf/config.hh>
 #include <senf/Utils/singleton.hh>
 #include <senf/Utils/Console/Parse.hh>
+
 #ifdef SENF_DEBUG
 #  include <senf/Utils/RestrictedInt.hh>
 #endif
@@ -71,6 +72,8 @@ namespace senf {
             implementation based on interval timers and gettimeofday(). The current implementation
             uses POSIX clocks and is much simpler and more precise.
       */
+//    namespace scheduler { ClockService::clock_type now(); }
+
     class ClockService
         : singleton<ClockService>
     {

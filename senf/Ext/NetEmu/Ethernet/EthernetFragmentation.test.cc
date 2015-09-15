@@ -53,7 +53,7 @@ namespace {
         if (eth->type_length() == senf::EthVLanPacketType::etherType)
             ethPayload = ethPayload.next();
         BOOST_CHECK_EQUAL( ethPayload.size(), size);
-        wiback::EthernetFragmentPacket fragment (eth.find<wiback::EthernetFragmentPacket>());
+        senf::emu::EthernetFragmentPacket fragment (eth.find<senf::emu::EthernetFragmentPacket>());
         BOOST_REQUIRE( fragment);
         BOOST_CHECK_EQUAL( fragment->fragmentNr(), fragmentNr++);
         BOOST_CHECK_EQUAL( fragment->moreFragment(), moreFragment);
@@ -79,7 +79,7 @@ namespace {
 SENF_AUTO_TEST_CASE(Eth_Fragmenter)
 {
     senf::ppi::module::debug::ActiveSource source;
-    wiback::EthernetFragmenter fragmenter (150);
+    senf::emu::EthernetFragmenter fragmenter (150);
     senf::ppi::module::debug::PassiveSink sink;
 
     senf::ppi::connect( source, fragmenter);
@@ -108,9 +108,9 @@ SENF_AUTO_TEST_CASE(Eth_Fragmenter)
 
     BOOST_REQUIRE_EQUAL( sink.size(), 2);
 
-    BOOST_CHECK_EQUAL( sink.front().find<wiback::EthernetFragmentPacket>()->size(), payload.size());
+    BOOST_CHECK_EQUAL( sink.front().find<senf::emu::EthernetFragmentPacket>()->size(), payload.size());
     BOOST_MESSAGE( "check eth fragment 1");
-    checkFragment( sink.pop_front().as<senf::EthernetPacket>(), fragmenter.mtu(), 1, true);
+    checkFragment( sink.pop_front().as<senf::EthernetPacket>(), fragmenter.fragmentationThreshold(), 1, true);
     BOOST_MESSAGE( "check eth fragment 2");
     checkFragment( sink.pop_front().as<senf::EthernetPacket>(),
             64 - senf::EthernetPacketParser::fixed_bytes, 2, false);
@@ -124,8 +124,8 @@ SENF_AUTO_TEST_CASE(Eth_Fragmenter)
     BOOST_REQUIRE_EQUAL( sink.size(), 2);
 
     BOOST_MESSAGE( "check eth vlan fragment 1");
-    BOOST_CHECK_EQUAL( sink.front().find<wiback::EthernetFragmentPacket>()->size(), payload.size());
-    checkFragment( sink.pop_front().as<senf::EthernetPacket>(), fragmenter.mtu(), 1, true);
+    BOOST_CHECK_EQUAL( sink.front().find<senf::emu::EthernetFragmentPacket>()->size(), payload.size());
+    checkFragment( sink.pop_front().as<senf::EthernetPacket>(), fragmenter.fragmentationThreshold(), 1, true);
     BOOST_MESSAGE( "check eth vlan fragment 2");
     checkFragment( sink.pop_front().as<senf::EthernetPacket>(),
             64 - senf::EthernetPacketParser::fixed_bytes - senf::EthVLanPacketParser::fixed_bytes, 2, false);
@@ -134,7 +134,7 @@ SENF_AUTO_TEST_CASE(Eth_Fragmenter)
 SENF_AUTO_TEST_CASE(Eth_Reassembler)
 {
     senf::ppi::module::debug::ActiveSource source;
-    wiback::EthernetReassembler reassembler;
+    senf::emu::EthernetReassembler reassembler;
     senf::ppi::module::debug::PassiveSink sink;
 
     senf::ppi::connect( source, reassembler);
@@ -189,9 +189,9 @@ namespace {
 SENF_AUTO_TEST_CASE(Eth_Fragmentation)
 {
     senf::ppi::module::debug::ActiveSource source;
-    wiback::EthernetFragmenter fragmenter (150);
-    EthernetSizeChecker sizeChecker (fragmenter.mtu());
-    wiback::EthernetReassembler reassembler;
+    senf::emu::EthernetFragmenter fragmenter (150);
+    EthernetSizeChecker sizeChecker (fragmenter.fragmentationThreshold());
+    senf::emu::EthernetReassembler reassembler;
     senf::ppi::module::debug::PassiveSink sink;
 
     senf::ppi::connect( source, fragmenter);
@@ -204,7 +204,7 @@ SENF_AUTO_TEST_CASE(Eth_Fragmentation)
     ethPacket->destination() << senf::MACAddress::Broadcast;
     ethPacket.annotation<TestAnnotation>().value = 42;
 
-    senf::DataPacket payload (senf::DataPacket::createAfter( ethPacket, fragmenter.mtu() + 1));
+    senf::DataPacket payload (senf::DataPacket::createAfter( ethPacket, fragmenter.fragmentationThreshold() + 1));
     std::generate( payload.data().begin(), payload.data().end(), UniqueNumber);
 
     ethPacket.finalizeAll();

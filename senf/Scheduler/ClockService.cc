@@ -37,9 +37,16 @@
 
 // this include needed to add dependency on Scheduler. This should really be in 
 // ClockService.cci which is not possible due to recursive includes ...
-#include "Scheduler.hh"
+#include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_
+
+#ifdef SENF_DEBUG
+#   define SENF_CLOCKTYPEVAL(clock) (clock).value()
+#else
+#   define SENF_CLOCKTYPEVAL(clock) (clock)
+#endif
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 prefix_ void
@@ -86,6 +93,31 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
     }
     if (j != value.end())
         throw console::SyntaxErrorException();
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type time)
+{
+    if (scheduler::now() - baseClock_ > clock_type(1000000000ll))
+        restart_m();
+    boost::posix_time::time_duration delta (time - baseAbstime_);
+    return baseClock_ + clock_type( delta.ticks() )
+        * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
+}
+
+prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_type clock)
+{
+    if (clock == clock_type(0))
+        return abstime_type();
+    if (scheduler::now() - baseClock_ > clock_type(1000000000ll))
+        restart_m();
+#ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
+    return baseAbstime_ + boost::posix_time::nanoseconds(
+            SENF_CLOCKTYPEVAL( clock-baseClock_));
+#else
+    return baseAbstime_ + boost::posix_time::microseconds(
+            SENF_CLOCKTYPEVAL( (clock-baseClock_+clock_type(500))/1000));
+#endif
+    return abstime_type();
 }
 
 prefix_ void senf::formatClockServiceInterval(ClockService::clock_type interval,

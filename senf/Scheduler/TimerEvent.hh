@@ -37,6 +37,7 @@
 #include "ClockService.hh"
 #include "FIFORunner.hh"
 #include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Scheduler/ClockService.hh>
 
 //#include "TimerEvent.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
