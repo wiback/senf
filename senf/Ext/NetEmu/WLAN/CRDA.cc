@@ -302,6 +302,7 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
         SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] setting Regulatory Country to " << alpha2Country << " failed: " << e.message()) );
         return false;
     }
+    SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] requested Regulatory Country " << alpha2Country ) );
 
     return true;
 }
