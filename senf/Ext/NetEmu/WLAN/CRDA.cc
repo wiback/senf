@@ -236,6 +236,9 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
                     dummyCountry_[0] = 'A';
                 }
             }
+            // US seem to be special countries, so we avoid using it
+            if( dummyCountry_.compare("US") == 0)
+                dummyCountry_ = "UT";
             regDomain.alpha2Country = dummyCountry_;
             SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] regDomain not found in cache. Creating new regDomain as " << regDomain) );
         }
@@ -334,7 +337,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
 
     std::string c2( a2 ? a2 : WORLD_REG_ALPHA);
 
-    auto regDomain (currentRegDomain_ && c2.compare("00") != 0 ? currentRegDomain_ : worldRegDomain_);
+    auto regDomain (currentRegDomain_ && c2.compare("00") != 0 && c2.compare("US") != 0 ? currentRegDomain_ : worldRegDomain_);
 
 //    SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country: "<< a2 << " fallback:"<< c2  << " intended:"<<currentRegDomain_.alpha2Country) );
 
