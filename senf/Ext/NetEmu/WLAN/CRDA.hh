@@ -48,6 +48,7 @@ namespace emu {
         // Common
         bool setRegCountry(std::string alpha2Country);
         void kernelRegDomain(std::ostream & os);
+        bool pushRegulatory( senf::emu::RegulatoryDomain & reg);
 
         // Slave CRDA only
         void setRegulatory();

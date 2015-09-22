@@ -27,7 +27,8 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-#define WORLD_REG_ALPHA "AA"
+#define WORLD_REG_ALPHA "00"
+#define INITIAL_REG_ALPHA "AA"
 
 prefix_ senf::emu::CRDA & senf::emu::CRDA::instance()
 {
@@ -42,7 +43,7 @@ prefix_ std::string senf::emu::CRDA::slaveName()
 }
 
 prefix_ senf::emu::CRDA::CRDA()
-    : dummyCountry_(WORLD_REG_ALPHA),
+    : dummyCountry_(INITIAL_REG_ALPHA),
       dfsMode_(true),
       nonWirelessBox_(false)
 {
@@ -137,6 +138,18 @@ prefix_ senf::emu::CRDA::CRDA()
     }
 }
 
+prefix_ bool  senf::emu::CRDA::pushRegulatory( senf::emu::RegulatoryDomain & reg)
+{
+    try {
+        WirelessNLController wnlc;
+        wnlc.set_regulatory( reg);
+    } catch (senf::ExceptionMixin & e) {
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Setting regulatory domain failed: " << e.message() << ", " << reg) );
+        return false;
+    }
+    return true;
+}
+
 prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename)
 {
     if (filename.empty())
@@ -159,16 +172,29 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             WirelessNLController wnlc;
             currentRegDomain_ = wnlc.get_regulatory();
             // initialize our country counter
-            dummyCountry_ = currentRegDomain_.alpha2Country;
+            dummyCountry_ = currentRegDomain_.alpha2Country.compare( WORLD_REG_ALPHA) == 0 ? INITIAL_REG_ALPHA : currentRegDomain_.alpha2Country;
             SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] currentRegDomain initialized from kernel to " << currentRegDomain_ << ". 'DummyCountry' initialized to " << dummyCountry_ << ".") );
+            // store the new mapping (if the mapping already exists, this does nothing)
+            cachedRegDomains_.insert(currentRegDomain_);
+
+//            auto domainAA( worldRegDomain_);
+//            domainAA.alpha2Country = WORLD_REG_ALPHA;
+//            cachedRegDomains_.insert( domainAA);
+//            regDomain( domainAA);
+//
+//            ::usleep(500000);  // 0.5s
+//
+//            auto domainUS( worldRegDomain_);
+//            domainUS.alpha2Country = "US";
+//            cachedRegDomains_.insert( domainUS);
+//            regDomain( domainUS);
+
         } catch (...) {
             nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
             currentRegDomain_.alpha2Country = WORLD_REG_ALPHA;
             SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
         }
-        // store the new mapping (if the mapping already exists, this does nothing)
-        cachedRegDomains_.insert(currentRegDomain_);
     } else {
         try {
             WirelessNLController wnlc;
@@ -281,8 +307,6 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
     if (alpha2Country.empty())
         alpha2Country = WORLD_REG_ALPHA;
 
-    currentRegDomain_.alpha2Country = alpha2Country;
-
     if (nonWirelessBox_)
         return true;
 
@@ -298,6 +322,8 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
         return false;
     }
     
+    currentRegDomain_.alpha2Country = alpha2Country;
+
     try {
         WirelessNLController wnlc;
         wnlc.set_regulatory_request(alpha2Country);
@@ -339,22 +365,16 @@ prefix_ void senf::emu::CRDA::setRegulatory()
 
     auto regDomain (currentRegDomain_ && c2.compare("00") != 0 && c2.compare("US") != 0 ? currentRegDomain_ : worldRegDomain_);
 
-//    SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country: "<< a2 << " fallback:"<< c2  << " intended:"<<currentRegDomain_.alpha2Country) );
-
     if( regDomain.alpha2Country.empty())
             regDomain.alpha2Country = c2;
 
-    if( c2.length() != 2 or c2.compare( regDomain.alpha2Country) != 0) {
-        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country is not the same: "<< c2 << " expected "<<  regDomain.alpha2Country << ".") );
-    }
+//    if( c2.length() != 2 or c2.compare( regDomain.alpha2Country) != 0) {
+//        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country is not the same: "<< c2 << " expected "<<  regDomain.alpha2Country << ".") );
+//    }
 
-    try {
-        WirelessNLController wnlc;
-        wnlc.set_regulatory(regDomain);
-    } catch (senf::ExceptionMixin & e) {
-        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Setting regulatory domain failed: " << e.message() << ", " << regDomain) );
+    if( not pushRegulatory( regDomain))
         return;
-    }
+
     SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Regulatory rules pushed to kernel as " << regDomain) );
 }
 
