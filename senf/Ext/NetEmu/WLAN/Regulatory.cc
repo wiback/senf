@@ -159,12 +159,28 @@ prefix_ bool senf::emu::RegulatoryRule::operator==(RegulatoryRule const & other)
         flags_                  == other.flags_;
 }
 
+//prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
+//    const
+//{
+//    if (frequencyRangeBegin_ < other.frequencyRangeBegin_)
+//        return true;
+//
+//    return false;
+//}
+
 prefix_ bool senf::emu::RegulatoryRule::operator<(RegulatoryRule const & other)
     const
 {
-    if (frequencyRangeBegin_ < other.frequencyRangeBegin_)
-        return true;
+#define GTLT( a) if (a < other.a) return true; if (other.a < a) return false;
 
+    GTLT( frequencyRangeBegin_);
+    GTLT( frequencyRangeEnd_);
+    GTLT( maxBandwidth_);
+    GTLT( maxAntennaGain_);
+    GTLT( maxEIRP_);
+    GTLT( cacTime_);
+    GTLT( flags_);
+    // its equal
     return false;
 }
 

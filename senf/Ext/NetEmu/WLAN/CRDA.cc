@@ -247,7 +247,7 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
         regDomain = worldRegDomain_;
         regDomain.alpha2Country = WORLD_REG_ALPHA;
     }  else {
-        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] regDomain cache lookup for " << regDomain) );
+        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] regDomain cache (" << cachedRegDomains_.size() << ") lookup for " << regDomain) );
         // check if we already have a mapping for this regDomain
         auto const it (cachedRegDomains_.find(regDomain));
         if (it != cachedRegDomains_.end()) {
