@@ -228,21 +228,27 @@ prefix_ bool senf::emu::RegulatoryDomain::operator<(RegulatoryDomain const & oth
     // It's not quite clear what '<' means for this object, but std::set requires this operator
     // 
         
+    if (rules.size() < other.rules.size())
+        return true;
+    if (other.rules.size() < rules.size())
+        return false;
+
+    if (int(dfsRegion) < int(other.dfsRegion))
+        return true;
+    if (int(other.dfsRegion) < int(dfsRegion))
+        return false;
+
     auto left (rules.begin());
     auto right (other.rules.begin());
     while ((left != rules.end()) && (right != other.rules.end())) {
         if (*left < *right)
             return true;
+        if (*right < *left)
+            return false;
         left++;
         right++;
     }
     
-    if (int(dfsRegion) < int(other.dfsRegion))
-        return true;
-
-    if (rules.size() < other.rules.size())
-        return true;
-
     return false;
 }
 

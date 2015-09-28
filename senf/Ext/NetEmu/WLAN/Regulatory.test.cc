@@ -1,4 +1,4 @@
-// $Id:$
+// $Id$
 //
 // Copyright (C) 2015
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
@@ -50,7 +50,28 @@ SENF_AUTO_TEST_CASE(regulatory)
 
     // DFS-disabled world regulatory domain
     // DFS-disabled world regulatory domain
-    RegulatoryDomain myreg1;
+
+    RegulatoryDomain reg0;
+    reg0.alpha2Country = "";
+    reg0.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
+    reg0.rules.insert(RegulatoryRule()
+                                 .frequencyRange(700000, 800000)
+                                 .maxBandwidth(40000)
+                                 .maxEIRP(3000) );
+    reg0.rules.insert(RegulatoryRule()
+                                 .frequencyRange(2402000, 2494000)
+                                 .maxBandwidth(40000)
+                                 .maxEIRP(3000) );
+    reg0.rules.insert(RegulatoryRule()
+                                 .frequencyRange(3000000, 4000000)
+                                 .maxBandwidth(40000)
+                                 .maxEIRP(3000) );
+    reg0.rules.insert(RegulatoryRule()
+                                     .frequencyRange(4900000, 6100000)
+                                     .maxBandwidth(40000)
+                                     .maxEIRP(3000) );
+    cache.insert( reg0);
+
     // AB DFS_ETSI (
     // (758000 778000 20000 3000 0 ())
     // (2400000 2483500 40000 2000 0 ())
@@ -58,8 +79,14 @@ SENF_AUTO_TEST_CASE(regulatory)
     // (5470000 5725000 80000 3600 0 ())
     // (57240000 65880000 2160000 4000 0 (NoOutdoor)))
 
+    RegulatoryDomain myreg1;
     myreg1.alpha2Country = "AB";
     myreg1.dfsRegion = RegulatoryDomain::DFSRegion::ETSI;
+    myreg1.rules.insert(RegulatoryRule()
+                                 .frequencyRange(5470000, 5725000)
+                                 .maxBandwidth(40000)
+                                 .maxEIRP(3600)
+                                 .dfsRequired());
     myreg1.rules.insert(RegulatoryRule()
                                  .frequencyRange(758000, 778000)
                                  .maxBandwidth(20000)
@@ -73,34 +100,11 @@ SENF_AUTO_TEST_CASE(regulatory)
                                  .maxBandwidth(80000)
                                  .maxEIRP(3000) );
     myreg1.rules.insert(RegulatoryRule()
-                                 .frequencyRange(5470000, 5725000)
-                                 .maxBandwidth(40000)
-                                 .maxEIRP(3600) );
-    myreg1.rules.insert(RegulatoryRule()
                                  .frequencyRange(57240000, 65880000)
                                  .maxBandwidth(2160000)
                                  .maxEIRP(4000)
                                  .noOutdoor());
 
-
-//    myreg1.alpha2Country = "";
-//    myreg1.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
-//    myreg1.rules.insert(RegulatoryRule()
-//                                 .frequencyRange(700000, 800000)
-//                                 .maxBandwidth(40000)
-//                                 .maxEIRP(3000) );
-//    myreg1.rules.insert(RegulatoryRule()
-//                                 .frequencyRange(2402000, 2494000)
-//                                 .maxBandwidth(40000)
-//                                 .maxEIRP(3000) );
-//    myreg1.rules.insert(RegulatoryRule()
-//                                 .frequencyRange(3000000, 4000000)
-//                                 .maxBandwidth(40000)
-//                                 .maxEIRP(3000) );
-//    myreg1.rules.insert(RegulatoryRule()
-//                                 .frequencyRange(4900000, 6100000)
-//                                 .maxBandwidth(40000)
-//                                 .maxEIRP(3000) );
 
 
 
@@ -109,17 +113,27 @@ SENF_AUTO_TEST_CASE(regulatory)
     myreg2.alpha2Country = "AA";
 
     std::cout << myreg1 << std::endl;
-    std::cout << myreg2 << std::endl;
+    std::cout << myreg2 << std::endl<<std::endl;;
 
     BOOST_CHECK( not ( myreg1 < myreg2));
     BOOST_CHECK( not ( myreg2 < myreg1));
 
     BOOST_CHECK( myreg1 == myreg2);
+    BOOST_CHECK( myreg2 == myreg1);
 
     BOOST_CHECK( cache.find(myreg1) == cache.end());
+
     auto res (cache.insert(myreg1));
     BOOST_CHECK( res.second);
-    auto const it = cache.find(myreg2);
+
+    for( auto const & r: cache) {
+        std::cout << r << std::endl;
+    }
+
+    auto it = cache.find(reg0);
+    BOOST_CHECK( it != cache.end());
+
+    it = cache.find(myreg2);
     BOOST_CHECK( it != cache.end());
     RegulatoryDomain cachedreg( *it);
     BOOST_CHECK( cachedreg == myreg1);
