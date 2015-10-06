@@ -91,6 +91,12 @@ namespace senf {
         T     max() const;              ///< Returns current maximal value.
                                         /**< This method returns the maximal value of the
                                              current accumulation.*/
+        T     sum() const;              ///< Returns current sum value.
+                                        /**< This method returns the sum value of the
+                                             current accumulation. */
+        T     sum2() const;             ///< Returns current squared sum value.
+                                        /**< This method returns the squared sum value of the
+                                             current accumulation. */
         float avg() const;              ///< Returns arithmetic average value.
                                         /**< This method returns the arithmetic average value of the
                                              current accumulation.*/
