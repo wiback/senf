@@ -106,8 +106,8 @@ namespace ppi {
 
         /** \brief Unhandled error condition */
         struct ErrorException : public senf::SystemException
-        { explicit ErrorException(int code=0)
-            : senf::SystemException("error in IOEvent callback", code) {} };
+        { explicit ErrorException(int code)
+            : senf::SystemException("error in senf::ppi::IOEvent callback", code) {} };
 
         /** \brief Unhandled hangup condition */
         struct HangupException : public senf::Exception
