@@ -66,9 +66,7 @@ prefix_ void senf::ppi::IOEvent::cb(int event)
             socklen_t len (sizeof(err));
             if (::getsockopt(fd_, SOL_SOCKET, SO_ERROR, &err, &len) < 0)
                 err = 0;
-            // only throw if the kernel reports an error condition
-            if (err != 0)
-                throw ErrorException(err);
+            throw ErrorException(err);
         }
         if (event & Hup)
             throw HangupException();
