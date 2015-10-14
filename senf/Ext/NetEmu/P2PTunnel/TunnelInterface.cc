@@ -72,7 +72,7 @@ template <class Controller>
 prefix_ senf::emu::detail::TunnelInterfaceNet<Controller>::TunnelInterfaceNet(typename Controller::Interface & interface)
     : socket(senf::noinit), tunnelCtrl(interface),
       source(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)), sink(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)),
-      netOutput(reassembler_.output), netInput(sink.input), mtu_(1500u)
+      netOutput(reassembler_.output), netInput(sink.input), mtu_(1500u), maxBurst_(48)
 {
     ppi::connect(source, reassembler_);
 }
@@ -82,7 +82,7 @@ prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::assignSocket(UDP
 {
     socket = socket_;
     source.handle(socket);
-    source.maxBurst(48);
+    source.maxBurst(maxBurst_);
     sink.handle(socket);
 }
 
@@ -141,7 +141,8 @@ prefix_ unsigned senf::emu::detail::TunnelInterfaceNet<Controller>::maxBurst()
 template <class Controller>
 prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::maxBurst(unsigned v)
 {
-    source.maxBurst(v);
+    maxBurst_ = v;
+    source.maxBurst(maxBurst_);
 }
 
 

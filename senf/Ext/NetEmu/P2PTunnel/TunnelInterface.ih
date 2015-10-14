@@ -79,6 +79,7 @@ namespace detail {
         ppi::connector::PassiveInputJack<EthernetPacket> netInput;
 
         unsigned mtu_;
+        unsigned maxBurst_;
 
         TunnelInterfaceNet(typename Controller::Interface & interface);
 
