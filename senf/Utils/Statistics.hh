@@ -530,6 +530,8 @@ namespace senf {
 
         StatisticsBase::OutputProxy<Collector> output(unsigned n = 1u);
 
+        bool updated() const;
+
     private:
         Collector(StatisticsBase * owner, unsigned rank);
         void enter(unsigned n, unsigned cnt, float min, float avg, float max, float dev);
@@ -544,6 +546,7 @@ namespace senf {
         float accSumSq_;
         float accMax_;
         StatisticsBase * owner_;
+        bool updated_;  // true indicates that StatisticsBase::enter() was called
 
         friend class StatisticsBase;
     };

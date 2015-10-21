@@ -179,7 +179,7 @@ prefix_ senf::StatisticsData senf::StatisticsBase::data()
 
 prefix_ senf::Collector::Collector(StatisticsBase * owner, unsigned rank)
     : rank_ (rank), i_ (0u), accCnt_(0), accMin_ (FLT_MAX), accSum_ (0.0f), accSumSq_ (0.0f), accMax_ (-FLT_MAX),
-      owner_ (owner)
+      owner_ (owner), updated_(false)
 {}
 
 prefix_ unsigned senf::Collector::rank()
@@ -187,6 +187,13 @@ prefix_ unsigned senf::Collector::rank()
 {
     return rank_;
 }
+
+prefix_ bool senf::Collector::updated()
+    const
+{
+    return updated_;
+}
+
 
 prefix_ senf::StatisticsBase::OutputProxy<senf::Collector>
 senf::Collector::output(unsigned n)

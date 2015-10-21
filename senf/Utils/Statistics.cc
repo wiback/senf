@@ -311,6 +311,8 @@ prefix_ std::string senf::Statistics::v_path()
 
 prefix_ void senf::Collector::enter(unsigned n, unsigned cnt, float min, float avg, float max, float dev)
 {
+    updated_ = false;
+    
     if (min < accMin_) accMin_ = min;
     if (max > accMax_) accMax_ = max;
 
@@ -334,6 +336,7 @@ prefix_ void senf::Collector::enter(unsigned n, unsigned cnt, float min, float a
             StatisticsBase::enter(d.quot, cnt, min, avg, max, dev);
             n = d.rem;
         }
+        updated_ = true;
     }
 
     if (n>0) {
