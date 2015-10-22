@@ -38,10 +38,10 @@
 std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & _data)
 {
     if (_data.cnt > 0) {
-        os << "(" << format::eng(_data.min).setprecision(5);
+        os << "("  << "#" << _data.cnt;
+        os << ";" << format::eng(_data.min).setprecision(5);
         os << ";" << format::eng(_data.avg, _data.stddev).setprecision(5);
         os << ";" << format::eng(_data.max).setprecision(5);
-        os << ";"  << "#" << _data.cnt;
         os << ")";
     } else { 
         os << "(no-data)";
