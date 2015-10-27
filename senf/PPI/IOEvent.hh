@@ -34,6 +34,7 @@
 // Custom includes
 #include <senf/Scheduler/FdEvent.hh>
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/String.hh>
 #include "Events.hh"
 
 //#include "IOEvent.mpp"
@@ -106,8 +107,8 @@ namespace ppi {
 
         /** \brief Unhandled error condition */
         struct ErrorException : public senf::SystemException
-        { explicit ErrorException(int code)
-            : senf::SystemException("error in senf::ppi::IOEvent callback", code) {} };
+        { explicit ErrorException(int fd, int code, std::string msg)
+            : senf::SystemException("error in senf::ppi::IOEvent callback on file descriptor " + senf::str(fd) + " : " + msg + " : ", code) {} };
 
         /** \brief Unhandled hangup condition */
         struct HangupException : public senf::Exception

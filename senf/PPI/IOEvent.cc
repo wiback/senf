@@ -35,6 +35,9 @@
 #include <senf/Utils/senfassert.hh>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <linux/if_packet.h>
+#include <net/ethernet.h> /* the L2 protocols */
+#include <net/if.h>
 
 //#include "IOEvent.mpp"
 #define prefix_
@@ -66,7 +69,30 @@ prefix_ void senf::ppi::IOEvent::cb(int event)
             socklen_t len (sizeof(err));
             if (::getsockopt(fd_, SOL_SOCKET, SO_ERROR, &err, &len) < 0)
                 err = 0;
-            throw ErrorException(err);
+            char buf[1024];
+            sockaddr *addr = (sockaddr*) buf;
+            len = sizeof(buf);
+            std::string msg;
+            if (::getsockname(fd_, addr, &len) == 0) {
+                if (addr->sa_family == AF_PACKET) {
+                    sockaddr_ll *sa = (sockaddr_ll*) addr;
+                    if (sa->sll_ifindex > 0) {
+                        char name[256];
+                        ::bzero(name, 256);
+                        if (::if_indextoname(sa->sll_ifindex, name))
+                            msg = name;
+                        else
+                            msg = "if_index=" + senf::str(sa->sll_ifindex);
+                    } else {
+                        msg = "if_index is 0";
+                    }  
+                } else {
+                    msg = "sa_family=" + senf::str(addr->sa_family);
+                }
+            } else {
+                msg = "getsockname() failed";
+            }
+            throw ErrorException(fd_, err, msg);
         }
         if (event & Hup)
             throw HangupException();
