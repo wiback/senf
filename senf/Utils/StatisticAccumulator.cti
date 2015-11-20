@@ -93,6 +93,15 @@ prefix_ float senf::StatisticAccumulator<T>::last_avg()
     return last_avg_;
 }
 
+template <class T>
+prefix_ void senf::StatisticAccumulator<T>::accumulate(T value)
+{
+    sum_ += value;
+    sum_squared_ += value * value;
+    cnt_++;
+    min_ = std::min(min_, value);
+    max_ = std::max(max_, value);
+}
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
