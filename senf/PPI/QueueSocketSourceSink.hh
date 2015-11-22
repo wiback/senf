@@ -134,6 +134,8 @@ namespace module {
         Handle handle() const;
         void handle(Handle const & handle);
 
+        unsigned dropped();
+        
         QueueingAlgorithm & qAlgorithm() const;
         void qAlgorithm(QueueingAlgorithm::ptr qAlgorithm);
 
@@ -153,7 +155,8 @@ namespace module {
         scheduler::EventHook eventHook_;
         IOEvent ioEvent_;
         boost::scoped_ptr<QueueingAlgorithm> qAlgo_;
-
+        unsigned dropped_;
+        
 #ifdef SENF_DEBUG
         unsigned burst_;
         unsigned burstMax_;

@@ -168,6 +168,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
               senf::scheduler::EventHook::POST, false)
     , ioEvent_( handle_, IOEvent::Write)
     , qAlgo_( new NoneQueueingAlgorithm())
+    , dropped_(0)
 #ifdef SENF_DEBUG
     , burst_ (0)
     , burstMax_ (0)
@@ -187,6 +188,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
               senf::scheduler::EventHook::POST, false)
     , ioEvent_( handle_, IOEvent::Write)
     , qAlgo_( new NoneQueueingAlgorithm())
+    , dropped_(0)  
 #ifdef SENF_DEBUG
     , burst_ (0)
     , burstMax_ (0)
@@ -243,13 +245,14 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
 {
     Packet const & packet (input());
     if (SENF_UNLIKELY(!qAlgo_->empty())) {
-        qAlgo_->enqueue(packet);
+        dropped_ += !qAlgo_->enqueue(packet);
         ioEvent_.enabled(!qAlgo_->empty());
         return;
     }
+
     boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
     if (SENF_UNLIKELY(!buf)) {
-        qAlgo_->enqueue(packet);
+        dropped_ += !qAlgo_->enqueue(packet);
         ioEvent_.enabled(!qAlgo_->empty());
         return;
     }
@@ -295,6 +298,15 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::qAlgorithm(Qu
 {
     qAlgo_.reset( qAlgorithm.release());
 }
+
+template <class Connector>
+prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink<Connector>::dropped()
+{
+    unsigned tmp (dropped_);
+    dropped_ = 0;
+    return tmp;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

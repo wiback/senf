@@ -381,7 +381,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
            << "sent "        << ts.sent << ", "
            << "wrongFormat " << ts.wrongFormat << ", "
            << "overrun "     << ts.overrun << ", "
-           << "dropped "     << ts.dropped << std::endl;
+           << "dropped "     << ts.dropped << ". ";
+        os << "DSQ stats: "
+           << "dropped "     << sink.dropped() << std::endl;
     } else {
         os << "Socket closed. Not stats available." << std::endl;
     }
