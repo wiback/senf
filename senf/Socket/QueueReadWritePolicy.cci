@@ -336,10 +336,11 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
                     }
                 }
                 continue;
+            case ENOBUFS:
+                break;
             case ENOTCONN:
             case ENETDOWN:
             case ENXIO:
-            case ENOBUFS:
                 // Some frames might have been sent, hence we first have to reset and then advance tx.tail accordingly
                 qi.tx.tail = last_tail;
                 while (qi.tx.tail != qi.tx.head) {
