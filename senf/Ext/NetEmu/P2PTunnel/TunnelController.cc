@@ -139,7 +139,9 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
             fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
             bool force (false);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
             for (auto & frag : frags) {
-                force = qAlgo_->enqueue(frag, force);
+                if (!force and !qAlgo_->enqueue(frag, force))
+                    break;
+                force = true;
             }
         }
         return true;
@@ -162,7 +164,7 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
             do_sendPkt(handle, frag, txInfo);
             force = true;  // one a seqment has been sent, force enqueue()ing for remaining frags (if required)
         } else {
-            force = qAlgo_->enqueue(frag, force);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
+            qAlgo_->enqueue(frag, force);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
         }
     }
     
