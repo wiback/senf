@@ -507,7 +507,9 @@ prefix_ senf::emu::detail::TunnelClientController::TunnelClientController(Tunnel
       txSeqNo_(0),
       rxSeqNo_(0xffffffff),
       setupRequests_(0),
-      reSyncs_(0)
+      reSyncs_(0),
+      reordered_(0),
+      duplicate_(0)
 {
     v_timeoutChanged();
     fragmentationThreshold(0);
@@ -527,6 +529,9 @@ prefix_ signed senf::emu::detail::TunnelClientController::v_processSequenceNumbe
             reSyncs_++;
         }
     }
+    reordered_ += diff < 0;
+    duplicate_ += diff == 0;
+
     return diff;
 }
 
@@ -608,6 +613,8 @@ prefix_ void senf::emu::detail::TunnelClientController::processTimeout()
         txSeqNo_ = 0;
         rxSeqNo_ = 0xFFFFFFFF;
         reSyncs_ = 0;
+        reordered_ = 0;
+        duplicate_ = 0;
         fragmentationThreshold(0);
     }
     if (serverINet_ && interface_.enabled())
@@ -694,7 +701,8 @@ prefix_ void senf::emu::detail::TunnelClientController::v_dumpInfo(std::ostream 
        << " sec." << std::endl
        << "fragThresh " << fragmentationThreshold() << std::endl
        << "setupREQs sent " << setupRequests_ << std::endl
-       << "txSeqNo: 0x" << std::hex << txSeqNo_ << ", rxSeqno 0x" << rxSeqNo_ << std::dec << ", reSyncs " << reSyncs_ << std::endl;
+       << "txSeqNo: 0x" << std::hex << txSeqNo_ << ", rxSeqno 0x" << rxSeqNo_ << std::dec << ", reSyncs " << reSyncs_ << std::endl
+       << "reordered: " << reordered_ << ", duplicate: " << duplicate_ << std::endl;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -276,6 +276,8 @@ namespace detail {
         unsigned fragmentationThreshold_;
         unsigned setupRequests_;
         unsigned reSyncs_;
+        unsigned reordered_;
+        unsigned duplicate_;
     };
 
 }}}
