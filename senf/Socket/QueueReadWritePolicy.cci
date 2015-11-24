@@ -337,7 +337,6 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
                 }
                 continue;
             case ENOBUFS:
-                break;
             case ENOTCONN:
             case ENETDOWN:
             case ENXIO:
