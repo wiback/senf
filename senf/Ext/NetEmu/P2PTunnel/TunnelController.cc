@@ -128,6 +128,11 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     INet6SocketAddress addr;
 
     handle.readfrom(thdr.data(), addr, SENF_EMU_MAXMTU);
+    if( thdr.data().size() == 0) {
+        // ignore EGAIN, etc.
+        return senf::EthernetPacket();
+    }
+    
     stats_.rxPackets++;
     
     if (SENF_UNLIKELY((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes + senf::EthernetPacketParser::fixed_bytes)) or 
