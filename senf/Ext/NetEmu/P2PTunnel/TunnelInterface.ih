@@ -78,7 +78,6 @@ namespace detail {
 
         unsigned mtu_;
         unsigned maxBurst_;
-        EthernetReassembler reassembler_;
 
         TunnelInterfaceNet(typename Controller::Interface & interface);
 

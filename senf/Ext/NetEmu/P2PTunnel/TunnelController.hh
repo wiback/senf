@@ -39,7 +39,8 @@
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <senf/PPI/QueueingAlgorithm.hh>
-#include <senf/Ext/NetEmu/Ethernet/EthernetFragmentation.hh>
+#include <senf/Ext/NetEmu/Ethernet/EthernetFragmenter.hh>
+#include <senf/Ext/NetEmu/Ethernet/EthernetReassembler.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf {
@@ -131,6 +132,7 @@ namespace detail {
         TunnelInterfaceBase & interface_;
         boost::scoped_ptr<ppi::QueueingAlgorithm> qAlgo_;
         EthernetFragmenter fragmenter_;
+        EthernetReassembler reassembler_;
         TunnelIOStatistics stats_;
     };
 

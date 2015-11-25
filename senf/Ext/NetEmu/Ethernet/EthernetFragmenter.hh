@@ -25,8 +25,8 @@
 // Contributor(s):
 //       Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
 
-#ifndef HH_WiBACK_Core_Interfaces_EthernetFragmentation_
-#define HH_WiBACK_Core_Interfaces_EthernetFragmentation_ 1
+#ifndef HH_WiBACK_Core_Interfaces_EthernetFragmenter_
+#define HH_WiBACK_Core_Interfaces_EthernetFragmenter_ 1
 
 // Custom includes
 #include <senf/PPI/Module.hh>
@@ -37,57 +37,61 @@
 namespace senf {
 namespace emu {
 
-    class EthernetFragmenter
-        : public senf::ppi::module::Module
+    class EthernetFragmenterBase
     {
-        SENF_PPI_MODULE( EthernetFragmenter );
+    public:
+        EthernetFragmenterBase();
+        virtual ~EthernetFragmenterBase() {};
+
+        unsigned fragmentationCount();
+
+        static bool fragmentationRequired(senf::EthernetPacket const & pkt, unsigned threshold);
+
+    protected:
+        void do_fragmentFrame(senf::EthernetPacket const & eth, unsigned threshold);
+
+    private:
+        virtual void v_outputFragment(senf::EthernetPacket const & eth) = 0;
+
+        unsigned fragmentationCount_;
+    };
+
+    class EthernetFragmenter
+        : public EthernetFragmenterBase
+    {
+    public:
+        EthernetFragmenter();
+
+        void fragmentFrame(senf::EthernetPacket const & pkt, unsigned treshold);
+        std::vector<senf::EthernetPacket> & fragments();
+        
+    private:
+        std::vector<senf::EthernetPacket> fragments_;
+        void v_outputFragment(senf::EthernetPacket const & eth)  override;
+    };
+
+    class EthernetFragmenterModule
+        : public EthernetFragmenterBase, 
+          public senf::ppi::module::Module
+    {
+        SENF_PPI_MODULE( EthernetFragmenterModule );
 
     public:
         senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
         senf::ppi::connector::ActiveOutput<senf::EthernetPacket> output;
 
-        EthernetFragmenter(unsigned fragmentationThreshold = 1500u);
+        EthernetFragmenterModule(unsigned fragmentationThreshold = 1500u);
 
         void fragmentationThreshold(unsigned _fragmentationThreshold);
         unsigned fragmentationThreshold() const;
 
-        unsigned fragmentationCount();
-
-        static bool fragmentationRequired(senf::EthernetPacket const & pkt, unsigned fragmentationThreshold);
-        void fragmentFrame(senf::EthernetPacket const & pkt, unsigned fragmentationThreshold, std::vector<senf::EthernetPacket> & frags);
-        void fragmentFrame(senf::EthernetPacket const & pkt);
-
     private:
+        void v_outputFragment(senf::EthernetPacket const & eth)  override;
+
         void onRequest();
 
         unsigned fragmentationThreshold_;
-        unsigned fragmentationCount_;
-    };
-
-
-    class EthernetReassembler
-        : public senf::ppi::module::Module
-    {
-        SENF_PPI_MODULE( EthernetReassembler );
-
-    public:
-        senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
-        senf::ppi::connector::ActiveOutput<senf::EthernetPacket> output;
-
-        EthernetReassembler();
-
-        unsigned fragmentationCount();
-
-    private:
-        static bool isFragmentedPacket(senf::EthernetPacket const & eth);
-        void onRequest();
-
-        std::uint8_t nextFragmentNr_;
-        unsigned fragmentationCount_;
-        senf::EthernetPacket fragmentedPacket_;
-        senf::PacketData::iterator payloadIter_;
-    };
-
+     };
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

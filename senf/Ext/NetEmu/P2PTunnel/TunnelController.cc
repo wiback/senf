@@ -94,7 +94,7 @@ prefix_ void senf::emu::detail::TunnelIOStatistics::dump(std::ostream & os)
        << ",txOverrun "   << txOverrun   << " (" << float(txOverrun)   / float(txPackets) * 100.0f << "%)"
        << ",txDSQDropped "<< txDSQDropped<< " (" << float(txDSQDropped)/ float(txPackets) * 100.0f << "%)";
     
-    os << ")" << std::endl;
+    os << ")";
 }
 
 prefix_ std::string senf::emu::detail::TunnelIOStatistics::dump()
@@ -130,7 +130,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     handle.readfrom(thdr.data(), addr, SENF_EMU_MAXMTU);
     stats_.rxPackets++;
     
-    if (SENF_UNLIKELY((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes +  senf::EthernetPacketParser::fixed_bytes)) or 
+    if (SENF_UNLIKELY((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes + senf::EthernetPacketParser::fixed_bytes)) or 
                       (thdr->reserved() != TunnelHeaderPacketType::reservedMagic))) {
         stats_.rxIgnored++;
         return EthernetPacket();
@@ -173,7 +173,15 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
         q.setLoss(-diff); 
     }
 
-    return eth;
+    if (reassembler_.isFragmentedPacket(eth)) {
+        if (reassembler_.processFrame(eth))
+            return reassembler_.reassembledPacket();
+    } else {
+        return eth;
+    }
+
+    // no output packet due to reassembling
+    return  EthernetPacket();
 }
 
 
@@ -208,14 +216,13 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
     
     if (!qAlgo_->empty()) {
         if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
-             stats_.txDSQDropped += qAlgo_->enqueue(pkt);
+             stats_.txDSQDropped += !qAlgo_->enqueue(pkt);
         } else {
-            std::vector<senf::EthernetPacket> frags;
-            fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
+            fragmenter_.fragmentFrame(pkt,txInfo.second);
             bool force (false);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
-            for (auto & frag : frags) {
+            for (auto & frag : fragmenter_.fragments()) {
                 if (!force and !qAlgo_->enqueue(frag, force)) {
-                    stats_.txDSQDropped += frags.size();
+                    stats_.txDSQDropped += fragmenter_.fragments().size();
                     break;
                 }
                 force = true;
@@ -234,10 +241,9 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
         return true;
     }
 
-    std::vector<senf::EthernetPacket> frags;
-    fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
+    fragmenter_.fragmentFrame(pkt,txInfo.second);
     bool force (false);
-    for (auto & frag : frags) {
+    for (auto & frag : fragmenter_.fragments()) {
         if (handle.writeable()) {
             do_sendPkt(handle, frag, txInfo);
             force = true;  // one a seqment has been sent, force enqueue()ing for remaining frags (if required)
@@ -323,7 +329,7 @@ prefix_ void senf::emu::detail::TunnelControllerBase::dumpInfo(std::ostream & os
        << "Enabled: " << (interface_.enabled() ? "yes" : "no") << std::endl
        << "Timeout: " << ClockService::in_seconds(timeout_) << " sec." << std::endl;
     os << "IOStats: " << stats_.stats().dump() << std::endl;
-    os << "FragmentationStats: out " << fragmenter_.fragmentationCount() << ", in " << "(to be implemented)" << std::endl;
+    os << "FragmentationStats: out " << fragmenter_.fragmentationCount() << ", in " << reassembler_.packetsReassembled() << std::endl;
 
     v_dumpInfo(os);
 }
