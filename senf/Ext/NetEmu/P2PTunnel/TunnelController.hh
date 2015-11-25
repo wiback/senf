@@ -60,6 +60,29 @@ namespace emu {
 
 namespace detail {
 
+    struct TunnelIOStatistics
+    {
+        senf::ClockService::clock_type tstamp;
+        
+        unsigned rxPackets;
+        unsigned rxData;
+        unsigned rxControl;
+        unsigned rxIgnored;
+
+        unsigned txPackets;
+        unsigned txSent;
+        unsigned txError;
+        unsigned txOverrun;
+        unsigned txDSQDropped;
+
+        TunnelIOStatistics();
+        void reset();            
+        senf::ClockService::clock_type duration() const;
+        TunnelIOStatistics stats();
+        void dump(std::ostream & os) const;
+        std::string dump() const;
+    };
+    
     class TunnelControllerBase
     {
     public:
@@ -77,7 +100,7 @@ namespace detail {
         ppi::QueueingAlgorithm & qAlgorithm() const;
         void qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgorithm);
 
-        void dumpInfo(std::ostream & os) const;
+        void dumpInfo(std::ostream & os);
 
         unsigned fragmentationCount();
 
@@ -108,6 +131,7 @@ namespace detail {
         TunnelInterfaceBase & interface_;
         boost::scoped_ptr<ppi::QueueingAlgorithm> qAlgo_;
         EthernetFragmenter fragmenter_;
+        TunnelIOStatistics stats_;
     };
 
 

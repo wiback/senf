@@ -181,7 +181,7 @@ prefix_ unsigned senf::emu::EthernetFragmenter::fragmentationCount()
 // senf::emu::EthernetReassembler
 
 prefix_ senf::emu::EthernetReassembler::EthernetReassembler()
-    : nextFragmentNr_(1)
+    : nextFragmentNr_(1), fragmentationCount_(0)
 {
     route( input, output).autoThrottling(false);
     input.onRequest( &EthernetReassembler::onRequest);
@@ -231,6 +231,7 @@ prefix_ void senf::emu::EthernetReassembler::onRequest()
             return;
     }
     if (fragmentNr == 1) {
+        fragmentationCount_++;
         bool vlanPresent (eth->type_length() == senf::EthVLanPacketType::etherType);
         fragmentedPacket_ = eth.clone();
         senf::Packet p (fragmentedPacket_);
@@ -253,6 +254,13 @@ prefix_ void senf::emu::EthernetReassembler::onRequest()
         fragmentedPacket_.reparse();
         output( fragmentedPacket_);
     }
+}
+
+prefix_ unsigned senf::emu::EthernetReassembler::fragmentationCount()
+{
+    unsigned tmp (fragmentationCount_);
+    fragmentationCount_ = 0;
+    return tmp;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

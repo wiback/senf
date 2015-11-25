@@ -76,11 +76,14 @@ namespace emu {
 
         EthernetReassembler();
 
+        unsigned fragmentationCount();
+
     private:
         static bool isFragmentedPacket(senf::EthernetPacket const & eth);
         void onRequest();
 
         std::uint8_t nextFragmentNr_;
+        unsigned fragmentationCount_;
         senf::EthernetPacket fragmentedPacket_;
         senf::PacketData::iterator payloadIter_;
     };

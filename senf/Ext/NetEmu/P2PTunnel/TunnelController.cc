@@ -41,9 +41,74 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::emu::TunnelIOStatistics
+
+prefix_ senf::emu::detail::TunnelIOStatistics::TunnelIOStatistics()
+{
+    reset();
+}
+
+prefix_ void senf::emu::detail::TunnelIOStatistics::reset()
+{
+    memset( this, 0, sizeof(*this));
+    tstamp = senf::ClockService::now();
+}
+
+senf::ClockService::clock_type senf::emu::detail::TunnelIOStatistics::duration()
+    const
+{
+    return senf::ClockService::now() - tstamp;
+}
+
+prefix_ senf::emu::detail::TunnelIOStatistics senf::emu::detail::TunnelIOStatistics::stats()
+{
+    TunnelIOStatistics tmp (*this);
+    reset();
+    return tmp;
+}
+
+prefix_ void senf::emu::detail::TunnelIOStatistics::dump(std::ostream & os)
+    const
+{
+    os << "(duration "    << senf::ClockService::in_milliseconds(duration()) << " ms"
+       << ",rxRate "      << (rxPackets*1000) / (senf::ClockService::in_milliseconds(duration())+1) << " pps"  // +1 to avoid DIV_BY_ZERO
+       << ",txRate "      << (txPackets*1000) / (senf::ClockService::in_milliseconds(duration())+1) << " pps"; // +1 to avoid DIV_BY_ZERO
+
+    // add check for txStats here. But this is more tricky due to possible fragmentation
+    if ((rxControl + rxData + rxIgnored) != rxPackets)
+        os << ",stats bad";
+    else
+        os << ",stats good";
+
+    os.setf(std::ios::fixed,std::ios::floatfield);
+    os.precision(1);
+
+    os << ";rxPackets "   << rxPackets
+       << ";rxData "      << rxData      << " (" << float(rxData)      / float(rxPackets) * 100.0f << "%)"
+       << ",rxControl "   << rxControl   << " (" << float(rxControl)   / float(rxPackets) * 100.0f << "%)"
+       << ",rxIgnored "   << rxIgnored   << " (" << float(rxIgnored)   / float(rxPackets) * 100.0f << "%)"
+
+       << ";txPackets "   << txPackets
+       << ",txSent "      << txSent      << " (" << float(txSent)      / float(txPackets) * 100.0f << "%)"
+       << ",txError "     << txError     << " (" << float(txError)     / float(txPackets) * 100.0f << "%)"
+       << ",txOverrun "   << txOverrun   << " (" << float(txOverrun)   / float(txPackets) * 100.0f << "%)"
+       << ",txDSQDropped "<< txDSQDropped<< " (" << float(txDSQDropped)/ float(txPackets) * 100.0f << "%)";
+    
+    os << ")" << std::endl;
+}
+
+prefix_ std::string senf::emu::detail::TunnelIOStatistics::dump()
+    const
+{
+    std::stringstream ss;
+    dump(ss);
+    return ss.str();
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::detail::TunnelControllerBase
 
-const signed reSyncTresh = 1024;
+const signed reSyncTresh = 256;
 
 prefix_ senf::emu::detail::TunnelControllerBase::TunnelControllerBase(TunnelInterfaceBase & interface)
     : timeout_(senf::ClockService::seconds(20)), interface_(interface), qAlgo_( new senf::ppi::NoneQueueingAlgorithm())
@@ -63,21 +128,27 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     INet6SocketAddress addr;
 
     handle.readfrom(thdr.data(), addr, SENF_EMU_MAXMTU);
-
+    stats_.rxPackets++;
+    
     if (SENF_UNLIKELY((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes +  senf::EthernetPacketParser::fixed_bytes)) or 
-        (thdr->reserved() != TunnelHeaderPacketType::reservedMagic)))
+                      (thdr->reserved() != TunnelHeaderPacketType::reservedMagic))) {
+        stats_.rxIgnored++;
         return EthernetPacket();
+    }
 
     senf::EthernetPacket eth(thdr.next<senf::EthernetPacket>());
 
     if (SENF_UNLIKELY(isTunnelCtrlPacket(eth))) {
         try {
             v_handleCtrlPacket( eth, addr, handle);
+            stats_.rxControl++;
         } catch (TruncatedPacketException &) {}
         return EthernetPacket();
     }
 
-    // Ctrl Frames do not have a seqNo, so perform the here where we only see Data frames
+    stats_.rxData++;
+
+    // Ctrl Frames do not have a valid seqNo, so perform this here where we only see Data frames
     signed diff = v_processSequenceNumber(thdr, addr);
 
     eth.annotation<annotations::Interface>().value = interface_.id();
@@ -111,8 +182,10 @@ prefix_ void senf::emu::detail::TunnelControllerBase::do_sendPkt(Handle & handle
     try{
         v_prependTHdr(pkt);
         handle.writeto(txInfo.first,pkt.prev().data());
+        stats_.txSent++;
     }
     catch(...) {
+        stats_.txError++;
     };
 }
 
@@ -126,6 +199,8 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
     // first, flush any possibly pending packets
     flushQueue(handle);
 
+    stats_.txPackets++;
+
     pkt.annotation<annotations::Interface>().value = dstMAC;
     auto txInfo (v_getTxInfo(pkt));
 
@@ -133,14 +208,16 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
     
     if (!qAlgo_->empty()) {
         if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
-            qAlgo_->enqueue(pkt);
+             stats_.txDSQDropped += qAlgo_->enqueue(pkt);
         } else {
             std::vector<senf::EthernetPacket> frags;
             fragmenter_.fragmentFrame(pkt,txInfo.second, frags);
             bool force (false);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
             for (auto & frag : frags) {
-                if (!force and !qAlgo_->enqueue(frag, force))
+                if (!force and !qAlgo_->enqueue(frag, force)) {
+                    stats_.txDSQDropped += frags.size();
                     break;
+                }
                 force = true;
             }
         }
@@ -151,7 +228,8 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
         if (handle.writeable()) {
             do_sendPkt(handle, pkt, txInfo);
         } else {
-            qAlgo_->enqueue(pkt);
+            stats_.txOverrun++;
+            stats_.txDSQDropped += !qAlgo_->enqueue(pkt);
         }
         return true;
     }
@@ -164,7 +242,8 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
             do_sendPkt(handle, frag, txInfo);
             force = true;  // one a seqment has been sent, force enqueue()ing for remaining frags (if required)
         } else {
-            qAlgo_->enqueue(frag, force);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
+            stats_.txOverrun++;
+            stats_.txDSQDropped += !qAlgo_->enqueue(frag, force);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
         }
     }
     
@@ -239,11 +318,13 @@ prefix_ unsigned senf::emu::detail::TunnelControllerBase::fragmentationCount()
 
 
 prefix_ void senf::emu::detail::TunnelControllerBase::dumpInfo(std::ostream & os)
-    const
 {
     os << "Id: " << interface_.id() << std::endl
        << "Enabled: " << (interface_.enabled() ? "yes" : "no") << std::endl
        << "Timeout: " << ClockService::in_seconds(timeout_) << " sec." << std::endl;
+    os << "IOStats: " << stats_.stats().dump() << std::endl;
+    os << "FragmentationStats: out " << fragmenter_.fragmentationCount() << ", in " << "(to be implemented)" << std::endl;
+
     v_dumpInfo(os);
 }
 
