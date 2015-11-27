@@ -220,6 +220,7 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
     // the following code is a bit tricky as we need to ensure that we either send/enqueue all fragments of a frame or drop the complete sequence of fragments!
     
     if (!qAlgo_->empty()) {
+        stats_.txOverrun++;
         if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
              stats_.txDSQDropped += !qAlgo_->enqueue(pkt);
         } else {
