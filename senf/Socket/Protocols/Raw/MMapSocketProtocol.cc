@@ -112,10 +112,6 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
             SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TX_HAS_OFF");
 #endif
         size += req.tp_block_size;
-
-        // supposedly this should speed up TX, but for us it rather costs us 10% 
-        // v = 1;
-        // setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
     }
 
     unsigned char * map (static_cast<unsigned char *>(
