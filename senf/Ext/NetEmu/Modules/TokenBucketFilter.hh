@@ -53,10 +53,6 @@ namespace emu {
 
         TokenBucketFilter(unsigned _burst, unsigned _rate, ppi::QueueingAlgorithm::ptr qAlgorithm);
 
-        void burst(unsigned bytes);           ///< Set size of the bucket, in bytes.
-                                              /**< Set the maximum amount of bytes that tokens can be
-                                                   available for instantaneously. */
-        unsigned burst() const;               ///< Get size of the bucket, in bytes.
         void rate(unsigned bits_per_second);  ///< Set rate of new tokens, in bits per second.
         unsigned rate() const;                ///< Get rate of new tokens, in bits per second.
 
