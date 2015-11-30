@@ -70,7 +70,8 @@ namespace emu {
         unsigned bucketLimit_;
         unsigned bucketSize_;
         unsigned rate_;
-
+        unsigned bucketEmpty_;
+        
         void onTimeout();
         void onRequest();
         void byPass();

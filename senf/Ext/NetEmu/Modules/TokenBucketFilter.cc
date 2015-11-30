@@ -32,6 +32,7 @@
 
 // Custom includes
 #include <senf/Utils/membind.hh>
+#include <senf/Utils/Console/Variables.hh>
 #include <senf/Utils/Console/ParsedCommand.hh>
 
 #define prefix_
@@ -42,7 +43,7 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
       lastToken_( scheduler::now()),
       timer_( "TokenBucketFilter::timer", membind(&TokenBucketFilter::onTimeout, this)),
       bucketLimit_( _burst), bucketSize_( _burst),
-      rate_( _rate)
+      rate_( _rate), bucketEmpty_(0)
 {
     route( input, output).autoThrottling( false);
     if (rate_ == 0)
@@ -53,12 +54,12 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
 
     namespace fty = console::factory;
     dir.add("queue", queueAlgo_->consoleDir());
-    dir.add( "burst", fty::Command(
-            SENF_MEMBINDFNP( void, TokenBucketFilter, burst, (unsigned)))
-        .doc( "set the bucket size in bytes"));
-    dir.add( "burst", fty::Command(
-            SENF_MEMBINDFNP( unsigned, TokenBucketFilter, burst, () const))
-        .doc( "get the bucket size in bytes"));
+    dir.add( "burst", fty::Variable( TokenBucketFilter::bucketLimit_)
+        .doc( "Get/Set the bucket size in bytes"));
+    dir.add( "bucketSize", fty::Variable( boost::cref(TokenBucketFilter::bucketSize_))
+        .doc( "Get the current bucket size in bytes. 0 means empty."));
+    dir.add( "bucketEmpty", fty::Variable( boost::cref(TokenBucketFilter::bucketEmpty_))
+        .doc( "Get current bucket-is-empty counter. An empty bucket means queueing."));
     dir.add( "rateLimit", fty::Command(
             SENF_MEMBINDFNP( void, TokenBucketFilter, rate, (unsigned)))
         .doc( "set the rate limit in bits per second"));
@@ -84,17 +85,6 @@ prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
     }  else {
         input.onRequest( &TokenBucketFilter::onRequest);
     }
-}
-
-prefix_ void senf::emu::TokenBucketFilter::burst(unsigned bytes)
-{
-    bucketLimit_ = bytes;
-}
-
-prefix_ unsigned senf::emu::TokenBucketFilter::burst()
-    const
-{
-    return bucketLimit_;
 }
 
 prefix_ void senf::emu::TokenBucketFilter::onTimeout()
@@ -123,16 +113,11 @@ prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
     ClockService::clock_type now (scheduler::now());
     ClockService::int64_type delta (ClockService::in_microseconds(now - lastToken_));
-    if (SENF_UNLIKELY(delta == 0))
-        return;
 
     lastToken_ = now;
-    if (bucketSize_ == bucketLimit_)
-        return;
 
     bucketSize_ += (delta * rate_) / 8000000;
-    if (bucketSize_ > bucketLimit_)
-        bucketSize_ = bucketLimit_;
+    bucketSize_ = (bucketSize_ % bucketLimit_) + 1;
 }
 
 prefix_ void senf::emu::TokenBucketFilter::byPass()
@@ -144,18 +129,22 @@ prefix_ void senf::emu::TokenBucketFilter::onRequest()
 {
     Packet const & packet (input.read());
 
-    Packet::size_type packetSize (packet.size());
-    if (! queueAlgo_->empty()) {
+    if (!queueAlgo_->empty()) {
+        bucketEmpty_++;
         queueAlgo_->enqueue( packet);
         return;
     }
+    
     fillBucket();
+
+    Packet::size_type packetSize (packet.size());
     if (packetSize <= bucketSize_) {
         bucketSize_ -= packetSize;
         output.write( packet);
         return;
     }
 
+    bucketEmpty_++;
     if (queueAlgo_->enqueue( packet))
         setTimeout();
 }
