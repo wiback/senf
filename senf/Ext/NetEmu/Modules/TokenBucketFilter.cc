@@ -54,12 +54,16 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
 
     namespace fty = console::factory;
     dir.add("queue", queueAlgo_->consoleDir());
-    dir.add( "burst", fty::Variable( TokenBucketFilter::bucketLimit_)
-        .doc( "Get/Set the bucket size in bytes"));
+    dir.add( "burst", fty::Command(
+            SENF_MEMBINDFNP( void, TokenBucketFilter, burst, (unsigned)))
+        .doc( "Set the bucket size/limit in bytes"));
+    dir.add( "burst", fty::Command(
+            SENF_MEMBINDFNP( unsigned, TokenBucketFilter, burst, () const))
+        .doc( "Get the bucket size/limit in bytes"));
     dir.add( "bucketSize", fty::Variable( boost::cref(TokenBucketFilter::bucketSize_))
         .doc( "Get the current bucket size in bytes. 0 means empty."));
     dir.add( "bucketEmpty", fty::Variable( boost::cref(TokenBucketFilter::bucketEmpty_))
-        .doc( "Get current bucket-is-empty counter. An empty bucket means queueing."));
+        .doc( "Get bucket-is-empty counter. An empty bucket means queueing."));
     dir.add( "rateLimit", fty::Command(
             SENF_MEMBINDFNP( void, TokenBucketFilter, rate, (unsigned)))
         .doc( "set the rate limit in bits per second"));
@@ -67,6 +71,18 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
             SENF_MEMBINDFNP( unsigned, TokenBucketFilter, rate, () const))
         .doc( "get the rate limit in bits per second"));
 }
+
+prefix_ unsigned senf::emu::TokenBucketFilter::burst()
+    const
+{
+    return bucketLimit_;
+}
+
+prefix_ void senf::emu::TokenBucketFilter::burst(unsigned bytes)
+{
+    bucketLimit_ = bytes;
+}
+
 
 prefix_ unsigned senf::emu::TokenBucketFilter::rate()
     const
