@@ -68,7 +68,8 @@ namespace emu {
         boost::uint32_t lowThresh_;
         boost::uint8_t  lowThreshPrecentage_;
         boost::uint32_t queueSize_;
-        boost::uint32_t packetsDropped_;
+        boost::uint32_t packetsDroppedTotal_;
+        boost::uint32_t packetsDroppedLast_;
     };
 
 }}

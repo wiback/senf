@@ -32,6 +32,7 @@
 
 // Custom includes
 #include <senf/Scheduler/ClockService.hh>
+#include <senf/Utils/Console/Variables.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -55,16 +56,18 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
             SENF_MEMBINDFNP( boost::uint32_t, REDQueue, limit, () const))
         .doc( "get the RED queue size in bytes"));
     consoleDir().add( "dropped", fty::Command( &REDQueue::dropped, this)
-        .doc( "get the number of dropped packets"));
+        .doc( "get the number of dropped packets since the last call."));
     consoleDir().add( "size", fty::Command( &REDQueue::size, this)
         .doc( "return the current RED queue size (usage) in bytes"));
+    consoleDir().add( "droppedTotal", fty::Variable( boost::cref(REDQueue::packetsDroppedTotal_))
+        .doc( "Get the total number of dropped packets."));
 }
 
 prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool force)
 {
     if (!force and (queueSize_ > lowThresh_)) {
         if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_)) <= (queueSize_ - lowThresh_) ) {
-            packetsDropped_++;
+            packetsDroppedTotal_++;
             return false;  // no additional packet added to queue
         }
     }
@@ -87,7 +90,8 @@ prefix_ senf::Packet senf::emu::REDQueue::v_dequeue()
 prefix_ void senf::emu::REDQueue::v_clear()
 {
     queueSize_ = 0;
-    packetsDropped_ = 0;
+    packetsDroppedLast_ = 0;
+    packetsDroppedTotal_ = 0;
     while (! queue_.empty())
         queue_.pop();
 }
@@ -122,17 +126,17 @@ prefix_ boost::uint32_t senf::emu::REDQueue::limit()
 prefix_ boost::uint32_t senf::emu::REDQueue::dropped()
     const
 {
-    return packetsDropped_;
+    return packetsDroppedTotal_ - packetsDroppedLast_;
 }
 
 prefix_ void senf::emu::REDQueue::incrDropped()
 {
-    packetsDropped_++;
+    packetsDroppedTotal_++;
 }
 
 prefix_ void senf::emu::REDQueue::resetDropped()
 {
-    packetsDropped_ = 0;
+    packetsDroppedLast_ = packetsDroppedTotal_;
 }
 
 prefix_ unsigned senf::emu::REDQueue::v_size()

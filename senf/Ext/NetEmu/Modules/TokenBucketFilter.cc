@@ -122,18 +122,18 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
     ClockService::clock_type now (scheduler::now());
     Packet::size_type packetSize (queueAlgo_->frontPacketSize());
     SENF_ASSERT( packetSize > bucketSize_, "internal TokenBucketFilter error");
-    timer_.timeout( now + ClockService::microseconds((packetSize-bucketSize_)*8000000ul / rate_));
+    timer_.timeout( now + ClockService::nanoseconds((packetSize-bucketSize_)*8000000000ul / rate_));
 }
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
     ClockService::clock_type now (scheduler::now());
-    ClockService::int64_type delta (ClockService::in_microseconds(now - lastToken_));
+    ClockService::int64_type delta (ClockService::in_nanoseconds(now - lastToken_));
 
     lastToken_ = now;
 
-    bucketSize_ += (delta * rate_) / 8000000;
-    bucketSize_ = (bucketSize_ % bucketLimit_) + 1;
+    bucketSize_ += (delta * rate_) / 8000000000ul;
+    bucketSize_ = (bucketSize_ % bucketLimit_) * 5 / 4;
 }
 
 prefix_ void senf::emu::TokenBucketFilter::byPass()
@@ -145,6 +145,8 @@ prefix_ void senf::emu::TokenBucketFilter::onRequest()
 {
     Packet const & packet (input.read());
 
+    onTimeout();
+    
     if (!queueAlgo_->empty()) {
         bucketEmpty_++;
         queueAlgo_->enqueue( packet);
