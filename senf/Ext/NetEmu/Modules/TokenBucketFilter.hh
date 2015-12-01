@@ -68,6 +68,7 @@ namespace emu {
         ClockService::clock_type lastToken_;
         scheduler::TimerEvent timer_;
         unsigned bucketLimit_;
+        unsigned bucketLowThresh_;
         unsigned bucketSize_;
         unsigned rate_;
         unsigned bucketEmpty_;

@@ -42,7 +42,7 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
     : queueAlgo_(qAlgorithm.release()),
       lastToken_( scheduler::now()),
       timer_( "TokenBucketFilter::timer", membind(&TokenBucketFilter::onTimeout, this)),
-      bucketLimit_( _burst), bucketSize_( _burst),
+      bucketLimit_( _burst), bucketLowThresh_(0), bucketSize_( _burst),
       rate_( _rate), bucketEmpty_(0)
 {
     route( input, output).autoThrottling( false);
@@ -62,6 +62,8 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
         .doc( "Get the bucket size/limit in bytes"));
     dir.add( "bucketSize", fty::Variable( boost::cref(TokenBucketFilter::bucketSize_))
         .doc( "Get the current bucket size in bytes. 0 means empty."));
+    dir.add( "bucketLowThresh", fty::Variable( boost::cref(TokenBucketFilter::bucketLowThresh_))
+        .doc( "Get/Set the bucket low threshold. Below this, we start dropping frames indicating an empty(ing) bucket early."));
     dir.add( "bucketEmpty", fty::Variable( boost::cref(TokenBucketFilter::bucketEmpty_))
         .doc( "Get bucket-is-empty counter. An empty bucket means queueing."));
     dir.add( "rateLimit", fty::Command(
@@ -133,7 +135,7 @@ prefix_ void senf::emu::TokenBucketFilter::fillBucket()
     lastToken_ = now;
 
     bucketSize_ += (delta * rate_) / 8000000000ul;
-    bucketSize_ = (bucketSize_ % bucketLimit_) * 5 / 4;
+    bucketSize_ = bucketSize_ % bucketLimit_;
 }
 
 prefix_ void senf::emu::TokenBucketFilter::byPass()
@@ -145,8 +147,6 @@ prefix_ void senf::emu::TokenBucketFilter::onRequest()
 {
     Packet const & packet (input.read());
 
-    onTimeout();
-    
     if (!queueAlgo_->empty()) {
         bucketEmpty_++;
         queueAlgo_->enqueue( packet);
@@ -157,6 +157,11 @@ prefix_ void senf::emu::TokenBucketFilter::onRequest()
 
     Packet::size_type packetSize (packet.size());
     if (packetSize <= bucketSize_) {
+        if (bucketSize_ < bucketLowThresh_ &&  bucketSize_ <= (std::uint32_t(rand()) % bucketLowThresh_)){
+            // drop packet early...indicating an empty(ing) bucket
+            bucketEmpty_++;
+            return;
+        }
         bucketSize_ -= packetSize;
         output.write( packet);
         return;
