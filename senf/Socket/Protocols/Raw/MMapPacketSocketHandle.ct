@@ -46,13 +46,13 @@ template <class Policy, bool IsMMapReadable, bool IsMMapWriteable>
 prefix_ void
 senf::detail::ConnectedMMapPacketSocketProtocol_Bases<Policy,IsMMapReadable,IsMMapWriteable>::
 init_client(std::string iface, unsigned qlen, unsigned frameSize,
-            typename LinuxPacketSocketProtocol::SocketType type, int protocol, unsigned reserve)
+            typename LinuxPacketSocketProtocol::SocketType type, int protocol, unsigned reserve, bool qDiscBypass)
     const
 {
     this->init_packetSocket(type, protocol);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).blocking(false);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
-    this->init_mmap(frameSize, qlen, qlen, reserve);
+    this->init_mmap(frameSize, qlen, qlen, reserve, qDiscBypass);
 }
 
 template <class Policy>
@@ -72,13 +72,13 @@ template <class Policy>
 prefix_ void
 senf::detail::ConnectedMMapPacketSocketProtocol_Bases<Policy, false, true>::
 init_client(std::string iface, unsigned qlen, unsigned frameSize,
-            typename LinuxPacketSocketProtocol::SocketType type, int protocol, unsigned reserve)
+            typename LinuxPacketSocketProtocol::SocketType type, int protocol, unsigned reserve, bool qDiscBypass)
     const
 {
     this->init_packetSocket(type, protocol);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).blocking(false);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
-    this->init_mmap(frameSize, 0, qlen, reserve);
+    this->init_mmap(frameSize, 0, qlen, reserve, qDiscBypass);
 }
 
 template <class Policy>
@@ -88,7 +88,6 @@ init_client(std::string iface, unsigned frameSize, typename LinuxPacketSocketPro
             int protocol, unsigned reserve)
     const
 {
-
     this->init_packetSocket(type, protocol);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).blocking(false);
 }

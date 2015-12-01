@@ -62,7 +62,7 @@ prefix_ void senf::MMapSocketProtocol::terminate()
 }
 
 prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rxqlen,
-                                                 unsigned txqlen, unsigned reserve=0)
+                                                 unsigned txqlen, unsigned reserve, bool qDiscBypass)
     const
 {
     ::memset(&qi_, 0, sizeof(qi_));
@@ -137,8 +137,10 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
 
     // supposedly this should speed up TX. And it does (<5% increase), when our non-blocking patch is applied. 
     // Otherwise it seems to rather costs us 10% 
-    v = 1;
-    setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
+    if (qDiscBypass) {
+        v = 1;
+        setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
+    }
 
     senf::FileHandleAccess::extraPtr(fh(), &qi_);
 }

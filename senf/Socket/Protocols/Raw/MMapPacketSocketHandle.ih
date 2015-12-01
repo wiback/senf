@@ -56,7 +56,8 @@ namespace detail {
                          unsigned frameSize=(1u << SENF_PACKET_VECTOR_SIZE_INDEX),
                          typename LinuxPacketSocketProtocol::SocketType type = LinuxPacketSocketProtocol::RawSocket,
                          int protocol = -1,
-                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM) const;
+                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM,
+                         bool qDiscBypass = false) const;
                                         ///< Create packet socket
                                         /**< The new socket will receive all packets of the given
                                              IEEE 802.3 \a protocol. The socket will receive all
@@ -111,7 +112,8 @@ namespace detail {
                          unsigned frameSize=(1u << SENF_PACKET_VECTOR_SIZE_INDEX),
                          typename LinuxPacketSocketProtocol::SocketType type = LinuxPacketSocketProtocol::RawSocket,
                          int protocol = -1,
-                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM) const;
+                         unsigned reserve=SENF_PACKET_VECTOR_HEADROOM,
+                          bool qDiscBypass = false) const;
     };
 
     template <class Policy>

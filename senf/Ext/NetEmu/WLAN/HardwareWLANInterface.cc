@@ -410,7 +410,7 @@ prefix_ void senf::emu::HardwareWLANInterface::init_sockets()
 
     // Set the protocol to '0' which supposedly speeds up the tx-path inside the kernel
     // This only works for tx-only sockets
-    ConnectedMMapWritePacketSocketHandle txSocket_ (device(), qlen_, SENF_EMU_MAXMTU, LinuxPacketSocketProtocol::RawSocket, 0);
+    ConnectedMMapWritePacketSocketHandle txSocket_ (device(), qlen_, SENF_EMU_MAXMTU, LinuxPacketSocketProtocol::RawSocket, 0, true);
     txSocket_.protocol().sndbuf( sndBufSize_);
     // txSocket_.protocol().sndLowat(SENF_EMU_MAXMTU);
 

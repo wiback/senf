@@ -51,7 +51,7 @@ namespace senf {
         detail::QueueInfo::RxStats rxStats();
 
     protected:
-        void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen, unsigned reserve) const;
+        void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen, unsigned reserve = 0, bool qDiscBypass = false) const;
         void close_mmap() const;
         void terminate_mmap() const;
 

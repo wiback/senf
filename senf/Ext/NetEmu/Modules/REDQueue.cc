@@ -65,6 +65,9 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
 
 prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool force)
 {
+    if (queueLimit_ == 0)
+        return false;
+
     if (!force and (queueSize_ > lowThresh_)) {
         if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_)) <= (queueSize_ - lowThresh_) ) {
             packetsDroppedTotal_++;
@@ -106,6 +109,10 @@ prefix_ void senf::emu::REDQueue::limit(boost::uint32_t bytes, boost::uint8_t lo
 {
     if (lowThreshPrecentage > 100)
         lowThreshPrecentage = 100;
+
+    // 2GByte limit
+    if (bytes > 0x7fffffff)
+        bytes = 0x7fffffff;
 
     queueLimit_ = bytes;
     lowThreshPrecentage_ = lowThreshPrecentage;
