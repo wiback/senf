@@ -60,10 +60,14 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
     dir.add( "burst", fty::Command(
             SENF_MEMBINDFNP( unsigned, TokenBucketFilter, burst, () const))
         .doc( "Get the bucket size/limit in bytes"));
+    dir.add( "bucketLowThresh", fty::Command(
+            SENF_MEMBINDFNP( void, TokenBucketFilter, bucketLowThresh, (unsigned)))
+        .doc( "Set the bucket low threshold in percent. Below this, we start dropping frames indicating an empty(ing) bucket early."));
+    dir.add( "bucketLowThresh", fty::Command(
+            SENF_MEMBINDFNP( unsigned, TokenBucketFilter, bucketLowThresh, () const))
+        .doc( "Get the bucket low threshold in bytes."));
     dir.add( "bucketSize", fty::Variable( boost::cref(TokenBucketFilter::bucketSize_))
         .doc( "Get the current bucket size in bytes. 0 means empty."));
-    dir.add( "bucketLowThresh", fty::Variable( boost::cref(TokenBucketFilter::bucketLowThresh_))
-        .doc( "Get/Set the bucket low threshold. Below this, we start dropping frames indicating an empty(ing) bucket early."));
     dir.add( "bucketEmpty", fty::Variable( boost::cref(TokenBucketFilter::bucketEmpty_))
         .doc( "Get bucket-is-empty counter. An empty bucket means queueing."));
     dir.add( "rateLimit", fty::Command(
@@ -85,6 +89,16 @@ prefix_ void senf::emu::TokenBucketFilter::burst(unsigned bytes)
     bucketLimit_ = bytes;
 }
 
+prefix_ unsigned senf::emu::TokenBucketFilter::bucketLowThresh()
+    const
+{
+    return bucketLowThresh_;
+}
+
+prefix_ void senf::emu::TokenBucketFilter::bucketLowThresh(unsigned t)
+{
+    bucketLowThresh_ = (bucketLimit_ * 100) / std::min(100u, t);
+}
 
 prefix_ unsigned senf::emu::TokenBucketFilter::rate()
     const

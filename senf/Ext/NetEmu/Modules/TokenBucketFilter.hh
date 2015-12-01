@@ -57,6 +57,8 @@ namespace emu {
                                               /**< Set the maximum amount of bytes that tokens can be
                                                    available for instantaneously. */
         unsigned burst() const;               ///< Get size of the bucket, in bytes.
+        void bucketLowThresh(unsigned percent);  ///< Set size of the bucket low thresh, in percent.
+        unsigned bucketLowThresh() const;        ///< Get size of the bucket low thresh, in bytes.
         void rate(unsigned bits_per_second);  ///< Set rate of new tokens, in bits per second.
         unsigned rate() const;                ///< Get rate of new tokens, in bits per second.
 
