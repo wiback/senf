@@ -336,32 +336,11 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
                     }
                 }
                 continue;
-            case ENOBUFS: {
-                // TODO mtk 27-nov-2015: This is a hack to avoid a busy loop, as the kernel seems to report ENOBUFS instead of ENOTCON or ENETDOWN
-                // The sndBuf seems to be full, but the socket is still writable. In this case, we flush the TX_RING - effectively treating ENOBUFS like ENOTCON or ENETDOWN
-                if (handle.writeable()) {
-                    // Some frames might have been sent, hence we first have to reset and then advance tx.tail accordingly
-                    qi.tx.tail = last_tail;
-                    while (qi.tx.tail != qi.tx.head) {
-                        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
-                        if (pk.tp_status != TP_STATUS_SEND_REQUEST)
-                            qi.inc(qi.tx.tail, qi.tx);
-                        else
-                            break;
-                    }
-                    // We flush our queue, to avoid a busy loop, effectively dropping all frames !!!
-                    for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) {
-                        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buf));
-                        if (pk.tp_status == TP_STATUS_SEND_REQUEST) {
-                            pk.tp_status = TP_STATUS_AVAILABLE;
-                            qi.txStats.dropped++;
-                        }
-                    }
-                    // reset tx.head effectily dropping all unsent frames
-                    qi.tx.head = qi.tx.tail;
-                }
-            }
-		break;
+            case ENOBUFS:
+                // Just break'ing here is ok for normal sockets. But may cause problems when QDISC_BYPASS is turned on.
+                // In this case, the kernel seems to report ENOBUFS instead of ENOTCON or ENETDOWN and 
+                // the sndBuf seems to be full, but the socket is still writable...
+                break;
             case ENOTCONN:
             case ENETDOWN:
             case ENXIO:
