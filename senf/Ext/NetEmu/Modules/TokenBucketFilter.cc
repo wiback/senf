@@ -97,7 +97,7 @@ prefix_ unsigned senf::emu::TokenBucketFilter::bucketLowThresh()
 
 prefix_ void senf::emu::TokenBucketFilter::bucketLowThresh(unsigned t)
 {
-    bucketLowThresh_ = (bucketLimit_ * 100) / std::min(100u, t);
+    bucketLowThresh_ = (bucketLimit_ * std::min(100u, t)) / 100u;
 }
 
 prefix_ unsigned senf::emu::TokenBucketFilter::rate()
