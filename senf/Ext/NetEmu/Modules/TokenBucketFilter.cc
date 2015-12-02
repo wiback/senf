@@ -76,6 +76,8 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
     dir.add( "rateLimit", fty::Command(
             SENF_MEMBINDFNP( unsigned, TokenBucketFilter, rate, () const))
         .doc( "get the rate limit in bits per second"));
+    dir.add( "deviation", fty::Command( &TokenBucketFilter::timerDeviation, this)
+        .doc( "statistic to timer duration and deviation"));
 }
 
 prefix_ unsigned senf::emu::TokenBucketFilter::burst()
@@ -105,6 +107,13 @@ prefix_ unsigned senf::emu::TokenBucketFilter::rate()
 {
     return rate_;
 }
+prefix_ senf::emu::TokenBucketFilter::timerDeviation(std::ostream & out)
+{
+    out << "Timer     " << timerDuration_.data() << std::endl
+        << "Deviation " << timerDeviation_.data();
+    timerDuration_.clear();
+    timerDeviation_.clear();
+}
 
 prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 {
@@ -122,6 +131,8 @@ prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 {
     SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
+    ClockService::clock_type delta (scheduler::now() - timer_.timeout());
+    timerDeviation_.accumulate( delta);
     fillBucket();
     while (!queueAlgo_->empty() && queueAlgo_->frontPacketSize() <= bucketSize_) {
         Packet packet (queueAlgo_->dequeue());
@@ -138,7 +149,8 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
     ClockService::clock_type now (scheduler::now());
     Packet::size_type packetSize (queueAlgo_->frontPacketSize());
     SENF_ASSERT( packetSize > bucketSize_, "internal TokenBucketFilter error");
-    timer_.timeout( now + ClockService::nanoseconds((packetSize-bucketSize_)*8000000000ul / rate_));
+    ClockService::clock_type defer (ClockService::nanoseconds((packetSize - bucketSize_) * 8000000000ul / rate_));
+    timer_.timeout( now + defer);
 }
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket()

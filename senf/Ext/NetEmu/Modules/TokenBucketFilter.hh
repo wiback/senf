@@ -32,8 +32,10 @@
 #define HH_SENF_Ext_NetEmu_Modules_TokenBucketFilter_ 1
 
 // Custom includes
+#include <iostream>
 #include <senf/PPI/Module.hh>
 #include <senf/Scheduler/TimerEvent.hh>
+#include <senf/Utils/StatisticAccumulator.hh>
 #include "REDQueue.hh"
 
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -74,6 +76,8 @@ namespace emu {
         unsigned bucketSize_;
         unsigned rate_;
         unsigned bucketEmpty_;
+        senf::StatisticAccumulator<ClockService::clock_type> timerDeviation_;
+        senf::StatisticAccumulator<ClockService::clock_type> timerDuration_;
         
         void onTimeout();
         void onRequest();
@@ -81,6 +85,7 @@ namespace emu {
         void fillBucket();
         void setTimeout();
         bool queuePacket(Packet const & packet, Packet::size_type packetSize);
+        void timerDeviation(std::ostream & out);
     };
 
 }}
