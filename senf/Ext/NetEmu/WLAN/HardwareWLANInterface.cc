@@ -197,6 +197,8 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         .add("mmapStats", fty::Command( &HardwareWLANInterface::dumpMmapStats, this)
         .doc("dumps and resets the MMAP RX/TX statistics"));
     consoleDir()
+        .add("queue", qAlgorithm().consoleDir());
+    consoleDir()
         .add("frequencyOffset", fty::Command(
                 SENF_MEMBINDFNP(void, HardwareWLANInterface, frequencyOffset, (int)))
         .doc("set the frequency offset"));

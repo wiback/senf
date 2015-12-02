@@ -178,14 +178,21 @@ prefix_ senf::emu::TunnelInterfaceBase::TunnelInterfaceBase(Output & output, Inp
     HardwareInterface::init();
 
     namespace fty = console::factory;
-    consoleDir().add("timeout", fty::Command(
+    consoleDir()
+        .add("timeout", fty::Command(
             SENF_MEMBINDFNP(ClockService::clock_type, TunnelInterfaceBase, timeout, () const)) );
-    consoleDir().add("timeout", fty::Command(
+    consoleDir()
+        .add("timeout", fty::Command(
             SENF_MEMBINDFNP(void, TunnelInterfaceBase, timeout, (ClockService::clock_type))) );
-    consoleDir().add("info", fty::Command( &detail::TunnelControllerBase::dumpInfo, &ctrlBase_));
-    consoleDir().add("address", fty::Command(
+    consoleDir()
+        .add("info", fty::Command( &detail::TunnelControllerBase::dumpInfo, &ctrlBase_));
+    consoleDir()
+        .add("queue", qAlgorithm().consoleDir());
+    consoleDir()
+        .add("address", fty::Command(
             SENF_MEMBINDFNP(senf::INet6SocketAddress const &, TunnelInterfaceBase, address, () const)) );
-    consoleDir().add("fragmentationCount", fty::Command(&detail::TunnelControllerBase::fragmentationCount, &ctrlBase_));
+    consoleDir()
+        .add("fragmentationCount", fty::Command(&detail::TunnelControllerBase::fragmentationCount, &ctrlBase_));
 }
 
 prefix_ senf::emu::TunnelInterfaceBase::~TunnelInterfaceBase()
@@ -444,14 +451,19 @@ prefix_ senf::emu::TunnelClientInterface::TunnelClientInterface(INet6SocketAddre
       sndBufSize_(96*1024), rcvBufSize_(384*1024)
 {
     namespace fty = console::factory;
-    consoleDir().add("established", fty::Command( &TunnelClientInterface::established, this));
-    consoleDir().add("serverAddress", fty::Command(
+    consoleDir()
+        .add("established", fty::Command( &TunnelClientInterface::established, this));
+    consoleDir()
+        .add("serverAddress", fty::Command(
             SENF_MEMBINDFNP(void, TunnelClientInterface, serverAddress, (senf::INet6SocketAddress const &))) );
-    consoleDir().add("serverAddress", fty::Command(
+    consoleDir()
+        .add("serverAddress", fty::Command(
             SENF_MEMBINDFNP(void, TunnelClientInterface, serverAddress, (senf::INet4SocketAddress const &))) );
-    consoleDir().add("serverAddress", fty::Command(
+    consoleDir()
+        .add("serverAddress", fty::Command(
             SENF_MEMBINDFNP(senf::INet6SocketAddress const &, TunnelClientInterface, serverAddress, () const)) );
-    consoleDir().add("capacity", fty::Variable(capacity_));
+    consoleDir()
+        .add("capacity", fty::Variable(capacity_));
 
     consoleDir()
         .add("sndBuf", fty::Command(

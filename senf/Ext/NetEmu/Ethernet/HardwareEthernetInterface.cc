@@ -151,6 +151,8 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
         .add("mmapStats", fty::Command(&HardwareEthernetInterface::dumpMmapStats, this)
         .doc("dumps and resets the MMAP RX/TX statistics"));
     consoleDir()
+        .add("queue", qAlgorithm().consoleDir());
+    consoleDir()
         .add("sndBuf", fty::Command(
                  SENF_MEMBINDFNP(void, HardwareEthernetInterface, sndBuf, (unsigned)))
              .doc( "set the send socket buffer size in bytes"));
