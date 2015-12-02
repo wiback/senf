@@ -107,7 +107,7 @@ prefix_ unsigned senf::emu::TokenBucketFilter::rate()
 {
     return rate_;
 }
-prefix_ senf::emu::TokenBucketFilter::timerDeviation(std::ostream & out)
+prefix_ void senf::emu::TokenBucketFilter::timerDeviation(std::ostream & out)
 {
     out << "Timer     " << timerDuration_.data() << std::endl
         << "Deviation " << timerDeviation_.data();
