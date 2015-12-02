@@ -51,9 +51,10 @@ senf::emu::detail::HardwareWLANInterfaceNet::self()
     return *static_cast<HardwareWLANInterface const *>(this);
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgorithm)
+prefix_ void senf::emu::HardwareWLANInterface::qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgo)
 {
-    HardwareWLANInterfaceNet::sink.qAlgorithm( SENF_MOVE(qAlgorithm));
+    HardwareWLANInterfaceNet::sink.qAlgorithm( SENF_MOVE(qAlgo));
+    consoleDir().add("queue", qAlgorithm().consoleDir());
 }
 
 prefix_ senf::ppi::QueueingAlgorithm & senf::emu::HardwareWLANInterface::qAlgorithm()

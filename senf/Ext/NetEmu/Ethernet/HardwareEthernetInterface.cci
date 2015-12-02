@@ -55,9 +55,10 @@ prefix_ senf::emu::EthernetController & senf::emu::HardwareEthernetInterface::et
     return ctrl_;
 }
 
-prefix_ void senf::emu::HardwareEthernetInterface::qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgorithm)
+prefix_ void senf::emu::HardwareEthernetInterface::qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgo)
 {
-    HardwareEthernetInterfaceNet::sink.qAlgorithm( SENF_MOVE(qAlgorithm));
+    HardwareEthernetInterfaceNet::sink.qAlgorithm( SENF_MOVE(qAlgo));
+    consoleDir().add("queue", qAlgorithm().consoleDir());
 }
 
 prefix_ senf::ppi::QueueingAlgorithm & senf::emu::HardwareEthernetInterface::qAlgorithm()

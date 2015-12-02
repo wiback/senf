@@ -211,9 +211,10 @@ prefix_ senf::emu::detail::TunnelControllerBase & senf::emu::TunnelInterfaceBase
     return ctrlBase_;
 }
 
-prefix_ void senf::emu::TunnelInterfaceBase::qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgorithm)
+prefix_ void senf::emu::TunnelInterfaceBase::qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgo)
 {
-    ctrlBase_.qAlgorithm( SENF_MOVE(qAlgorithm));
+    ctrlBase_.qAlgorithm( SENF_MOVE(qAlgo));
+    consoleDir().add("queue", qAlgorithm().consoleDir());
 }
 
 prefix_ senf::ppi::QueueingAlgorithm & senf::emu::TunnelInterfaceBase::qAlgorithm()
