@@ -39,7 +39,7 @@
 
 prefix_ senf::ppi::QueueingAlgorithm::ptr senf::emu::REDQueue::create()
 {
-    return ppi::QueueingAlgorithm::ptr(new REDQueue(4096, 0));
+    return ppi::QueueingAlgorithm::ptr(new REDQueue(16384, 25));
 }
 
 prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t lowThreshPrecentage)
@@ -65,8 +65,10 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
 
 prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool force)
 {
-    if (queueLimit_ == 0)
+    if (queueLimit_ == 0) {
+        packetsDroppedTotal_++;
         return false;
+    }
 
     if (!force and (queueSize_ > lowThresh_)) {
         if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_)) <= (queueSize_ - lowThresh_) ) {
