@@ -46,10 +46,13 @@ namespace emu {
     public:
         static ppi::QueueingAlgorithm::ptr create();
 
-        REDQueue(boost::uint32_t _limit = 4096, boost::uint8_t lowThreshPrecentage = 50);
 
-        void limit(boost::uint32_t bytes, boost::uint8_t lowThreshPrecentage = 50);
-        boost::uint32_t limit() const;
+        typedef std::pair<boost::uint32_t,boost::uint8_t> limit_t;
+
+        REDQueue(boost::uint32_t _limit = 16384, boost::uint8_t lowThreshPrecentage = 25);
+
+        void limit(boost::uint32_t bytes, boost::uint8_t lowThreshPrecentage = 25);
+        limit_t limit() const;
 
         boost::uint32_t dropped() const;
         void incrDropped();

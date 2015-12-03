@@ -33,6 +33,7 @@
 // Custom includes
 #include <senf/Scheduler/ClockService.hh>
 #include <senf/Utils/Console/Variables.hh>
+#include <senf/Utils/Console/STLSupport.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -53,8 +54,8 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
             SENF_MEMBINDFNP( void, REDQueue, limit, (boost::uint32_t, boost::uint8_t)))
         .doc( "set the RED queue size bytes and low threshold in percent"));
     consoleDir().add( "limit", fty::Command(
-            SENF_MEMBINDFNP( boost::uint32_t, REDQueue, limit, () const))
-        .doc( "get the RED queue size in bytes"));
+            SENF_MEMBINDFNP( limit_t, REDQueue, limit, () const))
+        .doc( "get the RED queue size in bytes and low threshold in percent"));
     consoleDir().add( "dropped", fty::Command( &REDQueue::dropped, this)
         .doc( "get the number of dropped packets since the last call."));
     consoleDir().add( "size", fty::Command( &REDQueue::size, this)
@@ -126,10 +127,10 @@ prefix_ void senf::emu::REDQueue::limit(boost::uint32_t bytes, boost::uint8_t lo
     }
 }
 
-prefix_ boost::uint32_t senf::emu::REDQueue::limit()
+prefix_ senf::emu::REDQueue::limit_t senf::emu::REDQueue::limit()
     const
 {
-    return queueLimit_;
+    return std::make_pair(queueLimit_, lowThreshPrecentage_);
 }
 
 prefix_ boost::uint32_t senf::emu::REDQueue::dropped()
