@@ -85,7 +85,7 @@ prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool fo
 
 prefix_ senf::Packet senf::emu::REDQueue::v_dequeue()
 {
-    Packet tmp (queue_.front());
+    Packet const & tmp (queue_.front());
     queue_.pop();
     if (SENF_LIKELY(tmp)) {
         queueSize_ -= tmp.size();

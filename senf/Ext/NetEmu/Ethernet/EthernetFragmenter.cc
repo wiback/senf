@@ -148,7 +148,7 @@ prefix_ void senf::emu::EthernetFragmenterModule::v_outputFragment(senf::Etherne
 
 prefix_ void senf::emu::EthernetFragmenterModule::onRequest()
 {
-    senf::EthernetPacket eth (input());
+    senf::EthernetPacket const & eth (input());
     if (fragmentationRequired(eth, fragmentationThreshold_))
         do_fragmentFrame(eth, fragmentationThreshold_);
     else
