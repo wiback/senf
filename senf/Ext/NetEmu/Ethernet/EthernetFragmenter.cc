@@ -122,23 +122,46 @@ prefix_ void senf::emu::EthernetFragmenter::fragmentFrame(senf::EthernetPacket c
     do_fragmentFrame(eth, threshold);
 }
 
-prefix_ senf::emu::EthernetFragmenterModule::EthernetFragmenterModule(unsigned fragmentationThreshold)
-    : fragmentationThreshold_(fragmentationThreshold)
+prefix_ senf::emu::EthernetFragmenterModule::EthernetFragmenterModule(std::uint16_t defaultFragThresh)
+    : defaultFragThresh_(std::max(std::uint16_t(576),defaultFragThresh))
 {
     route( input, output).autoThrottling(false);
     input.onRequest( &EthernetFragmenterModule::onRequest);
     input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
 }
 
-prefix_ void senf::emu::EthernetFragmenterModule::fragmentationThreshold(unsigned threshold)
+prefix_ void senf::emu::EthernetFragmenterModule::fragmentationThreshold(std::uint16_t threshold, senf::MACAddress const & dst)
 {
-    fragmentationThreshold_ = std::max(576u, threshold);
+    if (!dst) {
+        defaultFragThresh_ = std::max(std::uint16_t(576), threshold);
+    } else {
+        fragThreshMap_.erase(dst);
+        if (threshold > 0) {
+            fragThreshMap_.insert(std::make_pair(dst, std::max(std::uint16_t(576), threshold))).second;
+        }
+    }
 }
 
-prefix_ unsigned senf::emu::EthernetFragmenterModule::fragmentationThreshold()
+prefix_ std::uint16_t senf::emu::EthernetFragmenterModule::fragmentationThreshold(senf::MACAddress const & dst)
     const
 {
-    return fragmentationThreshold_;
+    auto const it (fragThreshMap_.find(dst));
+    if (it != fragThreshMap_.end()) {
+        return it->second;
+    }
+    
+    return defaultFragThresh_;
+}
+
+prefix_ boost::unordered_map<senf::MACAddress,std::uint16_t> const & senf::emu::EthernetFragmenterModule::fragThreshMap()
+    const
+{
+    return fragThreshMap_;
+}
+
+prefix_ void senf::emu::EthernetFragmenterModule::clearFragThreshMap()
+{
+    fragThreshMap_.clear();
 }
 
 prefix_ void senf::emu::EthernetFragmenterModule::v_outputFragment(senf::EthernetPacket const & eth)
@@ -149,8 +172,8 @@ prefix_ void senf::emu::EthernetFragmenterModule::v_outputFragment(senf::Etherne
 prefix_ void senf::emu::EthernetFragmenterModule::onRequest()
 {
     senf::EthernetPacket const & eth (input());
-    if (fragmentationRequired(eth, fragmentationThreshold_))
-        do_fragmentFrame(eth, fragmentationThreshold_);
+    if (fragmentationRequired(eth, fragmentationThreshold(eth->destination())))
+        do_fragmentFrame(eth, fragmentationThreshold(eth->destination()));
     else
         output(eth);
 }

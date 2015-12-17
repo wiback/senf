@@ -29,6 +29,7 @@
 #define HH_WiBACK_Core_Interfaces_EthernetFragmenter_ 1
 
 // Custom includes
+#include <boost/unordered/unordered_map.hpp>
 #include <senf/PPI/Module.hh>
 #include <senf/PPI/Connectors.hh>
 #include "EthernetFragmentPacket.hh"
@@ -80,17 +81,20 @@ namespace emu {
         senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
         senf::ppi::connector::ActiveOutput<senf::EthernetPacket> output;
 
-        EthernetFragmenterModule(unsigned fragmentationThreshold = 1500u);
+        EthernetFragmenterModule(std::uint16_t defaultFragThresh = 1500u);
 
-        void fragmentationThreshold(unsigned _fragmentationThreshold);
-        unsigned fragmentationThreshold() const;
+        void fragmentationThreshold(std::uint16_t _fragmentationThreshold, senf::MACAddress const & dst = senf::MACAddress::None);
+        std::uint16_t fragmentationThreshold(senf::MACAddress const & dst = senf::MACAddress::None) const;
+        boost::unordered_map<senf::MACAddress,std::uint16_t> const & fragThreshMap() const;
+        void clearFragThreshMap();
 
     private:
         void v_outputFragment(senf::EthernetPacket const & eth)  override;
 
         void onRequest();
 
-        unsigned fragmentationThreshold_;
+        boost::unordered_map<senf::MACAddress,std::uint16_t> fragThreshMap_;
+        std::uint16_t  defaultFragThresh_;
      };
 }}
 
