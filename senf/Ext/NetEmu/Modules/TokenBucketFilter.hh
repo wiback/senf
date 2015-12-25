@@ -76,8 +76,7 @@ namespace emu {
         unsigned bucketSize_;
         unsigned rate_;
         unsigned bucketEmpty_;
-        senf::StatisticAccumulator<ClockService::clock_type> timerDeviation_;
-        senf::StatisticAccumulator<ClockService::clock_type> timerDuration_;
+        senf::StatisticAccumulator<ClockService::int64_type> timerDeviation_;
         
         void onTimeout();
         void onRequest();

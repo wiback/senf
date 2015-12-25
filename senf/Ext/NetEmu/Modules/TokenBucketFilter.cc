@@ -109,9 +109,7 @@ prefix_ unsigned senf::emu::TokenBucketFilter::rate()
 }
 prefix_ void senf::emu::TokenBucketFilter::timerDeviation(std::ostream & out)
 {
-    out << "Timer     " << timerDuration_.data() << std::endl
-        << "Deviation " << timerDeviation_.data();
-    timerDuration_.clear();
+    out << "Deviation: " << timerDeviation_.data();
     timerDeviation_.clear();
 }
 
@@ -131,15 +129,15 @@ prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 {
     SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
-    ClockService::clock_type delta (scheduler::now() - timer_.timeout());
+    ClockService::int64_type delta (senf::ClockService::in_nanoseconds(scheduler::now() - timer_.timeout()));
     timerDeviation_.accumulate( delta);
     fillBucket();
-    while (!queueAlgo_->empty() && queueAlgo_->frontPacketSize() <= bucketSize_) {
+    while (not queueAlgo_->empty() and queueAlgo_->frontPacketSize() <= bucketSize_) {
         Packet packet (queueAlgo_->dequeue());
         bucketSize_ -= packet.size();
         output(packet);
     }
-    if (! queueAlgo_->empty())
+    if (not queueAlgo_->empty())
         setTimeout();
 }
 
