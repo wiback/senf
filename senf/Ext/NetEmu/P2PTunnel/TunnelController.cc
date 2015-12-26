@@ -550,8 +550,13 @@ prefix_ void senf::emu::detail::TunnelServerController::fragmentationThreshold(M
         ft = 1280u;
 
     Clients_by_macAddr::const_iterator client (clients_by_macAddr_.find(clientAddr));
-    if ( client != clients_by_macAddr_.end())
+    if ( client != clients_by_macAddr_.end()) {
         clients_by_macAddr_.modify( client, TunnelClient::updateFragmentationThreshold(ft - TunnelControllerBase::TunnelOverhead));
+    } else {
+        for (auto it = clients_by_macAddr_.begin(); it != clients_by_macAddr_.end(); it++) {
+            clients_by_macAddr_.modify( it, TunnelClient::updateFragmentationThreshold(ft - TunnelControllerBase::TunnelOverhead));
+        }
+    }
 }
 
 prefix_ unsigned senf::emu::detail::TunnelServerController::fragmentationThreshold(MACAddress const & clientAddr)

@@ -134,6 +134,7 @@ prefix_ void senf::emu::EthernetFragmenterModule::fragmentationThreshold(std::ui
 {
     if (!dst) {
         defaultFragThresh_ = std::max(std::uint16_t(576), threshold);
+        fragThreshMap_.clear();
     } else {
         fragThreshMap_.erase(dst);
         if (threshold > 0) {
