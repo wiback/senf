@@ -551,10 +551,10 @@ prefix_ void senf::emu::detail::TunnelServerController::fragmentationThreshold(M
 
     Clients_by_macAddr::const_iterator client (clients_by_macAddr_.find(clientAddr));
     if ( client != clients_by_macAddr_.end()) {
-        clients_by_macAddr_.modify( client, TunnelClient::updateFragmentationThreshold(ft - TunnelControllerBase::TunnelOverhead));
+        clients_by_macAddr_.modify( client, TunnelClient::updateFragmentationThreshold(ft));
     } else {
         for (auto it = clients_by_macAddr_.begin(); it != clients_by_macAddr_.end(); it++) {
-            clients_by_macAddr_.modify( it, TunnelClient::updateFragmentationThreshold(ft - TunnelControllerBase::TunnelOverhead));
+            clients_by_macAddr_.modify( it, TunnelClient::updateFragmentationThreshold(ft));
         }
     }
 }
@@ -563,7 +563,7 @@ prefix_ unsigned senf::emu::detail::TunnelServerController::fragmentationThresho
     const
 {
     Clients_by_macAddr::const_iterator client (clients_by_macAddr_.find(clientAddr));
-    return client != clients_by_macAddr_.end() ? (client->fragmentationThreshold + TunnelControllerBase::TunnelOverhead) : 0;
+    return client != clients_by_macAddr_.end() ? (client->fragmentationThreshold) : 0;
 }
 
 
@@ -582,7 +582,7 @@ prefix_ void senf::emu::detail::TunnelServerController::v_dumpInfo(std::ostream 
         os << fmtClient
               % senf::str(client.inetAddr)
               % senf::str(client.macAddr)
-              % senf::str(client.fragmentationThreshold + TunnelControllerBase::TunnelOverhead)
+              % senf::str(client.fragmentationThreshold)
               % ClockService::in_seconds(scheduler::now() - client.lastSeen) % "sec."
               % get(client.capacity, tunnel::FromServerToClient)
               % get(client.capacity, tunnel::FromClientToServer)
@@ -773,13 +773,13 @@ prefix_ void senf::emu::detail::TunnelClientController::fragmentationThreshold(u
     if (ft == 0)
         ft = 1280u;
 
-    fragmentationThreshold_ = ft - TunnelControllerBase::TunnelOverhead;
+    fragmentationThreshold_ = ft;
 }
 
 prefix_ unsigned senf::emu::detail::TunnelClientController::fragmentationThreshold()
     const
 {
-    return fragmentationThreshold_ + TunnelControllerBase::TunnelOverhead;
+    return fragmentationThreshold_;
 }
 
 prefix_ void senf::emu::detail::TunnelClientController::v_timeoutChanged()
