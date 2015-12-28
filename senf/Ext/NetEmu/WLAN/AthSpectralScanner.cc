@@ -157,10 +157,9 @@ prefix_ float senf::emu::AthSpectralScanner::computeSignalLevel(fft_sample_ht20 
     std::uint64_t datasquaresum = 0;
 
     for (unsigned i = 0; i < SPECTRAL_HT20_NUM_BINS; i++) {
-        std::uint16_t data = sample.data[i] << sample.max_exp;
+        std::uint16_t data (std::max(1, sample.data[i] << sample.max_exp));  // std::max to avoid NANs below
         datasquaresum += data * data;
-        if (data > maxData)
-            maxData = data;
+        maxData = std::max (maxData, data);
     }
 
     // supposedly max_magnitude is the maximum among the samples, so we actually do not need to compute maxData ourselves

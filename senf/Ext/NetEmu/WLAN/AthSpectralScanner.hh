@@ -87,7 +87,7 @@ namespace emu {
         { clear(); }
 
         void accumulate(float val) {
-            sum_  += val;
+            sum_ += val;
             sum_squared_ += val * val;
             cnt_++;
 
