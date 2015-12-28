@@ -119,7 +119,7 @@ namespace emu {
         float avg()
             const
         {
-            return cnt_ == 0 ? NAN : sum_ / float(cnt_);
+            return cnt_ == 0 ? NAN : float(double(sum_) / double(cnt_));
         }
 
         float stddev()
@@ -129,9 +129,9 @@ namespace emu {
                 return NAN;
             if (cnt_ == 1)
                 return 0.0f;
-            float _avg (avg());
+            double _avg (avg());
             // std::max avoid rounding errors, that might cause a sqrt(<0)
-            return sqrt(( std::max(0.0f, sum_squared_ / float( cnt_) ) - (_avg * _avg) ));
+            return float(sqrt( ( std::max(0.0, double(sum_squared_) / double( cnt_) ) - (_avg * _avg) )));
         }
 
         void clear() {
