@@ -131,21 +131,36 @@ namespace emu {
                 return 0.0f;
             double _avg (avg());
             // std::max avoid rounding errors, that might cause a sqrt(<0)
-            return float(sqrt( ( std::max(0.0, double(sum_squared_) / double( cnt_) ) - (_avg * _avg) )));
+            return float(sqrt( std::max(0.0, (double(sum_squared_) / double( cnt_) - (_avg * _avg) ))));
         }
 
         void clear() {
             sum_ = sum_squared_ = 0.0f;
-            min_ =  10000.0f;
-            max_ = -10000.0f;
+            min_ = std::numeric_limits<float>::max();
+            max_ = std::numeric_limits<float>::min();  
             cnt_ = 0;
             maxSet_ = false;
             minSet_ = false;
         }
 
-        senf::StatisticsData data() {
-            senf::StatisticsData tmp(min_, avg(), max_, stddev(), cnt_);
-            clear();
+        void data(senf::StatisticsData & data_) const {
+            if (cnt_ == 0) {
+                data_.min = data_.avg = data_.max = 0.0f;
+                data_.stddev = NAN;
+                data_.cnt = 0;
+            } else {
+                data_.min = (float) min_;
+                data_.avg = avg();
+                data_.max = (float) max_;
+                data_.stddev = stddev();
+                data_.cnt = cnt_;
+            }
+        }
+
+        senf::StatisticsData data() const
+        {
+            StatisticsData tmp;
+            data(tmp);
             return tmp;
         }
     };

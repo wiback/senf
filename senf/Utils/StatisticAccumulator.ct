@@ -59,7 +59,7 @@ prefix_ float senf::StatisticAccumulator<T>::stddev()
         return 0.0f;
     double _avg (avg());
     // std::max avoid rounding errors, that might cause a sqrt(<0)
-    return float(sqrt( ( std::max(0.0, double(sum_squared_) / double( cnt_) ) - (_avg * _avg) )));
+    return float(sqrt( std::max(0.0, (double(sum_squared_) / double( cnt_) - (_avg * _avg) ))));
 }
 
 template <class T>

@@ -143,7 +143,8 @@ prefix_ bool senf::emu::AthSpectralScanner::stop(senf::StatisticsData * sd)
     handle_.close();
 
     if (sd) {
-        *sd = signalLevel_.data();
+        signalLevel_.data(*sd);
+        signalLevel_.clear();
         return sd->valid();
     }
 
