@@ -130,7 +130,7 @@ prefix_ bool senf::emu::AthSpectralScanner::start(unsigned frequency)
     return true;
 }
 
-prefix_ bool senf::emu::AthSpectralScanner::stop(senf::StatisticsData * sd)
+prefix_ bool senf::emu::AthSpectralScanner::stop(senf::StatisticsData * sd, unsigned thresh1000)
 {
     disable();
 
@@ -143,7 +143,7 @@ prefix_ bool senf::emu::AthSpectralScanner::stop(senf::StatisticsData * sd)
     handle_.close();
 
     if (sd) {
-        signalLevel_.data(*sd);
+        signalLevel_.data(*sd, thresh1000);
         signalLevel_.clear();
         return sd->valid();
     }

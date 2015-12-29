@@ -88,7 +88,7 @@ namespace emu {
             samples_.clear();
         }
 
-        void data(senf::StatisticsData & data_, unsigned thresh1000=3) const {
+        void data(senf::StatisticsData & data_, unsigned thresh1000=1) const {
             if (samples_.size() == 0) {
                 data_.min = data_.avg = data_.max = 0.0f;
                 data_.stddev = NAN;
@@ -113,7 +113,7 @@ namespace emu {
                 for (auto it = samples_.begin(); it != samples_.end(); it++) {
                     sum  += float(it->first) * float(it->second);
                     cnt += it->second;
-                    if (cnt > ((data_.cnt * thresh1000) / 1000u))
+                    if (cnt > ((data_.cnt * thresh1000 * 10) / 1000u))  // 10x 
                         break;
                 }
                 data_.min = sum / float(cnt);
@@ -123,14 +123,14 @@ namespace emu {
                 for (auto it = samples_.rbegin(); it != samples_.rend(); it++) {
                     sum  += float(it->first) * float(it->second);
                     cnt += it->second;
-                    if (cnt > ((data_.cnt * thresh1000) / 1000u))
+                    if (cnt > ((data_.cnt * thresh1000) / 1000u))  // 1x
                         break;
                 }
                 data_.max = sum / float(cnt);
             }
         }
 
-        senf::StatisticsData data(unsigned thresh1000=3) const
+        senf::StatisticsData data(unsigned thresh1000=1) const
         {
             StatisticsData tmp;
             data(tmp, thresh1000);
@@ -167,7 +167,7 @@ namespace emu {
         ~AthSpectralScanner();
 
         bool start(unsigned frequency);
-        bool stop(senf::StatisticsData * sd = NULL);
+        bool stop(senf::StatisticsData * sd = NULL, unsigned thresh1000=1);
         bool valid() const;
         unsigned mismatch() const;
         unsigned truncated() const;
