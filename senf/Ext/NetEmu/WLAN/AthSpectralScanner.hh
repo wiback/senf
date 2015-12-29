@@ -113,7 +113,7 @@ namespace emu {
                 for (auto it = samples_.begin(); it != samples_.end(); it++) {
                     sum  += float(it->first) * float(it->second);
                     cnt += it->second;
-                    if (cnt > ((data_.cnt * thresh) / 1000u))
+                    if (cnt > ((data_.cnt * thresh1000) / 1000u))
                         break;
                 }
                 data_.min = sum / float(cnt);
@@ -123,7 +123,7 @@ namespace emu {
                 for (auto it = samples_.rbegin(); it != samples_.rend(); it++) {
                     sum  += float(it->first) * float(it->second);
                     cnt += it->second;
-                    if (cnt > ((data_.cnt * thresh) / 1000u))
+                    if (cnt > ((data_.cnt * thresh1000) / 1000u))
                         break;
                 }
                 data_.max = sum / float(cnt);
@@ -133,7 +133,7 @@ namespace emu {
         senf::StatisticsData data(unsigned thresh1000=3) const
         {
             StatisticsData tmp;
-            data(tmp, thresh);
+            data(tmp, thresh1000);
             return tmp;
         }
     };
