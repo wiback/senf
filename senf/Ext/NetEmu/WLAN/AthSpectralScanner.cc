@@ -196,11 +196,13 @@ prefix_ bool senf::emu::AthSpectralScanner::process(int fd)
             truncated_++;
         }
         for (unsigned n = 0; n < bytes / sizeof(fft_sample_ht20); n++) {
-            if (be16toh(samples[n].freq) != frequency_ / 1000) {
-                mismatch_++;
-                continue;
+            if (samples[n].tlv.type == ATH_FFT_SAMPLE_HT20) {
+                if (be16toh(samples[n].freq) != frequency_ / 1000) {
+                    mismatch_++;
+                    continue;
+                }
+                signalLevel_.accumulate(computeSignalLevel(samples[n]));
             }
-            signalLevel_.accumulate(computeSignalLevel(samples[n]));
         }
     }
 

@@ -29,6 +29,7 @@
 #define HH_SENF_Ext_NetEmu_WLAN_AthSpectralScanner_ 1
 
 // Custom includes
+#include <map>
 #include <senf/Socket/FileHandle.hh>
 #include <senf/Scheduler/FdEvent.hh>
 #include <senf/Utils/Statistics.hh>
@@ -71,100 +72,72 @@ struct fft_sample_ht20 {
 namespace senf {
 namespace emu {
 
-    class StatisticsAccu {
+    class SampleAccumulator {
+    private:
+        std::map<std::int16_t,unsigned> samples_;  // powerLevel => count
     public:
-        float sum_;
-        float sum_squared_;
-        unsigned cnt_;
-        float min_;
-        float max_;
-        float thresh_;
-        bool maxSet_;
-        bool minSet_;
-
-        StatisticsAccu() :
-            thresh_(0.75f)
-        { clear(); }
-
         void accumulate(float val) {
-            sum_ += val;
-            sum_squared_ += val * val;
-            cnt_++;
-
-            if (val <= (thresh_ * min_)) {
-                if (!minSet_) {
-                    min_ = val / 2.0f;
-                    minSet_ = true;
-                }
-                else
-                    min_ = (min_ + val) / 2.0f;
-            }
-
-            if (val >= (thresh_ * max_)) {
-                if (!maxSet_) {
-                    max_ = val * 2.0f;
-                    maxSet_ = true;
-                }
-                else
-                    max_ = (max_ + val) / 2.0f;
-            }
+            auto it (samples_.find(std::int16_t(val)));
+            if ( it != samples_.end())
+                it->second++;
+            else
+                samples_.insert(std::make_pair(std::int16_t(val),1));
         }
-
-        unsigned count()
-            const
-        {
-            return cnt_;
-        }
-
-        float avg()
-            const
-        {
-            return cnt_ == 0 ? NAN : float(double(sum_) / double(cnt_));
-        }
-
-        float stddev()
-            const
-        {
-            if (cnt_ == 0)
-                return NAN;
-            if (cnt_ == 1)
-                return 0.0f;
-            double _avg (avg());
-            // std::max avoid rounding errors, that might cause a sqrt(<0)
-            return float(sqrt( std::max(0.0, (double(sum_squared_) / double( cnt_) - (_avg * _avg) ))));
-        }
-
+        
         void clear() {
-            sum_ = sum_squared_ = 0.0f;
-            min_ = std::numeric_limits<float>::max();
-            max_ = std::numeric_limits<float>::min();  
-            cnt_ = 0;
-            maxSet_ = false;
-            minSet_ = false;
+            samples_.clear();
         }
 
-        void data(senf::StatisticsData & data_) const {
-            if (cnt_ == 0) {
+        void data(senf::StatisticsData & data_, unsigned thresh=1) const {
+            if (samples_.size() == 0) {
                 data_.min = data_.avg = data_.max = 0.0f;
                 data_.stddev = NAN;
                 data_.cnt = 0;
             } else {
-                data_.min = (float) min_;
-                data_.avg = avg();
-                data_.max = (float) max_;
-                data_.stddev = stddev();
-                data_.cnt = cnt_;
+                data_.cnt = 0;
+                // AVG + STDDEV
+                float sum (0.0f);
+                float sum2 (0.0f);
+                for (auto it = samples_.begin(); it != samples_.end(); it++) {
+                    sum  += float(it->first) * float(it->second);
+                    for (unsigned n (0); n < it->second; n++)
+                        sum2 += float(it->first) * float(it->first);
+                    data_.cnt += it->second;
+                }
+                data_.avg = sum / float(data_.cnt);
+                double _avg (data_.avg);
+                data_.stddev = float(sqrt( std::max(0.0, (double(sum2) / double(data_.cnt) - (_avg * _avg) ))));
+                // MIN
+                unsigned cnt (0);
+                sum = 0.0f;
+                for (auto it = samples_.begin(); it != samples_.end(); it++) {
+                    sum  += float(it->first) * float(it->second);
+                    cnt += it->second;
+                    if (cnt > ((data_.cnt * thresh) / 100u))
+                        break;
+                }
+                data_.min = sum / float(cnt);
+                // MAX
+                cnt = 0;
+                sum = 0.0f;
+                for (auto it = samples_.rbegin(); it != samples_.rend(); it++) {
+                    sum  += float(it->first) * float(it->second);
+                    cnt += it->second;
+                    if (cnt > ((data_.cnt * thresh) / 100))
+                        break;
+                }
+                data_.max = sum / float(cnt);
             }
         }
 
-        senf::StatisticsData data() const
+        senf::StatisticsData data(unsigned thresh=1) const
         {
             StatisticsData tmp;
-            data(tmp);
+            data(tmp, thresh);
             return tmp;
         }
     };
-
+            
     class UnixFileHandle
         : public senf::FileHandle
     {
@@ -185,7 +158,7 @@ namespace emu {
         unsigned truncated_;
         std::string ctlFile_;
         std::string dataFile_;
-        StatisticsAccu signalLevel_;
+        SampleAccumulator signalLevel_;
         UnixFileHandle handle_;
         senf::scheduler::FdEvent event_;
 
