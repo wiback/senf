@@ -489,11 +489,15 @@ prefix_ void senf::emu::WirelessNLController::set_bitrates(BitrateParameters p)
             nl_nested_attr_ptr bandAttr (msg, NL80211_BAND_2GHZ);
             NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_LEGACY, legacy_24);
             NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_MCS,    mcs_24);
+            if(mcs_24)
+                NLA_PUT_U8         ( msg, NL80211_TXRATE_GI,     NL80211_TXRATE_FORCE_LGI);
         }
         if (legacy_5 or mcs_5) {
             nl_nested_attr_ptr bandAttr (msg, NL80211_BAND_5GHZ);
             NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_LEGACY, legacy_5);
             NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_MCS,    mcs_5);
+            if(mcs_5)
+                NLA_PUT_U8         ( msg, NL80211_TXRATE_GI,     NL80211_TXRATE_FORCE_LGI);
         }
     }
 
