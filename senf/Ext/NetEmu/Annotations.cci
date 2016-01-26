@@ -97,7 +97,8 @@ prefix_ std::ostream & senf::emu::annotations::operator<<(std::ostream & os,
        << " rssi:" << annotation.rssi
        << " noise:" << annotation.noise
        << " flags:" << annotation.flags.frameCorrupt << "," << annotation.flags.frameRetransmitted 
-       << "," << annotation.flags.frameDuplicate << "," << annotation.flags.framePredecessorLost << "," << annotation.flags.frameLength
+       << "," << annotation.flags.frameDuplicate << "," << annotation.flags.frameReordered
+       << "," << annotation.flags.framePredecessorLost << "," << annotation.flags.frameLength
        << ")";
     return os;
 }

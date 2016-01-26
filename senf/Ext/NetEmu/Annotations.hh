@@ -72,6 +72,7 @@ namespace annotations {
         unsigned frameCorrupt:1;
         unsigned frameRetransmitted:1;
         unsigned frameDuplicate:1;
+        unsigned frameReordered:1;
         unsigned framePredecessorLost:8;
         unsigned frameLength:12;
     };

@@ -173,9 +173,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     else if (diff > 1) {
         q.setLoss(diff - 1); 
     } else {
-        // diff < 0 ==> reordering
-        q.flags.frameDuplicate = true;
-        q.setLoss(-diff); 
+        q.flags.frameReordered = true;
     }
 
     if (reassembler_.isFragmentedPacket(eth)) {
