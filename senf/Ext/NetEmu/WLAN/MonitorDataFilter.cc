@@ -169,12 +169,25 @@ prefix_ void senf::emu::MonitorDataFilter::handle_DuplicateFrame(EthernetPacket 
     }
 }
 
-static inline int seqNoDelta(unsigned last, boost::uint16_t current)
+static inline std::int32_t seqNoDelta(std::uint16_t current, std::uint32_t last)
 {
     if (SENF_UNLIKELY(last == NO_SEQ_NO)) return INT_MAX;
+
+    static constexpr std::int32_t maxSeq_     = 0xfff+1;
+    static constexpr std::int32_t threshold_  = maxSeq_/10;
+    
+    std::int32_t dist(current - last);
+
+    if (SENF_UNLIKELY(dist + threshold_ < 0))
+        return dist + maxSeq_;
+    if (SENF_UNLIKELY(dist - (maxSeq_ - threshold_) > 0))
+        return dist - maxSeq_;
+    
+    return dist;
+
     // modulo subtraction with 12-bit sign extension
     // see https://graphics.stanford.edu/~seander/bithacks.html
-    return (((current - last) & 0x0FFF) ^ 0x0800) - 0x0800;
+    //return (((current - last) & 0x0FFF) ^ 0x0800) - 0x0800;
 }
 
 prefix_ void senf::emu::MonitorDataFilter::resetTimer()
@@ -260,7 +273,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
     {
         ReorderRecord & record (i->second);
         
-        int delta (seqNoDelta(record.nextExpectedSeqNo, seqNo));
+        int delta (seqNoDelta(seqNo, record.nextExpectedSeqNo));
         if (delta <= REORDER_MAX) {
             if (delta < 0) {
                 handle_DuplicateFrame(ethp);
@@ -586,7 +599,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         
         SequenceNumberMap::iterator i (sequenceNumberMap_.find(key));
         if (SENF_LIKELY(i != sequenceNumberMap_.end())) {
-            int delta (seqNoDelta(i->second.number, seqNo));
+            int delta (seqNoDelta(seqNo, i->second.number));
             if (SENF_LIKELY(delta == 1)) {
                 i->second.number = seqNo;
                 i->second.last = senf::scheduler::now();
