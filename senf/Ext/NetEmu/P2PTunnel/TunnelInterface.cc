@@ -58,7 +58,7 @@ prefix_ typename senf::emu::detail::TunnelIOHelper<Controller>::PacketType senf:
 template <class Controller>
 prefix_ bool senf::emu::detail::TunnelIOHelper<Controller>::operator()(Handle & handle, PacketType const & packet)
 {
-    if (SENF_LIKELY(packet.size() <= tunnelIface_.mtu()))
+    if (SENF_LIKELY(packet.size() <= tunnelIface_.mtu() + 18))
         return ctrl_.writePacket(handle, packet.as<EthernetPacket>());
     
     return true;
