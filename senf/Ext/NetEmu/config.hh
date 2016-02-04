@@ -52,7 +52,7 @@
 #  define LIBNL_VER_NUM          LIBNL_VER(LIBNL_VER_MAJ, LIBNL_VER_MIN)
 #endif
 
-#define SENF_EMU_MAXMTU 2048u
+#define SENF_EMU_MAXMTU 4096u
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
