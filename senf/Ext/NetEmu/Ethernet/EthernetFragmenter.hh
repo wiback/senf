@@ -86,12 +86,14 @@ namespace emu {
         void fragmentationThreshold(std::uint16_t _fragmentationThreshold, senf::MACAddress const & dst = senf::MACAddress::None);
         std::uint16_t fragmentationThreshold(senf::MACAddress const & dst = senf::MACAddress::None) const;
         boost::unordered_map<senf::MACAddress,std::uint16_t> const & fragThreshMap() const;
-        void clearFragThreshMap();
-
+        void reset();
+        void bypass(bool on);
+        
     private:
         void v_outputFragment(senf::EthernetPacket const & eth)  override;
 
         void onRequest();
+        void onRequestBypass();
 
         boost::unordered_map<senf::MACAddress,std::uint16_t> fragThreshMap_;
         std::uint16_t  defaultFragThresh_;

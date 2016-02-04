@@ -57,7 +57,7 @@ prefix_ senf::EthernetPacket & senf::emu::EthernetReassemblerBase::reassembledPa
 prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPacket const & eth)
 {
     EthernetFragmentPacket fragment (eth.next().find<EthernetFragmentPacket>(senf::nothrow));
-    if (!fragment) {
+    if (SENF_UNLIKELY(!fragment)) {
         // clone here to be on the safe side - this should not happen anyway
         reassembledPacket_ = eth.clone();
         packetsUnfragmented_++;
@@ -65,7 +65,7 @@ prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPack
     }
 
     std::uint8_t fragmentNr (fragment->fragmentNr());
-    if (fragmentNr != nextFragmentNr_) {
+    if (SENF_UNLIKELY(fragmentNr != nextFragmentNr_)){
         fragmentsInvalid_++;
         if (fragmentNr != 1)
             return false;

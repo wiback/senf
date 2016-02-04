@@ -46,7 +46,7 @@ prefix_ bool senf::emu::EthernetFragmenterBase::fragmentationRequired(senf::Ethe
     if (eth->type_length() == senf::EthVLanPacketType::etherType)
         payloadSize -= senf::EthVLanPacketParser::fixed_bytes;
     
-    return (payloadSize > threshold) or (eth.size() < senf::EthernetPacketType::minPayloadSize);
+    return payloadSize > threshold;
 }
 
 prefix_ unsigned senf::emu::EthernetFragmenterBase::fragmentationCount()
@@ -147,7 +147,7 @@ prefix_ std::uint16_t senf::emu::EthernetFragmenterModule::fragmentationThreshol
     const
 {
     auto const it (fragThreshMap_.find(dst));
-    if (it != fragThreshMap_.end()) {
+    if (SENF_LIKELY(it != fragThreshMap_.end())) {
         return it->second;
     }
     
@@ -160,10 +160,17 @@ prefix_ boost::unordered_map<senf::MACAddress,std::uint16_t> const & senf::emu::
     return fragThreshMap_;
 }
 
-prefix_ void senf::emu::EthernetFragmenterModule::clearFragThreshMap()
+prefix_ void senf::emu::EthernetFragmenterModule::reset()
 {
     fragThreshMap_.clear();
+    bypass(false);
 }
+
+prefix_ void senf::emu::EthernetFragmenterModule::bypass(bool on)
+{
+    input.onRequest( on ? &EthernetFragmenterModule::onRequestBypass : &EthernetFragmenterModule::onRequest); 
+}
+
 
 prefix_ void senf::emu::EthernetFragmenterModule::v_outputFragment(senf::EthernetPacket const & eth)
 {
@@ -178,6 +185,12 @@ prefix_ void senf::emu::EthernetFragmenterModule::onRequest()
     else
         output(eth);
 }
+
+prefix_ void senf::emu::EthernetFragmenterModule::onRequestBypass()
+{
+    output(input());
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
