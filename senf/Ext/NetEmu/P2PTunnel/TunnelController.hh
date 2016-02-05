@@ -87,7 +87,8 @@ namespace detail {
     class TunnelControllerBase
     {
     public:
-        static const unsigned TunnelOverhead = 32u; // IPv4 (20) + UDP (8) + TunnelHeader (4)
+        // The tunnel's MAC header must be accounted for, as it counts as payload in this case, while the Ethernet Fragmenter would exclude it
+        static const unsigned TunnelOverhead = 46u; // IPv4 (20) + UDP (8) + TunnelHeader (4) + Tunnel MAC
 
         typedef UDPv6ClientSocketHandle Handle;
         typedef EthernetPacket PacketType;
