@@ -128,7 +128,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     INet6SocketAddress addr;
 
     handle.readfrom(thdr.data(), addr, SENF_EMU_MAXMTU);
-    if( thdr.data().size() == 0) {
+    if (SENF_UNLIKELY(thdr.data().size() == 0)) {
         // ignore EGAIN, etc.
         return senf::EthernetPacket();
     }
@@ -333,6 +333,7 @@ prefix_ void senf::emu::detail::TunnelControllerBase::dumpInfo(std::ostream & os
        << "Enabled: " << (interface_.enabled() ? "yes" : "no") << std::endl
        << "Timeout: " << ClockService::in_seconds(timeout_) << " sec." << std::endl;
     os << "IOStats: " << stats_.stats().dump() << std::endl;
+    os << "Tunnel Overhead: " << TunnelOverhead << std::endl;
     os << "FragmentationStats: out " << fragmenter_.fragmentationCount() << ", in " << reassembler_.packetsReassembled() << std::endl;
 
     v_dumpInfo(os);
@@ -444,10 +445,11 @@ prefix_ void senf::emu::detail::TunnelServerController::v_handleCtrlPacket(
                 responseCode = TunnelCtrlPacketParser::SetupReject;
             }
         } else {
-            if (clientByINet == clients_by_inetAddr_.end())
+            if (clientByINet == clients_by_inetAddr_.end()) {
                 // known mac but unknown ip/port => update ip/port
                 updateINetAddr = true;
-            // else know mac and known ip/port => ok.
+            }
+            // else known mac and known ip/port => ok.
             updateLastSeen = true;
         }
         clients_by_macAddr_.modify( clientByMAC, TunnelClient::updateCapacity(
@@ -751,7 +753,7 @@ prefix_ void senf::emu::detail::TunnelClientController::reset()
     txSeqNo_ = 0;
     rxSeqNo_ = 0xFFFFFFFF;
     reSyncs_ = 0;
-    fragmentationThreshold(0);
+   fragmentationThreshold(0);
 }
 
 prefix_ void senf::emu::detail::TunnelClientController::serverAddress(INet6SocketAddress const & address)
@@ -796,6 +798,7 @@ prefix_ void senf::emu::detail::TunnelClientController::v_dumpInfo(std::ostream 
            << (serverLastSeen_ ? senf::str(ClockService::in_seconds(scheduler::now() - serverLastSeen_)) : "none")
        << " sec." << std::endl
        << "fragThresh " << fragmentationThreshold() << std::endl
+       << "Tunnel Overhead: " << TunnelOverhead << std::endl
        << "setupREQs sent " << setupRequests_ << std::endl
        << "txSeqNo: 0x" << std::hex << txSeqNo_ << ", rxSeqno 0x" << rxSeqNo_ << std::dec << ", reSyncs " << reSyncs_ << std::endl
        << "reordered: " << reordered_ << ", duplicate: " << duplicate_ << std::endl;
