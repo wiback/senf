@@ -109,7 +109,7 @@ prefix_ unsigned senf::emu::TokenBucketFilter::rate()
 }
 prefix_ void senf::emu::TokenBucketFilter::timerDeviation(std::ostream & out)
 {
-    out << "Deviation: " << timerDeviation_.data();
+    out << "Timer deviation " << timerDeviation_.data() << " nano secs." << std::endl;
     timerDeviation_.clear();
 }
 
@@ -144,7 +144,7 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 {
     SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
-    ClockService::clock_type now (scheduler::now());
+    ClockService::clock_type const & now (scheduler::now());
     Packet::size_type packetSize (queueAlgo_->frontPacketSize());
     SENF_ASSERT( packetSize > bucketSize_, "internal TokenBucketFilter error");
     ClockService::clock_type defer (ClockService::nanoseconds((packetSize - bucketSize_) * 8000000000ul / rate_));
@@ -153,7 +153,7 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket(bool enforceLimit)
 {
-    ClockService::clock_type now (scheduler::now());
+    ClockService::clock_type const & now (scheduler::now());
     ClockService::int64_type diff (ClockService::in_nanoseconds(now - lastToken_));
 
     lastToken_ = now;
