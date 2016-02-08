@@ -40,7 +40,7 @@
 
 prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigned _rate, ppi::QueueingAlgorithm::ptr qAlgorithm)
     : queueAlgo_(qAlgorithm.release()),
-      lastToken_( scheduler::now()),
+      lastToken_( ClockService::now()),
       timer_( "TokenBucketFilter::timer", membind(&TokenBucketFilter::onTimeout, this)),
       bucketLimit_( _burst), bucketLowThresh_(0), bucketSize_( _burst),
       rate_( _rate), bucketEmpty_(0)
@@ -129,7 +129,7 @@ prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 {
     SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
-    ClockService::int64_type delta (senf::ClockService::in_nanoseconds(scheduler::now() - timer_.timeout()));
+    ClockService::int64_type delta (senf::ClockService::in_nanoseconds(ClockService::now() - timer_.timeout()));
     timerDeviation_.accumulate(delta);
     fillBucket(delta <= 0);
     while (not queueAlgo_->empty() and queueAlgo_->frontPacketSize() <= bucketSize_) {
@@ -144,7 +144,7 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 {
     SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
-    ClockService::clock_type const & now (scheduler::now());
+    ClockService::clock_type now (ClockService::now());
     Packet::size_type packetSize (queueAlgo_->frontPacketSize());
     SENF_ASSERT( packetSize > bucketSize_, "internal TokenBucketFilter error");
     ClockService::clock_type defer (ClockService::nanoseconds((packetSize - bucketSize_) * 8000000000ul / rate_));
@@ -153,7 +153,7 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket(bool enforceLimit)
 {
-    ClockService::clock_type const & now (scheduler::now());
+    ClockService::clock_type now (ClockService::now());
     ClockService::int64_type diff (ClockService::in_nanoseconds(now - lastToken_));
 
     lastToken_ = now;
