@@ -81,7 +81,7 @@ namespace emu {
         void onTimeout();
         void onRequest();
         void byPass();
-        void fillBucket();
+        void fillBucket(bool enforceLimit = true);
         void setTimeout();
         bool queuePacket(Packet const & packet, Packet::size_type packetSize);
         void timerDeviation(std::ostream & out);

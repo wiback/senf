@@ -130,8 +130,8 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 {
     SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
     ClockService::int64_type delta (senf::ClockService::in_nanoseconds(scheduler::now() - timer_.timeout()));
-    timerDeviation_.accumulate( delta);
-    fillBucket();
+    timerDeviation_.accumulate(delta);
+    fillBucket(delta <= 0);
     while (not queueAlgo_->empty() and queueAlgo_->frontPacketSize() <= bucketSize_) {
         Packet packet (queueAlgo_->dequeue());
         bucketSize_ -= packet.size();
@@ -151,15 +151,16 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
     timer_.timeout( now + defer);
 }
 
-prefix_ void senf::emu::TokenBucketFilter::fillBucket()
+prefix_ void senf::emu::TokenBucketFilter::fillBucket(bool enforceLimit)
 {
     ClockService::clock_type now (scheduler::now());
-    ClockService::int64_type delta (ClockService::in_nanoseconds(now - lastToken_));
+    ClockService::int64_type diff (ClockService::in_nanoseconds(now - lastToken_));
 
     lastToken_ = now;
 
-    bucketSize_ += (delta * rate_) / 8000000000ul;
-    bucketSize_ = bucketSize_ % bucketLimit_;
+    bucketSize_ += (diff * rate_) / 8000000000ul;
+    if (enforceLimit)
+        bucketSize_ %= bucketLimit_;
 }
 
 prefix_ void senf::emu::TokenBucketFilter::byPass()
