@@ -131,7 +131,7 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
     SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
     ClockService::int64_type delta (senf::ClockService::in_nanoseconds(ClockService::now() - timer_.timeout()));
     timerDeviation_.accumulate(delta);
-    fillBucket(delta <= 0);
+    fillBucket();
     while (not queueAlgo_->empty() and queueAlgo_->frontPacketSize() <= bucketSize_) {
         Packet packet (queueAlgo_->dequeue());
         bucketSize_ -= packet.size();
@@ -151,17 +151,21 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
     timer_.timeout( now + defer);
 }
 
-prefix_ void senf::emu::TokenBucketFilter::fillBucket(bool enforceLimit)
+prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
     ClockService::clock_type now (ClockService::now());
     ClockService::int64_type diff (ClockService::in_nanoseconds(now - lastToken_));
 
     lastToken_ = now;
-
     bucketSize_ += (diff * rate_) / 8000000000ul;
-    if (enforceLimit)
-        bucketSize_ %= bucketLimit_;
 }
+
+prefix_ void senf::emu::TokenBucketFilter::fillBucketLimit()
+{
+    fillBucket();
+    bucketSize_ %= bucketLimit_;
+}
+
 
 prefix_ void senf::emu::TokenBucketFilter::byPass()
 {
@@ -178,11 +182,11 @@ prefix_ void senf::emu::TokenBucketFilter::onRequest()
         return;
     }
     
-    fillBucket();
+    fillBucketLimit();
 
     Packet::size_type packetSize (packet.size());
     if (packetSize <= bucketSize_) {
-        if (bucketSize_ < bucketLowThresh_ &&  bucketSize_ <= (std::uint32_t(rand()) % bucketLowThresh_)){
+        if (bucketSize_ < bucketLowThresh_ &&  bucketSize_ <= (std::uint32_t(rand()) % bucketLowThresh_)) {
             // drop packet early...indicating an empty(ing) bucket
             bucketEmpty_++;
             return;
