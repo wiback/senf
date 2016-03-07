@@ -57,7 +57,7 @@ namespace senf {
         bool broadcast() const;         ///< \c true, if address is the broadcast address
         bool null() const;              ///< \c true, if address is the zero address
         void hash(boost::uint64_t *) const;   ///< Return MAC address as uint64 value as hask key
-        void hash(boost::uint64_t *, boost::uint16_t const &) const;   ///< Return MAC address as uint64 value as hask key
+        void hash(boost::uint64_t *, boost::uint16_t ) const;   ///< Return MAC address as uint64 value as hask key
 
         using Base::operator=;
     };
