@@ -133,7 +133,8 @@ prefix_ senf::emu::EthernetFragmenterModule::EthernetFragmenterModule(std::uint1
 prefix_ void senf::emu::EthernetFragmenterModule::fragmentationThreshold(std::uint16_t threshold, senf::MACAddress const & dst)
 {
     if (!dst) {
-        defaultFragThresh_ = std::max(std::uint16_t(576), threshold);
+        if (threshold > 0)
+            defaultFragThresh_ = std::max(std::uint16_t(576), threshold);
         fragThreshMap_.clear();
     } else {
         fragThreshMap_.erase(dst);
