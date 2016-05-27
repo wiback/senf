@@ -28,8 +28,8 @@
 /** \file
     \brief AthSpectralTool public header */
 
-#ifndef HH_SENF_Ext_NetEmu_examples_AthSpectralTool_AthSpectralTool
-#define HH_SENF_Ext_NetEmu_examples_AthSpectralTool_AthSpectralTool 1
+#ifndef HH_SENF_Ext_NetEmu_examples_AthSpectralTool_AthSpectralTool_
+#define HH_SENF_Ext_NetEmu_examples_AthSpectralTool_AthSpectralTool_ 1
 
 // Custom includes
 

@@ -133,6 +133,41 @@ namespace senf {
         SENF_PARSER_FINALIZE( RadiotapPacket_MCSParser );
     };
 
+    struct RadiotapPacket_VHTParser : public PacketParserBase
+    {
+#       include SENF_FIXED_PARSER()
+
+        SENF_PARSER_SKIP_BITS(                                 7           );
+        SENF_PARSER_BITFIELD ( partialAidKnown,                1, bool     );
+        SENF_PARSER_BITFIELD ( groupIdKnown,                   1, bool     );
+        SENF_PARSER_BITFIELD ( bandwidthKnown,                 1, bool     );
+        SENF_PARSER_BITFIELD ( beamFormedKnown,                1, bool     );
+        SENF_PARSER_BITFIELD ( ldpcExtraOfdmSymbolKnown,       1, bool     ); 
+        SENF_PARSER_BITFIELD ( shortGiNsymDisambiguationKnown, 1, bool     );
+        SENF_PARSER_BITFIELD ( guardIntervalKnown,             1, bool     );
+        SENF_PARSER_BITFIELD ( txOpPsNotAllowedKnown,          1, bool     );
+        SENF_PARSER_BITFIELD ( stbcKnown,                      1, bool     );
+        SENF_PARSER_SKIP_BITS(                                 2           );
+        SENF_PARSER_BITFIELD ( beamFormed,                     1, bool     );
+        SENF_PARSER_BITFIELD ( ldpcExtraOfdmSymbol,            1, bool     ); 
+        SENF_PARSER_BITFIELD ( shortGiNsymDisambiguation,      1, bool     );
+        SENF_PARSER_BITFIELD ( guardInterval,                  1, bool     );
+        SENF_PARSER_BITFIELD ( txOpPsNotAllowed,               1, bool     );
+        SENF_PARSER_BITFIELD ( stbc,                           1, bool     );
+
+        SENF_PARSER_FIELD    ( bandwidth,                      UInt8Parser );
+        SENF_PARSER_FIELD    ( mcsNss0,                        UInt8Parser );
+        SENF_PARSER_FIELD    ( mcsNss1,                        UInt8Parser );
+        SENF_PARSER_FIELD    ( mcsNss2,                        UInt8Parser );
+        SENF_PARSER_FIELD    ( mcsNss3,                        UInt8Parser );
+        SENF_PARSER_FIELD    ( coding,                         UInt8Parser );
+        SENF_PARSER_FIELD    ( groupId,                        UInt8Parser );
+        SENF_PARSER_FIELD    ( partialAid,                     UInt16LSBParser);
+        
+        SENF_PARSER_FINALIZE( RadiotapPacket_VHTParser );
+    };
+
+    
     /** \brief Parse an Radiotap header
 
         Parser implementing the Radiotap header
@@ -288,6 +323,7 @@ namespace senf {
         FIELD( rtsRetries,        UInt8Parser,                          RTS_RETRIES_INDEX       );
         FIELD( dataRetries,       UInt8Parser,                          DATA_RETRIES_INDEX      );
         FIELD( mcs,               RadiotapPacket_MCSParser,             MCS_INDEX               );
+        FIELD( vht,               RadiotapPacket_VHTParser,             VHT_INDEX               );
 
 #       undef FIELD
 

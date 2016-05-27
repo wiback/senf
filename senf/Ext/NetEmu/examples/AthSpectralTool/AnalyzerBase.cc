@@ -130,11 +130,10 @@ prefix_ void AnalyzerBase::request()
                               rtParser.mcs().guardInterval() ));
             rate = senf::emu::WLANModulationParameterRegistry::instance().findModulationById(id).rate;
         }
-        /*
         else if (rtParser.vhtPresent()) {
-            // we need a Parser for that !
+            // we need to extend the Modulation registry to support VHT...
+            rate = 1000000;  // 1Gbps (dummy for now)
         }
-        */
         else if (rtParser.ratePresent()) {
             rate = rtParser.rate() * 500;
         }

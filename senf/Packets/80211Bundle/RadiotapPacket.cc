@@ -263,6 +263,25 @@ static const char * MCSmcsIndexDesc[] = { };
             os << "\n"; }
 
 
+static const char * VHTpartialAidDesc[] = { };
+static const char * VHTgroupIdDesc[] = { };
+static const char * VHTbandwidthDesc[] = { };
+static const char * VHTbeamFormedDesc[] = { "yes", "no" };
+static const char * VHTldpcExtraOfdmSymbolDesc[] = { "yes", "no" };
+static const char * VHTshortGiNsymDisambiguationDesc[] = { "yes", "no" };
+static const char * VHTguardIntervalDesc[] = { "long", "short" };
+static const char * VHTtxOpPsNotAllowedDesc[] = { "yes", "no" };
+static const char * VHTstbcDesc[] = { "yes", "no" };
+
+
+#   define VHT_FLAG(name, desc, longDesc)                               \
+        if (subparser.name ## Known()) {                                    \
+            os << senf::fieldName("  " desc) << unsigned(subparser.name()); \
+            if (longDesc)                                                   \
+                os << " (" << VHT ## name ## Desc[subparser.name()] << ")"; \
+            os << "\n"; }
+
+
 
     FIELD           ( tsft,              boost::uint64_t, "MAC timestamp"        );
     ENTER           ( flags                                                      );
@@ -333,7 +352,30 @@ static const char * MCSmcsIndexDesc[] = { };
         MCS_FLAG    (     fecType,                            "FEC type",       1);
         MCS_FLAG    (     mcsIndex,                           "MCS index",      0);
     LEAVE           (                                                            );
-
+    ENTER           ( vht                                                        );
+      START_FLAGS   (                                    "known VHT information" );
+        FLAG        (     partialAidKnown,                    "Partial AID"      );
+        FLAG        (     groupIdKnown,                       "Group ID"         );
+        FLAG        (     bandwidthKnown,                     "Bandwidth"        );
+        FLAG        (     beamFormedKnown,                    "Beam formed"      );
+        FLAG        (     ldpcExtraOfdmSymbolKnown,           "LDPC Extra OFDM Symbol");
+        FLAG        (     shortGiNsymDisambiguationKnown,     "Short GI NSYM Disambiguation");
+        FLAG        (     guardIntervalKnown,                 "Guard Interval"   );
+        FLAG        (     txOpPsNotAllowedKnown,              "TxOp PS Not Allowed");
+        FLAG        (     stbcKnown,                          "STBC"             );
+      END_FLAGS     (                                                            );
+      os <<                                            "  VHT information\n"      ;
+        VHT_FLAG    (     partialAid,                         "Partial AID"   , 0);
+        VHT_FLAG    (     groupId,                            "GroupId"       , 0);
+        VHT_FLAG    (     bandwidth,                          "Bandwidth Index", 0);
+        VHT_FLAG    (     beamFormed,                         "Beam Formed",    1);
+        VHT_FLAG    (     ldpcExtraOfdmSymbol,                "LDPC Extra OFDM Symbol", 1);
+        VHT_FLAG    (     shortGiNsymDisambiguation,          "Short GI NSYM Disambiguation", 1);
+        VHT_FLAG    (     guardInterval,                      "Guard Interval", 1);
+        VHT_FLAG    (     txOpPsNotAllowed,                   "TxOp PS Not Allowed", 1);
+        VHT_FLAG    (     stbc,                               "STBC",           1);
+    LEAVE           (                                                            );
+    
     if (p->flagsPresent() && p->flags().fcsAtEnd())
         os << senf::fieldName("fcs") << unsigned(p->fcs()) << '\n';
 
@@ -345,6 +387,7 @@ static const char * MCSmcsIndexDesc[] = { };
 #   undef ENTER
 #   undef FIELD
 #   undef MCS_FLAG
+#   undef VHT_FLAG
 }
 
 prefix_ void senf::RadiotapPacketType::init(packet p)
