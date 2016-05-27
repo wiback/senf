@@ -46,6 +46,12 @@ public:
     senf::ClockService::clock_type duration;
     unsigned frequency;
     bool ht40;
+
+    unsigned spectralPeriod;
+    unsigned spectralFFTPeriod;
+    unsigned spectralCount;
+    bool spectralEndless;
+    bool spectralShortRepeat;
     
     Configuration();
 

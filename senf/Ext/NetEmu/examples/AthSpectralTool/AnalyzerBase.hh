@@ -61,6 +61,7 @@ public:
     AnalyzerBase(Configuration const & configuration);
 
     bool startSpectralScan();
+    bool spectralSetting( std::string option, unsigned value);
 
     std::string stats();
     
@@ -82,7 +83,8 @@ private:
     // spectral stuff
     UnixFileHandle spectralHandle_;
     senf::scheduler::FdEvent spectralEvent_;
-
+    std::string spectralPath_;
+    
     unsigned pktData_;
     unsigned pktManagement_;
     unsigned pktControl_;

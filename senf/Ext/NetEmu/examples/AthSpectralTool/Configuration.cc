@@ -44,24 +44,35 @@ prefix_ Configuration::Configuration()
       reportingInterval(senf::ClockService::milliseconds(1000)),
       duration(senf::ClockService::seconds(10)),
       frequency(5180),
-      ht40(false)
+      ht40(false),
+      spectralPeriod(0x08),
+      spectralFFTPeriod(0x02),
+      spectralCount(8),
+      spectralEndless(false),
+      spectralShortRepeat(true)
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));
-    initDir.add("help", fty::Command( &Configuration::help, this));
-    initDir.add("version", fty::Command( &Configuration::version, this));
-    initDir.add("realtime-scheduling", fty::Command( &Configuration::enableRealtimeScheduling, this));
+    initDir.add("help", fty::Command(&Configuration::help, this));
+    initDir.add("version", fty::Command(&Configuration::version, this));
+    initDir.add("realtime-scheduling", fty::Command(&Configuration::enableRealtimeScheduling, this));
 
-    initDir.add("verbose", fty::Variable( verbose));
-    initDir.add("phy-name", fty::Variable( phyName));
-    initDir.add("debug-fs", fty::Variable( debugFS));
+    initDir.add("verbose", fty::Variable(verbose));
+    initDir.add("phy-name", fty::Variable(phyName));
+    initDir.add("debug-fs", fty::Variable(debugFS));
     initDir.add("reporting-interval", fty::Variable( reportingInterval)
                 .parser(senf::parseClockServiceInterval));
     initDir.add("duration", fty::Variable(duration)
                 .parser(senf::parseClockServiceInterval));
 
-    initDir.add("frequency", fty::Variable( frequency));
-    initDir.add("ht40", fty::Variable( ht40));
+    initDir.add("frequency", fty::Variable(frequency));
+    initDir.add("ht40", fty::Variable(ht40));
+
+    initDir.add("spectral-period", fty::Variable(spectralPeriod));
+    initDir.add("spectral-fft-period", fty::Variable(spectralFFTPeriod));
+    initDir.add("spectral-count", fty::Variable(spectralCount));
+    initDir.add("spectral-endless", fty::Variable(spectralEndless));
+    initDir.add("spectral-short-repeat", fty::Variable(spectralShortRepeat));
 
     // always turn those on, where available
     enableHighresTimers();

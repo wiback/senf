@@ -63,6 +63,10 @@ prefix_ AnalyzerBase::AnalyzerBase(Configuration const & configuration)
     // start the interval timer
     nextTimeout_ = startTime_ + configuration_.reportingInterval;
     timer_.timeout( nextTimeout_);
+
+    spectralPath_ = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k";
+    if (access(spectralPath_.c_str(), O_RDONLY) != 0)
+        spectralPath_ = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath10k";
 }
 
 prefix_ void AnalyzerBase::timerEvent()
@@ -210,17 +214,34 @@ prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
     }
 }
 
+prefix_ bool AnalyzerBase::spectralSetting( std::string option, unsigned value)
+{
+    int cfd;
+    if ((cfd = open( (spectralPath_ + "/" + option).c_str(), O_WRONLY)) != -1) {
+        std::string tmp (senf::str(value));
+        bool rtn (write(cfd, tmp.c_str(), tmp.size()) == signed(tmp.size()));
+        close(cfd);
+        return rtn;
+    }
+
+    return false;
+}
+
 prefix_ bool AnalyzerBase::startSpectralScan()
 {
-    std::string ctlFile_  (configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k/spectral_scan_ctl");
-    std::string dataFile_ (configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k/spectral_scan0");
+    std::string ctlFile_  (spectralPath_ + "/spectral_scan_ctl");
+    std::string dataFile_ (spectralPath_ + "/spectral_scan0");
 
-    // no ath9k ?  maybe we have a ath10k PHY....
-    if (access(ctlFile_.c_str(), O_RDONLY) != 0) {
-        ctlFile_  = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath10k/spectral_scan_ctl";
-        dataFile_ = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath10k/spectral_scan0";        
-    }
-    
+    // apply the settings
+    if (!spectralSetting( "spectral_period", configuration_.spectralPeriod))
+        return false;
+    if (!spectralSetting( "spectral_fft_period", configuration_.spectralFFTPeriod))
+        return false;
+    if (!spectralSetting( "spectral_count", configuration_.spectralCount))
+        return false;
+    if (!spectralSetting( "spectral_short_repeat", configuration_.spectralShortRepeat))
+        return false;
+
     int dfd;
     if ((dfd = open( dataFile_.c_str(), O_RDONLY|O_NONBLOCK)) == -1) {
         return false;

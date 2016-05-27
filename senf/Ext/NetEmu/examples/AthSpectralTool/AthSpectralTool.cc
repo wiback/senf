@@ -108,7 +108,10 @@ int main(int argc, char const * argv[])
     senf::scheduler::SignalEvent sigint  (SIGINT,  handleSignal);
     senf::scheduler::SignalEvent sigterm (SIGTERM, handleSignal);
 
-    analyzer.startSpectralScan();
+    if (!analyzer.startSpectralScan()) {
+        SENF_LOG((senf::log::IMPORTANT)("Failed to init the spectral scanner") );
+        exit(1);
+    }
     
     senf::ppi::run();
 
