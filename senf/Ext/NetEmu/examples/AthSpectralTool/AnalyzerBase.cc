@@ -50,6 +50,7 @@ prefix_ AnalyzerBase::AnalyzerBase(Configuration const & configuration)
      pktOther_(0),
      pktTx_(0),
      pktExceptions_(0),
+     pktFrequencyMismatch_(0),
      spectralSamples_(0),
      spectralUnknown_(0),
      spectralTruncated_(0),
@@ -145,7 +146,10 @@ prefix_ void AnalyzerBase::request()
         pktExceptions_++;
     };
 
-    v_80211FrameReceived(rtParser.tsft(), freq, rssi, rate, length, rtPacket);
+    if (freq == configuration_.frequency)
+        v_80211FrameReceived(rtParser.tsft(), freq, rssi, rate, length, rtPacket);
+    else
+        pktFrequencyMismatch_++;
 }
 
 prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
@@ -209,8 +213,14 @@ prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
 
 prefix_ bool AnalyzerBase::startSpectralScan()
 {
-    std::string ctlFile_  = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k/spectral_scan_ctl";
-    std::string dataFile_ = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k/spectral_scan0";
+    std::string ctlFile_  (configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k/spectral_scan_ctl");
+    std::string dataFile_ (configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k/spectral_scan0");
+
+    // no ath9k ?  maybe we have a ath10k PHY....
+    if (access(ctlFile_.c_str(), O_RDONLY) != 0) {
+        ctlFile_  = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath10k/spectral_scan_ctl";
+        dataFile_ = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath10k/spectral_scan0";        
+    }
     
     int dfd;
     if ((dfd = open( dataFile_.c_str(), O_RDONLY|O_NONBLOCK)) == -1) {
@@ -247,6 +257,7 @@ prefix_ std::string AnalyzerBase::stats()
         ", pktOther " + senf::str(pktOther_) +
         ", pktTx " + senf::str(pktTx_) +
         ", pktExceptions " + senf::str(pktExceptions_) +
+        ", pktFrequencyMismatch " + senf::str(pktFrequencyMismatch_) +
 
         " --- spectralSamples " + senf::str(spectralSamples_) +
         ", spectralUnknown " + senf::str(spectralUnknown_) +

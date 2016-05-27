@@ -89,6 +89,7 @@ private:
     unsigned pktOther_;
     unsigned pktTx_;
     unsigned pktExceptions_;
+    unsigned pktFrequencyMismatch_;
     unsigned spectralSamples_;
     unsigned spectralUnknown_;
     unsigned spectralTruncated_;
