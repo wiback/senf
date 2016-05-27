@@ -38,10 +38,11 @@ extern "C" {
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 prefix_ Configuration::Configuration()
-    : verbose( false),
+    : verbose(false),
       phyName("phy0"),
       debugFS("/sys/kernel/debug"),
-      reportingInterval( senf::ClockService::milliseconds(1000)),
+      reportingInterval(senf::ClockService::milliseconds(1000)),
+      duration(senf::ClockService::seconds(10)),
       frequency(5180),
       ht40(false)
 {
@@ -55,6 +56,8 @@ prefix_ Configuration::Configuration()
     initDir.add("phy-name", fty::Variable( phyName));
     initDir.add("debug-fs", fty::Variable( debugFS));
     initDir.add("reporting-interval", fty::Variable( reportingInterval)
+                .parser(senf::parseClockServiceInterval));
+    initDir.add("duration", fty::Variable(duration)
                 .parser(senf::parseClockServiceInterval));
 
     initDir.add("frequency", fty::Variable( frequency));

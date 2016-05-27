@@ -62,16 +62,18 @@ public:
 
     bool startSpectralScan();
 
+    std::string stats();
+    
 protected:
     Configuration const & configuration_;
 
     virtual void v_timerInterval(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration) = 0;
 
-    virtual void v_80211FrameReceived(std::uint64_t tsft, senf::RadiotapPacket & rt) = 0;
+    virtual void v_80211FrameReceived(std::uint64_t tsft, unsigned frequency, signed rssi, unsigned rate, unsigned length, senf::RadiotapPacket & rt) = 0;
 
-    virtual void v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ht20 const &)    = 0;
-    virtual void v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ht20_40 const &) = 0;
-    virtual void v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ath10k const &)  = 0;
+    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20 const &) = 0;
+    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20_40 const &) = 0;
+    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const &) = 0;
     
 private:
     senf::scheduler::TimerEvent    timer_;
@@ -87,8 +89,10 @@ private:
     unsigned pktOther_;
     unsigned pktTx_;
     unsigned pktExceptions_;
+    unsigned spectralSamples_;
     unsigned spectralUnknown_;
     unsigned spectralTruncated_;
+    unsigned spectralFrequencyMismatch_;
     
     void request();
     void handleSpectralEvent(int fd);

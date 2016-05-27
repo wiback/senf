@@ -43,6 +43,7 @@ public:
     std::string phyName;
     std::string debugFS;
     senf::ClockService::clock_type reportingInterval;
+    senf::ClockService::clock_type duration;
     unsigned frequency;
     bool ht40;
     

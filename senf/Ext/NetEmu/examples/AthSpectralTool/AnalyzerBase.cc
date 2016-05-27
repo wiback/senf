@@ -50,8 +50,10 @@ prefix_ AnalyzerBase::AnalyzerBase(Configuration const & configuration)
      pktOther_(0),
      pktTx_(0),
      pktExceptions_(0),
+     spectralSamples_(0),
      spectralUnknown_(0),
-     spectralTruncated_(0)
+     spectralTruncated_(0),
+     spectralFrequencyMismatch_(0)
 {
     noroute(input);
     input.onRequest( &AnalyzerBase::request);
@@ -71,6 +73,10 @@ prefix_ void AnalyzerBase::timerEvent()
     // restart timer fixing any potential scheduling issues
     nextTimeout_ += configuration_.reportingInterval;
     timer_.timeout( nextTimeout_);
+
+    if (configuration_.duration and ((current - startTime_) >= configuration_.duration)) {
+        senf::scheduler::terminate();
+    }
 }
 
 prefix_ void AnalyzerBase::request()
@@ -84,6 +90,11 @@ prefix_ void AnalyzerBase::request()
         return;
     }
 
+    unsigned freq (0);
+    unsigned rate(0);
+    signed rssi(0);
+    unsigned length(0);
+    
     try {        
         senf::WLANPacket_DataFrame dpkt (rtPacket.next<senf::WLANPacket_DataFrame>(senf::nothrow));
         if (dpkt) {
@@ -104,12 +115,37 @@ prefix_ void AnalyzerBase::request()
                 }
             }
         }
+
+        // determine frequency
+        if (rtParser.channelOptionsPresent()) {
+            freq = rtParser.channelOptions().freq();
+        }
+        
+        // determine data rate
+        if (rtParser.mcsPresent()) {
+            unsigned id (senf::emu::WLANModulationParameterRegistry::instance().parameterIdByMCS(
+                              rtParser.mcs().mcsIndex(),
+                              rtParser.mcs().bandwidth(),
+                              rtParser.mcs().guardInterval() ));
+            rate = senf::emu::WLANModulationParameterRegistry::instance().findModulationById(id).rate;
+        }
+        /*
+        else if (rtParser.vhtPresent()) {
+            // we need a Parser for that !
+        }
+        */
+        else if (rtParser.ratePresent()) {
+            rate = rtParser.rate() * 500;
+        }
+        
+        rssi = short(rtParser.dbmAntennaSignal());
+        length = rtPacket.size() - rtParser.length();   
     }
     catch(...) {
         pktExceptions_++;
     };
-    
-    v_80211FrameReceived(rtParser.tsft(), rtPacket);
+
+    v_80211FrameReceived(rtParser.tsft(), freq, rssi, rate, length, rtPacket);
 }
 
 prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
@@ -123,7 +159,12 @@ prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
                 fft_sample_ht20 ht20;
                 ht20.tlv = tlv;
                 if (read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                    v_SpectralDataReceived(be64toh(ht20.tsf), ht20);
+                    if (be16toh(ht20.freq) == configuration_.frequency) {
+                        spectralSamples_++;
+                        v_SpectralDataReceived(be64toh(ht20.tsf), be16toh(ht20.freq), ht20);
+                    } else {
+                        spectralFrequencyMismatch_++;
+                    }
                 } else {
                     spectralTruncated_++;
                 }
@@ -133,8 +174,13 @@ prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
             {
                 fft_sample_ht20_40 ht20_40;
                 ht20_40.tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                    v_SpectralDataReceived(be64toh(ht20_40.tsf), ht20_40);
+                if (read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) { 
+                    if (be16toh(ht20_40.freq) == configuration_.frequency) {
+                        spectralSamples_++;
+                        v_SpectralDataReceived(be64toh(ht20_40.tsf), be16toh(ht20_40.freq), ht20_40);
+                    } else {
+                        spectralFrequencyMismatch_++;
+                    }
                 } else {
                     spectralTruncated_++;
                 }
@@ -145,7 +191,8 @@ prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
                 fft_sample_ath10k ath10k;
                 ath10k.tlv = tlv;
                 if (read(spectralHandle_.fd(), ((char*)&ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                    v_SpectralDataReceived(be64toh(ath10k.tsf), ath10k);
+                    spectralSamples_++;
+                    v_SpectralDataReceived(be64toh(ath10k.tsf), be16toh(ath10k.freq1), be16toh(ath10k.freq2), ath10k);
                 } else {
                     spectralTruncated_++;
                 }
@@ -192,6 +239,20 @@ prefix_ bool AnalyzerBase::startSpectralScan()
     return true;
 }
 
+prefix_ std::string AnalyzerBase::stats()
+{
+    return "pktData " + senf::str(pktData_) +
+        ", pktManagement " + senf::str(pktManagement_) +
+        ", pktControl " + senf::str(pktControl_) +
+        ", pktOther " + senf::str(pktOther_) +
+        ", pktTx " + senf::str(pktTx_) +
+        ", pktExceptions " + senf::str(pktExceptions_) +
+
+        " --- spectralSamples " + senf::str(spectralSamples_) +
+        ", spectralUnknown " + senf::str(spectralUnknown_) +
+        ", spectralTruncated " + senf::str(spectralTruncated_) +
+        ", spectralFrequencyMismatch " + senf::str(spectralFrequencyMismatch_);
+}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

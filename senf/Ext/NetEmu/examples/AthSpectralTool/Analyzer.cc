@@ -50,24 +50,29 @@ prefix_ void Analyzer::v_timerInterval(senf::ClockService::clock_type const & ti
                                   << "Some message here...") );
 }
 
-prefix_ void Analyzer::v_80211FrameReceived(std::uint64_t tsft, senf::RadiotapPacket & rt)
+prefix_ void Analyzer::v_80211FrameReceived(std::uint64_t tsft, unsigned frequency, signed rssi, unsigned rate, unsigned length, senf::RadiotapPacket & rt)
 {
-    SENF_LOG((senf::log::MESSAGE) ("80211 frame received with tsft=" << std::hex << tsft) );
+    // rough estimate without preamble, padding, FCS, etc !!!
+    senf::ClockService::clock_type airtime (rate ? (senf::ClockService::microseconds((length * 8 * 1000) / rate)) : 0);
+    
+    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " 80211 frame received.Freqency " << frequency
+                                   << ", rssi " << rssi << ", rate " << rate << ", lenght " << length
+                                   << ", airtime " << senf::ClockService::in_microseconds(airtime) << "us") );
 }
 
-prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ht20 const & sample)
+prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20 const & sample)
 {
-    SENF_LOG((senf::log::MESSAGE) ("Spectral Data (HT20) received with tsft=" << std::hex << tsft) );
+    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (HT20) received on frequency " << frequency) );
 }
 
-prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ht20_40 const & sample)
+prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20_40 const & sample)
 {
-    SENF_LOG((senf::log::MESSAGE) ("Spectral Data (HT20_40) received with tsft=" << std::hex << tsft) );
+    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (HT20_40) received on frequency " << frequency) );
 }
 
-prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ath10k const & sample)
+prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const & sample)
 {
-    SENF_LOG((senf::log::MESSAGE) ("Spectral Data (ATH10K) received with tsft=" << std::hex << tsft) );
+    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (ATH10K) received on frequency1 " << frequency1 << " and frequency2 " << frequency2) );
 }
 
 

@@ -42,10 +42,10 @@ public:
     
 private:
     void v_timerInterval(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration);
-    void v_80211FrameReceived(std::uint64_t tsft, senf::RadiotapPacket & rt);
-    void v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ht20 const &);
-    void v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ht20_40 const &);
-    void v_SpectralDataReceived(std::uint64_t tsft, fft_sample_ath10k const &);
+    void v_80211FrameReceived(std::uint64_t tsft, unsigned frequency, signed rssi, unsigned rate, unsigned length, senf::RadiotapPacket & rt);
+    void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20 const &);
+    void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20_40 const &);
+    void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const &);
 };
 
 ///////////////////////////////hh.p////////////////////////////////////////

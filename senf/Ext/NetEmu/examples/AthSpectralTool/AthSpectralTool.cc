@@ -117,6 +117,8 @@ int main(int argc, char const * argv[])
         SENF_LOG((senf::log::IMPORTANT)("Dropped " << dropped << " frames during the capture! CPU overload ?"));
     }
 
+    SENF_LOG((senf::log::MESSAGE) (analyzer.stats()) );
+    
     return exitCode_;
 }
 
