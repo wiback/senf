@@ -62,6 +62,7 @@ public:
 
     bool startSpectralScan();
     bool spectralSetting( std::string option, unsigned value);
+    unsigned spectralSetting( std::string option);
 
     std::string stats();
     
@@ -69,6 +70,7 @@ protected:
     Configuration const & configuration_;
 
     virtual void v_timerInterval(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration) = 0;
+    virtual void v_terminate(senf::ClockService::clock_type const & sessionDuration) = 0;
 
     virtual void v_80211FrameReceived(std::uint64_t tsft, unsigned frequency, signed rssi, unsigned rate, unsigned length, senf::RadiotapPacket & rt) = 0;
 

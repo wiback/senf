@@ -112,7 +112,13 @@ int main(int argc, char const * argv[])
         SENF_LOG((senf::log::IMPORTANT)("Failed to init the spectral scanner") );
         exit(1);
     }
-    
+
+    SENF_LOG((senf::log::IMPORTANT)("Specral settings"
+                                    << ": period " << analyzer.spectralSetting("spectral_period")
+                                    << ", fft-period " << analyzer.spectralSetting("spectral_fft_period")
+                                    << ", short-repeat " << analyzer.spectralSetting("spectral_short_repeat")
+                                    << ", count " << analyzer.spectralSetting("spectral_count") ) );
+
     senf::ppi::run();
 
     unsigned dropped (socket.protocol().rxQueueDropped());

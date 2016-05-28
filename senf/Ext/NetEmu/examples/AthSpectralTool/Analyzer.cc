@@ -43,10 +43,15 @@ prefix_ Analyzer::~Analyzer()
 {
 }
 
+prefix_ void Analyzer::v_terminate(senf::ClockService::clock_type const & sessionDuration)
+{
+    SENF_LOG((senf::log::MESSAGE)("session terminated after " << senf::ClockService::in_seconds(sessionDuration) << "s") );
+}
+
 prefix_ void Analyzer::v_timerInterval(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration)
 {
-    SENF_LOG((senf::log::MESSAGE)("Timestamp " << senf::ClockService::in_milliseconds(timestamp)
-                                  << ", actualDuration " << senf::ClockService::in_milliseconds(actualDuration) << ": "
+    SENF_LOG((senf::log::MESSAGE)("timestamp " << senf::ClockService::in_milliseconds(timestamp)
+                                  << "ms, actualIntervalDuration " << senf::ClockService::in_milliseconds(actualDuration) << "ms: "
                                   << "Some message here...") );
 }
 

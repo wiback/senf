@@ -80,6 +80,7 @@ prefix_ void AnalyzerBase::timerEvent()
     timer_.timeout( nextTimeout_);
 
     if (configuration_.duration and ((current - startTime_) >= configuration_.duration)) {
+        v_terminate(current - startTime_);
         senf::scheduler::terminate();
     }
 }
@@ -212,6 +213,20 @@ prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
     } else {
         spectralTruncated_++;
     }
+}
+
+prefix_ unsigned AnalyzerBase::spectralSetting( std::string option)
+{
+    int cfd;
+    if ((cfd = open( (spectralPath_ + "/" + option).c_str(), O_RDONLY)) != -1) {
+        char buf[128]; int rd;
+        if ((rd = read(cfd, buf, sizeof((buf)))) > 0) {
+            buf[rd] = 0;
+            return atoi(buf);
+        }
+    }
+    
+    return unsigned(-1);
 }
 
 prefix_ bool AnalyzerBase::spectralSetting( std::string option, unsigned value)
