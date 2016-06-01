@@ -75,9 +75,9 @@ prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequ
     SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (HT20_40) received on frequency " << frequency) );
 }
 
-prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const & sample)
+prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const & sample, unsigned bins)
 {
-    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (ATH10K) received on frequency1 " << frequency1 << " and frequency2 " << frequency2) );
+    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (ATH10K) received on frequency1 " << frequency1 << " and frequency2 " << frequency2 << ", bins " << bins) );
 }
 
 

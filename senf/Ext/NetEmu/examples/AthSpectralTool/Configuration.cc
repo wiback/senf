@@ -47,7 +47,8 @@ prefix_ Configuration::Configuration()
       ht40(false),
       spectralPeriod(0x08),
       spectralFFTPeriod(0x02),
-      spectralCount(8),
+      spectralCount(0),
+      spectralBins(64),
       spectralEndless(false),
       spectralShortRepeat(true)
 {
@@ -70,6 +71,7 @@ prefix_ Configuration::Configuration()
 
     initDir.add("spectral-period", fty::Variable(spectralPeriod));
     initDir.add("spectral-fft-period", fty::Variable(spectralFFTPeriod));
+    initDir.add("spectral-bins", fty::Variable(spectralBins));
     initDir.add("spectral-count", fty::Variable(spectralCount));
     initDir.add("spectral-endless", fty::Variable(spectralEndless));
     initDir.add("spectral-short-repeat", fty::Variable(spectralShortRepeat));

@@ -50,6 +50,7 @@ public:
     unsigned spectralPeriod;
     unsigned spectralFFTPeriod;
     unsigned spectralCount;
+    unsigned spectralBins;
     bool spectralEndless;
     bool spectralShortRepeat;
     

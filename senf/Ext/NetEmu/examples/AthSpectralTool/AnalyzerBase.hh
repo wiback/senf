@@ -76,7 +76,7 @@ protected:
 
     virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20 const &) = 0;
     virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20_40 const &) = 0;
-    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const &) = 0;
+    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const &, unsigned bins) = 0;
     
 private:
     senf::scheduler::TimerEvent    timer_;

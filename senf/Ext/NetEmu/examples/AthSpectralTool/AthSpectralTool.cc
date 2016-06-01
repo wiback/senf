@@ -114,9 +114,10 @@ int main(int argc, char const * argv[])
     }
 
     SENF_LOG((senf::log::IMPORTANT)("Specral settings"
-                                    << ": period " << analyzer.spectralSetting("spectral_period")
-                                    << ", fft-period " << analyzer.spectralSetting("spectral_fft_period")
-                                    << ", short-repeat " << analyzer.spectralSetting("spectral_short_repeat")
+                                    << ": period (atk9k)" << analyzer.spectralSetting("spectral_period")
+                                    << ", fft-period (ath9k)" << analyzer.spectralSetting("spectral_fft_period")
+                                    << ", short-repeat (ath9k)" << analyzer.spectralSetting("spectral_short_repeat")
+                                    << ", bins (ath10k)" << analyzer.spectralSetting("spectral_bins")
                                     << ", count " << analyzer.spectralSetting("spectral_count") ) );
 
     senf::ppi::run();

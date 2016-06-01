@@ -196,11 +196,12 @@ prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
             break;
         case ATH_FFT_SAMPLE_ATH10K:
             {
-                fft_sample_ath10k ath10k;
-                ath10k.tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)&ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
+                char buf[1024]; // fft_sample_ath10k has avariable length, depending on the number bins
+                fft_sample_ath10k *ath10k = (fft_sample_ath10k *) buf;
+                ath10k->tlv = tlv;
+                if (read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
                     spectralSamples_++;
-                    v_SpectralDataReceived(be64toh(ath10k.tsf), be16toh(ath10k.freq1), be16toh(ath10k.freq2), ath10k);
+                    v_SpectralDataReceived(be64toh(ath10k->tsf), be16toh(ath10k->freq1), be16toh(ath10k->freq2), *ath10k, configuration_.spectralBins);
                 } else {
                     spectralTruncated_++;
                 }
@@ -247,14 +248,20 @@ prefix_ bool AnalyzerBase::startSpectralScan()
     std::string ctlFile_  (spectralPath_ + "/spectral_scan_ctl");
     std::string dataFile_ (spectralPath_ + "/spectral_scan0");
 
-    // apply the settings
-    if (!spectralSetting( "spectral_period", configuration_.spectralPeriod))
+
+    if (spectralPath_.find("ath9k") != std::string::npos) {
+        if (!spectralSetting( "spectral_period", configuration_.spectralPeriod))
+            return false;
+        if (!spectralSetting( "spectral_fft_period", configuration_.spectralFFTPeriod))
         return false;
-    if (!spectralSetting( "spectral_fft_period", configuration_.spectralFFTPeriod))
-        return false;
+        if (!spectralSetting( "spectral_short_repeat", configuration_.spectralShortRepeat))
+            return false;
+    } else {
+        // ath10k
+        if (!spectralSetting( "spectral_bins", configuration_.spectralBins))
+            return false;
+    }
     if (!spectralSetting( "spectral_count", configuration_.spectralCount))
-        return false;
-    if (!spectralSetting( "spectral_short_repeat", configuration_.spectralShortRepeat))
         return false;
 
     int dfd;
