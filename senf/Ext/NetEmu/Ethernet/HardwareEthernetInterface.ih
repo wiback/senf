@@ -71,6 +71,7 @@ namespace detail {
         void sndBuf(unsigned);
 
         void setupBPF(senf::MACAddress const & hwAddr, bool srcOnly = true);
+        void clearBPF();
     };
 
 }}}

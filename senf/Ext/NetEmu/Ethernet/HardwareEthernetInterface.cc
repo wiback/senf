@@ -85,7 +85,7 @@ prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::setupBPF(senf::MAC
     if (!socket)
         return;
 
-    // BPF: tcpdump -i eth1 -dd 'not ether src <self> and not ether dst <self>'
+    // BPF: tcpdump -i eth1 -dd 'not ether src <self>
     static struct sock_filter BPF_code_src[] = {
         { 0x20, 0, 0, 0x00000008 },
         { 0x15, 0, 3, (boost::uint32_t(hwAddr[3]) << 24) | (boost::uint32_t(hwAddr[2]) << 16) | (boost::uint32_t(hwAddr[1]) << 8) | boost::uint32_t(hwAddr[0]) },
@@ -114,6 +114,15 @@ prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::setupBPF(senf::MAC
     else
         socket.protocol().attachSocketFilter(BPF_code_src_dst);
 }
+
+prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::clearBPF()
+{
+    if (!socket)
+        return;
+
+    socket.protocol().detachSocketFilter();
+}
+
 
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +228,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
     // socket_.protocol().sndLowat(SENF_EMU_MAXMTU);
 
     HardwareEthernetInterfaceNet::assignSockets(socket_);
-    HardwareEthernetInterfaceNet::setupBPF(id(), true); // SRC only
+    if (promisc()) {
+        HardwareEthernetInterfaceNet::setupBPF(id(), true); // SRC only
+    }
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
@@ -274,6 +285,11 @@ prefix_ bool senf::emu::HardwareEthernetInterface::v_promisc()
 prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool v)
 {
     ctrl_.promisc(v);
+
+    if (v)
+        HardwareEthernetInterfaceNet::setupBPF(id(), true); // SRC only
+    else
+        HardwareEthernetInterfaceNet::clearBPF();
 }
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::v_mtu()
