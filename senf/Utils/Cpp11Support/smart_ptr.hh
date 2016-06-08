@@ -38,7 +38,7 @@
 #  define SENF_SMART_PTR  std::unique_ptr
 #  define SENF_MOVE(t)    std::move(t)
 #else
-#  define SENF_SMART_PTR  std::auto_ptr
+#  define SENF_SMART_PTR  std::unique_ptr
 #  define SENF_MOVE(t)    t
 #endif
 

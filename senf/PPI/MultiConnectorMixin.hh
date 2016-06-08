@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.fokus.fraunhofer.de.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -207,7 +207,7 @@ namespace module {
 
         If you need to use a completely different type of container, you can take over the container
         management yourself. To do this, pass \c void as container type and change \c
-        connectorSetup() to take an \c std::auto_ptr as argument. \c connectorSetup() must ensure to
+        connectorSetup() to take an \c std::unique_ptr as argument. \c connectorSetup() must ensure to
         save this connector in some container or throw an exception.
 
         Implementing \c connectorDestroy now is \e mandatory. The signature is changed to take a
@@ -223,7 +223,7 @@ namespace module {
             // ...
 
         private:
-            void connectorSetup(std::auto_ptr<ConnectorType> conn, unsigned p)
+            void connectorSetup(std::unique_ptr<ConnectorType> conn, unsigned p)
             {
                 if (p>connectors_.size())
                    throw SomeErrorException();
@@ -359,7 +359,7 @@ namespace module {
 #include "MultiConnectorMixin.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

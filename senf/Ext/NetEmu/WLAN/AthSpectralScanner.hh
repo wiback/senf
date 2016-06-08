@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.fokus.fraunhofer.de.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -83,7 +83,7 @@ namespace emu {
             else
                 samples_.insert(std::make_pair(std::int16_t(val),1));
         }
-        
+
         void clear() {
             samples_.clear();
         }
@@ -113,7 +113,7 @@ namespace emu {
                 for (auto it = samples_.begin(); it != samples_.end(); it++) {
                     sum  += float(it->first) * float(it->second);
                     cnt += it->second;
-                    if (cnt > ((data_.cnt * thresh1000 * 10) / 1000u))  // 10x 
+                    if (cnt > ((data_.cnt * thresh1000 * 10) / 1000u))  // 10x
                         break;
                 }
                 data_.min = sum / float(cnt);
@@ -137,12 +137,12 @@ namespace emu {
             return tmp;
         }
     };
-            
+
     class UnixFileHandle
         : public senf::FileHandle
     {
     public:
-        UnixFileHandle() : senf::FileHandle(std::auto_ptr<senf::FileBody>(new senf::FileBody)) {
+        UnixFileHandle() : senf::FileHandle(std::unique_ptr<senf::FileBody>(new senf::FileBody)) {
         }
 
         void SetFd(int fd_) {
@@ -172,7 +172,7 @@ namespace emu {
         unsigned mismatch() const;
         unsigned truncated() const;
         std::string ctlFile() const;
-      
+
     private:
         bool enable();
         void disable();
