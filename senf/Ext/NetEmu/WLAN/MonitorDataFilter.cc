@@ -36,6 +36,7 @@
 #include <senf/Utils/algorithm.hh>
 #include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Ext/NetEmu/Log.hh>
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 #include "WLANInterface.hh"
 
 #define prefix_
@@ -124,12 +125,12 @@ prefix_ std::string senf::emu::MonitorDataFilterStatistics::dump()
 prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const & id)
     : maxReorderDelay_ (senf::ClockService::milliseconds(32)),
       reorderQueueTimer_( "ReorderQueueTimer_" + senf::str(id), senf::membind( &MonitorDataFilter::reorderQueueTick, this)),
-      id_(id), promisc_(false),
+      id_(id),
+      promisc_(false),
+      rawMode_(false),
       modulationRegistry_(WLANModulationParameterRegistry::instance()),
-      dropUnknownMCS_ (true),
-      detailedAnnotations_(false)
+      dropUnknownMCS_ (true)
 {
-    noroute(monitor);
     route(input, output).autoThrottling(false);
     input.onRequest( &MonitorDataFilter::request);
     input.throttlingDisc( ppi::ThrottlingDiscipline::NONE);
@@ -144,6 +145,12 @@ prefix_ void senf::emu::MonitorDataFilter::promisc(bool p)
 {
     promisc_ = p;
 }
+
+prefix_ void senf::emu::MonitorDataFilter::rawMode(bool r)
+{
+    rawMode_ = r;
+}
+
 
 prefix_ senf::emu::TSFTHistogram & senf::emu::MonitorDataFilter::tsftHistogram()
 {
@@ -165,7 +172,7 @@ prefix_ void senf::emu::MonitorDataFilter::handle_DuplicateFrame(EthernetPacket 
     stats_.duplicated++;
     if (promisc_) {
         eth.annotation<annotations::Quality>().flags.frameDuplicate = true;
-        output(eth);
+        outData(eth);
     }
 }
 
@@ -215,9 +222,9 @@ prefix_ void senf::emu::MonitorDataFilter::reorderQueueTick()
     for (ReorderMap::iterator i (reorderMap_.begin()); i != reorderMap_.end();) {
         if (i->second.timeout <= reorderQueueTimer_.timeout()) {
             ++ stats_.reorderedTimedOut;
-            for (senf::EthernetPacket const & ethp : i->second.queue) {
+            for (senf::EthernetPacket & ethp : i->second.queue) {
                 if (ethp)
-                    output(ethp);
+                    outData(ethp);
             }
             sequenceNumberMap_.erase(i->first);
             i = reorderMap_.erase(i);
@@ -243,7 +250,7 @@ prefix_ void senf::emu::MonitorDataFilter::flushQueue(SequenceNumberMap::key_typ
     if (i != reorderMap_.end()) {
         while (!i->second.queue.empty()) {
             if (i->second.queue.front())
-                output(i->second.queue.front());
+                outData(i->second.queue.front());
             i->second.queue.pop_front();
         }
     }
@@ -287,12 +294,11 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
                 handle_DuplicateFrame(ethp);
                 return;
             }
-//            ethp.data().releaseExternalMemory();
             record.queue.at(delta) = ethp;
             
             while (! record.queue.empty() && record.queue.front()) {
                 seqNo = record.nextExpectedSeqNo;
-                output(record.queue.front());
+                outData(record.queue.front());
                 record.queue.pop_front();
                 record.nextExpectedSeqNo = (record.nextExpectedSeqNo + 1) & 0x0FFF;
             }
@@ -305,7 +311,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
                         record.queue.front().annotation<annotations::Quality>().setLoss(gap);
                         stats_.lost += gap;
                     }
-                    output(record.queue.front());
+                    outData(record.queue.front());
                     gap = 0;
                 } else {
                     gap++;
@@ -315,7 +321,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
             // ethp is the first packet which would have increased the queue size beyond
             // REORDER_MAX. Thus the sequence number of ethp (seqNo) must be beyond all other
             // sequence numbers in the queue and thus this is the last packet.
-            output(ethp);
+            outData(ethp);
             // We don't have to explicitly set seqNo since it's already correct.
         }
         
@@ -416,18 +422,15 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
     if (!pkt)
         return;
 
-    EthernetPacket eth (EthernetPacket::create( pkt.size() < EthernetPacketParser::fixed_bytes ? EthernetPacketParser::fixed_bytes : pkt.size()));
-    eth->source() = src;
-    eth->destination() = dst;
-    eth->type_length() = 0xffff; // reserved
+    DataPacket data (DataPacket::create(pkt.size()));
 
-    eth.annotation<annotations::Quality>()               = rtp.annotation<annotations::Quality>();
-    eth.annotation<annotations::Interface>().value       = rtp.annotation<annotations::Interface>().value;
-    eth.annotation<annotations::Timestamp>()             = rtp.annotation<annotations::Timestamp>();
-    eth.annotation<annotations::WirelessModulation>().id = rtp.annotation<annotations::WirelessModulation>().id;
+    data.annotation<annotations::Quality>()               = rtp.annotation<annotations::Quality>();
+    data.annotation<annotations::Interface>().value       = rtp.annotation<annotations::Interface>().value;
+    data.annotation<annotations::Timestamp>()             = rtp.annotation<annotations::Timestamp>();
+    data.annotation<annotations::WirelessModulation>().id = rtp.annotation<annotations::WirelessModulation>().id;
 
     stats_.substitute++;
-    output( eth);
+    outExtUI(data, src, dst);
 }
 
 
@@ -447,8 +450,7 @@ prefix_ bool senf::emu::MonitorDataFilter::handle_ManagementFrame(RadiotapPacket
     }
 
     stats_.management++;
-    if (monitor.connected())
-        monitor(rtPacket);
+    outExtUI(mgt);
 
     return true;
 }
@@ -462,8 +464,7 @@ prefix_ bool senf::emu::MonitorDataFilter::handle_CtrlFrame(RadiotapPacket & rtP
     }
 
     stats_.control++;
-    if (monitor.connected())
-        monitor(rtPacket);
+    outExtUI(ctrl);
 
     return true;
 }
@@ -626,12 +627,67 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
         }
 
-        stats_.data++;
-        output(eth);
+        outData(eth);
     }
     catch (senf::TruncatedPacketException const &) {
        stats_.truncated++;
     }
+}
+
+prefix_ void senf::emu::MonitorDataFilter::outExtUI(Packet & pkt, senf::MACAddress const & src_, senf::MACAddress const & dst_)
+{
+    AnnotationsPacket ap (AnnotationsPacket::createBefore(pkt));
+    EthOUIExtensionPacket oui (EthOUIExtensionPacket::createBefore(ap));
+    EthernetPacket eth (EthernetPacket::createBefore(oui));
+
+    senf::MACAddress src (senf::MACAddress::None);
+    senf::MACAddress dst (senf::MACAddress::Broadcast);
+    if (pkt.is<senf::EthernetPacket>()) {
+        src = pkt.as<senf::EthernetPacket>()->source();
+        dst = pkt.as<senf::EthernetPacket>()->destination();
+    }
+    else if (pkt.is<senf::WLANPacket_MgtFrame>()) {
+        src = pkt.as<senf::WLANPacket_MgtFrame>()->sourceAddress();
+    }
+    else if (pkt.is<senf::WLANPacket_CtrlFrame>() and pkt.as<senf::WLANPacket_CtrlFrame>()->is_rts()) {
+        src = pkt.as<senf::WLANPacket_CtrlFrame>()->sourceAddress();
+    }
+    else if (pkt.is<senf::WLANPacket_DataFrame>()) {
+        src = pkt.as<senf::WLANPacket_DataFrame>()->sourceAddress();
+        dst = pkt.as<senf::WLANPacket_DataFrame>()->destinationAddress();
+    }
+    else if (pkt.is<senf::DataPacket>()) {
+        src = src_;
+        dst = dst_;
+    }
+
+    eth->source() << src;
+    eth->destination() << dst;
+
+    ap->interfaceId()   << pkt.annotation<annotations::Interface>().value;
+    ap->timestampMAC()  << pkt.annotation<annotations::Timestamp>().as_clock_type();
+    ap->timestamp()     << pkt.annotation<annotations::Timestamp>().as_clock_type();
+    ap->modulationId()  << pkt.annotation<annotations::WirelessModulation>().id;
+    ap->snr()           << pkt.annotation<annotations::Quality>().snr;
+    ap->rssi()          << pkt.annotation<annotations::Quality>().rssi;
+    ap->corrupt()       << pkt.annotation<annotations::Quality>().flags.frameCorrupt;
+    ap->retransmitted() << pkt.annotation<annotations::Quality>().flags.frameRetransmitted;
+    ap->duplicated()    << pkt.annotation<annotations::Quality>().flags.frameDuplicate;
+    ap->reordered()     << pkt.annotation<annotations::Quality>().flags.frameReordered;
+    ap->gap()           << pkt.annotation<annotations::Quality>().flags.framePredecessorLost;
+    ap->length()        << pkt.annotation<annotations::Quality>().flags.frameLength;
+    
+    eth.finalizeTo(ap);
+    output(eth);
+}
+
+prefix_ void senf::emu::MonitorDataFilter::outData(senf::EthernetPacket & eth)
+{
+    stats_.data++;
+    if (rawMode_)
+        outExtUI(eth);
+    else
+        output(eth);
 }
 
 prefix_ void senf::emu::MonitorDataFilter::dumpState(std::ostream & os)

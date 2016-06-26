@@ -61,7 +61,6 @@ namespace detail {
 
         ppi::connector::ActiveOutputJack<EthernetPacket> netOutput;
         ppi::connector::PassiveInputJack<EthernetPacket> netInput;
-        ppi::connector::ActiveOutputJack<RadiotapPacket> monitor;
 
         HardwareWLANInterfaceNet();
 

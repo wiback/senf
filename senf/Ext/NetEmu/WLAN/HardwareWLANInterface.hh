@@ -63,15 +63,6 @@ namespace emu {
         typedef TypedInterfaceDecorator<
             HardwareWLANInterface, WirelessInterface::Decorator> Decorator;
 
-#ifdef DOXYGEN
-        ppi::connector::ActiveOutputJack<RadiotapPacket> monitor;
-                                        ///< Monitor traffic
-                                        /**< Monitor traffic is sent to this connector. This traffic
-                                             is only available, if a monitorDevice() is set. */
-#else
-        using detail::HardwareWLANInterfaceNet::monitor;
-#endif
-
         explicit HardwareWLANInterface(std::string const & iface, bool joined=false);
         HardwareWLANInterface(std::string const & iface, std::string const & monIface, bool joined=false);
 
@@ -97,6 +88,7 @@ namespace emu {
 
         MonitorDataFilterStatistics filterStats();
         void monitorDropUnknownMCS(bool q);
+        void rawMode (bool r);
 
         WirelessNLController::IbssJoinParameters::ptr joinAdhocNetwork(std::string const & ssid, unsigned int freq, unsigned int bandwidth);
         void leaveAdhocNetwork();

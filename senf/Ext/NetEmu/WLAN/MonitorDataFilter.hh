@@ -97,11 +97,11 @@ namespace emu {
     public:
         ppi::connector::PassiveInput<RadiotapPacket> input;
         ppi::connector::ActiveOutput<EthernetPacket> output;
-        ppi::connector::ActiveOutput<RadiotapPacket> monitor;
 
         MonitorDataFilter(senf::MACAddress const & id = senf::MACAddress::None);
 
         void promisc(bool p);
+        void rawMode(bool r);
         void id(senf::MACAddress const & _id);
         TSFTHistogram & tsftHistogram();
         MonitorDataFilterStatistics stats();
@@ -139,11 +139,11 @@ namespace emu {
 
         senf::MACAddress id_;
         bool promisc_;
+        bool rawMode_;
         WLANModulationParameterRegistry const & modulationRegistry_;
         TSFTHistogram tsftHistogram_;
         MonitorDataFilterStatistics stats_;
         bool dropUnknownMCS_;
-        bool detailedAnnotations_;
 
         void resetTimer();
         void reorderQueueTick();
@@ -151,6 +151,9 @@ namespace emu {
         void flushQueue(SequenceNumberMap::key_type key);
 
         void pushSubstituteEthernet(RadiotapPacket & rtPacket);
+
+        void outExtUI(Packet & pkt, senf::MACAddress const & src = senf::MACAddress::None, senf::MACAddress const & dst = senf::MACAddress::Broadcast);
+        void outData(senf::EthernetPacket & eth);
 
         void handle_badFCS(RadiotapPacket & rtp);
         void handle_DuplicateFrame(EthernetPacket & eth);
