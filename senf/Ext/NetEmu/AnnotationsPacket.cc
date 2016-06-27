@@ -117,7 +117,7 @@ prefix_ senf::EthernetPacket senf::prependAnnotaionsPacket(Packet const & pkt, M
     }
 
     eth->source()      << src;
-    eth->destination() << dst;
+    eth->destination() << (dst.broadcast() ? pkt.annotation<emu::annotations::Interface>().value : dst);
 
     ap->interfaceId()   << pkt.annotation<emu::annotations::Interface>().value;
     ap->timestampMAC()  << pkt.annotation<emu::annotations::Timestamp>().as_clock_type();
