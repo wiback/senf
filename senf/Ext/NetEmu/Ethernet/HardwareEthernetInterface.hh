@@ -66,6 +66,8 @@ namespace emu {
         void qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgorithm);
         senf::ppi::QueueingAlgorithm & qAlgorithm() const;
 
+        void rawMode(bool r);
+
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);
         unsigned rcvBuf();
@@ -117,7 +119,7 @@ namespace emu {
         unsigned rcvBufSize_;
         unsigned sndBufSize_;
         unsigned qlen_;
-
+        
         friend struct detail::HardwareEthernetInterfaceNet;
         friend class EthernetAnnotator;
     };

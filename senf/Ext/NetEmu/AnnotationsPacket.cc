@@ -38,6 +38,7 @@
 #include <senf/Utils/senflikely.hh>
 #include <senf/Packets/PacketTypes.hh>
 #include <senf/Packets/80211Bundle/WLANPacket.hh>
+#include "Annotations.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,6 +88,54 @@ prefix_ void senf::AnnotationsPacketType::finalize(packet p)
     }
     // Do NOT reset type_length if the type is not known ... doing this will destroy read packets
 }
+
+prefix_ senf::EthernetPacket senf::prependAnnotaionsPacket(Packet const & pkt, MACAddress const & src_, MACAddress const & dst_)
+{
+    AnnotationsPacket ap (AnnotationsPacket::createBefore(pkt));
+    EthOUIExtensionPacket oui (EthOUIExtensionPacket::createBefore(ap));
+    EthernetPacket eth (EthernetPacket::createBefore(oui));
+
+    senf::MACAddress src (senf::MACAddress::None);
+    senf::MACAddress dst (senf::MACAddress::Broadcast);
+    if (SENF_LIKELY(pkt.is<senf::EthernetPacket>())) {
+        src = pkt.as<senf::EthernetPacket>()->source();
+        dst = pkt.as<senf::EthernetPacket>()->destination();
+    }
+    else if (pkt.is<senf::WLANPacket_MgtFrame>()) {
+        src = pkt.as<senf::WLANPacket_MgtFrame>()->sourceAddress();
+    }
+    else if (pkt.is<senf::WLANPacket_CtrlFrame>() and pkt.as<senf::WLANPacket_CtrlFrame>()->is_rts()) {
+        src = pkt.as<senf::WLANPacket_CtrlFrame>()->sourceAddress();
+    }
+    else if (pkt.is<senf::WLANPacket_DataFrame>()) {
+        src = pkt.as<senf::WLANPacket_DataFrame>()->sourceAddress();
+        dst = pkt.as<senf::WLANPacket_DataFrame>()->destinationAddress();
+    }
+    else if (pkt.is<senf::DataPacket>()) {
+        src = src_;
+        dst = dst_;
+    }
+
+    eth->source()      << src;
+    eth->destination() << dst;
+
+    ap->interfaceId()   << pkt.annotation<emu::annotations::Interface>().value;
+    ap->timestampMAC()  << pkt.annotation<emu::annotations::Timestamp>().as_clock_type();
+    ap->timestamp()     << pkt.annotation<emu::annotations::Timestamp>().as_clock_type();
+    ap->modulationId()  << pkt.annotation<emu::annotations::WirelessModulation>().id;
+    ap->snr()           << pkt.annotation<emu::annotations::Quality>().snr;
+    ap->rssi()          << pkt.annotation<emu::annotations::Quality>().rssi;
+    ap->corrupt()       << pkt.annotation<emu::annotations::Quality>().flags.frameCorrupt;
+    ap->retransmitted() << pkt.annotation<emu::annotations::Quality>().flags.frameRetransmitted;
+    ap->duplicated()    << pkt.annotation<emu::annotations::Quality>().flags.frameDuplicate;
+    ap->reordered()     << pkt.annotation<emu::annotations::Quality>().flags.frameReordered;
+    ap->gap()           << pkt.annotation<emu::annotations::Quality>().flags.framePredecessorLost;
+    ap->length()        << pkt.annotation<emu::annotations::Quality>().flags.frameLength;
+    
+    eth.finalizeTo(ap);
+    return eth;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

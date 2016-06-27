@@ -32,7 +32,6 @@
 #define IH_SENF_Ext_NetEmu_EthernetAnnotator 1
 
 // Custom includes
-#include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/PPI/QueueSocketSourceSink.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,10 +53,13 @@ namespace emu {
         void id(MACAddress const & id);
         MACAddress const & id() const;
 
+        void rawMode(bool r);
+
     private:
         void request();
 
         MACAddress id_;
+        bool rawMode_;
     };
 }}
 

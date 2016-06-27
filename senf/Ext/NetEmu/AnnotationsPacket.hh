@@ -106,6 +106,8 @@ namespace senf {
      */
     typedef ConcretePacket<AnnotationsPacketType> AnnotationsPacket;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( AnnotationsPacket );
+
+    EthernetPacket prependAnnotaionsPacket(Packet const & pkt, MACAddress const & src_ = senf::MACAddress::None, MACAddress const & dst_ = senf::MACAddress::Broadcast);
 }
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "AnnotationsPacket.cci"

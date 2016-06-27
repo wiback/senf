@@ -31,10 +31,14 @@
 // Custom includes
 #include "EthernetAnnotator.hh"
 
+#include <senf/Ext/NetEmu/Annotations.hh>
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
+
 #define prefix_ 
 
 prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(senf::MACAddress const & id)
-    : id_ (id)
+    : id_ (id),
+      rawMode_(false)
 {
     route(input, output).autoThrottling( false);
     input.throttlingDisc(senf::ppi::ThrottlingDiscipline::NONE);
@@ -50,6 +54,11 @@ prefix_ senf::MACAddress const & senf::emu::EthernetAnnotator::id()
     const
 {
     return id_;
+}
+
+prefix_ void senf::emu::EthernetAnnotator::rawMode(bool r)
+{
+    rawMode_ = r;
 }
 
 prefix_ void senf::emu::EthernetAnnotator::request()
@@ -70,7 +79,7 @@ prefix_ void senf::emu::EthernetAnnotator::request()
     }
 
     boost::optional<unsigned> vlanId (eth.annotation<senf::ppi::QueueBufferAnnotation>()->vlan());
-    if (vlanId) {
+    if (SENF_UNLIKELY(vlanId)) {
         EthVLanPacket vlan (EthVLanPacket::createInsertBefore(eth.next()));
         vlan->vlanId() << *vlanId;
         vlan->type_length() << eth->type_length();
@@ -78,7 +87,11 @@ prefix_ void senf::emu::EthernetAnnotator::request()
         vlan.reparse();
     }
 
-    output(eth);
+    if (SENF_UNLIKELY(rawMode_)) {
+        output(prependAnnotaionsPacket(eth));
+    } else {
+        output(eth);
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

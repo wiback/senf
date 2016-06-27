@@ -34,8 +34,8 @@
 #include "senf/PPI/QueueSocketSourceSink.hh"
 #include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
 #include <senf/Utils/algorithm.hh>
-#include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Ext/NetEmu/Log.hh>
+#include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 #include "WLANInterface.hh"
 
@@ -636,55 +636,13 @@ prefix_ void senf::emu::MonitorDataFilter::request()
 
 prefix_ void senf::emu::MonitorDataFilter::outExtUI(Packet & pkt, senf::MACAddress const & src_, senf::MACAddress const & dst_)
 {
-    AnnotationsPacket ap (AnnotationsPacket::createBefore(pkt));
-    EthOUIExtensionPacket oui (EthOUIExtensionPacket::createBefore(ap));
-    EthernetPacket eth (EthernetPacket::createBefore(oui));
-
-    senf::MACAddress src (senf::MACAddress::None);
-    senf::MACAddress dst (senf::MACAddress::Broadcast);
-    if (pkt.is<senf::EthernetPacket>()) {
-        src = pkt.as<senf::EthernetPacket>()->source();
-        dst = pkt.as<senf::EthernetPacket>()->destination();
-    }
-    else if (pkt.is<senf::WLANPacket_MgtFrame>()) {
-        src = pkt.as<senf::WLANPacket_MgtFrame>()->sourceAddress();
-    }
-    else if (pkt.is<senf::WLANPacket_CtrlFrame>() and pkt.as<senf::WLANPacket_CtrlFrame>()->is_rts()) {
-        src = pkt.as<senf::WLANPacket_CtrlFrame>()->sourceAddress();
-    }
-    else if (pkt.is<senf::WLANPacket_DataFrame>()) {
-        src = pkt.as<senf::WLANPacket_DataFrame>()->sourceAddress();
-        dst = pkt.as<senf::WLANPacket_DataFrame>()->destinationAddress();
-    }
-    else if (pkt.is<senf::DataPacket>()) {
-        src = src_;
-        dst = dst_;
-    }
-
-    eth->source() << src;
-    eth->destination() << dst;
-
-    ap->interfaceId()   << pkt.annotation<annotations::Interface>().value;
-    ap->timestampMAC()  << pkt.annotation<annotations::Timestamp>().as_clock_type();
-    ap->timestamp()     << pkt.annotation<annotations::Timestamp>().as_clock_type();
-    ap->modulationId()  << pkt.annotation<annotations::WirelessModulation>().id;
-    ap->snr()           << pkt.annotation<annotations::Quality>().snr;
-    ap->rssi()          << pkt.annotation<annotations::Quality>().rssi;
-    ap->corrupt()       << pkt.annotation<annotations::Quality>().flags.frameCorrupt;
-    ap->retransmitted() << pkt.annotation<annotations::Quality>().flags.frameRetransmitted;
-    ap->duplicated()    << pkt.annotation<annotations::Quality>().flags.frameDuplicate;
-    ap->reordered()     << pkt.annotation<annotations::Quality>().flags.frameReordered;
-    ap->gap()           << pkt.annotation<annotations::Quality>().flags.framePredecessorLost;
-    ap->length()        << pkt.annotation<annotations::Quality>().flags.frameLength;
-    
-    eth.finalizeTo(ap);
-    output(eth);
+    output(prependAnnotaionsPacket(pkt, src_, dst_));
 }
 
 prefix_ void senf::emu::MonitorDataFilter::outData(senf::EthernetPacket & eth)
 {
     stats_.data++;
-    if (rawMode_)
+    if (SENF_UNLIKELY(rawMode_))
         outExtUI(eth);
     else
         output(eth);
