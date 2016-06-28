@@ -59,7 +59,7 @@ namespace emu {
 
         void qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgorithm);
         senf::ppi::QueueingAlgorithm & qAlgorithm() const;
-
+        
     protected:
         template <class Output, class Input>
         TunnelInterfaceBase(Output & output, Input & input, detail::TunnelControllerBase & ctrlBase, INet6SocketAddress const & address);
@@ -105,6 +105,8 @@ namespace emu {
 
         unsigned capacity(MACAddress const & client, tunnel::CapacityDirection direction) const;
 
+        void rawMode(bool r);
+
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);
         unsigned rcvBuf();
@@ -144,9 +146,11 @@ namespace emu {
         INet6SocketAddress const & serverAddress() const;
 
         bool established() const;
-
+        
         unsigned capacity(tunnel::CapacityDirection direction) const;
         void capacity(tunnel::CapacityDirection direction, unsigned cap);
+
+        void rawMode(bool r);
 
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);

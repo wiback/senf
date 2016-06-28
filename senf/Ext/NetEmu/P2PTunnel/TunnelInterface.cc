@@ -33,7 +33,7 @@
 // Custom includes
 #include <senf/Utils/Console/STLSupport.hh>
 #include <senf/Utils/Console/Variables.hh>
-#include <senf/Ext/NetEmu/Annotations.hh>
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 #include <senf/Ext/NetEmu/config.hh>
 #include "TunnelCtrlPacket.hh"
 #include "TunnelHeaderPacket.hh"
@@ -52,7 +52,15 @@ prefix_ senf::emu::detail::TunnelIOHelper<Controller>::TunnelIOHelper(TunnelCont
 template <class Controller>
 prefix_ typename senf::emu::detail::TunnelIOHelper<Controller>::PacketType senf::emu::detail::TunnelIOHelper<Controller>::operator()(Handle & handle)
 {
-    return ctrl_.readPacket(handle);
+    auto pkt (ctrl_.readPacket(handle));
+    if (!pkt)
+        return pkt;
+    
+    if (SENF_UNLIKELY(tunnelIface_.rawMode())) {
+        return prependAnnotaionsPacket(pkt);
+    } else {
+        return pkt;
+    }
 }
 
 template <class Controller>
@@ -72,7 +80,7 @@ template <class Controller>
 prefix_ senf::emu::detail::TunnelInterfaceNet<Controller>::TunnelInterfaceNet(typename Controller::Interface & interface)
     : socket(senf::noinit), tunnelCtrl(interface),
       source(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)), sink(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)),
-      netOutput(source.output), netInput(sink.input), mtu_(1500u), maxBurst_(48)
+      netOutput(source.output), netInput(sink.input), mtu_(1500u), maxBurst_(48), rawMode_(false)
 {
 }
 
@@ -142,6 +150,19 @@ prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::maxBurst(unsigne
 {
     maxBurst_ = v;
     source.maxBurst(maxBurst_);
+}
+
+template <class Controller>
+prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::rawMode(bool r)
+{
+    rawMode_ = r;
+}
+
+template <class Controller>
+prefix_ bool senf::emu::detail::TunnelInterfaceNet<Controller>::rawMode()
+    const
+{
+    return rawMode_;
 }
 
 
@@ -437,6 +458,11 @@ prefix_ void senf::emu::TunnelServerInterface::maxBurst(unsigned v)
     TunnelInterfaceNet::maxBurst(v);
 }
 
+prefix_ void senf::emu::TunnelServerInterface::rawMode(bool r)
+{
+    TunnelInterfaceNet::rawMode(r);
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::TunnelClientInterface
@@ -616,6 +642,11 @@ prefix_ unsigned senf::emu::TunnelClientInterface::maxBurst()
 prefix_ void senf::emu::TunnelClientInterface::maxBurst(unsigned v)
 {
     TunnelInterfaceNet::maxBurst(v);
+}
+
+prefix_ void senf::emu::TunnelClientInterface::rawMode(bool r)
+{
+    TunnelInterfaceNet::rawMode(r);
 }
 
 
