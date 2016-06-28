@@ -97,6 +97,14 @@ namespace senf {
         void promisc(bool mode);        ///< enable/disable promiscuous mode of the interface
                                         /**< Note, that this is a privileged operation. */
 
+        void addVLAN(std::uint16_t vlanId);
+                                        ///< add a VLAN interface 
+                                        /**< Note, that this is a privileged operation. */
+        void delVLAN(std::uint16_t vlanId);
+                                        ///< delete a VLAN interface 
+                                        /**< Note, that this is a privileged operation. */
+
+        
         bool isUp() const;              ///< return \c true if interface is up
         void up();                      ///< ifconfig up interface
         void down();                    ///< ifconfig down interface

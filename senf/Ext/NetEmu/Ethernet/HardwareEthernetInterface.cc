@@ -28,10 +28,8 @@
 /** \file
     \brief HardwareEthernetInterface non-inline non-template implementation */
 
-#include <linux/filter.h>
-#include <linux/if_vlan.h>
 #include <linux/sockios.h>
-#include <sys/ioctl.h>
+#include <linux/filter.h>
 #include "HardwareEthernetInterface.hh"
 
 // Custom includes
@@ -219,39 +217,6 @@ prefix_ std::string senf::emu::HardwareEthernetInterface::device()
     return dev_;
 }
 
-prefix_ bool senf::emu::HardwareEthernetInterface::addVLAN(std::uint16_t vlanId)
-{
-    int fd(::socket(AF_INET,SOCK_STREAM,0));
-    if (fd == -1)
-        return false;
-    
-    vlan_ioctl_args vlan_request;
-    memset(&vlan_request, 0, sizeof(vlan_request));
-    vlan_request.cmd     = ADD_VLAN_CMD;
-    vlan_request.u.VID   = vlanId;
-    strncpy(vlan_request.device1, device().c_str(), sizeof(vlan_request.device1));
-    int rtn (::ioctl (fd, SIOCSIFVLAN, &vlan_request));
-    close(fd);
-
-    return rtn != -1;
-}
-
-prefix_ bool senf::emu::HardwareEthernetInterface::delVLAN(std::uint16_t vlanId)
-{
-    int fd(::socket(AF_INET,SOCK_STREAM,0));
-    if (fd == -1)
-        return false;
-    
-    vlan_ioctl_args vlan_request;
-    memset(&vlan_request, 0, sizeof(vlan_request));
-    vlan_request.cmd     = DEL_VLAN_CMD;
-    strncpy(vlan_request.device1, (device()+"."+senf::str(vlanId)).c_str(), sizeof(vlan_request.device1));
-    int rtn (::ioctl (fd, SIOCSIFVLAN, &vlan_request));
-    close(fd);
-
-    return rtn != -1;
-}
-
 prefix_ void senf::emu::HardwareEthernetInterface::rawMode(bool r)
 {
     annotator_.rawMode(r);
@@ -269,13 +234,16 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_mcDrop(MACAddress const & a
 
 prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 {
+    std::string vlanDevice (device() + "." + senf::str(pvid_));
+
     if (!promisc() and pvid_ != std::uint16_t(-1)) {
-        addVLAN(pvid_);
-	NetdeviceController nc (device() + "." + senf::str(pvid_));
-	nc.up();
+        NetdeviceController nc (device());
+        nc.addVLAN(pvid_);
+        NetdeviceController ncv (vlanDevice);
+        ncv.up();
     }
     
-    ConnectedMMapPacketSocketHandle socket_ ((promisc() or pvid_ == std::uint16_t(-1) ? device() : device() + "." + senf::str(pvid_)),
+    ConnectedMMapPacketSocketHandle socket_ ((promisc() or pvid_ == std::uint16_t(-1) ? device() : vlanDevice),
                                              qlen_, SENF_EMU_MAXMTU);
 
     socket_.protocol().rcvbuf( rcvBufSize_);
@@ -294,7 +262,8 @@ prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
         HardwareEthernetInterfaceNet::socket.close();
 
     if (!promisc() and pvid_ != std::uint16_t(-1)) {
-        delVLAN(pvid_);
+        NetdeviceController nc (device());
+        nc.delVLAN(pvid_);
     }
 
     HardwareEthernetInterfaceNet::assignSockets(socket);

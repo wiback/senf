@@ -101,9 +101,6 @@ namespace emu {
     private:
         void init_sockets();
         void close_sockets();
-
-        bool addVLAN(std::uint16_t vlanId);
-        bool delVLAN(std::uint16_t vlanId);
         
         // interface
         virtual bool v_enabled() const;

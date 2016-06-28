@@ -34,10 +34,13 @@
 
 // Custom includes
 #include <sys/socket.h>
+#include <linux/sockios.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+#include <linux/if_vlan.h>
 #include <boost/weak_ptr.hpp>
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/String.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
 
 #define prefix_
@@ -182,6 +185,26 @@ prefix_ void senf::NetdeviceController::down()
     ifr.ifr_flags &= ~IFF_UP;
     doIoctl(ifr, SIOCSIFFLAGS, "Could not set interface status");
 }
+
+prefix_ void senf::NetdeviceController::addVLAN(std::uint16_t vlanId)
+{
+    vlan_ioctl_args vlan_request;
+    memset(&vlan_request, 0, sizeof(vlan_request));
+    vlan_request.cmd     = ADD_VLAN_CMD;
+    vlan_request.u.VID   = vlanId;
+    strncpy(vlan_request.device1, interfaceName().c_str(), sizeof(vlan_request.device1));
+    doIoctl (vlan_request, SIOCSIFVLAN, "failed to add VLAN interface");
+}
+
+prefix_ void senf::NetdeviceController::delVLAN(std::uint16_t vlanId)
+{
+    vlan_ioctl_args vlan_request;
+    memset(&vlan_request, 0, sizeof(vlan_request));
+    vlan_request.cmd     = DEL_VLAN_CMD;
+    strncpy(vlan_request.device1, (interfaceName() + "." + senf::str(vlanId)).c_str(), sizeof(vlan_request.device1));
+    doIoctl (vlan_request, SIOCSIFVLAN, "failed to delete VLAN interface");
+}
+
 
 prefix_ int senf::NetdeviceController::interfaceIndex()
     const
