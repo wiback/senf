@@ -68,6 +68,9 @@ namespace emu {
 
         void rawMode(bool r);
 
+        std::uint16_t pvid() const;
+        bool     pvid(std::uint16_t p); 
+        
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);
         unsigned rcvBuf();
@@ -99,6 +102,9 @@ namespace emu {
         void init_sockets();
         void close_sockets();
 
+        bool addVLAN(std::uint16_t vlanId);
+        bool delVLAN(std::uint16_t vlanId);
+        
         // interface
         virtual bool v_enabled() const;
         virtual void v_id(MACAddress const & id);
@@ -119,7 +125,8 @@ namespace emu {
         unsigned rcvBufSize_;
         unsigned sndBufSize_;
         unsigned qlen_;
-        
+        std::uint16_t  pvid_;
+
         friend struct detail::HardwareEthernetInterfaceNet;
         friend class EthernetAnnotator;
     };

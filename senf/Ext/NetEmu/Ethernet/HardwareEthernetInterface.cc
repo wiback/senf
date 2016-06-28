@@ -29,10 +29,12 @@
     \brief HardwareEthernetInterface non-inline non-template implementation */
 
 #include <linux/filter.h>
+#include <linux/if_vlan.h>
+#include <linux/sockios.h>
+#include <sys/ioctl.h>
 #include "HardwareEthernetInterface.hh"
 
 // Custom includes
-#include <senf/Ext/NetEmu/Annotations.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ namespace {
 
 prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::string const & device)
     : EthernetInterface (netOutput, netInput), dev_ (device), ctrl_ (dev_),
-      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512)
+      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(std::uint16_t(-1))
 {
     EthernetInterface::init();
     HardwareInterface::init();
@@ -193,6 +195,14 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
         .add("maxBurst", fty::Command(
                  SENF_MEMBINDFNP(unsigned, HardwareEthernetInterface, maxBurst, () const))
              .doc("get max burst rate"));
+    consoleDir()
+        .add("pvid", fty::Command(
+                 SENF_MEMBINDFNP(bool, HardwareEthernetInterface, pvid, (std::uint16_t)))
+             .doc( "enables filtering for a specific PVID (VLAN ID must be 0...4095)"));
+    consoleDir()
+        .add("pvid", fty::Command(
+                 SENF_MEMBINDFNP(std::uint16_t, HardwareEthernetInterface, pvid, () const))
+             .doc( "report the currently configured PVID (-1 means none)"));
 
 
     console::provideDirectory(interfaceDir(),"by-device").add(dev_, fty::Link(consoleDir()));
@@ -207,6 +217,39 @@ prefix_ std::string senf::emu::HardwareEthernetInterface::device()
     const
 {
     return dev_;
+}
+
+prefix_ bool senf::emu::HardwareEthernetInterface::addVLAN(std::uint16_t vlanId)
+{
+    int fd(::socket(AF_INET,SOCK_STREAM,0));
+    if (fd == -1)
+        return false;
+    
+    vlan_ioctl_args vlan_request;
+    memset(&vlan_request, 0, sizeof(vlan_request));
+    vlan_request.cmd     = ADD_VLAN_CMD;
+    vlan_request.u.VID   = vlanId;
+    strncpy(vlan_request.device1, device().c_str(), sizeof(vlan_request.device1));
+    int rtn (::ioctl (fd, SIOCSIFVLAN, &vlan_request));
+    close(fd);
+
+    return rtn != -1;
+}
+
+prefix_ bool senf::emu::HardwareEthernetInterface::delVLAN(std::uint16_t vlanId)
+{
+    int fd(::socket(AF_INET,SOCK_STREAM,0));
+    if (fd == -1)
+        return false;
+    
+    vlan_ioctl_args vlan_request;
+    memset(&vlan_request, 0, sizeof(vlan_request));
+    vlan_request.cmd     = DEL_VLAN_CMD;
+    strncpy(vlan_request.device1, (device()+"."+senf::str(vlanId)).c_str(), sizeof(vlan_request.device1));
+    int rtn (::ioctl (fd, SIOCSIFVLAN, &vlan_request));
+    close(fd);
+
+    return rtn != -1;
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::rawMode(bool r)
@@ -226,7 +269,14 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_mcDrop(MACAddress const & a
 
 prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 {
-    ConnectedMMapPacketSocketHandle  socket_ (device(), qlen_, SENF_EMU_MAXMTU);
+    if (!promisc() and pvid_ != std::uint16_t(-1)) {
+        addVLAN(pvid_);
+	NetdeviceController nc (device() + "." + senf::str(pvid_));
+	nc.up();
+    }
+    
+    ConnectedMMapPacketSocketHandle socket_ ((promisc() or pvid_ == std::uint16_t(-1) ? device() : device() + "." + senf::str(pvid_)),
+                                             qlen_, SENF_EMU_MAXMTU);
 
     socket_.protocol().rcvbuf( rcvBufSize_);
     socket_.protocol().sndbuf( sndBufSize_);
@@ -242,6 +292,10 @@ prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
 {
     if (HardwareEthernetInterfaceNet::socket.valid())
         HardwareEthernetInterfaceNet::socket.close();
+
+    if (!promisc() and pvid_ != std::uint16_t(-1)) {
+        delVLAN(pvid_);
+    }
 
     HardwareEthernetInterfaceNet::assignSockets(socket);
 }
@@ -289,12 +343,11 @@ prefix_ bool senf::emu::HardwareEthernetInterface::v_promisc()
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool v)
 {
+    close_sockets();
     ctrl_.promisc(v);
-
-    if (v)
-        HardwareEthernetInterfaceNet::setupBPF(id(), true); // SRC only
-    else
-        HardwareEthernetInterfaceNet::clearBPF();
+    init_sockets();
+    // inform the annotator about our promisc state (if promisc is on, all frames will be prepended with an AnnotationsPacket)
+    annotator_.rawMode(v);
 }
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::v_mtu()
@@ -357,6 +410,24 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::rcvBuf()
     // need to cache rcvBufSize_ so we can (re-)apply the value in v_enable()
     return rcvBufSize_ = HardwareEthernetInterfaceNet::rcvBuf();
 }
+
+prefix_ std::uint16_t senf::emu::HardwareEthernetInterface::pvid()
+    const
+{
+    return pvid_;
+}
+
+prefix_ bool senf::emu::HardwareEthernetInterface::pvid(std::uint16_t p)
+{
+    if (p > 4095 and p != std::uint16_t(-1))
+        return false;
+    
+    close_sockets();
+    pvid_ = p;
+    init_sockets();
+    return true;
+}
+
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::qlen()
     const
