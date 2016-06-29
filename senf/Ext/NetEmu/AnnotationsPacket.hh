@@ -54,6 +54,7 @@ namespace senf {
         SENF_PARSER_FIELD   ( snr,          senf::UInt16Parser );
         SENF_PARSER_FIELD   ( rssi,         senf::Int16Parser );
         SENF_PARSER_FIELD   ( type,         senf::UInt8Parser  );
+
         SENF_PARSER_BITFIELD( corrupt,       1, bool           );
         SENF_PARSER_BITFIELD( retransmitted, 1, bool           );
         SENF_PARSER_BITFIELD( duplicated,    1, bool           );

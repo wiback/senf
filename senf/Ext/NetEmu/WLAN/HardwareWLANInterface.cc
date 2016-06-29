@@ -652,11 +652,6 @@ prefix_ void senf::emu::HardwareWLANInterface::monitorDropUnknownMCS(bool q)
     HardwareWLANInterfaceNet::monitorDataFilter.dropUnknownMCS(q);
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::rawMode(bool r)
-{
-    HardwareWLANInterfaceNet::monitorDataFilter.rawMode(r);
-}
-
 prefix_ void senf::emu::HardwareWLANInterface::dumpFilterStats(std::ostream & os)
 {
     HardwareWLANInterfaceNet::monitorDataFilter.stats().dump(os);

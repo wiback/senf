@@ -78,7 +78,7 @@ namespace detail {
 
         unsigned mtu_;
         unsigned maxBurst_;
-        bool rawMode_;
+        bool promisc_;
 
         TunnelInterfaceNet(typename Controller::Interface & interface);
 
@@ -87,8 +87,8 @@ namespace detail {
         unsigned mtu() const;
         void mtu(unsigned v);
 
-        void rawMode(bool r);
-        bool rawMode() const;
+        void promisc(bool p);
+        bool promisc() const;
 
         unsigned maxBurst() const;
         void maxBurst(unsigned v);

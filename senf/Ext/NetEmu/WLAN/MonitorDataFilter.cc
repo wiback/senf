@@ -127,7 +127,6 @@ prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const &
       reorderQueueTimer_( "ReorderQueueTimer_" + senf::str(id), senf::membind( &MonitorDataFilter::reorderQueueTick, this)),
       id_(id),
       promisc_(false),
-      rawMode_(false),
       modulationRegistry_(WLANModulationParameterRegistry::instance()),
       dropUnknownMCS_ (true)
 {
@@ -145,12 +144,6 @@ prefix_ void senf::emu::MonitorDataFilter::promisc(bool p)
 {
     promisc_ = p;
 }
-
-prefix_ void senf::emu::MonitorDataFilter::rawMode(bool r)
-{
-    rawMode_ = r;
-}
-
 
 prefix_ senf::emu::TSFTHistogram & senf::emu::MonitorDataFilter::tsftHistogram()
 {
@@ -562,7 +555,8 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         unsigned radiotapLength (senf::bytes(rtParser));
         senf::WLANPacket_DataFrameParser wlan (rtPacket.data().begin() + radiotapLength, &rtPacket.data());
         if (SENF_UNLIKELY(wlan.type() != 2 || wlan.subtype() != 8)) {
-            handle_NonDataFrame(rtPacket);
+            if (promisc_)
+                handle_NonDataFrame(rtPacket);
             return;
         }
 
@@ -642,7 +636,7 @@ prefix_ void senf::emu::MonitorDataFilter::outExtUI(Packet & pkt, senf::MACAddre
 prefix_ void senf::emu::MonitorDataFilter::outData(senf::EthernetPacket & eth)
 {
     stats_.data++;
-    if (SENF_UNLIKELY(rawMode_))
+    if (SENF_UNLIKELY(promisc_))
         outExtUI(eth);
     else
         output(eth);

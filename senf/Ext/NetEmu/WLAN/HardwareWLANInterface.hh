@@ -88,7 +88,6 @@ namespace emu {
 
         MonitorDataFilterStatistics filterStats();
         void monitorDropUnknownMCS(bool q);
-        void rawMode (bool r);
 
         WirelessNLController::IbssJoinParameters::ptr joinAdhocNetwork(std::string const & ssid, unsigned int freq, unsigned int bandwidth);
         void leaveAdhocNetwork();

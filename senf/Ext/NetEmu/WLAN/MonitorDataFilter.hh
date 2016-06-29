@@ -101,7 +101,6 @@ namespace emu {
         MonitorDataFilter(senf::MACAddress const & id = senf::MACAddress::None);
 
         void promisc(bool p);
-        void rawMode(bool r);
         void id(senf::MACAddress const & _id);
         TSFTHistogram & tsftHistogram();
         MonitorDataFilterStatistics stats();
@@ -139,7 +138,6 @@ namespace emu {
 
         senf::MACAddress id_;
         bool promisc_;
-        bool rawMode_;
         WLANModulationParameterRegistry const & modulationRegistry_;
         TSFTHistogram tsftHistogram_;
         MonitorDataFilterStatistics stats_;

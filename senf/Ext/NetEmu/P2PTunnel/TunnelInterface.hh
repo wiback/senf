@@ -74,8 +74,6 @@ namespace emu {
         virtual bool v_enabled() const;
         virtual void v_id(MACAddress const & id);
         virtual MACAddress v_id() const;
-        virtual bool v_promisc() const;
-        virtual void v_promisc(bool v);
         virtual void v_mcAdd(MACAddress const & address);
         virtual void v_mcDrop(MACAddress const & address);
         virtual boost::uint8_t v_linkTypeId() const;
@@ -105,8 +103,6 @@ namespace emu {
 
         unsigned capacity(MACAddress const & client, tunnel::CapacityDirection direction) const;
 
-        void rawMode(bool r);
-
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);
         unsigned rcvBuf();
@@ -124,6 +120,8 @@ namespace emu {
         virtual void v_disable();
         virtual unsigned v_mtu() const;
         virtual void v_mtu(unsigned v);
+        virtual bool v_promisc() const;
+        virtual void v_promisc(bool v);
 
     private:
         unsigned sndBufSize_;
@@ -150,8 +148,6 @@ namespace emu {
         unsigned capacity(tunnel::CapacityDirection direction) const;
         void capacity(tunnel::CapacityDirection direction, unsigned cap);
 
-        void rawMode(bool r);
-
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);
         unsigned rcvBuf();
@@ -169,6 +165,8 @@ namespace emu {
         virtual void v_disable();
         virtual unsigned v_mtu() const;
         virtual void v_mtu(unsigned v);
+        virtual bool v_promisc() const;
+        virtual void v_promisc(bool v);
 
         tunnel::Capacity capacity_;
 

@@ -217,11 +217,6 @@ prefix_ std::string senf::emu::HardwareEthernetInterface::device()
     return dev_;
 }
 
-prefix_ void senf::emu::HardwareEthernetInterface::rawMode(bool r)
-{
-    annotator_.rawMode(r);
-}
-
 prefix_ void senf::emu::HardwareEthernetInterface::v_mcAdd(MACAddress const & address)
 {
     HardwareEthernetInterfaceNet::socket.protocol().mcAdd( dev_, address);

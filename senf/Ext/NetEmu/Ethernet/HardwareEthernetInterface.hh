@@ -66,8 +66,6 @@ namespace emu {
         void qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgorithm);
         senf::ppi::QueueingAlgorithm & qAlgorithm() const;
 
-        void rawMode(bool r);
-
         std::uint16_t pvid() const;
         bool     pvid(std::uint16_t p); 
         
