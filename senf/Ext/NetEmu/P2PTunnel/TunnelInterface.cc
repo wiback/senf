@@ -56,7 +56,7 @@ prefix_ typename senf::emu::detail::TunnelIOHelper<Controller>::PacketType senf:
     if (!pkt)
         return pkt;
     
-    if (SENF_UNLIKELY(tunnelIface_.promisc())) {
+    if (SENF_UNLIKELY(tunnelIface_._promisc())) {
         return prependAnnotaionsPacket(pkt);
     } else {
         return pkt;
@@ -153,13 +153,13 @@ prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::maxBurst(unsigne
 }
 
 template <class Controller>
-prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::promisc(bool p)
+prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::_promisc(bool p)
 {
     promisc_ = p;
 }
 
 template <class Controller>
-prefix_ bool senf::emu::detail::TunnelInterfaceNet<Controller>::promisc()
+prefix_ bool senf::emu::detail::TunnelInterfaceNet<Controller>::_promisc()
     const
 {
     return promisc_;
@@ -451,13 +451,13 @@ prefix_ void senf::emu::TunnelServerInterface::maxBurst(unsigned v)
 
 prefix_ void senf::emu::TunnelServerInterface::v_promisc(bool p)
 {
-    TunnelInterfaceNet::promisc(p);
+    TunnelInterfaceNet::_promisc(p);
 }
 
 prefix_ bool senf::emu::TunnelServerInterface::v_promisc()
     const
 {
-    return TunnelInterfaceNet::promisc();
+    return TunnelInterfaceNet::_promisc();
 }
 
 
@@ -643,13 +643,13 @@ prefix_ void senf::emu::TunnelClientInterface::maxBurst(unsigned v)
 
 prefix_ void senf::emu::TunnelClientInterface::v_promisc(bool p)
 {
-    TunnelInterfaceNet::promisc(p);
+    TunnelInterfaceNet::_promisc(p);
 }
 
 prefix_ bool senf::emu::TunnelClientInterface::v_promisc()
     const
 {
-    return TunnelInterfaceNet::promisc();
+    return TunnelInterfaceNet::_promisc();
 }
 
 

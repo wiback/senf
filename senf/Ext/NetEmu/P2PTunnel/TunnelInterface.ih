@@ -87,8 +87,8 @@ namespace detail {
         unsigned mtu() const;
         void mtu(unsigned v);
 
-        void promisc(bool p);
-        bool promisc() const;
+        void _promisc(bool p);
+        bool _promisc() const;
 
         unsigned maxBurst() const;
         void maxBurst(unsigned v);
