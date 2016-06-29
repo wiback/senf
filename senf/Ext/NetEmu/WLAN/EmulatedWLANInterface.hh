@@ -61,8 +61,6 @@ namespace emu {
         using WirelessInterface::registerFrequency;
         using WirelessTransmitter::registerTxPower;
 
-        using detail::EmulatedWLANInterfaceNet::monitor;
-
         EmulatedWLANInterface();
         void init();
         void mode(Mode);

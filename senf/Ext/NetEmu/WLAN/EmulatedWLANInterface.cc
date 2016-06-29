@@ -36,6 +36,7 @@
 #include <senf/Utils/Console/STLSupport.hh>
 #include <senf/Packets/80211Bundle/WLANBeaconPacket.hh>
 #include <senf/Packets/80211Bundle/MCSInfo.hh>
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,8 +49,7 @@ prefix_ senf::emu::detail::EmulatedWLANInterfaceNet::EmulatedWLANInterfaceNet()
       beaconGenerator_(self()),
       receiveInput(receiveFilter_.input),
       receiveOutput(receiveFilter_.output), transmitInput (transmitFilter_.input),
-      transmitOutput(transmitFilter_.output),
-      monitor(receiveFilter_.monitor)
+      transmitOutput(transmitFilter_.output)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,6 @@ prefix_ senf::emu::detail::EmulatedWLANReceiveFilter::
 EmulatedWLANReceiveFilter(EmulatedWLANInterface & iface)
 {
     route(input, output);
-    noroute (monitor);
     input.onRequest(&EmulatedWLANReceiveFilter::request);
 }
 
@@ -270,9 +269,9 @@ prefix_ void senf::emu::detail::EmulatedWLANReceiveFilter::request()
         output(e);
         return;
     }
-    RadiotapPacket rp (p.find<RadiotapPacket>(senf::nothrow));
-    if (monitor.connected() && rp) {
-        monitor(rp);
+    WLANPacket_MgtFrame wmp (p.find<WLANPacket_MgtFrame>(senf::nothrow));
+    if (wmp) {
+        output(prependAnnotaionsPacket(wmp));
     }
 }
 
@@ -300,8 +299,8 @@ prefix_ void senf::emu::detail::EmulatedWLANTransmitFilter::request()
 
 prefix_ void senf::emu::detail::EmulatedWLANTransmitFilter::beaconRequest()
 {
-    RadiotapPacket rp (beaconInput());
-    WLANPacketHeader wph (WLANPacketHeader::createBefore(rp));
+    WLANPacket_MgtFrame wmp (beaconInput());
+    WLANPacketHeader wph (WLANPacketHeader::createBefore(wmp));
     wph->mgt() = true;
     wph.finalizeThis();
     output(wph);
@@ -314,7 +313,7 @@ EmulatedWLANBeaconGenerator(EmulatedWLANInterface & iface)
 #ifdef SENF_DEBUG
     : timer_(ClockService::seconds(2)),
 #else
-    : timer_(ClockService::milliseconds(100)),
+    : timer_(ClockService::milliseconds(250)),
 #endif
       iface_(iface)
 {
@@ -330,11 +329,9 @@ prefix_ void senf::emu::detail::EmulatedWLANBeaconGenerator::init()
     WLANBeaconPacket p (WLANBeaconPacket::create());
     p->beaconInterval() = ClockService::in_milliseconds(timer_.interval().first);
 
-    WLANPacket_MgtFrame wmp (WLANPacket_MgtFrame::createBefore(p));
-    wmp->destinationAddress() = MACAddress::Broadcast;
-    wmp->sequenceNumber(0u);
-
-    beacon_ = RadiotapPacket::createBefore(wmp);
+    beacon_ = WLANPacket_MgtFrame::createBefore(p);
+    beacon_->destinationAddress() = MACAddress::Broadcast;
+    beacon_->sequenceNumber(0u);
 }
 
 prefix_ void senf::emu::detail::EmulatedWLANBeaconGenerator::beaconInterval(ClockService::clock_type interval)
@@ -359,9 +356,8 @@ prefix_ void senf::emu::detail::EmulatedWLANBeaconGenerator::tick()
     if (iface_.mode() == EmulatedWLANInterface::STA)
         return;
 
-    WLANPacket_MgtFrame wmp (beacon_.find<WLANPacket_MgtFrame>(senf::nothrow));
-    wmp->sourceAddress() = iface_.id(); //iface not known during init
-    wmp->sequenceNumber(wmp->sequenceNumber()+1);
+    beacon_->sourceAddress() = iface_.id(); //iface not known during init
+    beacon_->sequenceNumber(beacon_->sequenceNumber()+1);
 
     beacon_.finalizeAll();
     output(beacon_.clone());

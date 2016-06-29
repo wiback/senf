@@ -64,7 +64,7 @@ namespace detail {
 
         ppi::IntervalTimer timer_;
         EmulatedWLANInterface & iface_;
-        RadiotapPacket beacon_;
+        WLANPacket_MgtFrame beacon_;
     };
 
     /** \brief Internal: Input filter of emulated WLAN interface */
@@ -75,7 +75,6 @@ namespace detail {
     public:
         ppi::connector::PassiveInput<WLANPacketHeader> input;
         ppi::connector::ActiveOutput<EthernetPacket> output;
-        ppi::connector::ActiveOutput<RadiotapPacket> monitor;
 
         explicit EmulatedWLANReceiveFilter(EmulatedWLANInterface & iface);
 
@@ -91,7 +90,7 @@ namespace detail {
     public:
         ppi::connector::PassiveInput<EthernetPacket> input;
         ppi::connector::ActiveOutput<WLANPacketHeader> output;
-        ppi::connector::PassiveInput<RadiotapPacket> beaconInput;
+        ppi::connector::PassiveInput<WLANPacket_MgtFrame> beaconInput;
 
         explicit EmulatedWLANTransmitFilter(EmulatedWLANInterface & iface);
 
@@ -119,8 +118,6 @@ namespace detail {
 
         ppi::connector::PassiveInputJack<EthernetPacket> transmitInput;
         ppi::connector::ActiveOutputJack<WLANPacketHeader> transmitOutput;
-
-        ppi::connector::ActiveOutputJack<RadiotapPacket> monitor;
 
         EmulatedWLANInterfaceNet();
 
