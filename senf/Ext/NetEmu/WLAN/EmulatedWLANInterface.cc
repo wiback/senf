@@ -328,10 +328,12 @@ prefix_ void senf::emu::detail::EmulatedWLANBeaconGenerator::init()
     //create beacon packet
     WLANBeaconPacket p (WLANBeaconPacket::create());
     p->beaconInterval() = ClockService::in_milliseconds(timer_.interval().first);
+    p->ssidIE().value() << "NetEMU";
 
     beacon_ = WLANPacket_MgtFrame::createBefore(p);
     beacon_->destinationAddress() = MACAddress::Broadcast;
     beacon_->sequenceNumber(0u);
+    beacon_->bssid() = senf::MACAddress::from_string("00:11:23:32:11:00");
 }
 
 prefix_ void senf::emu::detail::EmulatedWLANBeaconGenerator::beaconInterval(ClockService::clock_type interval)
