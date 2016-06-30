@@ -52,10 +52,10 @@ namespace detail {
     {
         TapSocketHandle socket;
         TapSocketHandle socketPVID;
-        std::string dev_;
-        EthernetController ctrl_;
         senf::ppi::module::ActiveSocketSource<senf::ppi::DgramReader<EthernetPacket, SENF_EMU_MAXMTU> > source;
         senf::ppi::module::PassiveSocketSink<> sink;
+        std::string dev_;
+        EthernetController ctrl_;
  
         TAPAnnotator annotator_;
         
