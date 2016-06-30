@@ -40,18 +40,41 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::detail::TAPEthernetInterfaceNet
 
-prefix_ senf::emu::detail::TAPEthernetInterfaceNet::TAPEthernetInterfaceNet()
-    : socket (senf::noinit), source (socket), sink (socket),
+prefix_ senf::emu::detail::TAPEthernetInterfaceNet::TAPEthernetInterfaceNet(std::string const & device)
+    : socket (TapSocketHandle(device)), socketPVID(senf::noinit),  source (socketPVID), sink (socketPVID),
+      dev_(device), ctrl_(device),
       netOutput (annotator_.output), netInput (sink.input)
 {
     senf::ppi::connect(source.output, annotator_.input);
 }
 
-prefix_ void senf::emu::detail::TAPEthernetInterfaceNet::assignSockets(TapSocketHandle & socket_)
+prefix_ void senf::emu::detail::TAPEthernetInterfaceNet::assignSockets(bool on, std::uint16_t pvid)
 {
-    socket = socket_;
-    source.handle(socket);
-    sink.handle(socket);
+    if (!on) {
+        if (socketPVID) {
+            socketPVID.close();
+            ctrl_.delVLAN(pvid);
+        }
+        // socketPVID is now invalid in any case....
+        source.handle(socketPVID);
+        sink.handle(socketPVID);
+        return;
+    } 
+
+    if (pvid != std::uint16_t(-1)) {
+        std::string vlanDevice (dev_ + "." + senf::str(pvid));
+        ctrl_.addVLAN(pvid);
+        NetdeviceController ncv (vlanDevice);
+        ncv.up();
+        socketPVID = TapSocketHandle (vlanDevice);
+        socketPVID.blocking(false);
+        source.handle(socketPVID);
+        sink.handle(socketPVID);
+    } else {
+        socket.blocking(false);
+        source.handle(socket);
+        sink.handle(socket);
+    }
 }
 
 
@@ -74,7 +97,9 @@ namespace {
 }
 
 prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const & device)
-    : BidirectionalWiredInterface (netOutput, netInput), dev_ (device), ctrl_ (dev_)
+    : TAPEthernetInterfaceNet(device),
+      BidirectionalWiredInterface (netOutput, netInput),
+      pvid_(std::uint16_t(-1))
 {
     BidirectionalWiredInterface::init();
     HardwareInterface::init();
@@ -93,14 +118,23 @@ prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const 
         .add("maxBurst", fty::Command(
                  SENF_MEMBINDFNP(unsigned, TAPEthernetInterface, maxBurst, () const))
              .doc("get max burst rate"));
+    consoleDir()
+        .add("pvid", fty::Command(
+                 SENF_MEMBINDFNP(bool, TAPEthernetInterface, pvid, (std::uint16_t)))
+             .doc( "enables filtering for a specific PVID (VLAN ID must be 0...4095)"));
+    consoleDir()
+        .add("pvid", fty::Command(
+                 SENF_MEMBINDFNP(std::uint16_t, TAPEthernetInterface, pvid, () const))
+             .doc( "report the currently configured PVID (-1 means none)"));
 
 
     console::provideDirectory(interfaceDir(),"by-device").add(dev_, fty::Link(consoleDir()));
 
     annotator_.id(id());
 
-    if (enabled())
-        init_sockets();
+    if (enabled()) {
+        assignSockets(true);
+    }
 }
 
 prefix_ std::string senf::emu::TAPEthernetInterface::device()
@@ -109,34 +143,18 @@ prefix_ std::string senf::emu::TAPEthernetInterface::device()
     return dev_;
 }
 
-prefix_ void senf::emu::TAPEthernetInterface::init_sockets()
-{
-    TapSocketHandle socket_ (device());
-    socket_.blocking(false);
-
-    TAPEthernetInterfaceNet::assignSockets(socket_);
-}
-
-prefix_ void senf::emu::TAPEthernetInterface::close_sockets()
-{
-    if (TAPEthernetInterfaceNet::socket.valid())
-        TAPEthernetInterfaceNet::socket.close();
-    
-    TAPEthernetInterfaceNet::assignSockets(socket);
-}
-
 prefix_ void senf::emu::TAPEthernetInterface::v_enable()
 {
     if (! enabled()) {
         ctrl_.up();
-        init_sockets();
+        TAPEthernetInterfaceNet::assignSockets(true, pvid_);
     }
 }
 
 prefix_ void senf::emu::TAPEthernetInterface::v_disable()
 {
     if (enabled()) {
-        close_sockets();
+        TAPEthernetInterfaceNet::assignSockets(false);
         ctrl_.down();
     }
 }
@@ -168,9 +186,10 @@ prefix_ bool senf::emu::TAPEthernetInterface::v_promisc()
 
 prefix_ void senf::emu::TAPEthernetInterface::v_promisc(bool v)
 {
-    close_sockets();
+    TAPEthernetInterfaceNet::assignSockets(false);
     ctrl_.promisc(v);
-    init_sockets();
+    TAPEthernetInterfaceNet::assignSockets(true, v ? std::uint16_t(-1) : pvid_);
+    
     // inform the annotator about our promisc state (if promisc is on, all frames will be prepended with an AnnotationsPacket)
     annotator_.rawMode(v);
 }
@@ -185,6 +204,35 @@ prefix_ void senf::emu::TAPEthernetInterface::v_mtu(unsigned v)
 {
     ctrl_.mtu(v);
 }
+
+prefix_ std::uint16_t senf::emu::TAPEthernetInterface::pvid()
+    const
+{
+    return pvid_;
+}
+
+prefix_ bool senf::emu::TAPEthernetInterface::pvid(std::uint16_t p)
+{
+    if (p > 4095 and p != std::uint16_t(-1))
+        return false;
+
+    TAPEthernetInterfaceNet::assignSockets(false);
+    pvid_ = p;
+    TAPEthernetInterfaceNet::assignSockets(true, pvid_);
+
+    return true;
+}
+
+prefix_ void senf::emu::TAPEthernetInterface::v_mcAdd(MACAddress const & address)
+{
+    throw senf::SystemException("multicast not supported on TunnelInterfaces", ENOSYS);
+}
+
+prefix_ void senf::emu::TAPEthernetInterface::v_mcDrop(MACAddress const & address)
+{
+    throw senf::SystemException("multicast not supported on TunnelInterfaces", ENOSYS);
+}
+
 
 prefix_ void senf::emu::TAPEthernetInterface::v_flushRxQueues()
 {

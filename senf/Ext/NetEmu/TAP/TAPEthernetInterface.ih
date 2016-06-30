@@ -51,20 +51,23 @@ namespace detail {
     struct TAPEthernetInterfaceNet
     {
         TapSocketHandle socket;
-        senf::ppi::module::ActiveSocketSource<senf::ppi::DgramReader<senf::EthernetPacket, SENF_EMU_MAXMTU> > source;
+        TapSocketHandle socketPVID;
+        std::string dev_;
+        EthernetController ctrl_;
+        senf::ppi::module::ActiveSocketSource<senf::ppi::DgramReader<EthernetPacket, SENF_EMU_MAXMTU> > source;
         senf::ppi::module::PassiveSocketSink<> sink;
  
         TAPAnnotator annotator_;
-
+        
         ppi::connector::ActiveOutputJack<EthernetPacket> netOutput;
         ppi::connector::PassiveInputJack<EthernetPacket> netInput;
 
-        TAPEthernetInterfaceNet();
+        TAPEthernetInterfaceNet(std::string const & device);
 
         TAPEthernetInterface & self();
         TAPEthernetInterface const & self() const;
 
-        void assignSockets(TapSocketHandle & socket);
+        void assignSockets(bool on, std::uint16_t pvid = std::uint16_t(-1));
     };
 
 }}}

@@ -54,7 +54,20 @@ SENF_PACKET_REGISTRY_REGISTER( senf::EtherOUIExtTypes,
 prefix_ void senf::AnnotationsPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
-    os << senf::fieldName("type") << format::dumpint(p->type().value()) << std::endl;
+    os << senf::fieldName("interfaceId")  << p->type().value()                          << std::endl;
+    os << senf::fieldName("timestampMAC") << format::dumpint(p->timestampMAC().value()) << std::endl;
+    os << senf::fieldName("timestamp")    << format::dumpint(p->timestamp().value())    << std::endl;
+    os << senf::fieldName("modulationId") << format::dumpint(p->modulationId().value()) << std::endl;
+    os << senf::fieldName("snr")          << format::dumpint(p->snr().value())          << std::endl;
+    os << senf::fieldName("rssi")         << format::dumpint(p->rssi().value())         << std::endl;
+    os << senf::fieldName("type")         << format::dumpint(p->type().value())         << std::endl;
+
+    os << senf::fieldName("flags.corrupt")       << format::dumpint(p->corrupt().value())       << std::endl;
+    os << senf::fieldName("flags.retransmitted") << format::dumpint(p->retransmitted().value()) << std::endl;
+    os << senf::fieldName("flags.duplicated")    << format::dumpint(p->duplicated().value())    << std::endl;
+    os << senf::fieldName("flags.reordered")     << format::dumpint(p->reordered().value())     << std::endl;
+    os << senf::fieldName("flags.gap")           << format::dumpint(p->gap().value())           << std::endl;
+    os << senf::fieldName("flags.length")        << format::dumpint(p->length().value())        << std::endl;
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::AnnotationsPacketType::nextPacketType(packet p)
@@ -120,8 +133,8 @@ prefix_ senf::EthernetPacket senf::prependAnnotaionsPacket(Packet const & pkt, M
     eth->destination()  << (dst.multicast() ? pkt.annotation<emu::annotations::Interface>().value : dst);
 
     ap->interfaceId()   << pkt.annotation<emu::annotations::Interface>().value;
-    ap->timestampMAC()  << pkt.annotation<emu::annotations::Timestamp>().as_clock_type();
-    ap->timestamp()     << pkt.annotation<emu::annotations::Timestamp>().as_clock_type();
+    ap->timestampMAC()  << senf::ClockService::in_nanoseconds(pkt.annotation<emu::annotations::Timestamp>().as_clock_type());
+    ap->timestamp()     << senf::ClockService::in_nanoseconds(pkt.annotation<emu::annotations::Timestamp>().as_clock_type());
     ap->modulationId()  << pkt.annotation<emu::annotations::WirelessModulation>().id;
     ap->snr()           << pkt.annotation<emu::annotations::Quality>().snr;
     ap->rssi()          << pkt.annotation<emu::annotations::Quality>().rssi;

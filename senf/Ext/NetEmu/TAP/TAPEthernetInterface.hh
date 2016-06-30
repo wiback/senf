@@ -71,6 +71,9 @@ namespace emu {
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 
+        std::uint16_t pvid() const;
+        bool pvid(std::uint16_t p);
+
     protected:
         EthernetController & ethController();
 
@@ -89,6 +92,8 @@ namespace emu {
         virtual void v_id(MACAddress const & id);
         virtual bool v_promisc() const;
         virtual void v_promisc(bool v);
+        virtual void v_mcAdd(MACAddress const & address);
+        virtual void v_mcDrop(MACAddress const & address);
         virtual void v_flushRxQueues();
 
         virtual MACAddress v_id() const;
@@ -96,9 +101,8 @@ namespace emu {
         
         void dumpMmapStats(std::ostream & os);
 
-        std::string dev_;
-        EthernetController ctrl_;
-
+        std::uint16_t pvid_;
+        
         friend struct detail::TAPEthernetInterfaceNet;
         friend class TAPAnnotator;
     };

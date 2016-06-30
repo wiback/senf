@@ -555,8 +555,8 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         unsigned radiotapLength (senf::bytes(rtParser));
         senf::WLANPacket_DataFrameParser wlan (rtPacket.data().begin() + radiotapLength, &rtPacket.data());
         if (SENF_UNLIKELY(wlan.type() != 2 || wlan.subtype() != 8)) {
-            if (promisc_)
-                handle_NonDataFrame(rtPacket);
+            // if (promisc_)
+            handle_NonDataFrame(rtPacket);
             return;
         }
 
