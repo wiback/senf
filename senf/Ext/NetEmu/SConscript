@@ -36,7 +36,7 @@ bundlesources            = [ 'Packets.cc', 'P2PTunnel/TunnelCtrlPacket.cc' ]
 
 sources, tests, includes = SENFSCons.Glob(env,
                                   exclude = emusharksources + bundlesources,
-                                  subdirs = ['WLAN', "Ethernet", "DVB", "P2PTunnel", "Modules"] )
+                                  subdirs = ['WLAN', "Ethernet", "DVB", "P2PTunnel", "TAP", "Modules"] )
 subscripts               = sorted(env.Glob("*/SConscript", strings=True))
 doxyfile                 = env.Glob("Doxyfile")
 

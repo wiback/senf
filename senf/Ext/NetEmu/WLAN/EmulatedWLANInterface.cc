@@ -358,7 +358,7 @@ prefix_ void senf::emu::detail::EmulatedWLANBeaconGenerator::tick()
     if (iface_.mode() == EmulatedWLANInterface::STA)
         return;
 
-    beacon_->sourceAddress() = iface_.id(); //iface not known during init
+    beacon_->sourceAddress() = iface_.id();  // iface not known during init
     beacon_->sequenceNumber(beacon_->sequenceNumber()+1);
 
     beacon_.finalizeAll();
