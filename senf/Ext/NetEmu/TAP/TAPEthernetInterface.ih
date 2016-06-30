@@ -51,7 +51,6 @@ namespace detail {
     struct TAPEthernetInterfaceNet
     {
         TapSocketHandle socket;
-        TapSocketHandle socketPVID;
         senf::ppi::module::ActiveSocketSource<senf::ppi::DgramReader<EthernetPacket, SENF_EMU_MAXMTU> > source;
         senf::ppi::module::PassiveSocketSink<> sink;
         std::string dev_;
@@ -67,7 +66,7 @@ namespace detail {
         TAPEthernetInterface & self();
         TAPEthernetInterface const & self() const;
 
-        void assignSockets(bool on, std::uint16_t pvid = std::uint16_t(-1));
+        void assignSockets(bool on);
     };
 
 }}}

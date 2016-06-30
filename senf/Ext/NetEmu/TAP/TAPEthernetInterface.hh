@@ -71,9 +71,6 @@ namespace emu {
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 
-        std::uint16_t pvid() const;
-        bool pvid(std::uint16_t p);
-
     protected:
         EthernetController & ethController();
 
@@ -101,8 +98,6 @@ namespace emu {
         
         void dumpMmapStats(std::ostream & os);
 
-        std::uint16_t pvid_;
-        
         friend struct detail::TAPEthernetInterfaceNet;
         friend class TAPAnnotator;
     };
