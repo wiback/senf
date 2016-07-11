@@ -203,7 +203,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
     detail::QueueInfo & qi (* qinfo(handle));
     for (unsigned count (0); count < 2*qi.rx.qlen; ++count) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
-        if (SENF_LIKELY((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL)) {  // we assume bursts => likely
+        if (SENF_LIKELY((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL)) {
             qi.rxStats.received++;
             Buffer bf (qi.rx.head, qi.rx.head + qi.frameSize, qi.hdrlen);
             struct ::sockaddr_ll & sa (* reinterpret_cast<struct ::sockaddr_ll *>(qi.rx.head + qi.hdrlen));

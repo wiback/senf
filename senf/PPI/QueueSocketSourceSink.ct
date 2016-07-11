@@ -118,7 +118,7 @@ template <class Packet, class Connector>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
 {
     flushPending_ = false;
-    for (burst_ = 1; burst_ <= maxBurst_ && SENF_LIKELY(!flushPending_); burst_++) {
+    for (burst_ = 1; SENF_LIKELY(handle_ and (burst_ <= maxBurst_) and !flushPending_); burst_++) {
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
         if (SENF_UNLIKELY(!buf))
             break;
@@ -152,10 +152,12 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
     // this tells flush() that we are done with the for() loop
     burst_ = 0;
 
-    if (SENF_UNLIKELY(flushPending_))
-        flush();
-    else
-        handle_.release();
+    if (handle_) {
+        if (SENF_UNLIKELY(flushPending_))
+            flush();
+        else
+            handle_.release();
+    }
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

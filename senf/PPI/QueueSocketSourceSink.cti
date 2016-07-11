@@ -58,8 +58,10 @@ template <class Packet, class Connector>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::flush()
 {
     if (burst_ == 0) { // not in read() loop
-        while (handle_.dequeue());
-        handle_.release();
+        if(handle_) {
+            while (handle_.dequeue());
+            handle_.release();
+        }
     } else {
         flushPending_ = true;
     }
