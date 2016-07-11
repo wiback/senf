@@ -63,11 +63,6 @@ namespace emu {
 
         std::string device() const;
 
-#ifdef SENF_DEBUG
-        unsigned burstMax();
-        unsigned sharedPackets();
-#endif
-
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 

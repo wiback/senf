@@ -247,20 +247,6 @@ prefix_ void senf::emu::TAPEthernetInterface::dumpMmapStats(std::ostream & os)
     }
 }
 
-#ifdef SENF_DEBUG
-
-prefix_ unsigned senf::emu::TAPEthernetInterface::burstMax()
-{
-    return source.burstMax();
-}
-
-prefix_ unsigned senf::emu::TAPEthernetInterface::sharedPackets()
-{
-    return source.sharedPackets();
-}
-
-#endif
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
