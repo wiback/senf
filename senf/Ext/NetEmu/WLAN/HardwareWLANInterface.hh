@@ -63,25 +63,12 @@ namespace emu {
         typedef TypedInterfaceDecorator<
             HardwareWLANInterface, WirelessInterface::Decorator> Decorator;
 
-        explicit HardwareWLANInterface(std::string const & iface, bool joined=false);
-        HardwareWLANInterface(std::string const & iface, std::string const & monIface, bool joined=false);
+        explicit HardwareWLANInterface(std::pair<std::string,std::string> interfaces);
 
         std::string const & device() const;
                                         ///< Get name of physical device
         std::string const & monitorDevice() const;
                                         ///< Get current monitor %interface
-        void monitorDevice(std::string const & dev);
-                                        ///< Set monitor %interface
-                                        /**< The monitor %interface must be an %interface configured
-                                             for monitor mode of the same hardware %interface.
-
-                                             When the monitor %interface is set (\a dev is a
-                                             non-empty string), all incoming data is read from the
-                                             monitor %interface (incoming data on the ordinary
-                                             device is discarded). Packets read from the monitor
-                                             %interface have additional \ref
-                                             senf::emu::annotations::Quality "quality
-                                             annotation". */
 
         void qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgorithm);
         ppi::QueueingAlgorithm & qAlgorithm() const;
@@ -140,6 +127,13 @@ namespace emu {
         void init_sockets();
         void close_sockets();
 
+        void openMonitorSocket();
+        void closeMonitorSocket();
+        void openDataSocket();
+        void closeDataSocket();
+
+
+        
         // interface
         virtual void v_enable();
         virtual void v_disable();
@@ -176,8 +170,7 @@ namespace emu {
         std::string dev_;
         std::string monitorDev_;
         AthSpectralScanner spectralScanner_;
-        mutable bool promisc_; // cache
-        bool joined_;
+        bool promisc_; // cache
         int frequencyOffset_;
         int restrictedBand_;
         HTMode::Enum htMode_;

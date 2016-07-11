@@ -36,6 +36,7 @@
 #include <senf/PPI/SocketSink.hh>
 #include <senf/PPI/Jack.hh>
 #include <senf/Ext/NetEmu/config.hh>
+#include <senf/Ext/NetEmu/Ethernet/PVIDInserter.hh>
 #include "TAPAnnotator.hh"
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +58,7 @@ namespace detail {
         EthernetController ctrl_;
  
         TAPAnnotator annotator_;
+        PVIDInserter pvidInserter_;
         
         ppi::connector::ActiveOutputJack<EthernetPacket> netOutput;
         ppi::connector::PassiveInputJack<EthernetPacket> netInput;

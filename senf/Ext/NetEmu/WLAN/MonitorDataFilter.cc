@@ -133,6 +133,9 @@ prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const &
     route(input, output).autoThrottling(false);
     input.onRequest( &MonitorDataFilter::request);
     input.throttlingDisc( ppi::ThrottlingDiscipline::NONE);
+    route(input_plain, output).autoThrottling(false);
+    input_plain.onRequest( &MonitorDataFilter::requestPlain);
+    input_plain.throttlingDisc( ppi::ThrottlingDiscipline::NONE);
 }
 
 prefix_ void senf::emu::MonitorDataFilter::dropUnknownMCS(bool q)
@@ -651,6 +654,30 @@ prefix_ void senf::emu::MonitorDataFilter::dumpState(std::ostream & os)
         os << std::hex << "0x" << seqNo.first << std::dec << " => " << seqNo.second.number << " " << senf::ClockService::in_milliseconds(senf::scheduler::now() - seqNo.second.last) << "ms"
            << ", queueSize: " << (i==reorderMap_.end() ? "(none)" : senf::str(i->second.queue.size())) << std::endl;
     } 
+}
+
+prefix_ void senf::emu::MonitorDataFilter::requestPlain()
+{
+    senf::EthernetPacket eth (input_plain());
+
+    stats_.received++;
+    
+    eth.annotation<annotations::Interface>().value = id_;
+    
+    // set the rx timestamp. Careful: this assumes that we are using an MMAP source !
+    eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
+    
+    {
+        emu::annotations::Quality & q (eth.annotation<emu::annotations::Quality>());
+        q.rssi  = 110;            // for now, we report the maximum signal 'quality'
+        q.noise = -128;           // this should be read out via ethtool commands (i.e. for fiber links)
+        q.snr = 238;
+        q.flags.frameLength = eth.size();
+    }
+
+    stats_.data++;
+    
+    output(eth);
 }
 
 

@@ -53,13 +53,14 @@ namespace emu {
         void id(MACAddress const & id);
         MACAddress const & id() const;
 
-        void rawMode(bool r);
+        void rawMode(bool r, std::uint16_t pvid = std::uint16_t(-1));
 
     private:
         void request();
 
         MACAddress id_;
         bool rawMode_;
+        std::uint16_t pvid_;
     };
 }}
 

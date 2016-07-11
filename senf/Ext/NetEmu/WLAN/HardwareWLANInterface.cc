@@ -55,59 +55,71 @@
 // senf::emu::detail::HardwareWLANInterfaceNet
 
 prefix_ senf::emu::detail::HardwareWLANInterfaceNet::HardwareWLANInterfaceNet()
-    : rxSocket (senf::noinit),
-      txSocket (senf::noinit),
-      source (rxSocket),
-      sink (txSocket),
+    : socket (senf::noinit),
+      source (socket),
+      sink (socket),
+      monSocket (senf::noinit),
+      monSource(monSocket),
       netOutput (monitorDataFilter.output), netInput (sink.input)
 {
-    ppi::connect(source, monitorDataFilter);
+    ppi::connect(monSource, monitorDataFilter);
+    ppi::connect(source, monitorDataFilter.input_plain);
 }
 
-prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::assignSockets(
-        ConnectedMMapReadPacketSocketHandle & rxSocket_, ConnectedMMapWritePacketSocketHandle & txSocket_)
+prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::assignMonitorSocket(ConnectedMMapReadPacketSocketHandle & monSocket_)
 {
-    rxSocket = rxSocket_;
-    source.handle(rxSocket);
-    if (rxSocket) {
-        if (self().joined_)
-            MonitorDataFilter::filterMonitorTxAndCtlFrames(rxSocket);
-        else
-            MonitorDataFilter::filterMonitorTxFrames(rxSocket);
+    monSocket = monSocket_;
+    monSource.handle(monSocket);
+}
+
+prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::assignDataSocket(ConnectedMMapPacketSocketHandle & socket_)
+{
+    socket = socket_;
+    source.handle(socket);
+    sink.handle(socket);
+}
+
+prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::dataSource(bool on)
+{    
+    if (on) {
+        source.handle(socket);
+        // clean update the source queue, as we have changed the socket
+        source.flush();
+    } else {
+        source.handle(ConnectedMMapPacketSocketHandle(senf::noinit));
     }
-    txSocket = txSocket_;
-    sink.handle(txSocket);
 }
 
 prefix_ unsigned senf::emu::detail::HardwareWLANInterfaceNet::rcvBuf()
 {
-    if (rxSocket)
-        return rxSocket.protocol().rcvbuf();
+    if (socket)
+        return socket.protocol().rcvbuf();
     return 0;
 }
 
 prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::rcvBuf(unsigned rcvbuf)
 {
-    if (rxSocket)
-        rxSocket.protocol().rcvbuf(rcvbuf);
+    if (socket)
+        socket.protocol().rcvbuf(rcvbuf);
 }
 
 prefix_ unsigned senf::emu::detail::HardwareWLANInterfaceNet::sndBuf()
 {
-    if (txSocket)
-        return txSocket.protocol().sndbuf();
+    if (socket)
+        return socket.protocol().sndbuf();
     return 0;
 }
 
 prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::sndBuf(unsigned sndbuf)
 {
-    if (txSocket)
-        txSocket.protocol().sndbuf(sndbuf);
+    if (socket)
+        socket.protocol().sndbuf(sndbuf);
 }
 
 prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::flush()
 {
-    HardwareWLANInterfaceNet::source.flush();
+//    source.flush();
+//    monSource.flush();
     monitorDataFilter.flushQueues();
 }
 
@@ -139,21 +151,10 @@ namespace senf { namespace emu {
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( HardwareWLANInterface::HTMode, Enum, (Disabled)(Enabled)(HT20only)(HT40only) );
 }}
 
-prefix_ senf::emu::HardwareWLANInterface::HardwareWLANInterface(std::string const & iface, bool joined)
+prefix_ senf::emu::HardwareWLANInterface::HardwareWLANInterface(std::pair<std::string,std::string> interfaces)
     : WLANInterface(detail::HardwareWLANInterfaceNet::netOutput, detail::HardwareWLANInterfaceNet::netInput),
-      netctl_(iface), wnlc_(iface), dev_(iface), spectralScanner_(wnlc_.phyName()), 
-      promisc_(netctl_.promisc()), joined_(joined), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
-      modId_( WLANModulationParameterRegistry::instance().parameterIdUnknown()), bw_(0), txPower_(0),
-      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512)
-{
-    init();
-}
-
-prefix_ senf::emu::HardwareWLANInterface::HardwareWLANInterface(std::string const & iface,
-                                                                std::string const & monIface, bool joined)
-    : WLANInterface(detail::HardwareWLANInterfaceNet::netOutput, detail::HardwareWLANInterfaceNet::netInput),
-      netctl_(iface), wnlc_(iface), dev_(iface), monitorDev_ (monIface), spectralScanner_(wnlc_.phyName()),
-      promisc_(netctl_.promisc()), joined_(joined), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
+      netctl_(interfaces.first), wnlc_(interfaces.first), dev_(interfaces.first), monitorDev_ (interfaces.second), spectralScanner_(wnlc_.phyName()),
+      promisc_(false), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
       modId_( WLANModulationParameterRegistry::instance().parameterIdUnknown()), bw_(0), txPower_(0),
       rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512)
 {
@@ -242,14 +243,6 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         .overloadDoc("Get monitor device name.\n"
                      "If the device name is empty, data is read from the normal device"
                      "and no monitor information (SNR, Noise, signal level) is available.") );
-    consoleDir()
-        .add("monitorDevice", fty::Command(
-                SENF_MEMBINDFNP(void, HardwareWLANInterface, monitorDevice, (std::string const &)))
-        .overloadDoc("Set monitor device name.\n"
-                     "The device must be based on the same hardware interface as the normal"
-                     "device but in monitor mode. If set to the empty string, the monitor"
-                     "device is disabled and data is read from the normal device.") );
-
     consoleDir()
         .add("sndBuf", fty::Command(
                  SENF_MEMBINDFNP(void, HardwareWLANInterface, sndBuf, (unsigned)))
@@ -397,70 +390,77 @@ prefix_ std::string const & senf::emu::HardwareWLANInterface::monitorDevice()
     return monitorDev_;
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::monitorDevice(std::string const & dev)
-{
-    monitorDev_ = dev;
-}
-
 prefix_ void senf::emu::HardwareWLANInterface::init_sockets()
 {
-    if (monitorDevice().empty()) {
-        monitorDevice( device() + "-mon");
-        wnlc_.add_monInterface(monitorDevice());
-    }
-    NetdeviceController(monitorDevice()).up();
-
-    // Set the protocol to '0' which supposedly speeds up the tx-path inside the kernel
-    // This only works for tx-only sockets
-    ConnectedMMapWritePacketSocketHandle txSocket_ (device(), qlen_, SENF_EMU_MAXMTU, LinuxPacketSocketProtocol::RawSocket, 0, false);
-    txSocket_.protocol().sndbuf( sndBufSize_);
-    // txSocket_.protocol().sndLowat(SENF_EMU_MAXMTU);
-
-    ConnectedMMapReadPacketSocketHandle rxSocket_ (monitorDevice(), qlen_, SENF_EMU_MAXMTU);
-    rxSocket_.protocol().rcvbuf( rcvBufSize_);
-
-    HardwareWLANInterfaceNet::assignSockets(rxSocket_, txSocket_);
-
     monitorDataFilter.id(self().id());
-    monitorDataFilter.promisc(promisc_);
+
+    NetdeviceController ctrl (monitorDevice());
+    ctrl.promisc(true);
+    ctrl.up();
+
+    netctl_.promisc(false);
+    netctl_.down();
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::openMonitorSocket()
+{
+    ConnectedMMapReadPacketSocketHandle monSocket_ (monitorDevice(), qlen_, SENF_EMU_MAXMTU);
+    monSocket_.protocol().rcvbuf( rcvBufSize_);
+    MonitorDataFilter::filterMonitorTxFrames(monSocket_);
+    monitorDataFilter.promisc(true);
+    monitorDataFilter.flushQueues();
+    assignMonitorSocket(monSocket_);
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::closeMonitorSocket()
+{ 
+    if (HardwareWLANInterfaceNet::monSocket.valid())
+        HardwareWLANInterfaceNet::monSocket.close();
+
+    assignMonitorSocket(HardwareWLANInterfaceNet::monSocket);
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
+{ 
+    netctl_.up();
+    ConnectedMMapPacketSocketHandle socket_ (device(), qlen_, SENF_EMU_MAXMTU);
+    socket_.protocol().sndbuf( sndBufSize_);
+    socket_.protocol().rcvbuf( rcvBufSize_);
+    HardwareWLANInterfaceNet::assignDataSocket(socket_);   
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::closeDataSocket()
+{ 
+    if (HardwareWLANInterfaceNet::socket.valid())
+        HardwareWLANInterfaceNet::socket.close();
+    
+    HardwareWLANInterfaceNet::assignDataSocket(HardwareWLANInterfaceNet::socket);
+    netctl_.down();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::close_sockets()
 {
-    if (HardwareWLANInterfaceNet::rxSocket.valid())
-        HardwareWLANInterfaceNet::rxSocket.close();
-    if (HardwareWLANInterfaceNet::txSocket.valid())
-        HardwareWLANInterfaceNet::txSocket.close();
-
-    HardwareWLANInterfaceNet::assignSockets(HardwareWLANInterfaceNet::rxSocket, HardwareWLANInterfaceNet::txSocket);
+    closeMonitorSocket();
+    closeDataSocket();
+    NetdeviceController(monitorDevice()).down();    
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_enable()
 {
     if (! enabled()) {
-        netctl_.up();
-        if (!monitorDev_.empty())
-            NetdeviceController(monitorDev_).up();
         init_sockets();
     }
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_disable()
 {
-    netctl_.down();
-    if (! monitorDev_.empty())
-        NetdeviceController(monitorDev_).down();
-
     close_sockets();
 }
 
 prefix_ bool senf::emu::HardwareWLANInterface::v_enabled()
     const
 {
-    if (! monitorDev_.empty())
-        return NetdeviceController(monitorDev_).isUp();
-    else
-        return netctl_.isUp();
+    return NetdeviceController(monitorDevice()).isUp();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_id(MACAddress const & id)
@@ -479,37 +479,33 @@ prefix_ senf::MACAddress senf::emu::HardwareWLANInterface::v_id()
 prefix_ bool senf::emu::HardwareWLANInterface::v_promisc()
     const
 {
-    if (!monitorDev_.empty()) {
-        NetdeviceController ctrl (monitorDev_);
-        promisc_ = ctrl.promisc();
-    }
-    else {
-        promisc_ = netctl_.promisc();
-    }
     return promisc_;
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool v)
+prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
 {
-    if (!monitorDev_.empty()) {
-        NetdeviceController ctrl (monitorDev_);
-        ctrl.promisc(v);
+    if (promisc_ == p)
+        return;
+
+    promisc_ = p;
+
+    if (p) {
+        openMonitorSocket();
+        dataSource(false);
+    } else {
+        closeMonitorSocket();
+        dataSource(true);
     }
-    else {
-        netctl_.promisc(v);
-    }
-    promisc_ = v;
-    monitorDataFilter.promisc(promisc_);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_mcAdd(MACAddress const & address)
 {
-    HardwareWLANInterfaceNet::rxSocket.protocol().mcAdd( dev_, address);
+    HardwareWLANInterfaceNet::socket.protocol().mcAdd( dev_, address);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_mcDrop(MACAddress const & address)
 {
-    HardwareWLANInterfaceNet::rxSocket.protocol().mcDrop( dev_, address);
+    HardwareWLANInterfaceNet::socket.protocol().mcDrop( dev_, address);
 }
 
 prefix_ unsigned senf::emu::HardwareWLANInterface::v_mtu()
@@ -521,11 +517,12 @@ prefix_ unsigned senf::emu::HardwareWLANInterface::v_mtu()
 prefix_ void senf::emu::HardwareWLANInterface::v_mtu(unsigned v)
 {
     netctl_.mtu(v);
+    NetdeviceController(monitorDevice()).mtu(v);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_flushRxQueues()
 {
-    HardwareWLANInterfaceNet::flush();
+//    HardwareWLANInterfaceNet::flush();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_flushTxQueues()
@@ -580,11 +577,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
 
 prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsigned bandwidth)
 {
-//    IGNORE_EXCPETION( wnlc_.ibss_leave(); )
-    if (! monitorDev_.empty())
-        IGNORE_EXCPETION( netctl_.down(); )
-
-    WirelessNLController wnlc (monitorDev_.empty() ? dev_ : monitorDev_);
+    WirelessNLController wnlc (monitorDevice());
 
     if (freq != 0 && bandwidth != 0) {
         switch (bandwidth) {
@@ -603,11 +596,13 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
         }
     }
 
+    /*
     if (enabled()) {
-        // read and drop all old frames from the kernel queue
+        // read and drop all old frames from the kernel queues
         flushRxQueues();
         flushTxQueues();
     }
+    */
 }
 
 prefix_ unsigned senf::emu::HardwareWLANInterface::v_frequency()
@@ -660,22 +655,32 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpFilterStats(std::ostream & os
 
 prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
 {
-    if (HardwareWLANInterfaceNet::txSocket.valid() and HardwareWLANInterfaceNet::rxSocket.valid()) {
-        auto rs (HardwareWLANInterfaceNet::rxSocket.protocol().rxStats());
-        os << "MMAP Rx stats: " 
+    if (!HardwareWLANInterfaceNet::socket.valid() and !HardwareWLANInterfaceNet::monSocket.valid()) {
+         os << "Socket closed. Not stats available." << std::endl;
+         return;
+    }
+
+    if (HardwareWLANInterfaceNet::monSocket.valid()) {
+        auto rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStats());
+        os << "MMAP Rx (monitor) stats: " 
            << "received " << rs.received << ", "
            << "ignored "  << rs.ignored  << ". ";
-        auto ts (HardwareWLANInterfaceNet::txSocket.protocol().txStats());
-        os << "MMAP Tx stats: " 
+    } else {
+        auto rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
+        os << "MMAP Rx (data) stats: " 
+           << "received " << rs.received << ", "
+           << "ignored "  << rs.ignored  << ". ";
+    }
+
+    if (HardwareWLANInterfaceNet::socket.valid()) {
+        auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
+        os << "MMAP Tx (data) stats: " 
            << "sent "        << ts.sent << ", "
            << "wrongFormat " << ts.wrongFormat << ", "
            << "overrun "     << ts.overrun << ", "
            << "dropped "     << ts.dropped << ". ";
         os << "DSQ stats: "
-           << "dropped "     << sink.dropped() << std::endl;
-        
-    } else {
-        os << "Socket closed. Not stats available." << std::endl;
+           << "dropped "     << sink.dropped() << std::endl;        
     }
 }
 
@@ -758,33 +763,19 @@ senf::emu::HardwareWLANInterface::joinAdhocNetwork(std::string const & ssid, uns
 
 prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters)
 {
-//    IGNORE_EXCPETION( wnlc_.ibss_leave(); )
-//    if (! monitorDev_.empty())
-//        IGNORE_EXCPETION( netctl_.down(); )
-    if (! monitorDev_.empty())
-        netctl_.up();
+    openDataSocket();
     
     wnlc_.do_ibss_join(parameters);
-    joined_ = true;
     bw_ = parameters.channelType_ == WirelessNLController::ChannelType::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
-
-    // filter CTL frames in 'joined' mode
-    if (! monitorDev_.empty())
-        MonitorDataFilter::filterMonitorTxAndCtlFrames(HardwareWLANInterfaceNet::rxSocket);
-
-    flushRxQueues();
-    flushTxQueues();
+    
+//    flushRxQueues();
+//    flushTxQueues();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::leaveAdhocNetwork()
 {
     wnlc_.ibss_leave();
-    joined_ = false;
-    if (!monitorDev_.empty()) {
-        netctl_.down();
-        // allow CTL frames in 'not joined' mode, for i.e. channel scanning
-        MonitorDataFilter::filterMonitorTxFrames(HardwareWLANInterfaceNet::rxSocket);
-    }
+    closeDataSocket();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::sndBuf(unsigned sndbuf)
@@ -833,7 +824,11 @@ prefix_ void senf::emu::HardwareWLANInterface::qlen(unsigned qlen)
 prefix_ unsigned senf::emu::HardwareWLANInterface::rxQueueDropped()
     const
 {
-    return HardwareWLANInterfaceNet::rxSocket.protocol().rxQueueDropped();
+    if (HardwareWLANInterfaceNet::socket) {
+        return HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
+    } else {
+        return 0;
+    }
 }
 
 prefix_ unsigned senf::emu::HardwareWLANInterface::maxBurst()
@@ -865,7 +860,7 @@ prefix_ bool senf::emu::HardwareWLANInterface::spectralScanStop(senf::Statistics
 
 prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANInterface::dfsState(unsigned freq, unsigned bandwidth)
 {
-    WirelessNLController wnlc (monitorDev_.empty() ? dev_ : monitorDev_);
+    WirelessNLController wnlc (monitorDev_);
 
     if (freq == 0 or bandwidth == 0)
         return WirelessNLController::DFSState::NoDFS;

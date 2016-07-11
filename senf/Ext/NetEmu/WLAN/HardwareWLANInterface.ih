@@ -51,12 +51,12 @@ namespace detail {
     /** \brief Internal: Hardware WLAN interface PPI network */
     struct HardwareWLANInterfaceNet
     {
-        ConnectedMMapReadPacketSocketHandle rxSocket;
-        ConnectedMMapWritePacketSocketHandle txSocket;
-
-        ppi::module::ActiveQueueSocketSource<RadiotapPacket> source;
+        ConnectedMMapPacketSocketHandle socket;
+        ppi::module::ActiveQueueSocketSource<EthernetPacket> source;
         ppi::module::PassiveQueueSocketSink<> sink;
 
+        ConnectedMMapReadPacketSocketHandle monSocket;
+        ppi::module::ActiveQueueSocketSource<RadiotapPacket> monSource;
         MonitorDataFilter monitorDataFilter;
 
         ppi::connector::ActiveOutputJack<EthernetPacket> netOutput;
@@ -67,7 +67,8 @@ namespace detail {
         HardwareWLANInterface & self();
         HardwareWLANInterface const & self() const;
 
-        void assignSockets(ConnectedMMapReadPacketSocketHandle & rxSocket, ConnectedMMapWritePacketSocketHandle & txSocket);
+        void assignDataSocket(ConnectedMMapPacketSocketHandle & socket);
+        void assignMonitorSocket(ConnectedMMapReadPacketSocketHandle & monSocket);
 
         unsigned rcvBuf();
         void rcvBuf(unsigned);
@@ -75,6 +76,8 @@ namespace detail {
         void sndBuf(unsigned);
         void flush();
 
+        void dataSource(bool on);
+        
         TSFTHistogram & tsftHistogram();
     };
 

@@ -42,9 +42,10 @@
 
 prefix_ senf::emu::detail::HardwareEthernetInterfaceNet::HardwareEthernetInterfaceNet()
     : socket (senf::noinit), source (socket), sink (socket),
-      netOutput (annotator_.output), netInput (sink.input)
+      netOutput (annotator_.output), netInput (pvidInserter_.input)
 {
     senf::ppi::connect(source.output, annotator_.input);
+    senf::ppi::connect(pvidInserter_.output, sink.input);
 }
 
 prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::assignSockets(ConnectedMMapPacketSocketHandle & socket_)
@@ -305,13 +306,15 @@ prefix_ bool senf::emu::HardwareEthernetInterface::v_promisc()
     return ctrl_.promisc();
 }
 
-prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool v)
+prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool p)
 {
     close_sockets();
-    ctrl_.promisc(v);
+    ctrl_.promisc(p);
     init_sockets();
     // inform the annotator about our promisc state (if promisc is on, all frames will be prepended with an AnnotationsPacket)
-    annotator_.rawMode(v);
+    annotator_.rawMode(p, pvid_);
+    // inserter should only be active in promisc mode
+    pvidInserter_.rawMode(p ? pvid_ : std::uint16_t(-1));
 }
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::v_mtu()

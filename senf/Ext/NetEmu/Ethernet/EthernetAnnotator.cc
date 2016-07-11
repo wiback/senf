@@ -38,7 +38,8 @@
 
 prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(senf::MACAddress const & id)
     : id_ (id),
-      rawMode_(false)
+      rawMode_(false),
+      pvid_(std::uint16_t(-1))
 {
     route(input, output).autoThrottling( false);
     input.throttlingDisc(senf::ppi::ThrottlingDiscipline::NONE);
@@ -56,9 +57,10 @@ prefix_ senf::MACAddress const & senf::emu::EthernetAnnotator::id()
     return id_;
 }
 
-prefix_ void senf::emu::EthernetAnnotator::rawMode(bool r)
+prefix_ void senf::emu::EthernetAnnotator::rawMode(bool r, std::uint16_t pvid)
 {
     rawMode_ = r;
+    pvid_ = pvid;
 }
 
 prefix_ void senf::emu::EthernetAnnotator::request()
@@ -69,7 +71,7 @@ prefix_ void senf::emu::EthernetAnnotator::request()
 
     // set the rx timestamp. Careful: this assumes that we are using an MMAP source !
     eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
-
+    
     {
         emu::annotations::Quality & q (eth.annotation<emu::annotations::Quality>());
         q.rssi  = 127;            // for now, we report the maximum signal 'quality'
@@ -78,16 +80,37 @@ prefix_ void senf::emu::EthernetAnnotator::request()
         q.flags.frameLength = eth.size();
     }
 
+    // check, if the h/w has removed the VLAN tag...
     boost::optional<unsigned> vlanId (eth.annotation<senf::ppi::QueueBufferAnnotation>()->vlan());
     if (SENF_UNLIKELY(vlanId)) {
-        EthVLanPacket vlan (EthVLanPacket::createInsertBefore(eth.next()));
-        vlan->vlanId() << *vlanId;
-        vlan->type_length() << eth->type_length();
-        eth.finalizeTo(vlan);
-        vlan.reparse();
+        if (pvid_ == std::uint16_t(-1) or pvid_ == (*vlanId & 0xfff)) {
+            // if no PVID is specified, but the TAG bck in...
+            EthVLanPacket vlan (EthVLanPacket::createInsertBefore(eth.next()));
+            vlan->vlanId() << *vlanId;
+            vlan->type_length() << eth->type_length();
+            eth.finalizeTo(vlan);
+            vlan.reparse();
+        }
     }
-
+    
     if (SENF_UNLIKELY(rawMode_)) {
+        if (pvid_ != std::uint16_t(-1)) {
+            auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
+            if (!vlan)
+                return;
+            if (vlan->vlanId() != pvid_) {
+                return;
+            }
+            // remove VLAN TAG here
+            std::uint16_t tl (vlan->type_length());
+            ::memmove(
+                      vlan.data().begin(),
+                      vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
+                      vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
+            eth.data().resize( eth.size() - senf::EthVLanPacketParser::fixed_bytes);
+            eth->type_length() = tl;
+            eth.reparse();
+        }
         output(prependAnnotaionsPacket(eth));
     } else {
         output(eth);

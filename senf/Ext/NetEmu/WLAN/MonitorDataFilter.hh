@@ -96,6 +96,7 @@ namespace emu {
 
     public:
         ppi::connector::PassiveInput<RadiotapPacket> input;
+        ppi::connector::PassiveInput<EthernetPacket> input_plain;
         ppi::connector::ActiveOutput<EthernetPacket> output;
 
         MonitorDataFilter(senf::MACAddress const & id = senf::MACAddress::None);
@@ -160,8 +161,8 @@ namespace emu {
         void handle_NonDataFrame(RadiotapPacket & rtPacket);
 
         void request();
+        void requestPlain();
     };
-
 }}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

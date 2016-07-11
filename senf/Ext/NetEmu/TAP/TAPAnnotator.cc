@@ -38,7 +38,8 @@
 
 prefix_ senf::emu::TAPAnnotator::TAPAnnotator(senf::MACAddress const & id)
     : id_ (id),
-      rawMode_(false)
+      rawMode_(false),
+      pvid_(std::uint16_t(-1))
 {
     route(input, output).autoThrottling(false);
     input.throttlingDisc(senf::ppi::ThrottlingDiscipline::NONE);
@@ -56,9 +57,10 @@ prefix_ senf::MACAddress const & senf::emu::TAPAnnotator::id()
     return id_;
 }
 
-prefix_ void senf::emu::TAPAnnotator::rawMode(bool r)
+prefix_ void senf::emu::TAPAnnotator::rawMode(bool r, std::uint16_t pvid)
 {
     rawMode_ = r;
+    pvid_ = pvid;
 }
 
 prefix_ void senf::emu::TAPAnnotator::request()
@@ -75,8 +77,24 @@ prefix_ void senf::emu::TAPAnnotator::request()
         q.snr = 255;
         q.flags.frameLength = eth.size();
     }
-
+    
     if (SENF_UNLIKELY(rawMode_)) {
+        if (pvid_ != std::uint16_t(-1)) {
+            auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
+            if (!vlan)
+                return;
+            if (vlan->vlanId() != pvid_)
+                return;
+            // remove VLAN TAG here
+            std::uint16_t tl (vlan->type_length());
+            ::memmove(
+                      vlan.data().begin(),
+                      vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
+                      vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
+            eth.data().resize( eth.size() - senf::EthVLanPacketParser::fixed_bytes);
+            eth->type_length() = tl;
+            eth.reparse();
+        }
         output(prependAnnotaionsPacket(eth));
     } else {
         output(eth);
