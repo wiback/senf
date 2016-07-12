@@ -118,8 +118,10 @@ prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::sndBuf(unsigned sndbuf
 
 prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::flush()
 {
-//    source.flush();
-//    monSource.flush();
+    if (socket)
+        source.flush();
+    if (monSocket)
+        monSource.flush();
     monitorDataFilter.flushQueues();
 }
 
@@ -522,7 +524,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_mtu(unsigned v)
 
 prefix_ void senf::emu::HardwareWLANInterface::v_flushRxQueues()
 {
-//    HardwareWLANInterfaceNet::flush();
+    HardwareWLANInterfaceNet::flush();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_flushTxQueues()
@@ -596,13 +598,8 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
         }
     }
 
-    /*
-    if (enabled()) {
-        // read and drop all old frames from the kernel queues
-        flushRxQueues();
-        flushTxQueues();
-    }
-    */
+    // drop all old frames from the kernel queues
+    flushRxQueues();
 }
 
 prefix_ unsigned senf::emu::HardwareWLANInterface::v_frequency()
@@ -655,12 +652,12 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpFilterStats(std::ostream & os
 
 prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
 {
-    if (!HardwareWLANInterfaceNet::socket.valid() and !HardwareWLANInterfaceNet::monSocket.valid()) {
+    if (!HardwareWLANInterfaceNet::socket and !HardwareWLANInterfaceNet::monSocket) {
          os << "Socket closed. Not stats available." << std::endl;
          return;
     }
 
-    if (HardwareWLANInterfaceNet::monSocket.valid()) {
+    if (HardwareWLANInterfaceNet::monSocket) {
         auto rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStats());
         os << "MMAP Rx (monitor) stats: " 
            << "received " << rs.received << ", "
@@ -672,7 +669,7 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
            << "ignored "  << rs.ignored  << ". ";
     }
 
-    if (HardwareWLANInterfaceNet::socket.valid()) {
+    if (HardwareWLANInterfaceNet::socket) {
         auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
         os << "MMAP Tx (data) stats: " 
            << "sent "        << ts.sent << ", "
@@ -824,7 +821,9 @@ prefix_ void senf::emu::HardwareWLANInterface::qlen(unsigned qlen)
 prefix_ unsigned senf::emu::HardwareWLANInterface::rxQueueDropped()
     const
 {
-    if (HardwareWLANInterfaceNet::socket) {
+    if (HardwareWLANInterfaceNet::monSocket) {
+        return HardwareWLANInterfaceNet::monSocket.protocol().rxQueueDropped();
+    } else if (HardwareWLANInterfaceNet::socket) {
         return HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
     } else {
         return 0;
