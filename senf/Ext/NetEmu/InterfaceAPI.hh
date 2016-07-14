@@ -236,6 +236,7 @@ namespace emu {
         InterfaceDeviceId deviceId() const;
 
         boost::uint8_t linkTypeId() const;
+        std::string interfaceTypeName() const;
 
         console::DirectoryNode & consoleDir() const; ///< Access %interface console directory
 
@@ -300,8 +301,6 @@ namespace emu {
         virtual boost::uint8_t v_linkTypeId() const = 0;
 
     private:
-        std::string interfaceTypeName() const;
-
         typedef boost::ptr_map<std::string, senf::Statistics> Statistics;
         Statistics statistics_;
         console::ScopedDirectory<> consoleDir_;
