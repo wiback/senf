@@ -42,7 +42,7 @@
 
 prefix_ senf::emu::detail::TAPEthernetInterfaceNet::TAPEthernetInterfaceNet(std::string const & device)
     : socket (TapSocketHandle(device)),
-      dev_(device), ctrl_(device),
+      dev_(device), ctrl_(device), annotator_(ctrl_.hardwareAddress()),
       netOutput (annotator_.output), netInput (pvidInserter_.input)
 {
     socket.blocking(false);
@@ -158,7 +158,7 @@ prefix_ void senf::emu::TAPEthernetInterface::v_id(MACAddress const & mac)
 {
     DisableInterfaceGuard guard (*this);
     ctrl_.hardwareAddress(mac);
-    annotator_.id(id());
+    annotator_.id(mac);
 }
 
 prefix_ senf::MACAddress senf::emu::TAPEthernetInterface::v_id()
