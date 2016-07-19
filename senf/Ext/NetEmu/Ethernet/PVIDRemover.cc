@@ -26,61 +26,55 @@
 //       Mathias Kretschmer <mtk@berlios.de>
 
 /** \file
-    \brief PVIDInserter implementation */
+    \brief PVIDRemover implementation */
 
 // Custom includes
-#include "PVIDInserter.hh"
+#include "PVIDRemover.hh"
 
 #define prefix_ 
 
-prefix_ senf::emu::PVIDInserter::PVIDInserter()
+prefix_ senf::emu::PVIDRemover::PVIDRemover()
     : pvid_(std::uint16_t(-1))
 {
     route(input, output).autoThrottling( false);
     input.throttlingDisc(senf::ppi::ThrottlingDiscipline::NONE);
-    input.onRequest(&PVIDInserter::requestBypass);
+    input.onRequest(&PVIDRemover::requestBypass);
 }
 
-prefix_ void senf::emu::PVIDInserter::rawMode(std::uint16_t pvid)
+prefix_ void senf::emu::PVIDRemover::rawMode(std::uint16_t pvid)
 {
     pvid_ = pvid;
 
     if (pvid_ == std::uint16_t(-1))
-        input.onRequest(&PVIDInserter::requestBypass);
+        input.onRequest(&PVIDRemover::requestBypass);
     else
-        input.onRequest(&PVIDInserter::requestInsert);
+        input.onRequest(&PVIDRemover::requestRemove);
 }
 
-prefix_ void senf::emu::PVIDInserter::requestBypass()
+prefix_ void senf::emu::PVIDRemover::requestBypass()
 {
     output(input());
 }
 
 
-prefix_ void senf::emu::PVIDInserter::requestInsert()
+prefix_ void senf::emu::PVIDRemover::requestRemove()
 {
     senf::EthernetPacket eth (input());
 
     senf::EthVLanPacket vlan (eth.next<senf::EthVLanPacket>(senf::nothrow));
-    if (SENF_UNLIKELY(vlan)) {
-        // drop already tagged frames
+    if (SENF_UNLIKELY(!vlan  or (vlan->vlanId() != pvid_))) {
         return;
     }
-
-    std::uint16_t tl (eth->type_length());
-    senf::Packet pkt (eth.next(senf::nothrow));
-    if (SENF_LIKELY(pkt)) {
-        senf::EthVLanPacket vtmp (senf::EthVLanPacket::createInsertBefore(pkt));
-        vtmp->vlanId() = pvid_;
-        vtmp->type_length() = tl;
-        eth.finalizeTo(vtmp);
-    } else {
-        senf::EthVLanPacket vtmp (senf::EthVLanPacket::createAfter(eth));
-        vtmp->vlanId() = pvid_;
-        vtmp->type_length() = tl;
-        eth.finalizeTo(vtmp);
-    }
-
+    
+    // remove TAG here
+    std::uint16_t tl (vlan->type_length());
+    ::memmove(vlan.data().begin(),
+              vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
+              vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
+    eth.data().resize( eth.size() - senf::EthVLanPacketParser::fixed_bytes);
+    eth->type_length() = tl;
+    eth.reparse();
+    
     output(eth);
 }
 
