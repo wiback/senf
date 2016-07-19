@@ -68,7 +68,7 @@ prefix_ void senf::emu::TAPAnnotator::request()
     senf::EthernetPacket eth (input());
 
     eth.annotation<annotations::Interface>().value = id_;
-    //    eth.annotation<annotations::Timestamp>().fromSocketProtocol(handle.protocol());
+    eth.annotation<annotations::Timestamp>().fromWallClock();
 
     {
         emu::annotations::Quality & q (eth.annotation<emu::annotations::Quality>());
@@ -78,23 +78,27 @@ prefix_ void senf::emu::TAPAnnotator::request()
         q.flags.frameLength = eth.size();
     }
     
-    if (SENF_UNLIKELY(rawMode_)) {
-        if (pvid_ != std::uint16_t(-1)) {
-            auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
-            if (!vlan)
-                return;
-            if (vlan->vlanId() != pvid_)
-                return;
-            // remove VLAN TAG here
-            std::uint16_t tl (vlan->type_length());
-            ::memmove(
-                      vlan.data().begin(),
-                      vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
-                      vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
-            eth.data().resize( eth.size() - senf::EthVLanPacketParser::fixed_bytes);
-            eth->type_length() = tl;
-            eth.reparse();
+    if (pvid_ != std::uint16_t(-1)) {
+        senf::EthVLanPacket vlan (eth.next<senf::EthVLanPacket>(senf::nothrow));
+        if (SENF_UNLIKELY(vlan)) {
+            return;
         }
+        std::uint16_t tl (eth->type_length());
+        senf::Packet const & pkt (eth.next(senf::nothrow));
+        if (SENF_LIKELY(pkt)) {
+            senf::EthVLanPacket vtmp (senf::EthVLanPacket::createInsertBefore(pkt));
+            vtmp->vlanId() = pvid_;
+            vtmp->type_length() = tl;
+            eth.finalizeTo(vtmp);
+        } else {
+            senf::EthVLanPacket vtmp (senf::EthVLanPacket::createAfter(eth));
+            vtmp->vlanId() = pvid_;
+            vtmp->type_length() = tl;
+            eth.finalizeTo(vtmp);
+        }
+    }
+    
+    if (SENF_UNLIKELY(rawMode_)) {
         output(prependAnnotaionsPacket(eth));
     } else {
         output(eth);

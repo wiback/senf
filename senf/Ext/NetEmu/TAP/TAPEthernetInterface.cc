@@ -43,13 +43,12 @@
 prefix_ senf::emu::detail::TAPEthernetInterfaceNet::TAPEthernetInterfaceNet(std::string const & device)
     : socket (TapSocketHandle(device)),
       dev_(device), ctrl_(device), annotator_(ctrl_.hardwareAddress()),
-      netOutput (annotator_.output), netInput (pvidInserter_.input)
+      netOutput (annotator_.output), netInput (pvidRemover_.input)
 {
     socket.blocking(false);
 
     senf::ppi::connect(source.output, annotator_.input);
-    senf::ppi::connect(pvidInserter_.output, sink.input);
-
+    senf::ppi::connect(pvidRemover_.output, sink.input);
 }
 
 prefix_ void senf::emu::detail::TAPEthernetInterfaceNet::assignSockets(bool on)
@@ -178,7 +177,7 @@ prefix_ void senf::emu::TAPEthernetInterface::v_promisc(bool v)
     ctrl_.promisc(v);
     // inform the annotator about our promisc state (if promisc is on, all frames will be prepended with an AnnotationsPacket)
     annotator_.rawMode(v, pvid_);
-    pvidInserter_.rawMode(pvid_);
+    pvidRemover_.rawMode(pvid_);
 }
 
 prefix_ unsigned senf::emu::TAPEthernetInterface::v_mtu()
@@ -221,7 +220,7 @@ prefix_ bool senf::emu::TAPEthernetInterface::pvid(std::uint16_t p)
     
     pvid_ = p;
     annotator_.rawMode(promisc(), pvid_);
-    pvidInserter_.rawMode(pvid_);
+    pvidRemover_.rawMode(pvid_);
 
     return true;
 }
