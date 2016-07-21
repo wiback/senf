@@ -83,7 +83,7 @@ namespace {
 
 prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const & device)
     : TAPEthernetInterfaceNet(device),
-      BidirectionalWiredInterface (netOutput, netInput),
+      EthernetInterface (netOutput, netInput),
       pvid_(std::uint16_t(-1))
 {
     BidirectionalWiredInterface::init();

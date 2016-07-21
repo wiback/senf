@@ -35,6 +35,7 @@
 #include <senf/PPI/QueueingSocketSink.hh>
 #include "senf/Ext/NetEmu/InterfaceAPIBase.hh"
 #include "senf/Ext/NetEmu/Ethernet/EthernetController.hh"
+#include "senf/Ext/NetEmu/Ethernet/EthernetInterface.hh"
 
 #include "TAPEthernetInterface.ih"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +53,7 @@ namespace emu {
      */
     class TAPEthernetInterface
         : private detail::TAPEthernetInterfaceNet,
-          public BidirectionalWiredInterface,
+          public EthernetInterface,
           public HardwareInterface
     {
     public:
@@ -94,7 +95,6 @@ namespace emu {
         virtual void v_flushRxQueues();
 
         virtual MACAddress v_id() const;
-        virtual boost::uint8_t v_linkTypeId() const;
         
         void dumpMmapStats(std::ostream & os);
 

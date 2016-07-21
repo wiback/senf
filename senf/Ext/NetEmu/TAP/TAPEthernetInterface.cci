@@ -55,12 +55,6 @@ prefix_ senf::emu::EthernetController & senf::emu::TAPEthernetInterface::ethCont
     return ctrl_;
 }
 
-prefix_ boost::uint8_t senf::emu::TAPEthernetInterface::v_linkTypeId()
-    const
-{
-    return 15; // 802.21 link type for Ethernet
-}
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
