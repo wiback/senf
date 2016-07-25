@@ -35,6 +35,8 @@
 // Custom includes
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
+
 
 //#include "NetdeviceController.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +119,9 @@ namespace senf {
         };
 
         static SockFd::ptr sockfd();
+
+        static std::string macToName(MACAddress const & mac);
+        static MACAddress readMACAddressFromFile(boost::filesystem::path const & path);
 
     protected:
         void ifrName(ifreq & ifr) const;

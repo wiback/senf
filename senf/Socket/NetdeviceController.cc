@@ -39,6 +39,7 @@
 #include <net/if.h>
 #include <linux/if_vlan.h>
 #include <boost/weak_ptr.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <senf/Utils/Exception.hh>
 #include <senf/Utils/String.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
@@ -224,6 +225,7 @@ prefix_ void senf::NetdeviceController::ifrName(ifreq & ifr)
 
 #undef doIoctl
 
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::NetdeviceController::SockFd
 
@@ -247,6 +249,34 @@ prefix_ senf::NetdeviceController::SockFd::ptr senf::NetdeviceController::sockfd
          sockfd = p = SockFd::ptr(new SockFd());
     return p;
 }
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::NetdeviceController::mactoName()
+
+prefix_ senf::MACAddress senf::NetdeviceController::readMACAddressFromFile(boost::filesystem::path const & path)
+{
+    boost::filesystem::ifstream file;
+    file.exceptions( std::ifstream::failbit | std::ifstream::badbit);
+    file.open(path, std::ios::in);
+    senf::MACAddress addr;
+    file >> addr;
+    file.close();
+    return addr;
+}
+
+prefix_ std::string senf::NetdeviceController::macToName(senf::MACAddress const & mac)
+{
+    boost::filesystem::directory_iterator end_itr;
+    for (boost::filesystem::directory_iterator itr ("/sys/class/net/"); itr != end_itr; ++itr) {
+        try {
+            if (readMACAddressFromFile(itr->path()/"macaddress") == mac)
+                return itr->path().filename().string();
+        } catch (std::exception &) {}
+    }
+    return "";
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
