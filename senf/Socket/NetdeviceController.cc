@@ -270,7 +270,7 @@ prefix_ std::string senf::NetdeviceController::macToName(senf::MACAddress const 
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr ("/sys/class/net/"); itr != end_itr; ++itr) {
         try {
-            if (readMACAddressFromFile(itr->path()/"macaddress") == mac)
+            if (readMACAddressFromFile(itr->path()/"address") == mac)
                 return itr->path().filename().string();
         } catch (std::exception &) {}
     }
