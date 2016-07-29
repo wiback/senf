@@ -287,6 +287,9 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
 
 prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
 {
+    if (SENF_UNLIKELY(!handle))
+        return;
+
     detail::QueueInfo & qi (* qinfo(handle));
 
     if (qi.tx.idle)
@@ -300,6 +303,9 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
 
 prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 {
+    if (SENF_UNLIKELY(!handle))
+        return;
+    
     detail::QueueInfo & qi (* qinfo(handle));
     unsigned char * last_tail (qi.tx.tail);
     while (SENF_LIKELY(!qi.tx.idle || qi.tx.tail != qi.tx.head)) {  // we assume bursts >> likely
@@ -315,7 +321,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         qi.tx.idle = true;
     }
 
-    for (;;) {
+    for (;SENF_LIKELY(handle);) {
         if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
             switch (errno) {
             case EINTR:
