@@ -323,6 +323,7 @@ namespace emu {
 
         ppi::connector::ActiveOutputJack<EthernetPacket> output;
 
+        void annotationMode(bool a);    ///< Enable/Disable AnnotationPackets for each frame
         bool promisc() const;           ///< Get interface promiscuous status
         void promisc(bool v);           ///< Change interface promiscuous status
         void mcAdd(senf::MACAddress const & address);
@@ -341,6 +342,7 @@ namespace emu {
 
         void init();
 
+        virtual void v_annotationMode(bool a) = 0;
         virtual bool v_promisc() const = 0;
         virtual void v_promisc(bool v) = 0;
 

@@ -56,7 +56,7 @@ prefix_ typename senf::emu::detail::TunnelIOHelper<Controller>::PacketType senf:
     if (!pkt)
         return pkt;
     
-    if (SENF_UNLIKELY(tunnelIface_._promisc())) {
+    if (SENF_UNLIKELY(tunnelIface_._annotationMode())) {
         return prependAnnotaionsPacket(pkt);
     } else {
         return pkt;
@@ -80,7 +80,7 @@ template <class Controller>
 prefix_ senf::emu::detail::TunnelInterfaceNet<Controller>::TunnelInterfaceNet(typename Controller::Interface & interface)
     : socket(senf::noinit), tunnelCtrl(interface),
       source(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)), sink(socket, TunnelIOHelper<Controller>(tunnelCtrl, *this)),
-      netOutput(source.output), netInput(sink.input), mtu_(1500u), maxBurst_(48), promisc_(false)
+      netOutput(source.output), netInput(sink.input), mtu_(1500u), maxBurst_(48), promisc_(false), annotationMode_(false)
 {
 }
 
@@ -163,6 +163,19 @@ prefix_ bool senf::emu::detail::TunnelInterfaceNet<Controller>::_promisc()
     const
 {
     return promisc_;
+}
+
+template <class Controller>
+prefix_ void senf::emu::detail::TunnelInterfaceNet<Controller>::_annotationMode(bool a)
+{
+    annotationMode_ = a;
+}
+
+template <class Controller>
+prefix_ bool senf::emu::detail::TunnelInterfaceNet<Controller>::_annotationMode()
+    const
+{
+    return annotationMode_;
 }
 
 
@@ -460,6 +473,11 @@ prefix_ bool senf::emu::TunnelServerInterface::v_promisc()
     return TunnelInterfaceNet::_promisc();
 }
 
+prefix_ void senf::emu::TunnelServerInterface::v_annotationMode(bool a)
+{
+    TunnelInterfaceNet::_annotationMode(a);
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::TunnelClientInterface
@@ -650,6 +668,10 @@ prefix_ bool senf::emu::TunnelClientInterface::v_promisc()
     const
 {
     return TunnelInterfaceNet::_promisc();
+}
+prefix_ void senf::emu::TunnelClientInterface::v_annotationMode(bool a)
+{
+    TunnelInterfaceNet::_annotationMode(a);
 }
 
 

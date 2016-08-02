@@ -500,6 +500,12 @@ prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
     }
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::v_annotationMode(bool a)
+{
+    monitorDataFilter.annotate(a);
+}
+
+
 prefix_ void senf::emu::HardwareWLANInterface::v_mcAdd(MACAddress const & address)
 {
     HardwareWLANInterfaceNet::socket.protocol().mcAdd( dev_, address);

@@ -54,12 +54,14 @@ namespace emu {
         MACAddress const & id() const;
 
         void rawMode(bool r, std::uint16_t pvid = std::uint16_t(-1));
+        void annotate(bool a);
 
     private:
         void request();
 
         MACAddress id_;
         bool rawMode_;
+        bool annotate_;
         std::uint16_t pvid_;
     };
 }}

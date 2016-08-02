@@ -39,6 +39,7 @@
 prefix_ senf::emu::TAPAnnotator::TAPAnnotator(senf::MACAddress const & id)
     : id_ (id),
       rawMode_(false),
+      annotate_(false),
       pvid_(std::uint16_t(-1))
 {
     route(input, output).autoThrottling(false);
@@ -61,6 +62,11 @@ prefix_ void senf::emu::TAPAnnotator::rawMode(bool r, std::uint16_t pvid)
 {
     rawMode_ = r;
     pvid_ = pvid;
+}
+
+prefix_ void senf::emu::TAPAnnotator::annotate(bool a)
+{
+    annotate_ = a;
 }
 
 prefix_ void senf::emu::TAPAnnotator::request()
@@ -98,7 +104,7 @@ prefix_ void senf::emu::TAPAnnotator::request()
         }
     }
     
-    if (SENF_UNLIKELY(rawMode_)) {
+    if (SENF_UNLIKELY(rawMode_ & annotate_)) {
         output(prependAnnotaionsPacket(eth));
     } else {
         output(eth);

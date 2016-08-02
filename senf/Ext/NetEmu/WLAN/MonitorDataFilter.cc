@@ -127,6 +127,7 @@ prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const &
       reorderQueueTimer_( "ReorderQueueTimer_" + senf::str(id), senf::membind( &MonitorDataFilter::reorderQueueTick, this)),
       id_(id),
       promisc_(false),
+      annotate_(false),
       modulationRegistry_(WLANModulationParameterRegistry::instance()),
       dropUnknownMCS_ (true)
 {
@@ -146,6 +147,11 @@ prefix_ void senf::emu::MonitorDataFilter::dropUnknownMCS(bool q)
 prefix_ void senf::emu::MonitorDataFilter::promisc(bool p)
 {
     promisc_ = p;
+}
+
+prefix_ void senf::emu::MonitorDataFilter::annotate(bool a)
+{
+    annotate_ = a;
 }
 
 prefix_ senf::emu::TSFTHistogram & senf::emu::MonitorDataFilter::tsftHistogram()
@@ -639,7 +645,7 @@ prefix_ void senf::emu::MonitorDataFilter::outExtUI(Packet & pkt, senf::MACAddre
 prefix_ void senf::emu::MonitorDataFilter::outData(senf::EthernetPacket & eth)
 {
     stats_.data++;
-    if (SENF_UNLIKELY(promisc_))
+    if (SENF_UNLIKELY(annotate_))
         outExtUI(eth);
     else
         output(eth);

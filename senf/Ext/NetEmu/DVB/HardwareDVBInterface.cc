@@ -341,6 +341,11 @@ prefix_ void senf::emu::HardwareDVBReceiverInterface::v_promisc(bool v)
         throw InvalidArgumentException("promisc mode cannot be disabled.");
 }
 
+prefix_ void senf::emu::HardwareDVBReceiverInterface::v_annotationMode(bool a)
+{
+    throw InvalidArgumentException("annotation mode not implemented.");
+}
+
 prefix_ void senf::emu::HardwareDVBReceiverInterface::v_mcAdd(MACAddress const & address)
 {
     throw SystemException(ENOTSUP);

@@ -39,6 +39,7 @@
 prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(senf::MACAddress const & id)
     : id_ (id),
       rawMode_(false),
+      annotate_(false),
       pvid_(std::uint16_t(-1))
 {
     route(input, output).autoThrottling( false);
@@ -61,6 +62,11 @@ prefix_ void senf::emu::EthernetAnnotator::rawMode(bool r, std::uint16_t pvid)
 {
     rawMode_ = r;
     pvid_ = pvid;
+}
+
+prefix_ void senf::emu::EthernetAnnotator::annotate(bool a)
+{
+    annotate_ = a;
 }
 
 prefix_ void senf::emu::EthernetAnnotator::request()
@@ -111,7 +117,10 @@ prefix_ void senf::emu::EthernetAnnotator::request()
             eth->type_length() = tl;
             eth.reparse();
         }
-        output(prependAnnotaionsPacket(eth));
+        if (annotate_)
+            output(prependAnnotaionsPacket(eth));
+        else
+            output(eth);
     } else {
         output(eth);
     }
