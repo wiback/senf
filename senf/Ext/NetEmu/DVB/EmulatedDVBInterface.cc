@@ -29,6 +29,7 @@
     \brief EmulatedDVBInterface non-inline non-template implementation */
 
 #include "EmulatedDVBInterface.hh"
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 
 // Custom includes
 #include <boost/foreach.hpp>
@@ -90,7 +91,8 @@ EmulatedDVBSenderInterfaceNet()
 
 prefix_ senf::emu::detail::EmulatedDVBReceiverInterfaceNet::
 EmulatedDVBReceiverInterfaceNet()
-    : receiveInput (receiveFilter_.input),
+    : receiveFilter_(self()),
+      receiveInput (receiveFilter_.input),
       receiveOutput (receiveFilter_.output)
 {}
 
@@ -149,7 +151,9 @@ prefix_ senf::emu::EmulatedDVBReceiverInterface::EmulatedDVBReceiverInterface()
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::detail::EmulatedDVBReceiverReceiveFilter
 
-prefix_ senf::emu::detail::EmulatedDVBReceiverReceiveFilter::EmulatedDVBReceiverReceiveFilter()
+prefix_ senf::emu::detail::EmulatedDVBReceiverReceiveFilter::
+EmulatedDVBReceiverReceiveFilter(EmulatedDVBReceiverInterface & iface)
+    : iface_ (iface)
 {
     route(input, output);
     input.onRequest( &EmulatedDVBReceiverReceiveFilter::request);
@@ -171,7 +175,10 @@ prefix_ void senf::emu::detail::EmulatedDVBReceiverReceiveFilter::request()
     EthernetPacket e (p.find<EthernetPacket>(senf::nothrow));
     if (! e)
         return;
-    output(e);
+    if (iface_.annotationMode())
+        output(prependAnnotaionsPacket(e));
+    else
+        output(e);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

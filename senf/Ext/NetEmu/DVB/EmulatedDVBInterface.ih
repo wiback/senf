@@ -52,10 +52,12 @@ namespace detail {
         ppi::connector::PassiveInput<DVBPacketHeader> input;
         ppi::connector::ActiveOutput<EthernetPacket> output;
 
-        EmulatedDVBReceiverReceiveFilter();
+        EmulatedDVBReceiverReceiveFilter(EmulatedDVBReceiverInterface & iface);
 
     private:
         void request();
+
+        EmulatedDVBReceiverInterface & iface_;
     };
 
     /** \brief Internal: Internal PPI Network of emulated DVBReceiver interface */
