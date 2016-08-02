@@ -225,6 +225,18 @@ v_promisc(bool v)
 }
 
 template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_annotationMode()
+    const
+{
+    return annotationModeEmulatedReceiver();
+}
+
+template <class Base>
 prefix_ void
 senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
                             senf::emu::interface::Bidirectional,
@@ -415,6 +427,29 @@ senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
 v_promisc(bool v)
 {
     promiscEmulatedReceiver(v);
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_annotationMode()
+    const
+{
+    return annotationModeEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::Bidirectional,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_annotationMode(bool a)
+{
+    annotationModeEmulatedReceiver(a);
 }
 
 template <class Base>
@@ -614,6 +649,29 @@ senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
 v_promisc(bool v)
 {
     promiscEmulatedReceiver(v);
+}
+
+template <class Base>
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_annotationMode()
+    const
+{
+    return annotationModeEmulatedReceiver();
+}
+
+template <class Base>
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wireless,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated,
+                            Base>::
+v_annotationMode(bool a)
+{
+    annotationModeEmulatedReceiver(a);
 }
 
 template <class Base>

@@ -177,6 +177,17 @@ prefix_ void senf::emu::EmulatedDVBReceiverInterface::v_deinitEmulationInterface
     deinitEmulatedReceiver();
 }
 
+prefix_ bool senf::emu::EmulatedDVBReceiverInterface::v_annotationMode()
+    const
+{
+    return annotationModeEmulatedReceiver();
+}
+
+prefix_ void senf::emu::EmulatedDVBReceiverInterface::v_annotationMode(bool v)
+{
+    annotationModeEmulatedReceiver(v);
+}
+
 prefix_ bool senf::emu::EmulatedDVBReceiverInterface::v_promisc()
     const
 {

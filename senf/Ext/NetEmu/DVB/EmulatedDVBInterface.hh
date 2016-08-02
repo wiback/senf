@@ -126,6 +126,8 @@ namespace emu {
     private:
         virtual bool v_promisc() const;
         virtual void v_promisc(bool v);
+        virtual bool v_annotationMode() const;
+        virtual void v_annotationMode(bool v);
         virtual void v_mcAdd(MACAddress const & address);
         virtual void v_mcDrop(MACAddress const & address);
         virtual void v_initEmulationInterface();
