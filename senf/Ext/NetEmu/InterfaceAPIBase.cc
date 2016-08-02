@@ -220,6 +220,16 @@ prefix_ void
 senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
                             senf::emu::interface::ReceiveOnly,
                             senf::emu::interface::Emulated>::
+v_annotationMode(bool a)
+{
+    annotationModeEmulatedReceiver(a);
+}
+
+
+prefix_ void
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated>::
 v_mcAdd(senf::MACAddress const & address)
 {
     mcAddEmulatedReceiver(address);

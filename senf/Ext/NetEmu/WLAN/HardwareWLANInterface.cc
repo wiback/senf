@@ -505,6 +505,11 @@ prefix_ void senf::emu::HardwareWLANInterface::v_annotationMode(bool a)
     monitorDataFilter.annotate(a);
 }
 
+prefix_ bool senf::emu::HardwareWLANInterface::v_annotationMode()
+    const
+{
+    return monitorDataFilter.annotate();
+}
 
 prefix_ void senf::emu::HardwareWLANInterface::v_mcAdd(MACAddress const & address)
 {

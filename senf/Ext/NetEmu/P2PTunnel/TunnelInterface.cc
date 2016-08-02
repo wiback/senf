@@ -478,6 +478,12 @@ prefix_ void senf::emu::TunnelServerInterface::v_annotationMode(bool a)
     TunnelInterfaceNet::_annotationMode(a);
 }
 
+prefix_ bool senf::emu::TunnelServerInterface::v_annotationMode()
+    const
+{
+    return TunnelInterfaceNet::_annotationMode();
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::TunnelClientInterface
@@ -669,9 +675,16 @@ prefix_ bool senf::emu::TunnelClientInterface::v_promisc()
 {
     return TunnelInterfaceNet::_promisc();
 }
+
 prefix_ void senf::emu::TunnelClientInterface::v_annotationMode(bool a)
 {
     TunnelInterfaceNet::_annotationMode(a);
+}
+
+prefix_ bool senf::emu::TunnelClientInterface::v_annotationMode()
+    const
+{
+    return TunnelInterfaceNet::_annotationMode();
 }
 
 

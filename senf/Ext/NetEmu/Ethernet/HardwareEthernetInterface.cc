@@ -317,6 +317,12 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool p)
     pvidInserter_.rawMode(p ? pvid_ : std::uint16_t(-1));
 }
 
+prefix_ bool senf::emu::HardwareEthernetInterface::v_annotationMode()
+    const
+{
+    return annotator_.annotate();
+}
+
 prefix_ void senf::emu::HardwareEthernetInterface::v_annotationMode(bool a)
 {
     annotator_.annotate(a);

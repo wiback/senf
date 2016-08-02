@@ -154,6 +154,12 @@ prefix_ void senf::emu::MonitorDataFilter::annotate(bool a)
     annotate_ = a;
 }
 
+prefix_ bool senf::emu::MonitorDataFilter::annotate()
+    const
+{
+    return annotate_;
+}
+
 prefix_ senf::emu::TSFTHistogram & senf::emu::MonitorDataFilter::tsftHistogram()
 {
     return tsftHistogram_;

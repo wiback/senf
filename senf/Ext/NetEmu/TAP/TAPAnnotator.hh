@@ -55,6 +55,7 @@ namespace emu {
 
         void rawMode(bool r, std::uint16_t pvid = std::uint16_t(-1));
         void annotate(bool a);
+        bool annotate() const;
 
     private:
         void request();

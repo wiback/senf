@@ -80,6 +80,8 @@ namespace detail {
 
     private:
         void request();
+
+        EmulatedWLANInterface & iface_;
     };
 
     /** \brief Internal: Transmit filter of emulated WLAN interface */

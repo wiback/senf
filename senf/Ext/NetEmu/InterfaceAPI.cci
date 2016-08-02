@@ -143,6 +143,12 @@ prefix_ std::string senf::emu::Interface::interfaceTypeName()
 prefix_ senf::emu::Receiver::~Receiver()
 {}
 
+prefix_ bool senf::emu::Receiver::annotationMode()
+    const
+{
+    return v_annotationMode();
+}
+
 prefix_ void senf::emu::Receiver::annotationMode(bool v)
 {
     v_annotationMode(v);

@@ -69,6 +69,12 @@ prefix_ void senf::emu::EthernetAnnotator::annotate(bool a)
     annotate_ = a;
 }
 
+prefix_ bool senf::emu::EthernetAnnotator::annotate()
+    const
+{
+    return annotate_;
+}
+
 prefix_ void senf::emu::EthernetAnnotator::request()
 {
     senf::EthernetPacket eth (input());

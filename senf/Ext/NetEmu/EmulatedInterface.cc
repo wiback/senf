@@ -298,7 +298,7 @@ prefix_ void senf::emu::EmulatedInterface::closeSocket()
 // senf::emu::EmulatedReceiver
 
 prefix_ senf::emu::EmulatedReceiver::EmulatedReceiver()
-    : filter_ (*this), dropper_(0u), receiverJack (advance_.output), promisc_ (false)
+    : filter_ (*this), dropper_(0u), receiverJack (advance_.output), promisc_ (false), annotationMode_(false)
 {
     ppi::connect(source_, filter_);
     ppi::connect(filter_, dropChecker_);

@@ -103,6 +103,7 @@ namespace emu {
 
         void promisc(bool p);
         void annotate(bool a);
+        bool annotate() const;
         void id(senf::MACAddress const & _id);
         TSFTHistogram & tsftHistogram();
         MonitorDataFilterStatistics stats();

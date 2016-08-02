@@ -148,6 +148,7 @@ namespace interface {
             // Only hardware receive capable interfaces
             virtual bool v_promisc() const;
             virtual void v_promisc(bool v);
+            virtual void v_annotationMode(bool a);
 
             // Only hardware wireless interfaces
             virtual unsigned v_frequency() const;
@@ -326,6 +327,8 @@ namespace interface {
         void v_deinitEmulationInterface();
         bool v_promisc() const;
         void v_promisc(bool v);
+        bool v_annotationMode() const;
+        void v_annotationMode(bool a);
         void v_mcAdd(senf::MACAddress const & address);
         void v_mcDrop(senf::MACAddress const & address);
         unsigned v_mtu() const;
@@ -360,6 +363,8 @@ namespace interface {
         void v_deinitEmulationInterface();
         bool v_promisc() const;
         void v_promisc(bool v);
+        bool v_annotationMode() const;
+        void v_annotationMode(bool a);
         void v_mcAdd(senf::MACAddress const & address);
         void v_mcDrop(senf::MACAddress const & address);
     };
@@ -415,6 +420,8 @@ namespace interface {
         void v_deinitEmulationInterface();
         bool v_promisc() const;
         void v_promisc(bool v);
+        bool v_annotationMode() const;
+        void v_annotationMode(bool a);
         void v_mcAdd(senf::MACAddress const & address);
         void v_mcDrop(senf::MACAddress const & address);
         unsigned v_mtu() const;
@@ -455,6 +462,8 @@ namespace interface {
         void v_deinitEmulationInterface();
         bool v_promisc() const;
         void v_promisc(bool v);
+        bool v_annotationMode() const;
+        void v_annotationMode(bool a);
         void v_mcAdd(senf::MACAddress const & address);
         void v_mcDrop(senf::MACAddress const & address);
         unsigned v_frequency() const;

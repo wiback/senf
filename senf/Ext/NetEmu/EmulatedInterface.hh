@@ -198,6 +198,12 @@ namespace emu {
         void promiscEmulatedReceiver(bool v); ///< Set receiver promiscuous state
                                         /**< Must be called by the interface implementations \c
                                              v_promisc(bool) member. */
+        void annotationModeEmulatedReceiver(bool a); ///< Set receiver annotationMode state
+                                        /**< Must be called by the interface implementations \c
+                                             v_annotationMode(bool) member. */
+        bool annotationModeEmulatedReceiver() const; ///< Get receiver annotationMode state
+                                        /**< Must be called by the interface implementations \c
+                                             v_annotationMode() member. */
         void mcAddEmulatedReceiver(MACAddress const & address);///< Add multicast MAC address
                                         /**< Must be called by the interface implementations \c
                                              v_mcAdd(senf::MACAddress) member. */
@@ -210,6 +216,7 @@ namespace emu {
         typedef detail::InterfaceAccess<Interface> basei;
 
         bool promisc_;
+        bool annotationMode_;
         std::set<MACAddress> mcSet_;
 
         friend class detail::EmulatedInterfaceReceiveFilter;

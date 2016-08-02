@@ -215,6 +215,17 @@ prefix_ void senf::emu::EmulatedReceiver::promiscEmulatedReceiver(bool v)
     promisc_ = v;
 }
 
+prefix_ bool senf::emu::EmulatedReceiver::annotationModeEmulatedReceiver()
+    const
+{
+    return annotationMode_;
+}
+
+prefix_ void senf::emu::EmulatedReceiver::annotationModeEmulatedReceiver(bool a)
+{
+    annotationMode_ = a;
+}
+
 prefix_ void senf::emu::EmulatedReceiver::mcAddEmulatedReceiver(MACAddress const & address)
 {
     mcSet_.insert(address);

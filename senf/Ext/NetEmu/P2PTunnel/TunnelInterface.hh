@@ -122,6 +122,7 @@ namespace emu {
         virtual void v_mtu(unsigned v);
         virtual bool v_promisc() const;
         virtual void v_promisc(bool v);
+        virtual bool v_annotationMode() const;
         virtual void v_annotationMode(bool a);
 
     private:
@@ -168,6 +169,7 @@ namespace emu {
         virtual void v_mtu(unsigned v);
         virtual bool v_promisc() const;
         virtual void v_promisc(bool v);
+        virtual bool v_annotationMode() const;
         virtual void v_annotationMode(bool a);
 
         tunnel::Capacity capacity_;

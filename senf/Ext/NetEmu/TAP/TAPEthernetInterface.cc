@@ -180,6 +180,12 @@ prefix_ void senf::emu::TAPEthernetInterface::v_promisc(bool v)
     pvidRemover_.rawMode(pvid_);
 }
 
+prefix_ bool senf::emu::TAPEthernetInterface::v_annotationMode()
+    const
+{
+    return annotator_.annotate();
+}
+
 prefix_ void senf::emu::TAPEthernetInterface::v_annotationMode(bool a)
 {
     annotator_.annotate(a);

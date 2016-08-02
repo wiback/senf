@@ -29,6 +29,7 @@
     \brief EmulatedEthernetInterface non-inline non-template implementation */
 
 #include "EmulatedEthernetInterface.hh"
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 
 // Custom includes
 
@@ -140,7 +141,10 @@ prefix_ void senf::emu::detail::EmulatedEthernetReceiveFilter::request()
             q.flags.frameLength = e.size();
         }
 
-        output(e);
+        if (iface_.annotationMode())
+            output(prependAnnotaionsPacket(e));
+        else
+            output(e);
     }
     return;
 }

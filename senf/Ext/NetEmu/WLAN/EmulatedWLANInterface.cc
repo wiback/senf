@@ -245,6 +245,7 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
 
 prefix_ senf::emu::detail::EmulatedWLANReceiveFilter::
 EmulatedWLANReceiveFilter(EmulatedWLANInterface & iface)
+    : iface_ (iface)
 {
     route(input, output);
     input.onRequest(&EmulatedWLANReceiveFilter::request);
@@ -266,7 +267,10 @@ prefix_ void senf::emu::detail::EmulatedWLANReceiveFilter::request()
 
     EthernetPacket e (p.find<EthernetPacket>(senf::nothrow));
     if (e) {
-        output(e);
+        if (iface_.annotationMode())
+            output(prependAnnotaionsPacket(e));
+        else
+            output(e);
         return;
     }
     WLANPacket_MgtFrame wmp (p.find<WLANPacket_MgtFrame>(senf::nothrow));

@@ -346,6 +346,12 @@ prefix_ void senf::emu::HardwareDVBReceiverInterface::v_annotationMode(bool a)
     throw InvalidArgumentException("annotation mode not implemented.");
 }
 
+prefix_ bool senf::emu::HardwareDVBReceiverInterface::v_annotationMode()
+    const
+{
+    return false;
+}
+
 prefix_ void senf::emu::HardwareDVBReceiverInterface::v_mcAdd(MACAddress const & address)
 {
     throw SystemException(ENOTSUP);

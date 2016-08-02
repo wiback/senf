@@ -103,6 +103,7 @@ namespace emu {
         // interface
         virtual bool v_enabled() const;
         virtual void v_id(MACAddress const & id);
+        virtual bool v_annotationMode() const;
         virtual void v_annotationMode(bool a);
         virtual bool v_promisc() const;
         virtual void v_promisc(bool v);
