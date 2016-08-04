@@ -254,6 +254,7 @@ namespace emu {
         void set_txpower(TxPowerSetting::Enum setting, unsigned int mBm);
         void add_monInterface(std::string const & name, int flags = MonitorFlags::None);
         void add_adhocInterface(std::string const & name);
+        void add_apInterface(std::string const & name);
         void del_interface(std::string const & name);
 
         void set_retryLimit(boost::uint8_t shortLimit, boost::uint8_t longLimit);

@@ -865,6 +865,16 @@ prefix_ void senf::emu::WirelessNLController::add_adhocInterface(std::string con
     send_and_wait4response(msg);
 }
 
+prefix_ void senf::emu::WirelessNLController::add_apInterface(std::string const & name)
+{
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_NEW_INTERFACE, CIB_PHY, NLM_F_ACK));
+
+    NLA_PUT_STRING( msg, NL80211_ATTR_IFNAME, name.c_str());
+    NLA_PUT_U32   ( msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_AP);
+
+    send_and_wait4response(msg);
+}
+
 prefix_ void senf::emu::WirelessNLController::del_interface(std::string const & name)
 {
     int ifindex = if_nametoindex(name.c_str());
