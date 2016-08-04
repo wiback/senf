@@ -967,6 +967,19 @@ namespace {
         } catch (std::exception & e) {}
         return "";
     }
+
+    namespace fs = ::boost::filesystem;
+
+    senf::MACAddress readMACAddressFromFile(fs::path const & path)
+    {
+        fs::ifstream file;
+        file.exceptions( std::ifstream::failbit | std::ifstream::badbit);
+        file.open(path, std::ios::in);
+        senf::MACAddress addr;
+        file >> addr;
+        file.close();
+        return addr;
+    }
 }
 
 prefix_ int senf::emu::WirelessNLController::if_nameto_phy_index(std::string const & ifname)
@@ -986,6 +999,19 @@ prefix_ std::string senf::emu::WirelessNLController::if_nameto_phy_name(std::str
     return readStringFromFile(
             boost::filesystem::path("/sys/class/net")/ifname/"phy80211/name");
 }
+
+prefix_ std::string senf::emu::WirelessNLController::macToPhy(senf::MACAddress const & mac)
+{
+    fs::directory_iterator end_itr;
+    for (fs::directory_iterator itr ("/sys/class/ieee80211/"); itr != end_itr; ++itr) {
+        try {
+            if (readMACAddressFromFile(itr->path()/"macaddress") == mac)
+                return itr->path().filename().string();
+        } catch (std::exception &) {}
+    }
+    return "unknown mac";
+}
+
 
 prefix_ void senf::emu::WirelessNLController::ibss_leave()
 {

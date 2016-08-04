@@ -320,6 +320,7 @@ namespace emu {
         static int if_nameto_phy_index(std::string const & ifname);
         static std::string if_nameto_phy_name(std::string const & ifname);
         static int phy_nametoindex(std::string const & phyname);
+        static std::string macToPhy(senf::MACAddress const & mac);
 
         std::string cmdAsString(std::uint8_t cmd) const;
 
