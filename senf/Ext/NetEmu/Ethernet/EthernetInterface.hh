@@ -50,7 +50,7 @@ namespace emu {
         void init();
 
     private:
-        virtual boost::uint8_t v_linkTypeId() const;
+        virtual std::uint8_t v_linkTypeId() const;
     };
 
 }}
