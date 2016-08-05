@@ -50,9 +50,12 @@ prefix_ senf::emu::detail::HardwareEthernetInterfaceNet::HardwareEthernetInterfa
 
 prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::assignSockets(ConnectedMMapPacketSocketHandle & socket_)
 {
-    socket = socket_;
-    source.handle(socket);
-    sink.handle(socket);
+    source.handle(socket_);
+    sink.handle(socket_);
+    if (!socket_)
+        socket.close();
+    else
+        socket = socket_;
 }
 
 prefix_ unsigned senf::emu::detail::HardwareEthernetInterfaceNet::rcvBuf()
@@ -254,15 +257,13 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 
 prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
 {
-    if (HardwareEthernetInterfaceNet::socket.valid())
-        HardwareEthernetInterfaceNet::socket.close();
-
     if (!promisc() and pvid_ != std::uint16_t(-1)) {
         NetdeviceController nc (device());
         nc.delVLAN(pvid_);
     }
 
-    HardwareEthernetInterfaceNet::assignSockets(socket);
+    ConnectedMMapPacketSocketHandle skt (senf::noinit);
+    HardwareEthernetInterfaceNet::assignSockets(skt);
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_enable()
