@@ -200,6 +200,9 @@ prefix_ void senf::SocketQueueBuffer::resize(size_type sz
 prefix_ boost::optional<senf::QueueReadPolicy::Buffer>
 senf::QueueReadPolicy::dequeue(FileHandle & handle)
 {
+    if (SENF_UNLIKELY(!handle))
+        return boost::none;
+
     detail::QueueInfo & qi (* qinfo(handle));
     for (unsigned count (0); count < 2*qi.rx.qlen; ++count) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
@@ -225,6 +228,9 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
 
 prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
 {
+    if (SENF_UNLIKELY(!handle))
+        return;
+
     detail::QueueInfo & qi (* qinfo(handle));
     while (SENF_LIKELY(!qi.rx.idle || qi.rx.tail != qi.rx.head)) {  // we assume bursts => likely
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.rx.tail));
@@ -240,6 +246,9 @@ prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
 
 prefix_ unsigned senf::QueueReadPolicy::read(FileHandle & handle, char * buffer, unsigned size)
 {
+    if (SENF_UNLIKELY(!handle))
+        return 0;
+
     SENF_ASSERT( qinfo(handle)->rx.idle,
             "Inconsistent mixing of read() and dequeue() on mmap socket" );
     bool blocking (false);
@@ -267,6 +276,9 @@ prefix_ unsigned senf::QueueReadPolicy::read(FileHandle & handle, char * buffer,
 prefix_ boost::optional<senf::QueueWritePolicy::Buffer>
 senf::QueueWritePolicy::enqueue(FileHandle & handle)
 {
+    if (SENF_UNLIKELY(!handle))
+        return boost::none;
+
     detail::QueueInfo & qi (* qinfo(handle));
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
     if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && (pk.tp_status == TP_STATUS_AVAILABLE)) {
@@ -321,7 +333,7 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         qi.tx.idle = true;
     }
 
-    for (;SENF_LIKELY(handle);) {
+    for (;;) {
         if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
             switch (errno) {
             case EINTR:
@@ -381,6 +393,9 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
 prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const * buffer,
                                                unsigned size)
 {
+    if (SENF_UNLIKELY(!handle))
+        return 0;
+
     SENF_ASSERT( qinfo(handle)->tx.idle,
             "Inconsistent mixing of write() and enqueue() on mmap socket" );
     for (bool repeat (true);; repeat = false) {
