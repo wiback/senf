@@ -54,7 +54,7 @@ prefix_ Packet senf::ppi::DgramReader<Packet,MaxSize>::operator()(Handle & handl
 
 template <class Reader>
 prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(unsigned max_burst)
-    : maxBurst_(max_burst)
+    : maxBurst_(max_burst), burst_(0)
 {
     registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);
@@ -62,7 +62,7 @@ prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(unsign
 
 template <class Reader>
 prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Reader reader, unsigned max_burst)
-    : reader_(reader), maxBurst_(maxBurst)
+    : reader_(reader), maxBurst_(maxBurst), burst_(0)
 {
     registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);
@@ -70,7 +70,7 @@ prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Reader
 
 template <class Reader>
 prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle const & handle, unsigned max_burst)
-    : handle_(handle), event_(handle_, IOEvent::Read), maxBurst_(max_burst)
+    : handle_(handle), event_(handle_, IOEvent::Read), maxBurst_(max_burst), burst_(0)
 {
     registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);
@@ -79,7 +79,7 @@ prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle
 template <class Reader>
 prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle const & handle,
                                                                           Reader reader, unsigned max_burst)
-    : handle_(handle), event_(handle_, IOEvent::Read), reader_(reader), maxBurst_(max_burst)
+    : handle_(handle), event_(handle_, IOEvent::Read), reader_(reader), maxBurst_(max_burst), burst_(0)
 {
     registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);
@@ -101,12 +101,16 @@ prefix_ unsigned senf::ppi::module::ActiveSocketSource<Reader>::maxBurst()
 template <class Reader>
 prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::read()
 {
-    for (unsigned int i = 0; handle_ and (i < maxBurst_); ++i) {
+    flush_pending_ = false;
+    for (burst_ = 1; handle_ and handle_.readable() and !flush_pending_ and (burst_ <= maxBurst_); ++burst_) {
         typename Reader::PacketType p (reader_(handle_));
         if (SENF_LIKELY(p and (p.data().size() > 0)))
             output( p);
-        else
-            break;
+    }
+
+    burst_ = 0;
+    if (flush_pending_) {
+       flush();
     }
 }
 
@@ -115,6 +119,11 @@ prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::flush()
 {
     if (!handle_)
         return;
+
+    if (burst_ > 0) {
+      flush_pending_ = true;
+      return;
+    }
 
     try {
         while (handle_.readable() && reader_(handle_));

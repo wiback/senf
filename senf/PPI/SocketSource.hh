@@ -152,7 +152,8 @@ namespace module {
         IOEvent event_;
         Reader reader_;
         unsigned maxBurst_;
-
+        unsigned burst_;
+        bool flush_pending_;
         void read();
     };
 
