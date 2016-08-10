@@ -211,7 +211,7 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
 
     annotator_.id(id());
 
-    if (enabled())
+    if (ctrl_.isUp())
         init_sockets();
 }
 
@@ -223,12 +223,14 @@ prefix_ std::string senf::emu::HardwareEthernetInterface::device()
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_mcAdd(MACAddress const & address)
 {
-    HardwareEthernetInterfaceNet::socket.protocol().mcAdd( dev_, address);
+    if (HardwareEthernetInterfaceNet::socket.valid())
+        HardwareEthernetInterfaceNet::socket.protocol().mcAdd( dev_, address);
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_mcDrop(MACAddress const & address)
 {
-    HardwareEthernetInterfaceNet::socket.protocol().mcDrop( dev_, address);
+    if (HardwareEthernetInterfaceNet::socket.valid())
+        HardwareEthernetInterfaceNet::socket.protocol().mcDrop( dev_, address);
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
@@ -285,7 +287,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_disable()
 prefix_ bool senf::emu::HardwareEthernetInterface::v_enabled()
     const
 {
-    return ctrl_.isUp();
+    return HardwareEthernetInterfaceNet::socket.valid();
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_id(MACAddress const & mac)
