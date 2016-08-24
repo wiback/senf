@@ -52,10 +52,13 @@ prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::assignSockets(Conn
 {
     source.handle(socket_);
     sink.handle(socket_);
-    if (!socket_)
-        socket.close();
-    else
+    if (!socket_) {
+        if(socket) {
+            socket.close();
+        }
+    } else {
         socket = socket_;
+    }
 }
 
 prefix_ unsigned senf::emu::detail::HardwareEthernetInterfaceNet::rcvBuf()
@@ -423,8 +426,10 @@ prefix_ void senf::emu::HardwareEthernetInterface::qlen(unsigned qlen)
     // need to cache rxqlen_ so we can (re-)apply the value in v_enable()
     qlen_ = qlen;
 
-    close_sockets();
-    init_sockets();
+    if (enabled()) {
+        close_sockets();
+        init_sockets();
+    }
 }
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::rxQueueDropped()
