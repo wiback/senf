@@ -114,7 +114,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
 
-        static const unsigned minPayloadSize = 64u;
+        static const unsigned minPayloadSize = 64u;  // incl. CRC
     };
 
     /** \brief Ethernet packet typedef
