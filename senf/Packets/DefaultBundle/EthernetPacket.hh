@@ -114,7 +114,8 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
 
-        static const unsigned minPayloadSize = 64u;  // incl. CRC
+        static const unsigned minPayloadSize    = 60u;  // without CRC - that's what we typically 'see' in SENF
+        static const unsigned minPayloadSizeCRC = 64u;  // real h/w limit on 100Mbps Ethernet
     };
 
     /** \brief Ethernet packet typedef
