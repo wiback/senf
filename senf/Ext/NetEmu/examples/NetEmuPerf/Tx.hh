@@ -12,15 +12,10 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <senf/PPI.hh>
-#include <senf/Packets/DefaultBundle/IPv4Packet.hh>
-#include <senf/Packets/DefaultBundle/IPv6Packet.hh>
-#include <senf/Packets/80211Bundle/InformationElements.hh>
-#include <senf/Ext/NetEmu/WLAN/WirelessExtController.hh>
 #include <senf/Ext/NetEmu/Ethernet/HardwareEthernetInterface.hh>
 #include <senf/Ext/NetEmu/WLAN/HardwareWLANInterface.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
-#include <senf/Scheduler/SignalEvent.hh>
 #include <senf/Scheduler/Scheduler.hh>
 #include <senf/Utils/Logger.hh>
 #include <senf/Utils/Console.hh>
