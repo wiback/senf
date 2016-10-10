@@ -46,20 +46,25 @@ namespace {
         connector::ActiveOutput<senf::EthernetPacket> output; 
         senf::scheduler::TimerEvent timer_;
         senf::EthernetPacket eth;
-       
+        senf::MPLSPacket mpls;
+        wiback::TIMPacket tim;
+        senf::ClockService::clock_type nextTimeout;
+        senf::ClockService::clock_type period;
+        unsigned seqNo;
+        
         Sender(senf::MACAddress const & src, senf::MACAddress const & dst)
-            : timer_("TX", senf::membind( &Sender::timerEvent, this), senf::ClockService::clock_type(0), false),
-              src_(src), dst_ (dst)
+            : timer_("TX", senf::membind(&Sender::timerEvent, this), senf::ClockService::clock_type(0), false),
+              eth(senf::EthernetPacket::create()),
+              mpls(senf::MPLSPacket::createAfter(eth)),
+              tim(wiback::TIMPacket::createAfter(mpls)),
+              src_(src), dst_(dst)
         {
             noroute(output);
 
-            eth = senf::EthernetPacket::create();
             eth->source() = src_;
             eth->destination() = dst_;
-            senf::MPLSPacket mpls (senf::MPLSPacket::createAfter(eth));
             mpls->label() = 4711;
             mpls->tc() = 1;
-            wiback::TIMPacket tim (wiback::TIMPacket::createAfter(mpls));
             senf::DataPacket data (senf::DataPacket::createAfter(tim, 1500u - mpls.size()));
             eth.finalizeAll();
         }
@@ -67,11 +72,27 @@ namespace {
     private:
         void timerEvent()
         {
+            tim->timestamp() = senf::ClockService::in_milliseconds(senf::scheduler::now()) % (wiback::TIMPacketParser::timestamp_t::max_value + 1);
+            tim->sequenceNumber() = seqNo;
+            tim->linkLocalSeqNo() = seqNo;
+            seqNo = (seqNo + 1) % (wiback::TIMPacketParser::sequenceNumber_t::max_value + 1);
+
             output(eth.clone());
+            nextTimeout += period;
+            timer_.timeout(nextTimeout);
         }
 
         void bitrate(unsigned brate_in_kbps)
         {
+            if (brate_in_kbps == 0) {
+                timer_.disable();
+                return;
+            }
+
+            seqNo = 0;
+            nextTimeout = senf::scheduler::now();
+            period = senf::ClockService::microseconds(brate_in_kbps * 1000 * 1000 * 1000 / (1514 * 8));
+            timerEvent();
         }
         
         senf::MACAddress src_;

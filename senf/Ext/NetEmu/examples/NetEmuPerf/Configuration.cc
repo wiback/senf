@@ -39,18 +39,17 @@ extern "C" {
 
 prefix_ Configuration::Configuration()
     : verbose(false),
-      phyName("phy0"),
-      debugFS("/sys/kernel/debug"),
-      reportingInterval(senf::ClockService::milliseconds(1000)),
-      duration(senf::ClockService::seconds(10)),
+      rxMode(true),
+      iface("phy0"),
       frequency(5180),
       ht40(false),
-      spectralPeriod(0x08),
-      spectralFFTPeriod(0x02),
-      spectralCount(0),
-      spectralBins(64),
-      spectralEndless(false),
-      spectralShortRepeat(true)
+      peer(senf::MACAddress::None),
+      label((rand() % 0xffff) << 4),
+      txBuf(192000),
+      qlen(768),
+      maxBurst(48),
+      reportingInterval(senf::ClockService::milliseconds(1000)),
+      duration(senf::ClockService::seconds(10))
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));
@@ -59,22 +58,23 @@ prefix_ Configuration::Configuration()
     initDir.add("realtime-scheduling", fty::Command(&Configuration::enableRealtimeScheduling, this));
 
     initDir.add("verbose", fty::Variable(verbose));
-    initDir.add("phy-name", fty::Variable(phyName));
-    initDir.add("debug-fs", fty::Variable(debugFS));
+
+    initDir.add("rxMode", fty::Variable(rxMode));
+    initDir.add("iface", fty::Variable(iface));
+    initDir.add("frequency", fty::Variable(frequency));
+    initDir.add("ht40", fty::Variable(ht40));
+
+    initDir.add("peer", fty::Variable(peer));
+    initDir.add("label", fty::Variable(label));
+
+    initDir.add("txBuf", fty::Variable(txBuf));
+    initDir.add("qlen", fty::Variable(qlen));
+    initDir.add("maxBurst", fty::Variable(maxBurst));
+
     initDir.add("reporting-interval", fty::Variable( reportingInterval)
                 .parser(senf::parseClockServiceInterval));
     initDir.add("duration", fty::Variable(duration)
                 .parser(senf::parseClockServiceInterval));
-
-    initDir.add("frequency", fty::Variable(frequency));
-    initDir.add("ht40", fty::Variable(ht40));
-
-    initDir.add("spectral-period", fty::Variable(spectralPeriod));
-    initDir.add("spectral-fft-period", fty::Variable(spectralFFTPeriod));
-    initDir.add("spectral-bins", fty::Variable(spectralBins));
-    initDir.add("spectral-count", fty::Variable(spectralCount));
-    initDir.add("spectral-endless", fty::Variable(spectralEndless));
-    initDir.add("spectral-short-repeat", fty::Variable(spectralShortRepeat));
 
     // always turn those on, where available
     enableHighresTimers();
@@ -95,7 +95,7 @@ prefix_ void Configuration::help()
 
 prefix_ void Configuration::version()
 {
-    std::cerr << "1.2" << std::endl;
+    std::cerr << "1.0" << std::endl;
     exit(0);
 }
 

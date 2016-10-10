@@ -25,6 +25,9 @@
 #include <senf/Utils/Logger.hh>
 #include <senf/Utils/Console.hh>
 
+#include "MPLSPacket.hh"
+#include "TIMPacket.hh"
+
 //#include "main.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -41,6 +44,10 @@ namespace {
         SENF_PPI_MODULE(Receiver);
     public:
         connector::PassiveInput<senf::EthernetPacket> input;
+        std::uint32_t label;
+        wiback::TIMSeqNoStats e2eStats;
+        wiback::TIMSeqNoStats llStats;
+        std::uint32_t ignored;
         
         Receiver(senf::MACAddress const & src, senf::MACAddress const & dst)
             : src_ (src), dst_(dst)
@@ -48,14 +55,53 @@ namespace {
             noroute(input);
             input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
             input.onRequest(&Receiver::request);
+
+            reset();
         }
         
     private:
         void request()
         {
             senf::EthernetPacket const & eth (input());
+            if ((!src_ or eth->source() == src_) and eth->destination() == dst_) { 
+                senf::MPLSPacket mpls (eth.next<senf::MPLSPacket>(senf::nothrow));
+                if (mpls) {
+                    if (label == 0xffffffff or label != mpls->label()) {
+                        reset();
+                        label = mpls->label();
+                    }
+                    wiback::TIMPacket tim (mpls.next<wiback::TIMPacket>(senf::nothrow));
+                    if (tim) {
+                        e2eStats.processSeqNo(tim);
+                        llStats.processLLSeqNo(tim);
+                        return;
+                    }
+                }
+            }
+            ignored++;
+         }
+
+        void reset() {
+            label = 0xffffffff; 
+            e2eStats.reset();
+            llStats.reset();
+            ignored = 0;
         }
-        
+
+    public:
+        void clear() {
+            e2eStats.clear();
+            llStats.clear();
+            ignored = 0;
+        }
+
+        void report(std::ostream & os, senf::ClockService::clock_type const & period) {
+            os << "Label " << label;
+            os << "; E2E stats: "; e2eStats.dump(os, period);
+            os << "; LL stats: "; llStats.dump(os, period);
+            os << "; ignored " << ignored;
+        }
+
         senf::MACAddress src_;
         senf::MACAddress dst_;
     };

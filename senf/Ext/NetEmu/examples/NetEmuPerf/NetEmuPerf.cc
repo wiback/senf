@@ -25,6 +25,7 @@
 #include <senf/Utils/Logger.hh>
 #include <senf/Utils/Console.hh>
 
+#include "Configuration.hh"
 #include "Interfaces.hh"
 #include "Rx.hh"
 #include "Tx.hh"
@@ -48,6 +49,7 @@ namespace {
         typedef typename OurDecoration::template apply<Interface>::type DecoInterface;
         DecoInterface iface;
         
+        senf::scheduler::TimerEvent timer_;
         senf::ClockService::clock_type startTime;
         senf::ClockService::clock_type period;
         senf::ClockService::clock_type nextTime;
@@ -56,6 +58,7 @@ namespace {
         
         App(std::string const & iface_, unsigned burst, unsigned qlen, unsigned txbuf)
             : iface (iface_),
+              timer_("APP", senf::membind(&App::timerEvent, this), senf::ClockService::clock_type(0), false),
               startTime(senf::scheduler::now()),
               period(senf::ClockService::seconds(1)),
               nextTime(startTime + period),
@@ -64,17 +67,19 @@ namespace {
         {
             iface.interface().maxBurst(burst);
             iface.interface().qlen(qlen);
-            iface.interface().sndBuf(txbuf);
-            
+            iface.interface().sndBuf(txbuf);            
             iface.interface().enable();
+
+            timer_.timeout(nextTime);            
         }
         
         virtual void v_stats(senf::ClockService::clock_type const & tstamp, senf::ClockService::clock_type const & period) = 0;
         
-        void statsTimer()
+        void timerEvent()
         {
             v_stats(nextTime - startTime, period);
             nextTime += period;
+            timer_.timeout(nextTime);
         };
         
         void terminate()
@@ -105,6 +110,8 @@ namespace {
         void v_stats(senf::ClockService::clock_type const & tstamp, senf::ClockService::clock_type const & period) {
             std::cout << senf::ClockService::in_seconds(tstamp) << '.' << std::setw(3) << std::setfill('0') << (senf::ClockService::in_milliseconds(tstamp) % 1000);
             std::cout << " queue-drops " << App<Interface>::iface.interface().rxQueueDropped();
+            receiver.report(std::cout, period);
+            receiver.clear();
             std::cout << std::endl;
         }
     };
@@ -142,59 +149,35 @@ namespace {
     }    
 }
 
-int main(int argc, char ** argv)
+int main(int argc, const char ** argv)
 {
-    if (argc < 7) {
-        std::cerr << "Usage:\n    " << argv[0] << "\n"
-                  << "        <iface> <freq> <peer>\n"
-                  << "        <burst> <qlen> <txbuf> [[NO]RT] [[NO]WLAN]\n"
-                  << std::endl;
-        return 1;
+    senf::log::ConsoleTarget::logToStderr();
+
+    Configuration config;
+
+    if (!config.parse( argc, argv)) {
+        exit(1);
     }
-    
-    std::string iface (argv[1]);
-    unsigned freq (boost::lexical_cast<unsigned>(argv[2]));
-    senf::MACAddress peer (senf::MACAddress::from_string(argv[3]));
-    
-    unsigned burst (boost::lexical_cast<unsigned>(argv[4]));
-    unsigned qlen (boost::lexical_cast<unsigned>(argv[5]));
-    unsigned txbuf (boost::lexical_cast<unsigned>(argv[6]));
-    
-    bool enableRT (true);
-    bool useWlan (false);
-    
-    for (int i (8); i < argc; ++ i) {
-        bool state (true);
-        char * arg (argv[i]);
-        if (*arg == 'N') {
-            state = false;
-            if (*(++ arg) == 'O')
-                ++ arg;
-        }
-        switch (*arg) {
-        case 'R': enableRT = state; break;
-        case 'W': useWlan = state; break;
-        default: std::cerr << "invalid flag " << argv[i] << std::endl; ::exit(1);
-        }
-    }
-    
-    if (enableRT) {
-        sched_param schedpm;
-        schedpm.sched_priority = 1;
-        if (::sched_setscheduler(::getpid(), SCHED_FIFO, &schedpm) >= 0)
-            std::cerr << "SCHED_FIFO realtime scheduling enabled" << std::endl;
-    }
-    
-    senf::scheduler::watchdogTimeout(0); // allow debugging using gdb
-    
+
+    // enable console for (remote) logging
     senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u));
     
-    if (useWlan) 
-        run<AppRx<WLANInterface> >(iface, freq, 20u, peer,
-                                   burst, qlen, txbuf);
-    else
-        run<AppRx<EthernetInterface> >(iface, freq, 20u, peer, 
-                                       burst, qlen, txbuf);
+    if (config.iface.find("phy") == 0){
+        if (config.rxMode)
+            run< AppRx<WLANInterface> >(config.iface, config.frequency, config.ht40 ? 40 : 20, config.peer,
+                                       config.maxBurst, config.qlen, config.txBuf);
+        else
+            run< AppTx<WLANInterface> >(config.iface, config.frequency, config.ht40 ? 40 : 20, config.peer,
+                                       config.maxBurst, config.qlen, config.txBuf);
+    }
+    else {
+        if (config.rxMode)
+            run< AppRx<EthernetInterface>>(config.iface, 0, 0, config.peer,
+                                           config.maxBurst, config.qlen, config.txBuf);
+        else
+            run< AppTx<EthernetInterface> >(config.iface, 0, 0, config.peer,
+                                           config.maxBurst, config.qlen, config.txBuf);
+    }
     
     return 0;
 }

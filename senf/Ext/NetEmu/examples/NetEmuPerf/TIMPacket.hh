@@ -10,10 +10,11 @@
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
+#include <senf/Scheduler/ClockService.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace wiback {
-
+    
     struct TIMPacketParser : public senf::PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
@@ -52,6 +53,90 @@ namespace wiback {
     };
 
     typedef senf::ConcretePacket<TIMPacketType> TIMPacket;
+
+    //
+    // TIM SeqNo Stats Analyzer
+    //
+    struct TIMSeqNoStats {
+        std::uint32_t processed;
+        std::uint32_t good;
+        std::uint32_t goodBytes;
+        std::uint32_t duplicate;
+        std::uint32_t late;
+        std::uint32_t lost;
+        std::uint32_t resyncs;
+        std::uint32_t last;
+        
+        TIMSeqNoStats() {
+            reset();
+        };
+
+        void clear() {
+            processed = good = goodBytes = duplicate = late = lost = 0;
+        };
+
+        void reset() {
+            clear();
+            resyncs = 0;
+            last = 0xFFFFFFFF;
+        };
+
+        bool process(std::uint32_t seqNo, std::uint32_t payloadSize) {
+            processed++;
+            if (SENF_UNLIKELY(last == 0xFFFFFFFF)) {
+                last = seqNo;
+                good = 1;
+                goodBytes = payloadSize;
+                return true;
+            }
+
+            int diff = TIMPacketType::seqNoDiff(seqNo, last);
+
+            if (SENF_LIKELY(diff == 1)) {
+                // no loss
+                good++;
+                goodBytes += payloadSize;
+                last = seqNo;
+                return true;
+            }
+            else if (diff == 0) {
+                // duplicate
+                duplicate++;
+            }
+            else if (diff < 0) {
+                // late frame(s) => reordering
+                late++;
+                if (diff <= -128) {
+                    // resync to next expected SeqNo
+                    resyncs++;
+                    last = seqNo;
+                }
+            } else {
+                // frame loss
+                lost += diff-1;
+                last = seqNo;
+            }
+            return false;
+        }
+
+        bool processSeqNo(TIMPacket const & tim) {
+            return process(tim->sequenceNumber(), tim.size() - TIMPacketType::parser::fixed_bytes);
+        }
+
+        bool processLLSeqNo(TIMPacket const & tim) {
+            return process(tim->linkLocalSeqNo(), tim.size() - TIMPacketType::parser::fixed_bytes);
+        }
+
+        void dump(std::ostream & os, senf::ClockService::clock_type const & period = senf::ClockService::clock_type(0)) {
+            os << "processed " << processed << ", good " << good << ", goodBytes " << goodBytes;
+            if (period) {
+                os << ", good/s " << ((std::uint64_t(good) * 1000) / senf::ClockService::in_milliseconds(period));
+                os << ", goodBytes/s " << ((std::uint64_t(goodBytes) * 1000) / senf::ClockService::in_milliseconds(period));
+            }
+            os << ", duplicate " << duplicate << ", late " << late << ", lost " << lost;
+            os << ", resyncs " << resyncs;
+        }
+    };
 }
 
 SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( wiback::TIMPacket );

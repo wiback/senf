@@ -30,6 +30,7 @@
 
 // Custom includes
 #include <senf/Socket/Protocols/INet.hh>
+#include <senf/Socket/Protocols/Raw.hh>
 #include <senf/Utils/Logger.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -40,19 +41,22 @@ class Configuration
 
 public:
     bool verbose;
-    std::string phyName;
-    std::string debugFS;
-    senf::ClockService::clock_type reportingInterval;
-    senf::ClockService::clock_type duration;
+    bool rxMode;
+    
+    std::string iface;
     unsigned frequency;
     bool ht40;
 
-    unsigned spectralPeriod;
-    unsigned spectralFFTPeriod;
-    unsigned spectralCount;
-    unsigned spectralBins;
-    bool spectralEndless;
-    bool spectralShortRepeat;
+    senf::MACAddress peer;
+    unsigned label;
+    
+    unsigned txBuf;
+    unsigned qlen;
+    unsigned maxBurst;
+
+    senf::ClockService::clock_type reportingInterval;
+    senf::ClockService::clock_type duration;
+
     
     Configuration();
 
