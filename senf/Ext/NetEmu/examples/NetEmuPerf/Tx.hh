@@ -60,6 +60,7 @@ namespace {
             eth->destination() = dst_;
             mpls->label() = 4711;
             mpls->tc() = 1;
+            // let's use non-jumbo frames for now
             senf::DataPacket data (senf::DataPacket::createAfter(tim, 1500u - mpls.size()));
             eth.finalizeAll();
         }
@@ -87,7 +88,7 @@ namespace {
 
             seqNo = 0;
             nextTimeout = senf::scheduler::now();
-            period = senf::ClockService::microseconds((1514*8) * 1000 / brate_in_kbps);
+            period = senf::ClockService::microseconds((eth.size()*8) * 1000 / brate_in_kbps);
             timerEvent();
         }
         
