@@ -49,7 +49,7 @@ prefix_ Configuration::Configuration()
       qlen(768),
       maxBurst(48),
       reportingInterval(senf::ClockService::milliseconds(1000)),
-      duration(senf::ClockService::seconds(10))
+      duration(senf::ClockService::seconds(0))
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));

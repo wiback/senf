@@ -51,15 +51,17 @@ namespace {
         
         senf::scheduler::TimerEvent timer_;
         senf::ClockService::clock_type startTime;
+        senf::ClockService::clock_type duration_;
         senf::ClockService::clock_type period;
         senf::ClockService::clock_type nextTime;
         senf::scheduler::SignalEvent sigint;
         senf::scheduler::SignalEvent sigterm;
         
-        App(std::string const & iface_, unsigned burst, unsigned qlen, unsigned txbuf)
+        App(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned burst, unsigned qlen, unsigned txbuf)
             : iface (iface_),
               timer_("APP", senf::membind(&App::timerEvent, this), senf::ClockService::clock_type(0), false),
               startTime(senf::scheduler::now()),
+              duration_(duration),
               period(senf::ClockService::seconds(1)),
               nextTime(startTime + period),
               sigint (SIGINT, boost::bind(&App::terminate, this)),
@@ -77,6 +79,10 @@ namespace {
         
         void timerEvent()
         {
+            if (duration_ and (senf::scheduler::now() - startTime) >= duration_){
+                terminate();
+            }
+            
             v_stats(nextTime - startTime, period);
             nextTime += period;
             timer_.timeout(nextTime);
@@ -84,7 +90,6 @@ namespace {
         
         void terminate()
         {
-            std::cerr << "bye." << std::endl;
             senf::scheduler::terminate();
         }
     };
@@ -95,8 +100,8 @@ namespace {
     public:
         Receiver receiver;
         
-        AppRx(std::string const & iface_, unsigned freq, unsigned width, senf::MACAddress peer, unsigned burst, unsigned qlen, unsigned txbuf)
-            : App<Interface> (iface_, burst, qlen, txbuf),
+        AppRx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer, unsigned burst, unsigned qlen, unsigned txbuf)
+            : App<Interface> (iface_, duration, burst, qlen, txbuf),
             receiver(peer, App<Interface>::iface.interface().id())
         {
             ppi::connect(App<Interface>::iface, receiver);
@@ -105,11 +110,13 @@ namespace {
             if (wif) {
                 wif->join(freq, width, 4711u);
             }
+
+            std::cerr << "Receiver ready on " << iface_ << ", mac " << App<Interface>::iface.interface().id() << ", peer " << peer << std::endl;
         }
         
         void v_stats(senf::ClockService::clock_type const & tstamp, senf::ClockService::clock_type const & period) {
             std::cout << senf::ClockService::in_seconds(tstamp) << '.' << std::setw(3) << std::setfill('0') << (senf::ClockService::in_milliseconds(tstamp) % 1000);
-            std::cout << " queue-drops " << App<Interface>::iface.interface().rxQueueDropped();
+            std::cout << " queue-drops " << App<Interface>::iface.interface().rxQueueDropped() << "; ";
             receiver.report(std::cout, period);
             receiver.clear();
             std::cout << std::endl;
@@ -122,8 +129,8 @@ namespace {
     public:
         Sender sender;
         
-        AppTx(std::string const & iface_, unsigned freq, unsigned width, senf::MACAddress peer, unsigned burst, unsigned qlen, unsigned txbuf)
-            : App<Interface> (iface_, burst, qlen, txbuf),
+        AppTx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer, unsigned burst, unsigned qlen, unsigned txbuf)
+            : App<Interface> (iface_, duration, burst, qlen, txbuf),
             sender(App<Interface>::iface.interface().id(), peer)
         {
             ppi::connect(sender, App<Interface>::iface);            
@@ -132,6 +139,8 @@ namespace {
             if (wif) {
                 wif->join(freq, width, 4711u);
             }
+
+            std::cerr << "Transmitter ready on " << iface_ << ", mac " << App<Interface>::iface.interface().id() << ", peer " << peer << std::endl;
         }
         
         void v_stats(senf::ClockService::clock_type const & tstamp, senf::ClockService::clock_type const & period) {
@@ -141,10 +150,10 @@ namespace {
     };
     
     template <class Application>
-    void run(std::string iface, unsigned freq, unsigned width, senf::MACAddress peer, 
+    void run(std::string iface, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer, 
              unsigned burst, unsigned qlen, unsigned txbuf)
     {
-        Application app (iface, freq, width, peer, burst, qlen, txbuf);
+        Application app (iface, duration, freq, width, peer, burst, qlen, txbuf);
         ppi::run();
     }    
 }
@@ -164,18 +173,18 @@ int main(int argc, const char ** argv)
     
     if (config.iface.find("phy") == 0){
         if (config.rxMode)
-            run< AppRx<WLANInterface> >(config.iface, config.frequency, config.ht40 ? 40 : 20, config.peer,
+            run< AppRx<WLANInterface> >(config.iface, config.duration, config.frequency, config.ht40 ? 40 : 20, config.peer,
                                        config.maxBurst, config.qlen, config.txBuf);
         else
-            run< AppTx<WLANInterface> >(config.iface, config.frequency, config.ht40 ? 40 : 20, config.peer,
+            run< AppTx<WLANInterface> >(config.iface, config.duration, config.frequency, config.ht40 ? 40 : 20, config.peer,
                                        config.maxBurst, config.qlen, config.txBuf);
     }
     else {
         if (config.rxMode)
-            run< AppRx<EthernetInterface>>(config.iface, 0, 0, config.peer,
+            run< AppRx<EthernetInterface>>(config.iface, config.duration, 0, 0, config.peer,
                                            config.maxBurst, config.qlen, config.txBuf);
         else
-            run< AppTx<EthernetInterface> >(config.iface, 0, 0, config.peer,
+            run< AppTx<EthernetInterface> >(config.iface, config.duration, 0, 0, config.peer,
                                            config.maxBurst, config.qlen, config.txBuf);
     }
     
