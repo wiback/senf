@@ -1,0 +1,50 @@
+# -*- python -*-
+# $Id:$
+#
+# Copyright (C) 2008
+# Fraunhofer Institute for Open Communication Systems (FOKUS)
+#
+# The contents of this file are subject to the Fraunhofer FOKUS Public License
+# Version 1.0 (the "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at 
+# http://senf.fokus.fraunhofer.de.de/license.html
+#
+# The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+# but modifies the Mozilla Public License Version 1.1.
+# See the full license text for the amendments.
+#
+# Software distributed under the License is distributed on an "AS IS" basis, 
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+# for the specific language governing rights and limitations under the License.
+#
+# The Original Code is Fraunhofer FOKUS code.
+#
+# The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+# (registered association), Hansastrasse 27 c, 80686 Munich, Germany.
+# All Rights Reserved.
+
+import os
+import os.path
+import sys
+try: sys.path.append(((_ for _ in (os.path.join(os.path.sep.join(('..' for _ in range(_))),d,
+     'site_scons') for d in ('senf','Senf') for _ in range(len(os.getcwd().split('/'))))
+     if os.path.exists(_))).next())
+except: pass
+import senfutil
+
+env = Environment()
+senfutil.SetupForSENF(env, exit_if_not_found=True)
+senfutil.NetEmu.SetupForNetEmu(env)
+senfutil.DefaultOptions(env)
+
+sources = senfutil.Glob(env, exclude = ['NetEmuPerf.cc'])[0]
+
+### the boost libs should be linked staticly:
+boostlibs = [ '-l%s' % lib for lib in env['LIBS'] if lib.startswith('$BOOST') ]
+env.Replace( LIBS      = [ lib for lib in env['LIBS'] if not lib.startswith('$BOOST') ] )
+env.Append(  LINKFLAGS = [ '-Wl,-Bdynamic' ],
+             LINKCOM   = ' -Wl,-Bstatic ' + ' '.join(boostlibs) + ' -Wl,-Bdynamic' )
+
+env.Default( env.Program('NetEmuPerf', sources + ['NetEmuPerf.cc', '${BUNDLEDIR}/AllBundles${LIBADDSUFFIX}.o']) )
+
+env.Program('wlanMon2Eth', ['wlanMon2Eth.cc', '$BUNDLEDIR/AllBundles.o'])
