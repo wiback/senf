@@ -320,8 +320,6 @@ InterfaceAPIBase(Output & output)
     : WiredReceiver(output)
 {}
 
-
-
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::InterfaceAPIBase< Wired,TransmitOnly,Emulated >
 

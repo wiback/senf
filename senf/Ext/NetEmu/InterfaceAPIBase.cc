@@ -225,6 +225,16 @@ v_annotationMode(bool a)
     annotationModeEmulatedReceiver(a);
 }
 
+prefix_ bool
+senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,
+                            senf::emu::interface::ReceiveOnly,
+                            senf::emu::interface::Emulated>::
+v_annotationMode()
+    const
+{
+    return annotationModeEmulatedReceiver();
+}
+
 
 prefix_ void
 senf::emu::InterfaceAPIBase<senf::emu::interface::Wired,

@@ -148,6 +148,7 @@ namespace interface {
             // Only hardware receive capable interfaces
             virtual bool v_promisc() const;
             virtual void v_promisc(bool v);
+            virtual bool v_annotationMode() const;
             virtual void v_annotationMode(bool a);
 
             // Only hardware wireless interfaces
