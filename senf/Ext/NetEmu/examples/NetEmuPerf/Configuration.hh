@@ -41,7 +41,6 @@ class Configuration
 
 public:
     bool verbose;
-    bool rxMode;
     
     std::string iface;
     unsigned frequency;
@@ -54,6 +53,8 @@ public:
     unsigned qlen;
     unsigned maxBurst;
 
+    unsigned bandwidth;
+    
     senf::ClockService::clock_type reportingInterval;
     senf::ClockService::clock_type duration;
 

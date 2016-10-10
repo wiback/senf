@@ -82,6 +82,7 @@ namespace {
             timer_.timeout(nextTimeout);
         }
 
+    public:
         void bitrate(unsigned brate_in_kbps)
         {
             if (brate_in_kbps == 0) {
@@ -91,7 +92,7 @@ namespace {
 
             seqNo = 0;
             nextTimeout = senf::scheduler::now();
-            period = senf::ClockService::microseconds(brate_in_kbps * 1000 * 1000 * 1000 / (1514 * 8));
+            period = senf::ClockService::microseconds((1514*8) * 1000 / brate_in_kbps);
             timerEvent();
         }
         

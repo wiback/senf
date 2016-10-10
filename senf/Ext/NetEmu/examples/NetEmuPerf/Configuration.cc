@@ -39,7 +39,6 @@ extern "C" {
 
 prefix_ Configuration::Configuration()
     : verbose(false),
-      rxMode(true),
       iface("phy0"),
       frequency(5180),
       ht40(false),
@@ -48,6 +47,7 @@ prefix_ Configuration::Configuration()
       txBuf(192000),
       qlen(768),
       maxBurst(48),
+      bandwidth(0),
       reportingInterval(senf::ClockService::milliseconds(1000)),
       duration(senf::ClockService::seconds(0))
 {
@@ -59,7 +59,6 @@ prefix_ Configuration::Configuration()
 
     initDir.add("verbose", fty::Variable(verbose));
 
-    initDir.add("rxMode", fty::Variable(rxMode));
     initDir.add("iface", fty::Variable(iface));
     initDir.add("frequency", fty::Variable(frequency));
     initDir.add("ht40", fty::Variable(ht40));
@@ -70,6 +69,8 @@ prefix_ Configuration::Configuration()
     initDir.add("txBuf", fty::Variable(txBuf));
     initDir.add("qlen", fty::Variable(qlen));
     initDir.add("maxBurst", fty::Variable(maxBurst));
+
+    initDir.add("bandwidth", fty::Variable(bandwidth));
 
     initDir.add("reporting-interval", fty::Variable( reportingInterval)
                 .parser(senf::parseClockServiceInterval));

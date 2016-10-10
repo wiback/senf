@@ -100,7 +100,8 @@ namespace {
     public:
         Receiver receiver;
         
-        AppRx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer, unsigned burst, unsigned qlen, unsigned txbuf)
+        AppRx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer,
+              unsigned burst, unsigned qlen, unsigned txbuf, unsigned bandwidth)
             : App<Interface> (iface_, duration, burst, qlen, txbuf),
             receiver(peer, App<Interface>::iface.interface().id())
         {
@@ -129,7 +130,8 @@ namespace {
     public:
         Sender sender;
         
-        AppTx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer, unsigned burst, unsigned qlen, unsigned txbuf)
+        AppTx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer,
+              unsigned burst, unsigned qlen, unsigned txbuf, unsigned bandwidth)
             : App<Interface> (iface_, duration, burst, qlen, txbuf),
             sender(App<Interface>::iface.interface().id(), peer)
         {
@@ -140,20 +142,23 @@ namespace {
                 wif->join(freq, width, 4711u);
             }
 
-            std::cerr << "Transmitter ready on " << iface_ << ", mac " << App<Interface>::iface.interface().id() << ", peer " << peer << std::endl;
+            sender.bitrate(bandwidth);
+            
+            std::cerr << "Transmitter ready on " << iface_ << ", mac " << App<Interface>::iface.interface().id() << ", peer " << peer << ", bitrate " << bandwidth << "kbps" << std::endl;
         }
         
         void v_stats(senf::ClockService::clock_type const & tstamp, senf::ClockService::clock_type const & period) {
             std::cout << senf::ClockService::in_seconds(tstamp) << '.' << std::setw(3) << std::setfill('0') << (senf::ClockService::in_milliseconds(tstamp) % 1000);
+            std::cout << " seqNo " << sender.seqNo;
             std::cout << std::endl;
         }
     };
     
     template <class Application>
     void run(std::string iface, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer, 
-             unsigned burst, unsigned qlen, unsigned txbuf)
+             unsigned burst, unsigned qlen, unsigned txbuf, unsigned bandwidth)
     {
-        Application app (iface, duration, freq, width, peer, burst, qlen, txbuf);
+        Application app (iface, duration, freq, width, peer, burst, qlen, txbuf, bandwidth);
         ppi::run();
     }    
 }
@@ -172,20 +177,20 @@ int main(int argc, const char ** argv)
     senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u));
     
     if (config.iface.find("phy") == 0){
-        if (config.rxMode)
+        if (config.bandwidth == 0)
             run< AppRx<WLANInterface> >(config.iface, config.duration, config.frequency, config.ht40 ? 40 : 20, config.peer,
-                                       config.maxBurst, config.qlen, config.txBuf);
+                                        config.maxBurst, config.qlen, config.txBuf, 0);
         else
             run< AppTx<WLANInterface> >(config.iface, config.duration, config.frequency, config.ht40 ? 40 : 20, config.peer,
-                                       config.maxBurst, config.qlen, config.txBuf);
+                                        config.maxBurst, config.qlen, config.txBuf, config.bandwidth);
     }
     else {
-        if (config.rxMode)
+        if (config.bandwidth == 0)
             run< AppRx<EthernetInterface>>(config.iface, config.duration, 0, 0, config.peer,
-                                           config.maxBurst, config.qlen, config.txBuf);
+                                           config.maxBurst, config.qlen, config.txBuf, 0);
         else
             run< AppTx<EthernetInterface> >(config.iface, config.duration, 0, 0, config.peer,
-                                           config.maxBurst, config.qlen, config.txBuf);
+                                            config.maxBurst, config.qlen, config.txBuf, config.bandwidth);
     }
     
     return 0;
