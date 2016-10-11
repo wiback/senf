@@ -47,9 +47,10 @@ prefix_ Configuration::Configuration()
       txBuf(192000),
       qlen(768),
       maxBurst(48),
-      bandwidth(0),
+      bitrate(0),  // default mode is RX
       reportingInterval(senf::ClockService::milliseconds(1000)),
-      duration(senf::ClockService::seconds(0))
+      duration(senf::ClockService::seconds(0)),
+      consolePort(23232)
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));
@@ -70,12 +71,14 @@ prefix_ Configuration::Configuration()
     initDir.add("qlen", fty::Variable(qlen));
     initDir.add("maxBurst", fty::Variable(maxBurst));
 
-    initDir.add("bandwidth", fty::Variable(bandwidth));
+    initDir.add("bitrate", fty::Variable(bitrate));
 
     initDir.add("reporting-interval", fty::Variable( reportingInterval)
                 .parser(senf::parseClockServiceInterval));
     initDir.add("duration", fty::Variable(duration)
                 .parser(senf::parseClockServiceInterval));
+
+    initDir.add("consolePort", fty::Variable(consolePort));
 
     // always turn those on, where available
     enableHighresTimers();

@@ -57,19 +57,19 @@ namespace {
         senf::scheduler::SignalEvent sigint;
         senf::scheduler::SignalEvent sigterm;
         
-        App(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned burst, unsigned qlen, unsigned txbuf)
-            : iface (iface_),
+        App(Configuration const & config)
+            : iface (config.iface),
               timer_("APP", senf::membind(&App::timerEvent, this), senf::ClockService::clock_type(0), false),
               startTime(senf::scheduler::now()),
-              duration_(duration),
-              period(senf::ClockService::seconds(1)),
+              duration_(config.duration),
+              period(config.reportingInterval),
               nextTime(startTime + period),
               sigint (SIGINT, boost::bind(&App::terminate, this)),
               sigterm (SIGTERM, boost::bind(&App::terminate, this))
         {
-            iface.interface().maxBurst(burst);
-            iface.interface().qlen(qlen);
-            iface.interface().sndBuf(txbuf);            
+            iface.interface().maxBurst(config.maxBurst);
+            iface.interface().qlen(config.qlen);
+            iface.interface().sndBuf(config.txBuf);            
             iface.interface().enable();
 
             timer_.timeout(nextTime);            
@@ -100,19 +100,18 @@ namespace {
     public:
         Receiver receiver;
         
-        AppRx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer,
-              unsigned burst, unsigned qlen, unsigned txbuf, unsigned bandwidth)
-            : App<Interface> (iface_, duration, burst, qlen, txbuf),
-            receiver(peer, App<Interface>::iface.interface().id())
+        AppRx(Configuration const & config)
+            : App<Interface> (config),
+            receiver(config.peer, App<Interface>::iface.interface().id())
         {
             ppi::connect(App<Interface>::iface, receiver);
 
             WLANInterface *wif (dynamic_cast<WLANInterface*>(&App<Interface>::iface.interface()));
             if (wif) {
-                wif->join(freq, width, 4711u);
+                wif->join(config.frequency, config.ht40 ? 40 : 20, 4711u);
             }
 
-            std::cerr << "Receiver ready on " << iface_ << ", mac " << App<Interface>::iface.interface().id() << ", peer " << peer << std::endl;
+            std::cerr << "Receiver ready on " << config.iface << ", mac " << App<Interface>::iface.interface().id() << ", peer " << config.peer << std::endl;
         }
         
         void v_stats(senf::ClockService::clock_type const & tstamp, senf::ClockService::clock_type const & period) {
@@ -130,35 +129,44 @@ namespace {
     public:
         Sender sender;
         
-        AppTx(std::string const & iface_, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer,
-              unsigned burst, unsigned qlen, unsigned txbuf, unsigned bandwidth)
-            : App<Interface> (iface_, duration, burst, qlen, txbuf),
-            sender(App<Interface>::iface.interface().id(), peer)
+        AppTx(Configuration const & config)
+            : App<Interface> (config),
+            sender(App<Interface>::iface.interface().id(), config.peer, config.label)
         {
             ppi::connect(sender, App<Interface>::iface);            
 
             WLANInterface *wif (dynamic_cast<WLANInterface*>(&App<Interface>::iface.interface()));
             if (wif) {
-                wif->join(freq, width, 4711u);
+                wif->join(config.frequency, config.ht40 ? 40 : 20, 4711u);
             }
 
-            sender.bitrate(bandwidth);
+            sender.bitrate(config.bitrate);
             
-            std::cerr << "Transmitter ready on " << iface_ << ", mac " << App<Interface>::iface.interface().id() << ", peer " << peer << ", bitrate " << bandwidth << "kbps" << std::endl;
+            std::cerr << "Transmitter ready on " << config.iface << ", mac " << App<Interface>::iface.interface().id()
+                      << ", peer " << config.peer << ", label " << config.label << ", bitrate " << config.bitrate << "kbps" << std::endl;
         }
         
         void v_stats(senf::ClockService::clock_type const & tstamp, senf::ClockService::clock_type const & period) {
             std::cout << senf::ClockService::in_seconds(tstamp) << '.' << std::setw(3) << std::setfill('0') << (senf::ClockService::in_milliseconds(tstamp) % 1000);
             std::cout << " seqNo " << sender.seqNo;
+            WLANInterface *wif (dynamic_cast<WLANInterface*>(&App<Interface>::iface.interface()));
+            if (wif) {
+                std::cout << ", mmStats ";
+                wif->dumpMmapStats(std::cout);
+            }
+            EthernetInterface *eif (dynamic_cast<EthernetInterface*>(&App<Interface>::iface.interface()));
+            if (eif) {
+                std::cout << ", mmStats ";
+                eif->dumpMmapStats(std::cout);
+            }
             std::cout << std::endl;
         }
     };
     
     template <class Application>
-    void run(std::string iface, senf::ClockService::clock_type const & duration, unsigned freq, unsigned width, senf::MACAddress peer, 
-             unsigned burst, unsigned qlen, unsigned txbuf, unsigned bandwidth)
+    void run(Configuration const & config)
     {
-        Application app (iface, duration, freq, width, peer, burst, qlen, txbuf, bandwidth);
+        Application app (config);
         ppi::run();
     }    
 }
@@ -174,23 +182,21 @@ int main(int argc, const char ** argv)
     }
 
     // enable console for (remote) logging
-    senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u));
+    if (config.consolePort > 0) {
+        senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, config.consolePort));
+    }
     
     if (config.iface.find("phy") == 0){
-        if (config.bandwidth == 0)
-            run< AppRx<WLANInterface> >(config.iface, config.duration, config.frequency, config.ht40 ? 40 : 20, config.peer,
-                                        config.maxBurst, config.qlen, config.txBuf, 0);
+        if (config.bitrate == 0)
+            run< AppRx<WLANInterface> >(config);
         else
-            run< AppTx<WLANInterface> >(config.iface, config.duration, config.frequency, config.ht40 ? 40 : 20, config.peer,
-                                        config.maxBurst, config.qlen, config.txBuf, config.bandwidth);
+            run< AppTx<WLANInterface> >(config);
     }
     else {
-        if (config.bandwidth == 0)
-            run< AppRx<EthernetInterface>>(config.iface, config.duration, 0, 0, config.peer,
-                                           config.maxBurst, config.qlen, config.txBuf, 0);
+        if (config.bitrate == 0)
+            run< AppRx<EthernetInterface>>(config);
         else
-            run< AppTx<EthernetInterface> >(config.iface, config.duration, 0, 0, config.peer,
-                                            config.maxBurst, config.qlen, config.txBuf, config.bandwidth);
+            run< AppTx<EthernetInterface> >(config);
     }
     
     return 0;

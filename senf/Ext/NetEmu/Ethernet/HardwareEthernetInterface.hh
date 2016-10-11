@@ -79,6 +79,8 @@ namespace emu {
 
         unsigned rxQueueDropped() const;
 
+        void dumpMmapStats(std::ostream & os);
+
 #ifdef SENF_DEBUG
         unsigned burstMax();
         unsigned sharedPackets();
@@ -113,8 +115,6 @@ namespace emu {
         virtual void v_flushTxQueues();
 
         virtual MACAddress v_id() const;
-
-        void dumpMmapStats(std::ostream & os);
 
         std::string dev_;
         EthernetController ctrl_;

@@ -114,6 +114,9 @@ namespace emu {
         bool spectralScanStart();
         bool spectralScanStop(senf::StatisticsData *sd);
 
+        void dumpMmapStats(std::ostream & os);
+        void dumpFilterStats(std::ostream & os);
+
     protected:
         NetdeviceController netctl_;
         mutable WirelessNLController wnlc_;
@@ -152,8 +155,6 @@ namespace emu {
         virtual void v_flushTxQueues();
         virtual void v_coverageRange(unsigned distance);
 
-        void dumpMmapStats(std::ostream & os);
-        void dumpFilterStats(std::ostream & os);
         void do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters);
 
         // modulation

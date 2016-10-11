@@ -53,11 +53,12 @@ public:
     unsigned qlen;
     unsigned maxBurst;
 
-    unsigned bandwidth;
+    unsigned bitrate;
     
     senf::ClockService::clock_type reportingInterval;
     senf::ClockService::clock_type duration;
 
+    unsigned consolePort;
     
     Configuration();
 

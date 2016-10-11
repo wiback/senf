@@ -47,7 +47,7 @@ namespace {
         senf::ClockService::clock_type period;
         unsigned seqNo;
         
-        Sender(senf::MACAddress const & src, senf::MACAddress const & dst)
+        Sender(senf::MACAddress const & src, senf::MACAddress const & dst, std::uint32_t label)
             : timer_("TX", senf::membind(&Sender::timerEvent, this), senf::ClockService::clock_type(0), false),
               eth(senf::EthernetPacket::create()),
               mpls(senf::MPLSPacket::createAfter(eth)),
@@ -58,7 +58,7 @@ namespace {
 
             eth->source() = src_;
             eth->destination() = dst_;
-            mpls->label() = 4711;
+            mpls->label() = label;
             mpls->tc() = 1;
             // let's use non-jumbo frames for now
             senf::DataPacket data (senf::DataPacket::createAfter(tim, 1500u - mpls.size()));
