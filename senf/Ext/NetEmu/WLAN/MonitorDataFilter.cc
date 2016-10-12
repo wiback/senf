@@ -389,7 +389,7 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
     }
     catch (...) {
         // catch any possible exception here.
-        // If we catch one, we assume that we failed to extract a valid/usefull source address
+        // If we catch one, we assume that we failed to extract a valid/useful source address
         src = senf::MACAddress::None;
     }
     
@@ -409,7 +409,7 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
     }
     catch (...) {
         // catch any possible exception here.
-        // If we catch one, we assume that we failed to extract a valid/usefull destination address
+        // If we catch one, we assume that we failed to extract a valid/useful destination address
         dst = senf::MACAddress::Broadcast;
     }
 

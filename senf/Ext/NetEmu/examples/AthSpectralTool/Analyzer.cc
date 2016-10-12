@@ -77,7 +77,7 @@ prefix_ void Analyzer::v_80211FrameReceived(std::uint64_t tsft, unsigned frequen
         }
     } catch (...) {
         // catch any possible exception here.
-        // If we catch one, we assume that we failed to extract a valid/usefull source address
+        // If we catch one, we assume that we failed to extract a valid/useful source address
         SENF_LOG( (senf::log::MESSAGE) ("Couldn't parse the source address from Radio packet") );
         srcAddress = senf::MACAddress::None;
     }
@@ -86,8 +86,8 @@ prefix_ void Analyzer::v_80211FrameReceived(std::uint64_t tsft, unsigned frequen
     senf::ClockService::clock_type airtime (rate ? (senf::ClockService::microseconds((length * 8 * 1000) / rate)) : 0);
 
     SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " 80211 frame received.Freqency " << frequency
-                                   << ", rssi " << rssi << ", rate " << rate << ", lenght " << length
-                                   << ", airtime " << senf::ClockService::in_microseconds(airtime) << "us") );
+            << ", rssi " << rssi << ", rate " << rate << ", length " << length
+            << ", airtime " << senf::ClockService::in_microseconds(airtime) << "us") );
 }
 
 prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20 const & sample)

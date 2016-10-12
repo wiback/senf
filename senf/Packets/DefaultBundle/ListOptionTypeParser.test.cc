@@ -92,7 +92,7 @@ SENF_AUTO_TEST_CASE(ListOptionTypeParser_container)
         OptionParser::list_t::container_type c (p.list());
 
         BOOST_CHECK_EQUAL( c.size(), 0u );
-        BOOST_CHECK_EQUAL( c.bytes(), 0u ); // padding bytes wont be in here, added/removed automatically in destructor
+        BOOST_CHECK_EQUAL( c.bytes(), 0u ); // padding bytes won't be in here, added/removed automatically in destructor
         BOOST_CHECK( c.begin() == c.end() );
 
         std::vector<unsigned char> d (2, 0xab);

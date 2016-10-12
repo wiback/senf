@@ -41,7 +41,7 @@
     This gives a lot of flexibility in scenario configuration.
 
     \warning You must start the senf::emu::EmulatedFrequencyRegistry before any traffic will flow
-        accross emulated wireless interfaces. See the documentation for more.
+        across emulated wireless interfaces. See the documentation for more.
 
     \section emu_main_emushark Packet capture utility for emulated networks
 

@@ -68,7 +68,7 @@ namespace format {
             If the width is set >0, the output will be padded internally. If the width is set to
             more than the minimal required output width including internal padding, the output is
             padded on the left or right depending on the streams \c ajustfield setting (changed
-            with \c std::left, \c std:;right or \c std::interal). If the \c adjustfield is set to \c
+            with \c std::left, \c std:;right or \c std::internal). If the \c adjustfield is set to \c
             internal, padding is added between the sign and the number.
 
         \par \c std::\c setprecision
