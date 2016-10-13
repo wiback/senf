@@ -11,6 +11,8 @@
 // Custom includes
 #include <senf/Packets/Packets.hh>
 #include <senf/Scheduler/ClockService.hh>
+#include <senf/Utils/Statistics.hh>
+#include <senf/Ext/NetEmu/Annotations.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace wiback {
@@ -65,7 +67,7 @@ namespace wiback {
         std::uint32_t late;
         std::uint32_t lost;
         std::uint32_t resyncs;
-        std::uint32_t last;
+        std::uint32_t last_;
         
         TIMSeqNoStats() {
             reset();
@@ -78,25 +80,25 @@ namespace wiback {
         void reset() {
             clear();
             resyncs = 0;
-            last = 0xFFFFFFFF;
+            last_ = 0xFFFFFFFF;
         };
 
         bool process(std::uint32_t seqNo, std::uint32_t payloadSize) {
             processed++;
-            if (SENF_UNLIKELY(last == 0xFFFFFFFF)) {
-                last = seqNo;
+            if (SENF_UNLIKELY(last_ == 0xFFFFFFFF)) {
+                last_ = seqNo;
                 good = 1;
                 goodBytes = payloadSize;
                 return true;
             }
 
-            int diff = TIMPacketType::seqNoDiff(seqNo, last);
+            int diff (TIMPacketType::seqNoDiff(seqNo, last_));
 
             if (SENF_LIKELY(diff == 1)) {
                 // no loss
                 good++;
                 goodBytes += payloadSize;
-                last = seqNo;
+                last_ = seqNo;
                 return true;
             }
             else if (diff == 0) {
@@ -109,12 +111,12 @@ namespace wiback {
                 if (diff <= -128) {
                     // resync to next expected SeqNo
                     resyncs++;
-                    last = seqNo;
+                    last_ = seqNo;
                 }
             } else {
                 // frame loss
                 lost += diff-1;
-                last = seqNo;
+                last_ = seqNo;
             }
             return false;
         }
@@ -137,6 +139,47 @@ namespace wiback {
             os << ", resyncs " << resyncs;
         }
     };
+
+    struct TIMTimestampStats {
+        senf::StatisticAccumulator<std::uint32_t> delay;
+        senf::StatisticAccumulator<std::uint32_t> pdv;
+        // no unsigned here!
+        std::int32_t lastPD_;
+
+        TIMTimestampStats() {
+            reset();
+        };
+
+        void clear() {
+            delay.clear();
+            pdv.clear();
+        };
+
+        void reset() {
+            clear();
+            lastPD_ = 0x7FFFFFFF;
+        };
+
+        void process(TIMPacket const & tim) {
+
+            std::int32_t diff (TIMPacketType::timeStampDiff(tim.annotation<senf::emu::annotations::Timestamp>().as_milli_seconds((TIMPacketParser::timestamp_t::max_value + 1)), tim->timestamp()));
+
+            // first packet seen => establish the typical delay
+            if (SENF_UNLIKELY(lastPD_ == 0x7FFFFFFF)) {
+                lastPD_ = diff;
+            }
+
+            pdv.accumulate(unsigned(abs(diff - lastPD_)));
+            lastPD_ = diff;
+
+            if (tim->syn()) {  // we need to also check if our clock is synced
+                if (SENF_UNLIKELY(diff < 0))
+                    diff = (TIMPacketParser::timestamp_t::max_value + 1);  // error
+                delay.accumulate(unsigned(diff));
+            }
+        }
+    };
+    
 }
 
 SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( wiback::TIMPacket );
