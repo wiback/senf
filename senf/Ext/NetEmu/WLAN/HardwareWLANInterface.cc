@@ -85,6 +85,8 @@ prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::dataSource(bool on)
         source.handle(socket);
         // clean update the source queue, as we have changed the socket
         source.flush();
+        // flush any pending packets from the filter
+        monitorDataFilter.flushQueues();
     } else {
         source.handle(ConnectedMMapPacketSocketHandle(senf::noinit));
     }
