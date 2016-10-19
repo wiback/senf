@@ -69,6 +69,7 @@ namespace detail {
             unsigned wrongFormat;
             unsigned dropped;
             unsigned overrun;
+            unsigned red;
         };
         struct RxStats {
             unsigned received;
@@ -79,6 +80,8 @@ namespace detail {
         RxStats rxStats;
         
         void inc(unsigned char * & ptr, Queue const & q);
+
+        unsigned blocksFree(Queue const &) const;
     };
 
     struct QueuePolicyBase

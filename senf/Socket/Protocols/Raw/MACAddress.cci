@@ -142,6 +142,22 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
         (boost::uint64_t( (*this)[5] )      );
 }
 
+prefix_ void senf::MACAddress::hash(boost::uint64_t * hash)
+    const
+{
+    *(((std::uint32_t *)hash)+0) = (*((std::uint32_t const *)&(*this)[0]));
+    *(((std::uint16_t *)hash)+2) = (*((std::uint16_t const *)&(*this)[4]));
+}
+
+prefix_ void senf::MACAddress::hash(boost::uint64_t * hash, boost::uint16_t otherKey)
+    const
+{ 
+    *(((std::uint32_t *)hash)+0) = (*((std::uint32_t const *)&(*this)[0]));
+    *(((std::uint16_t *)hash)+2) = (*((std::uint16_t const *)&(*this)[4]));
+    *(((std::uint16_t *)hash)+3) = otherKey;
+}
+
+
 prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
 {
     return eui64.isMACCompatible()
@@ -167,6 +183,7 @@ prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) SENF_NOEXCEPT
         BOOST_STATIC_ASSERT_MSG(true, "unknown sizeof(std::size_t)");
 #endif
 }
+
 
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -132,6 +132,9 @@ namespace senf {
 
         boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
         boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
+
+        void hash(boost::uint64_t * hash) const;                           ///< computes a fast uint64 hash
+        void hash(boost::uint64_t * hash, boost::uint16_t otherKey) const; ///< computes a fast uint64 hash mixing in another 16 value
     };
 
     /** \brief Output MAC instance as it's string representation

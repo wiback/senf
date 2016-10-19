@@ -54,6 +54,21 @@ prefix_ void senf::detail::QueueInfo::inc(unsigned char * & ptr, Queue const & q
         ptr = q.begin;
 }
 
+prefix_ unsigned senf::detail::QueueInfo::blocksFree(Queue const & q)
+    const
+{
+    if (q.idle)
+        return q.qlen;
+
+    if (q.head == q.tail)
+        return 0;
+
+    if (q.tail > q.head)
+        return (q.head + (q.qlen * frameSize) - q.tail) / frameSize;
+    else 
+        return (q.head - q.tail) / frameSize;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::SocketQueueBuffer
 
@@ -280,6 +295,16 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
         return boost::none;
 
     detail::QueueInfo & qi (* qinfo(handle));
+
+    // simple RED
+    if (qi.blocksFree(qi.tx) < qi.tx.qlen/2) {
+        if (rand() % (qi.blocksFree(qi.tx)+1) == 0) {
+            qi.txStats.red++;
+            qi.txStats.overrun++;
+            return boost::none;
+        }
+    }
+    
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
     if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && (pk.tp_status == TP_STATUS_AVAILABLE)) {
         ::memset(&pk, 0, qi.hdrlen);

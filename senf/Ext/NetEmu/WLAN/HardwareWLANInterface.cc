@@ -687,6 +687,7 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
         os << "MMAP Tx (data) stats: " 
            << "sent "        << ts.sent << ", "
            << "wrongFormat " << ts.wrongFormat << ", "
+           << "red "         << ts.red << ", "
            << "overrun "     << ts.overrun << ", "
            << "dropped "     << ts.dropped << ". ";
         os << "DSQ stats: "

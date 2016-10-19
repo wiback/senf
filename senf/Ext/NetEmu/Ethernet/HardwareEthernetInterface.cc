@@ -460,6 +460,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
         os << "MMAP Tx stats: "
            << "sent "        << ts.sent << ", "
            << "wrongFormat " << ts.wrongFormat << ", "
+           << "red "         << ts.red << ", "
            << "overrun "     << ts.overrun << ", "
            << "dropped "     << ts.dropped << ". ";
         os << "DSQ stats: "
