@@ -74,6 +74,7 @@ namespace detail {
         struct RxStats {
             unsigned received;
             unsigned ignored;
+            unsigned red;
         };
 
         TxStats txStats;
@@ -81,7 +82,7 @@ namespace detail {
         
         void inc(unsigned char * & ptr, Queue const & q);
 
-        unsigned blocksFree(Queue const &) const;
+        unsigned blocksUsed(Queue const &) const;
     };
 
     struct QueuePolicyBase

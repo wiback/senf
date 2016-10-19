@@ -674,11 +674,13 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
         auto rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStats());
         os << "MMAP Rx (monitor) stats: " 
            << "received " << rs.received << ", "
+           << "red "      << rs.red << ", "
            << "ignored "  << rs.ignored  << ". ";
     } else {
         auto rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
         os << "MMAP Rx (data) stats: " 
            << "received " << rs.received << ", "
+           << "red "      << rs.red << ", "
            << "ignored "  << rs.ignored  << ". ";
     }
 

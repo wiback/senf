@@ -54,19 +54,19 @@ prefix_ void senf::detail::QueueInfo::inc(unsigned char * & ptr, Queue const & q
         ptr = q.begin;
 }
 
-prefix_ unsigned senf::detail::QueueInfo::blocksFree(Queue const & q)
+prefix_ unsigned senf::detail::QueueInfo::blocksUsed(Queue const & q)
     const
 {
     if (q.idle)
-        return q.qlen;
-
-    if (q.head == q.tail)
         return 0;
 
+    if (q.head == q.tail)
+        return q.qlen;
+
     if (q.tail > q.head)
-        return q.qlen - ((q.head + (q.qlen * frameSize) - q.tail) / frameSize);
+        return ((q.head + (q.qlen * frameSize) - q.tail) / frameSize);
     else 
-        return q.qlen - ((q.head - q.tail) / frameSize);
+        return ((q.head - q.tail) / frameSize);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -233,6 +233,16 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
                     qi.rx.tail = qi.rx.head;
                 continue;
             }
+            // simple RED
+            if (SENF_UNLIKELY(qi.blocksUsed(qi.rx) >= qi.rx.qlen/2)) {
+                if (rand() % (qi.rx.qlen - qi.blocksUsed(qi.rx) + 1) == 0) {
+                    qi.rxStats.red++;
+                    pk.tp_status = TP_STATUS_KERNEL;
+                    if (qi.rx.idle)
+                        qi.rx.tail = qi.rx.head;
+                    continue;
+                }
+            }
             qi.rx.idle = false;
             return bf;
         }
@@ -297,10 +307,9 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
     detail::QueueInfo & qi (* qinfo(handle));
 
     // simple RED
-    if (qi.blocksFree(qi.tx) < qi.tx.qlen/2) {
-        if (rand() % (qi.blocksFree(qi.tx)+1) == 0) {
+    if (SENF_UNLIKELY(qi.blocksUsed(qi.tx) >= qi.tx.qlen/2)) {
+        if (rand() % (qi.tx.qlen - qi.blocksUsed(qi.tx) + 1) == 0) {
             qi.txStats.red++;
-            qi.txStats.overrun++;
             return boost::none;
         }
     }

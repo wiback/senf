@@ -122,7 +122,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
         if (SENF_UNLIKELY(!buf))
             break;
-
+        
         PacketInfo ifo;
         {
            Packet pk (Packet::create(

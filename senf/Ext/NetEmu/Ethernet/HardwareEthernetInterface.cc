@@ -455,6 +455,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
         auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
         os << "MMAP Rx stats: "
            << "received " << rs.received << ", "
+           << "red "      << rs.red << ", "
            << "ignored "  << rs.ignored  << ". ";
         auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
         os << "MMAP Tx stats: "
