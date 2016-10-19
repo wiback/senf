@@ -64,9 +64,9 @@ prefix_ unsigned senf::detail::QueueInfo::blocksFree(Queue const & q)
         return 0;
 
     if (q.tail > q.head)
-        return (q.head + (q.qlen * frameSize) - q.tail) / frameSize;
+        return q.qlen - ((q.head + (q.qlen * frameSize) - q.tail) / frameSize);
     else 
-        return (q.head - q.tail) / frameSize;
+        return q.qlen - ((q.head - q.tail) / frameSize);
 }
 
 ///////////////////////////////////////////////////////////////////////////
