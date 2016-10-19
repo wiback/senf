@@ -234,6 +234,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
                 continue;
             }
             // simple RED
+            /*
             if (SENF_UNLIKELY(qi.blocksUsed(qi.rx) >= qi.rx.qlen/2)) {
                 if (rand() % (qi.rx.qlen - qi.blocksUsed(qi.rx) + 1) == 0) {
                     qi.rxStats.red++;
@@ -243,6 +244,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
                     continue;
                 }
             }
+            */
             qi.rx.idle = false;
             return bf;
         }
@@ -307,8 +309,8 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
     detail::QueueInfo & qi (* qinfo(handle));
 
     // simple RED
-    if (SENF_UNLIKELY(qi.blocksUsed(qi.tx) >= qi.tx.qlen/2)) {
-        if (rand() % (qi.tx.qlen - qi.blocksUsed(qi.tx) + 1) == 0) {
+    if (SENF_UNLIKELY(qi.blocksUsed(qi.tx) > qi.tx.qlen/2)) {
+        if ((boost::uint32_t(rand()) % (qi.tx.qlen - qi.tx.qlen/2)) <= (qi.blocksUsed(qi.tx) - qi.tx.qlen/2)) {
             qi.txStats.red++;
             return boost::none;
         }
