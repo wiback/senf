@@ -248,6 +248,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
         return boost::none;
 
     detail::QueueInfo & qi (* qinfo(handle));
+    unsigned usage (qi.usageRx());
     for (unsigned count (0); count < 2*qi.rx.qlen; ++count) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
         if (SENF_LIKELY((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL)) {
@@ -263,9 +264,8 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
                 continue;
             }
             // simple RED (i.e. due to CPU overload) starting at > 50% usage
-            unsigned usage (qi.usageRx());
             if (SENF_UNLIKELY(usage > (NUM_SAMPLES/2))) {
-                if ((boost::uint32_t(rand()) % (qi.rx.qlen)) < (usage * qi.rx.qlen/NUM_SAMPLES)) {
+                if ((boost::uint32_t(rand()) % (qi.rx.qlen)) < ((usage-(NUM_SAMPLES/4)) * qi.rx.qlen/NUM_SAMPLES)) {
                     qi.rxStats.red++;
                     pk.tp_status = TP_STATUS_KERNEL;
                     if (qi.rx.idle)
@@ -339,7 +339,7 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
     // simple RED starting at > 50% usage
     unsigned usage (qi.usageTx());
     if (SENF_UNLIKELY(usage > (NUM_SAMPLES/2))) {
-        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < (usage * qi.tx.qlen/NUM_SAMPLES)) {
+        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-(NUM_SAMPLES/4)) * qi.tx.qlen/NUM_SAMPLES)) {
             qi.txStats.red++;
             return boost::none;
         }
