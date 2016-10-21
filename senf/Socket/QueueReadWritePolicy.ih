@@ -43,6 +43,8 @@ namespace detail {
 #     define TP_STATUS_VLAN_VALID (1<<4)
 #   endif
 
+#define NUM_SAMPLES 4
+    
     struct QueueInfo
     {
         unsigned char * map;
@@ -59,6 +61,11 @@ namespace detail {
             unsigned char * tail;   // last buffer in queue still held by user-space
             bool idle;              // set to true when the range from head -> tail is empty. needed
                                     // to differentiate between empty and full head/tail range
+
+            // we devide the ring buffer in NUM_SAMPLES slices and keep a pointer to tp_status
+            // of the first frame of each slide. In usageRx/TX() we check how many of those samples report 'used by kernel'.
+            // This provides a rough estimate of ring bugger usage by the kernel
+            std::uint32_t * samples[NUM_SAMPLES];  
         };
 
         Queue rx;
@@ -82,7 +89,9 @@ namespace detail {
         
         void inc(unsigned char * & ptr, Queue const & q);
 
-        unsigned blocksUsed(Queue const &) const;
+        void init(unsigned rxqlen, unsigned txqlen);
+        unsigned usageRx() const;
+        unsigned usageTx() const;
     };
 
     struct QueuePolicyBase
