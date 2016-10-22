@@ -453,21 +453,13 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
 {
     if (HardwareEthernetInterfaceNet::socket.valid()) {
         auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
-        os << "MMAP Rx stats: "
-           << "received " << rs.received << ", "
-           << "red "      << rs.red << ", "
-           << "ignored "  << rs.ignored  << ". ";
+        os << "MMAP Rx stats: "; rs.dump(os);
         auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
-        os << "MMAP Tx stats: "
-           << "sent "        << ts.sent << ", "
-           << "wrongFormat " << ts.wrongFormat << ", "
-           << "red "         << ts.red << ", "
-           << "overrun "     << ts.overrun << ", "
-           << "dropped "     << ts.dropped << ". ";
+        os << "MMAP Tx stats: "; ts.dump(os);
         os << "DSQ stats: "
            << "dropped "     << sink.dropped() << std::endl;
     } else {
-        os << "Socket closed. Not stats available." << std::endl;
+        os << "Socket closed. No stats available." << std::endl;
     }
 }
 

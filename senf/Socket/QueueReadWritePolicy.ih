@@ -42,11 +42,11 @@ namespace detail {
 #   if !defined(TP_STATUS_VLAN_VALID)
 #     define TP_STATUS_VLAN_VALID (1<<4)
 #   endif
-
-#define NUM_SAMPLES 4
     
     struct QueueInfo
     {
+        static constexpr std::uint16_t NUM_SAMPLES = 6;
+
         unsigned char * map;
         unsigned hdrlen;
         unsigned frameSize;
@@ -77,11 +77,14 @@ namespace detail {
             unsigned dropped;
             unsigned overrun;
             unsigned red;
+            void dump(std::ostream & os) const;
         };
         struct RxStats {
             unsigned received;
             unsigned ignored;
+            unsigned noop;
             unsigned red;
+            void dump(std::ostream & os) const;
         };
 
         TxStats txStats;

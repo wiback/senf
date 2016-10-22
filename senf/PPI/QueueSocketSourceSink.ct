@@ -35,6 +35,7 @@
 #include <senf/Packets/PacketInfo.hh>
 #include <senf/Utils/senflikely.hh>
 #include "SocketSource.hh"
+#include <senf/Socket/QueueReadWritePolicy.ih>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,12 +118,30 @@ prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::s
 template <class Packet, class Connector>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
 {
+    if (SENF_UNLIKELY(!handle_))
+        return;
+
+    senf::detail::QueueInfo & qi (* senf::detail::QueuePolicyBase::qinfo(handle_));
+    unsigned usage (qi.usageRx());
+
+    // simple RED (i.e. due to CPU overload) starting at > 33% usage
+    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
+        usage = maxBurst_ / (usage-(senf::detail::QueueInfo::NUM_SAMPLES/3)+1);
+    } else {
+        usage = 0;
+    }
+    
     flushPending_ = false;
     for (burst_ = 1; SENF_LIKELY(handle_ and (burst_ <= maxBurst_) and !flushPending_); burst_++) {
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
         if (SENF_UNLIKELY(!buf))
             break;
-        
+
+        if ((usage > 0) and (std::uint32_t(rand()) % usage) == 0) {
+            qi.rxStats.red++;
+            continue;
+        }
+            
         PacketInfo ifo;
         {
            Packet pk (Packet::create(

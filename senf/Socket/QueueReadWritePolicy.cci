@@ -72,22 +72,43 @@ prefix_ void senf::detail::QueueInfo::init(unsigned rxqlen, unsigned txqlen)
         tx.samples[n] = &(reinterpret_cast<struct ::tpacket2_hdr *>(tx.begin + (n * slice * frameSize))->tp_status);
 }
 
+prefix_ void senf::detail::QueueInfo::RxStats::dump(std::ostream & os)
+    const
+{
+    os << "received " << received << ", "
+       << "red "      << red << ", "
+       << "ignored "  << ignored  << ", "
+       << "noop "     << noop  << ".";
+}
+
+prefix_ void senf::detail::QueueInfo::TxStats::dump(std::ostream & os)
+    const
+{
+    os << "sent "        << sent << ", "
+       << "wrongFormat " << wrongFormat << ", "
+       << "red "         << red << ", "
+       << "overrun "     << overrun << ", "
+       << "dropped "     << dropped << ". ";
+}
+
 prefix_ unsigned senf::detail::QueueInfo::usageRx()
     const
 {
-    return (*(rx.samples[0]) != TP_STATUS_KERNEL) +
-           (*(rx.samples[1]) != TP_STATUS_KERNEL) +
-           (*(rx.samples[2]) != TP_STATUS_KERNEL) +
-           (*(rx.samples[3]) != TP_STATUS_KERNEL);
+    unsigned sum (0);
+    for (unsigned n = 0; n < NUM_SAMPLES; n++)
+        sum += (*(rx.samples[n]) != TP_STATUS_KERNEL);
+
+    return sum;
 }
 
 prefix_ unsigned senf::detail::QueueInfo::usageTx()
     const
 {
-    return (*(tx.samples[0]) != TP_STATUS_AVAILABLE) +
-           (*(tx.samples[1]) != TP_STATUS_AVAILABLE) +
-           (*(tx.samples[2]) != TP_STATUS_AVAILABLE) +
-           (*(tx.samples[3]) != TP_STATUS_AVAILABLE);
+    unsigned sum (0);
+    for (unsigned n = 0; n < NUM_SAMPLES; n++)
+        sum += (*(tx.samples[n]) != TP_STATUS_AVAILABLE);
+
+    return sum;
 }
 
 prefix_ void senf::detail::QueueInfo::inc(unsigned char * & ptr, Queue const & q)
@@ -248,7 +269,6 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
         return boost::none;
 
     detail::QueueInfo & qi (* qinfo(handle));
-    unsigned usage (qi.usageRx());
     for (unsigned count (0); count < 2*qi.rx.qlen; ++count) {
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr *>(qi.rx.head));
         if (SENF_LIKELY((qi.rx.idle || qi.rx.head != qi.rx.tail) && pk.tp_status != TP_STATUS_KERNEL)) {
@@ -263,21 +283,13 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
                     qi.rx.tail = qi.rx.head;
                 continue;
             }
-            // simple RED (i.e. due to CPU overload) starting at > 50% usage
-            if (SENF_UNLIKELY(usage > (NUM_SAMPLES/2))) {
-                if ((boost::uint32_t(rand()) % (qi.rx.qlen)) < ((usage-2) * qi.rx.qlen/NUM_SAMPLES/4)) {
-                    qi.rxStats.red++;
-                    pk.tp_status = TP_STATUS_KERNEL;
-                    if (qi.rx.idle)
-                        qi.rx.tail = qi.rx.head;
-                    continue;
-                }
-            }
             qi.rx.idle = false;
             return bf;
         }
+        qi.rxStats.noop++;
         return boost::none;
     }
+    qi.rxStats.noop++;
     return boost::none;
 }
 
@@ -336,10 +348,10 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
 
     detail::QueueInfo & qi (* qinfo(handle));
 
-    // simple RED starting at > 50% usage
+    // simple RED starting at > 30% usage
     unsigned usage (qi.usageTx());
-    if (SENF_UNLIKELY(usage > (NUM_SAMPLES/2))) {
-        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-2) * qi.tx.qlen/NUM_SAMPLES/4)) {
+    if (SENF_UNLIKELY(usage > (detail::QueueInfo::NUM_SAMPLES/3))) {
+        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-(detail::QueueInfo::NUM_SAMPLES/3)) * qi.tx.qlen/detail::QueueInfo::NUM_SAMPLES)) {
             qi.txStats.red++;
             return boost::none;
         }

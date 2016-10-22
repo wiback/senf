@@ -152,6 +152,7 @@ prefix_ void senf::MMapSocketProtocol::terminate_mmap()
 }
 
 prefix_ senf::detail::QueueInfo::TxStats senf::MMapSocketProtocol::txStats()
+    const
 {
     detail::QueueInfo::TxStats txStats (qi_.txStats);
     ::memset(&qi_.txStats, 0, sizeof(qi_.txStats));
@@ -159,18 +160,12 @@ prefix_ senf::detail::QueueInfo::TxStats senf::MMapSocketProtocol::txStats()
 }
 
 prefix_ senf::detail::QueueInfo::RxStats senf::MMapSocketProtocol::rxStats()
+    const
 {
     detail::QueueInfo::RxStats rxStats (qi_.rxStats);
     ::memset(&qi_.rxStats, 0, sizeof(qi_.rxStats));
     return rxStats;
 }
-
-prefix_ senf::detail::QueueInfo::RxStats const & senf::MMapSocketProtocol::rxStatsConst()
-    const
-{
-    return qi_.rxStats;
-}
-
 
 prefix_ unsigned senf::MMapReadableSocketProtocol::available()
     const

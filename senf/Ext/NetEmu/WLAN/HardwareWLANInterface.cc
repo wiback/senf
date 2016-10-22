@@ -666,36 +666,25 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpFilterStats(std::ostream & os
 prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
 {
     if (!HardwareWLANInterfaceNet::socket and !HardwareWLANInterfaceNet::monSocket) {
-         os << "Socket closed. Not stats available." << std::endl;
+         os << "Socket closed. No stats available." << std::endl;
          return;
     }
 
     if (HardwareWLANInterfaceNet::monSocket) {
         auto rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStats());
-        os << "MMAP Rx (monitor) stats: " 
-           << "received " << rs.received << ", "
-           << "red "      << rs.red << ", "
-           << "ignored "  << rs.ignored  << ". ";
+        os << "MMAP Rx (monitor) stats: "; rs.dump(os);
     } else {
         auto rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
-        os << "MMAP Rx (data) stats: " 
-           << "received " << rs.received << ", "
-           << "red "      << rs.red << ", "
-           << "ignored "  << rs.ignored  << ". ";
+        os << "MMAP Rx (data) stats: "; rs.dump(os);
     }
 
     if (HardwareWLANInterfaceNet::socket) {
         auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
-        os << "MMAP Tx (data) stats: " 
-           << "sent "        << ts.sent << ", "
-           << "wrongFormat " << ts.wrongFormat << ", "
-           << "red "         << ts.red << ", "
-           << "overrun "     << ts.overrun << ", "
-           << "dropped "     << ts.dropped << ". ";
+        os << "MMAP Tx (data) stats: "; ts.dump(os);
         os << "DSQ stats: "
            << "dropped "     << sink.dropped() << std::endl;        
     } else {
-	// just flush rxStats
+        // just flush rxStats
         os << std::endl;
     }
 }
@@ -844,16 +833,16 @@ prefix_ unsigned senf::emu::HardwareWLANInterface::rxQueueDropped()
     unsigned red (0);
     if (HardwareWLANInterfaceNet::monSocket) {
         dropped = HardwareWLANInterfaceNet::monSocket.protocol().rxQueueDropped();
-        auto const & rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStatsConst());
+        auto const & rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStats());
         red = rs.red;
     } else if (HardwareWLANInterfaceNet::socket) {
         dropped = HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
-        auto const & rs (HardwareWLANInterfaceNet::socket.protocol().rxStatsConst());
+        auto const & rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
         red = rs.red;
     }
 
     if (dropped+red > 0) {
-	SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("Rx Buffer Overrun " << dropped << ", RED " << red) );
+        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("Rx Buffer Overrun " << dropped << ", RED " << red) );
     }
 
     return dropped+red;
