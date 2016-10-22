@@ -48,6 +48,7 @@ prefix_
 senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::ActiveQueueSocketSource(unsigned burst)
     : handle_ ()
     , event_ ()
+    , redFilterCallback_(redFilterDrop)
     , maxBurst_ (burst)
     , burst_(0)
     , flushPending_(false)
@@ -65,6 +66,7 @@ prefix_ senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::
 ActiveQueueSocketSource(Handle const & handle, unsigned burst)
     : handle_ (handle)
     , event_ (handle_, IOEvent::Read)
+    , redFilterCallback_(redFilterDrop)
     , maxBurst_ (burst)
     , burst_(0)
     , flushPending_(false)
@@ -116,6 +118,12 @@ prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::s
 #endif
 
 template <class Packet, class Connector>
+prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::setREDFilterCallback(REDFilterCallback const & cb)
+{
+    redFilterCallback_ = cb;
+}
+
+template <class Packet, class Connector>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
 {
     if (SENF_UNLIKELY(!handle_))
@@ -136,11 +144,6 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         boost::optional<senf::QueueReadPolicy::Buffer> buf (handle_.dequeue());
         if (SENF_UNLIKELY(!buf))
             break;
-
-        if ((usage > 0) and (std::uint32_t(burst_) % usage) == 0) {
-            qi.rxStats.red++;
-            continue;
-        }
             
         PacketInfo ifo;
         {
@@ -154,8 +157,16 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             pk.template annotation<senf::ppi::ReadTimestamp>().value = senf::ClockService::now();
 #endif
             ifo = PacketInfo(pk);
-            output(pk);
+            
+            if (SENF_UNLIKELY((usage > 0) and ((burst_ % usage) == 0) and !redFilterCallback_(pk))) {
+                // drop frame
+                qi.rxStats.red++;
+            } else {
+                // process frame
+                output(pk);
+            }
         }
+        
         if (SENF_UNLIKELY(ifo.is_shared())) {
             ifo.releaseExternalMemory();
 #ifdef SENF_DEBUG
@@ -171,7 +182,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
     // this tells flush() that we are done with the for() loop
     burst_ = 0;
 
-    if (handle_) {
+    if (SENF_LIKELY(handle_)) {
         if (SENF_UNLIKELY(flushPending_))
             flush();
         else
@@ -187,8 +198,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     : handle_ ()
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
-    , ioEvent_( handle_, IOEvent::Write)
-    , qAlgo_( new NoneQueueingAlgorithm())
+    , redFilterCallback_(redFilterDrop)
     , dropped_(0)
 #ifdef SENF_DEBUG
     , burst_ (0)
@@ -198,8 +208,6 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
     input.throttlingDisc( ThrottlingDiscipline::NONE);
-    registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
-    ioEvent_.enabled(false);
 }
 
 template <class Connector>
@@ -207,8 +215,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     : handle_ (handle)
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
-    , ioEvent_( handle_, IOEvent::Write)
-    , qAlgo_( new NoneQueueingAlgorithm())
+    , redFilterCallback_(redFilterDrop)
     , dropped_(0)  
 #ifdef SENF_DEBUG
     , burst_ (0)
@@ -218,8 +225,6 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
     input.throttlingDisc( ThrottlingDiscipline::NONE);
-    registerEvent(ioEvent_, &PassiveQueueSocketSink::writable);
-    ioEvent_.enabled(false);
 }
 
 template <class Connector>
@@ -234,8 +239,6 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::handle(Handle const & handle)
 {
     handle_ = handle;
-    ioEvent_.set( handle_, IOEvent::Write);
-    qAlgo_->clear();
 }
 
 #ifdef SENF_DEBUG
@@ -247,6 +250,12 @@ prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink<Connector>::burstMax(
     return res;
 }
 #endif
+
+template <class Connector>
+prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::setREDFilterCallback(REDFilterCallback const & cb)
+{
+    redFilterCallback_ = cb;
+}
 
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
@@ -264,19 +273,30 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
 {
-    Packet const & packet (input());
-    if (SENF_UNLIKELY(!qAlgo_->empty())) {
-        dropped_ += !qAlgo_->enqueue(packet);
-        ioEvent_.enabled(!qAlgo_->empty());
+    if (SENF_UNLIKELY(!handle_))
         return;
+
+    Packet const & packet (input());
+
+    // simple RED starting at > 30% usage
+    senf::detail::QueueInfo & qi (* senf::detail::QueuePolicyBase::qinfo(handle_));
+    unsigned usage (qi.usageTx());
+
+    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
+        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-1) * qi.tx.qlen/senf::detail::QueueInfo::NUM_SAMPLES)) {
+            if (!redFilterCallback_(packet)) {
+                qi.txStats.red++;
+                return;
+            }
+        }
     }
 
     boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
     if (SENF_UNLIKELY(!buf)) {
-        dropped_ += !qAlgo_->enqueue(packet);
-        ioEvent_.enabled(!qAlgo_->empty());
+        dropped_++;
         return;
     }
+    
     writePacket(packet, *buf);
 }
 
@@ -291,33 +311,6 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(s
 #ifdef SENF_DEBUG
     ++ burst_;
 #endif
-}
-
-template <class Connector>
-prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writable()
-{
-    handle_.send();
-    while (!qAlgo_->empty()) {
-        boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
-        if (SENF_UNLIKELY(!buf)) {
-            return;
-        }
-        writePacket(qAlgo_->dequeue(), *buf);
-    }
-    ioEvent_.enabled(!qAlgo_->empty());
-}
-
-template <class Connector>
-prefix_ senf::ppi::QueueingAlgorithm & senf::ppi::module::PassiveQueueSocketSink<Connector>::qAlgorithm()
-    const
-{
-    return *qAlgo_;
-}
-
-template <class Connector>
-prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::qAlgorithm(QueueingAlgorithm::ptr qAlgorithm)
-{
-    qAlgo_.reset( qAlgorithm.release());
 }
 
 template <class Connector>

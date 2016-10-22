@@ -70,8 +70,8 @@ namespace emu {
         std::string const & monitorDevice() const;
                                         ///< Get current monitor %interface
 
-        void qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgorithm);
-        ppi::QueueingAlgorithm & qAlgorithm() const;
+        void setREDFilterCallbackRx(senf::ppi::REDFilterCallback const & cb);
+        void setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb);
 
         MonitorDataFilterStatistics filterStats();
         void monitorDropUnknownMCS(bool q);

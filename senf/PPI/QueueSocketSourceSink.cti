@@ -74,8 +74,6 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::flush()
 {
     QueueWritePolicy::flush(handle_);
-    qAlgo_->clear();
-    ioEvent_.enabled(false);
     eventHook_.disable();
 }
 

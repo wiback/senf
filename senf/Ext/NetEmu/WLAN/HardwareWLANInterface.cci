@@ -51,16 +51,13 @@ senf::emu::detail::HardwareWLANInterfaceNet::self()
     return *static_cast<HardwareWLANInterface const *>(this);
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgo)
+prefix_ void senf::emu::HardwareWLANInterface::setREDFilterCallbackRx(senf::ppi::REDFilterCallback const & cb)
 {
-    HardwareWLANInterfaceNet::sink.qAlgorithm( SENF_MOVE(qAlgo));
-    consoleDir().add("queue", qAlgorithm().consoleDir());
+    source.setREDFilterCallback(cb);
 }
-
-prefix_ senf::ppi::QueueingAlgorithm & senf::emu::HardwareWLANInterface::qAlgorithm()
-    const
+prefix_ void senf::emu::HardwareWLANInterface::setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb)
 {
-    return HardwareWLANInterfaceNet::sink.qAlgorithm();
+    sink.setREDFilterCallback(cb);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

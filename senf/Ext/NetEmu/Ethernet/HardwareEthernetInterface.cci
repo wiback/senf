@@ -55,16 +55,13 @@ prefix_ senf::emu::EthernetController & senf::emu::HardwareEthernetInterface::et
     return ctrl_;
 }
 
-prefix_ void senf::emu::HardwareEthernetInterface::qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgo)
+prefix_ void senf::emu::HardwareEthernetInterface::setREDFilterCallbackRx(senf::ppi::REDFilterCallback const & cb)
 {
-    HardwareEthernetInterfaceNet::sink.qAlgorithm( SENF_MOVE(qAlgo));
-    consoleDir().add("queue", qAlgorithm().consoleDir());
+    source.setREDFilterCallback(cb);
 }
-
-prefix_ senf::ppi::QueueingAlgorithm & senf::emu::HardwareEthernetInterface::qAlgorithm()
-    const
+prefix_ void senf::emu::HardwareEthernetInterface::setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb)
 {
-    return HardwareEthernetInterfaceNet::sink.qAlgorithm();
+    sink.setREDFilterCallback(cb);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

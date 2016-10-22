@@ -59,6 +59,8 @@ namespace ppi {
 
     std::ostream & operator<<(std::ostream & os, QueueBufferAnnotation const & annotation);
 
+    typedef std::function<bool (senf::Packet const & pkt)> REDFilterCallback;
+    
 namespace module {
 
     /** \brief Reader for module::ActiveSocketSource (read from socket packet queue)
@@ -98,14 +100,17 @@ namespace module {
         unsigned burstMax();
         unsigned sharedPackets();
 #endif
-
+        
+        void setREDFilterCallback(REDFilterCallback const & cb);
+        
     private:
         Handle handle_;
         IOEvent event_;
+        REDFilterCallback redFilterCallback_;
         unsigned maxBurst_;
         unsigned burst_;
         bool flushPending_;
-
+        
 #ifdef SENF_DEBUG
         unsigned burstMax_;
         unsigned sharedPackets_;
@@ -136,15 +141,14 @@ namespace module {
 
         unsigned dropped();
         
-        QueueingAlgorithm & qAlgorithm() const;
-        void qAlgorithm(QueueingAlgorithm::ptr qAlgorithm);
-
         void send();
         void flush();
 
 #ifdef SENF_DEBUG
         unsigned burstMax();
 #endif
+
+        void setREDFilterCallback(REDFilterCallback const & cb);
 
     private:
         void write();
@@ -153,8 +157,7 @@ namespace module {
 
         Handle handle_;
         scheduler::EventHook eventHook_;
-        IOEvent ioEvent_;
-        boost::scoped_ptr<QueueingAlgorithm> qAlgo_;
+        REDFilterCallback redFilterCallback_;
         unsigned dropped_;
         
 #ifdef SENF_DEBUG

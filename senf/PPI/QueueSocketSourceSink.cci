@@ -47,5 +47,15 @@ prefix_ senf::QueueReadPolicy::Buffer const * senf::ppi::QueueBufferAnnotation::
     return value;
 }
 
+prefix_ bool redFilterPass(senf::Packet const & pkt)
+{
+    return true;
+}
+
+prefix_ bool redFilterDrop(senf::Packet const & pkt)
+{
+    return false;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

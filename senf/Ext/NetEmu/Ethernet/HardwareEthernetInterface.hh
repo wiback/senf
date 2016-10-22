@@ -63,8 +63,8 @@ namespace emu {
 
         std::string device() const;
 
-        void qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgorithm);
-        senf::ppi::QueueingAlgorithm & qAlgorithm() const;
+        void setREDFilterCallbackRx(senf::ppi::REDFilterCallback const & cb);
+        void setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb);
 
         std::uint16_t pvid() const;
         bool     pvid(std::uint16_t p); 
