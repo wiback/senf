@@ -694,6 +694,9 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
            << "dropped "     << ts.dropped << ". ";
         os << "DSQ stats: "
            << "dropped "     << sink.dropped() << std::endl;        
+    } else {
+	// just flush rxStats
+        os << std::endl;
     }
 }
 
@@ -837,13 +840,23 @@ prefix_ void senf::emu::HardwareWLANInterface::qlen(unsigned qlen)
 prefix_ unsigned senf::emu::HardwareWLANInterface::rxQueueDropped()
     const
 {
+    unsigned dropped (0);
+    unsigned red (0);
     if (HardwareWLANInterfaceNet::monSocket) {
-        return HardwareWLANInterfaceNet::monSocket.protocol().rxQueueDropped();
+        dropped = HardwareWLANInterfaceNet::monSocket.protocol().rxQueueDropped();
+        auto const & rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStatsConst());
+        red = rs.red;
     } else if (HardwareWLANInterfaceNet::socket) {
-        return HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
-    } else {
-        return 0;
+        dropped = HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
+        auto const & rs (HardwareWLANInterfaceNet::socket.protocol().rxStatsConst());
+        red = rs.red;
     }
+
+    if (dropped+red > 0) {
+	SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("Rx Buffer Overrun " << dropped << ", RED " << red) );
+    }
+
+    return dropped+red;
 }
 
 prefix_ unsigned senf::emu::HardwareWLANInterface::maxBurst()

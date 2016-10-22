@@ -86,9 +86,9 @@ namespace wiback {
         bool process(std::uint32_t seqNo, std::uint32_t payloadSize) {
             processed++;
             if (SENF_UNLIKELY(last_ == 0xFFFFFFFF)) {
-                last_ = seqNo;
                 good = 1;
                 goodBytes = payloadSize;
+                last_ = seqNo;
                 return true;
             }
 
@@ -112,11 +112,13 @@ namespace wiback {
                     // resync to next expected SeqNo
                     resyncs++;
                     last_ = seqNo;
+                    return true;
                 }
             } else {
                 // frame loss
                 lost += diff-1;
                 last_ = seqNo;
+                return true;
             }
             return false;
         }

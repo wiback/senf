@@ -265,7 +265,7 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
             }
             // simple RED (i.e. due to CPU overload) starting at > 50% usage
             if (SENF_UNLIKELY(usage > (NUM_SAMPLES/2))) {
-                if ((boost::uint32_t(rand()) % (qi.rx.qlen)) < ((usage-(NUM_SAMPLES/4)) * qi.rx.qlen/NUM_SAMPLES)) {
+                if ((boost::uint32_t(rand()) % (qi.rx.qlen)) < ((usage-2) * qi.rx.qlen/NUM_SAMPLES/4)) {
                     qi.rxStats.red++;
                     pk.tp_status = TP_STATUS_KERNEL;
                     if (qi.rx.idle)
@@ -339,7 +339,7 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
     // simple RED starting at > 50% usage
     unsigned usage (qi.usageTx());
     if (SENF_UNLIKELY(usage > (NUM_SAMPLES/2))) {
-        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-(NUM_SAMPLES/4)) * qi.tx.qlen/NUM_SAMPLES)) {
+        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-2) * qi.tx.qlen/NUM_SAMPLES/4)) {
             qi.txStats.red++;
             return boost::none;
         }

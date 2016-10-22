@@ -165,6 +165,13 @@ prefix_ senf::detail::QueueInfo::RxStats senf::MMapSocketProtocol::rxStats()
     return rxStats;
 }
 
+prefix_ senf::detail::QueueInfo::RxStats const & senf::MMapSocketProtocol::rxStatsConst()
+    const
+{
+    return qi_.rxStats;
+}
+
+
 prefix_ unsigned senf::MMapReadableSocketProtocol::available()
     const
 {
