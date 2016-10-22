@@ -830,18 +830,13 @@ prefix_ unsigned senf::emu::HardwareWLANInterface::rxQueueDropped()
     const
 {
     unsigned dropped (0);
-    unsigned red (0);
     if (HardwareWLANInterfaceNet::monSocket) {
         dropped = HardwareWLANInterfaceNet::monSocket.protocol().rxQueueDropped();
-        auto const & rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStats());
-        red = rs.red;
     } else if (HardwareWLANInterfaceNet::socket) {
         dropped = HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
-        auto const & rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
-        red = rs.red;
     }
 
-    return dropped+red;
+    return dropped;
 }
 
 prefix_ unsigned senf::emu::HardwareWLANInterface::maxBurst()
