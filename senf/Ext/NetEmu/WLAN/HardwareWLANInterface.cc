@@ -680,8 +680,8 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
 
     if (HardwareWLANInterfaceNet::socket) {
         auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
-        os << "MMAP Tx (data) stats: "; ts.dump(os);
-        os << "DSQ stats: "
+        os << " MMAP Tx (data) stats: "; ts.dump(os);
+        os << " DSQ stats: "
            << "dropped "     << sink.dropped() << std::endl;        
     } else {
         // just flush rxStats
@@ -839,10 +839,6 @@ prefix_ unsigned senf::emu::HardwareWLANInterface::rxQueueDropped()
         dropped = HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
         auto const & rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
         red = rs.red;
-    }
-
-    if (dropped+red > 0) {
-        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("Rx Buffer Overrun " << dropped << ", RED " << red) );
     }
 
     return dropped+red;

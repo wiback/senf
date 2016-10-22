@@ -126,7 +126,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
 
     // simple RED (i.e. due to CPU overload) starting at > 33% usage
     if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
-        usage = maxBurst_ / (usage-(senf::detail::QueueInfo::NUM_SAMPLES/3)+1);
+        usage = maxBurst_ / (usage-(senf::detail::QueueInfo::NUM_SAMPLES/3)+2);
     } else {
         usage = 0;
     }
@@ -137,7 +137,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         if (SENF_UNLIKELY(!buf))
             break;
 
-        if ((usage > 0) and (std::uint32_t(rand()) % usage) == 0) {
+        if ((usage > 0) and (std::uint32_t(burst_) % usage) == 0) {
             qi.rxStats.red++;
             continue;
         }

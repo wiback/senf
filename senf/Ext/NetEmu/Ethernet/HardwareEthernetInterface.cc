@@ -455,7 +455,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
         auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
         os << "MMAP Rx stats: "; rs.dump(os);
         auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
-        os << "MMAP Tx stats: "; ts.dump(os);
+        os << " MMAP Tx stats: "; ts.dump(os);
         os << "DSQ stats: "
            << "dropped "     << sink.dropped() << std::endl;
     } else {
