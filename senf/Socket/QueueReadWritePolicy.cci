@@ -342,7 +342,7 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
 {
     detail::QueueInfo & qi (* qinfo(handle));    
     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.head));
-    if ((qi.tx.idle || qi.tx.head != qi.tx.tail) && (pk.tp_status == TP_STATUS_AVAILABLE)) {
+    if (SENF_LIKELY((qi.tx.idle || qi.tx.head != qi.tx.tail) && (pk.tp_status == TP_STATUS_AVAILABLE))) {
         ::memset(&pk, 0, qi.hdrlen);
         pk.tp_mac = pk.tp_net = qi.hdrlen
 #ifdef SENF_ENABLE_TPACKET_OFFSET
