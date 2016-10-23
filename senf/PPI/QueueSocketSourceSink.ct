@@ -134,7 +134,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
 
     // simple RED (i.e. due to CPU overload) starting at > 33% usage
     if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
-        usage = maxBurst_ / usage;
+        usage = maxBurst_ / (usage-1);
     } else {
         usage = 0;
     }
@@ -294,6 +294,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
     boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
     if (SENF_UNLIKELY(!buf)) {
         dropped_++;
+        eventHook_.enable();  // there might be packets to be pushed to the kernel
         return;
     }
     

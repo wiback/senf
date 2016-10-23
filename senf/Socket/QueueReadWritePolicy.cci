@@ -365,10 +365,18 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
 
     detail::QueueInfo & qi (* qinfo(handle));
 
+    //
+    // just forget about any frames in the ring which have not yet been pushed into the kernel
+    //
+    while (SENF_LIKELY(!qi.tx.idle || qi.tx.tail != qi.tx.head)) {  // we assume bursts >> likely
+        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.tx.tail));
+        pk.tp_status = TP_STATUS_AVAILABLE;
+        qi.inc(qi.tx.tail, qi.tx);
+    }
+    
     if (qi.tx.idle)
         return;
     
-    // just forget about any frames in the ring which have not yet been pushed into the kernel
     qi.tx.head = qi.tx.tail;
     qi.tx.idle = true;
     return;
