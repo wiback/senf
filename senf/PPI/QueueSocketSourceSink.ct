@@ -239,6 +239,7 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::handle(Handle const & handle)
 {
     handle_ = handle;
+    eventHook_.disable();
 }
 
 #ifdef SENF_DEBUG
