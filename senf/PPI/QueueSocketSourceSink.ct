@@ -239,7 +239,6 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::handle(Handle const & handle)
 {
     handle_ = handle;
-    eventHook_.disable();
 }
 
 #ifdef SENF_DEBUG
@@ -274,10 +273,10 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
 {
+    Packet const & packet (input());
+
     if (SENF_UNLIKELY(!handle_))
         return;
-
-    Packet const & packet (input());
 
     // simple RED starting at > 30% usage
     senf::detail::QueueInfo & qi (* senf::detail::QueuePolicyBase::qinfo(handle_));
@@ -287,6 +286,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
         if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-1) * qi.tx.qlen/senf::detail::QueueInfo::NUM_SAMPLES)) {
             if (!redFilterCallback_(packet)) {
                 qi.txStats.red++;
+                dropped_++;
                 eventHook_.enable();  // there might be packets to be pushed to the kernel
                 return;
             }

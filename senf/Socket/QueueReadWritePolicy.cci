@@ -373,6 +373,9 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
         pk.tp_status = TP_STATUS_AVAILABLE;
         qi.inc(qi.tx.tail, qi.tx);
     }
+
+    // trigger a send() to flush out frames that we can not mark AVAILABLE (should there actually be any) ?
+    send(handle);
     
     if (qi.tx.idle)
         return;
