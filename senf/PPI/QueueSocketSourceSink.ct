@@ -288,7 +288,6 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
             if (!redFilterCallback_(packet)) {
                 qi.txStats.red++;
                 dropped_++;
-                eventHook_.enable();  // there might be packets to be pushed to the kernel
                 return;
             }
         }
@@ -297,7 +296,6 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
     boost::optional<QueueWritePolicy::Buffer> buf (handle_.enqueue());
     if (SENF_UNLIKELY(!buf)) {
         dropped_++;
-        eventHook_.enable();  // there might be packets to be pushed to the kernel
         return;
     }
     
