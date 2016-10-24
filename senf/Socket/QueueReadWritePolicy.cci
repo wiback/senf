@@ -379,8 +379,13 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
         qi.tx.idle = true;
     }
 
-    // trigger a send() to flush out frames that we can not mark AVAILABLE (should there actually be any) ?
-    send(handle);
+    // check if there are any more SEND_REQUEST marked frames that we can just discard/flush
+    for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) { 
+        struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buf));
+        if (pk.tp_status == TP_STATUS_SEND_REQUEST) {
+            pk.tp_status = TP_STATUS_AVAILABLE;
+        }
+    }
 }
 
 prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
