@@ -430,10 +430,14 @@ prefix_ void senf::emu::HardwareEthernetInterface::qlen(unsigned qlen)
     }
 }
 
-prefix_ unsigned senf::emu::HardwareEthernetInterface::rxQueueDropped()
-    const
+prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareEthernetInterface::rxDropped()
 {
-    return HardwareEthernetInterfaceNet::socket.valid() ? HardwareEthernetInterfaceNet::socket.protocol().rxQueueDropped() : 0;
+    return source.dropped();
+}
+
+prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareEthernetInterface::txDropped()
+{
+    return sink.dropped();
 }
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::maxBurst()
@@ -454,8 +458,6 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
         os << "MMAP Rx stats: "; rs.dump(os);
         auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
         os << " MMAP Tx stats: "; ts.dump(os);
-        os << "DSQ stats: "
-           << "dropped "     << sink.dropped() << std::endl;
     } else {
         os << "Socket closed. No stats available." << std::endl;
     }

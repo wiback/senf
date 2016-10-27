@@ -102,7 +102,9 @@ namespace module {
 #endif
         
         void setREDFilterCallback(REDFilterCallback const & cb);
-        
+
+        std::pair<unsigned,unsigned> dropped();
+
     private:
         Handle handle_;
         IOEvent event_;
@@ -110,6 +112,7 @@ namespace module {
         unsigned maxBurst_;
         unsigned burst_;
         bool flushPending_;
+        unsigned red_;
         
 #ifdef SENF_DEBUG
         unsigned burstMax_;
@@ -139,7 +142,7 @@ namespace module {
         Handle handle() const;
         void handle(Handle const & handle);
 
-        unsigned dropped();
+        std::pair<unsigned,unsigned> dropped();
         
         void send();
         void flush();
@@ -158,6 +161,7 @@ namespace module {
         Handle handle_;
         scheduler::EventHook eventHook_;
         REDFilterCallback redFilterCallback_;
+        unsigned red_;
         unsigned dropped_;
         
 #ifdef SENF_DEBUG

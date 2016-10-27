@@ -104,7 +104,8 @@ namespace emu {
         unsigned qlen() const;
         void     qlen(unsigned qlen);
 
-        unsigned rxQueueDropped() const;
+        std::pair<unsigned,unsigned> rxDropped();
+        std::pair<unsigned,unsigned> txDropped();
 
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);

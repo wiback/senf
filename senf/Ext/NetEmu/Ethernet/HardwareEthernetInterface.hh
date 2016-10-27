@@ -77,7 +77,8 @@ namespace emu {
         unsigned qlen() const;
         void     qlen(unsigned qlen);
 
-        unsigned rxQueueDropped() const;
+        std::pair<unsigned,unsigned> rxDropped();
+        std::pair<unsigned,unsigned> txDropped();
 
         void dumpMmapStats(std::ostream & os);
 

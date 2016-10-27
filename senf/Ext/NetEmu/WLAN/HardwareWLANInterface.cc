@@ -679,8 +679,6 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
     if (HardwareWLANInterfaceNet::socket) {
         auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
         os << " MMAP Tx (data) stats: "; ts.dump(os);
-        os << " DSQ stats: "
-           << "dropped "     << sink.dropped() << std::endl;        
     } else {
         // just flush rxStats
         os << std::endl;
@@ -824,17 +822,18 @@ prefix_ void senf::emu::HardwareWLANInterface::qlen(unsigned qlen)
     }
 }
 
-prefix_ unsigned senf::emu::HardwareWLANInterface::rxQueueDropped()
-    const
+prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareWLANInterface::rxDropped()
 {
-    unsigned dropped (0);
     if (HardwareWLANInterfaceNet::monSocket) {
-        dropped = HardwareWLANInterfaceNet::monSocket.protocol().rxQueueDropped();
-    } else if (HardwareWLANInterfaceNet::socket) {
-        dropped = HardwareWLANInterfaceNet::socket.protocol().rxQueueDropped();
+        return monSource.dropped();
     }
 
-    return dropped;
+    return source.dropped();
+}
+
+prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareWLANInterface::txDropped()
+{
+    return sink.dropped();
 }
 
 prefix_ unsigned senf::emu::HardwareWLANInterface::maxBurst()

@@ -36,6 +36,7 @@
 #include <senf/Utils/senflikely.hh>
 #include "SocketSource.hh"
 #include <senf/Socket/QueueReadWritePolicy.ih>
+#include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +53,7 @@ senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::ActiveQueueSocketS
     , maxBurst_ (burst)
     , burst_(0)
     , flushPending_(false)
+    , red_(0)
 #ifdef SENF_DEBUG
     , burstMax_ (0)
     , sharedPackets_ (0)
@@ -70,6 +72,7 @@ ActiveQueueSocketSource(Handle const & handle, unsigned burst)
     , maxBurst_ (burst)
     , burst_(0)
     , flushPending_(false)
+    , red_(0)
 #ifdef SENF_DEBUG
     , burstMax_ (0)
     , sharedPackets_ (0)
@@ -93,6 +96,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handl
 {
     burst_ = 0;
     flushPending_ = false;
+    red_ = 0;
     handle_ = handle;
     event_.set(handle_, IOEvent::Read);
 }
@@ -161,6 +165,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             if (SENF_UNLIKELY((usage > 0) and ((burst_ % usage) == 0) and !redFilterCallback_(pk))) {
                 // drop frame
                 qi.rxStats.red++;
+                red_++;
             } else {
                 // process frame
                 output(pk);
@@ -190,6 +195,22 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
     }
 }
 
+template <class Packet, class Connector>
+prefix_ std::pair<unsigned,unsigned> senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::dropped()
+{
+    unsigned dropped (0);
+    if (handle_) {
+        try {
+            auto & h (reinterpret_cast<ConnectedMMapPacketSocketHandle &>(handle_));
+            dropped = h.protocol().rxQueueDropped();
+        } catch (...) {};
+    }
+    std::pair<unsigned,unsigned> tmp (std::make_pair(red_, dropped));
+    red_ = 0;
+    return tmp;
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveQueueSocketSink
 
@@ -199,6 +220,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
     , redFilterCallback_(redFilterDrop)
+    , red_(0)
     , dropped_(0)
 #ifdef SENF_DEBUG
     , burst_ (0)
@@ -216,6 +238,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
     , redFilterCallback_(redFilterDrop)
+    , red_(0)
     , dropped_(0)  
 #ifdef SENF_DEBUG
     , burst_ (0)
@@ -240,6 +263,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::handle(Handle
 {
     handle_ = handle;
     eventHook_.disable();
+    red_ = dropped_ = 0;
 }
 
 #ifdef SENF_DEBUG
@@ -287,7 +311,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
         if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-1) * qi.tx.qlen/senf::detail::QueueInfo::NUM_SAMPLES)) {
             if (!redFilterCallback_(packet)) {
                 qi.txStats.red++;
-                dropped_++;
+                red_++;
                 return;
             }
         }
@@ -316,10 +340,10 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(s
 }
 
 template <class Connector>
-prefix_ unsigned senf::ppi::module::PassiveQueueSocketSink<Connector>::dropped()
+prefix_ std::pair<unsigned,unsigned> senf::ppi::module::PassiveQueueSocketSink<Connector>::dropped()
 {
-    unsigned tmp (dropped_);
-    dropped_ = 0;
+    std::pair<unsigned,unsigned> tmp (std::make_pair(red_,dropped_));
+    red_ = dropped_ = 0;
     return tmp;
 }
 
