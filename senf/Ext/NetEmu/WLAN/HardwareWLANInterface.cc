@@ -87,6 +87,8 @@ prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::dataSource(bool on)
         source.flush();
         // flush any pending packets from the filter
         monitorDataFilter.flushQueues();
+	// flush old rxDropped values
+        source.dropped();
     } else {
         source.handle(ConnectedMMapPacketSocketHandle(senf::noinit));
     }
