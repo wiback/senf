@@ -50,7 +50,7 @@ namespace annotations {
     /** \brief Incoming or outgoing interface */
     struct Interface
     {
-        MACAddress value;
+        mutable MACAddress value;
         // Very nice: senf::MACAddress is based on boost::array which has a trivial default
         // constructor and such can be used in a simple annotation
 
