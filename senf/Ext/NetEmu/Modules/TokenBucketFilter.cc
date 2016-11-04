@@ -117,9 +117,9 @@ prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 {
     rate_ = bits_per_second;
 
+    queueAlgo_->clear();
+    
     if (rate_ == 0u) {
-        // we have to flush the queue now
-        queueAlgo_->clear();
         input.onRequest( &TokenBucketFilter::byPass);
     }  else {
         input.onRequest( &TokenBucketFilter::onRequest);
@@ -128,32 +128,31 @@ prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 
 prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 {
-    SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
-    ClockService::int64_type delta (senf::ClockService::in_nanoseconds(ClockService::now() - timer_.timeout()));
-    timerDeviation_.accumulate(delta);
+    // ClockService::int64_type delta (senf::ClockService::in_nanoseconds(ClockService::now() - timer_.timeout()));
+    // timerDeviation_.accumulate(delta);
     fillBucket();
     while (not queueAlgo_->empty() and queueAlgo_->frontPacketSize() <= bucketSize_) {
-        Packet packet (queueAlgo_->dequeue());
+        Packet const & packet (queueAlgo_->dequeue());
         bucketSize_ -= packet.size();
         output(packet);
     }
-    if (not queueAlgo_->empty())
-        setTimeout();
+    if (queueAlgo_->empty())
+      input.onRequest( &TokenBucketFilter::onRequest);
+    else
+      setTimeout();
 }
 
 prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 {
-    SENF_ASSERT( !queueAlgo_->empty(), "internal TokenBucketFilter error");
-    ClockService::clock_type now (ClockService::now());
+    ClockService::clock_type now (scheduler::now());
     Packet::size_type packetSize (queueAlgo_->frontPacketSize());
-    SENF_ASSERT( packetSize > bucketSize_, "internal TokenBucketFilter error");
     ClockService::clock_type defer (ClockService::nanoseconds((packetSize - bucketSize_) * 8000000000ul / rate_));
     timer_.timeout( now + defer);
 }
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
-    ClockService::clock_type now (ClockService::now());
+    ClockService::clock_type now (scheduler::now());
     ClockService::int64_type diff (ClockService::in_nanoseconds(now - lastToken_));
 
     lastToken_ = now;
@@ -172,33 +171,38 @@ prefix_ void senf::emu::TokenBucketFilter::byPass()
     output(input());
 }
 
+prefix_ void senf::emu::TokenBucketFilter::onRequestQueueing()
+{
+    bucketEmpty_++;
+    if (queueAlgo_->enqueue(input())) {
+        setTimeout();
+    }
+}
+
+
 prefix_ void senf::emu::TokenBucketFilter::onRequest()
 {
-    Packet const & packet (input.read());
+    Packet const & packet (input());
+    Packet::size_type packetSize (packet.size());
 
-    if (!queueAlgo_->empty()) {
-        bucketEmpty_++;
-        queueAlgo_->enqueue( packet);
-        return;
-    }
-    
     fillBucketLimit();
 
-    Packet::size_type packetSize (packet.size());
     if (packetSize <= bucketSize_) {
         if (bucketSize_ < bucketLowThresh_ &&  bucketSize_ <= (std::uint32_t(rand()) % bucketLowThresh_)) {
-            // drop packet early...indicating an empty(ing) bucket
-            bucketEmpty_++;
-            return;
+	    // drop packet early...indicating an empty(ing) bucket
+	    bucketEmpty_++;
+	    return;
         }
-        bucketSize_ -= packetSize;
+	bucketSize_ -= packetSize;
         output.write( packet);
         return;
     }
 
     bucketEmpty_++;
-    if (queueAlgo_->enqueue( packet))
+    if (queueAlgo_->enqueue( packet)) {
+        input.onRequest( &TokenBucketFilter::onRequestQueueing);
         setTimeout();
+    }
 }
 
 prefix_ senf::ppi::QueueingAlgorithm & senf::emu::TokenBucketFilter::qAlgorithm()

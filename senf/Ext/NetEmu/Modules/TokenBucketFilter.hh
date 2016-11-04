@@ -80,6 +80,7 @@ namespace emu {
 
         void onTimeout();
         void onRequest();
+        void onRequestQueueing();
         void byPass();
         void fillBucket();
         void fillBucketLimit();
