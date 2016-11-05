@@ -73,19 +73,9 @@ prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool fo
         }
     }
 
-    queue_.push(packet);
+    queue_.emplace(packet);
     queueSize_ += packet.size();
     return true;
-}
-
-prefix_ senf::Packet senf::emu::REDQueue::v_dequeue()
-{
-    Packet tmp (queue_.front());
-    queue_.pop();
-    if (SENF_LIKELY(tmp)) {
-        queueSize_ -= tmp.size();
-    }
-    return tmp;
 }
 
 prefix_ void senf::emu::REDQueue::v_pop()
@@ -104,26 +94,12 @@ prefix_ void senf::emu::REDQueue::v_clear()
         queue_.pop();
 }
 
-prefix_ unsigned senf::emu::REDQueue::v_frontPacketSize()
-    const
-{
-    try {
-        return queue_.front().size();
-    } catch (...) {
-        return 0;
-    }
-}
-
 prefix_ unsigned senf::emu::REDQueue::v_peek(unsigned maxSize)
     const
 {
-    try {
-        if (queue_.front().size() <= maxSize)
-            return queue_.front().size();
-        return 0;
-    } catch (...) {
-        return 0;
-    }
+    if (!queue_.empty() and (queue_.front().size() <= maxSize))
+        return queue_.front().size();
+    return 0;
 }
 
 prefix_ senf::Packet const & senf::emu::REDQueue::v_front()
@@ -146,10 +122,8 @@ prefix_ void senf::emu::REDQueue::limit(boost::uint32_t bytes, boost::uint8_t lo
     lowThreshPrecentage_ = lowThreshPrecentage;
 
     lowThresh_ = (queueLimit_ * lowThreshPrecentage_) / 100;
-    while (queueSize_ > queueLimit_) {
-        queueSize_ -= queue_.front().size();
-        queue_.pop();
-    }
+
+    clear();
 }
 
 prefix_ senf::emu::REDQueue::limit_t senf::emu::REDQueue::limit()
