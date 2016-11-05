@@ -131,21 +131,22 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
     // ClockService::int64_type delta (senf::ClockService::in_nanoseconds(ClockService::now() - timer_.timeout()));
     // timerDeviation_.accumulate(delta);
     fillBucket();
-    while (not queueAlgo_->empty() and queueAlgo_->frontPacketSize() <= bucketSize_) {
-        Packet const & packet (queueAlgo_->dequeue());
-        bucketSize_ -= packet.size();
-        output(packet);
+    unsigned pktSize;
+    while ((pktSize = queueAlgo_->peek(bucketSize_)) > 0) {
+        bucketSize_ -= pktSize;
+        output(queueAlgo_->front());
+	queueAlgo_->pop();
     }
     if (queueAlgo_->empty())
-      input.onRequest( &TokenBucketFilter::onRequest);
+        input.onRequest( &TokenBucketFilter::onRequest);
     else
-      setTimeout();
+        setTimeout();
 }
 
 prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 {
     ClockService::clock_type now (scheduler::now());
-    Packet::size_type packetSize (queueAlgo_->frontPacketSize());
+    Packet::size_type packetSize (queueAlgo_->peek());
     ClockService::clock_type defer (ClockService::nanoseconds((packetSize - bucketSize_) * 8000000000ul / rate_));
     timer_.timeout( now + defer);
 }

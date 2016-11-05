@@ -262,14 +262,11 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
 
 prefix_ void senf::emu::detail::TunnelControllerBase::flushQueue(Handle & handle)
 {
-    while (handle.writeable()) {
-        senf::Packet eth (qAlgo_->dequeue());
-        if (eth) {
-            do_sendPkt(handle, eth.as<EthernetPacket>());
-        }
-        else {
-            break;
-        }
+    while (handle.writeable() and qAlgo_->peek()) {
+        // the below is not ideal as we create a new PktImpl. The whole mess here needs an overhaul
+        senf::EthernetPacket eth (qAlgo_->front().as<EthernetPacket>());
+        do_sendPkt(handle, eth);
+        qAlgo_->pop();
     }
 }
 

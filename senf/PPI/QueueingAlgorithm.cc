@@ -86,16 +86,6 @@ prefix_ senf::ppi::FIFOQueueingAlgorithm::FIFOQueueingAlgorithm()
     consoleDir().add("max-size", console::factory::Variable(max_size_) );
 }
 
-prefix_ senf::Packet senf::ppi::FIFOQueueingAlgorithm::v_dequeue()
-{
-    if (queue_.size() > 0) {
-        Packet p (queue_.front());
-        queue_.pop();
-        return p;
-    }
-    return Packet();
-}
-
 prefix_ bool senf::ppi::FIFOQueueingAlgorithm::v_enqueue(Packet const & packet, bool force)
 {
     if (!force and (queue_.size() >= max_size_))

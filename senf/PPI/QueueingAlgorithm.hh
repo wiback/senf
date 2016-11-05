@@ -52,20 +52,22 @@ namespace ppi {
         virtual ~QueueingAlgorithm() {};
 
         console::DirectoryNode & consoleDir();
-        Packet dequeue();
+        void pop();
+        Packet const & front() const;
         bool enqueue(Packet const & packet, bool force = false);
         unsigned size() const;
-        unsigned frontPacketSize() const;
+        unsigned peek(unsigned maxSize = 0x7fffffff) const;
         void clear();
         bool empty() const;
 
     protected:
         QueueingAlgorithm();
 
-        virtual Packet v_dequeue() = 0;
+        virtual Packet const & v_front() const = 0;
+        virtual void v_pop() = 0;
         virtual bool v_enqueue(Packet const & packet, bool force) = 0;
         virtual unsigned v_size() const = 0;
-        virtual unsigned v_frontPacketSize() const = 0;
+        virtual unsigned v_peek(unsigned maxSize) const = 0;
         virtual void v_clear() = 0;
         virtual bool v_empty() const = 0;
     };
@@ -129,10 +131,11 @@ namespace ppi {
 
         FIFOQueueingAlgorithm();
 
-        virtual Packet v_dequeue();
+        virtual Packet const & v_front() const;
+        virtual unsigned v_peek(unsigned maxSize) const;
+        virtual void v_pop();
         virtual bool v_enqueue(Packet const & packet, bool force);
         virtual unsigned v_size() const;
-        virtual unsigned v_frontPacketSize() const;
         virtual void v_clear();
         virtual bool v_empty() const;
 
@@ -143,10 +146,11 @@ namespace ppi {
 
     class NoneQueueingAlgorithm : public QueueingAlgorithm
     {
-        virtual Packet v_dequeue();
+        virtual Packet const & v_front() const;
+        virtual unsigned v_peek(unsigned maxSize) const;
+        virtual void v_pop();
         virtual bool v_enqueue(Packet const & packet, bool force);
         virtual unsigned v_size() const;
-        virtual unsigned v_frontPacketSize() const;
         virtual void v_clear();
         virtual bool v_empty() const;
 

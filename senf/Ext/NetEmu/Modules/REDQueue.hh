@@ -59,6 +59,11 @@ namespace emu {
         void resetDropped();
 
     private:
+        unsigned v_peek(unsigned maxSize) const;
+        senf::Packet const & v_front() const;
+
+        bool v_dequeue(senf::Packet & pkt);
+        void v_pop();
         senf::Packet v_dequeue();
         bool v_enqueue(senf::Packet const & packet, bool force);
         unsigned v_size() const;

@@ -86,9 +86,10 @@ prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::write()
 template <class Writer>
 prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::writable()
 {
-    Packet p (qAlgo_->dequeue());
-    if (p)
-        writer_( handle_, static_cast<PacketType const &>(p));
+    if (qAlgo_->peek() > 0) {
+        writer_( handle_, static_cast<PacketType const &>(qAlgo_->front()));
+        qAlgo_->pop();
+    }
     if (qAlgo_->size() == 0) {
         event_.enabled( false);
     }

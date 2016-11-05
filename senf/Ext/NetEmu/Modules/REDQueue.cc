@@ -66,13 +66,8 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
 
 prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool force)
 {
-    if (queueLimit_ == 0) {
-        packetsDroppedTotal_++;
-        return false;
-    }
-
     if (!force and (queueSize_ > lowThresh_)) {
-        if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_)) <= (queueSize_ - lowThresh_) ) {
+        if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_ + 1)) <= (queueSize_ - lowThresh_) ) {
             packetsDroppedTotal_++;
             return false;  // no additional packet added to queue
         }
@@ -93,6 +88,13 @@ prefix_ senf::Packet senf::emu::REDQueue::v_dequeue()
     return tmp;
 }
 
+prefix_ void senf::emu::REDQueue::v_pop()
+{
+    queueSize_ -= queue_.front().size();
+    queue_.pop();
+}
+
+
 prefix_ void senf::emu::REDQueue::v_clear()
 {
     queueSize_ = 0;
@@ -105,8 +107,31 @@ prefix_ void senf::emu::REDQueue::v_clear()
 prefix_ unsigned senf::emu::REDQueue::v_frontPacketSize()
     const
 {
-    return queue_.front().size();
+    try {
+        return queue_.front().size();
+    } catch (...) {
+        return 0;
+    }
 }
+
+prefix_ unsigned senf::emu::REDQueue::v_peek(unsigned maxSize)
+    const
+{
+    try {
+        if (queue_.front().size() <= maxSize)
+            return queue_.front().size();
+        return 0;
+    } catch (...) {
+        return 0;
+    }
+}
+
+prefix_ senf::Packet const & senf::emu::REDQueue::v_front()
+    const
+{
+    return queue_.front();
+}
+
 
 prefix_ void senf::emu::REDQueue::limit(boost::uint32_t bytes, boost::uint8_t lowThreshPrecentage)
 {

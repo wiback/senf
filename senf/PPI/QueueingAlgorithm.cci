@@ -44,10 +44,10 @@ prefix_ unsigned senf::ppi::QueueingAlgorithm::size()
     return v_size();
 }
 
-prefix_ unsigned senf::ppi::QueueingAlgorithm::frontPacketSize()
+prefix_ unsigned senf::ppi::QueueingAlgorithm::peek(unsigned maxSize)
     const
 {
-    return v_frontPacketSize();
+    return v_peek(maxSize);
 }
 
 prefix_ void senf::ppi::QueueingAlgorithm::clear()
@@ -61,14 +61,20 @@ prefix_ bool senf::ppi::QueueingAlgorithm::empty()
     return v_empty();
 }
 
-prefix_ senf::Packet senf::ppi::QueueingAlgorithm::dequeue()
+prefix_ senf::Packet const & senf::ppi::QueueingAlgorithm::front()
+    const
 {
-    return v_dequeue();
+    return v_front();
 }
 
 prefix_ bool senf::ppi::QueueingAlgorithm::enqueue(Packet const & packet, bool force)
 {
     return v_enqueue( packet, force);
+}
+
+prefix_ void senf::ppi::QueueingAlgorithm::pop()
+{
+    return v_pop();
 }
 
 
@@ -81,10 +87,28 @@ prefix_ unsigned senf::ppi::FIFOQueueingAlgorithm::v_size()
     return queue_.size();
 }
 
-prefix_ unsigned senf::ppi::FIFOQueueingAlgorithm::v_frontPacketSize()
+prefix_ unsigned senf::ppi::FIFOQueueingAlgorithm::v_peek(unsigned maxSize)
     const
 {
-    return queue_.empty() ? 0 : queue_.front().size();
+    try {
+        if (queue_.front().size() <= maxSize)
+            return queue_.front().size();
+        return 0;
+    } catch (...) {
+        return 0;
+    }
+}
+
+prefix_ senf::Packet const & senf::ppi::FIFOQueueingAlgorithm::v_front()
+    const
+{
+    return queue_.front();
+}
+
+
+prefix_ void senf::ppi::FIFOQueueingAlgorithm::v_pop()
+{
+    queue_.pop();
 }
 
 prefix_ bool senf::ppi::FIFOQueueingAlgorithm::v_empty()
@@ -102,19 +126,25 @@ prefix_ unsigned senf::ppi::NoneQueueingAlgorithm::v_size()
     return 0u;
 }
 
-prefix_ unsigned senf::ppi::NoneQueueingAlgorithm::v_frontPacketSize()
+prefix_ unsigned senf::ppi::NoneQueueingAlgorithm::v_peek(unsigned maxSize)
     const
 {
-    return 0u;
+    return 0;
+}
+
+prefix_ senf::Packet const & senf::ppi::NoneQueueingAlgorithm::v_front()
+    const
+{
+    static senf::Packet _pkt_;
+    return _pkt_;
+}
+
+prefix_ void senf::ppi::NoneQueueingAlgorithm::v_pop()
+{
 }
 
 prefix_ void senf::ppi::NoneQueueingAlgorithm::v_clear()
 {}
-
-prefix_ senf::Packet senf::ppi::NoneQueueingAlgorithm::v_dequeue()
-{
-    return Packet();
-}
 
 prefix_ bool senf::ppi::NoneQueueingAlgorithm::v_enqueue(Packet const & packet, bool force)
 {
