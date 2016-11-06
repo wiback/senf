@@ -135,7 +135,7 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
     while ((pktSize = queueAlgo_->peek(bucketSize_)) > 0) {
         bucketSize_ -= pktSize;
         output(queueAlgo_->front());
-	queueAlgo_->pop();
+        queueAlgo_->pop();
     }
     if (queueAlgo_->empty())
         input.onRequest( &TokenBucketFilter::onRequest);
@@ -187,18 +187,18 @@ prefix_ void senf::emu::TokenBucketFilter::onRequest()
     Packet::size_type packetSize (packet.size());
 
     fillBucketLimit();
-
+    
     if (packetSize <= bucketSize_) {
         if (bucketSize_ < bucketLowThresh_ &&  bucketSize_ <= (std::uint32_t(rand()) % bucketLowThresh_)) {
-	    // drop packet early...indicating an empty(ing) bucket
-	    bucketEmpty_++;
-	    return;
+            // drop packet early...indicating an empty(ing) bucket
+            bucketEmpty_++;
+            return;
         }
-	bucketSize_ -= packetSize;
+        bucketSize_ -= packetSize;
         output.write( packet);
         return;
     }
-
+    
     bucketEmpty_++;
     if (queueAlgo_->enqueue( packet)) {
         input.onRequest( &TokenBucketFilter::onRequestQueueing);

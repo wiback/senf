@@ -80,7 +80,7 @@ prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool fo
 
 prefix_ void senf::emu::REDQueue::v_pop()
 {
-    if (frontPktSize_ > 0) {
+    if (SENF_LIKELY(frontPktSize_ > 0)) {
         queueSize_ -= frontPktSize_;
         queue_.pop();
         frontPktSize_ = 0;
@@ -93,7 +93,7 @@ prefix_ void senf::emu::REDQueue::v_clear()
     queueSize_ = 0;
     packetsDroppedLast_ = 0;
     packetsDroppedTotal_ = 0;
-    while (! queue_.empty())
+    while (!queue_.empty())
         queue_.pop();
     frontPktSize_ = 0;
 }
