@@ -163,7 +163,7 @@ prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 prefix_ void senf::emu::TokenBucketFilter::fillBucketLimit()
 {
     fillBucket();
-    bucketSize_ %= bucketLimit_;
+    bucketSize_ = std::min(bucketSize_, bucketLimit_);
 }
 
 

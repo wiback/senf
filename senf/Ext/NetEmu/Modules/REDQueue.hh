@@ -47,14 +47,14 @@ namespace emu {
         static ppi::QueueingAlgorithm::ptr create();
 
 
-        typedef std::pair<boost::uint32_t,boost::uint8_t> limit_t;
+        typedef std::pair<std::uint32_t,std::uint8_t> limit_t;
 
-        REDQueue(boost::uint32_t _limit = 16384, boost::uint8_t lowThreshPrecentage = 25);
+        REDQueue(std::uint32_t _limit = 16384, std::uint8_t lowThreshPrecentage = 25);
 
-        void limit(boost::uint32_t bytes, boost::uint8_t lowThreshPrecentage = 25);
+        void limit(std::uint32_t bytes, std::uint8_t lowThreshPrecentage = 25);
         limit_t limit() const;
 
-        boost::uint32_t dropped() const;
+        std::uint32_t dropped() const;
         void incrDropped();
         void resetDropped();
 
@@ -70,12 +70,13 @@ namespace emu {
         bool v_empty() const;
 
         std::queue<senf::Packet> queue_;
-        boost::uint32_t queueLimit_;
-        boost::uint32_t lowThresh_;
-        boost::uint8_t  lowThreshPrecentage_;
-        boost::uint32_t queueSize_;
-        boost::uint32_t packetsDroppedTotal_;
-        boost::uint32_t packetsDroppedLast_;
+        std::uint32_t queueLimit_;
+        std::uint32_t lowThresh_;
+        std::uint8_t  lowThreshPrecentage_;
+        std::uint32_t queueSize_;
+        mutable std::uint32_t frontPktSize_;
+        std::uint32_t packetsDroppedTotal_;
+        std::uint32_t packetsDroppedLast_;
     };
 
 }}

@@ -90,13 +90,9 @@ prefix_ unsigned senf::ppi::FIFOQueueingAlgorithm::v_size()
 prefix_ unsigned senf::ppi::FIFOQueueingAlgorithm::v_peek(unsigned maxSize)
     const
 {
-    try {
-        if (queue_.front().size() <= maxSize)
-            return queue_.front().size();
-        return 0;
-    } catch (...) {
-        return 0;
-    }
+    if (!queue_.empty() and (queue_.front().size() <= maxSize))
+        return queue_.front().size();
+    return 0;
 }
 
 prefix_ senf::Packet const & senf::ppi::FIFOQueueingAlgorithm::v_front()

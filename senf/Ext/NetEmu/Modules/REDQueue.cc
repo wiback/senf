@@ -44,7 +44,7 @@ prefix_ senf::ppi::QueueingAlgorithm::ptr senf::emu::REDQueue::create()
 }
 
 prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t lowThreshPrecentage)
-    : queueLimit_ (0), lowThresh_ (0), lowThreshPrecentage_ (lowThreshPrecentage)
+    : queueLimit_ (0), lowThresh_ (0), lowThreshPrecentage_ (lowThreshPrecentage), frontPktSize_(0)
 {
     clear();
     limit( _limit, lowThreshPrecentage_);
@@ -80,8 +80,11 @@ prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool fo
 
 prefix_ void senf::emu::REDQueue::v_pop()
 {
-    queueSize_ -= queue_.front().size();
-    queue_.pop();
+    if (frontPktSize_ > 0) {
+        queueSize_ -= frontPktSize_;
+        queue_.pop();
+        frontPktSize_ = 0;
+    }
 }
 
 
@@ -92,13 +95,14 @@ prefix_ void senf::emu::REDQueue::v_clear()
     packetsDroppedTotal_ = 0;
     while (! queue_.empty())
         queue_.pop();
+    frontPktSize_ = 0;
 }
 
 prefix_ unsigned senf::emu::REDQueue::v_peek(unsigned maxSize)
     const
 {
     if (!queue_.empty() and (queue_.front().size() <= maxSize))
-        return queue_.front().size();
+        return frontPktSize_ = queue_.front().size();
     return 0;
 }
 
