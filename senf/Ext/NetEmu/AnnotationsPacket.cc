@@ -104,8 +104,8 @@ prefix_ void senf::AnnotationsPacketType::finalize(packet p)
 
 prefix_ senf::EthernetPacket senf::prependAnnotaionsPacket(Packet const & pkt, MACAddress const & src_, MACAddress const & dst_)
 {
-    AnnotationsPacket ap (AnnotationsPacket::createBefore(pkt));
-    EthOUIExtensionPacket oui (EthOUIExtensionPacket::createBefore(ap));
+    AnnotationsPacket const & ap (AnnotationsPacket::createBefore(pkt));
+    EthOUIExtensionPacket const & oui (EthOUIExtensionPacket::createBefore(ap));
     EthernetPacket eth (EthernetPacket::createBefore(oui));
 
     senf::MACAddress src (senf::MACAddress::None);
