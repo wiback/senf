@@ -56,7 +56,7 @@ prefix_ senf::EthernetPacket & senf::emu::EthernetReassemblerBase::reassembledPa
 
 prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPacket const & eth)
 {
-    EthernetFragmentPacket fragment (eth.next().find<EthernetFragmentPacket>(senf::nothrow));
+    EthernetFragmentPacket const & fragment (eth.next().find<EthernetFragmentPacket>(senf::nothrow));
     if (SENF_UNLIKELY(!fragment)) {
         // clone here to be on the safe side - this should not happen anyway
         reassembledPacket_ = eth.clone();
@@ -86,11 +86,11 @@ prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPack
         payloadIter_ = (senf::DataPacket::createAfter(p, fragment->size(), senf::noinit)).data().begin();
     }
     payloadIter_ = std::copy(
-            fragment.next().data().begin(),
-            std::next( fragment.next().data().begin(), std::min( senf::Packet::size_type(fragment->size()), fragment.next().data().size())),
-            payloadIter_);
+                             fragment.next().data().begin(),
+                             std::next( fragment.next().data().begin(), std::min( senf::Packet::size_type(fragment->size()), fragment.next().data().size())),
+                             payloadIter_);
     nextFragmentNr_ = fragmentNr + 1;
-
+    
     if (! fragment->moreFragment()) {
         nextFragmentNr_ = 1;
         reassembledPacket_.reparse();
