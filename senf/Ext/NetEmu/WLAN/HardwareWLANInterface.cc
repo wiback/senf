@@ -160,7 +160,7 @@ namespace senf { namespace emu {
 prefix_ senf::emu::HardwareWLANInterface::HardwareWLANInterface(std::pair<std::string,std::string> interfaces)
     : WLANInterface(detail::HardwareWLANInterfaceNet::netOutput, detail::HardwareWLANInterfaceNet::netInput),
       netctl_(interfaces.first), wnlc_(interfaces.first), dev_(interfaces.first), monitorDev_ (interfaces.second), spectralScanner_(wnlc_.phyName()),
-      promisc_(false), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
+      wifiStatistics_(monitorDevice()), promisc_(false), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
       modId_( WLANModulationParameterRegistry::instance().parameterIdUnknown()), bw_(0), txPower_(0),
       rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512)
 {
@@ -414,6 +414,9 @@ prefix_ void senf::emu::HardwareWLANInterface::openMonitorSocket()
     monitorDataFilter.promisc(true);
     monitorDataFilter.flushQueues();
     assignMonitorSocket(monSocket_);
+
+    // in monitor mode, we disable the wifi_statistics module
+    wifiStatistics_.enable(false);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::closeMonitorSocket()
@@ -422,6 +425,9 @@ prefix_ void senf::emu::HardwareWLANInterface::closeMonitorSocket()
         HardwareWLANInterfaceNet::monSocket.close();
 
     assignMonitorSocket(HardwareWLANInterfaceNet::monSocket);
+
+    // in non-monitor mode, we enable the wifi_statistics module
+    wifiStatistics_.enable(true);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
@@ -863,6 +869,11 @@ prefix_ bool senf::emu::HardwareWLANInterface::spectralScanStop(senf::Statistics
     }
 
     return spectralScanner_.stop(sd);
+}
+
+senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statisticsMap(std::uint32_t tag)
+{
+    return wifiStatistics_.statisticsMap(tag);
 }
 
 prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANInterface::dfsState(unsigned freq, unsigned bandwidth)

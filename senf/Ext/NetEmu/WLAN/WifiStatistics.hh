@@ -30,6 +30,7 @@
 
 // Custom includes
 #include <map>
+#include <boost/property_tree/ptree.hpp>
 #include <senf/Socket/FileHandle.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
 #include <senf/Scheduler/FdEvent.hh>
@@ -42,7 +43,7 @@ namespace senf {
 namespace emu {
 
     struct WifiStatisticsData {
-        senf::StatisticsData rssi;
+        senf::StatisticsData signal;
         std::uint32_t total;
         std::uint32_t badFCS; 
         std::uint32_t rTx;
@@ -60,15 +61,21 @@ namespace emu {
         ~WifiStatistics();
         
         bool enable(bool on = true);
-        bool pollStatistics();
-
+        bool pollStatistics(std::uint32_t tag);
         WifiStatisticsMap const & map() const;
         ClockService::clock_type const & timestamp() const;
+        std::uint32_t tag() const;
+
+        WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
+
+    private:
+        bool parseSignal(boost::property_tree::ptree const & pt, StatisticsData & sd);
 
     private:
         std::string debugFsPath_;
         WifiStatisticsMap map_;
         ClockService::clock_type timestamp_;
+        std::uint32_t tag_;
     };
     
 }

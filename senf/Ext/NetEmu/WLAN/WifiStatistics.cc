@@ -30,7 +30,6 @@
 // Custom includes
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <cassert>
@@ -39,7 +38,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
-
+#include <senf/Scheduler/Scheduler.hh>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -48,7 +47,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::emu::WifiStatistics::WifiStatistics(std::string ifName, std::string debugFS)
-    : timestamp_ (senf::ClockService::clock_type(0))
+    : timestamp_ (senf::ClockService::clock_type(0)), tag_(0)
 {
     debugFsPath_ = debugFS + "/wifi_statistics/" + ifName + "/";
 }
@@ -72,8 +71,48 @@ prefix_ bool senf::emu::WifiStatistics::enable(bool on)
     return false;
 }
 
-prefix_ bool senf::emu::WifiStatistics::pollStatistics()
+prefix_ bool senf::emu::WifiStatistics::parseSignal(boost::property_tree::ptree const & pt, StatisticsData & sd)
 {
+    unsigned num (0); // keep track of numer of parsed items (we need 5)
+    std::uint32_t min, max, count, sum;
+    std::uint64_t sum2;
+    
+    for (auto it = pt.begin(); it != pt.end(); it++) {
+        if (it->first == "min") {
+            min = it->second.get<std::uint32_t>("");
+            num++;
+        }
+        else if (it->first == "max") {
+            max = it->second.get<std::uint32_t>("");
+            num++;
+        }
+        else if (it->first == "sum") {
+            sum = it->second.get<std::uint32_t>("");
+            num++;
+        }
+        else if (it->first == "sum2") {
+            sum2 = it->second.get<std::uint64_t>("");
+            num++;
+        }
+        else if (it->first == "count") {
+            count = it->second.get<std::uint32_t>("");
+            num++;
+        }
+    }
+
+    if (num == 5) {
+        sd = StatisticAccumulator<std::uint64_t>(sum, sum2, min, max, count).data();
+        return true;
+    }
+
+    return false;
+}
+
+prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
+{
+    if (timestamp_ and (tag_ == tag))
+        return true;
+    
     map_.clear();
     timestamp_ = senf::ClockService::clock_type(0);
 
@@ -85,41 +124,43 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics()
         boost::property_tree::read_json(file, pt);
         file.close();        
 
+        unsigned num; // keep track of numer of parsed items (we need 4)
         BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt) {
             senf::MACAddress mac(senf::MACAddress::from_string(v.first));
             map_.insert(std::make_pair(mac, WifiStatisticsData()));
-            unsigned count (0); // keep track of numer of parsed items (we need 4)
+            num = 0;
             for (auto it = v.second.begin(); it != v.second.end(); it++) {
                 if (it->first == "signal") {
-                    count++;
-                    // outStats(kv, 0);
+                    if (parseSignal(it->second, map_.find(mac)->second.signal))
+                        num++;
                 } else {
                     if (it->first == "badFCS") {
                         map_.find(mac)->second.badFCS = it->second.get<std::uint32_t>("");
-                        count++;
+                        num++;
                     }
                     else if (it->first == "rTx") {
                         map_.find(mac)->second.rTx = it->second.get<std::uint32_t>("");
-                        count++;
+                        num++;
                     }
                     else if (it->first == "total") {
                         map_.find(mac)->second.total = it->second.get<std::uint32_t>("");
-                        count++;
+                        num++;
                     }
                 }
             }
-            
-            if (count != 4) {
-                map_.erase(mac);
+            if (num != 4) {
+                map_.clear();
+                return false;
             }
-            count = 0;
         }
         
     } catch(...) {
+        map_.clear();
         return false;
     }
 
-    //   timestamp_ = senf::scheduler::now();
+    tag_ = tag;
+    timestamp_ = senf::scheduler::now();
     return true;
 }
 
@@ -135,6 +176,17 @@ prefix_ senf::ClockService::clock_type const & senf::emu::WifiStatistics::timest
     return timestamp_;
 }
 
+prefix_ std::uint32_t senf::emu::WifiStatistics::tag()
+    const
+{
+    return tag_;
+}
+
+prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::statisticsMap(std::uint32_t tag)
+{
+    pollStatistics(tag);
+    return map_;
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -37,6 +37,7 @@
 #include "WLANInterface.hh"
 #include "WirelessNLController.hh"
 #include "AthSpectralScanner.hh"
+#include "WifiStatistics.hh"
 
 #include "HardwareWLANInterface.ih"
 
@@ -118,6 +119,8 @@ namespace emu {
         void dumpMmapStats(std::ostream & os);
         void dumpFilterStats(std::ostream & os);
 
+        WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
+        
     protected:
         NetdeviceController netctl_;
         mutable WirelessNLController wnlc_;
@@ -174,6 +177,7 @@ namespace emu {
         std::string dev_;
         std::string monitorDev_;
         AthSpectralScanner spectralScanner_;
+        WifiStatistics wifiStatistics_;
         bool promisc_; // cache
         int frequencyOffset_;
         int restrictedBand_;
