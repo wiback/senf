@@ -69,9 +69,6 @@ namespace emu {
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
 
     private:
-        bool parseSignal(boost::property_tree::ptree const & pt, StatisticsData & sd);
-
-    private:
         std::string debugFsPath_;
         WifiStatisticsMap map_;
         ClockService::clock_type timestamp_;

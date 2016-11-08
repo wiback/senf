@@ -71,43 +71,6 @@ prefix_ bool senf::emu::WifiStatistics::enable(bool on)
     return false;
 }
 
-prefix_ bool senf::emu::WifiStatistics::parseSignal(boost::property_tree::ptree const & pt, StatisticsData & sd)
-{
-    unsigned num (0); // keep track of numer of parsed items (we need 5)
-    std::uint32_t min, max, count, sum;
-    std::uint64_t sum2;
-    
-    for (auto it = pt.begin(); it != pt.end(); it++) {
-        if (it->first == "min") {
-            min = it->second.get<std::uint32_t>("");
-            num++;
-        }
-        else if (it->first == "max") {
-            max = it->second.get<std::uint32_t>("");
-            num++;
-        }
-        else if (it->first == "sum") {
-            sum = it->second.get<std::uint32_t>("");
-            num++;
-        }
-        else if (it->first == "sum2") {
-            sum2 = it->second.get<std::uint64_t>("");
-            num++;
-        }
-        else if (it->first == "count") {
-            count = it->second.get<std::uint32_t>("");
-            num++;
-        }
-    }
-
-    if (num == 5) {
-        sd = StatisticAccumulator<std::uint64_t>(sum, sum2, min, max, count).data();
-        return true;
-    }
-
-    return false;
-}
-
 prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
 {
     if (timestamp_ and (tag_ == tag))
@@ -131,8 +94,12 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
             num = 0;
             for (auto it = v.second.begin(); it != v.second.end(); it++) {
                 if (it->first == "signal") {
-                    if (parseSignal(it->second, map_.find(mac)->second.signal))
-                        num++;
+                    map_.find(mac)->second.signal = StatisticAccumulator<std::int64_t> (it->second.get<std::int32_t>("sum"),
+                                                                                        it->second.get<std::int64_t>("sum2"),
+                                                                                        it->second.get<std::int32_t>("min"),
+                                                                                        it->second.get<std::int32_t>("max"),
+                                                                                        it->second.get<std::uint32_t>("count")).data();
+                    num++;
                 } else {
                     if (it->first == "badFCS") {
                         map_.find(mac)->second.badFCS = it->second.get<std::uint32_t>("");
