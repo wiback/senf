@@ -683,14 +683,12 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
         auto rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
         os << "MMAP Rx (data) stats: "; rs.dump(os);
     }
-
     if (HardwareWLANInterfaceNet::socket) {
         auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
         os << " MMAP Tx (data) stats: "; ts.dump(os);
-    } else {
-        // just flush rxStats
-        os << std::endl;
     }
+
+    os << std::endl;
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::frequencyOffset(int offset)

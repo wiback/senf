@@ -459,8 +459,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
         auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
         os << " MMAP Tx stats: "; ts.dump(os);
     } else {
-        os << "Socket closed. No stats available." << std::endl;
+        os << "Socket closed. No stats available.";
     }
+    os << std::endl;
 }
 
 #ifdef SENF_DEBUG
