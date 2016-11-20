@@ -275,7 +275,7 @@ namespace scheduler {
      */
     ClockService::clock_type const & now();
 
-    /** \brief Returns (approximate) current time (coarse, about 1ms precision) - Caution only valid when scheduler is running !
+    /** \brief Returns (approximate) current time (coarse, 1ms precision) - Caution only valid when scheduler is running !
 
         This call will return the current time as far as it is already known to the scheduler. If
         the scheduler is running, this will return eventTime(), otherwise it will return

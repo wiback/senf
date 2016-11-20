@@ -102,12 +102,12 @@ prefix_ senf::ClockService::clock_type senf::ClockService::from_time_t(time_t co
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::fromCoarse(clock_type_coarse v)
 {
-    return clock_type(v << 20);
+    return clock_type(v) * 1000000LL;
 }
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::toCoarse(clock_type v)
 {
-    return clock_type_coarse(v >> 20);
+    return clock_type_coarse(v / 1000000LL);
 }
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::nanoseconds(int64_type v)

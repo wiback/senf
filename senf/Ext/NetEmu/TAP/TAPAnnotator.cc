@@ -81,7 +81,7 @@ prefix_ void senf::emu::TAPAnnotator::request()
     senf::EthernetPacket eth (input());
 
     eth.annotation<annotations::Interface>().value = id_;
-    eth.annotation<annotations::Timestamp>().fromWallClock();
+    eth.annotation<annotations::Timestamp>().fromScheduler();
 
     {
         emu::annotations::Quality & q (eth.annotation<emu::annotations::Quality>());

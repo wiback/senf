@@ -104,6 +104,7 @@ namespace annotations {
         bool operator<(Timestamp const & other) const;
         Timestamp &operator=(Timestamp const & other);
 
+        void fromScheduler();
         void fromSocketProtocol(senf::DatagramSocketProtocol const & protocol);
         void fromWallClock();
         void fromQueueBuffer(senf::SocketQueueBuffer const & buffer);

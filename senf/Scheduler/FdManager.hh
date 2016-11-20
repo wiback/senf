@@ -75,7 +75,7 @@ namespace detail {
                                         /**< This call waits until at least one event is posted but
                                              no longer than the current timeout(). */
         ClockService::clock_type const & eventTime() const; ///< Time of last event
-        ClockService::clock_type_coarse const & eventTimeCoarse() const; ///< Time of last event in eventTime() >> 20 (roughly 1ms precision)
+        ClockService::clock_type_coarse const & eventTimeCoarse() const; ///< Time of last event in eventTime() / 1000000 (1ms precision)
         
     protected:
 

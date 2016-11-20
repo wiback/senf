@@ -129,6 +129,12 @@ prefix_ senf::emu::annotations::Timestamp & senf::emu::annotations::Timestamp::o
     return *this;
 }
 
+prefix_ void senf::emu::annotations::Timestamp::fromScheduler()
+{
+    timestamp[0]= scheduler::nowCoarse() / 1000;
+    timestamp[1]= (scheduler::nowCoarse() % 1000) * 1000000;
+}
+
 prefix_ void senf::emu::annotations::Timestamp::fromSocketProtocol(senf::DatagramSocketProtocol const & protocol)
 {
     struct timespec spec;
