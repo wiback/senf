@@ -67,9 +67,11 @@ namespace emu {
         ppi::QueueingAlgorithm & qAlgorithm() const;
         void qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgorithm);
 
+        ClockService::clock_type_coarse const & lastToken() const;
+
     private:
         boost::scoped_ptr<ppi::QueueingAlgorithm> queueAlgo_;
-        ClockService::clock_type lastToken_;
+        ClockService::clock_type_coarse lastToken_;
         scheduler::TimerEvent timer_;
         unsigned bucketLimit_;
         unsigned bucketLowThresh_;
