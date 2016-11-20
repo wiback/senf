@@ -39,14 +39,19 @@
 
 // public members
 
-prefix_ senf::ClockService::clock_type senf::scheduler::eventTime()
+prefix_ senf::ClockService::clock_type const & senf::scheduler::eventTime()
 {
     return scheduler::detail::FdManager::instance().eventTime();
 }
 
-prefix_ senf::ClockService::clock_type senf::scheduler::now()
+prefix_ senf::ClockService::clock_type const & senf::scheduler::now()
 {
-    return SENF_LIKELY(running()) ? eventTime() : ClockService::now();
+    return scheduler::detail::FdManager::instance().eventTime();
+}
+
+prefix_ senf::ClockService::clock_type_coarse const & senf::scheduler::nowCoarse()
+{
+    return scheduler::detail::FdManager::instance().eventTimeCoarse();
 }
 
 prefix_ void senf::scheduler::watchdogTimeout(unsigned ms)

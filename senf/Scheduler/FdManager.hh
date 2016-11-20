@@ -74,8 +74,9 @@ namespace detail {
         void processOnce();             ///< Wait for events
                                         /**< This call waits until at least one event is posted but
                                              no longer than the current timeout(). */
-        ClockService::clock_type eventTime() const; ///< Time of last event
-
+        ClockService::clock_type const & eventTime() const; ///< Time of last event
+        ClockService::clock_type_coarse const & eventTimeCoarse() const; ///< Time of last event in eventTime() >> 20 (roughly 1ms precision)
+        
     protected:
 
     private:
@@ -83,6 +84,7 @@ namespace detail {
 
         Poller<Event> poller_;
         senf::ClockService::clock_type eventTime_;
+        senf::ClockService::clock_type_coarse eventTimeCoarse_;
 
         friend void senf::scheduler::restart();
         friend class singleton<FdManager>;

@@ -40,7 +40,9 @@
 
 prefix_ senf::scheduler::detail::FdManager::FdManager()
     : eventTime_ (senf::ClockService::now())
-{}
+{
+    eventTimeCoarse_ = eventTime_ >> 20;
+}
 
 prefix_ bool senf::scheduler::detail::FdManager::set(int fd, int events, Event * entry)
 {
@@ -63,10 +65,16 @@ prefix_ int senf::scheduler::detail::FdManager::timeout()
     return poller_.timeout();
 }
 
-prefix_ senf::ClockService::clock_type senf::scheduler::detail::FdManager::eventTime()
+prefix_ senf::ClockService::clock_type const & senf::scheduler::detail::FdManager::eventTime()
     const
 {
     return eventTime_;
+}
+
+prefix_ senf::ClockService::clock_type_coarse const & senf::scheduler::detail::FdManager::eventTimeCoarse()
+    const
+{
+    return eventTimeCoarse_;
 }
 
 

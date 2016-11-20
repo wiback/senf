@@ -264,7 +264,7 @@ namespace scheduler {
         This is the timestamp, the last event has been signaled. This is the real time at which the
         event is delivered \e not the time it should have been delivered (in the case of timers).
      */
-    ClockService::clock_type eventTime();
+    ClockService::clock_type const & eventTime();
 
     /** \brief Return (approximate) current time
 
@@ -273,7 +273,16 @@ namespace scheduler {
         ClockService::now(). While the scheduler is running, this will reduce the number of system
         calls.
      */
-    ClockService::clock_type now();
+    ClockService::clock_type const & now();
+
+    /** \brief Returns (approximate) current time (coarse, about 1ms precision) - Caution only valid when scheduler is running !
+
+        This call will return the current time as far as it is already known to the scheduler. If
+        the scheduler is running, this will return eventTime(), otherwise it will return
+        ClockService::now(). While the scheduler is running, this will reduce the number of system
+        calls.
+     */
+    ClockService::clock_type_coarse const & nowCoarse();
 
     /** \brief Set watchdog timeout to \a ms milliseconds.
 

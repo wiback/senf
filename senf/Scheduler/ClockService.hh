@@ -92,6 +92,8 @@ namespace senf {
 #else
         typedef config::time_type clock_type;
 #endif
+        typedef std::int32_t clock_type_coarse;
+        
         /** \brief Supplementary integer type
 
             This type is used to represent varies supplementary values (e.g. number of microseconds)
@@ -146,6 +148,9 @@ namespace senf {
                                         ///< Convert legacy timeval to clock value
                                         /**< This member converts an absolute time value
                                              represented as a timeval value into a clock value */
+
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type fromCoarse(clock_type_coarse); ///< Convert \a from coarse to clock_type
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type_coarse toCoarse(clock_type); ///< Convert \a v from clock_type to coarse
 
         static SENF_CLOCKSERVICE_CONSTEXPR clock_type nanoseconds(int64_type v); ///< Convert \a v nanoseconds to clock_type
         static SENF_CLOCKSERVICE_CONSTEXPR clock_type microseconds(int64_type v); ///< Convert \a v microseconds to clock_type
