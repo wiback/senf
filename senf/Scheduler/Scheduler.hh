@@ -268,21 +268,23 @@ namespace scheduler {
 
     /** \brief Return (approximate) current time
 
-        This call will return the current time as far as it is already known to the scheduler. If
-        the scheduler is running, this will return eventTime(), otherwise it will return
-        ClockService::now(). While the scheduler is running, this will reduce the number of system
-        calls.
+        This call will return the current time as far as it is already known to the scheduler.
+        Note: The scheduler must be running() for this time to be accurate.
      */
     ClockService::clock_type const & now();
 
-    /** \brief Returns (approximate) current time (coarse, 1ms precision) - Caution only valid when scheduler is running !
+    /** \brief Returns (approximate) current time (coarse, 1ms precision)
 
-        This call will return the current time as far as it is already known to the scheduler. If
-        the scheduler is running, this will return eventTime(), otherwise it will return
-        ClockService::now(). While the scheduler is running, this will reduce the number of system
-        calls.
+        This call will return the current time as far as it is already known to the scheduler.
+        Note: The scheduler must be running() for this time to be accurate.
      */
     ClockService::clock_type_coarse const & nowCoarse();
+
+    /** \brief Returns (approximate) coarse time difference between 'older' and now()
+
+        Note: The scheduler must be running() for this time to be accurate.
+     */
+    ClockService::clock_type_coarse nowCoarseDiff(ClockService::clock_type_coarse const & older);
 
     /** \brief Set watchdog timeout to \a ms milliseconds.
 
