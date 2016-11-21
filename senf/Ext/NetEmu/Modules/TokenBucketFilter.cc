@@ -160,10 +160,10 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
     ClockService::clock_type_coarse now (scheduler::nowCoarse());
-    ClockService::clock_type_coarse diff (now - lastToken_);
+    ClockService::clock_type_coarse diff (ClockService::coarseToMs(ClockService::coarseDiff(now, lastToken_)));
     
     lastToken_ = now;
-    bucketSize_ += (diff * rate_) / (8000000000ul / (1 << 20));
+    bucketSize_ += (diff * rate_) / 8000ul;
 }
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucketLimit()

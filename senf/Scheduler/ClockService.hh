@@ -149,6 +149,10 @@ namespace senf {
                                         /**< This member converts an absolute time value
                                              represented as a timeval value into a clock value */
 
+        
+        static clock_type_coarse coarseDiff(clock_type_coarse const & newer, clock_type_coarse const & older); ///< Compute newer - older
+        static SENF_CLOCKSERVICE_CONSTEXPR std::int32_t coarseToMs(clock_type_coarse); ///< Convert \a from coarse to ms
+        static SENF_CLOCKSERVICE_CONSTEXPR clock_type_coarse msToCoarse(std::int32_t); ///< Convert \a from ms ro clock_type_coarse
         static SENF_CLOCKSERVICE_CONSTEXPR clock_type fromCoarse(clock_type_coarse); ///< Convert \a from coarse to clock_type
         static SENF_CLOCKSERVICE_CONSTEXPR clock_type_coarse toCoarse(clock_type); ///< Convert \a v from clock_type to coarse
 

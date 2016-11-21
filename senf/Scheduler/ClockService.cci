@@ -32,6 +32,7 @@
 #include <time.h>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/senflikely.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +101,24 @@ prefix_ senf::ClockService::clock_type senf::ClockService::from_time_t(time_t co
     return clock( boost::posix_time::from_time_t(time) );
 }
 
+prefix_ senf::ClockService::clock_type_coarse senf::ClockService::coarseDiff(clock_type_coarse const & newer, clock_type_coarse const & older)
+{
+    clock_type_coarse diff (newer - older);
+    if (SENF_UNLIKELY(diff < 0))
+        diff += 0x7fffffff;
+    return diff;
+}
+
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR std::int32_t senf::ClockService::coarseToMs(clock_type_coarse v)
+{
+    return std::int32_t(v * 1);
+}
+
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::msToCoarse(std::int32_t v)
+{
+    return clock_type_coarse(v * 1);
+}
+
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::fromCoarse(clock_type_coarse v)
 {
     return clock_type(v) * 1000000LL;
@@ -107,7 +126,7 @@ prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockSe
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::toCoarse(clock_type v)
 {
-    return clock_type_coarse(v / 1000000LL);
+    return clock_type_coarse((v / 1000000LL) % 0x80000000);
 }
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::nanoseconds(int64_type v)

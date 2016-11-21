@@ -131,8 +131,8 @@ prefix_ senf::emu::annotations::Timestamp & senf::emu::annotations::Timestamp::o
 
 prefix_ void senf::emu::annotations::Timestamp::fromScheduler()
 {
-    timestamp[0]= scheduler::nowCoarse() / 1000;
-    timestamp[1]= (scheduler::nowCoarse() % 1000) * 1000000;
+    timestamp[0]= ClockService::coarseToMs(scheduler::nowCoarse()) / 1000;
+    timestamp[1]= ClockService::coarseToMs(scheduler::nowCoarse() % 1000) * 1000000;
 }
 
 prefix_ void senf::emu::annotations::Timestamp::fromSocketProtocol(senf::DatagramSocketProtocol const & protocol)
