@@ -40,6 +40,7 @@
 
 prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigned _rate, ppi::QueueingAlgorithm::ptr qAlgorithm)
     : queueAlgo_(qAlgorithm.release()),
+      now_(scheduler::nowCoarse()),
       lastToken_(scheduler::nowCoarse()),
       timer_( "TokenBucketFilter::timer", membind(&TokenBucketFilter::onTimeout, this)),
       bucketLimit_( _burst), bucketLowThresh_(0), bucketSize_( _burst),
@@ -159,9 +160,9 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
-    ClockService::clock_type_coarse diff (ClockService::coarseToMs(scheduler::nowCoarseDiff(lastToken_)));
+    ClockService::clock_type_coarse diff (ClockService::coarseToMs(ClockService::coarseDiff(now_, lastToken_)));
     
-    lastToken_ = scheduler::nowCoarse();
+    lastToken_ = now_;
     bucketSize_ += (diff * rate_) / 8000ul;
 }
 
