@@ -57,14 +57,14 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
     dir.add("cachedRegDomains", fty::Command(&CRDA::cachedRegDomains, this));
 
-    // sync our CRDA behavior with the kernel setting (boot time argument, for now)
-    int fd (::open("/proc/cmdline", O_RDONLY));
+    // sync our CRDA behavior with the ath.ko module's debugRegd setting
+    int fd (::open("/sys/module/ath/parameters/debugRegd", O_RDONLY));
     if (fd != -1) {
-        char buf[8192];
+        char buf[32];
         size_t rd;
         if ((rd = ::read(fd, buf, sizeof(buf)-1)) > 0) {
             buf[rd] = '\0';
-            dfsMode_ = strstr(buf, "WiBACK-CRDA") == NULL;
+            dfsMode_ = strstr(buf, "1") == NULL;
             if (!dfsMode_) {
                 SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] WiBACK-CRDA mode enabled.") );
             }
@@ -74,7 +74,7 @@ prefix_ senf::emu::CRDA::CRDA()
 
     if (dfsMode_) {
         // DFS-aware world regulatory domain
-        worldRegDomain_.alpha2Country = "";
+        worldRegDomain_.alpha2Country = WORLD_REG_ALPHA;
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
@@ -91,33 +91,37 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .noIR(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(3000000, 4000000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(80000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5170000, 5250000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(80000)
                                      .maxEIRP(3000)
                                      .noIR(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5250000, 5330000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(80000)
                                      .maxEIRP(3000)
                                      .noIR(true)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5490000, 5730000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(80000)
                                      .maxEIRP(3000)
                                      .noIR(true)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5735000, 5835000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(80000)
                                      .maxEIRP(3000)
                                      .noIR(true) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(57240000, 63720000)
+                                     .maxBandwidth(2160000)
+                                     .maxEIRP(1000) );
     } else {
-        // DFS-disabled world regulatory domain
-        worldRegDomain_.alpha2Country = "";
+        // Regd debug world regulatory domain
+        worldRegDomain_.alpha2Country = WORLD_REG_ALPHA;
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
@@ -129,12 +133,16 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(3000000, 4000000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(80000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(4900000, 6100000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(80000)
                                      .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(57240000, 63720000)
+                                     .maxBandwidth(2160000)
+                                     .maxEIRP(1000) );
     }
 }
 
@@ -176,19 +184,6 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] currentRegDomain initialized from kernel to " << currentRegDomain_ << ". 'DummyCountry' initialized to " << dummyCountry_ << ".") );
             // store the new mapping (if the mapping already exists, this does nothing)
             cachedRegDomains_.insert(currentRegDomain_);
-
-//            auto domainAA( worldRegDomain_);
-//            domainAA.alpha2Country = WORLD_REG_ALPHA;
-//            cachedRegDomains_.insert( domainAA);
-//            regDomain( domainAA);
-//
-//            ::usleep(500000);  // 0.5s
-//
-//            auto domainUS( worldRegDomain_);
-//            domainUS.alpha2Country = "US";
-//            cachedRegDomains_.insert( domainUS);
-//            regDomain( domainUS);
-
         } catch (...) {
             nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
@@ -262,7 +257,7 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
                     dummyCountry_[0] = 'A';
                 }
             }
-            // US seem to be special countries, so we avoid using it
+            // US seem to be a special countrie, so we avoid using it
             if( dummyCountry_.compare("US") == 0)
                 dummyCountry_ = "UT";
             regDomain.alpha2Country = dummyCountry_;
@@ -367,10 +362,6 @@ prefix_ void senf::emu::CRDA::setRegulatory()
 
     if( regDomain.alpha2Country.empty())
             regDomain.alpha2Country = c2;
-
-//    if( c2.length() != 2 or c2.compare( regDomain.alpha2Country) != 0) {
-//        SENF_LOG( (senf::log::IMPORTANT) ("[senf::emu::CRDA] Requested country is not the same: "<< c2 << " expected "<<  regDomain.alpha2Country << ".") );
-//    }
 
     if( not pushRegulatory( regDomain))
         return;
