@@ -39,6 +39,8 @@ namespace emu {
 
         bool equalsKernel();
 
+        bool debugRegd() const;
+        
     private:
         CRDA();
 
@@ -58,10 +60,11 @@ namespace emu {
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
-        bool dfsMode_;
+        bool debugRegd_;
         std::string syncFilename_;
         bool nonWirelessBox_;
-
+        std::string logTag_;
+        
         // here we keep a cache of known regDomains which we have already pushed into the kernel
         std::set<senf::emu::RegulatoryDomain> cachedRegDomains_;
     };    
