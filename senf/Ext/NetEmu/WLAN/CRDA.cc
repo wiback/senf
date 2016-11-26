@@ -80,7 +80,7 @@ prefix_ senf::emu::CRDA::CRDA()
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "debugRegd mode enabled.") );
 
         // Regd debug world regulatory domain
-        worldRegDomain_.alpha2Country = WORLD_REG_ALPHA;
+        worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
@@ -104,7 +104,7 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxEIRP(1000) );
     } else {
         // regular world regulatory domain
-        worldRegDomain_.alpha2Country = WORLD_REG_ALPHA;
+        worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
@@ -263,7 +263,7 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
                     dummyCountry_[0] = 'A';
                 }
             }
-            // US seem to be a special countrie, so we avoid using it
+            // 'US' seem to be a special country code, so we avoid using it
             if( dummyCountry_.compare("US") == 0)
                 dummyCountry_ = "UT";
             regDomain.alpha2Country = dummyCountry_;
