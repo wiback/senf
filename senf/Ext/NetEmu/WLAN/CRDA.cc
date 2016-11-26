@@ -92,7 +92,7 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(3000000, 4000000)
-                                     .maxBandwidth(80000)
+                                     .maxBandwidth(40000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(4900000, 6100000)
@@ -121,7 +121,7 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .noIR(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(3000000, 4000000)
-                                     .maxBandwidth(80000)
+                                     .maxBandwidth(40000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5170000, 5250000)
