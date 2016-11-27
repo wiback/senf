@@ -36,7 +36,7 @@
 #include <senf/Utils/Logger/Log.hh>
 #include "WLANInterface.hh"
 #include "WirelessNLController.hh"
-#include "AthSpectralScanner.hh"
+#include "AthSpectralScan.hh"
 #include "WifiStatistics.hh"
 
 #include "HardwareWLANInterface.ih"
@@ -113,13 +113,13 @@ namespace emu {
 
         WirelessNLController::DFSState::Enum dfsState(unsigned freq, unsigned bw);
 
-        bool spectralScanStart();
-        bool spectralScanStop(senf::StatisticsData *sd);
-
         void dumpMmapStats(std::ostream & os);
         void dumpFilterStats(std::ostream & os);
 
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
+        
+        void spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb);
+        void spectralScanCallback();
         
     protected:
         NetdeviceController netctl_;
@@ -138,8 +138,6 @@ namespace emu {
         void closeMonitorSocket();
         void openDataSocket();
         void closeDataSocket();
-
-
         
         // interface
         virtual void v_enable();
@@ -176,7 +174,7 @@ namespace emu {
 
         std::string dev_;
         std::string monitorDev_;
-        AthSpectralScanner spectralScanner_;
+        AthSpectralScan spectralScanner_;
         WifiStatistics wifiStatistics_;
         bool promisc_; // cache
         int frequencyOffset_;

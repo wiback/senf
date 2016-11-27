@@ -286,10 +286,10 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
     if (enabled())
         init_sockets();
 
-    if (!spectralScanner_.valid()) {
-        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath9k spectral scanner not available for " << wnlc_.phyName() << ". Can not access '" << spectralScanner_.ctlFile() << "'. DebugFS mounted at /sys/kernel/debug ?") );
+    if (!spectralScanner_.detected()) {
+        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath9k spectral scanner not detected for " << wnlc_.phyName() << ". DebugFS mounted at /sys/kernel/debug ?") );
     } else {
-        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath9k spectral scanner available for passive 20MHz scans for " << wnlc_.phyName()) );
+        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath spectral scanner detected for " << wnlc_.phyName()) );
     }
 }
 
@@ -853,20 +853,15 @@ prefix_ void senf::emu::HardwareWLANInterface::maxBurst(unsigned maxBurst)
     source.maxBurst(maxBurst);
 }
 
-prefix_ bool senf::emu::HardwareWLANInterface::spectralScanStart()
+prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb)
 {
-    // OK for 20MHz channels !
-    // Note: We must NOT apply the frequency offset here !!!!
-    return spectralScanner_.start(wnlc_.frequency());
+    spectralScanner_.frequency(wnlc_.frequency());
+    spectralScanner_.callback(cb);
 }
 
-prefix_ bool senf::emu::HardwareWLANInterface::spectralScanStop(senf::StatisticsData *sd)
+prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback()
 {
-    if (spectralScanner_.mismatch() or spectralScanner_.truncated()) {
-        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ATH Spectral Scanner Errors: mismatch " << spectralScanner_.mismatch() << ", truncated " << spectralScanner_.truncated()) );
-    }
-
-    return spectralScanner_.stop(sd);
+    spectralScanner_.disable();
 }
 
 senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statisticsMap(std::uint32_t tag)

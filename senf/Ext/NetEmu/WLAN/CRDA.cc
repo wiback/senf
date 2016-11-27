@@ -186,7 +186,10 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             WirelessNLController wnlc;
             currentRegDomain_ = wnlc.get_regulatory();
             // initialize our country counter
-            dummyCountry_ = currentRegDomain_.alpha2Country.compare( WORLD_REG_ALPHA) == 0 ? INITIAL_REG_ALPHA : currentRegDomain_.alpha2Country;
+            if (currentRegDomain_.alpha2Country.compare(WORLD_REG_ALPHA) == 0 or currentRegDomain_.alpha2Country.compare("98") == 0) 
+                dummyCountry_ = INITIAL_REG_ALPHA;
+            else
+                dummyCountry_ = currentRegDomain_.alpha2Country;
             SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "currentRegDomain initialized from kernel to " << currentRegDomain_ << ". 'DummyCountry' initialized to " << dummyCountry_ << ".") );
             // store the new mapping (if the mapping already exists, this does nothing)
             cachedRegDomains_.insert(currentRegDomain_);

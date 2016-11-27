@@ -17,6 +17,8 @@
 #ifndef SPECTRAL_COMMON_H
 #define SPECTRAL_COMMON_H
 
+#include <cstdint>
+
 #define SPECTRAL_HT20_NUM_BINS		56
 #define SPECTRAL_HT20_40_NUM_BINS      128
 
