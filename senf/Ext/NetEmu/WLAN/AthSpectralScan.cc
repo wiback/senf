@@ -97,6 +97,7 @@ prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq)
         freq /= 1000;
     
     frequency_ = freq;
+    spectralSetting("spectral_scan_ctl", "trigger");
 }
 
 prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)

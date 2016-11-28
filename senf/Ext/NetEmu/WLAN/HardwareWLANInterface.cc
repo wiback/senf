@@ -862,8 +862,8 @@ prefix_ void senf::emu::HardwareWLANInterface::maxBurst(unsigned maxBurst)
 
 prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb)
 {
-    spectralScanner_.frequency(wnlc_.frequency());
     spectralScanner_.callback(cb);
+    spectralScanner_.frequency(wnlc_.frequency());
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback()
