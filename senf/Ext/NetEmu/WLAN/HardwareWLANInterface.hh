@@ -117,7 +117,9 @@ namespace emu {
         void dumpFilterStats(std::ostream & os);
 
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
-        
+
+        void frequencyHint();
+
         void spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb);
         void spectralScanCallback();
         void spectralScanStats(std::ostream & os);

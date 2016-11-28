@@ -619,8 +619,8 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
             break;
         }
     }
-    
-    spectralScanner_.frequency(wnlc_.frequency());
+
+    frequencyHint();
 
     // drop all old frames from the kernel queues
     flushRxQueues();
@@ -780,10 +780,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController
     wnlc_.do_ibss_join(parameters);
     bw_ = parameters.channelType_ == WirelessNLController::ChannelType::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
 
-    spectralScanner_.frequency(wnlc_.frequency());
-
-//    flushRxQueues();
-//    flushTxQueues();
+    frequencyHint();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::leaveAdhocNetwork()
@@ -860,10 +857,16 @@ prefix_ void senf::emu::HardwareWLANInterface::maxBurst(unsigned maxBurst)
     source.maxBurst(maxBurst);
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::frequencyHint()
+{
+    unsigned freq (wnlc_.frequency() / 1000);
+    spectralScanner_.frequency(freq);
+    monitorDataFilter.frequency(freq);
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb)
 {
     spectralScanner_.callback(cb);
-    spectralScanner_.frequency(wnlc_.frequency());
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback()
@@ -875,7 +878,6 @@ prefix_ void senf::emu::HardwareWLANInterface::spectralScanStats(std::ostream & 
 {
     spectralScanner_.stats(os);
 }
-
 
 senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statisticsMap(std::uint32_t tag)
 {

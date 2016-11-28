@@ -102,20 +102,20 @@ prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq)
 
 prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
 {
-    unsigned burst(1024);
+    unsigned burst(64);
 
-    while(burst-- > 0) {
+    while(SENF_LIKELY(burst-- > 0)) {
         spectralFrames_++;    
         fft_sample_tlv tlv;
         size_t rd;
-        if ((rd = read(spectralHandle_.fd(), &tlv, sizeof(tlv))) == sizeof(tlv)) {    
+        if (SENF_LIKELY((rd = read(spectralHandle_.fd(), &tlv, sizeof(tlv))) == sizeof(tlv))) {    
             switch (tlv.type) {
             case ATH_FFT_SAMPLE_HT20:
                 {
                     fft_sample_ht20 ht20;
                     ht20.tlv = tlv;
-                    if (read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                        if (be16toh(ht20.freq) == frequency_) {
+                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) {
+                        if (SENF_LIKELY(be16toh(ht20.freq) == frequency_)) {
                             spectralValidSamples_++;
                             callback_(be64toh(ht20.tsf), be16toh(ht20.freq), SPECTRAL_HT20_NUM_BINS, &ht20);
                         } else {
@@ -131,8 +131,8 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                 {
                     fft_sample_ht20_40 ht20_40;
                     ht20_40.tlv = tlv;
-                    if (read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) { 
-                        if (be16toh(ht20_40.freq) == frequency_) {
+                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) { 
+                        if (SENF_LIKELY(be16toh(ht20_40.freq) == frequency_)) {
                             spectralValidSamples_++;
                             callback_(be64toh(ht20_40.tsf), be16toh(ht20_40.freq), SPECTRAL_HT20_40_NUM_BINS, &ht20_40);
                         } else {
@@ -149,9 +149,13 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                     char buf[1024]; // fft_sample_ath10k has avariable length, depending on the number bins
                     fft_sample_ath10k *ath10k = (fft_sample_ath10k *) buf;
                     ath10k->tlv = tlv;
-                    if (read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                        spectralValidSamples_++;
-                        callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1), spectralBins_, ath10k);
+                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) {
+                        if (SENF_LIKELY(be16toh(ath10k->freq1) == frequency_)) {
+                            spectralValidSamples_++;
+                            callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1), spectralBins_, ath10k);
+                        } else {
+                            spectralFrequencyMismatch_++;
+                        }
                     } else {
                         spectralTruncated_++;
                         burst = 0;

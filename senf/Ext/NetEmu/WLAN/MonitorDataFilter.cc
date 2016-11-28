@@ -75,7 +75,7 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
     os << "(duration "    << senf::ClockService::in_milliseconds(duration()) << " ms"
        << ",rate "        << (received*1000) / (senf::ClockService::in_milliseconds(duration())+1) << " pps";// +1 to avoid DIV_BY_ZERO
 
-    if ((legacy + ht + unknownMCS) != received ||
+    if ((freqMismatch + legacy + ht + unknownMCS) != received ||
         (management + control + data + unknownType + badFCS + truncated) != received ||
         duplicated > retries ||
         (truncated + badFCS + unknownType) != substitute)
@@ -86,21 +86,22 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
     os.setf(std::ios::fixed,std::ios::floatfield);
     os.precision(1);
 
-    os << ";received "    << received
-       << ";legacy "      << legacy      << " (" << float(legacy)      / float(received) * 100.0f << "%)"
-       << ",ht "          << ht          << " (" << float(ht)          / float(received) * 100.0f << "%)"
-       << ",unknownMCS "  << unknownMCS  << " (" << float(unknownMCS)  / float(received) * 100.0f << "%)"
-       << ";management "  << management  << " (" << float(management)  / float(received) * 100.0f << "%)"
-       << ",control "     << control     << " (" << float(control)     / float(received) * 100.0f << "%)"
-       << ",data "        << data        << " (" << float(data)        / float(received) * 100.0f << "%)"
-       << ",unknownType " << unknownType << " (" << float(unknownType) / float(received) * 100.0f << "%)"
-       << ",badFCS "      << badFCS      << " (" << float(badFCS)      / float(received) * 100.0f << "%)"
-       << ",truncated "   << truncated   << " (" << float(truncated)   / float(received) * 100.0f << "%)"
-       << ";retries "     << retries     << " (" << float(retries)     / float(received) * 100.0f << "%)"
-       << ";duplicated "  << duplicated  << " (" << float(duplicated)  / float(received) * 100.0f << "%)"
-       << ";encrypted "   << encrypted   << " (" << float(encrypted)   / float(received) * 100.0f << "%)"
-       << ";substitute "  << substitute  << " (" << float(substitute)  / float(received) * 100.0f << "%)"
-       << ";lost "        << lost        << " (" << float(lost)        / float(received) * 100.0f << "%)"
+    os << ";received "     << received
+       << ";freqMismatch " << freqMismatch << " (" << float(freqMismatch) / float(received) * 100.0f << "%)"
+       << ",legacy "       << legacy       << " (" << float(legacy)       / float(received) * 100.0f << "%)"
+       << ",ht "           << ht           << " (" << float(ht)           / float(received) * 100.0f << "%)"
+       << ",unknownMCS "   << unknownMCS   << " (" << float(unknownMCS)   / float(received) * 100.0f << "%)"
+       << ";management "   << management   << " (" << float(management)   / float(received) * 100.0f << "%)"
+       << ",control "      << control      << " (" << float(control)      / float(received) * 100.0f << "%)"
+       << ",data "         << data         << " (" << float(data)         / float(received) * 100.0f << "%)"
+       << ",unknownType "  << unknownType  << " (" << float(unknownType)  / float(received) * 100.0f << "%)"
+       << ",badFCS "       << badFCS       << " (" << float(badFCS)       / float(received) * 100.0f << "%)"
+       << ",truncated "    << truncated    << " (" << float(truncated)    / float(received) * 100.0f << "%)"
+       << ";retries "      << retries      << " (" << float(retries)      / float(received) * 100.0f << "%)"
+       << ";duplicated "   << duplicated   << " (" << float(duplicated)   / float(received) * 100.0f << "%)"
+       << ";encrypted "    << encrypted    << " (" << float(encrypted)    / float(received) * 100.0f << "%)"
+       << ";substitute "   << substitute   << " (" << float(substitute)   / float(received) * 100.0f << "%)"
+       << ";lost "         << lost         << " (" << float(lost)         / float(received) * 100.0f << "%)"
        << ";maxReorderSize "     << maxReorderSize
        << ";reordered "          << reordered
        << ";reorderedTimedOut "  << reorderedTimedOut
@@ -128,6 +129,7 @@ prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const &
       id_(id),
       promisc_(false),
       annotate_(false),
+      frequency_(0),
       modulationRegistry_(WLANModulationParameterRegistry::instance()),
       dropUnknownMCS_ (true)
 {
@@ -158,6 +160,11 @@ prefix_ bool senf::emu::MonitorDataFilter::annotate()
     const
 {
     return annotate_;
+}
+
+prefix_ void senf::emu::MonitorDataFilter::frequency(unsigned f)
+{
+    frequency_ = f;
 }
 
 prefix_ senf::emu::TSFTHistogram & senf::emu::MonitorDataFilter::tsftHistogram()
@@ -524,6 +531,13 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         
         stats_.received++;
 
+        if (SENF_LIKELY(rtParser.channelOptionsPresent())) {
+            if (SENF_UNLIKELY(rtParser.channelOptions().freq() != frequency_)) {
+                stats_.freqMismatch++;
+                return;
+            }
+        }
+        
         // Set Annotations: incoming interface
         rtPacket.annotation<annotations::Interface>().value = id_;
 
@@ -534,8 +548,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         {
             annotations::Quality & q (rtPacket.annotation<annotations::Quality>());
             q.rssi  = short(rtParser.dbmAntennaSignal());
-//            q.noise = (rtParser.dbmAntennaNoisePresent() ? short(rtParser.dbmAntennaNoise()) : short(DEFAULT_WLAN_NOISE));
-            q.noise = short(DEFAULT_WLAN_NOISE);
+            q.noise = (rtParser.dbmAntennaNoisePresent() ? short(rtParser.dbmAntennaNoise()) : short(DEFAULT_WLAN_NOISE));
             q.snr   = short(q.rssi - q.noise);
             q.flags.frameLength = rtPacket.size() - rtParser.length();
         }

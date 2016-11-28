@@ -57,6 +57,7 @@ namespace emu {
     {
         senf::ClockService::clock_type tstamp;
         unsigned received;
+        unsigned freqMismatch;
         unsigned legacy;
         unsigned ht;
         unsigned badFCS;
@@ -104,6 +105,7 @@ namespace emu {
         void promisc(bool p);
         void annotate(bool a);
         bool annotate() const;
+        void frequency(unsigned f);
         void id(senf::MACAddress const & _id);
         TSFTHistogram & tsftHistogram();
         MonitorDataFilterStatistics stats();
@@ -142,6 +144,7 @@ namespace emu {
         senf::MACAddress id_;
         bool promisc_;
         bool annotate_;
+        unsigned frequency_;
         WLANModulationParameterRegistry const & modulationRegistry_;
         TSFTHistogram tsftHistogram_;
         MonitorDataFilterStatistics stats_;
