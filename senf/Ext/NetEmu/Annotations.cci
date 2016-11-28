@@ -144,6 +144,7 @@ prefix_ void senf::emu::annotations::Timestamp::fromSocketProtocol(senf::Datagra
 }
 
 prefix_ void senf::emu::annotations::Timestamp::fromQueueBuffer(senf::SocketQueueBuffer const & buffer)
+    const
 {
     ::memcpy(timestamp, buffer.timestampPtr(), sizeof(timestamp));
 }
