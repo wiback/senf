@@ -91,11 +91,12 @@ prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq)
         frequency_ = 0;
         return;
     }
-    
+
+    // be tolerant, if we have been given kHz :)
     if (freq > 10000)
         freq /= 1000;
+    
     frequency_ = freq;
-    spectralSetting("spectral_scan_ctl", "trigger");
 }
 
 prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
@@ -105,7 +106,8 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
     while(burst-- > 0) {
         spectralFrames_++;    
         fft_sample_tlv tlv;
-        if (read(spectralHandle_.fd(), &tlv, sizeof(tlv)) == sizeof(tlv)) {    
+        size_t rd;
+        if ((rd = read(spectralHandle_.fd(), &tlv, sizeof(tlv))) == sizeof(tlv)) {    
             switch (tlv.type) {
             case ATH_FFT_SAMPLE_HT20:
                 {
@@ -160,7 +162,9 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                 break;
             }
         } else {
-            spectralTruncated_++;
+            if (rd > 0) {
+                spectralTruncated_++;
+            }
             burst = 0;
         }
     }
