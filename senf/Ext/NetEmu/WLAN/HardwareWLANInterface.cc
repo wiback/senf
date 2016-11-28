@@ -509,6 +509,8 @@ prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
         closeMonitorSocket();
         dataSource(true);
     }
+
+    frequencyHint();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_annotationMode(bool a)

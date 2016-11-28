@@ -60,6 +60,7 @@ namespace emu {
         unsigned freqMismatch;
         unsigned legacy;
         unsigned ht;
+        unsigned vht;
         unsigned badFCS;
         unsigned unknownMCS;
         unsigned unknownType;

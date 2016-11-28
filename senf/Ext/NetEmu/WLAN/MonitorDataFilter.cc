@@ -75,7 +75,7 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
     os << "(duration "    << senf::ClockService::in_milliseconds(duration()) << " ms"
        << ",rate "        << (received*1000) / (senf::ClockService::in_milliseconds(duration())+1) << " pps";// +1 to avoid DIV_BY_ZERO
 
-    if ((freqMismatch + legacy + ht + unknownMCS) != received ||
+    if ((freqMismatch + legacy + ht + vht + unknownMCS) != received ||
         (management + control + data + unknownType + badFCS + truncated) != received ||
         duplicated > retries ||
         (truncated + badFCS + unknownType) != substitute)
@@ -90,6 +90,7 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
        << ";freqMismatch " << freqMismatch << " (" << float(freqMismatch) / float(received) * 100.0f << "%)"
        << ",legacy "       << legacy       << " (" << float(legacy)       / float(received) * 100.0f << "%)"
        << ",ht "           << ht           << " (" << float(ht)           / float(received) * 100.0f << "%)"
+       << ",vht "          << vht          << " (" << float(vht)          / float(received) * 100.0f << "%)"
        << ",unknownMCS "   << unknownMCS   << " (" << float(unknownMCS)   / float(received) * 100.0f << "%)"
        << ";management "   << management   << " (" << float(management)   / float(received) * 100.0f << "%)"
        << ",control "      << control      << " (" << float(control)      / float(received) * 100.0f << "%)"
@@ -559,6 +560,9 @@ prefix_ void senf::emu::MonitorDataFilter::request()
                 rtParser.mcs().mcsIndex(),
                 rtParser.mcs().bandwidth(),
                 rtParser.mcs().guardInterval() );
+        }
+        else if (rtParser.vhtPresent()) {
+            stats_.vht++;
         }
         else if (rtParser.ratePresent()) {
                 stats_.legacy++;
