@@ -47,7 +47,7 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
      spectralFFTPeriod_(0x02),
      spectralShortRepeat_(true),
      spectralBins_(64),
-     spectralCount_(0),
+     spectralCount_(8),
      spectralFrames_(0),
      spectralValidSamples_(0),
      spectralUnknown_(0),
@@ -87,9 +87,15 @@ prefix_ void senf::emu::AthSpectralScan::disable()
 
 prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq)
 {
+    if (!spectralHandle_) {
+        frequency_ = 0;
+        return;
+    }
+    
     if (freq > 10000)
         freq /= 1000;
     frequency_ = freq;
+    spectralSetting("spectral_scan_ctl", "trigger");
 }
 
 prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
@@ -217,10 +223,6 @@ prefix_ bool senf::emu::AthSpectralScan::callback(AthSpectralScanCallback const 
         return false;
     }
     
-    // flush any old samples
-    char buf[4096];
-    while (read(dfd, buf, sizeof(buf)) > 0);
-
     spectralHandle_.SetFd(dfd);
     spectralEvent_.handle(spectralHandle_);
     spectralEvent_.events( senf::scheduler::FdEvent::EV_READ);
