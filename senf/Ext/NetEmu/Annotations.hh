@@ -80,10 +80,10 @@ namespace annotations {
     /** \brief Packet quality */
     struct Quality
     {
-        mutable short snr;
-        mutable short rssi;
-        mutable short noise;
-        mutable FrameRxFlags flags;
+        short snr;
+        short rssi;
+        short noise;
+        FrameRxFlags flags;
 
         Quality();
         bool operator<(Quality const & other) const;
@@ -98,7 +98,7 @@ namespace annotations {
     /** \brief Incoming packet timestamp */
     struct Timestamp
     {
-        mutable std::uint32_t timestamp[2];
+        std::uint32_t timestamp[2];
 
         Timestamp();
         bool operator<(Timestamp const & other) const;
@@ -107,7 +107,7 @@ namespace annotations {
         void fromScheduler();
         void fromSocketProtocol(senf::DatagramSocketProtocol const & protocol);
         void fromWallClock();
-        void fromQueueBuffer(senf::SocketQueueBuffer const & buffer) const;
+        void fromQueueBuffer(senf::SocketQueueBuffer const & buffer);
         senf::ClockService::clock_type as_clock_type() const;
         std::uint32_t as_milli_seconds(std::uint32_t modulo = 0xffffffff) const;
     };
