@@ -152,7 +152,8 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                     if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) {
                         if (SENF_LIKELY(be16toh(ath10k->freq1) == frequency_)) {
                             spectralValidSamples_++;
-                            callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1), spectralBins_, ath10k);
+                            unsigned numBins (be16toh(tlv.length) - sizeof(*ath10k) + sizeof(tlv));
+                            callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1), numBins, ath10k);
                         } else {
                             spectralFrequencyMismatch_++;
                         }
