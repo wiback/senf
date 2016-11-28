@@ -73,6 +73,8 @@ prefix_ void senf::emu::AthSpectralScan::disable()
 {
     frequency_ = 0;
     callback_ = dummy;
+    spectralEvent_.disable();
+    spectralHandle_.close();
     spectralSetting("spectral_scan_ctl", "disable");
 }
 
