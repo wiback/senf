@@ -279,6 +279,9 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         .add("maxBurst", fty::Command(
                  SENF_MEMBINDFNP(unsigned, HardwareWLANInterface, maxBurst, () const))
              .doc("set max. number to frames to be read in a burst."));
+    consoleDir()
+        .add("spectralScanStats", fty::Command(&HardwareWLANInterface::spectralScanStats, this)
+             .doc("current spectralScanner stats."));
 
     console::provideDirectory(interfaceDir(), "by-device")
         .add(device(), fty::Link(consoleDir()));
@@ -616,6 +619,8 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
             break;
         }
     }
+    
+    spectralScanner_.frequency(wnlc_.frequency());
 
     // drop all old frames from the kernel queues
     flushRxQueues();
@@ -774,7 +779,9 @@ prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController
     
     wnlc_.do_ibss_join(parameters);
     bw_ = parameters.channelType_ == WirelessNLController::ChannelType::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
-    
+
+    spectralScanner_.frequency(wnlc_.frequency());
+
 //    flushRxQueues();
 //    flushTxQueues();
 }
@@ -863,6 +870,12 @@ prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback()
 {
     spectralScanner_.disable();
 }
+
+prefix_ void senf::emu::HardwareWLANInterface::spectralScanStats(std::ostream & os)
+{
+    spectralScanner_.stats(os);
+}
+
 
 senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statisticsMap(std::uint32_t tag)
 {

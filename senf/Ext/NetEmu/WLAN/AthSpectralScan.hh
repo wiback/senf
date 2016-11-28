@@ -66,6 +66,8 @@ namespace emu {
         void frequency(std::uint32_t freq);
 
         bool detected() const;
+
+        void stats(std::ostream & os);
         
     private:
         UnixFileHandle spectralHandle_;

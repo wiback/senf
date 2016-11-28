@@ -206,9 +206,18 @@ prefix_ bool senf::emu::AthSpectralScan::callback(AthSpectralScanCallback const 
     spectralSetting("spectral_scan_ctl", "background");
     spectralSetting("spectral_scan_ctl", "trigger");
 
+    spectralSamples_ =  spectralFrequencyMismatch_ = spectralTruncated_ = spectralUnknown_ = 0;
+
     callback_ = cb;
     
     return true;
+}
+
+prefix_ void senf::emu::AthSpectralScan::stats(std::ostream & os)
+{
+    os << (spectralEvent_.enabled() ? "enabled: " : "disabled: ") << "samples " << spectralSamples_
+       << ", frequency mismatch " << spectralFrequencyMismatch_ << ", truncated " << spectralTruncated_
+       << ", unknown type " << spectralUnknown_ << std::endl;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

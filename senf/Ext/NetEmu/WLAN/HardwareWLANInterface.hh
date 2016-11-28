@@ -120,6 +120,7 @@ namespace emu {
         
         void spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb);
         void spectralScanCallback();
+        void spectralScanStats(std::ostream & os);
         
     protected:
         NetdeviceController netctl_;
