@@ -48,7 +48,8 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
      spectralShortRepeat_(true),
      spectralBins_(64),
      spectralCount_(0),
-     spectralSamples_(0),
+     spectralFrames_(0),
+     spectralValidSamples_(0),
      spectralUnknown_(0),
      spectralTruncated_(0),
      spectralFrequencyMismatch_(0)
@@ -74,75 +75,88 @@ prefix_ void senf::emu::AthSpectralScan::disable()
     spectralSetting("spectral_scan_ctl", "disable");
     frequency_ = 0;
     callback_ = dummy;
-
+    
     if(spectralHandle_) {
         spectralEvent_.disable();
+        // flush any remaining samples
+        char buf[4096];
+        while (read(spectralHandle_.fd(), buf, sizeof(buf)) > 0);
         spectralHandle_.close();
     }
 }
 
 prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq)
 {
+    if (freq > 10000)
+        freq /= 1000;
     frequency_ = freq;
 }
 
 prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
 {
-    fft_sample_tlv tlv;
+    unsigned burst(1024);
 
-    if (read(spectralHandle_.fd(), &tlv, sizeof(tlv)) == sizeof(tlv)) {    
-        switch (tlv.type) {
-        case ATH_FFT_SAMPLE_HT20:
-            {
-                fft_sample_ht20 ht20;
-                ht20.tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                    if (be16toh(ht20.freq) == frequency_) {
-                        spectralSamples_++;
-                        callback_(be64toh(ht20.tsf), be16toh(ht20.freq), SPECTRAL_HT20_NUM_BINS, &ht20);
+    while(burst-- > 0) {
+        spectralFrames_++;    
+        fft_sample_tlv tlv;
+        if (read(spectralHandle_.fd(), &tlv, sizeof(tlv)) == sizeof(tlv)) {    
+            switch (tlv.type) {
+            case ATH_FFT_SAMPLE_HT20:
+                {
+                    fft_sample_ht20 ht20;
+                    ht20.tlv = tlv;
+                    if (read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
+                        if (be16toh(ht20.freq) == frequency_) {
+                            spectralValidSamples_++;
+                            callback_(be64toh(ht20.tsf), be16toh(ht20.freq), SPECTRAL_HT20_NUM_BINS, &ht20);
+                        } else {
+                            spectralFrequencyMismatch_++;
+                        }
                     } else {
-                        spectralFrequencyMismatch_++;
+                        spectralTruncated_++;
+                        burst = 0;
                     }
-                } else {
-                    spectralTruncated_++;
                 }
-            }
-            break;
-        case ATH_FFT_SAMPLE_HT20_40:
-            {
-                fft_sample_ht20_40 ht20_40;
-                ht20_40.tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) { 
-                    if (be16toh(ht20_40.freq) == frequency_) {
-                        spectralSamples_++;
-                        callback_(be64toh(ht20_40.tsf), be16toh(ht20_40.freq), SPECTRAL_HT20_40_NUM_BINS, &ht20_40);
+                break;
+            case ATH_FFT_SAMPLE_HT20_40:
+                {
+                    fft_sample_ht20_40 ht20_40;
+                    ht20_40.tlv = tlv;
+                    if (read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) { 
+                        if (be16toh(ht20_40.freq) == frequency_) {
+                            spectralValidSamples_++;
+                            callback_(be64toh(ht20_40.tsf), be16toh(ht20_40.freq), SPECTRAL_HT20_40_NUM_BINS, &ht20_40);
+                        } else {
+                            spectralFrequencyMismatch_++;
+                        }
                     } else {
-                        spectralFrequencyMismatch_++;
+                        spectralTruncated_++;
+                        burst = 0;
                     }
-                } else {
-                    spectralTruncated_++;
                 }
-            }
-            break;
-        case ATH_FFT_SAMPLE_ATH10K:
-            {
-                char buf[1024]; // fft_sample_ath10k has avariable length, depending on the number bins
-                fft_sample_ath10k *ath10k = (fft_sample_ath10k *) buf;
-                ath10k->tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                    spectralSamples_++;
-                    callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1), spectralBins_, ath10k);
-                } else {
-                    spectralTruncated_++;
+                break;
+            case ATH_FFT_SAMPLE_ATH10K:
+                {
+                    char buf[1024]; // fft_sample_ath10k has avariable length, depending on the number bins
+                    fft_sample_ath10k *ath10k = (fft_sample_ath10k *) buf;
+                    ath10k->tlv = tlv;
+                    if (read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
+                        spectralValidSamples_++;
+                        callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1), spectralBins_, ath10k);
+                    } else {
+                        spectralTruncated_++;
+                        burst = 0;
+                    }
                 }
+                break;
+            default:
+                spectralUnknown_++;
+                break;
             }
-            break;
-        default:
-            spectralUnknown_++;
-            break;
+        } else {
+            spectralTruncated_++;
+            burst = 0;
         }
-    } else {
-        spectralTruncated_++;
     }
 }
 
@@ -215,7 +229,7 @@ prefix_ bool senf::emu::AthSpectralScan::callback(AthSpectralScanCallback const 
     spectralSetting("spectral_scan_ctl", "background");
     spectralSetting("spectral_scan_ctl", "trigger");
 
-    spectralSamples_ =  spectralFrequencyMismatch_ = spectralTruncated_ = spectralUnknown_ = 0;
+    spectralFrames_ = spectralValidSamples_ =  spectralFrequencyMismatch_ = spectralTruncated_ = spectralUnknown_ = 0;
 
     callback_ = cb;
     
@@ -224,9 +238,10 @@ prefix_ bool senf::emu::AthSpectralScan::callback(AthSpectralScanCallback const 
 
 prefix_ void senf::emu::AthSpectralScan::stats(std::ostream & os)
 {
-    os << (spectralEvent_.enabled() ? "enabled: " : "disabled: ") << "samples " << spectralSamples_
-       << ", frequency mismatch " << spectralFrequencyMismatch_ << ", truncated " << spectralTruncated_
-       << ", unknown type " << spectralUnknown_ << std::endl;
+    os << (spectralEvent_.enabled() ? "enabled: " : "disabled: ") << "fd " << spectralHandle_.fd()
+       << ", frames total " << spectralFrames_ << ", valid samples " << spectralValidSamples_
+       << ", frequency mismatch " << spectralFrequencyMismatch_
+       << ", truncated " << spectralTruncated_ << ", unknown type " << spectralUnknown_ << std::endl;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

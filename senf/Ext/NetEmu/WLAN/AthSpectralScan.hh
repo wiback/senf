@@ -82,7 +82,8 @@ namespace emu {
         unsigned spectralBins_;
         unsigned spectralCount_;
 
-        unsigned spectralSamples_;
+        unsigned spectralFrames_;
+        unsigned spectralValidSamples_;
         unsigned spectralUnknown_;
         unsigned spectralTruncated_;
         unsigned spectralFrequencyMismatch_;
