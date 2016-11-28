@@ -71,11 +71,14 @@ prefix_ bool senf::emu::AthSpectralScan::detected()
 
 prefix_ void senf::emu::AthSpectralScan::disable()
 {
+    spectralSetting("spectral_scan_ctl", "disable");
     frequency_ = 0;
     callback_ = dummy;
-    spectralEvent_.disable();
-    spectralHandle_.close();
-    spectralSetting("spectral_scan_ctl", "disable");
+
+    if(spectralHandle_) {
+        spectralEvent_.disable();
+        spectralHandle_.close();
+    }
 }
 
 prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq)
@@ -176,6 +179,10 @@ prefix_ bool senf::emu::AthSpectralScan::spectralSetting( std::string option, un
 
 prefix_ bool senf::emu::AthSpectralScan::callback(AthSpectralScanCallback const & cb)
 {
+    if (spectralEvent_.enabled()) {
+        disable();
+    }
+    
     if (spectralPath_.find("ath9k") != std::string::npos) {
         if (!spectralSetting( "spectral_period", spectralPeriod_))
             return false;
