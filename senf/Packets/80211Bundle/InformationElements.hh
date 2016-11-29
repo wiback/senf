@@ -240,7 +240,6 @@ namespace senf {
         void dump(std::ostream & os) const;
     };
 
-
     struct WLANHTOperationInfoFieldParser
         : public PacketParserBase
     {
@@ -286,6 +285,26 @@ namespace senf {
 
         void dump(std::ostream & os) const;
     };
+
+    struct WLANMeshIdInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT ( WLANInfoElementParser            );
+        // the StringParser includes the length field so we have to go back
+        SENF_PARSER_GOTO    ( length                           );
+        SENF_PARSER_FIELD   ( value, StringParser<UInt8Parser> );
+        SENF_PARSER_FINALIZE( WLANMeshIdInfoElementParser      );
+
+        SENF_PARSER_INIT() {
+            type() = typeId;
+            length() = 0u;
+        }
+        static const type_t::value_type typeId = 0x72u;
+
+        void dump(std::ostream & os) const;
+    };
+
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
