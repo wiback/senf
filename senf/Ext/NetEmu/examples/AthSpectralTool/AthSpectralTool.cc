@@ -109,16 +109,16 @@ int main(int argc, char const * argv[])
     senf::scheduler::SignalEvent sigterm (SIGTERM, handleSignal);
 
     if (!analyzer.startSpectralScan()) {
-        SENF_LOG((senf::log::IMPORTANT)("Failed to init the spectral scanner") );
+        SENF_LOG((senf::log::IMPORTANT)("Failed to setup/start the spectral scanner") );
         exit(1);
     }
 
     SENF_LOG((senf::log::IMPORTANT)("Specral settings"
-                                    << ": period (atk9k)" << analyzer.spectralSetting("spectral_period")
-                                    << ", fft-period (ath9k)" << analyzer.spectralSetting("spectral_fft_period")
-                                    << ", short-repeat (ath9k)" << analyzer.spectralSetting("spectral_short_repeat")
-                                    << ", bins (ath10k)" << analyzer.spectralSetting("spectral_bins")
-                                    << ", count " << analyzer.spectralSetting("spectral_count") ) );
+                                    << ": period (atk9k)" << analyzer.athSpectralScan().spectralPeriod()
+                                    << ", fft-period (ath9k)" << analyzer.athSpectralScan().spectralFFTPeriod()
+                                    << ", short-repeat (ath9k)" << analyzer.athSpectralScan().spectralShortRepeat()
+                                    << ", bins (ath10k)" << analyzer.athSpectralScan().spectralBins()
+                                    << ", count " << analyzer.athSpectralScan().spectralCount() ) );
 
     senf::ppi::run();
 

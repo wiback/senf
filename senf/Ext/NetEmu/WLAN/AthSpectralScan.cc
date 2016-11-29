@@ -43,11 +43,6 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
    : spectralEvent_("spectralScan_" + phyName, senf::membind( &senf::emu::AthSpectralScan::handleSpectralEvent, this)),
      callback_(dummy),
      frequency_(0),
-     spectralPeriod_(0x08),
-     spectralFFTPeriod_(0x02),
-     spectralShortRepeat_(true),
-     spectralBins_(64),
-     spectralCount_(8),
      spectralFrames_(0),
      spectralValidSamples_(0),
      spectralUnknown_(0),
@@ -57,6 +52,15 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
     spectralPath_ = "/sys/kernel/debug/ieee80211/" + phyName + "/ath9k";
     if (access(spectralPath_.c_str(), O_RDONLY) != 0)
         spectralPath_ = "/sys/kernel/debug/ieee80211/" + phyName + "/ath10k";
+
+    if (spectralPath_.find("ath9k") != std::string::npos) {
+        spectralPeriod(0x08);
+        spectralFFTPeriod(0x02);
+        spectralShortRepeat(true);
+    } else {
+        spectralBins(128);
+    }
+    spectralCount(8);
 }
 
 prefix_ senf::emu::AthSpectralScan::~AthSpectralScan()
@@ -69,6 +73,19 @@ prefix_ bool senf::emu::AthSpectralScan::detected()
 {
     return access(spectralPath_.c_str(), O_RDONLY) == 0;
 }
+
+prefix_ bool senf::emu::AthSpectralScan::is_ath9k()
+    const
+{
+    return spectralPath_.find("ath9k") != std::string::npos;
+}
+
+prefix_ bool senf::emu::AthSpectralScan::is_ath10k()
+    const
+{
+    return spectralPath_.find("ath10k") != std::string::npos;
+}
+
 
 prefix_ void senf::emu::AthSpectralScan::disable()
 {
@@ -177,6 +194,7 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
 }
 
 prefix_ unsigned senf::emu::AthSpectralScan::spectralSetting( std::string option)
+    const
 {
     int cfd;
     if ((cfd = open( (spectralPath_ + "/" + option).c_str(), O_RDONLY)) != -1) {
@@ -213,21 +231,6 @@ prefix_ bool senf::emu::AthSpectralScan::callback(AthSpectralScanCallback const 
         disable();
     }
     
-    if (spectralPath_.find("ath9k") != std::string::npos) {
-        if (!spectralSetting( "spectral_period", spectralPeriod_))
-            return false;
-        if (!spectralSetting( "spectral_fft_period", spectralFFTPeriod_))
-        return false;
-        if (!spectralSetting( "spectral_short_repeat", spectralShortRepeat_))
-            return false;
-    } else {
-        // ath10k
-        if (!spectralSetting( "spectral_bins", spectralBins_))
-            return false;
-    }
-    if (!spectralSetting( "spectral_count", spectralCount_))
-        return false;
-
     int dfd;
     if ((dfd = open((spectralPath_ + "/spectral_scan0").c_str(), O_RDONLY|O_NONBLOCK)) == -1) {
         return false;
@@ -250,11 +253,67 @@ prefix_ bool senf::emu::AthSpectralScan::callback(AthSpectralScanCallback const 
 
 prefix_ void senf::emu::AthSpectralScan::stats(std::ostream & os)
 {
-    os << (spectralEvent_.enabled() ? "enabled: " : "disabled: ") << "fd " << spectralHandle_.fd()
+    os << (is_ath9k() ? "ath9k" : "ath10k") << (spectralEvent_.enabled() ? " enabled: " : " disabled: ") << "fd " << spectralHandle_.fd()
        << ", frames total " << spectralFrames_ << ", valid samples " << spectralValidSamples_
        << ", frequency mismatch " << spectralFrequencyMismatch_
        << ", truncated " << spectralTruncated_ << ", unknown type " << spectralUnknown_ << std::endl;
 }
+
+prefix_ unsigned senf::emu::AthSpectralScan::spectralPeriod()
+    const
+{
+    return spectralSetting("spectral_period");
+}
+
+prefix_ unsigned senf::emu::AthSpectralScan::spectralFFTPeriod()
+    const
+{
+    return spectralSetting("spectral_fft_period");
+}
+
+prefix_ unsigned senf::emu::AthSpectralScan::spectralShortRepeat()
+    const
+{
+    return spectralSetting("spectral_short_repeat");
+}
+
+prefix_ unsigned senf::emu::AthSpectralScan::spectralCount()
+    const
+{
+    return spectralSetting("spectral_count");
+}
+
+prefix_ unsigned senf::emu::AthSpectralScan::spectralBins()
+    const
+{
+    return spectralSetting("spectral_bins");
+}
+
+prefix_ bool senf::emu::AthSpectralScan::spectralPeriod(unsigned v)
+{
+    return !is_ath9k() or spectralSetting("spectral_period", v);
+}
+
+prefix_ bool senf::emu::AthSpectralScan::spectralFFTPeriod(unsigned v)
+{
+    return !is_ath9k() or spectralSetting("spectral_fft_period", v);
+}
+
+prefix_ bool senf::emu::AthSpectralScan::spectralShortRepeat(unsigned v)
+{
+    return !is_ath9k() or spectralSetting("spectral_short_repeat", v);
+}
+
+prefix_ bool senf::emu::AthSpectralScan::spectralCount(unsigned v)
+{
+    return spectralSetting("spectral_count", v);
+}
+
+prefix_ bool senf::emu::AthSpectralScan::spectralBins(unsigned v)
+{
+    return !is_ath10k() or spectralSetting("spectral_bins", v);
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

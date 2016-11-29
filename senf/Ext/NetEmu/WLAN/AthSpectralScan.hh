@@ -56,18 +56,32 @@ namespace emu {
         
         AthSpectralScan(std::string phyName);
         ~AthSpectralScan();
-        
+
         bool spectralSetting( std::string option, std::string value);
         bool spectralSetting( std::string option, unsigned value);
-        unsigned spectralSetting( std::string option);
-        
+        unsigned spectralSetting( std::string option) const;
+
         bool callback(AthSpectralScanCallback const & cb);
         void disable();
         void frequency(std::uint32_t freq);
 
         bool detected() const;
+        bool is_ath9k() const;
+        bool is_ath10k() const;
 
         void stats(std::ostream & os);
+
+        unsigned spectralPeriod() const;
+        unsigned spectralFFTPeriod() const;
+        unsigned spectralShortRepeat() const;
+        unsigned spectralCount() const;
+        unsigned spectralBins() const;
+
+        bool spectralPeriod(unsigned v);
+        bool spectralFFTPeriod(unsigned v);
+        bool spectralShortRepeat(unsigned v);
+        bool spectralCount(unsigned v);
+        bool spectralBins(unsigned v);
         
     private:
         UnixFileHandle spectralHandle_;

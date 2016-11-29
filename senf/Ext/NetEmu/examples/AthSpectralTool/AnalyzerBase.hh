@@ -33,22 +33,10 @@
 #include <senf/Packets/80211Bundle/RadiotapPacket.hh>
 #include <senf/Packets/80211Bundle/WLANPacket.hh>
 #include <senf/PPI/Module.hh>
+#include <senf/Ext/NetEmu/WLAN/AthSpectralScan.hh>
 #include "Configuration.hh"
-#include "spectral_common.h"
 
 ///////////////////////////////hh.p////////////////////////////////////////
-
-class UnixFileHandle
-    : public senf::FileHandle
-{
-public:
-    UnixFileHandle() : senf::FileHandle(std::unique_ptr<senf::FileBody>(new senf::FileBody)) {
-    }
-
-    void SetFd(int fd_) {
-        fd(fd_);
-    };
-};
 
 class AnalyzerBase
     : public senf::ppi::module::Module
@@ -60,12 +48,11 @@ public:
 
     AnalyzerBase(Configuration const & configuration);
 
-    bool startSpectralScan();
-    bool spectralSetting( std::string option, unsigned value);
-    unsigned spectralSetting( std::string option);
-
     std::string stats();
+    bool startSpectralScan();
 
+    senf::emu::AthSpectralScan & athSpectralScan();
+    
 protected:
     Configuration const & configuration_;
 
@@ -74,19 +61,19 @@ protected:
 
     virtual void v_80211FrameReceived(std::uint64_t tsft, unsigned frequency, signed rssi, unsigned rate, unsigned length, senf::RadiotapPacket & rt) = 0;
 
-    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20 const &) = 0;
-    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20_40 const &) = 0;
-    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const &, unsigned bins) = 0;
+    void processSpectralEvent(std::uint64_t tsft, std::uint16_t frequency, unsigned numBins, void * spectralSample);
+    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, unsigned bins, fft_sample_ht20 const &) = 0;
+    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, unsigned bins, fft_sample_ht20_40 const &) = 0;
+    virtual void v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, unsigned bins, fft_sample_ath10k const &) = 0;
 
 private:
     senf::scheduler::TimerEvent    timer_;
     senf::ClockService::clock_type startTime_;
     senf::ClockService::clock_type nextTimeout_;
-    // spectral stuff
-    UnixFileHandle spectralHandle_;
-    senf::scheduler::FdEvent spectralEvent_;
-    std::string spectralPath_;
 
+    senf::emu::AthSpectralScan athSpectralScan_;
+
+    unsigned spectralUnknownType_;
     unsigned pktData_;
     unsigned pktManagement_;
     unsigned pktControl_;
@@ -94,13 +81,8 @@ private:
     unsigned pktTx_;
     unsigned pktExceptions_;
     unsigned pktFrequencyMismatch_;
-    unsigned spectralSamples_;
-    unsigned spectralUnknown_;
-    unsigned spectralTruncated_;
-    unsigned spectralFrequencyMismatch_;
 
     void request();
-    void handleSpectralEvent(int fd);
     void timerEvent();
 };
 

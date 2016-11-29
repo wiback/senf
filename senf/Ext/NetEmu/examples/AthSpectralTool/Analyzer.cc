@@ -31,6 +31,7 @@
 #include <senf/Scheduler/Scheduler.hh>
 #include <senf/Packets/80211Bundle/WLANPacket.hh>
 #include <senf/Ext/NetEmu/Annotations.hh>
+#include <senf/Ext/NetEmu/WLAN/spectral_common.h>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,19 +91,19 @@ prefix_ void Analyzer::v_80211FrameReceived(std::uint64_t tsft, unsigned frequen
             << ", airtime " << senf::ClockService::in_microseconds(airtime) << "us") );
 }
 
-prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20 const & sample)
+prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, unsigned bins, fft_sample_ht20 const & sample)
 {
     SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (HT20) received on frequency " << frequency) );
 }
 
-prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, fft_sample_ht20_40 const & sample)
+prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, unsigned bins, fft_sample_ht20_40 const & sample)
 {
     SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (HT20_40) received on frequency " << frequency) );
 }
 
-prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency1, unsigned frequency2, fft_sample_ath10k const & sample, unsigned bins)
+prefix_ void Analyzer::v_SpectralDataReceived(std::uint64_t tsft, unsigned frequency, unsigned bins, fft_sample_ath10k const & sample)
 {
-    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (ATH10K) received on frequency1 " << frequency1 << " and frequency2 " << frequency2 << ", bins " << bins) );
+    SENF_LOG((senf::log::MESSAGE) ("tsft " << std::hex << tsft << std::dec << " Spectral samples (ATH10K) received on frequency " << frequency << ", bins " << bins) );
 }
 
 

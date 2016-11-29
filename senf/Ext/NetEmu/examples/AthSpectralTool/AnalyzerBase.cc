@@ -43,18 +43,15 @@ prefix_ AnalyzerBase::AnalyzerBase(Configuration const & configuration)
      timer_("intervalTimer", senf::membind( &AnalyzerBase::timerEvent, this)),
      startTime_(senf::ClockService::now()),
      nextTimeout_(senf::ClockService::clock_type(0)),
-     spectralEvent_("spectralScan_" + configuration.phyName, senf::membind( &AnalyzerBase::handleSpectralEvent, this)),
+     athSpectralScan_(configuration.phyName),
+     spectralUnknownType_(0),
      pktData_(0),
      pktManagement_(0),
      pktControl_(0),
      pktOther_(0),
      pktTx_(0),
      pktExceptions_(0),
-     pktFrequencyMismatch_(0),
-     spectralSamples_(0),
-     spectralUnknown_(0),
-     spectralTruncated_(0),
-     spectralFrequencyMismatch_(0)
+     pktFrequencyMismatch_(0)
 {
     noroute(input);
     input.onRequest( &AnalyzerBase::request);
@@ -63,10 +60,11 @@ prefix_ AnalyzerBase::AnalyzerBase(Configuration const & configuration)
     // start the interval timer
     nextTimeout_ = startTime_ + configuration_.reportingInterval;
     timer_.timeout( nextTimeout_);
+}
 
-    spectralPath_ = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath9k";
-    if (access(spectralPath_.c_str(), O_RDONLY) != 0)
-        spectralPath_ = configuration_.debugFS + "/ieee80211/" + configuration_.phyName + "/ath10k";
+prefix_ senf::emu::AthSpectralScan & AnalyzerBase::athSpectralScan()
+{
+    return athSpectralScan_;
 }
 
 prefix_ void AnalyzerBase::timerEvent()
@@ -83,6 +81,21 @@ prefix_ void AnalyzerBase::timerEvent()
         v_terminate(current - startTime_);
         senf::scheduler::terminate();
     }
+}
+
+prefix_ bool AnalyzerBase::startSpectralScan()
+{
+    if ( !athSpectralScan_.spectralPeriod(configuration_.spectralPeriod) or
+         !athSpectralScan_.spectralFFTPeriod(configuration_.spectralFFTPeriod) or
+         !athSpectralScan_.spectralShortRepeat(configuration_.spectralShortRepeat) or
+         !athSpectralScan_.spectralBins(configuration_.spectralBins) or
+         !athSpectralScan_.spectralCount(configuration_.spectralCount))
+        return false;
+
+    bool rtn = athSpectralScan_.callback(
+               std::bind(&AnalyzerBase::processSpectralEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+    athSpectralScan_.frequency(configuration_.frequency);
+    return rtn;
 }
 
 prefix_ void AnalyzerBase::request()
@@ -156,143 +169,29 @@ prefix_ void AnalyzerBase::request()
         pktFrequencyMismatch_++;
 }
 
-prefix_ void AnalyzerBase::handleSpectralEvent(int _dummy_)
+prefix_ void AnalyzerBase::processSpectralEvent(std::uint64_t tsft, std::uint16_t frequency, unsigned numBins, void * sample)
 {
-    fft_sample_tlv tlv;
-
-    if (read(spectralHandle_.fd(), &tlv, sizeof(tlv)) == sizeof(tlv)) {    
-        switch (tlv.type) {
-        case ATH_FFT_SAMPLE_HT20:
-            {
-                fft_sample_ht20 ht20;
-                ht20.tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                    if (be16toh(ht20.freq) == configuration_.frequency) {
-                        spectralSamples_++;
-                        v_SpectralDataReceived(be64toh(ht20.tsf), be16toh(ht20.freq), ht20);
-                    } else {
-                        spectralFrequencyMismatch_++;
-                    }
-                } else {
-                    spectralTruncated_++;
-                }
-            }
-            break;
-        case ATH_FFT_SAMPLE_HT20_40:
-            {
-                fft_sample_ht20_40 ht20_40;
-                ht20_40.tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) { 
-                    if (be16toh(ht20_40.freq) == configuration_.frequency) {
-                        spectralSamples_++;
-                        v_SpectralDataReceived(be64toh(ht20_40.tsf), be16toh(ht20_40.freq), ht20_40);
-                    } else {
-                        spectralFrequencyMismatch_++;
-                    }
-                } else {
-                    spectralTruncated_++;
-                }
-            }
-            break;
-        case ATH_FFT_SAMPLE_ATH10K:
-            {
-                char buf[1024]; // fft_sample_ath10k has avariable length, depending on the number bins
-                fft_sample_ath10k *ath10k = (fft_sample_ath10k *) buf;
-                ath10k->tlv = tlv;
-                if (read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length)) {
-                    spectralSamples_++;
-                    v_SpectralDataReceived(be64toh(ath10k->tsf), be16toh(ath10k->freq1), be16toh(ath10k->freq2), *ath10k, configuration_.spectralBins);
-                } else {
-                    spectralTruncated_++;
-                }
-            }
-            break;
-        default:
-            spectralUnknown_++;
-            break;
-        }
-    } else {
-        spectralTruncated_++;
+    switch (((fft_sample_tlv*) sample)->type) {
+    case ATH_FFT_SAMPLE_HT20:
+        v_SpectralDataReceived(tsft, frequency, numBins,  *((fft_sample_ht20 *) sample));
+        break;
+    case ATH_FFT_SAMPLE_HT20_40:
+        v_SpectralDataReceived(tsft, frequency, numBins,  *((fft_sample_ht20_40 *) sample));
+        break;
+    case ATH_FFT_SAMPLE_ATH10K:
+        v_SpectralDataReceived(tsft, frequency, numBins,  *((fft_sample_ath10k *) sample));
+        break;
+    default:
+        spectralUnknownType_++;
+        break;
     }
-}
-
-prefix_ unsigned AnalyzerBase::spectralSetting( std::string option)
-{
-    int cfd;
-    if ((cfd = open( (spectralPath_ + "/" + option).c_str(), O_RDONLY)) != -1) {
-        char buf[128]; int rd;
-        if ((rd = read(cfd, buf, sizeof((buf)))) > 0) {
-            buf[rd] = 0;
-            return atoi(buf);
-        }
-    }
-    
-    return unsigned(-1);
-}
-
-prefix_ bool AnalyzerBase::spectralSetting( std::string option, unsigned value)
-{
-    int cfd;
-    if ((cfd = open( (spectralPath_ + "/" + option).c_str(), O_WRONLY)) != -1) {
-        std::string tmp (senf::str(value));
-        bool rtn (write(cfd, tmp.c_str(), tmp.size()) == signed(tmp.size()));
-        close(cfd);
-        return rtn;
-    }
-
-    return false;
-}
-
-prefix_ bool AnalyzerBase::startSpectralScan()
-{
-    std::string ctlFile_  (spectralPath_ + "/spectral_scan_ctl");
-    std::string dataFile_ (spectralPath_ + "/spectral_scan0");
-
-
-    if (spectralPath_.find("ath9k") != std::string::npos) {
-        if (!spectralSetting( "spectral_period", configuration_.spectralPeriod))
-            return false;
-        if (!spectralSetting( "spectral_fft_period", configuration_.spectralFFTPeriod))
-        return false;
-        if (!spectralSetting( "spectral_short_repeat", configuration_.spectralShortRepeat))
-            return false;
-    } else {
-        // ath10k
-        if (!spectralSetting( "spectral_bins", configuration_.spectralBins))
-            return false;
-    }
-    if (!spectralSetting( "spectral_count", configuration_.spectralCount))
-        return false;
-
-    int dfd;
-    if ((dfd = open( dataFile_.c_str(), O_RDONLY|O_NONBLOCK)) == -1) {
-        return false;
-    }
-
-    // flush any old samples
-    char buf[4096];
-    while (read(dfd, buf, sizeof(buf)) > 0);
-
-    spectralHandle_.SetFd(dfd);
-    spectralEvent_.handle(spectralHandle_);
-    spectralEvent_.events( senf::scheduler::FdEvent::EV_READ);
-    spectralEvent_.enable();
-
-    int cfd;
-    if ((cfd = open( ctlFile_.c_str(), O_WRONLY)) != -1) {
-        senf::IGNORE(write(cfd, "background", 10));
-        close(cfd);
-    }
-    if ((cfd = open( ctlFile_.c_str(), O_WRONLY)) != -1) {
-        senf::IGNORE(write(cfd, "trigger", 7));
-        close(cfd);
-    }
-
-    return true;
 }
 
 prefix_ std::string AnalyzerBase::stats()
 {
+    std::stringstream ss;
+    athSpectralScan_.stats(ss);
+    
     return "pktData " + senf::str(pktData_) +
         ", pktManagement " + senf::str(pktManagement_) +
         ", pktControl " + senf::str(pktControl_) +
@@ -301,10 +200,7 @@ prefix_ std::string AnalyzerBase::stats()
         ", pktExceptions " + senf::str(pktExceptions_) +
         ", pktFrequencyMismatch " + senf::str(pktFrequencyMismatch_) +
 
-        " --- spectralSamples " + senf::str(spectralSamples_) +
-        ", spectralUnknown " + senf::str(spectralUnknown_) +
-        ", spectralTruncated " + senf::str(spectralTruncated_) +
-        ", spectralFrequencyMismatch " + senf::str(spectralFrequencyMismatch_);
+        " --- " + senf::str(ss) + ", spectralUnknown " + senf::str(spectralUnknownType_);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
