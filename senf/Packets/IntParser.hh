@@ -484,7 +484,6 @@ namespace senf {
         static value_type const max_value = boost::low_bits_mask_t<End-Start-1>::sig_bits;
         static value_type const min_value = - max_value - 1;
 
-
         value_type value() const {
             value_type v (detail::packet::parse_bitfield<Start,End>::parse(i()));
             return v&boost::high_bit_mask_t<End-Start-1>::high_bit ?

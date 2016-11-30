@@ -231,6 +231,34 @@ SENF_AUTO_TEST_CASE(WLANBeaconPacket_parse_mesh_vht)
     BOOST_CHECK_EQUAL( beacon->ssid().value(), "");
 
     BOOST_CHECK( beacon->ieList().contains<senf::WLANMeshIdInfoElementParser>());
+    BOOST_CHECK_EQUAL( beacon->ieList().find<senf::WLANMeshIdInfoElementParser>().value(), "44");
+
+    BOOST_CHECK( beacon->ieList().contains<senf::WLANVHTCapabilitiesInfoElementParser>());
+    senf::WLANVHTCapabilitiesInfoElementParser vhtCapaParser (beacon->ieList().find<
+    		senf::WLANVHTCapabilitiesInfoElementParser>());
+    senf::WLANVHTCapabilitiesInfoFieldParser vhtCapaInfoParser (vhtCapaParser.capabilitiesInfo());
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.maxMPDULength(),                    2u    );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.supportedChannelWidthSet(),         0u    );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.rxLDPC(),                           true  );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.shortGIfor80MHz(),                  true  );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.shortGIfor160_8080MHz(),            false );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.txSTBC(),                           true  );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.rxSTBC(),                           1u    );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.suBeamformer(),                     false );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.suBeamformee(),                     false );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.compressedSteeringNrOfBFAntennas(), 0u    );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.nrOfSoundingDimensions(),           0u    );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.muBeamformer(),                     false );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.muBeamformee(),                     false );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.vhtTxOpPowerSave(),                 false );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.htc_vhtCapable(),                   false );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.maxAMPDULengthExponent(),           7u    );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.vhtLinkAdaptationCapable(),         0u    );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.rxAntennaPatternConsistency(),      true  );
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.txAntennaPatternConsistency(),      true  );
+
+    vhtCapaInfoParser.maxAMPDULengthExponent(7);
+    BOOST_CHECK_EQUAL(vhtCapaInfoParser.maxAMPDULengthExponent(),           7u    );
 
     typedef senf::WLANBeaconPacketParser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (beacon->ieList());

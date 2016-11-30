@@ -305,6 +305,65 @@ namespace senf {
         void dump(std::ostream & os) const;
     };
 
+    struct WLANVHTCapabilitiesInfoFieldParser
+        : public PacketParserBase
+    {
+    public:
+#       include SENF_FIXED_PARSER()
+        // re-ordering of the fields due to the byte order
+        SENF_PARSER_BITFIELD ( txSTBC,                           1, bool     );
+        SENF_PARSER_BITFIELD ( shortGIfor160_8080MHz,            1, bool     );
+        SENF_PARSER_BITFIELD ( shortGIfor80MHz,                  1, bool     );
+        SENF_PARSER_BITFIELD ( rxLDPC,                           1, bool     );
+        SENF_PARSER_BITFIELD ( supportedChannelWidthSet,         2, unsigned );
+        SENF_PARSER_BITFIELD ( maxMPDULength,                    2, unsigned );
+
+        SENF_PARSER_BITFIELD ( compressedSteeringNrOfBFAntennas, 3, unsigned );
+        SENF_PARSER_BITFIELD ( suBeamformee,                     1, bool     );
+        SENF_PARSER_BITFIELD ( suBeamformer,                     1, bool     );
+        SENF_PARSER_BITFIELD ( rxSTBC,                           3, unsigned );
+
+        SENF_PARSER_PRIVATE_BITFIELD ( maxAMPDULengthExponent_1, 1, unsigned );
+        SENF_PARSER_BITFIELD ( htc_vhtCapable,                   1, bool     );
+        SENF_PARSER_BITFIELD ( vhtTxOpPowerSave,                 1, bool     );
+        SENF_PARSER_BITFIELD ( muBeamformee,                     1, bool     );
+        SENF_PARSER_BITFIELD ( muBeamformer,                     1, bool     );
+        SENF_PARSER_BITFIELD ( nrOfSoundingDimensions,           3, unsigned );
+
+        SENF_PARSER_SKIP_BITS(                                   2           );  // reserved
+        SENF_PARSER_BITFIELD ( txAntennaPatternConsistency,      1, bool     );
+        SENF_PARSER_BITFIELD ( rxAntennaPatternConsistency,      1, bool     );
+        SENF_PARSER_BITFIELD ( vhtLinkAdaptationCapable,         2, unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD ( maxAMPDULengthExponent_2, 2, unsigned );
+
+        SENF_PARSER_FINALIZE ( WLANVHTCapabilitiesInfoFieldParser            );
+
+        boost::uint32_t maxAMPDULengthExponent() const {
+        	return (maxAMPDULengthExponent_1().value() << 2) | maxAMPDULengthExponent_2().value();
+        }
+        void maxAMPDULengthExponent(boost::uint32_t v) const {
+         	maxAMPDULengthExponent_1((v & 0x00000004) >> 2) ;
+         	maxAMPDULengthExponent_2(v & 0x00000003);
+         }
+     };
+
+    struct WLANVHTCapabilitiesInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT ( WLANInfoElementParser                                            );
+        SENF_PARSER_FIELD   ( capabilitiesInfo,           WLANVHTCapabilitiesInfoFieldParser   );
+        SENF_PARSER_FINALIZE( WLANVHTCapabilitiesInfoElementParser                             );
+
+        SENF_PARSER_INIT() {
+            type() = typeId;
+            length() = 2u;
+        }
+        static const type_t::value_type typeId = 0xbf;
+
+        void dump(std::ostream & os) const;
+    };
+
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

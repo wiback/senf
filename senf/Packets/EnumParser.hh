@@ -59,6 +59,6 @@ namespace senf {
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 //#include "EnumParser.cci"
-//#include "BitsetParser.ct"
+//#include "EnumParser.ct"
 #include "EnumParser.cti"
 #endif
