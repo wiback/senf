@@ -5,20 +5,20 @@
 //
 // The contents of this file are subject to the Fraunhofer FOKUS Public License
 // Version 1.0 (the "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at 
+// with the License. You may obtain a copy of the License at
 // http://senf.fokus.fraunhofer.de.de/license.html
 //
-// The Fraunhofer FOKUS Public License Version 1.0 is based on, 
+// The Fraunhofer FOKUS Public License Version 1.0 is based on,
 // but modifies the Mozilla Public License Version 1.1.
 // See the full license text for the amendments.
 //
-// Software distributed under the License is distributed on an "AS IS" basis, 
-// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+// Software distributed under the License is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the License.
 //
 // The Original Code is Fraunhofer FOKUS code.
 //
-// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V. 
+// The Initial Developer of the Original Code is Fraunhofer-Gesellschaft e.V.
 // (registered association), Hansastraße 27 c, 80686 Munich, Germany.
 // All Rights Reserved.
 //
@@ -166,12 +166,13 @@ namespace emu {
                 OtherBSS = 1 << NL80211_MNTR_FLAG_OTHER_BSS  // show frames from other BSSes
             };
         };
-        struct ChannelType {
+        struct ChannelMode {
             enum Enum {
-                NoHT      = NL80211_CHAN_NO_HT,
-                HT20      = NL80211_CHAN_HT20,
-                HT40Minus = NL80211_CHAN_HT40MINUS,
-                HT40Plus  = NL80211_CHAN_HT40PLUS
+                NoHT20,
+                HT20,
+                HT40Minus,
+                HT40Plus,
+				VHT80,
             };
         };
         struct DFSState {
@@ -210,7 +211,7 @@ namespace emu {
             typedef boost::function<void (IbssJoinParameters const &)> Callback;
             typedef boost::shared_ptr<IbssJoinParameters> ptr;
 
-            IbssJoinParameters(Callback cb, std::string const & ssid, frequency_type freq, ChannelType::Enum channelType);
+            IbssJoinParameters(Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode);
 
             void initHTCapabilities();
 
@@ -218,7 +219,7 @@ namespace emu {
             bool handleDFS_;
             std::string ssid_;
             frequency_type freq_;
-            ChannelType::Enum channelType_;
+            ChannelMode::Enum channelMode_;
             senf::MACAddress bssid_;
             std::vector<unsigned char> ies_;
             boost::optional<ieee80211_ht_cap> htCapabilities_;
@@ -239,6 +240,29 @@ namespace emu {
             IbssJoinParameters::ptr handleDFS(bool flag);
         };
 
+        class MeshJoinParameters : boost::noncopyable,
+            public boost::enable_shared_from_this<MeshJoinParameters>
+        {
+            typedef boost::function<void (MeshJoinParameters const &)> Callback;
+            typedef boost::shared_ptr<MeshJoinParameters> ptr;
+
+            MeshJoinParameters(Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode);
+
+            Callback callback_;
+            std::string meshId_;
+            frequency_type freq_;
+            ChannelMode::Enum channelMode_;
+            boost::optional<boost::uint32_t> beaconInterval_;
+
+            friend class WirelessNLController;
+            friend class HardwareWLANInterface;
+
+        public:
+            ~MeshJoinParameters();
+
+            MeshJoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
+        };
+
     public:
         typedef boost::iterator_range<Frequencies_iterator> FrequencyRange;
         typedef boost::iterator_range<BitrateList::iterator> BitrateRange;
@@ -247,15 +271,20 @@ namespace emu {
         WirelessNLController();
         WirelessNLController(std::string const & interface);
 
-        IbssJoinParameters::ptr ibss_join(std::string const & ssid, frequency_type freq, ChannelType::Enum channelType);
+        IbssJoinParameters::ptr ibss_join(std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode);
         void ibss_leave();
 
-        void set_frequency(frequency_type freq, ChannelType::Enum = ChannelType::NoHT);
+        MeshJoinParameters::ptr mesh_join(std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode);
+        void mesh_leave();
+
+        void set_frequency(frequency_type freq, ChannelMode::Enum = ChannelMode::NoHT20);
         void set_txpower(TxPowerSetting::Enum setting, unsigned int mBm);
+
         void add_monInterface(std::string const & name, int flags = MonitorFlags::None);
         void add_adhocInterface(std::string const & name);
         void add_apInterface(std::string const & name);
-        void add_meshInterface(std::string const & name);
+        void add_meshInterface(std::string const & name, std::string const & meshId = "");
+
         void del_interface(std::string const & name);
 
         void set_retryLimit(boost::uint8_t shortLimit, boost::uint8_t longLimit);
@@ -263,7 +292,7 @@ namespace emu {
         void set_txQueueParameters(boost::uint8_t queue, boost::uint16_t cwMin, boost::uint16_t cwMax, boost::uint8_t aifs, boost::uint16_t txop);
 
         DFSState::Enum dfsState(frequency_type freq);
-        void start_radarDetection(unsigned int freq, ChannelType::Enum = ChannelType::NoHT);
+        void start_radarDetection(unsigned int freq, ChannelMode::Enum = ChannelMode::NoHT20);
 
         void set_regulatory_request(std::string const & alpha2Country);
         void set_regulatory(RegulatoryDomain const & regDomain);
@@ -286,7 +315,11 @@ namespace emu {
         static std::string if_nameto_phy_name(std::string const & ifname);
         static int phy_nametoindex(std::string const & phyname);
         static std::string macToPhy(senf::MACAddress const & mac);
-        
+
+        static int channelWidth(ChannelMode::Enum channelMode);
+        static int channelType(ChannelMode::Enum channelMode);
+        static frequency_type centerFreq(frequency_type freq, ChannelMode::Enum channelMode);
+
         frequency_type frequency();
         FrequencyRange frequencies();
         FrequencyRange frequencies(Band_t band);
@@ -331,9 +364,12 @@ namespace emu {
         void initNlCb(nl_sock_ptr & sock, nl_cb_ptr & cb, NetlinkMsgCallback & msgcb);
 
         static nl_msg_ptr nlMsg();
+        static void nlPutChannelDef(nl_msg_ptr msg, frequency_type freq, ChannelMode::Enum channelMode);
         nl_msg_ptr nlMsgHeader(uint8_t cmd, CmdIdBy idBy, int flags=0) const;
         void send_and_wait4response(nl_msg_ptr const & msg, CallbackMemPtr cb = nullptr);
+
         void do_ibss_join(IbssJoinParameters const & parameters);
+        void do_mesh_join(MeshJoinParameters const & parameters);
 
         void getWiphy();
 

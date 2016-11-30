@@ -609,11 +609,11 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
         switch (bandwidth) {
         case MHZ_TO_KHZ(20):
             wnlc.set_frequency( freq-frequencyOffset_,
-                    htMode_ == HTMode::Disabled ? WirelessNLController::ChannelType::NoHT : WirelessNLController::ChannelType::HT20);
+                    htMode_ == HTMode::Disabled ? WirelessNLController::ChannelMode::NoHT20 : WirelessNLController::ChannelMode::HT20);
             bw_ = MHZ_TO_KHZ(20);
             break;
         case MHZ_TO_KHZ(40):
-            wnlc.set_frequency( freq-frequencyOffset_-MHZ_TO_KHZ(10), WirelessNLController::ChannelType::HT40Plus);
+            wnlc.set_frequency( freq-frequencyOffset_-MHZ_TO_KHZ(10), WirelessNLController::ChannelMode::HT40Plus);
             bw_ = MHZ_TO_KHZ(40);
             break;
         default:
@@ -748,22 +748,22 @@ prefix_ void senf::emu::HardwareWLANInterface::v_coverageRange(unsigned distance
 }
 
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr
-senf::emu::HardwareWLANInterface::joinAdhocNetwork(std::string const & ssid, unsigned int freq,
-                                                   unsigned int bandwidth)
+senf::emu::HardwareWLANInterface::joinAdhocNetwork(std::string const & ssid,
+		unsigned int freq, unsigned int bandwidth)
 {
     if (! enabled())
         throw senf::SystemException(
             "Cannot join AdhocNetwork (" + ssid + "): Interface (" + device() + ") is down ", ENETDOWN);
 
-    WirelessNLController::ChannelType::Enum channelType;
+    WirelessNLController::ChannelMode::Enum channelMode;
     switch (bandwidth) {
     case MHZ_TO_KHZ(20):
-        channelType = (htMode_ == HTMode::Disabled
-                       ? WirelessNLController::ChannelType::NoHT
-                       : WirelessNLController::ChannelType::HT20);
+		channelMode = (htMode_ == HTMode::Disabled
+                       ? WirelessNLController::ChannelMode::NoHT20
+                       : WirelessNLController::ChannelMode::HT20);
         break;
     case MHZ_TO_KHZ(40):
-        channelType = WirelessNLController::ChannelType::HT40Plus;
+		channelMode = WirelessNLController::ChannelMode::HT40Plus;
         freq -= MHZ_TO_KHZ(10);
         break;
     default:
@@ -772,7 +772,7 @@ senf::emu::HardwareWLANInterface::joinAdhocNetwork(std::string const & ssid, uns
 
     return WirelessNLController::IbssJoinParameters::ptr( new WirelessNLController::IbssJoinParameters(
             membind(&HardwareWLANInterface::do_ibss_join, this),
-            ssid, freq-frequencyOffset_, channelType) );
+            ssid, freq-frequencyOffset_, channelMode) );
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters)
@@ -780,7 +780,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController
     openDataSocket();
     
     wnlc_.do_ibss_join(parameters);
-    bw_ = parameters.channelType_ == WirelessNLController::ChannelType::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
+    bw_ = parameters.channelMode_ == WirelessNLController::ChannelMode::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
 
     frequencyHint();
 }
