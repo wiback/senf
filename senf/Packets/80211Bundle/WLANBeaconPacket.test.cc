@@ -226,6 +226,9 @@ SENF_AUTO_TEST_CASE(WLANBeaconPacket_parse_mesh_vht)
 
     senf::WLANBeaconPacket beacon (senf::WLANBeaconPacket::create(data));
 
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( beacon.dump(oss));
+
     BOOST_CHECK_EQUAL( beacon->timestamp(), 0x000000001bb5c03buLL);
     BOOST_CHECK_EQUAL( beacon->ssidIE().length(), 0);
     BOOST_CHECK_EQUAL( beacon->ssid().value(), "");
@@ -259,6 +262,17 @@ SENF_AUTO_TEST_CASE(WLANBeaconPacket_parse_mesh_vht)
 
     vhtCapaInfoParser.maxAMPDULengthExponent(7);
     BOOST_CHECK_EQUAL(vhtCapaInfoParser.maxAMPDULengthExponent(),           7u    );
+
+    senf::WLANSupportedVHTMCSSetParser supportedMCSSet (vhtCapaParser.supportedMCSSet());
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS1SS(), 2u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS2SS(), 2u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS3SS(), 3u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS4SS(), 3u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS5SS(), 3u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS6SS(), 3u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS7SS(), 3u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS8SS(), 3u );
+    BOOST_CHECK_EQUAL(supportedMCSSet.rxHighestSupportedDataRate().value(), 0u );
 
     typedef senf::WLANBeaconPacketParser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (beacon->ieList());
