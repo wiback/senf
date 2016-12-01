@@ -252,6 +252,7 @@ namespace emu {
             std::string meshId_;
             frequency_type freq_;
             ChannelMode::Enum channelMode_;
+            std::vector<unsigned char> ies_;
             boost::optional<boost::uint32_t> beaconInterval_;
 
             friend class WirelessNLController;
@@ -260,6 +261,8 @@ namespace emu {
         public:
             ~MeshJoinParameters();
 
+            template <typename ForwardReadableRange>
+            MeshJoinParameters::ptr informationElements(ForwardReadableRange const & ies);
             MeshJoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
         };
 

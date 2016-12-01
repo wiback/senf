@@ -1112,7 +1112,7 @@ prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::Wire
 
 prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters const & parameters)
 {
-    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_JOIN_IBSS, CIB_IF, NLM_F_ACK));
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_JOIN_MESH, CIB_IF, NLM_F_ACK));
 
     NLA_PUT( msg, NL80211_ATTR_MESH_ID, parameters.meshId_.length(), parameters.meshId_.c_str());
 
@@ -1120,6 +1120,12 @@ prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters co
 
     if (parameters.beaconInterval_)
         NLA_PUT_U32( msg, NL80211_ATTR_BEACON_INTERVAL, parameters.beaconInterval_.get());
+
+    {
+        nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_MESH_SETUP);
+        if (! boost::empty(parameters.ies_))
+        	NLA_PUT( msg, NL80211_MESH_SETUP_IE, boost::size(parameters.ies_), &(*boost::begin(parameters.ies_)));
+    }
 
     send_and_wait4response(msg);
 }
@@ -1141,7 +1147,7 @@ prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters co
 {
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_JOIN_IBSS, CIB_IF, NLM_F_ACK));
 
-    NLA_PUT     ( msg, NL80211_ATTR_SSID, parameters.ssid_.length(), parameters.ssid_.c_str());
+    NLA_PUT( msg, NL80211_ATTR_SSID, parameters.ssid_.length(), parameters.ssid_.c_str());
 
 	nlPutChannelDef(msg, parameters.freq_, parameters.channelMode_);
 
