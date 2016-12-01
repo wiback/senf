@@ -73,6 +73,9 @@ prefix_ senf::emu::CRDA::CRDA()
         }
         ::close(fd);
     }
+    else {
+        debugRegd_ = getenv("DEBUGREGD");
+    }
 
     if (debugRegd()) {
         logTag_ = "[senf::emu::CRDA_DEBUG] ";
@@ -307,8 +310,10 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
 
 prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
 {
-    if (alpha2Country.empty())
-        alpha2Country = WORLD_REG_ALPHA;
+    if (alpha2Country.empty()) {
+        char *a2 = getenv("COUNTRY");
+        alpha2Country = std::string( a2 ? a2 : WORLD_REG_ALPHA);
+    }
 
     if (nonWirelessBox_)
         return true;
@@ -386,8 +391,15 @@ prefix_ void senf::emu::CRDA::help(int exit_status)
         "\n     --setRegCountry=\"<alpha2>\"   trigger the kernel to load the specified regulatory for the given dummy country."
         "\n     --setRegulatory              push current/world regulatory rules to the kernel - called via udev"
         "\n     --getRegulatory              dump current kernel regulatory domain."
+        "\n     --debug                      log debug info into /tmp/crda.log"
         "\n";
     exit(exit_status);
+}
+
+prefix_ void senf::emu::CRDA::debugEnable()
+{
+    logDebugTarget_.reset( new senf::log::FileTarget( "/tmp/crda.log"));
+    logDebugTarget_->route<senf::log::NOTICE>();
 }
 
 prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
@@ -405,6 +417,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     senf::console::root().add("setRegulatory", fty::Command( &CRDA::setRegulatory, &crda) );
     senf::console::root().add("getRegulatory", fty::Command( &CRDA::kernelRegDomain, &crda) );
     senf::console::root().add("regDomain",     fty::Variable(currentRegDomain_));
+    senf::console::root().add("debug",         fty::Command( &CRDA::debugEnable, &crda) );
 
     try {
         // Try to read and parse the redDBFile written by the main main process

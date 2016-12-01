@@ -55,7 +55,9 @@ namespace emu {
         // Slave CRDA only
         void setRegulatory();
         void help(int exit_status);
+        void debugEnable();
         
+        boost::scoped_ptr<senf::log::Target> logDebugTarget_;
         senf::log::SyslogTarget logTarget_;
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
