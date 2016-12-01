@@ -126,7 +126,7 @@ prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockSe
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::toCoarse(clock_type v)
 {
-    return clock_type_coarse((v / 1000000LL) % 0x80000000);
+    return clock_type_coarse((SENF_CLOCKTYPEVAL(v) / 1000000LL) % 0x80000000);
 }
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::nanoseconds(int64_type v)
