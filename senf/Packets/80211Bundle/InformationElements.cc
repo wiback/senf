@@ -42,6 +42,8 @@ SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANVendorSpecificInfoElementParser  );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANHTCapabilitiesInfoElementParser  );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANMeshIdInfoElementParser          );
 SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANVHTCapabilitiesInfoElementParser );
+SENF_PACKET_TLV_REGISTRY_REGISTER( senf::WLANVHTOperationInfoElementParser    );
+
 
 prefix_ void senf::WLANPowerConstraintInfoElementParser::dump(std::ostream & os)
     const
@@ -109,7 +111,16 @@ prefix_ void senf::WLANMeshIdInfoElementParser::dump(std::ostream & os)
 prefix_ void senf::WLANVHTCapabilitiesInfoElementParser::dump(std::ostream & os)
     const
 {
-    os << "  WLAN HT Operation Information Element\n"
+    os << "  WLAN VHT Operation Information Element\n"
+       << "    type:   " << unsigned(type()) << "\n"
+       << "    length: " << unsigned(length()) << "\n"
+       << "    value:  ToDo!\n";
+}
+
+prefix_ void senf::WLANVHTOperationInfoElementParser::dump(std::ostream & os)
+    const
+{
+    os << "  WLAN VHT Operation Information Element\n"
        << "    type:   " << unsigned(type()) << "\n"
        << "    length: " << unsigned(length()) << "\n"
        << "    value:  ToDo!\n";

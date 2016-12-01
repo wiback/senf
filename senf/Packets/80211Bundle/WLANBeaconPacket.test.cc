@@ -274,6 +274,12 @@ SENF_AUTO_TEST_CASE(WLANBeaconPacket_parse_mesh_vht)
     BOOST_CHECK_EQUAL(supportedMCSSet.rxVHTMCSMap().maxMCS8SS(), 3u );
     BOOST_CHECK_EQUAL(supportedMCSSet.rxHighestSupportedDataRate().value(), 0u );
 
+    senf::WLANVHTOperationInfoElementParser vhtOperationInfoParser (beacon->ieList().find<
+    		senf::WLANVHTOperationInfoElementParser>());
+    BOOST_CHECK_EQUAL(vhtOperationInfoParser.operationInfo().channelWidth(),             1 );
+    BOOST_CHECK_EQUAL(vhtOperationInfoParser.operationInfo().channelCenterFrequency0(), 42 );
+    BOOST_CHECK_EQUAL(vhtOperationInfoParser.operationInfo().channelCenterFrequency1(),  0 );
+
     typedef senf::WLANBeaconPacketParser::ieList_t::container_type ieListContainer_t;
     ieListContainer_t ieListContainer (beacon->ieList());
     BOOST_CHECK_EQUAL( ieListContainer.size(), 8);

@@ -326,7 +326,7 @@ namespace senf {
         SENF_PARSER_BITFIELD ( suBeamformer,                     1, bool     );
         SENF_PARSER_BITFIELD ( rxSTBC,                           3, unsigned );
 
-        SENF_PARSER_PRIVATE_BITFIELD ( maxAMPDULengthExponent_1, 1, unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD( maxAMPDULengthExponent_1,  1, unsigned );
         SENF_PARSER_BITFIELD ( htc_vhtCapable,                   1, bool     );
         SENF_PARSER_BITFIELD ( vhtTxOpPowerSave,                 1, bool     );
         SENF_PARSER_BITFIELD ( muBeamformee,                     1, bool     );
@@ -337,7 +337,7 @@ namespace senf {
         SENF_PARSER_BITFIELD ( txAntennaPatternConsistency,      1, bool     );
         SENF_PARSER_BITFIELD ( rxAntennaPatternConsistency,      1, bool     );
         SENF_PARSER_BITFIELD ( vhtLinkAdaptationCapable,         2, unsigned );
-        SENF_PARSER_PRIVATE_BITFIELD ( maxAMPDULengthExponent_2, 2, unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD( maxAMPDULengthExponent_2,  2, unsigned );
 
         SENF_PARSER_FINALIZE ( WLANVHTCapabilitiesInfoFieldParser            );
 
@@ -356,14 +356,14 @@ namespace senf {
     public:
 #       include SENF_FIXED_PARSER()
         // re-ordering of the fields due to the byte order
-        SENF_PARSER_BITFIELD ( maxMCS4SS, 2, unsigned );
-        SENF_PARSER_BITFIELD ( maxMCS3SS, 2, unsigned );
-        SENF_PARSER_BITFIELD ( maxMCS2SS, 2, unsigned );
-        SENF_PARSER_BITFIELD ( maxMCS1SS, 2, unsigned );
-        SENF_PARSER_BITFIELD ( maxMCS8SS, 2, unsigned );
-        SENF_PARSER_BITFIELD ( maxMCS7SS, 2, unsigned );
-        SENF_PARSER_BITFIELD ( maxMCS6SS, 2, unsigned );
-        SENF_PARSER_BITFIELD ( maxMCS5SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS4SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS3SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS2SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS1SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS8SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS7SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS6SS, 2, unsigned );
+        SENF_PARSER_BITFIELD( maxMCS5SS, 2, unsigned );
         SENF_PARSER_FINALIZE( WLANVHTMCSMapParser     );
     };
 
@@ -391,11 +391,11 @@ namespace senf {
     {
     public:
 #       include SENF_FIXED_PARSER()
-        SENF_PARSER_FIELD ( rxVHTMCSMap,                WLANVHTMCSMapParser                   );
-        SENF_PARSER_FIELD ( rxHighestSupportedDataRate, WLANVHTHighestSupportedDataRateParser );
-        SENF_PARSER_FIELD ( txVHTMCSMap,                WLANVHTMCSMapParser                   );
-        SENF_PARSER_FIELD ( txHighestSupportedDataRate, WLANVHTHighestSupportedDataRateParser );
-        SENF_PARSER_FINALIZE ( WLANSupportedVHTMCSSetParser                                   );
+        SENF_PARSER_FIELD   ( rxVHTMCSMap,                WLANVHTMCSMapParser                   );
+        SENF_PARSER_FIELD   ( rxHighestSupportedDataRate, WLANVHTHighestSupportedDataRateParser );
+        SENF_PARSER_FIELD   ( txVHTMCSMap,                WLANVHTMCSMapParser                   );
+        SENF_PARSER_FIELD   ( txHighestSupportedDataRate, WLANVHTHighestSupportedDataRateParser );
+        SENF_PARSER_FINALIZE( WLANSupportedVHTMCSSetParser                                      );
     };
 
     struct WLANVHTCapabilitiesInfoElementParser
@@ -412,6 +412,35 @@ namespace senf {
             length() = 12u;
         }
         static const type_t::value_type typeId = 0xbf;
+
+        void dump(std::ostream & os) const;
+    };
+
+
+    struct WLANVHTOperationInfoFieldParser
+		: public PacketParserBase
+    {
+    #   include SENF_FIXED_PARSER()
+        SENF_PARSER_FIELD   ( channelWidth,             UInt8Parser );
+        SENF_PARSER_FIELD   ( channelCenterFrequency0,  UInt8Parser );
+        SENF_PARSER_FIELD   ( channelCenterFrequency1,  UInt8Parser );
+        SENF_PARSER_FINALIZE( WLANVHTOperationInfoFieldParser       );
+    };
+
+    struct WLANVHTOperationInfoElementParser
+        : public WLANInfoElementParser
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_INHERIT ( WLANInfoElementParser                           );
+        SENF_PARSER_FIELD   ( operationInfo,  WLANVHTOperationInfoFieldParser );
+        SENF_PARSER_FIELD   ( basicMCSSet,    WLANVHTMCSMapParser             );
+        SENF_PARSER_FINALIZE( WLANVHTOperationInfoElementParser               );
+
+        SENF_PARSER_INIT() {
+            type() = typeId;
+            length() = 5u;
+        }
+        static const type_t::value_type typeId = 0xc0;
 
         void dump(std::ostream & os) const;
     };
