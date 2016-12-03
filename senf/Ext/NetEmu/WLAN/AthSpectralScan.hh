@@ -63,7 +63,7 @@ namespace emu {
 
         bool callback(AthSpectralScanCallback const & cb);
         void disable();
-        void frequency(std::uint32_t freq);
+        void frequency(std::uint32_t freq, std::int32_t offset = 0);
 
         bool detected() const;
         bool is_ath9k() const;
@@ -89,6 +89,7 @@ namespace emu {
         std::string spectralPath_;
         AthSpectralScanCallback callback_;
         std::uint32_t frequency_;
+        std::int32_t frequencyOffset_;
 
         unsigned spectralPeriod_;
         unsigned spectralFFTPeriod_;

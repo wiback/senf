@@ -862,7 +862,7 @@ prefix_ void senf::emu::HardwareWLANInterface::maxBurst(unsigned maxBurst)
 prefix_ void senf::emu::HardwareWLANInterface::frequencyHint()
 {
     unsigned freq (wnlc_.frequency() / 1000);
-    spectralScanner_.frequency(freq);
+    spectralScanner_.frequency(freq, frequencyOffset());
     monitorDataFilter.frequency(freq);
 }
 
