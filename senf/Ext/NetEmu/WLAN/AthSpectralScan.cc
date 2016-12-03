@@ -112,10 +112,6 @@ prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq, std::int3
         return;
     }
 
-    // be tolerant, if we have been given kHz :)
-    if (freq > 10000)
-        freq /= 1000;
-
     frequencyOffset_ = offset;
     
     frequency_ = freq;
