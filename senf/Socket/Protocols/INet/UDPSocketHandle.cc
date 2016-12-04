@@ -49,7 +49,7 @@
 prefix_ void senf::UDPv4SocketProtocol::init_client()
     const
 {
-    int sock = ::socket(PF_INET,SOCK_DGRAM,0);
+    int sock = ::socket(PF_INET,SOCK_DGRAM | SOCK_CLOEXEC, 0);
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not open UDPv4Socket");
     fd(sock);
@@ -70,7 +70,7 @@ senf::UDPv4SocketProtocol::init_client(INet4SocketAddress const & address)
 prefix_ void senf::UDPv6SocketProtocol::init_client()
     const
 {
-    int sock = ::socket(PF_INET6,SOCK_DGRAM,0);
+    int sock = ::socket(PF_INET6,SOCK_DGRAM | SOCK_CLOEXEC, 0);
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not open UDPv6Socket");
     fd(sock);

@@ -116,7 +116,7 @@ prefix_ void senf::LinuxPacketSocketProtocol::init_packetSocket(SocketType type,
         socktype = SOCK_DGRAM;
     if (protocol == -1)
         protocol = ETH_P_ALL;
-    int sock = ::socket(PF_PACKET, socktype, htons(protocol));
+    int sock = ::socket(PF_PACKET, socktype | SOCK_CLOEXEC, htons(protocol));
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("::socket(PF_PACKET) failed.");
     fd(sock);

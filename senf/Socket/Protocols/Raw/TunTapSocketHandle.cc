@@ -54,7 +54,7 @@ prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_
     const
 {
     int f;
-    if ( (f = ::open("/dev/net/tun", O_RDWR)) < 0 )
+    if ( (f = ::open("/dev/net/tun", O_RDWR  | O_CLOEXEC)) < 0 )
         SENF_THROW_SYSTEM_EXCEPTION("Could not open tap control device: /dev/net/tun.");
     struct ifreq ifr;
     ::memset( &ifr, 0, sizeof(ifr));

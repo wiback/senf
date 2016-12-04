@@ -43,7 +43,7 @@
 
 prefix_ void senf::UNDatagramSocketProtocol::init_client() const
 {
-    int sock = ::socket(PF_UNIX,SOCK_DGRAM,0);
+    int sock = ::socket(PF_UNIX,SOCK_DGRAM | SOCK_CLOEXEC, 0);
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("Could not create socket(PF_UNIX,SOCK_DGRAM,0).");
     fd(sock);

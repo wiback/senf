@@ -49,7 +49,7 @@
 prefix_ void senf::TCPv4SocketProtocol::init_client()
     const
 {
-    int sock = ::socket(PF_INET,SOCK_STREAM,0);
+    int sock = ::socket(PF_INET,SOCK_STREAM | SOCK_CLOEXEC, 0);
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv4Socket");
     fd(sock);
@@ -66,7 +66,7 @@ senf::TCPv4SocketProtocol::init_client(INet4SocketAddress const & address)
 prefix_ void senf::TCPv4SocketProtocol::init_server()
     const
 {
-    int sock = ::socket(PF_INET,SOCK_STREAM,0);
+    int sock = ::socket(PF_INET,SOCK_STREAM | SOCK_CLOEXEC, 0);
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv4Socket");
     fd(sock);
@@ -89,7 +89,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_server(INet4SocketAddress const & a
 prefix_ void senf::TCPv6SocketProtocol::init_client()
     const
 {
-    int sock = ::socket(PF_INET6,SOCK_STREAM,0);
+    int sock = ::socket(PF_INET6,SOCK_STREAM | SOCK_CLOEXEC, 0);
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv6Socket");
     fd(sock);
@@ -106,7 +106,7 @@ senf::TCPv6SocketProtocol::init_client(INet6SocketAddress const & address)
 prefix_ void senf::TCPv6SocketProtocol::init_server()
     const
 {
-    int sock = ::socket(PF_INET6,SOCK_STREAM,0);
+    int sock = ::socket(PF_INET6,SOCK_STREAM | SOCK_CLOEXEC, 0);
     if (sock < 0)
         SENF_THROW_SYSTEM_EXCEPTION("could not open TCPv6Socket");
     fd(sock);
