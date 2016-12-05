@@ -312,6 +312,10 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
 {
     if (alpha2Country.empty()) {
         char *a2 = getenv("COUNTRY");
+        if (!a2 or strlen(a2) == 0) {
+            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "No COUNTRY specified. Aborting.") );
+            return false;
+        }
         alpha2Country = std::string( a2 ? a2 : WORLD_REG_ALPHA);
     }
 
