@@ -295,14 +295,11 @@ senf::emu::WirelessNLController::nlMsgHeader(uint8_t cmd, CmdIdBy idBy, int flag
         break;
     }
 
-//    SENF_LOG( (senf::log::IMPORTANT) ("Created msg 0x" << senf::str((void*) msg.get()) << " with cmd = " << cmdAsString(cmd) << "(" << unsigned(cmd) << ")") );
     return msg;
 }
 
 prefix_ void senf::emu::WirelessNLController::send_and_wait4response(nl_msg_ptr const & msg, CallbackMemPtr cb)
 {
-//    SENF_LOG( (senf::log::IMPORTANT) ("Sending msg 0x" << senf::str((void*) msg.get())) );
-
     callback_ = cb;
     int r;
     if ((r = nl_send_auto_complete(nl_sock_.get(), msg.get())) > 0) {
@@ -1125,6 +1122,12 @@ prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters co
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_MESH_SETUP);
         if (! boost::empty(parameters.ies_))
         	NLA_PUT( msg, NL80211_MESH_SETUP_IE, boost::size(parameters.ies_), &(*boost::begin(parameters.ies_)));
+        if (parameters.vendorMetric_)
+            NLA_PUT_U8( msg, NL80211_MESH_SETUP_ENABLE_VENDOR_METRIC, parameters.vendorMetric_.get());
+        if (parameters.vendorPathSelection_)
+            NLA_PUT_U8( msg, NL80211_MESH_SETUP_ENABLE_VENDOR_PATH_SEL, parameters.vendorPathSelection_.get());
+        if (parameters.vendorSynchronization_)
+            NLA_PUT_U8( msg, NL80211_MESH_SETUP_ENABLE_VENDOR_SYNC, parameters.vendorSynchronization_.get());
     }
 
     send_and_wait4response(msg);
@@ -1426,178 +1429,24 @@ prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::Wire
     return shared_from_this();
 }
 
-
-
-#define CMD_AS_STR(a) case a: return #a
-
-prefix_ std::string senf::emu::WirelessNLController::cmdAsString(std::uint8_t cmd)
-    const
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorMetric(bool enable)
 {
-    switch (cmd) {
-        CMD_AS_STR(NL80211_CMD_UNSPEC);
-        CMD_AS_STR(NL80211_CMD_GET_WIPHY);
-        CMD_AS_STR(NL80211_CMD_SET_WIPHY);
-        CMD_AS_STR(NL80211_CMD_NEW_WIPHY);
-        CMD_AS_STR(NL80211_CMD_DEL_WIPHY);
-
-        CMD_AS_STR(NL80211_CMD_GET_INTERFACE);
-        CMD_AS_STR(NL80211_CMD_SET_INTERFACE);
-        CMD_AS_STR(NL80211_CMD_NEW_INTERFACE);
-        CMD_AS_STR(NL80211_CMD_DEL_INTERFACE);
-
-        CMD_AS_STR(NL80211_CMD_GET_KEY);
-        CMD_AS_STR(NL80211_CMD_SET_KEY);
-        CMD_AS_STR(NL80211_CMD_NEW_KEY);
-        CMD_AS_STR(NL80211_CMD_DEL_KEY);
-
-        CMD_AS_STR(NL80211_CMD_GET_BEACON);
-        CMD_AS_STR(NL80211_CMD_SET_BEACON);
-        CMD_AS_STR(NL80211_CMD_START_AP);
-        CMD_AS_STR(NL80211_CMD_STOP_AP);
-
-        CMD_AS_STR(NL80211_CMD_GET_STATION);
-        CMD_AS_STR(NL80211_CMD_SET_STATION);
-        CMD_AS_STR(NL80211_CMD_NEW_STATION);
-        CMD_AS_STR(NL80211_CMD_DEL_STATION);
-
-        CMD_AS_STR(NL80211_CMD_GET_MPATH);
-        CMD_AS_STR(NL80211_CMD_SET_MPATH);
-        CMD_AS_STR(NL80211_CMD_NEW_MPATH);
-        CMD_AS_STR(NL80211_CMD_DEL_MPATH);
-
-        CMD_AS_STR(NL80211_CMD_SET_BSS);
-
-        CMD_AS_STR(NL80211_CMD_SET_REG);
-        CMD_AS_STR(NL80211_CMD_REQ_SET_REG);
-
-        CMD_AS_STR(NL80211_CMD_GET_MESH_CONFIG);
-        CMD_AS_STR(NL80211_CMD_SET_MESH_CONFIG);
-
-        CMD_AS_STR(NL80211_CMD_SET_MGMT_EXTRA_IE);
-
-        CMD_AS_STR(NL80211_CMD_GET_REG);
-
-        CMD_AS_STR(NL80211_CMD_GET_SCAN);
-        CMD_AS_STR(NL80211_CMD_TRIGGER_SCAN);
-        CMD_AS_STR(NL80211_CMD_NEW_SCAN_RESULTS);
-        CMD_AS_STR(NL80211_CMD_SCAN_ABORTED);
-
-        CMD_AS_STR(NL80211_CMD_REG_CHANGE);
-
-        CMD_AS_STR(NL80211_CMD_AUTHENTICATE);
-        CMD_AS_STR(NL80211_CMD_ASSOCIATE);
-        CMD_AS_STR(NL80211_CMD_DEAUTHENTICATE);
-        CMD_AS_STR(NL80211_CMD_DISASSOCIATE);
-
-        CMD_AS_STR(NL80211_CMD_MICHAEL_MIC_FAILURE);
-
-        CMD_AS_STR(NL80211_CMD_REG_BEACON_HINT);
-
-        CMD_AS_STR(NL80211_CMD_JOIN_IBSS);
-        CMD_AS_STR(NL80211_CMD_LEAVE_IBSS);
-
-        CMD_AS_STR(NL80211_CMD_TESTMODE);
-
-        CMD_AS_STR(NL80211_CMD_CONNECT);
-        CMD_AS_STR(NL80211_CMD_ROAM);
-        CMD_AS_STR(NL80211_CMD_DISCONNECT);
-
-        CMD_AS_STR(NL80211_CMD_SET_WIPHY_NETNS);
-
-        CMD_AS_STR(NL80211_CMD_GET_SURVEY);
-        CMD_AS_STR(NL80211_CMD_NEW_SURVEY_RESULTS);
-
-        CMD_AS_STR(NL80211_CMD_SET_PMKSA);
-        CMD_AS_STR(NL80211_CMD_DEL_PMKSA);
-        CMD_AS_STR(NL80211_CMD_FLUSH_PMKSA);
-
-        CMD_AS_STR(NL80211_CMD_REMAIN_ON_CHANNEL);
-        CMD_AS_STR(NL80211_CMD_CANCEL_REMAIN_ON_CHANNEL);
-
-        CMD_AS_STR(NL80211_CMD_SET_TX_BITRATE_MASK);
-
-        CMD_AS_STR(NL80211_CMD_REGISTER_FRAME);
-        CMD_AS_STR(NL80211_CMD_FRAME);
-        CMD_AS_STR(NL80211_CMD_FRAME_TX_STATUS);
-
-        CMD_AS_STR(NL80211_CMD_SET_POWER_SAVE);
-        CMD_AS_STR(NL80211_CMD_GET_POWER_SAVE);
-
-        CMD_AS_STR(NL80211_CMD_SET_CQM);
-        CMD_AS_STR(NL80211_CMD_NOTIFY_CQM);
-
-        CMD_AS_STR(NL80211_CMD_SET_CHANNEL);
-        CMD_AS_STR(NL80211_CMD_SET_WDS_PEER);
-
-        CMD_AS_STR(NL80211_CMD_FRAME_WAIT_CANCEL);
-
-        CMD_AS_STR(NL80211_CMD_JOIN_MESH);
-        CMD_AS_STR(NL80211_CMD_LEAVE_MESH);
-
-        CMD_AS_STR(NL80211_CMD_UNPROT_DEAUTHENTICATE);
-        CMD_AS_STR(NL80211_CMD_UNPROT_DISASSOCIATE);
-
-        CMD_AS_STR(NL80211_CMD_NEW_PEER_CANDIDATE);
-
-        CMD_AS_STR(NL80211_CMD_GET_WOWLAN);
-        CMD_AS_STR(NL80211_CMD_SET_WOWLAN);
-
-        CMD_AS_STR(NL80211_CMD_START_SCHED_SCAN);
-        CMD_AS_STR(NL80211_CMD_STOP_SCHED_SCAN);
-        CMD_AS_STR(NL80211_CMD_SCHED_SCAN_RESULTS);
-        CMD_AS_STR(NL80211_CMD_SCHED_SCAN_STOPPED);
-
-        CMD_AS_STR(NL80211_CMD_SET_REKEY_OFFLOAD);
-
-        CMD_AS_STR(NL80211_CMD_PMKSA_CANDIDATE);
-
-        CMD_AS_STR(NL80211_CMD_TDLS_OPER);
-        CMD_AS_STR(NL80211_CMD_TDLS_MGMT);
-
-        CMD_AS_STR(NL80211_CMD_UNEXPECTED_FRAME);
-
-        CMD_AS_STR(NL80211_CMD_PROBE_CLIENT);
-
-        CMD_AS_STR(NL80211_CMD_REGISTER_BEACONS);
-
-        CMD_AS_STR(NL80211_CMD_UNEXPECTED_4ADDR_FRAME);
-
-        CMD_AS_STR(NL80211_CMD_SET_NOACK_MAP);
-
-        CMD_AS_STR(NL80211_CMD_CH_SWITCH_NOTIFY);
-
-        CMD_AS_STR(NL80211_CMD_START_P2P_DEVICE);
-        CMD_AS_STR(NL80211_CMD_STOP_P2P_DEVICE);
-
-        CMD_AS_STR(NL80211_CMD_CONN_FAILED);
-
-        CMD_AS_STR(NL80211_CMD_SET_MCAST_RATE);
-
-        CMD_AS_STR(NL80211_CMD_SET_MAC_ACL);
-
-        CMD_AS_STR(NL80211_CMD_RADAR_DETECT);
-
-        CMD_AS_STR(NL80211_CMD_GET_PROTOCOL_FEATURES);
-
-        CMD_AS_STR(NL80211_CMD_UPDATE_FT_IES);
-        CMD_AS_STR(NL80211_CMD_FT_EVENT);
-
-        CMD_AS_STR(NL80211_CMD_CRIT_PROTOCOL_START);
-        CMD_AS_STR(NL80211_CMD_CRIT_PROTOCOL_STOP);
-
-        CMD_AS_STR(NL80211_CMD_GET_COALESCE);
-        CMD_AS_STR(NL80211_CMD_SET_COALESCE);
-
-        CMD_AS_STR(NL80211_CMD_CHANNEL_SWITCH);
-
-        CMD_AS_STR(NL80211_CMD_VENDOR);
-
-        CMD_AS_STR(NL80211_CMD_SET_QOS_MAP);
-
-        default:
-            return "Unknown NL80211 CMD";
-        }
+	vendorMetric_ = enable ? 1 : 0;
+    return shared_from_this();
 }
+
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorPathSelection(bool enable)
+{
+	vendorPathSelection_ = enable ? 1 : 0;
+    return shared_from_this();
+}
+
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorSynchronization(bool enable)
+{
+	vendorSynchronization_ = enable ? 1 : 0;
+    return shared_from_this();
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // NetlinkException

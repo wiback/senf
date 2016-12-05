@@ -254,6 +254,9 @@ namespace emu {
             ChannelMode::Enum channelMode_;
             std::vector<unsigned char> ies_;
             boost::optional<boost::uint32_t> beaconInterval_;
+            boost::optional<boost::uint8_t> vendorMetric_;
+            boost::optional<boost::uint8_t> vendorPathSelection_;
+            boost::optional<boost::uint8_t> vendorSynchronization_;
 
             friend class WirelessNLController;
             friend class HardwareWLANInterface;
@@ -264,6 +267,9 @@ namespace emu {
             template <typename ForwardReadableRange>
             MeshJoinParameters::ptr informationElements(ForwardReadableRange const & ies);
             MeshJoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
+            MeshJoinParameters::ptr vendorMetric(bool enable);
+            MeshJoinParameters::ptr vendorPathSelection(bool enable);
+            MeshJoinParameters::ptr vendorSynchronization(bool enable);
         };
 
     public:
@@ -358,8 +364,6 @@ namespace emu {
         typedef std::unique_ptr<nl_cache, void(*)(nl_cache *)> nl_cache_ptr;
         typedef int (WirelessNLController::* CallbackMemPtr)(nl_msg *);
         enum CmdIdBy { CIB_NONE, CIB_PHY, CIB_IF };
-
-        std::string cmdAsString(std::uint8_t cmd) const;
 
         void init();
         void initNlSock(nl_sock_ptr & sock);
