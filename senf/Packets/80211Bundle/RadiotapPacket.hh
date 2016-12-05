@@ -137,18 +137,19 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_SKIP_BITS(                                 7           );
-        SENF_PARSER_BITFIELD ( partialAidKnown,                1, bool     );
         SENF_PARSER_BITFIELD ( groupIdKnown,                   1, bool     );
         SENF_PARSER_BITFIELD ( bandwidthKnown,                 1, bool     );
-        SENF_PARSER_BITFIELD ( beamFormedKnown,                1, bool     );
+        SENF_PARSER_BITFIELD ( beamformedKnown,                1, bool     );
         SENF_PARSER_BITFIELD ( ldpcExtraOfdmSymbolKnown,       1, bool     ); 
         SENF_PARSER_BITFIELD ( shortGiNsymDisambiguationKnown, 1, bool     );
         SENF_PARSER_BITFIELD ( guardIntervalKnown,             1, bool     );
         SENF_PARSER_BITFIELD ( txOpPsNotAllowedKnown,          1, bool     );
         SENF_PARSER_BITFIELD ( stbcKnown,                      1, bool     );
+        SENF_PARSER_SKIP_BITS(                                 7           );
+        SENF_PARSER_BITFIELD ( partialAidKnown,                1, bool     );
+
         SENF_PARSER_SKIP_BITS(                                 2           );
-        SENF_PARSER_BITFIELD ( beamFormed,                     1, bool     );
+        SENF_PARSER_BITFIELD ( beamformed,                     1, bool     );
         SENF_PARSER_BITFIELD ( ldpcExtraOfdmSymbol,            1, bool     ); 
         SENF_PARSER_BITFIELD ( shortGiNsymDisambiguation,      1, bool     );
         SENF_PARSER_BITFIELD ( guardInterval,                  1, bool     );
@@ -156,11 +157,22 @@ namespace senf {
         SENF_PARSER_BITFIELD ( stbc,                           1, bool     );
 
         SENF_PARSER_FIELD    ( bandwidth,                      UInt8Parser );
-        SENF_PARSER_FIELD    ( mcsNss0,                        UInt8Parser );
-        SENF_PARSER_FIELD    ( mcsNss1,                        UInt8Parser );
-        SENF_PARSER_FIELD    ( mcsNss2,                        UInt8Parser );
-        SENF_PARSER_FIELD    ( mcsNss3,                        UInt8Parser );
-        SENF_PARSER_FIELD    ( coding,                         UInt8Parser );
+
+        SENF_PARSER_BITFIELD ( mcs_user0,                      4, unsigned );
+        SENF_PARSER_BITFIELD ( nss_user0,                      4, unsigned );
+        SENF_PARSER_BITFIELD ( mcs_user1,                      4, unsigned );
+        SENF_PARSER_BITFIELD ( nss_user1,                      4, unsigned );
+        SENF_PARSER_BITFIELD ( mcs_user2,                      4, unsigned );
+        SENF_PARSER_BITFIELD ( nss_user2,                      4, unsigned );
+        SENF_PARSER_BITFIELD ( mcs_user3,                      4, unsigned );
+        SENF_PARSER_BITFIELD ( nss_user3,                      4, unsigned );
+
+        SENF_PARSER_SKIP_BITS(                                 4           );
+        SENF_PARSER_BITFIELD ( coding_user3,                   1, unsigned );
+        SENF_PARSER_BITFIELD ( coding_user2,                   1, unsigned );
+        SENF_PARSER_BITFIELD ( coding_user1,                   1, unsigned );
+        SENF_PARSER_BITFIELD ( coding_user0,                   1, unsigned );
+
         SENF_PARSER_FIELD    ( groupId,                        UInt8Parser );
         SENF_PARSER_FIELD    ( partialAid,                     UInt16LSBParser);
         

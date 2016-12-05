@@ -372,6 +372,41 @@ SENF_AUTO_TEST_CASE(RadiotapPacket_parse_ext)
     BOOST_CHECK_EQUAL( int(p->dbmAntennaSignal(2).value()), -92);
 }
 
+SENF_AUTO_TEST_CASE(RadiotapPacket_packet_ath10k_vts)
+{
+    unsigned char data[] = {
+    	0x00, 0x00, 0x26, 0x00, 0x2b, 0x48, 0x20, 0x00,
+		0x1d, 0xab, 0xf6, 0xa7, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x64, 0x14, 0x40, 0x01, 0xc5, 0x00,
+		0x00, 0x00, 0x44, 0x00, 0x00, 0x04, 0x62, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+    senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
+
+    BOOST_CHECK_EQUAL( p->version(), 0u  );
+    BOOST_CHECK_EQUAL( p->length(),  38u );
+
+    BOOST_CHECK( p->has_dbmAntennaSignal());
+    BOOST_CHECK_EQUAL( int(p->dbmAntennaSignal().value()), -59);
+
+    BOOST_CHECK( p->has_vht());
+    BOOST_CHECK_EQUAL( p->vht().stbcKnown(),                      false );
+    BOOST_CHECK_EQUAL( p->vht().txOpPsNotAllowedKnown(),          false );
+    BOOST_CHECK_EQUAL( p->vht().guardIntervalKnown(),             true  );
+    BOOST_CHECK_EQUAL( p->vht().shortGiNsymDisambiguationKnown(), false );
+    BOOST_CHECK_EQUAL( p->vht().ldpcExtraOfdmSymbolKnown(),       false );
+    BOOST_CHECK_EQUAL( p->vht().beamformedKnown(),                false );
+    BOOST_CHECK_EQUAL( p->vht().bandwidthKnown(),                 true  );
+    BOOST_CHECK_EQUAL( p->vht().groupIdKnown(),                   false );
+    BOOST_CHECK_EQUAL( p->vht().partialAidKnown(),                false );
+
+    BOOST_CHECK_EQUAL( p->vht().bandwidth(),    4 );
+    BOOST_CHECK_EQUAL( p->vht().mcs_user0(),    6 );
+    BOOST_CHECK_EQUAL( p->vht().nss_user0(),    2 );
+    BOOST_CHECK_EQUAL( p->vht().coding_user0(), 0 );
+
+}
+
 
 // Local Variables:
 // mode: c++
