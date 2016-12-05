@@ -52,7 +52,7 @@ prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_(INITIAL_REG_ALPHA),
       debugRegd_(false),
       nonWirelessBox_(false),
-      logTag_("[senf::emu::CRDA] ")
+      logTag_("[senf::emu::CRDA " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ")
 {
     namespace fty = senf::console::factory;
     dir.add("kernelRegDomain",  fty::Command(&CRDA::kernelRegDomain, this));
@@ -78,7 +78,7 @@ prefix_ senf::emu::CRDA::CRDA()
     }
 
     if (debugRegd()) {
-        logTag_ = "[senf::emu::CRDA_DEBUG] ";
+        logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
 
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "debugRegd mode enabled.") );
 
@@ -87,7 +87,7 @@ prefix_ senf::emu::CRDA::CRDA()
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(20000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2402000, 2494000)
@@ -111,7 +111,7 @@ prefix_ senf::emu::CRDA::CRDA()
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
-                                     .maxBandwidth(40000)
+                                     .maxBandwidth(20000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2402000, 2472000)
@@ -428,6 +428,10 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     }
     catch(...) {};
     
+    char *a2 = getenv("COUNTRY");
+    char *action = getenv("ACTION");
+    SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Action " << action << ", COUNTRY " << (a2 ? a2 : "(unset)") << ", regDomain.alpha " << (currentRegDomain_ ? currentRegDomain_.alpha2Country : "(unset)")) );
+
     // udev rule file will add '--setRegulatory' arg to command line
     //    declare -x ACTION="change"
     //    declare -x COUNTRY="AA"
