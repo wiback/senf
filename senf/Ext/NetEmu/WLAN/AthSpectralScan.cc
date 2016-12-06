@@ -166,9 +166,14 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                 {
                     char buf[1024]; // fft_sample_ath10k has avariable length, depending on the number bins
                     fft_sample_ath10k *ath10k = (fft_sample_ath10k *) buf;
+                    std::uint16_t offset (0);  // offset from actual center freq
                     ath10k->tlv = tlv;
                     if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) {
-                        if (SENF_LIKELY(be16toh(ath10k->freq1) == frequency_)) {
+                        if (ath10k->chan_width_mhz == 44)  // 40 MHz
+                            offset = 10;
+                        if (ath10k->chan_width_mhz == 88)  // 80 MHz
+                            offset = 30;
+                        if (SENF_LIKELY(be16toh(ath10k->freq1) == frequency_ + offset)) {
                             spectralValidSamples_++;
                             unsigned numBins (be16toh(tlv.length) - sizeof(*ath10k) + sizeof(tlv));
                             callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1) + frequencyOffset_, numBins, ath10k);
