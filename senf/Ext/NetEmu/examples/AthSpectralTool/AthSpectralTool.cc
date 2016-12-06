@@ -80,7 +80,7 @@ prefix_ std::string initInterface(Configuration & config)
     
     senf::NetdeviceController(name).up();
 
-    wnlc.set_frequency(config.frequency*1000, config.ht40 ? senf::emu::WirelessNLController::ChannelType::HT40Plus : senf::emu::WirelessNLController::ChannelType::HT20);
+    wnlc.set_frequency(config.frequency*1000, config.ht40 ? senf::emu::WirelessNLController::ChannelMode::HT40Plus : senf::emu::WirelessNLController::ChannelMode::HT20);
     
     return name;
 }
