@@ -54,21 +54,25 @@ namespace senf
          * Frame control field
          * re-ordering of fields due to the byte order
          */
-        SENF_PARSER_BITFIELD_RO( subtype,        4,  unsigned );
-        SENF_PARSER_BITFIELD_RO( type,           2,  unsigned );
-        SENF_PARSER_BITFIELD   ( version,        2,  unsigned );
-        SENF_PARSER_BITFIELD   ( order,          1,  bool     );
-        SENF_PARSER_BITFIELD   ( protectedFrame, 1,  bool     );
-        SENF_PARSER_BITFIELD   ( moreData,       1,  bool     );
-        SENF_PARSER_BITFIELD   ( pwrMgt,         1,  bool     );
-        SENF_PARSER_BITFIELD   ( retry,          1,  bool     );
-        SENF_PARSER_BITFIELD   ( moreFrag,       1,  bool     );
-        SENF_PARSER_BITFIELD   ( fromDS,         1,  bool     );
-        SENF_PARSER_BITFIELD   ( toDS,           1,  bool     );
+        SENF_PARSER_BITFIELD_RO( subtype,        4, unsigned );
+        SENF_PARSER_BITFIELD_RO( type,           2, unsigned );
+        SENF_PARSER_BITFIELD   ( version,        2, unsigned );
+        SENF_PARSER_BITFIELD   ( order,          1, bool     );
+        SENF_PARSER_BITFIELD   ( protectedFrame, 1, bool     );
+        SENF_PARSER_BITFIELD   ( moreData,       1, bool     );
+        SENF_PARSER_BITFIELD   ( pwrMgt,         1, bool     );
+        SENF_PARSER_BITFIELD   ( retry,          1, bool     );
+        SENF_PARSER_BITFIELD   ( moreFrag,       1, bool     );
+        SENF_PARSER_BITFIELD   ( fromDS,         1, bool     );
+        SENF_PARSER_BITFIELD   ( toDS,           1, bool     );
 
         SENF_PARSER_FIELD      ( duration,       UInt16LSBParser );
 
         SENF_PARSER_FINALIZE( WLANPacketParser );
+
+        SENF_PARSER_GOTO_OFFSET( 1, 1 );
+        SENF_PARSER_SKIP_BITS(         6           );
+        SENF_PARSER_BITFIELD ( dsBits, 2, unsigned );
     };
 
     //-////////////////////////////////////////////////////////////////////////
@@ -200,6 +204,20 @@ namespace senf
 
     //-////////////////////////////////////////////////////////////////////////
 
+    struct WLANPacket_MeshControlFieldParser : public PacketParserBase
+    {
+    #   include SENF_PARSER()
+
+    	SENF_PARSER_FIELD( flags,          UInt8Parser     );
+    	SENF_PARSER_FIELD( ttl,            UInt8Parser     );
+    	SENF_PARSER_FIELD( sequenceNumber, UInt32LSBParser );
+
+    	// ToDo (2016-12-07 tho) add variant parser for addr5 & addr6
+    	// depending on the AE field in flags
+
+        SENF_PARSER_FINALIZE( WLANPacket_MeshControlFieldParser );
+    };
+
     /** \brief Data frame parser
         <b>Re-ordering of bits due to LSB byte order</b>
      */
@@ -210,15 +228,12 @@ namespace senf
         SENF_PARSER_INHERIT( WLANPacketParser );
 
     protected:
-        typedef UIntFieldParser<6, 6+2> dsBits_t;
-        dsBits_t::value_type dsBits() const { return parse<dsBits_t>( 1); }
-
         MACAddressParser addr1() const { return parse<MACAddressParser>(  4); }
         MACAddressParser addr2() const { return parse<MACAddressParser>( 10); }
         MACAddressParser addr3() const { return parse<MACAddressParser>( 16); }
 
-        //sequence Number and fragment number
-        //shift bits manually due to LSB
+        // sequence Number and fragment number
+        // shift bits manually due to LSB
 
         typedef UIntFieldParser<0, 0+4> seqNumber_1_t;
         seqNumber_1_t seqNumber_1() const { return parse<seqNumber_1_t>( 22); }
@@ -236,18 +251,23 @@ namespace senf
 
         SENF_PARSER_GOTO_OFFSET( 24, 24);
 
-        // TODO fourth address field in case of WDS
-        // SENF_PARSER_PRIVATE_VARIANT (wds_, dsBits,
-        //     ( novalue ( disable_addr4,               VoidPacketParser ))
-        //     ( id      ( addr4,  key (3,              MACAddressParser ))) );
+        // 4th address
+        SENF_PARSER_PRIVATE_VARIANT( wds_, dsBits,
+        		( novalue( disable_addr4,         VoidPacketParser ))
+				( id     ( addr4,          key(3, MACAddressParser ))) );
 
-        //QoS Field
+        // QoS Field
         SENF_PARSER_VARIANT( qosField_, subtype,
                 ( ids( na,       na,           set_data,        key(0, VoidPacketParser)) )
                 ( ids( na,       na,           set_nullData,    key(4, VoidPacketParser)) )
                 ( ids( qosField, has_qosField, set_qosData,     key(8, UInt16LSBParser )) )
                 //we cannot parse qos Null (data) frames at the moment
                 ( ids( na,       na,           set_qosNullData, key(12, UInt16LSBParser)) ) );
+
+        // Mesh Control field
+        SENF_PARSER_VARIANT( mcf_, dsBits,
+        		( novalue( disable_mcf,             VoidPacketParser                  ))
+				( id     ( meshControlField, key(3, WLANPacket_MeshControlFieldParser ))) );
 
         SENF_PARSER_FINALIZE( WLANPacket_DataFrameParser );
 

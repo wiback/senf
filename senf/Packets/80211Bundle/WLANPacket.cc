@@ -120,11 +120,11 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sourceAddress()
     const
 {
     switch (dsBits()) {
-    case 0 :
-    case 1 :
+    case 0:
+    case 1:
         return addr2();
-    // TODO wds frames
-    // case 3 : return addr4();
+    case 3:
+    	return addr4();
     default:
         return addr3();
     }
