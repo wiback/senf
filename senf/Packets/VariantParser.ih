@@ -98,12 +98,6 @@ namespace detail {
         };
     };
 
-    template <class T, T (*KeyFn)()>
-    struct VariantKey
-    {
-        static T key() { return (*KeyFn)(); }
-    };
-
     template <class T, class Keys>
     struct VariantKeyTransform
     {
@@ -153,9 +147,11 @@ namespace detail {
 #   define SENF_PARSER_VARIANT_MAKETRANSFORM(name, types)                                         \
         BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_KEYVALUE, name, types)                        \
         template <BOOST_PP_CAT(name, _chooser_value_type) (*KeyFn)()>                             \
-        struct BOOST_PP_CAT(name, _key_value_template)                                            \
-            : public senf::detail::VariantKey<BOOST_PP_CAT(name, _chooser_value_type), KeyFn> {}; \
-        template <class T, T (*K)()> friend struct senf::detail::VariantKey;                       \
+        struct BOOST_PP_CAT(name, _key_value_template) {                                          \
+            static BOOST_PP_CAT(name, _chooser_value_type) key() { return (*KeyFn)(); }           \
+        };                                                                                        \
+        template <BOOST_PP_CAT(name, _chooser_value_type) (*KeyFn)()>                             \
+        friend struct BOOST_PP_CAT(name, _key_value_template);                                    \
         typedef senf::detail::VariantKeyTransform<                                                \
             BOOST_PP_CAT(name,_chooser_value_type),                                               \
             boost::mpl::vector<                                                                   \
