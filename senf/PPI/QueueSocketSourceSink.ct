@@ -56,7 +56,6 @@ senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::ActiveQueueSocketS
     , red_(0)
 #ifdef SENF_DEBUG
     , burstMax_ (0)
-    , sharedPackets_ (0)
 #endif
 {
     registerEvent(event_, &ActiveQueueSocketSource::read);
@@ -173,16 +172,19 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         }
         
         if (SENF_UNLIKELY(ifo.is_shared())) {
+            qi.rxStats.extMemory++;
             ifo.releaseExternalMemory();
-#ifdef SENF_DEBUG
-            ++ sharedPackets_;
-#endif
         }
     }
 #ifdef SENF_DEBUG
     if (burst_ > burstMax_)
         burstMax_ = burst_;
 #endif
+
+    // we were triggered, but no valid packet was available
+    if (SENF_UNLIKELY(burst_ == 1)) {
+        qi.rxStats.noop++;
+    }
 
     // this tells flush() that we are done with the for() loop
     burst_ = 0;

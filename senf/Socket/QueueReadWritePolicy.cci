@@ -75,10 +75,11 @@ prefix_ void senf::detail::QueueInfo::init(unsigned rxqlen, unsigned txqlen)
 prefix_ void senf::detail::QueueInfo::RxStats::dump(std::ostream & os)
     const
 {
-    os << "received " << received << ", "
-       << "red "      << red << ", "
-       << "ignored "  << ignored  << ", "
-       << "noop "     << noop  << ".";
+    os << "received "  << received << ", "
+       << "red "       << red << ", "
+       << "ignored "   << ignored  << ", "
+       << "extMemory " << extMemory << ", "
+       << "noop "      << noop  << ".";
 }
 
 prefix_ void senf::detail::QueueInfo::TxStats::dump(std::ostream & os)
@@ -278,23 +279,17 @@ senf::QueueReadPolicy::dequeue(FileHandle & handle)
                 pk.tp_status = TP_STATUS_KERNEL;
                 if (qi.rx.idle)
                     qi.rx.tail = qi.rx.head;
-                continue;
+            } else {
+                qi.rx.idle = false;
+                return bf;
             }
-            qi.rx.idle = false;
-            return bf;
         }
-        qi.rxStats.noop++;
-        return boost::none;
     }
-    qi.rxStats.noop++;
     return boost::none;
 }
 
 prefix_ void senf::QueueReadPolicy::release(FileHandle & handle)
 {
-    if (SENF_UNLIKELY(!handle))
-        return;
-
     detail::QueueInfo & qi (* qinfo(handle));
     while (SENF_LIKELY(!qi.rx.idle || qi.rx.tail != qi.rx.head)) {  // we assume bursts => likely
         struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(qi.rx.tail));

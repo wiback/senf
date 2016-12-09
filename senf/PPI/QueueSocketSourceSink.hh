@@ -98,7 +98,6 @@ namespace module {
 
 #ifdef SENF_DEBUG
         unsigned burstMax();
-        unsigned sharedPackets();
 #endif
         
         void setREDFilterCallback(REDFilterCallback const & cb);
@@ -116,7 +115,6 @@ namespace module {
         
 #ifdef SENF_DEBUG
         unsigned burstMax_;
-        unsigned sharedPackets_;
 #endif
 
         void read();

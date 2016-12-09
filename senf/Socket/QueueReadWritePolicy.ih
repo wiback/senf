@@ -81,6 +81,7 @@ namespace detail {
         };
         struct RxStats {
             unsigned received;
+            unsigned extMemory;
             unsigned ignored;
             unsigned noop;
             unsigned red;
