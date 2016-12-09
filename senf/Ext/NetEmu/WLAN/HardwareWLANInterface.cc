@@ -748,12 +748,12 @@ prefix_ void senf::emu::HardwareWLANInterface::v_coverageRange(unsigned distance
 }
 
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr
-senf::emu::HardwareWLANInterface::joinAdhocNetwork(std::string const & ssid,
+senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
 		unsigned int freq, unsigned int bandwidth)
 {
     if (! enabled())
         throw senf::SystemException(
-            "Cannot join AdhocNetwork (" + ssid + "): Interface (" + device() + ") is down ", ENETDOWN);
+            "joinAdhoc (" + ssid + ") failed: Interface (" + device() + ") is down ", ENETDOWN);
 
     WirelessNLController::ChannelMode::Enum channelMode;
     switch (bandwidth) {
@@ -775,6 +775,44 @@ senf::emu::HardwareWLANInterface::joinAdhocNetwork(std::string const & ssid,
             ssid, freq-frequencyOffset_, channelMode) );
 }
 
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr
+senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
+		unsigned int freq, unsigned int bandwidth)
+{
+    if (! enabled())
+        throw senf::SystemException(
+            "joinMesh (" + meshId + ") failed: Interface (" + device() + ") is down ", ENETDOWN);
+
+    WirelessNLController::ChannelMode::Enum channelMode;
+    switch (bandwidth) {
+    case MHZ_TO_KHZ(20):
+		channelMode = (htMode_ == HTMode::Disabled
+                       ? WirelessNLController::ChannelMode::NoHT20
+                       : WirelessNLController::ChannelMode::HT20);
+        break;
+    case MHZ_TO_KHZ(40):
+		channelMode = WirelessNLController::ChannelMode::HT40Plus;
+        freq -= MHZ_TO_KHZ(10);
+        break;
+    default:
+        throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
+    }
+
+    return WirelessNLController::MeshJoinParameters::ptr( new WirelessNLController::MeshJoinParameters(
+            membind(&HardwareWLANInterface::do_mesh_join, this),
+            meshId, freq-frequencyOffset_, channelMode) );
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController::MeshJoinParameters const & parameters)
+{
+    openDataSocket();
+    
+    wnlc_.do_mesh_join(parameters);
+    bw_ = parameters.channelMode_ == WirelessNLController::ChannelMode::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
+
+    frequencyHint();
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters)
 {
     openDataSocket();
@@ -785,9 +823,17 @@ prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController
     frequencyHint();
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::leaveAdhocNetwork()
+prefix_ void senf::emu::HardwareWLANInterface::leaveCell()
 {
-    wnlc_.ibss_leave();
+    try {
+        wnlc_.mesh_leave();
+    }
+    catch (...) {};
+
+    try {
+        wnlc_.ibss_leave();
+    } catch (...) {};
+
     closeDataSocket();
 }
 

@@ -77,8 +77,9 @@ namespace emu {
         MonitorDataFilterStatistics filterStats();
         void monitorDropUnknownMCS(bool q);
 
-        WirelessNLController::IbssJoinParameters::ptr joinAdhocNetwork(std::string const & ssid, unsigned int freq, unsigned int bandwidth);
-        void leaveAdhocNetwork();
+        WirelessNLController::IbssJoinParameters::ptr joinAdhoc(std::string const & ssid, unsigned int freq, unsigned int bandwidth);
+        WirelessNLController::MeshJoinParameters::ptr joinMesh(std::string const & meshId, unsigned int freq, unsigned int bandwidth);
+        void leaveCell();
 
         int frequencyOffset() const;
         void frequencyOffset(int offset);
@@ -161,6 +162,7 @@ namespace emu {
         virtual void v_coverageRange(unsigned distance);
 
         void do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters);
+        void do_mesh_join(WirelessNLController::MeshJoinParameters const & parameters);
 
         // modulation
         virtual ModulationParameter::id_t v_modulationId() const;

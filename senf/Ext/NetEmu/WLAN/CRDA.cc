@@ -313,10 +313,9 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
     if (alpha2Country.empty()) {
         char *a2 = getenv("COUNTRY");
         if (!a2 or strlen(a2) == 0) {
-            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "No COUNTRY specified. Aborting.") );
+            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring Request.") );
             return false;
         }
-        alpha2Country = std::string( a2 ? a2 : WORLD_REG_ALPHA);
     }
 
     if (nonWirelessBox_)
@@ -366,19 +365,17 @@ prefix_ void senf::emu::CRDA::kernelRegDomain(std::ostream & os)
 
 prefix_ void senf::emu::CRDA::setRegulatory()
 {
-    char *a2 = getenv("COUNTRY");
+    std::string a2 (getenv("COUNTRY") ? getenv("COUNTRY") : "");
 
-    if( !a2) {
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "No a2 country code provided. Ignore request") );
+    if(a2.empty()) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring request.") );
         return;
     }
 
-    std::string c2( a2 ? a2 : WORLD_REG_ALPHA);
-
-    auto regDomain (currentRegDomain_ && c2.compare("00") != 0 && c2.compare("US") != 0 ? currentRegDomain_ : worldRegDomain_);
+    auto regDomain (currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0 ? currentRegDomain_ : worldRegDomain_);
 
     if( regDomain.alpha2Country.empty())
-            regDomain.alpha2Country = c2;
+            regDomain.alpha2Country = a2;
 
     if( not pushRegulatory( regDomain))
         return;
