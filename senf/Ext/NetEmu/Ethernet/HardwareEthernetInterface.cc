@@ -471,11 +471,6 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::burstMax()
     return source.burstMax();
 }
 
-prefix_ unsigned senf::emu::HardwareEthernetInterface::sharedPackets()
-{
-    return source.sharedPackets();
-}
-
 #endif
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

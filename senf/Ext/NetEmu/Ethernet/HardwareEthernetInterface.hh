@@ -84,14 +84,14 @@ namespace emu {
 
 #ifdef SENF_DEBUG
         unsigned burstMax();
-        unsigned sharedPackets();
 #endif
 
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 
-    protected:
         EthernetController & ethController();
+
+    protected:
 
         virtual void v_enable();
         virtual void v_disable();
