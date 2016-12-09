@@ -52,6 +52,7 @@ namespace emu {
         unsigned speed() const;
         Duplex_mode duplex() const;
         bool hasLink() const;
+        bool nWayReset();
     };
 
 }}

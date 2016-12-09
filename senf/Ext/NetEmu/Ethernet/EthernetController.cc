@@ -98,6 +98,18 @@ prefix_ bool senf::emu::EthernetController::hasLink()
     return edata.data;
 }
 
+prefix_ bool senf::emu::EthernetController::nWayReset()
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    struct ethtool_value edata;
+    edata.cmd = ETHTOOL_NWAY_RST;
+    ifr.ifr_data = reinterpret_cast<caddr_t>(&edata);
+    doIoctl(ifr, "nWayReset failed.");
+    return edata.data;
+}
+
+
 #undef doIoctl
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
