@@ -80,7 +80,8 @@ namespace emu {
         WirelessNLController::IbssJoinParameters::ptr joinAdhoc(std::string const & ssid, unsigned int freq, unsigned int bandwidth);
         WirelessNLController::MeshJoinParameters::ptr joinMesh(std::string const & meshId, unsigned int freq, unsigned int bandwidth);
         void leaveCell();
-
+        bool cellJoined() const;
+        
         int frequencyOffset() const;
         void frequencyOffset(int offset);
 

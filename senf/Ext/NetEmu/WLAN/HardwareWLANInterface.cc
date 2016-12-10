@@ -442,6 +442,12 @@ prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
     HardwareWLANInterfaceNet::assignDataSocket(socket_);   
 }
 
+prefix_ bool senf::emu::HardwareWLANInterface::cellJoined()
+    const
+{
+    return HardwareWLANInterfaceNet::socket.valid();
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::closeDataSocket()
 { 
     if (HardwareWLANInterfaceNet::socket.valid())
