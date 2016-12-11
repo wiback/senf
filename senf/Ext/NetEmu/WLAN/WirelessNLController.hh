@@ -32,6 +32,7 @@
 #define HH_SENF_Ext_NetEmu_WLAN_WirelessNLController_ 1
 
 // Custom includes
+#include <array>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
@@ -136,16 +137,30 @@ namespace emu {
 
     struct BitrateParameters
     {
-        typedef unsigned short MCSIndex;
+    	/* VHT MCS */
+    	typedef std::bitset<16> VHT_MCSBitmap;
+        typedef std::array<VHT_MCSBitmap, NL80211_VHT_NSS_MAX> VHT_MCSBitmapTable;
+        boost::optional<VHT_MCSBitmapTable> vht_mcs_table_24;
+        boost::optional<VHT_MCSBitmapTable> vht_mcs_table_5;
+        /* HT MCS */
+        typedef uint8_t MCSIndex;
         typedef std::set<MCSIndex> MCSIndexSet;
         boost::optional<MCSIndexSet> mcs_24;
         boost::optional<MCSIndexSet> mcs_5;
+        /* Legacy */
         typedef uint32_t LegacyBitrate;  // Bitrate in kbps
         typedef std::set<LegacyBitrate> LegacyBitrateSet;
         boost::optional<LegacyBitrateSet> legacy_24;
         boost::optional<LegacyBitrateSet> legacy_5;
+        /* GI */
+        enum GICfg {
+            DefaultGI = NL80211_TXRATE_DEFAULT_GI,
+            ForceSGI  = NL80211_TXRATE_FORCE_SGI,
+            ForceLGI  = NL80211_TXRATE_FORCE_LGI
+        };
+        boost::optional<GICfg> gi_24;
+        boost::optional<GICfg> gi_5;
     };
-
 
     class WirelessNLController
     {
@@ -425,8 +440,8 @@ namespace emu {
         typedef std::map<frequency_type, DFSState::Enum> DFSStateMap;
         DFSStateMap dfsStates_;
         RegulatoryDomain regDomain_;
-        boost::optional<std::set<unsigned short> > tmpMCSRates_;
-        boost::optional<std::set<uint32_t> > tmpLegacyRates_;
+        boost::optional<std::set<BitrateParameters::MCSIndex> > tmpMCSRates_;
+        boost::optional<std::set<BitrateParameters::LegacyBitrate> > tmpLegacyRates_;
 
         nl_sock_ptr nl_event_sock_;
         nl_cb_ptr nl_event_cb_;

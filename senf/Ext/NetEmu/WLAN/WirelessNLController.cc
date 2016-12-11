@@ -314,10 +314,10 @@ prefix_ void senf::emu::WirelessNLController::send_and_wait4response(nl_msg_ptr 
 prefix_ void senf::emu::WirelessNLController::nlPutChannelDef(nl_msg_ptr msg, frequency_type freq, ChannelMode::Enum channelMode)
 {
     NLA_PUT_U32 ( msg, NL80211_ATTR_WIPHY_FREQ, KHZ_TO_MHZ(freq));
-	NLA_PUT_U32 ( msg, NL80211_ATTR_CHANNEL_WIDTH, channelWidth(channelMode));
-	if (channelType(channelMode) >= 0)
-		NLA_PUT_U32 ( msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, channelType(channelMode));
-	NLA_PUT_U32 ( msg, NL80211_ATTR_CENTER_FREQ1, KHZ_TO_MHZ(centerFreq(freq, channelMode)));
+    NLA_PUT_U32 ( msg, NL80211_ATTR_CHANNEL_WIDTH, channelWidth(channelMode));
+    if (channelType(channelMode) >= 0)
+        NLA_PUT_U32 ( msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, channelType(channelMode));
+    NLA_PUT_U32 ( msg, NL80211_ATTR_CENTER_FREQ1, KHZ_TO_MHZ(centerFreq(freq, channelMode)));
 
 }
 
@@ -342,7 +342,7 @@ prefix_ void senf::emu::WirelessNLController::set_frequency(frequency_type freq,
 {
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_SET_WIPHY, CIB_PHY, NLM_F_ACK));
 
-	nlPutChannelDef(msg, freq, channelMode);
+    nlPutChannelDef(msg, freq, channelMode);
 
     send_and_wait4response(msg);
 }
@@ -459,9 +459,10 @@ namespace {
 }
 
 #define NLA_PUT_OPTIONAL_VECTOR(msg, attrtype, optvector)           \
-    if (optvector) NLA_PUT( msg, attrtype, optvector->size(),       \
-            optvector->empty() ? NULL : &(*optvector)[0]);
-
+    do {                                                            \
+        if (optvector) NLA_PUT( msg, attrtype, optvector->size(),   \
+                optvector->empty() ? NULL : &(*optvector)[0]);      \
+    } while (0);
 
 prefix_ void senf::emu::WirelessNLController::set_bitrates(BitrateParameters p)
 {
@@ -472,6 +473,7 @@ prefix_ void senf::emu::WirelessNLController::set_bitrates(BitrateParameters p)
     boost::optional<LegacyBitrateVector> legacy_24, legacy_5;
     typedef std::vector<BitrateParameters::MCSIndex> MCSIndexVector;
     boost::optional<MCSIndexVector> mcs_24, mcs_5;
+    struct nl80211_txrate_vht txrate_vht_24, txrate_vht_5;
 
     if (p.legacy_24) {
         legacy_24.reset( LegacyBitrateVector(p.legacy_24->size()));
@@ -482,29 +484,41 @@ prefix_ void senf::emu::WirelessNLController::set_bitrates(BitrateParameters p)
         std::transform(p.legacy_5->begin(),  p.legacy_5->end(),  legacy_5->begin(),  transform_bitrate);
     }
     if (p.mcs_24) {
-	mcs_24.reset(MCSIndexVector(p.mcs_24->size()));
+        mcs_24.reset(MCSIndexVector(p.mcs_24->size()));
         std::copy(p.mcs_24->begin(), p.mcs_24->end(), mcs_24->begin());
     }
     if (p.mcs_5) {
         mcs_5.reset(MCSIndexVector(p.mcs_5->size()));
         std::copy(p.mcs_5->begin(), p.mcs_5->end(), mcs_5->begin());
     }
+    if (p.vht_mcs_table_24) {
+        for (int nss = 0; nss < NL80211_VHT_NSS_MAX; nss++)
+            txrate_vht_24.mcs[nss] = p.vht_mcs_table_24->at(nss).to_ulong();
+    }
+    if (p.vht_mcs_table_5) {
+        for (int nss = 0; nss < NL80211_VHT_NSS_MAX; nss++)
+            txrate_vht_5.mcs[nss] = p.vht_mcs_table_5->at(nss).to_ulong();
+    }
 
     {
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_TX_RATES);
-        if (legacy_24 or mcs_24) {
+        if (legacy_24 or mcs_24 or p.vht_mcs_table_24 or p.gi_24) {
             nl_nested_attr_ptr bandAttr (msg, NL80211_BAND_2GHZ);
             NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_LEGACY, legacy_24);
-            NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_MCS,    mcs_24);
-            if(mcs_24)
-                NLA_PUT_U8         ( msg, NL80211_TXRATE_GI,     NL80211_TXRATE_FORCE_LGI);
+            NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_HT,     mcs_24);
+            if (p.vht_mcs_table_24)
+                NLA_PUT            ( msg, NL80211_TXRATE_VHT,    sizeof(txrate_vht_24), &txrate_vht_24);
+            if (p.gi_24)
+                NLA_PUT_U8         ( msg, NL80211_TXRATE_GI,     p.gi_24.get());
         }
-        if (legacy_5 or mcs_5) {
+        if (legacy_5 or mcs_5 or p.vht_mcs_table_5 or p.gi_5) {
             nl_nested_attr_ptr bandAttr (msg, NL80211_BAND_5GHZ);
             NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_LEGACY, legacy_5);
-            NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_MCS,    mcs_5);
-            if(mcs_5)
-                NLA_PUT_U8         ( msg, NL80211_TXRATE_GI,     NL80211_TXRATE_FORCE_LGI);
+            NLA_PUT_OPTIONAL_VECTOR( msg, NL80211_TXRATE_HT,     mcs_5);
+            if (p.vht_mcs_table_5)
+                NLA_PUT            ( msg, NL80211_TXRATE_VHT,    sizeof(txrate_vht_5), &txrate_vht_5);
+            if (p.gi_5)
+                NLA_PUT_U8         ( msg, NL80211_TXRATE_GI,     p.gi_5.get());
         }
     }
 
@@ -888,8 +902,8 @@ prefix_ void senf::emu::WirelessNLController::add_meshInterface(std::string cons
 
     NLA_PUT_STRING( msg, NL80211_ATTR_IFNAME, name.c_str());
     NLA_PUT_U32   ( msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_MESH_POINT);
-	if (not meshId.empty())
-	    NLA_PUT( msg, NL80211_ATTR_MESH_ID, meshId.length(), meshId.c_str());
+    if (not meshId.empty())
+        NLA_PUT( msg, NL80211_ATTR_MESH_ID, meshId.length(), meshId.c_str());
 
     send_and_wait4response(msg);
 }
@@ -1034,62 +1048,62 @@ prefix_ std::string senf::emu::WirelessNLController::macToPhy(senf::MACAddress c
 
 prefix_ int senf::emu::WirelessNLController::channelWidth(ChannelMode::Enum channelMode)
 {
-	switch (channelMode) {
-	case ChannelMode::NoHT20:
-		return NL80211_CHAN_WIDTH_20_NOHT;
-	case ChannelMode::HT20:
-		return NL80211_CHAN_WIDTH_20;
-	case ChannelMode::HT40Minus:
-	case ChannelMode::HT40Plus:
-		return NL80211_CHAN_WIDTH_40;
-	case ChannelMode::VHT80:
-		return NL80211_CHAN_WIDTH_80;
-	}
+    switch (channelMode) {
+    case ChannelMode::NoHT20:
+        return NL80211_CHAN_WIDTH_20_NOHT;
+    case ChannelMode::HT20:
+        return NL80211_CHAN_WIDTH_20;
+    case ChannelMode::HT40Minus:
+    case ChannelMode::HT40Plus:
+        return NL80211_CHAN_WIDTH_40;
+    case ChannelMode::VHT80:
+        return NL80211_CHAN_WIDTH_80;
+    }
     throw InvalidArgumentException("invalid channelMode ") << channelMode;
 }
 
 prefix_ int senf::emu::WirelessNLController::channelType(ChannelMode::Enum channelMode)
 {
-	switch (channelMode) {
-	case ChannelMode::NoHT20:
-		return NL80211_CHAN_NO_HT;
-	case ChannelMode::HT20:
-		return NL80211_CHAN_HT20;
-	case ChannelMode::HT40Minus:
-		return NL80211_CHAN_HT40MINUS;
-	case ChannelMode::HT40Plus:
-		return NL80211_CHAN_HT40PLUS;
-	case ChannelMode::VHT80:
-		return -1;
-	}
+    switch (channelMode) {
+    case ChannelMode::NoHT20:
+        return NL80211_CHAN_NO_HT;
+    case ChannelMode::HT20:
+        return NL80211_CHAN_HT20;
+    case ChannelMode::HT40Minus:
+        return NL80211_CHAN_HT40MINUS;
+    case ChannelMode::HT40Plus:
+        return NL80211_CHAN_HT40PLUS;
+    case ChannelMode::VHT80:
+        return -1;
+    }
     throw InvalidArgumentException("invalid channelMode ") << channelMode;
 }
 
 prefix_ senf::emu::WirelessNLController::frequency_type  senf::emu::WirelessNLController::centerFreq(
-		frequency_type freq, ChannelMode::Enum channelMode)
+        frequency_type freq, ChannelMode::Enum channelMode)
 {
-	unsigned int vht80[] = {
-			MHZ_TO_KHZ(5180), MHZ_TO_KHZ(5260), MHZ_TO_KHZ(5500),
-			MHZ_TO_KHZ(5580), MHZ_TO_KHZ(5660), MHZ_TO_KHZ(5745) };
-	unsigned j;
+    unsigned int vht80[] = {
+            MHZ_TO_KHZ(5180), MHZ_TO_KHZ(5260), MHZ_TO_KHZ(5500),
+            MHZ_TO_KHZ(5580), MHZ_TO_KHZ(5660), MHZ_TO_KHZ(5745) };
+    unsigned j;
 
-	switch (channelMode) {
-	case ChannelMode::NoHT20:
-	case ChannelMode::HT20:
-		return freq;
-	case ChannelMode::HT40Minus:
-		return freq - MHZ_TO_KHZ(10);
-	case ChannelMode::HT40Plus:
-		return freq + MHZ_TO_KHZ(10);
-	case ChannelMode::VHT80:
-		for (j = 0; j < ARRAY_SIZE(vht80); j++) {
-			if (freq >= vht80[j] && freq < vht80[j] + MHZ_TO_KHZ(80))
-				break;
-		}
-		if (j == ARRAY_SIZE(vht80))
-		    throw InvalidArgumentException("invalid frequency ") << freq;
-		return vht80[j] + MHZ_TO_KHZ(30);
-	}
+    switch (channelMode) {
+    case ChannelMode::NoHT20:
+    case ChannelMode::HT20:
+        return freq;
+    case ChannelMode::HT40Minus:
+        return freq - MHZ_TO_KHZ(10);
+    case ChannelMode::HT40Plus:
+        return freq + MHZ_TO_KHZ(10);
+    case ChannelMode::VHT80:
+        for (j = 0; j < ARRAY_SIZE(vht80); j++) {
+            if (freq >= vht80[j] && freq < vht80[j] + MHZ_TO_KHZ(80))
+                break;
+        }
+        if (j == ARRAY_SIZE(vht80))
+            throw InvalidArgumentException("invalid frequency ") << freq;
+        return vht80[j] + MHZ_TO_KHZ(30);
+    }
     throw InvalidArgumentException("invalid channelMode ") << channelMode;
 }
 
@@ -1101,7 +1115,7 @@ prefix_ void senf::emu::WirelessNLController::mesh_leave()
 }
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::mesh_join(
-		std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode)
+        std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode)
 {
     return MeshJoinParameters::ptr( new MeshJoinParameters(
             membind(&WirelessNLController::do_mesh_join, this), meshId, freq, channelMode) );
@@ -1113,7 +1127,7 @@ prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters co
 
     NLA_PUT( msg, NL80211_ATTR_MESH_ID, parameters.meshId_.length(), parameters.meshId_.c_str());
 
-	nlPutChannelDef(msg, parameters.freq_, parameters.channelMode_);
+    nlPutChannelDef(msg, parameters.freq_, parameters.channelMode_);
 
     if (parameters.beaconInterval_)
         NLA_PUT_U32( msg, NL80211_ATTR_BEACON_INTERVAL, parameters.beaconInterval_.get());
@@ -1121,7 +1135,7 @@ prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters co
     {
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_MESH_SETUP);
         if (! boost::empty(parameters.ies_))
-        	NLA_PUT( msg, NL80211_MESH_SETUP_IE, boost::size(parameters.ies_), &(*boost::begin(parameters.ies_)));
+            NLA_PUT( msg, NL80211_MESH_SETUP_IE, boost::size(parameters.ies_), &(*boost::begin(parameters.ies_)));
         if (parameters.vendorMetric_)
             NLA_PUT_U8( msg, NL80211_MESH_SETUP_ENABLE_VENDOR_METRIC, parameters.vendorMetric_.get());
         if (parameters.vendorPathSelection_)
@@ -1152,7 +1166,7 @@ prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters co
 
     NLA_PUT( msg, NL80211_ATTR_SSID, parameters.ssid_.length(), parameters.ssid_.c_str());
 
-	nlPutChannelDef(msg, parameters.freq_, parameters.channelMode_);
+    nlPutChannelDef(msg, parameters.freq_, parameters.channelMode_);
 
     NLA_PUT_FLAG( msg, NL80211_ATTR_FREQ_FIXED);
 
@@ -1431,19 +1445,19 @@ prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::Wire
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorMetric(bool enable)
 {
-	vendorMetric_ = enable ? 1 : 0;
+    vendorMetric_ = enable ? 1 : 0;
     return shared_from_this();
 }
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorPathSelection(bool enable)
 {
-	vendorPathSelection_ = enable ? 1 : 0;
+    vendorPathSelection_ = enable ? 1 : 0;
     return shared_from_this();
 }
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorSynchronization(bool enable)
 {
-	vendorSynchronization_ = enable ? 1 : 0;
+    vendorSynchronization_ = enable ? 1 : 0;
     return shared_from_this();
 }
 
