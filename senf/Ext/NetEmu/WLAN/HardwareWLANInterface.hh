@@ -91,7 +91,7 @@ namespace emu {
         void refreshProperties();
 
         struct HTMode {
-            enum Enum { Disabled, Enabled, HT20only, HT40only };
+            enum Enum { Disabled, Enabled, HT20only, HT40only, VHT80only };
         };
         void htMode(HTMode::Enum mode);
         HTMode::Enum htMode() const;

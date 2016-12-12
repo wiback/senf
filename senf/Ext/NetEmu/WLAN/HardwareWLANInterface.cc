@@ -327,6 +327,15 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
             registerFrequency(freq + frequencyOffset_ + MHZ_TO_KHZ(10), MHZ_TO_KHZ(40));
         }
     }
+    if (htMode_ == HTMode::HT40only || !wnlc_.hasVHTCapabilities())
+        return;
+    // register VHT80( frequencies/bandwidth
+    BOOST_FOREACH( WirelessNLController::frequency_type freq, wnlc_.frequencies() ) {
+        if (boost::icl::contains(frequencyRanges, FrequencyRange(
+                freq + frequencyOffset_ - MHZ_TO_KHZ(40), freq + frequencyOffset_ + MHZ_TO_KHZ(40)))) {
+            registerFrequency(freq + frequencyOffset_ - MHZ_TO_KHZ(0), MHZ_TO_KHZ(80));
+        }
+    }
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::registerModulations()
@@ -622,6 +631,10 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
             wnlc.set_frequency( freq-frequencyOffset_-MHZ_TO_KHZ(10), WirelessNLController::ChannelMode::HT40Plus);
             bw_ = MHZ_TO_KHZ(40);
             break;
+        case MHZ_TO_KHZ(80):
+            wnlc.set_frequency( freq-frequencyOffset_-MHZ_TO_KHZ(0), WirelessNLController::ChannelMode::VHT80);
+            bw_ = MHZ_TO_KHZ(80);
+            break;
         default:
             throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
             break;
@@ -642,6 +655,8 @@ prefix_ unsigned senf::emu::HardwareWLANInterface::v_frequency()
         return wnlc_.frequency() + frequencyOffset_;
     case MHZ_TO_KHZ(40):
         return wnlc_.frequency() + frequencyOffset_ + MHZ_TO_KHZ(10);
+    case MHZ_TO_KHZ(80):
+        return wnlc_.frequency() + frequencyOffset_ + MHZ_TO_KHZ(0);
     }
     return 0;
 }
