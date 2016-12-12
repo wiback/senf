@@ -787,6 +787,10 @@ senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
 		channelMode = WirelessNLController::ChannelMode::HT40Plus;
         freq -= MHZ_TO_KHZ(10);
         break;
+    case MHZ_TO_KHZ(80):
+		channelMode = WirelessNLController::ChannelMode::VHT80;
+        freq -= MHZ_TO_KHZ(0);
+        break;
     default:
         throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
     }
@@ -815,6 +819,10 @@ senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
 		channelMode = WirelessNLController::ChannelMode::HT40Plus;
         freq -= MHZ_TO_KHZ(10);
         break;
+    case MHZ_TO_KHZ(80):
+		channelMode = WirelessNLController::ChannelMode::VHT80;
+        freq -= MHZ_TO_KHZ(0);
+        break;
     default:
         throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
     }
@@ -829,7 +837,21 @@ prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController
     openDataSocket();
     
     wnlc_.do_mesh_join(parameters);
-    bw_ = parameters.channelMode_ == WirelessNLController::ChannelMode::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
+
+    switch (parameters.channelMode_) {
+    case WirelessNLController::ChannelMode::HT40Plus:
+        bw_ = MHZ_TO_KHZ(40);
+        break;
+    case WirelessNLController::ChannelMode::NoHT20:
+    case WirelessNLController::ChannelMode::HT20:
+        bw_ = MHZ_TO_KHZ(20);
+        break;
+    case WirelessNLController::ChannelMode::VHT80:
+        bw_ = MHZ_TO_KHZ(80);
+        break;
+    default:
+        break;
+    }
 
     frequencyHint();
 }
@@ -839,7 +861,21 @@ prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController
     openDataSocket();
     
     wnlc_.do_ibss_join(parameters);
-    bw_ = parameters.channelMode_ == WirelessNLController::ChannelMode::HT40Plus ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
+
+    switch (parameters.channelMode_) {
+    case WirelessNLController::ChannelMode::HT40Plus:
+        bw_ = MHZ_TO_KHZ(40);
+        break;
+    case WirelessNLController::ChannelMode::NoHT20:
+    case WirelessNLController::ChannelMode::HT20:
+        bw_ = MHZ_TO_KHZ(20);
+        break;
+    case WirelessNLController::ChannelMode::VHT80:
+        bw_ = MHZ_TO_KHZ(80);
+        break;
+    default:
+        break;
+    }
 
     frequencyHint();
 }
@@ -981,6 +1017,39 @@ prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANI
         return WirelessNLController::DFSState::Available;
     }
 
+    if (bandwidth == MHZ_TO_KHZ(80)) {
+        /*             | noDFS  | usable    | available | unavailable
+         *       noDFS | noDFS  | usable    | available | unavailable
+         *      usable |        | usable    | usable    | unavailable
+         *   available |        |           | available | unavailable
+         * unavailable |        |           |           | unavailable
+         */
+        WirelessNLController::DFSState::Enum state1 (wnlc.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(30)));
+        WirelessNLController::DFSState::Enum state2 (wnlc.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
+        WirelessNLController::DFSState::Enum state3 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
+        WirelessNLController::DFSState::Enum state4 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(30)));
+
+        if (state1 == WirelessNLController::DFSState::NoDFS and
+            state2 == WirelessNLController::DFSState::NoDFS and
+            state3 == WirelessNLController::DFSState::NoDFS and
+            state4 == WirelessNLController::DFSState::NoDFS)
+            return WirelessNLController::DFSState::NoDFS;
+        
+        if (state1 == WirelessNLController::DFSState::Unavailable or
+            state2 == WirelessNLController::DFSState::Unavailable or
+            state3 == WirelessNLController::DFSState::Unavailable or
+            state4 == WirelessNLController::DFSState::Unavailable)
+            return WirelessNLController::DFSState::Unavailable;
+        
+        if (state1 == WirelessNLController::DFSState::Usable or
+            state2 == WirelessNLController::DFSState::Usable or
+            state3 == WirelessNLController::DFSState::Usable or
+            state4 == WirelessNLController::DFSState::Usable)
+            return WirelessNLController::DFSState::Usable;
+        
+        return WirelessNLController::DFSState::Available;
+    }
+    
     throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
 }
 
