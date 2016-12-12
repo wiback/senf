@@ -333,7 +333,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
     BOOST_FOREACH( WirelessNLController::frequency_type freq, wnlc_.frequencies() ) {
         if (boost::icl::contains(frequencyRanges, FrequencyRange(
                 freq + frequencyOffset_ - MHZ_TO_KHZ(40), freq + frequencyOffset_ + MHZ_TO_KHZ(40)))) {
-            registerFrequency(freq + frequencyOffset_ - MHZ_TO_KHZ(0), MHZ_TO_KHZ(80));
+            registerFrequency(freq + frequencyOffset_ - MHZ_TO_KHZ(10), MHZ_TO_KHZ(80));
         }
     }
 }
@@ -632,7 +632,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
             bw_ = MHZ_TO_KHZ(40);
             break;
         case MHZ_TO_KHZ(80):
-            wnlc.set_frequency( freq-frequencyOffset_-MHZ_TO_KHZ(0), WirelessNLController::ChannelMode::VHT80);
+            wnlc.set_frequency( freq-frequencyOffset_-MHZ_TO_KHZ(10), WirelessNLController::ChannelMode::VHT80);
             bw_ = MHZ_TO_KHZ(80);
             break;
         default:
@@ -656,7 +656,7 @@ prefix_ unsigned senf::emu::HardwareWLANInterface::v_frequency()
     case MHZ_TO_KHZ(40):
         return wnlc_.frequency() + frequencyOffset_ + MHZ_TO_KHZ(10);
     case MHZ_TO_KHZ(80):
-        return wnlc_.frequency() + frequencyOffset_ + MHZ_TO_KHZ(0);
+        return wnlc_.frequency() + frequencyOffset_ + MHZ_TO_KHZ(10);
     }
     return 0;
 }
@@ -789,7 +789,7 @@ senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
         break;
     case MHZ_TO_KHZ(80):
 		channelMode = WirelessNLController::ChannelMode::VHT80;
-        freq -= MHZ_TO_KHZ(0);
+        freq -= MHZ_TO_KHZ(10);
         break;
     default:
         throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
@@ -821,7 +821,7 @@ senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
         break;
     case MHZ_TO_KHZ(80):
 		channelMode = WirelessNLController::ChannelMode::VHT80;
-        freq -= MHZ_TO_KHZ(0);
+        freq -= MHZ_TO_KHZ(10);
         break;
     default:
         throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
