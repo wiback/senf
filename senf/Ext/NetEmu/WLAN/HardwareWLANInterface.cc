@@ -332,7 +332,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
     // register VHT80( frequencies/bandwidth
     BOOST_FOREACH( WirelessNLController::frequency_type freq, wnlc_.frequencies() ) {
         if (boost::icl::contains(frequencyRanges, FrequencyRange(
-                freq + frequencyOffset_ - MHZ_TO_KHZ(40), freq + frequencyOffset_ + MHZ_TO_KHZ(40)))) {
+                freq + frequencyOffset_ - MHZ_TO_KHZ(50), freq + frequencyOffset_ + MHZ_TO_KHZ(30)))) {
             registerFrequency(freq + frequencyOffset_ - MHZ_TO_KHZ(10), MHZ_TO_KHZ(80));
         }
     }
@@ -850,6 +850,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController
         bw_ = MHZ_TO_KHZ(80);
         break;
     default:
+         throw InvalidArgumentException("invalid channelMode: ") << parameters.channelMode_;
         break;
     }
 
@@ -874,6 +875,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController
         bw_ = MHZ_TO_KHZ(80);
         break;
     default:
+        throw InvalidArgumentException("invalid channelMode: ") << parameters.channelMode_;
         break;
     }
 
