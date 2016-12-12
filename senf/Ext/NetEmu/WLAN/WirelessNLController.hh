@@ -161,7 +161,7 @@ namespace emu {
     struct BitrateParameters
     {
     	/* VHT MCS */
-    	typedef std::bitset<16> VHT_MCSBitmap;
+    	typedef std::bitset<10> VHT_MCSBitmap;
         typedef std::array<VHT_MCSBitmap, NL80211_VHT_NSS_MAX> VHT_MCSBitmapTable;
         boost::optional<VHT_MCSBitmapTable> vht_mcs_table_24;
         boost::optional<VHT_MCSBitmapTable> vht_mcs_table_5;

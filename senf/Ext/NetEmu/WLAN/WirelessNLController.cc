@@ -771,17 +771,16 @@ prefix_ int senf::emu::WirelessNLController::getWiphy_cb(nl_msg * msg)
             for (int nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
                 switch ((tmp >> (nss * 2)) & 3) {
                 case 0:
-                    mcsBitmapTable[nss] = 0x7f;  // MCS 0-7
+                    mcsBitmapTable[nss] = 0xff;   // MCS 0-7
                     break;
                 case 1:
-                    mcsBitmapTable[nss] = 0xff;  // MCS 0-8
+                    mcsBitmapTable[nss] = 0x1ff;  // MCS 0-8
                     break;
                 case 2:
-                    mcsBitmapTable[nss] = 0x1ff;  // MCS 0-9
+                    mcsBitmapTable[nss] = 0x3ff;  // MCS 0-9
                     break;
                 case 3:
-                    /* not supported */
-                    break;
+                    break;  /* not supported */
                 }
             }
         }
