@@ -364,7 +364,7 @@ namespace senf {
         SENF_PARSER_BITFIELD( maxMCS7SS, 2, unsigned );
         SENF_PARSER_BITFIELD( maxMCS6SS, 2, unsigned );
         SENF_PARSER_BITFIELD( maxMCS5SS, 2, unsigned );
-        SENF_PARSER_FINALIZE( WLANVHTMCSMapParser     );
+        SENF_PARSER_FINALIZE( WLANVHTMCSMapParser    );
     };
 
     struct WLANVHTHighestSupportedDataRateParser

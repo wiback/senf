@@ -102,6 +102,29 @@ namespace emu {
         bool lSIG_TXOP_Protection;
     };
 
+    struct VHTCapabilitiesInfo
+    {
+        enum MaxMPDULength { MaxMPDULength_3895, MaxMPDULength_7991, MaxMPDULength_11454 };
+        enum MaxMPDULength maxMPDULength;
+        enum SupportedChannelWidth {
+            SupportedChannelWidth_No_160_nor_8080MHz,
+            SupportedChannelWidth_160MHz,
+            SupportedChannelWidth_160_8080MHz };
+        enum SupportedChannelWidth supportedChannelWidth;
+        bool rxLDPC;
+        bool shortGIfor80MHz;
+        bool shortGIfor160_8080MHz;
+        bool txSTBC;
+        bool suBeamformer;
+        bool suBeamformee;
+        bool muBeamformer;
+        bool muBeamformee;
+        bool vhtTxOpPowerSave;
+        bool htc_vhtCapable;
+        bool rxAntennaPatternConsistency;
+        bool txAntennaPatternConsistency;
+    };
+
 
     struct NetlinkMulticastGroup
     {
@@ -329,6 +352,9 @@ namespace emu {
         bool hasHTCapabilities();
         HTCapabilitiesInfo const & htCapabilities();
 
+        bool hasVHTCapabilities();
+        VHTCapabilitiesInfo const & vhtCapabilities();
+
         typedef std::set<std::string> IfaceNameSet;
         IfaceNameSet all_interfaces() const;
 
@@ -424,6 +450,8 @@ namespace emu {
         unsigned coverageClass_;
         bool hasHTCapabilities_;
         HTCapabilitiesInfo htCapabilities_;
+        bool hasVHTCapabilities_;
+        VHTCapabilitiesInfo vhtCapabilities_;
         std::set<Band_t> supportedBands_;
 
         int ifIndex_;

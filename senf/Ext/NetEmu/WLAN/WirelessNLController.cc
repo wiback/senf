@@ -204,6 +204,7 @@ prefix_ void senf::emu::WirelessNLController::init()
     frequency_ = 0;
     ifaceType_ = IfaceType::Unknown;
     hasHTCapabilities_ = false;
+    hasVHTCapabilities_ = false;
     callback_ = nullptr;
     netlinkMsgCb_ = senf::membind(&WirelessNLController::netlink_cb, this);
     netlinkEventCb_ = senf::membind(&WirelessNLController::netlink_event_cb, this);
@@ -575,6 +576,26 @@ namespace {
         return capInfo;
     }
 
+    VHTCapabilitiesInfo parseVHTCapabilities(uint32_t flags)
+    {
+        VHTCapabilitiesInfo capInfo;
+        capInfo.maxMPDULength = VHTCapabilitiesInfo::MaxMPDULength(flags & 3);
+        capInfo.supportedChannelWidth = VHTCapabilitiesInfo::SupportedChannelWidth((flags >> 2) & 3);
+        capInfo.rxLDPC = flags & BIT(4);
+        capInfo.shortGIfor80MHz = flags & BIT(5);
+        capInfo.shortGIfor160_8080MHz = flags & BIT(6);
+        capInfo.txSTBC = flags & BIT(7);
+        capInfo.suBeamformer = flags & BIT(11);
+        capInfo.suBeamformee = flags & BIT(12);
+        capInfo.suBeamformer = flags & BIT(19);
+        capInfo.suBeamformee = flags & BIT(20);
+        capInfo.vhtTxOpPowerSave = flags & BIT(21);
+        capInfo.htc_vhtCapable = flags & BIT(22);
+        capInfo.rxAntennaPatternConsistency = flags & BIT(28);
+        capInfo.txAntennaPatternConsistency = flags & BIT(29);
+        return capInfo;
+    };
+
 #   undef BIT
 }
 
@@ -636,6 +657,7 @@ prefix_ int senf::emu::WirelessNLController::getWiphy_cb(nl_msg * msg)
     nlattr * freqAttr[NL80211_FREQUENCY_ATTR_MAX + 1];
     nlattr * rateAttr[NL80211_BITRATE_ATTR_MAX + 1];
     uint16_t htCapa = 0;
+    uint32_t vhtCapa = 0;
 
     genlmsghdr * msgHdr = reinterpret_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
     nla_parse(msgAttr, NL80211_ATTR_MAX, genlmsg_attrdata(msgHdr, 0), genlmsg_attrlen(msgHdr, 0), NULL);
@@ -724,12 +746,44 @@ prefix_ int senf::emu::WirelessNLController::getWiphy_cb(nl_msg * msg)
         if (bandAttr[NL80211_BAND_ATTR_HT_CAPA]) {
             uint16_t bandHTCapa (nla_get_u16( bandAttr[NL80211_BAND_ATTR_HT_CAPA]));
             if (firstBand) {
-                htCapabilities_ = parseHTCapabilities( bandHTCapa);
+                htCapabilities_ = parseHTCapabilities(bandHTCapa);
                 hasHTCapabilities_ = true;
                 htCapa = bandHTCapa;
             }
             if (bandHTCapa != htCapa)
                 SENF_LOG((senf::log::IMPORTANT) ("not all bands have the same HT Capabilities; using only the first one!"));
+        }
+        if (bandAttr[NL80211_BAND_ATTR_VHT_CAPA]) {
+            uint32_t bandVHTCapa (nla_get_u32( bandAttr[NL80211_BAND_ATTR_VHT_CAPA]));
+            if (firstBand) {
+                vhtCapabilities_ = parseVHTCapabilities(bandVHTCapa);
+                hasVHTCapabilities_ = true;
+                vhtCapa = bandVHTCapa;
+            }
+            if (bandVHTCapa != vhtCapa)
+                SENF_LOG((senf::log::IMPORTANT) ("not all bands have the same VHT Capabilities; using only the first one!"));
+        }
+        if (bandAttr[NL80211_BAND_ATTR_VHT_MCS_SET]) {
+            unsigned char * mcs (reinterpret_cast<unsigned char*>(nla_data(bandAttr[NL80211_BAND_ATTR_VHT_MCS_SET])));
+            boost::uint16_t tmp = mcs[0] | (mcs[1] << 8);
+            BitrateParameters::VHT_MCSBitmapTable & mcsBitmapTable (get_optional_value(
+                    bandtype_ == BAND_2GHZ ? bitrates_.vht_mcs_table_24 : bitrates_.vht_mcs_table_5));
+            for (int nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
+                switch ((tmp >> (nss * 2)) & 3) {
+                case 0:
+                    mcsBitmapTable[nss] = 0x7f;  // MCS 0-7
+                    break;
+                case 1:
+                    mcsBitmapTable[nss] = 0xff;  // MCS 0-8
+                    break;
+                case 2:
+                    mcsBitmapTable[nss] = 0x1ff;  // MCS 0-9
+                    break;
+                case 3:
+                    /* not supported */
+                    break;
+                }
+            }
         }
         if (bandAttr[NL80211_BAND_ATTR_HT_MCS_SET] && nla_len(bandAttr[NL80211_BAND_ATTR_HT_MCS_SET]) == 16) {
             unsigned char * mcs (reinterpret_cast<unsigned char*>(nla_data(bandAttr[NL80211_BAND_ATTR_HT_MCS_SET])));
@@ -967,10 +1021,22 @@ prefix_ bool senf::emu::WirelessNLController::hasHTCapabilities()
     return hasHTCapabilities_;
 }
 
+prefix_ bool senf::emu::WirelessNLController::hasVHTCapabilities()
+{
+    getWiphy();
+    return hasVHTCapabilities_;
+}
+
 prefix_ senf::emu::HTCapabilitiesInfo const & senf::emu::WirelessNLController::htCapabilities()
 {
     getWiphy();
     return htCapabilities_;
+}
+
+prefix_ senf::emu::VHTCapabilitiesInfo const & senf::emu::WirelessNLController::vhtCapabilities()
+{
+    getWiphy();
+    return vhtCapabilities_;
 }
 
 namespace {
