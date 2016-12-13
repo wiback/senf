@@ -669,14 +669,17 @@ prefix_ int senf::emu::HardwareWLANInterface::v_txPower()
 
 prefix_ void senf::emu::HardwareWLANInterface::v_txPower(int power)
 {
+    // rounding it to a dB value (ath10k seems to require this)
+    power /= 100;
+    power *= 100;
+    
     if (power == txPower_)
         return;
 
     try {
         wnlc_.set_txpower(WirelessNLController::TxPowerSetting::Fixed, power);
     } catch (NetlinkException & ex) {
-        if (ex.errorNumber() != -7)  // Invalid parameter
-            throw;
+        throw;
     }
     txPower_ = power;
 }
