@@ -74,7 +74,6 @@ ActiveQueueSocketSource(Handle const & handle, unsigned burst)
     , red_(0)
 #ifdef SENF_DEBUG
     , burstMax_ (0)
-    , sharedPackets_ (0)
 #endif
 {
     registerEvent(event_, &ActiveQueueSocketSource::read);
@@ -107,14 +106,6 @@ prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::b
 {
     unsigned res (burstMax_);
     burstMax_ = 0;
-    return res;
-}
-
-template <class Packet, class Connector>
-prefix_ unsigned senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::sharedPackets()
-{
-    unsigned res (sharedPackets_);
-    sharedPackets_ = 0;
     return res;
 }
 
