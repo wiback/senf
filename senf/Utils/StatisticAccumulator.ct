@@ -40,6 +40,13 @@
 // senf::StatisticAccumulator<T>
 
 template <class T>
+prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T const & value)
+    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0), last_avg_(0)
+{
+    accumulate(value);
+}
+
+template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
     : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0), last_avg_(0)
 {}
