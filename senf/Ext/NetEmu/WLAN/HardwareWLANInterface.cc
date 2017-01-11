@@ -814,22 +814,22 @@ senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
     WirelessNLController::ChannelMode::Enum channelMode;
     switch (bandwidth) {
     case MHZ_TO_KHZ(20):
-		channelMode = (htMode_ == HTMode::Disabled
+        channelMode = (htMode_ == HTMode::Disabled
                        ? WirelessNLController::ChannelMode::NoHT20
                        : WirelessNLController::ChannelMode::HT20);
         break;
     case MHZ_TO_KHZ(40):
-		channelMode = WirelessNLController::ChannelMode::HT40Plus;
+        channelMode = WirelessNLController::ChannelMode::HT40Plus;
         freq -= MHZ_TO_KHZ(10);
         break;
     case MHZ_TO_KHZ(80):
-		channelMode = WirelessNLController::ChannelMode::VHT80;
+        channelMode = WirelessNLController::ChannelMode::VHT80;
         freq -= MHZ_TO_KHZ(30);
         break;
     default:
         throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
     }
-
+    
     return WirelessNLController::MeshJoinParameters::ptr( new WirelessNLController::MeshJoinParameters(
             membind(&HardwareWLANInterface::do_mesh_join, this),
             meshId, freq-frequencyOffset_, channelMode) );
@@ -853,7 +853,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController
         bw_ = MHZ_TO_KHZ(80);
         break;
     default:
-         throw InvalidArgumentException("invalid channelMode: ") << parameters.channelMode_;
+        throw InvalidArgumentException("invalid channelMode: ") << parameters.channelMode_;
         break;
     }
 

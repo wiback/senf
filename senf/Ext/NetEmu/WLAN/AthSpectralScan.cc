@@ -56,7 +56,7 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
 
     if (is_ath9k()) {
         spectralPeriod(0x08);
-        spectralFFTPeriod(0x02);
+        spectralFFTPeriod(0x04);
         spectralShortRepeat(true);
     } else {
         spectralBins(128);
