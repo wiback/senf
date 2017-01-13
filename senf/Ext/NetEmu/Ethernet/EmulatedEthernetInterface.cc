@@ -142,7 +142,7 @@ prefix_ void senf::emu::detail::EmulatedEthernetReceiveFilter::request()
         }
 
         if (iface_.annotationMode())
-            output(prependAnnotaionsPacket(e));
+            output(prependAnnotationsPacket(e));
         else
             output(e);
     }

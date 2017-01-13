@@ -80,10 +80,10 @@ namespace annotations {
     /** \brief Packet quality */
     struct Quality
     {
-        short snr;
-        short rssi;
-        short noise;
-        FrameRxFlags flags;
+        mutable short snr;
+        mutable short rssi;
+        mutable short noise;
+        mutable FrameRxFlags flags;
 
         Quality();
         bool operator<(Quality const & other) const;
@@ -98,16 +98,16 @@ namespace annotations {
     /** \brief Incoming packet timestamp */
     struct Timestamp
     {
-        std::uint32_t timestamp[2];
+        mutable std::uint32_t timestamp[2];
 
         Timestamp();
         bool operator<(Timestamp const & other) const;
         Timestamp &operator=(Timestamp const & other);
 
-        void fromScheduler();
-        void fromSocketProtocol(senf::DatagramSocketProtocol const & protocol);
-        void fromWallClock();
-        void fromQueueBuffer(senf::SocketQueueBuffer const & buffer);
+        void fromScheduler() const;
+        void fromSocketProtocol(senf::DatagramSocketProtocol const & protocol) const;
+        void fromWallClock() const;
+        void fromQueueBuffer(senf::SocketQueueBuffer const & buffer) const;
         senf::ClockService::clock_type as_clock_type() const;
         std::uint32_t as_milli_seconds(std::uint32_t modulo = 0xffffffff) const;
     };
@@ -120,7 +120,7 @@ namespace annotations {
     /** \brief Wireless modulation */
     struct WirelessModulation
     {
-        boost::uint32_t id;
+        mutable boost::uint32_t id;
 
         WirelessModulation();
         bool operator<(WirelessModulation const & other) const;

@@ -176,7 +176,7 @@ prefix_ void senf::emu::detail::EmulatedDVBReceiverReceiveFilter::request()
     if (! e)
         return;
     if (iface_.annotationMode())
-        output(prependAnnotaionsPacket(e));
+        output(prependAnnotationsPacket(e));
     else
         output(e);
 }

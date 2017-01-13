@@ -57,7 +57,7 @@ prefix_ typename senf::emu::detail::TunnelIOHelper<Controller>::PacketType senf:
         return pkt;
     
     if (SENF_UNLIKELY(tunnelIface_._annotationMode())) {
-        return prependAnnotaionsPacket(pkt);
+        return prependAnnotationsPacket(pkt);
     } else {
         return pkt;
     }

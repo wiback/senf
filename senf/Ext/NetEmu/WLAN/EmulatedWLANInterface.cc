@@ -268,14 +268,14 @@ prefix_ void senf::emu::detail::EmulatedWLANReceiveFilter::request()
     EthernetPacket e (p.find<EthernetPacket>(senf::nothrow));
     if (e) {
         if (iface_.annotationMode())
-            output(prependAnnotaionsPacket(e));
+            output(prependAnnotationsPacket(e));
         else
             output(e);
         return;
     }
     WLANPacket_MgtFrame wmp (p.find<WLANPacket_MgtFrame>(senf::nothrow));
     if (wmp) {
-        output(prependAnnotaionsPacket(wmp));
+        output(prependAnnotationsPacket(wmp));
     }
 }
 

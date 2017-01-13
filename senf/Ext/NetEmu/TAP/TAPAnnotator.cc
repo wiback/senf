@@ -112,7 +112,7 @@ prefix_ void senf::emu::TAPAnnotator::request()
     }
     
     if (SENF_UNLIKELY(rawMode_ & annotate_)) {
-        output(prependAnnotaionsPacket(eth));
+        output(prependAnnotationsPacket(eth));
     } else {
         output(eth);
     }

@@ -102,7 +102,7 @@ prefix_ void senf::AnnotationsPacketType::finalize(packet p)
     // Do NOT reset type_length if the type is not known ... doing this will destroy read packets
 }
 
-prefix_ senf::EthernetPacket senf::prependAnnotaionsPacket(Packet const & pkt, MACAddress const & src_, MACAddress const & dst_)
+prefix_ senf::EthernetPacket senf::prependAnnotationsPacket(Packet const & pkt, MACAddress const & src_, MACAddress const & dst_)
 {
     AnnotationsPacket const & ap (AnnotationsPacket::createBefore(pkt));
     EthOUIExtensionPacket const & oui (EthOUIExtensionPacket::createBefore(ap));

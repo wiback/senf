@@ -661,7 +661,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
 
 prefix_ void senf::emu::MonitorDataFilter::outExtUI(Packet & pkt, senf::MACAddress const & src_, senf::MACAddress const & dst_)
 {
-    output(prependAnnotaionsPacket(pkt, src_, dst_));
+    output(prependAnnotationsPacket(pkt, src_, dst_));
 }
 
 prefix_ void senf::emu::MonitorDataFilter::outData(senf::EthernetPacket & eth)
@@ -686,7 +686,7 @@ prefix_ void senf::emu::MonitorDataFilter::dumpState(std::ostream & os)
 
 prefix_ void senf::emu::MonitorDataFilter::requestPlain()
 {
-    senf::EthernetPacket eth (input_plain());
+    senf::EthernetPacket const & eth (input_plain());
 
     stats_.received++;
     
@@ -696,7 +696,7 @@ prefix_ void senf::emu::MonitorDataFilter::requestPlain()
     eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
     
     {
-        emu::annotations::Quality & q (eth.annotation<emu::annotations::Quality>());
+        emu::annotations::Quality const & q (eth.annotation<emu::annotations::Quality>());
         q.rssi  = 110;            // for now, we report the maximum signal 'quality'
         q.noise = -128;           // this should be read out via ethtool commands (i.e. for fiber links)
         q.snr = 238;

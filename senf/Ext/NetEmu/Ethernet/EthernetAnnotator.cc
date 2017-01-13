@@ -77,7 +77,7 @@ prefix_ bool senf::emu::EthernetAnnotator::annotate()
 
 prefix_ void senf::emu::EthernetAnnotator::request()
 {
-    senf::EthernetPacket eth (input());
+    senf::EthernetPacket const & eth (input());
 
     eth.annotation<annotations::Interface>().value = id_;
 
@@ -85,7 +85,7 @@ prefix_ void senf::emu::EthernetAnnotator::request()
     eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
     
     {
-        emu::annotations::Quality & q (eth.annotation<emu::annotations::Quality>());
+        emu::annotations::Quality const & q (eth.annotation<emu::annotations::Quality>());
         q.rssi  = 127;            // for now, we report the maximum signal 'quality'
         q.noise = -128;           // this should be read out via ethtool commands (i.e. for fiber links)
         q.snr = 255;
@@ -96,11 +96,11 @@ prefix_ void senf::emu::EthernetAnnotator::request()
     boost::optional<unsigned> vlanId (eth.annotation<senf::ppi::QueueBufferAnnotation>()->vlan());
     if (SENF_UNLIKELY(vlanId)) {
         if (pvid_ == std::uint16_t(-1) or pvid_ == (*vlanId & 0xfff)) {
-            // if no PVID is specified, but the TAG bck in...
+            // if no PVID is specified, but the TAG back in...
             EthVLanPacket vlan (EthVLanPacket::createInsertBefore(eth.next()));
             vlan->vlanId() << *vlanId;
             vlan->type_length() << eth->type_length();
-            eth.finalizeTo(vlan);
+            EthernetPacket(eth).finalizeTo(vlan);
             vlan.reparse();
         }
     }
@@ -119,12 +119,13 @@ prefix_ void senf::emu::EthernetAnnotator::request()
                       vlan.data().begin(),
                       vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
                       vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
-            eth.data().resize( eth.size() - senf::EthVLanPacketParser::fixed_bytes);
-            eth->type_length() = tl;
-            eth.reparse();
+            EthernetPacket tmp(eth);
+            tmp.data().resize( tmp.size() - senf::EthVLanPacketParser::fixed_bytes);
+            tmp->type_length() = tl;
+            tmp.reparse();
         }
         if (annotate_)
-            output(prependAnnotaionsPacket(eth));
+            output(prependAnnotationsPacket(eth));
         else
             output(eth);
     } else {
