@@ -278,8 +278,10 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::setREDFilterC
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 {
-    handle_.send();
-    eventHook_.disable();
+    if (handle_) {
+        handle_.send();
+        eventHook_.disable();
+    }
 
 #ifdef SENF_DEBUG
     if (burst_ > burstMax_)
