@@ -92,7 +92,14 @@ prefix_ void senf::ppi::IOEvent::cb(int event)
             } else {
                 msg = "getsockname() failed";
             }
-            throw ErrorException(fd_, err, msg);
+            // ENETDOWN seems to result from a race condition inside SENF. Let's disable events for this FD
+            if (err == ENETDOWN) {
+                SENF_LOG ( (senf::log::IMPORTANT) ("ENETDOWN on fd " << fd_ << " (" << msg << ") received. Disabling event. This might be due to a race condition.") ); 
+                enabled(false);
+                return;
+            } else {
+                throw ErrorException(fd_, err, msg);
+            }
         }
         if (event & Hup)
             throw HangupException();
