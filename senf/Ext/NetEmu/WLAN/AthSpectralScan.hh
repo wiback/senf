@@ -105,7 +105,6 @@ namespace emu {
         
         void handleSpectralEvent(int fd);
 
-        static void dummy(std::uint64_t tsft, std::uint16_t frequency, unsigned numBins, void * spectralSample) {};
     };
 
 }}

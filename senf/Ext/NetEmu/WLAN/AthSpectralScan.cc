@@ -38,6 +38,9 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+static void dummy(std::uint64_t tsft, std::uint16_t frequency, unsigned numBins, void * spectralSample)
+{
+}
 
 prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
    : spectralEvent_("spectralScan_" + phyName, senf::membind( &senf::emu::AthSpectralScan::handleSpectralEvent, this)),
@@ -56,7 +59,7 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
 
     if (is_ath9k()) {
         spectralPeriod(0x08);
-        spectralFFTPeriod(0x04);
+        spectralFFTPeriod(0x08);
         spectralShortRepeat(true);
     } else {
         spectralBins(128);
@@ -109,6 +112,7 @@ prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq, std::int3
     if (!spectralHandle_) {
         frequency_ = 0;
         frequencyOffset_ = 0;
+        callback_ = dummy;        
         return;
     }
 
@@ -132,7 +136,8 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                 {
                     fft_sample_ht20 ht20;
                     ht20.tlv = tlv;
-                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) {
+                    signed length (std::min(be16toh(tlv.length), std::uint16_t(sizeof(ht20) - sizeof(tlv))));
+                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)&ht20) + sizeof(tlv), length) == length)) {
                         if (SENF_LIKELY(be16toh(ht20.freq) == frequency_)) {
                             spectralValidSamples_++;
                             callback_(be64toh(ht20.tsf), be16toh(ht20.freq) + frequencyOffset_, SPECTRAL_HT20_NUM_BINS, &ht20);
@@ -149,7 +154,8 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                 {
                     fft_sample_ht20_40 ht20_40;
                     ht20_40.tlv = tlv;
-                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) { 
+                    signed length (std::min(be16toh(tlv.length), std::uint16_t(sizeof(ht20_40) - sizeof(tlv))));
+                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)&ht20_40) + sizeof(tlv), length) == length)) { 
                         if (SENF_LIKELY(be16toh(ht20_40.freq) == frequency_)) {
                             spectralValidSamples_++;
                             callback_(be64toh(ht20_40.tsf), be16toh(ht20_40.freq) + frequencyOffset_, SPECTRAL_HT20_40_NUM_BINS, &ht20_40);
@@ -168,14 +174,15 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                     fft_sample_ath10k *ath10k = (fft_sample_ath10k *) buf;
                     std::uint16_t offset (0);  // offset from actual center freq
                     ath10k->tlv = tlv;
-                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), be16toh(tlv.length)) == be16toh(tlv.length))) {
+                    signed length (std::min(be16toh(tlv.length), std::uint16_t(sizeof(buf) - sizeof(tlv))));
+                    if (SENF_LIKELY(read(spectralHandle_.fd(), ((char*)ath10k) + sizeof(tlv), length) == length)) {
                         if (ath10k->chan_width_mhz == 44)  // 40 MHz
                             offset = 10;
                         if (ath10k->chan_width_mhz == 88)  // 80 MHz
                             offset = 30;
                         if (SENF_LIKELY(be16toh(ath10k->freq1) == frequency_ + offset)) {
                             spectralValidSamples_++;
-                            unsigned numBins (be16toh(tlv.length) - sizeof(*ath10k) + sizeof(tlv));
+                            unsigned numBins (length + sizeof(tlv) - sizeof(*ath10k));
                             callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1) + frequencyOffset_, numBins, ath10k);
                         } else {
                             spectralFrequencyMismatch_++;
