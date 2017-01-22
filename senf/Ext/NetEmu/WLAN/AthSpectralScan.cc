@@ -181,9 +181,14 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                         if (ath10k->chan_width_mhz == 88)  // 80 MHz
                             offset = 30;
                         if (SENF_LIKELY(be16toh(ath10k->freq1) == frequency_ + offset)) {
-                            spectralValidSamples_++;
-                            unsigned numBins (length + sizeof(tlv) - sizeof(*ath10k));
-                            callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1) + frequencyOffset_, numBins, ath10k);
+                            signed numBins (length + sizeof(tlv) - sizeof(*ath10k));
+                            if (numBins > 0) {
+                                spectralValidSamples_++;
+                                callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1) + frequencyOffset_, numBins, ath10k);
+                            } else {
+                                spectralTruncated_++;
+                                burst = 0;
+                            }
                         } else {
                             spectralFrequencyMismatch_++;
                         }
