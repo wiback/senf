@@ -184,7 +184,7 @@ prefix_ void senf::emu::AthSpectralScan::handleSpectralEvent(int _dummy_)
                             signed numBins (length + sizeof(tlv) - sizeof(*ath10k));
                             if (numBins > 0) {
                                 spectralValidSamples_++;
-                                callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1) + frequencyOffset_, numBins, ath10k);
+                                callback_(be64toh(ath10k->tsf), be16toh(ath10k->freq1) + frequencyOffset_, std::min(numBins, SPECTRAL_ATH10K_MAX_NUM_BINS), ath10k);
                             } else {
                                 spectralTruncated_++;
                                 burst = 0;
