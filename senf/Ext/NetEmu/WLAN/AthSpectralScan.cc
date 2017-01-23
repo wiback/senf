@@ -62,7 +62,7 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
         spectralFFTPeriod(0x08);
         spectralShortRepeat(true);
     } else {
-        spectralBins(128);
+        spectralBins(64);
     }
     spectralCount(8);
 }
