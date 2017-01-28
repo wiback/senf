@@ -109,6 +109,8 @@ namespace emu {
         std::string const & emulationInterface() const;
                                         ///< Get interface on which emulated traffic is sent/received
 
+        std::uint32_t const & interfaceIndex() const;
+
     protected:
         EmulatedInterface();
         void init();
@@ -146,6 +148,10 @@ namespace emu {
         UDPClientHandle socket_;
         bool enabled_;
         std::string interface_;
+        std::uint32_t interfaceIndex_;
+        // this is a static counter, which is increamented in the ctor whenever an interface is created
+        // This can be used to uniquely identify an interface across multiple runs of the same emulated scenario (actually: same config a node)
+        static std::uint32_t emuInterfaceIndex;
     };
 
 

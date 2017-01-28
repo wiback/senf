@@ -124,11 +124,17 @@ prefix_ void senf::emu::detail::AdvancePacket::request()
 // senf::emu::EmulatedInterface
 
 prefix_ senf::emu::EmulatedInterface::EmulatedInterface()
-    : socket_ (senf::noinit), enabled_ (false)
+    : socket_ (senf::noinit), enabled_ (false), interfaceIndex_(emuInterfaceIndex++)
 {}
 
 prefix_ senf::emu::EmulatedInterface::~EmulatedInterface()
 {}
+
+prefix_ std::uint32_t const & senf::emu::EmulatedInterface::interfaceIndex()
+    const
+{
+    return interfaceIndex_;
+}
 
 prefix_ bool senf::emu::EmulatedInterface::emulatedInterfaceEnabled()
     const
