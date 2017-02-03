@@ -44,14 +44,31 @@ namespace senf {
             std::string    coding;
             unsigned       rate[4];
             short          rssi[2];
-            boost::uint8_t index;
-            boost::uint8_t streams;
+            std::uint8_t index;
+            std::uint8_t streams;
         };
 
         static std::vector<Info> getInfos();
-        static Info const & getInfo(boost::uint8_t index);
-        static unsigned getRate(boost::uint8_t mcsIndex, unsigned bandwidth, bool shortGI);
+        static Info const & getInfo(std::uint8_t index);
+        static unsigned getRate(std::uint8_t mcsIndex, unsigned bandwidth, bool shortGI);
     };
+
+    struct WLAN_MCSInfoVHT
+    {
+        struct Info
+        {
+            std::string    coding;
+            unsigned       rate[8];
+            short          rssi[2];
+            std::uint8_t index;
+            std::uint8_t streams;
+        };
+
+        static std::vector<Info> getInfos();
+        static Info const & getInfo(std::uint8_t index, std::uint8_t streams);
+        static unsigned getRate(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI);
+    };
+
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
