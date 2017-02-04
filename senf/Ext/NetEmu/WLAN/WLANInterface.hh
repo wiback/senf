@@ -49,14 +49,14 @@ namespace emu {
         enum Type { Legacy, MCS, Automatic, Unknown };
 
         Type type;
-        unsigned  mcsIndex;
+        unsigned  index;
         unsigned streams;
         bool shortGI;
 
     private:
         WLANModulationParameter(std::string const & _label, short _minRssi, unsigned _rate,
                 unsigned _bandwidth, Type _type, unsigned _streams=1,
-                unsigned _mcsIndex=0, bool _shortGI=false);
+                unsigned _index=0, bool _shortGI=false);
 
         virtual boost::uint16_t v_modulationId() const;
         virtual ModulationParameter * v_clone() const;
@@ -90,6 +90,7 @@ namespace emu {
         WLANModulationParameter const & findModulationById(ModulationParameter::id_t id) const;
         ModulationParameter::id_t parameterIdByLegacyRate(unsigned rate) const;
         ModulationParameter::id_t parameterIdByMCS(unsigned mcsIndex, bool ht40, bool shortGI) const;
+        ModulationParameter::id_t parameterIdByMCS(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI) const;
         ModulationParameter::id_t parameterIdAuto() const;
         ModulationParameter::id_t parameterIdUnknown() const;
 

@@ -157,17 +157,26 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(ModulationPara
         modulationId_ = id;
 }
 
-prefix_ void senf::emu::EmulatedWLANInterface::registerMCSModulation(unsigned mcsIndex, bool ht40, bool shortGI)
+prefix_ void senf::emu::EmulatedWLANInterface::registerMCSModulation(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI)
 {
-    registerModulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(mcsIndex, ht40, shortGI));
+    registerModulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(index, streams, bandwidth, shortGI));
 }
 
-prefix_ void senf::emu::EmulatedWLANInterface::registerMCSModulation(unsigned mcsIndex)
+prefix_ void senf::emu::EmulatedWLANInterface::registerMCSModulation(std::uint8_t index, std::uint8_t streams)
 {
-    registerMCSModulation( mcsIndex, false, false);
-    registerMCSModulation( mcsIndex, true,  false);
-    registerMCSModulation( mcsIndex, false, true );
-    registerMCSModulation( mcsIndex, true,  true );
+    if (streams > 0) {
+        for (unsigned bw = 0; bw < 8; bw+=2) {
+            registerMCSModulation(index, streams, WLAN_MCSInfo::fromBandwidthIndex(bw), true);
+            registerMCSModulation(index, streams, WLAN_MCSInfo::fromBandwidthIndex(bw), false);
+        }
+    } else {
+        for (unsigned nst = 1; nst <= WLAN_MCSInfo::NUM_STREAMS; nst++) {
+            for (unsigned bw = 0; bw < 8; bw+=2) {
+                registerMCSModulation(index, nst, WLAN_MCSInfo::fromBandwidthIndex(bw), true);
+                registerMCSModulation(index, nst, WLAN_MCSInfo::fromBandwidthIndex(bw), false);
+            }
+        }
+    }
 }
 
 prefix_ void senf::emu::EmulatedWLANInterface::registerLegacyModulation(unsigned rate)
@@ -185,9 +194,9 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
     switch (type) {
     case WLANModulationParameter::MCS: {
         if (args.size() == 1) {
-            if (boost::algorithm::iequals(args[0], "all")) {  // register all HT modulations
+            if (boost::algorithm::iequals(args[0], "all")) {  // register all (V)HT modulations
                 BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
-                    registerMCSModulation( info.index);
+                    registerMCSModulation(info.index, info.streams);
                 }
                 return;
             }

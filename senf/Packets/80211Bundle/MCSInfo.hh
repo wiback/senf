@@ -39,36 +39,32 @@ namespace senf {
     // http://mcsindex.com/
     struct WLAN_MCSInfo
     {
-        struct Info
-        {
-            std::string    coding;
-            unsigned       rate[4];
-            short          rssi[2];
-            std::uint8_t index;
-            std::uint8_t streams;
-        };
-
-        static std::vector<Info> getInfos();
-        static Info const & getInfo(std::uint8_t index);
-        static unsigned getRate(std::uint8_t mcsIndex, unsigned bandwidth, bool shortGI);
-    };
-
-    struct WLAN_MCSInfoVHT
-    {
+        static constexpr unsigned NUM_STREAMS   = 4;
+        static constexpr unsigned NUM_HT_INDEX  = 8;
+        static constexpr unsigned NUM_VHT_INDEX = 10;
+        static constexpr unsigned MAX_INDEX     = 12;
+        
         struct Info
         {
             std::string    coding;
             unsigned       rate[8];
-            short          rssi[2];
+            short          rssi[4];
             std::uint8_t index;
             std::uint8_t streams;
         };
 
         static std::vector<Info> getInfos();
+        static Info const & getInfo(std::uint8_t mcsIndex);
         static Info const & getInfo(std::uint8_t index, std::uint8_t streams);
+        static unsigned getRate(std::uint8_t mcsIndex, unsigned bandwidth, bool shortGI);
         static unsigned getRate(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI);
-    };
 
+        static std::uint8_t toHTIndex(std::uint8_t index, std::uint8_t streams);
+        static std::pair<std::uint8_t,std::uint8_t> fromHTIndex(std::uint8_t mcsIndex);
+        static std::uint8_t toBandwidthIndex(unsigned bandwidth, bool shortGI = false);
+        static unsigned fromBandwidthIndex(std::uint8_t bandwidthIndex);
+
+    };
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -37,6 +37,7 @@
 #include <boost/foreach.hpp>
 #include <boost/icl/interval_set.hpp>
 #include <senf/Utils/algorithm.hh>
+#include <senf/Packets/80211Bundle/MCSInfo.hh>
 #include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Ext/NetEmu/config.hh>
 #include <senf/Ext/NetEmu/Log.hh>
@@ -598,7 +599,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::Legacy,
                                         BitrateParameters::LegacyBitrateSet, bratePara.legacy_24, modPara.rate);
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::MCS,
-                                        BitrateParameters::MCSIndexSet, bratePara.mcs_24, modPara.mcsIndex);
+                                        BitrateParameters::MCSIndexSet, bratePara.mcs_24, senf::WLAN_MCSInfo::toHTIndex(modPara.index, modPara.streams));
         }
     }
     if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() > 5000000)) {
@@ -606,7 +607,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::Legacy,
                                         BitrateParameters::LegacyBitrateSet, bratePara.legacy_5, modPara.rate);
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::MCS,
-                                        BitrateParameters::MCSIndexSet, bratePara.mcs_5, modPara.mcsIndex);
+                                        BitrateParameters::MCSIndexSet, bratePara.mcs_5, senf::WLAN_MCSInfo::toHTIndex(modPara.index, modPara.streams));
         }
     }
 

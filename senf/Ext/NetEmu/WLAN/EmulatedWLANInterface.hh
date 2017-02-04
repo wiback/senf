@@ -68,11 +68,11 @@ namespace emu {
         using detail::EmulatedWLANInterfaceNet::beaconInterval;
 
         void registerModulation(ModulationParameter::id_t id);
-        void registerMCSModulation(unsigned mcsIndex);
+        void registerMCSModulation(std::uint8_t index, std::uint8_t streams = 0);
         void registerLegacyModulation(unsigned rate);
 
     private:
-        void registerMCSModulation(unsigned mcsIndex, bool ht40, bool shortGI);
+        void registerMCSModulation(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI);
         void registerModulation(WLANModulationParameter::Type type, std::vector<std::string> args);
 
         // interface

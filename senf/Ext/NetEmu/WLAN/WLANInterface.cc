@@ -46,14 +46,14 @@ namespace {
     static senf::emu::WLANModulationParameterRegistry::LegacyModulationInfo legacyInfos11b[] = {
         { "BPSK/DSSS",  1000, -82, },
         { "QPSK/DSSS",  2000, -82, },
-        { "CCK55",      5500, -82, },
-        { "CCK11",     11000, -82, },
+        {     "CCK55",  5500, -82, },
+        {     "CCK11", 11000, -82, },
     };
     static senf::emu::WLANModulationParameterRegistry::LegacyModulationInfo legacyInfosOFDM[] = {
-        { "BPSK 1/2",   6000, -81, },
-        { "BPSK 3/4",   9000, -81, },
-        { "QPSK 1/2",  12000, -79, },
-        { "QPSK 3/4",  18000, -77, },
+        {  "BPSK 1/2",  6000, -81, },
+        {  "BPSK 3/4",  9000, -81, },
+        {  "QPSK 1/2", 12000, -79, },
+        {  "QPSK 3/4", 18000, -77, },
         { "16QAM 1/2", 24000, -74, },
         { "16QAM 3/4", 36000, -70, },
         { "64QAM 2/3", 48000, -66, },
@@ -77,10 +77,10 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
 {
     // register HT modulations
     BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
-        for (unsigned i=0; i<4; ++i) {
+        for (unsigned i=0; i<8; ++i) {
             WLANModulationParameter p (
-                    info.coding, info.rssi[i<2?0:1], info.rate[i], (i<2 ? 20000 : 40000),
-                    WLANModulationParameter::MCS, info.streams, info.index, (i%2==1));
+                info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
+                WLANModulationParameter::MCS, info.streams, info.index, (i%2==1));
             mcsParametersToId_.push_back( registerModulation( p));
         }
     }
@@ -129,10 +129,20 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS(unsigned mcsIndex, bool ht40, bool shortGI)
     const
 {
-    if (SENF_UNLIKELY(mcsIndex+3 > mcsParametersToId_.size()))
+    if (SENF_UNLIKELY(mcsIndex >= (WLAN_MCSInfo::NUM_HT_INDEX * WLAN_MCSInfo::NUM_STREAMS)))
         return 0;
-    return mcsParametersToId_[(mcsIndex * 4) + (ht40 * 2u) + (shortGI * 1u)];
+    auto tmp (WLAN_MCSInfo::fromHTIndex(mcsIndex));
+    return parameterIdByMCS(tmp.first, tmp.second, 20000 + (ht40 * 20000), shortGI); 
 }
+
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI)
+    const
+{
+    if (SENF_UNLIKELY(index >= WLAN_MCSInfo::MAX_INDEX or streams > WLAN_MCSInfo::NUM_STREAMS))
+        return 0;
+    return mcsParametersToId_[(index + (WLAN_MCSInfo::MAX_INDEX * (streams-1)) * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI)];
+}
+
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAuto()
     const
@@ -147,9 +157,9 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
 }
 
 prefix_ senf::emu::WLANModulationParameter::WLANModulationParameter(std::string const & _label, short _minRssi,
-        unsigned _rate, unsigned _bandwidth, Type _type, unsigned _streams, unsigned _mcsIndex,  bool _shortGI)
+        unsigned _rate, unsigned _bandwidth, Type _type, unsigned _streams, unsigned _index,  bool _shortGI)
     : ModulationParameter(_label, _minRssi, _rate, _bandwidth, WLANInterface::linkTypeId),
-      type(_type), mcsIndex(_mcsIndex), streams(_streams), shortGI(_shortGI)
+      type(_type), index(_index), streams(_streams), shortGI(_shortGI)
 {}
 
 prefix_ boost::uint16_t senf::emu::WLANModulationParameter::v_modulationId()
@@ -159,7 +169,7 @@ prefix_ boost::uint16_t senf::emu::WLANModulationParameter::v_modulationId()
     case Legacy:
         return 100 + rate;
     case MCS:
-        return 2 + (mcsIndex * 4) + (bandwidth==40000 ? 2 : 0) + (shortGI ? 1 : 0);
+        return 2 + ((index + (streams-1) * WLAN_MCSInfo::MAX_INDEX)  * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI);
     case Automatic:
         return 1;
     case Unknown:
@@ -179,7 +189,7 @@ prefix_ void senf::emu::WLANModulationParameter::v_dump(std::ostream & os)
 {
     static const char * types[] = { "Legacy", "MCS", "Automatic", "Unknown" };
     os << "     type: " << (type <= Unknown ? types[type] : "?") << std::endl
-       << "MCS Index: " << (type==MCS ? senf::str(mcsIndex) : "-") << std::endl
+       << "MCS Index: " << (type==MCS ? senf::str(index) : "-") << std::endl
        << "# streams: " << streams << std::endl
        << " short GI: " << (shortGI ? "true" : "false") << std::endl;
 }
@@ -195,7 +205,7 @@ prefix_ void senf::emu::WLANModulationParameter::v_dumpTableRow(std::ostream & o
     const
 {
     boost::format fmt ("%3d %7d %8s");
-    os << fmt % (type==MCS ? senf::str(mcsIndex) : " - ") % streams % (shortGI ? "true" : "false");
+    os << fmt % (type==MCS ? senf::str(index) : " - ") % streams % (shortGI ? "true" : "false");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
