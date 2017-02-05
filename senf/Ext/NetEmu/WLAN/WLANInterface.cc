@@ -77,10 +77,23 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
 {
     // register HT modulations
     BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
-        for (unsigned i=0; i<8; ++i) {
+        if (info.index >= WLAN_MCSInfo::NUM_HT_INDEX)
+            continue;
+        for (unsigned i=0; i<4; ++i) {
             WLANModulationParameter p (
                 info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
                 WLANModulationParameter::HT, info.streams, info.index, (i%2==1));
+            mcsParametersToId_.push_back( registerModulation( p));
+        }
+    }
+    // register VHT modulations
+    BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
+        if (info.index >= WLAN_MCSInfo::NUM_VHT_INDEX)
+            continue;
+        for (unsigned i=0; i<8; ++i) {
+            WLANModulationParameter p (
+                info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
+                WLANModulationParameter::VHT, info.streams, info.index, (i%2==1));
             mcsParametersToId_.push_back( registerModulation( p));
         }
     }
