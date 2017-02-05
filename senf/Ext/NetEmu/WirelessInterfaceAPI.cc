@@ -81,7 +81,7 @@ prefix_ void senf::emu::ModulationParameter::dump(std::ostream & os)
 prefix_ void senf::emu::ModulationParameter::dumpTableHeader(std::ostream & os)
     const
 {
-    boost::format fmt ("%10d%1.1s %10.10s %7d %9d %8d ");
+    boost::format fmt ("%10d%1.1s %12.12s %7d %9d %8d ");
     os << fmt % "id" % "" % "coding" % "rate" % "bandwidth" % "min.RSSI";
     v_dumpTableHeader(os);
     os << std::endl;
@@ -90,7 +90,7 @@ prefix_ void senf::emu::ModulationParameter::dumpTableHeader(std::ostream & os)
 prefix_ void senf::emu::ModulationParameter::dumpTableRow(std::ostream & os, bool is_current_modulation)
     const
 {
-    boost::format fmt ("%10d%1.1s %10.10s %7d %9d %8d ");
+    boost::format fmt ("%10d%1.1s %12.12s %7d %9d %8d ");
     os << fmt % id % (is_current_modulation ? "*" : "") % coding % rate % bandwidth % minRssi;
     v_dumpTableRow(os);
     os << std::endl;

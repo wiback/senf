@@ -139,8 +139,8 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     const
 {
     if (SENF_UNLIKELY(index >= WLAN_MCSInfo::MAX_INDEX or streams > WLAN_MCSInfo::NUM_STREAMS))
-        return 0;
-    return mcsParametersToId_[(index + (WLAN_MCSInfo::MAX_INDEX * (streams-1)) * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI)];
+        return 0;    
+    return mcsParametersToId_[((index + (WLAN_MCSInfo::MAX_INDEX * (streams-1))) * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI)];
 }
 
 

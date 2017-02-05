@@ -565,8 +565,8 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             stats_.vht++;
         }
         else if (rtParser.ratePresent()) {
-                stats_.legacy++;
-                rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByLegacyRate( rtParser.rate() * 500);
+            stats_.legacy++;
+            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByLegacyRate( rtParser.rate() * 500);
         }
         else {
             stats_.unknownMCS++;
