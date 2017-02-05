@@ -192,7 +192,7 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
         }
 
     switch (type) {
-    case WLANModulationParameter::MCS: {
+    case WLANModulationParameter::HT: {
         if (args.size() == 1) {
             if (boost::algorithm::iequals(args[0], "all")) {  // register all (V)HT modulations
                 BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
@@ -241,9 +241,11 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
         }
         return;
     }
-    default:
-        throw console::SyntaxErrorException("argument syntax error: first argument must be 'mcs' or 'legacy': ") << type;
+    case WLANModulationParameter::Automatic:
+    case WLANModulationParameter::Unknown:
+        break;
     }
+    throw console::SyntaxErrorException("argument syntax error: first argument must be 'ht' or 'legacy': ") << type;
 
 #undef catch_bad_lexical_cast
 }

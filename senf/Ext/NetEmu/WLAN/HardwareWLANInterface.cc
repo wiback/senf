@@ -598,7 +598,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::Legacy,
                                         BitrateParameters::LegacyBitrateSet, bratePara.legacy_24, modPara.rate);
-            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::MCS,
+            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::HT,
                                         BitrateParameters::MCSIndexSet, bratePara.mcs_24, senf::WLAN_MCSInfo::toHTIndex(modPara.index, modPara.streams));
         }
     }
@@ -606,7 +606,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_5GHZ)) {
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::Legacy,
                                         BitrateParameters::LegacyBitrateSet, bratePara.legacy_5, modPara.rate);
-            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::MCS,
+            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::HT,
                                         BitrateParameters::MCSIndexSet, bratePara.mcs_5, senf::WLAN_MCSInfo::toHTIndex(modPara.index, modPara.streams));
         }
     }

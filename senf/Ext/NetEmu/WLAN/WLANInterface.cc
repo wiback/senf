@@ -80,7 +80,7 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
         for (unsigned i=0; i<8; ++i) {
             WLANModulationParameter p (
                 info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
-                WLANModulationParameter::MCS, info.streams, info.index, (i%2==1));
+                WLANModulationParameter::HT, info.streams, info.index, (i%2==1));
             mcsParametersToId_.push_back( registerModulation( p));
         }
     }
@@ -168,7 +168,7 @@ prefix_ boost::uint16_t senf::emu::WLANModulationParameter::v_modulationId()
     switch (type) {
     case Legacy:
         return 100 + rate;
-    case MCS:
+    case HT:
         return 2 + ((index + (streams-1) * WLAN_MCSInfo::MAX_INDEX)  * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI);
     case Automatic:
         return 1;
@@ -189,7 +189,7 @@ prefix_ void senf::emu::WLANModulationParameter::v_dump(std::ostream & os)
 {
     static const char * types[] = { "Legacy", "MCS", "Automatic", "Unknown" };
     os << "     type: " << (type <= Unknown ? types[type] : "?") << std::endl
-       << "MCS Index: " << (type==MCS ? senf::str(index) : "-") << std::endl
+       << "MCS Index: " << (type==HT ? senf::str(index) : "-") << std::endl
        << "# streams: " << streams << std::endl
        << " short GI: " << (shortGI ? "true" : "false") << std::endl;
 }
@@ -205,7 +205,7 @@ prefix_ void senf::emu::WLANModulationParameter::v_dumpTableRow(std::ostream & o
     const
 {
     boost::format fmt ("%5d %7d %8s");
-    os << fmt % (type==MCS ? senf::str(index) : "  -  ") % streams % (shortGI ? "true" : "false");
+    os << fmt % (type==HT ? senf::str(index) : "  -  ") % streams % (shortGI ? "true" : "false");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ prefix_ void senf::emu::WLANInterface::init()
 prefix_ void senf::emu::WLANInterface::modulation(WLANModulationParameter::Type type, unsigned value)
 {
     switch (type) {
-    case WLANModulationParameter::MCS:
+    case WLANModulationParameter::HT:
         modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(
                 value, (bandwidth() == 40000), false));
         return;

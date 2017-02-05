@@ -18,6 +18,7 @@
 #define SPECTRAL_COMMON_H
 
 #include <cstdint>
+#include <linux/types.h>
 
 #define SPECTRAL_HT20_NUM_BINS		56
 #define SPECTRAL_HT20_40_NUM_BINS      128
@@ -44,7 +45,7 @@ enum ath_fft_sample_type {
 typedef std::uint8_t u8;
 typedef std::int8_t  s8;
 typedef std::uint16_t __be16;
-typedef std::uint64_t __be64;
+//typedef std::uint64_t __be64;
 
 struct fft_sample_tlv {
 	u8 type;	/* see ath_fft_sample */

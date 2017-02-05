@@ -40,5 +40,3 @@ config.log
 /.settings
 /core
 
-#Ext
-/senf/Ext/NetEmu

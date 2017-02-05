@@ -46,7 +46,7 @@ namespace emu {
         : public ModulationParameter
     {
     public:
-        enum Type { Legacy, MCS, Automatic, Unknown };
+        enum Type { Legacy, HT, Automatic, Unknown };
 
         Type type;
         unsigned  index;
@@ -67,7 +67,7 @@ namespace emu {
         friend class WLANModulationParameterRegistry;
     };
 
-    SENF_CONSOLE_REGISTER_ENUM_MEMBER( WLANModulationParameter, Type, (Legacy)(MCS)(Automatic) );
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER( WLANModulationParameter, Type, (Legacy)(HT)(Automatic) );
 
 
     class WLANModulationParameterRegistry
