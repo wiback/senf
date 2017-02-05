@@ -593,13 +593,16 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
     WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
     BitrateParameters bratePara;
 
-    // @tho: There must be a better way to decide which mcs/legacy modualtion to provide for either 2.4 or 5.x GHz bands
+    // @tho: There must be a better way to decide which mcs/legacy modulation to provide for either 2.4 or 5.x GHz bands
     if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() < 3000000)) { 
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::Legacy,
                                         BitrateParameters::LegacyBitrateSet, bratePara.legacy_24, modPara.rate);
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::HT,
                                         BitrateParameters::MCSIndexSet, bratePara.mcs_24, senf::WLAN_MCSInfo::toHTIndex(modPara.index, modPara.streams));
+            bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
+            if (modPara.type == WLANModulationParameter::VHT)
+                bratePara.vht_mcs_table_24->at(modPara.streams).set(modPara.index);
         }
     }
     if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() > 5000000)) {
@@ -608,6 +611,9 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                                         BitrateParameters::LegacyBitrateSet, bratePara.legacy_5, modPara.rate);
             insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::HT,
                                         BitrateParameters::MCSIndexSet, bratePara.mcs_5, senf::WLAN_MCSInfo::toHTIndex(modPara.index, modPara.streams));
+            bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
+            if (modPara.type == WLANModulationParameter::VHT)
+                bratePara.vht_mcs_table_5->at(modPara.streams).set(modPara.index);
         }
     }
 

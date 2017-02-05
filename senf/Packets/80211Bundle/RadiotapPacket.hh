@@ -346,8 +346,8 @@ namespace senf {
         void disable_fcs();
 
         unsigned frameType();
-
         unsigned rateInKbps();
+        unsigned bandwidth();
 
     private:
         static const size_type fixed_bytes = 0; // hide this member, just in case

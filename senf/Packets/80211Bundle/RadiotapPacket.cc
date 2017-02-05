@@ -51,6 +51,10 @@ extern "C" {
 #   include "radiotap/radiotap_iter.h"
 }
 
+#define MHZ_TO_KHZ(freq) ((freq) * 1000)
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+
+
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -213,6 +217,24 @@ prefix_ unsigned senf::RadiotapPacketParser::rateInKbps()
                 mcs().guardInterval());
     if (ratePresent())
         return rate() * 1000 / 2;
+    return 0;
+}
+
+prefix_ unsigned senf::RadiotapPacketParser::bandwidth()
+{
+    unsigned vhtBandwidths[] = {
+            MHZ_TO_KHZ(20),  MHZ_TO_KHZ(40),  MHZ_TO_KHZ(40),  MHZ_TO_KHZ(40),
+            MHZ_TO_KHZ(80),  MHZ_TO_KHZ(80),  MHZ_TO_KHZ(80),  MHZ_TO_KHZ(80),
+            MHZ_TO_KHZ(80),  MHZ_TO_KHZ(80),  MHZ_TO_KHZ(80),  MHZ_TO_KHZ(160),
+            MHZ_TO_KHZ(160), MHZ_TO_KHZ(160), MHZ_TO_KHZ(160), MHZ_TO_KHZ(160),
+            MHZ_TO_KHZ(160), MHZ_TO_KHZ(160), MHZ_TO_KHZ(160), MHZ_TO_KHZ(160),
+            MHZ_TO_KHZ(160), MHZ_TO_KHZ(160), MHZ_TO_KHZ(160), MHZ_TO_KHZ(160),
+            MHZ_TO_KHZ(160), MHZ_TO_KHZ(160) };
+
+    if (mcsPresent())
+        return mcs().bandwidth() == 1 ? MHZ_TO_KHZ(40) : MHZ_TO_KHZ(20);
+    if (vhtPresent() and vht().bandwidth() < ARRAY_SIZE(vhtBandwidths))
+        return vhtBandwidths[vht().bandwidth()];
     return 0;
 }
 
