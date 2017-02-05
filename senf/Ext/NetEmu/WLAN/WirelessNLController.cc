@@ -145,7 +145,7 @@ namespace {
             surveyPolicy[NL80211_SURVEY_INFO_FREQUENCY].type = NLA_U32;
             surveyPolicy[NL80211_SURVEY_INFO_NOISE]    .type = NLA_U8;
 
-            memset( regRulePolicy, 0, sizeof(surveyPolicy));
+            memset( regRulePolicy, 0, sizeof(regRulePolicy));
             regRulePolicy[NL80211_ATTR_REG_RULE_FLAGS]         .type = NLA_U32;
             regRulePolicy[NL80211_ATTR_FREQ_RANGE_START]       .type = NLA_U32;
             regRulePolicy[NL80211_ATTR_FREQ_RANGE_END]         .type = NLA_U32;
@@ -1429,8 +1429,8 @@ prefix_ void senf::emu::WirelessNLController::leave_multicastGroup(NetlinkMultic
         return;
 
     int r = nl_socket_drop_memberships(nl_event_sock_.get(), multicastGroupId(group));
-        if (r)
-            throw NetlinkException(r);
+    if (r)
+        throw NetlinkException(r);
 
     joinedMCGroups_.erase(group);
 

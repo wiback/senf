@@ -139,7 +139,7 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     const
 {
     if (SENF_UNLIKELY(index >= WLAN_MCSInfo::MAX_INDEX or streams > WLAN_MCSInfo::NUM_STREAMS))
-        return 0;    
+        return 0;
     return mcsParametersToId_[((index + (WLAN_MCSInfo::MAX_INDEX * (streams-1))) * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI)];
 }
 
@@ -168,8 +168,9 @@ prefix_ boost::uint16_t senf::emu::WLANModulationParameter::v_modulationId()
     switch (type) {
     case Legacy:
         return 100 + rate;
+    case VHT:
     case HT:
-        return 2 + ((index + (streams-1) * WLAN_MCSInfo::MAX_INDEX)  * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI);
+        return 2 + ((index + (streams-1) * WLAN_MCSInfo::MAX_INDEX) * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI);
     case Automatic:
         return 1;
     case Unknown:
@@ -236,6 +237,11 @@ prefix_ void senf::emu::WLANInterface::modulation(WLANModulationParameter::Type 
         modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(
                 value, (bandwidth() == 40000), false));
         return;
+    case WLANModulationParameter::VHT: {
+        auto tmp (WLAN_MCSInfo::fromHTIndex(value));
+        modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(
+                tmp.first, tmp.second, bandwidth(), false));
+        return; }
     case WLANModulationParameter::Legacy:
         modulation( WLANModulationParameterRegistry::instance().parameterIdByLegacyRate(value));
         return;

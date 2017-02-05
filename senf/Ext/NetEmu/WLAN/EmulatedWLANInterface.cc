@@ -192,6 +192,7 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
         }
 
     switch (type) {
+    case WLANModulationParameter::VHT:
     case WLANModulationParameter::HT: {
         if (args.size() == 1) {
             if (boost::algorithm::iequals(args[0], "all")) {  // register all (V)HT modulations

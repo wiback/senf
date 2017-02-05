@@ -210,7 +210,7 @@ namespace emu {
                 HT20,
                 HT40Minus,
                 HT40Plus,
-				VHT80,
+                VHT80,
             };
         };
         struct DFSState {
