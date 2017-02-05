@@ -140,6 +140,12 @@ prefix_ std::pair<std::uint8_t,std::uint8_t> senf::WLAN_MCSInfo::fromHTIndex(std
     return std::make_pair(mcsIndex % NUM_HT_INDEX, (mcsIndex / NUM_HT_INDEX) + 1);
 }
 
+prefix_ std::pair<std::uint8_t,std::uint8_t> senf::WLAN_MCSInfo::fromVHTIndex(std::uint8_t mcsIndexVHT)
+{
+    return std::make_pair(mcsIndexVHT % NUM_VHT_INDEX, (mcsIndexVHT / NUM_VHT_INDEX) + 1);
+}
+
+
 prefix_ std::uint8_t senf::WLAN_MCSInfo::toBandwidthIndex(unsigned bandwidth, bool shortGI)
 {
     switch (bandwidth) {

@@ -238,7 +238,7 @@ prefix_ void senf::emu::WLANInterface::modulation(WLANModulationParameter::Type 
                 value, (bandwidth() == 40000), false));
         return;
     case WLANModulationParameter::VHT: {
-        auto tmp (WLAN_MCSInfo::fromHTIndex(value));
+        auto tmp (WLAN_MCSInfo::fromVHTIndex(value));
         modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(
                 tmp.first, tmp.second, bandwidth(), false));
         return; }

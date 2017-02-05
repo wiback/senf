@@ -61,6 +61,7 @@ namespace senf {
 
         static std::uint8_t toHTIndex(std::uint8_t index, std::uint8_t streams);
         static std::pair<std::uint8_t,std::uint8_t> fromHTIndex(std::uint8_t mcsIndex);
+        static std::pair<std::uint8_t,std::uint8_t> fromVHTIndex(std::uint8_t mcsIndexVHT);
         static std::uint8_t toBandwidthIndex(unsigned bandwidth, bool shortGI = false);
         static unsigned fromBandwidthIndex(std::uint8_t bandwidthIndex);
 
