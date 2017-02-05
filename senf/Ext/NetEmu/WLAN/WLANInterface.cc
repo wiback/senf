@@ -197,15 +197,15 @@ prefix_ void senf::emu::WLANModulationParameter::v_dump(std::ostream & os)
 prefix_ void senf::emu::WLANModulationParameter::v_dumpTableHeader(std::ostream & os)
     const
 {
-    boost::format fmt ("%3d %7d %8s");
-    os << fmt % "mcs" % "streams" % "short GI";
+    boost::format fmt ("%5d %7d %8s");
+    os << fmt % "index" % "streams" % "short GI";
 }
 
 prefix_ void senf::emu::WLANModulationParameter::v_dumpTableRow(std::ostream & os)
     const
 {
-    boost::format fmt ("%3d %7d %8s");
-    os << fmt % (type==MCS ? senf::str(index) : " - ") % streams % (shortGI ? "true" : "false");
+    boost::format fmt ("%5d %7d %8s");
+    os << fmt % (type==MCS ? senf::str(index) : "  -  ") % streams % (shortGI ? "true" : "false");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
