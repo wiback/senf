@@ -100,19 +100,6 @@ prefix_ std::vector<senf::WLAN_MCSInfo::Info> senf::WLAN_MCSInfo::getInfos()
     return std::vector<Info>(mcsInfos, mcsInfos + sizeof(mcsInfos) / sizeof(Info));
 }
 
-prefix_ senf::WLAN_MCSInfo::Info const & senf::WLAN_MCSInfo::getInfo(std::uint8_t mcsIndex)
-{
-    SENF_ASSERT(mcsIndex >= NUM_STREAMS * NUM_HT_INDEX, "invalid HT index");
-    auto tmp (fromHTIndex(mcsIndex));
-    return getInfo(tmp.first, tmp.second);
-}
-
-prefix_ senf::WLAN_MCSInfo::Info const & senf::WLAN_MCSInfo::getInfo(std::uint8_t index, std::uint8_t streams)
-{
-    SENF_ASSERT(index >= MAX_INDEX or streams == 0 or streams > NUM_STREAMS, "invalid VHT stream/index");
-    return mcsInfos[(streams-1) * MAX_INDEX + index];
-}
-
 prefix_ unsigned senf::WLAN_MCSInfo::getRate(std::uint8_t mcsIndex, unsigned bandwidth, bool shortGI)
 {
     if (SENF_UNLIKELY(mcsIndex >= (NUM_STREAMS * NUM_HT_INDEX) or bandwidth > 40))
@@ -144,7 +131,6 @@ prefix_ std::pair<std::uint8_t,std::uint8_t> senf::WLAN_MCSInfo::fromVHTIndex(st
 {
     return std::make_pair(mcsIndexVHT % NUM_VHT_INDEX, (mcsIndexVHT / NUM_VHT_INDEX) + 1);
 }
-
 
 prefix_ std::uint8_t senf::WLAN_MCSInfo::toBandwidthIndex(unsigned bandwidth, bool shortGI)
 {

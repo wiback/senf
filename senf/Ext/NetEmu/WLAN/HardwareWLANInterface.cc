@@ -339,6 +339,32 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
     }
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::registerModulations_vht(BitrateParameters::VHT_MCSBitmapTable const & vht_mcs_table)
+{
+    VHTCapabilitiesInfo const & vhtCapa (wnlc_.vhtCapabilities());
+    WLANModulationParameterRegistry const & registry (WLANModulationParameterRegistry::instance());
+    for (size_t nss = 0; nss < vht_mcs_table.size(); nss++) {
+        for (size_t index = 0; index < vht_mcs_table[nss].size(); index++) {
+            if (not vht_mcs_table[nss].test(index))
+                continue;
+            for (int bw : {MHZ_TO_KHZ(20), MHZ_TO_KHZ(40)}) {
+                if (WLAN_MCSInfo::getRate(index, nss, bw, false) > 0)
+                    registerModulation(registry.parameterIdByMCS_VHT(index, nss, bw, false));
+                if (WLAN_MCSInfo::getRate(index, nss, bw, true) > 0)
+                    registerModulation(registry.parameterIdByMCS_VHT(index, nss, bw, true));
+            }
+            registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(80), false));
+            if (vhtCapa.shortGIfor80MHz)
+                registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(80), true));
+            if (vhtCapa.supportedChannelWidth == VHTCapabilitiesInfo::SupportedChannelWidth_160MHz) {
+                registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(160), false));
+                if (vhtCapa.shortGIfor160_8080MHz)
+                    registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(160), true));
+            }
+        }
+    }
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::registerModulations()
 {
     WLANModulationParameterRegistry const & registry (WLANModulationParameterRegistry::instance());
@@ -346,7 +372,8 @@ prefix_ void senf::emu::HardwareWLANInterface::registerModulations()
     registerModulation( registry.parameterIdUnknown());
     registerModulation( registry.parameterIdAuto());
     BitrateParameters const & bitrates (wnlc_.bitrates());
-    if (htMode_  == HTMode::Disabled || htMode_ == HTMode::Enabled) {  // register non-HT legacy modulations
+    if (htMode_  == HTMode::Disabled || htMode_ == HTMode::Enabled) {
+        // register non-HT legacy modulations
         std::set<BitrateParameters::LegacyBitrate> legacyRates;
         if (bitrates.legacy_24)
             legacyRates.insert( bitrates.legacy_24->begin(), bitrates.legacy_24->end());
@@ -356,7 +383,8 @@ prefix_ void senf::emu::HardwareWLANInterface::registerModulations()
             registerModulation( registry.parameterIdByLegacyRate( legacyRate));
         }
     }
-    if (htMode_ != HTMode::Disabled) {  // register HT MCS modulations
+    if (htMode_ != HTMode::Disabled) {
+        // register HT MCS modulations
         HTCapabilitiesInfo const & htCapa (wnlc_.htCapabilities());
         std::set<BitrateParameters::MCSIndex> mcsIndexes;
         if (bitrates.mcs_24)
@@ -365,19 +393,26 @@ prefix_ void senf::emu::HardwareWLANInterface::registerModulations()
             mcsIndexes.insert( bitrates.mcs_5->begin(), bitrates.mcs_5->end());
         BOOST_FOREACH( BitrateParameters::MCSIndex mcsIndex, mcsIndexes) {
             if (htMode_ != HTMode::HT40only)
-                registerModulation( registry.parameterIdByMCS( mcsIndex, false, false));
+                registerModulation( registry.parameterIdByMCS_HT( mcsIndex, MHZ_TO_KHZ(20), false));
             if (! wnlc_.hasHTCapabilities())
                 continue;
             if (htMode_ != HTMode::HT40only)
                 if (htCapa.rxHT20SGI) // Indicates short GI support for 20 MHz
-                    registerModulation( registry.parameterIdByMCS( mcsIndex, false, true));
+                    registerModulation( registry.parameterIdByMCS_HT( mcsIndex, MHZ_TO_KHZ(20), true));
             if (htMode_ == HTMode::HT20only)
                 continue;
             if (htCapa.channelWidth == HTCapabilitiesInfo::HT20_40) {
-                registerModulation( registry.parameterIdByMCS( mcsIndex, true, false));
+                registerModulation( registry.parameterIdByMCS_HT( mcsIndex, MHZ_TO_KHZ(40), false));
                 if (htCapa.rxHT40SGI) // Indicates short GI support for 40 MHz
-                    registerModulation( registry.parameterIdByMCS( mcsIndex, true, true));
+                    registerModulation( registry.parameterIdByMCS_HT( mcsIndex, MHZ_TO_KHZ(40), true));
             }
+        }
+        // register VHT MCS modulations
+        if (wnlc_.hasVHTCapabilities()) {
+            if (bitrates.vht_mcs_table_24)
+                registerModulations_vht(bitrates.vht_mcs_table_24.get());
+            if (bitrates.vht_mcs_table_5)
+                registerModulations_vht(bitrates.vht_mcs_table_5.get());
         }
     }
 }

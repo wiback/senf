@@ -556,14 +556,14 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         // determine MCS (rate)
         if (SENF_LIKELY(rtParser.mcsPresent())) {
             stats_.ht++;
-            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS(
+            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS_HT(
                 rtParser.mcs().mcsIndex(),
                 rtParser.mcs().bandwidth(),
                 rtParser.mcs().guardInterval() );
         }
         else if (rtParser.vhtPresent()) {
             stats_.vht++;
-            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS(
+            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS_VHT(
                 rtParser.vht().mcs_user0(),
                 rtParser.vht().nss_user0(),
                 rtParser.bandwidth(),

@@ -80,10 +80,12 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
         if (info.index >= WLAN_MCSInfo::NUM_HT_INDEX)
             continue;
         for (unsigned i=0; i<4; ++i) {
-            WLANModulationParameter p (
-                info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
-                WLANModulationParameter::HT, info.streams, info.index, (i%2==1));
-            mcsParametersToId_.push_back( registerModulation( p));
+            if (info.rate[i] == 0)
+                continue;
+            WLANModulationParameter p(
+                    info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
+                    WLANModulationParameter::HT, info.streams, info.index, (i%2==1));
+            registerModulation( p);
         }
     }
     // register VHT modulations
@@ -91,20 +93,22 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
         if (info.index >= WLAN_MCSInfo::NUM_VHT_INDEX)
             continue;
         for (unsigned i=0; i<8; ++i) {
+            if (info.rate[i] == 0)
+                continue;
             WLANModulationParameter p (
-                info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
-                WLANModulationParameter::VHT, info.streams, info.index, (i%2==1));
-            mcsParametersToId_.push_back( registerModulation( p));
+                    info.coding, info.rssi[i/2], info.rate[i], WLAN_MCSInfo::fromBandwidthIndex(i),
+                    WLANModulationParameter::VHT, info.streams, info.index, (i%2==1));
+            registerModulation( p);
         }
     }
     // register non-HT legacy modulations
     BOOST_FOREACH( LegacyModulationInfo mod, legacyInfos11b ) {
         WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy);
-        rateToId_[mod.rate] = registerModulation( p);
+        registerModulation( p);
     }
     BOOST_FOREACH( LegacyModulationInfo mod, legacyInfosOFDM ) {
         WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy);
-        rateToId_[mod.rate] = registerModulation( p);
+        registerModulation( p);
     }
     // register the two 'special' modulations
     {
@@ -135,27 +139,23 @@ prefix_ senf::emu::WLANModulationParameter const & senf::emu::WLANModulationPara
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByLegacyRate(unsigned rate)
     const
 {
-    RateToIdMap::const_iterator i (rateToId_.find(rate));
-    return (i != rateToId_.end() ? i->second : 0);
+    return WLANModulationParameter::modulationId(
+            WLANModulationParameter::Legacy, rate, 0, 0, 0, false);
 }
 
-prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS(unsigned mcsIndex, bool ht40, bool shortGI)
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS_HT(unsigned htMcsIndex, unsigned bandwidth, bool shortGI)
     const
 {
-    if (SENF_UNLIKELY(mcsIndex >= (WLAN_MCSInfo::NUM_HT_INDEX * WLAN_MCSInfo::NUM_STREAMS)))
-        return 0;
-    auto tmp (WLAN_MCSInfo::fromHTIndex(mcsIndex));
-    return parameterIdByMCS(tmp.first, tmp.second, 20000 + (ht40 * 20000), shortGI); 
+    return WLANModulationParameter::modulationId(
+            WLANModulationParameter::HT, 0, bandwidth, htMcsIndex, 0, shortGI);
 }
 
-prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI)
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS_VHT(unsigned vhtMcsIndex, unsigned streams, unsigned bandwidth, bool shortGI)
     const
 {
-    if (SENF_UNLIKELY(index >= WLAN_MCSInfo::MAX_INDEX or streams > WLAN_MCSInfo::NUM_STREAMS))
-        return 0;
-    return mcsParametersToId_[((index + (WLAN_MCSInfo::MAX_INDEX * (streams-1))) * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI)];
+    return WLANModulationParameter::modulationId(
+            WLANModulationParameter::VHT, 0, bandwidth, vhtMcsIndex, streams, shortGI);
 }
-
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAuto()
     const
@@ -178,12 +178,19 @@ prefix_ senf::emu::WLANModulationParameter::WLANModulationParameter(std::string 
 prefix_ boost::uint16_t senf::emu::WLANModulationParameter::v_modulationId()
     const
 {
-    switch (type) {
+    return modulationId(type, rate, bandwidth, index, streams, shortGI);
+}
+
+prefix_ boost::uint16_t senf::emu::WLANModulationParameter::modulationId(Type _type, unsigned _rate,
+        unsigned _bandwidth, unsigned _index, unsigned _streams, bool _shortGI)
+{
+    switch (_type) {
     case Legacy:
-        return 100 + rate;
+        return 1000 + _rate;
     case VHT:
+        return 200 + ((_index + (_streams-1) * WLAN_MCSInfo::MAX_INDEX) * 8u) + WLAN_MCSInfo::toBandwidthIndex(_bandwidth, _shortGI);
     case HT:
-        return 2 + ((index + (streams-1) * WLAN_MCSInfo::MAX_INDEX) * 8u) + WLAN_MCSInfo::toBandwidthIndex(bandwidth, shortGI);
+        return 2 + (_index * 4) + WLAN_MCSInfo::toBandwidthIndex(_bandwidth, _shortGI);
     case Automatic:
         return 1;
     case Unknown:
@@ -203,7 +210,7 @@ prefix_ void senf::emu::WLANModulationParameter::v_dump(std::ostream & os)
 {
     static const char * types[] = { "Legacy", "MCS", "Automatic", "Unknown" };
     os << "     type: " << (type <= Unknown ? types[type] : "?") << std::endl
-       << "MCS Index: " << (type==HT ? senf::str(index) : "-") << std::endl
+       << "MCS Index: " << ((type==HT or type == VHT) ? senf::str(index) : "-") << std::endl
        << "# streams: " << streams << std::endl
        << " short GI: " << (shortGI ? "true" : "false") << std::endl;
 }
@@ -219,7 +226,7 @@ prefix_ void senf::emu::WLANModulationParameter::v_dumpTableRow(std::ostream & o
     const
 {
     boost::format fmt ("%5d %7d %8s");
-    os << fmt % (type==HT ? senf::str(index) : "  -  ") % streams % (shortGI ? "true" : "false");
+    os << fmt % ((type==HT or type == VHT) ? senf::str(index) : "  -  ") % streams % (shortGI ? "true" : "false");
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,21 +250,29 @@ prefix_ void senf::emu::WLANInterface::init()
         .doc("set modulation to auto") );
 }
 
+prefix_ void senf::emu::WLANInterface::modulation(WLANModulationParameter::Type type, unsigned index, unsigned streams)
+{
+    switch (type) {
+    case WLANModulationParameter::VHT:
+        modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS_VHT(
+                index, streams, bandwidth(), false));
+    default:
+        throw InvalidArgumentException("invalid argument for modulation; no second required.");
+    }
+}
+
 prefix_ void senf::emu::WLANInterface::modulation(WLANModulationParameter::Type type, unsigned value)
 {
     switch (type) {
     case WLANModulationParameter::HT:
-        modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(
-                value, (bandwidth() == 40000), false));
+        modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS_HT(
+                value, bandwidth(), false));
         return;
-    case WLANModulationParameter::VHT: {
-        auto tmp (WLAN_MCSInfo::fromVHTIndex(value));
-        modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(
-                tmp.first, tmp.second, bandwidth(), false));
-        return; }
     case WLANModulationParameter::Legacy:
         modulation( WLANModulationParameterRegistry::instance().parameterIdByLegacyRate(value));
         return;
+    case WLANModulationParameter::VHT:
+        throw InvalidArgumentException("invalid argument for vht modulation: argument missing");
     case WLANModulationParameter::Automatic:
         throw InvalidArgumentException("invalid argument for auto-modulation; no argument required.");
     case WLANModulationParameter::Unknown:

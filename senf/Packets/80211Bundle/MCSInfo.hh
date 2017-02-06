@@ -54,8 +54,6 @@ namespace senf {
         };
 
         static std::vector<Info> getInfos();
-        static Info const & getInfo(std::uint8_t mcsIndex);
-        static Info const & getInfo(std::uint8_t index, std::uint8_t streams);
         static unsigned getRate(std::uint8_t mcsIndex, unsigned bandwidth, bool shortGI);
         static unsigned getRate(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI);
 

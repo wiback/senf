@@ -53,6 +53,9 @@ namespace emu {
         unsigned streams;
         bool shortGI;
 
+        static boost::uint16_t modulationId(Type _type, unsigned _rate, unsigned _bandwidth,
+                unsigned _index, unsigned _streams, bool _shortGI);
+
     private:
         WLANModulationParameter(std::string const & _label, short _minRssi, unsigned _rate,
                 unsigned _bandwidth, Type _type, unsigned _streams=1,
@@ -89,8 +92,8 @@ namespace emu {
 
         WLANModulationParameter const & findModulationById(ModulationParameter::id_t id) const;
         ModulationParameter::id_t parameterIdByLegacyRate(unsigned rate) const;
-        ModulationParameter::id_t parameterIdByMCS(unsigned mcsIndex, bool ht40, bool shortGI) const;
-        ModulationParameter::id_t parameterIdByMCS(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI) const;
+        ModulationParameter::id_t parameterIdByMCS_HT(unsigned htMcsIndex, unsigned bandwidth, bool shortGI) const;
+        ModulationParameter::id_t parameterIdByMCS_VHT(unsigned vhtMcsIndex, unsigned streams, unsigned bandwidth, bool shortGI) const;
         ModulationParameter::id_t parameterIdAuto() const;
         ModulationParameter::id_t parameterIdUnknown() const;
 
@@ -101,9 +104,6 @@ namespace emu {
 
         typedef std::map<ModulationParameter::id_t, WLANModulationParameter> Modulations;
         Modulations modulations_;
-        std::vector<ModulationParameter::id_t> mcsParametersToId_;
-        typedef std::map<unsigned, ModulationParameter::id_t> RateToIdMap;
-        RateToIdMap rateToId_;
         ModulationParameter::id_t parameterIdAuto_;
         ModulationParameter::id_t parameterIdUnknown_;
     };
@@ -119,6 +119,7 @@ namespace emu {
         static const boost::uint8_t linkTypeId = 19;  // 802.21 link type for IEEE 802.11
 
         using WirelessTransmitter::modulation;
+        void modulation(WLANModulationParameter::Type type, unsigned index, unsigned streams);
         void modulation(WLANModulationParameter::Type type, unsigned value);
         void modulation(WLANModulationParameter::Type type);
 

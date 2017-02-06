@@ -157,26 +157,20 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(ModulationPara
         modulationId_ = id;
 }
 
-prefix_ void senf::emu::EmulatedWLANInterface::registerMCSModulation(std::uint8_t index, std::uint8_t streams, unsigned bandwidth, bool shortGI)
+
+prefix_ void senf::emu::EmulatedWLANInterface::registerVHTModulation(unsigned vhtMcsIndex, unsigned streams, unsigned bandwidth, bool shortGI)
 {
-    registerModulation( WLANModulationParameterRegistry::instance().parameterIdByMCS(index, streams, bandwidth, shortGI));
+    WLANModulationParameterRegistry const & registry (WLANModulationParameterRegistry::instance());
+    registerModulation(registry.parameterIdByMCS_VHT(vhtMcsIndex, streams, bandwidth, shortGI));
 }
 
-prefix_ void senf::emu::EmulatedWLANInterface::registerMCSModulation(std::uint8_t index, std::uint8_t streams)
+prefix_ void senf::emu::EmulatedWLANInterface::registerHTModulation(unsigned mcsIndex)
 {
-    if (streams > 0) {
-        for (unsigned bw = 0; bw < 8; bw+=2) {
-            registerMCSModulation(index, streams, WLAN_MCSInfo::fromBandwidthIndex(bw), true);
-            registerMCSModulation(index, streams, WLAN_MCSInfo::fromBandwidthIndex(bw), false);
-        }
-    } else {
-        for (unsigned nst = 1; nst <= WLAN_MCSInfo::NUM_STREAMS; nst++) {
-            for (unsigned bw = 0; bw < 8; bw+=2) {
-                registerMCSModulation(index, nst, WLAN_MCSInfo::fromBandwidthIndex(bw), true);
-                registerMCSModulation(index, nst, WLAN_MCSInfo::fromBandwidthIndex(bw), false);
-            }
-        }
-    }
+    WLANModulationParameterRegistry const & registry (WLANModulationParameterRegistry::instance());
+    registerModulation(registry.parameterIdByMCS_HT(mcsIndex, false, false));
+    registerModulation(registry.parameterIdByMCS_HT(mcsIndex, true,  false));
+    registerModulation(registry.parameterIdByMCS_HT(mcsIndex, false, true ));
+    registerModulation(registry.parameterIdByMCS_HT(mcsIndex, true,  true ));
 }
 
 prefix_ void senf::emu::EmulatedWLANInterface::registerLegacyModulation(unsigned rate)
@@ -193,11 +187,25 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
 
     switch (type) {
     case WLANModulationParameter::VHT:
+        if (args.size() != 1 or not boost::algorithm::iequals(args[0], "all"))
+            throw console::SyntaxErrorException("vht argument must be 'all'");
+        BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & mcsInfo, senf::WLAN_MCSInfo::getInfos() ) {
+            if (mcsInfo.index >= WLAN_MCSInfo::NUM_VHT_INDEX)
+               continue;
+            for (unsigned i=0; i<8; ++i) {
+               if (mcsInfo.rate[i] == 0)
+                   continue;
+               registerVHTModulation(mcsInfo.index, mcsInfo.streams, WLAN_MCSInfo::fromBandwidthIndex(i), (i%2==1));
+            }
+        }
+        return;
     case WLANModulationParameter::HT: {
         if (args.size() == 1) {
-            if (boost::algorithm::iequals(args[0], "all")) {  // register all (V)HT modulations
-                BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
-                    registerMCSModulation(info.index, info.streams);
+            if (boost::algorithm::iequals(args[0], "all")) {  // register all HT modulations
+                BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & mcsInfo, senf::WLAN_MCSInfo::getInfos() ) {
+                    if (mcsInfo.index >= WLAN_MCSInfo::NUM_HT_INDEX)
+                        continue;
+                    registerHTModulation(mcsInfo.index * (mcsInfo.streams -1));
                 }
                 return;
             }
@@ -207,18 +215,18 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
                     unsigned start (boost::lexical_cast<unsigned>(args[0].substr(0, p)));
                     unsigned end (boost::lexical_cast<unsigned>(args[0].substr(p+1)));
                     for (unsigned i=start; i<=end; ++i)
-                        registerMCSModulation( i);
+                        registerHTModulation(i);
                 } catch_bad_lexical_cast(args[0]);
                 return;
             }
             try {  // register one modulation index
-                registerMCSModulation( boost::lexical_cast<unsigned>(args[0]));
+                registerHTModulation(boost::lexical_cast<unsigned>(args[0]));
             } catch_bad_lexical_cast(args[0]);
             return;
         }
         BOOST_FOREACH( std::string index, args ) {
             try {  // register all given modulation indexes
-                registerMCSModulation( boost::lexical_cast<unsigned>(index));
+                registerHTModulation(boost::lexical_cast<unsigned>(index));
             } catch_bad_lexical_cast(index);
         }
         return;

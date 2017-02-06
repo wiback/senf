@@ -133,6 +133,7 @@ namespace emu {
     private:
         void registerFrequencies();
         void registerModulations();
+        void registerModulations_vht(BitrateParameters::VHT_MCSBitmapTable const & vht_mcs_table);
         void registerTxPowers();
 
         void init();
