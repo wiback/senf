@@ -134,6 +134,7 @@ namespace emu {
         void registerFrequencies();
         void registerModulations();
         void registerModulations_vht(BitrateParameters::VHT_MCSBitmapTable const & vht_mcs_table);
+        void registerVHTModulation(unsigned vhtMcsIndex, unsigned nss, unsigned bw, bool shortGI);
         void registerTxPowers();
 
         void init();

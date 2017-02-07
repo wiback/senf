@@ -339,27 +339,31 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
     }
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::registerVHTModulation(unsigned vhtMcsIndex, unsigned nss, unsigned bw, bool shortGI)
+{
+    WLANModulationParameterRegistry const & registry (WLANModulationParameterRegistry::instance());
+    if (WLAN_MCSInfo::getRate(vhtMcsIndex, nss+1, bw, shortGI) > 0)
+        registerModulation(registry.parameterIdByMCS_VHT(vhtMcsIndex, nss+1, bw, shortGI));
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::registerModulations_vht(BitrateParameters::VHT_MCSBitmapTable const & vht_mcs_table)
 {
     VHTCapabilitiesInfo const & vhtCapa (wnlc_.vhtCapabilities());
-    WLANModulationParameterRegistry const & registry (WLANModulationParameterRegistry::instance());
     for (size_t nss = 0; nss < vht_mcs_table.size(); nss++) {
         for (size_t index = 0; index < vht_mcs_table[nss].size(); index++) {
             if (not vht_mcs_table[nss].test(index))
                 continue;
             for (int bw : {MHZ_TO_KHZ(20), MHZ_TO_KHZ(40)}) {
-                if (WLAN_MCSInfo::getRate(index, nss, bw, false) > 0)
-                    registerModulation(registry.parameterIdByMCS_VHT(index, nss, bw, false));
-                if (WLAN_MCSInfo::getRate(index, nss, bw, true) > 0)
-                    registerModulation(registry.parameterIdByMCS_VHT(index, nss, bw, true));
+                registerVHTModulation(index, nss, bw, false);
+                registerVHTModulation(index, nss, bw, true);
             }
-            registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(80), false));
+            registerVHTModulation(index, nss, MHZ_TO_KHZ(80), false);
             if (vhtCapa.shortGIfor80MHz)
-                registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(80), true));
+                registerVHTModulation(index, nss, MHZ_TO_KHZ(80), true);
             if (vhtCapa.supportedChannelWidth == VHTCapabilitiesInfo::SupportedChannelWidth_160MHz) {
-                registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(160), false));
+                registerVHTModulation(index, nss, MHZ_TO_KHZ(160), false);
                 if (vhtCapa.shortGIfor160_8080MHz)
-                    registerModulation(registry.parameterIdByMCS_VHT(index, nss, MHZ_TO_KHZ(160), true));
+                    registerVHTModulation(index, nss, MHZ_TO_KHZ(160), true);
             }
         }
     }
