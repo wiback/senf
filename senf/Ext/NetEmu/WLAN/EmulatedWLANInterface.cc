@@ -205,7 +205,7 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
                 BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & mcsInfo, senf::WLAN_MCSInfo::getInfos() ) {
                     if (mcsInfo.index >= WLAN_MCSInfo::NUM_HT_INDEX)
                         continue;
-                    registerHTModulation(mcsInfo.index * (mcsInfo.streams -1));
+                    registerHTModulation(WLAN_MCSInfo::toHTIndex(mcsInfo.index, mcsInfo.streams));
                 }
                 return;
             }

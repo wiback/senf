@@ -104,6 +104,7 @@ namespace emu {
 
         typedef std::map<ModulationParameter::id_t, WLANModulationParameter> Modulations;
         Modulations modulations_;
+        std::map<boost::uint16_t, ModulationParameter::id_t> idMap_;
         ModulationParameter::id_t parameterIdAuto_;
         ModulationParameter::id_t parameterIdUnknown_;
     };
