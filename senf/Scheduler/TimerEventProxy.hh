@@ -70,7 +70,7 @@ namespace scheduler {
         std::vector<std::pair<ClockService::clock_type, IdType> > list() const;
                                         ///< Returns a vector of all active timers with timeout and id.
 
-        ClockService::clock_type const & timeout(IdType const & id) const;
+        ClockService::clock_type timeout(IdType const & id) const;
                                         ///< Returns timeout for given id
                                         /**< if no timer for this id is registered \a 0 is returned. */
 

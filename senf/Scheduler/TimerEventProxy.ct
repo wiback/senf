@@ -97,7 +97,7 @@ prefix_ bool senf::scheduler::TimerEventProxy<IdType>::remove(IdType const & id)
 }
 
 template<typename IdType>
-prefix_ senf::ClockService::clock_type const & senf::scheduler::TimerEventProxy<IdType>::timeout(IdType const & id)
+prefix_ senf::ClockService::clock_type senf::scheduler::TimerEventProxy<IdType>::timeout(IdType const & id)
     const
 {
     typename EntrySetById_t::const_iterator it (entrySetById_.find( id));
