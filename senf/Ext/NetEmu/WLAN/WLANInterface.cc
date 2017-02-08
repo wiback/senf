@@ -142,22 +142,37 @@ prefix_ senf::emu::WLANModulationParameter const & senf::emu::WLANModulationPara
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByLegacyRate(unsigned rate)
     const
 {
-    return idMap_.at(WLANModulationParameter::modulationId(
-            WLANModulationParameter::Legacy, rate, 0, 0, 0, false));
+    try {
+        return idMap_.at(WLANModulationParameter::modulationId(
+                             WLANModulationParameter::Legacy, rate, 0, 0, 0, false));
+    }
+    catch(...) {
+        return parameterIdUnknown_;
+    }
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS_HT(unsigned htMcsIndex, unsigned bandwidth, bool shortGI)
     const
 {
-    return idMap_.at(WLANModulationParameter::modulationId(
-            WLANModulationParameter::HT, 0, bandwidth, htMcsIndex, 0, shortGI));
+    try {
+        return idMap_.at(WLANModulationParameter::modulationId(
+                             WLANModulationParameter::HT, 0, bandwidth, htMcsIndex, 0, shortGI));
+    }
+    catch(...) {
+        return parameterIdUnknown_;
+    }
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdByMCS_VHT(unsigned vhtMcsIndex, unsigned streams, unsigned bandwidth, bool shortGI)
     const
 {
-    return idMap_.at(WLANModulationParameter::modulationId(
-            WLANModulationParameter::VHT, 0, bandwidth, vhtMcsIndex, streams, shortGI));
+    try {
+        return idMap_.at(WLANModulationParameter::modulationId(
+                             WLANModulationParameter::VHT, 0, bandwidth, vhtMcsIndex, streams, shortGI));
+    }
+    catch(...) {
+        return parameterIdUnknown_;
+    }
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAuto()
