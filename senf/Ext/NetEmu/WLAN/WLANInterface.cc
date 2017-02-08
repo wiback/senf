@@ -274,8 +274,9 @@ prefix_ void senf::emu::WLANInterface::modulation(WLANModulationParameter::Type 
     case WLANModulationParameter::VHT:
         modulation( WLANModulationParameterRegistry::instance().parameterIdByMCS_VHT(
                 index, streams, bandwidth(), false));
+        return;
     default:
-        throw InvalidArgumentException("invalid argument for modulation; no second required.");
+        throw InvalidArgumentException("invalid argument for modulation; two arguments (index + stream) required.");
     }
 }
 
