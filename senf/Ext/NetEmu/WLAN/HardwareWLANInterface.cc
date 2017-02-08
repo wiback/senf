@@ -641,7 +641,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                                         BitrateParameters::MCSIndexSet, bratePara.mcs_24, modPara.index);
             if (modPara.type == WLANModulationParameter::VHT) {
                 bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
-                bratePara.vht_mcs_table_24->at(modPara.streams).set(modPara.index);
+                bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
             }
         }
     }
@@ -653,7 +653,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                                         BitrateParameters::MCSIndexSet, bratePara.mcs_5, modPara.index);
             if (modPara.type == WLANModulationParameter::VHT) {
                 bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
-                bratePara.vht_mcs_table_5->at(modPara.streams).set(modPara.index);
+                bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
             }
         }
     }
