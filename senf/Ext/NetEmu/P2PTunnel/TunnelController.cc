@@ -31,7 +31,6 @@
 #include "TunnelController.hh"
 
 // Custom includes
-#include <boost/foreach.hpp>
 #include <senf/Utils/String.hh>
 #include "TunnelHeaderPacket.hh"
 #include "TunnelCtrlPacket.hh"
@@ -522,7 +521,7 @@ prefix_ void senf::emu::detail::TunnelServerController::resetTimer()
 
 prefix_ void senf::emu::detail::TunnelServerController::terminateAllClients(Handle handle)
 {
-    BOOST_FOREACH( TunnelClient const & client, clients_) {
+    for (TunnelClient const & client : clients_) {
         sendCtrlPacket( handle, client.macAddr, TunnelCtrlPacketParser::TerminateRequest);
     }
 }
@@ -575,7 +574,7 @@ prefix_ void senf::emu::detail::TunnelServerController::v_dumpInfo(std::ostream 
     os << std::endl;
     boost::format fmtClient ("%-30s  %-17s  %4d  %9d %4s  %18d %18d %5x %5x %7d");
     os << fmtClient % "address" % "MAC address" % "FragThesh" % "last seen" %"" % "capacity_to_client" % "capacity_from_client" % "TxSeq" % "RxSeq" % "ReSyncs"<< std::endl;
-    BOOST_FOREACH( TunnelClient const & client, clients_) {
+    for (TunnelClient const & client : clients_) {
         os << fmtClient
               % senf::str(client.inetAddr)
               % senf::str(client.macAddr)

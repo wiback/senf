@@ -31,7 +31,6 @@
 #include "HardwareDVBInterface.hh"
 
 // Custom includes
-#include <boost/foreach.hpp>
 #include <senf/Utils/Console/Variables.hh>
 #include <senf/Ext/NetEmu/Annotations.hh>
 
@@ -45,7 +44,7 @@ prefix_ senf::emu::HardwareDVBInterface::HardwareDVBInterface()
     : frequency_(0), bandwidth_(8000)
 {
     // register all known modulations
-    BOOST_FOREACH( ModulationParameter::id_t id, DVBModulationParameterRegistry::instance().parameterIds() ) {
+    for (ModulationParameter::id_t id : DVBModulationParameterRegistry::instance().parameterIds()) {
         registerModulation( id);
     }
     registerFrequencyRange(500000, 750000);

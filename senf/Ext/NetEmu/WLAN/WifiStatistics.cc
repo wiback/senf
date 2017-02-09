@@ -28,20 +28,17 @@
 #include "WifiStatistics.hh"
 
 // Custom includes
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/foreach.hpp>
-#include <cassert>
-#include <exception>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <algorithm>
-#include <senf/Scheduler/Scheduler.hh>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -88,17 +85,18 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
         file.close();        
 
         unsigned num; // keep track of numer of parsed items (we need 4)
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt) {
+        for (boost::property_tree::ptree::value_type & v : pt) {
             senf::MACAddress mac(senf::MACAddress::from_string(v.first));
             map_.insert(std::make_pair(mac, WifiStatisticsData()));
             num = 0;
             for (auto it = v.second.begin(); it != v.second.end(); it++) {
                 if (it->first == "signal") {
-                    map_.find(mac)->second.signal = StatisticAccumulator<std::int64_t> (it->second.get<std::int32_t>("sum"),
-                                                                                        it->second.get<std::int64_t>("sum2"),
-                                                                                        it->second.get<std::int32_t>("min"),
-                                                                                        it->second.get<std::int32_t>("max"),
-                                                                                        it->second.get<std::uint32_t>("count")).data();
+                    map_.find(mac)->second.signal = StatisticAccumulator<std::int64_t>(
+                            it->second.get<std::int32_t>("sum"),
+                            it->second.get<std::int64_t>("sum2"),
+                            it->second.get<std::int32_t>("min"),
+                            it->second.get<std::int32_t>("max"),
+                            it->second.get<std::uint32_t>("count")).data();
                     num++;
                 } else {
                     if (it->first == "badFCS") {
@@ -120,7 +118,6 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                 return false;
             }
         }
-        
     } catch(...) {
         map_.clear();
         return false;

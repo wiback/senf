@@ -32,7 +32,6 @@
 #include "WLAN/HardwareWLANInterface.hh"
 
 // Custom includes
-#include <boost/foreach.hpp>
 #include <senf/Utils/String.hh>
 #include <senf/Utils/algorithm.hh>
 
@@ -159,7 +158,7 @@ prefix_ void senf::emu::WirelessInterface::listModulations(std::ostream & os)
         os << std::endl;
     }
     registry.findModulationById( *modIds.begin()).dumpTableHeader(os);
-    BOOST_FOREACH( ModulationParameter::id_t mid, modIds ) {
+    for (ModulationParameter::id_t mid : modIds) {
         registry.findModulationById(mid).dumpTableRow(os, mid==cmid);
     }
 }
@@ -175,7 +174,7 @@ prefix_ void senf::emu::WirelessInterface::listFrequencies(std::ostream & os)
     os << fmt
         % "#" % "" % "FREQ" % "U" % "ENCY" % "BAND" % "W" % "IDTH";
     unsigned n (0);
-    BOOST_FOREACH( Frequency const & f, frequencies() ) {
+    for (Frequency const & f : frequencies()) {
         os << fmt
             % n++
             % (f.bandwidthLower <= bw && f.bandwidthUpper >= bw &&
@@ -188,7 +187,7 @@ prefix_ void senf::emu::WirelessInterface::listFrequencies(std::ostream & os)
             % (f.bandwidthLower == f.bandwidthUpper ? "" : senf::str(f.bandwidthUpper));
     }
     os << "Whitelisted Frequency Ranges:\n";
-    BOOST_FOREACH( FrequencyInterval const & f, whitelistedFrequencies_) {
+    for (FrequencyInterval const & f : whitelistedFrequencies_) {
         os << f.first << " - " << f.second << std::endl;
     }
 }
@@ -228,7 +227,7 @@ prefix_ bool senf::emu::WirelessInterface::frequency_is_whitelisted::operator()(
 {
     if (whitelistedFrequencies_.empty())
         return true;
-    BOOST_FOREACH( FrequencyInterval const & freqInterval, whitelistedFrequencies_ ) {
+    for (FrequencyInterval const & freqInterval : whitelistedFrequencies_) {
         if (freqInterval.first <= frequencyLower && freqInterval.second >= frequencyUpper)
             return true;
     }

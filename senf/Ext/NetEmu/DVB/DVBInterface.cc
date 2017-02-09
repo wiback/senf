@@ -31,7 +31,6 @@
 #include "DVBInterface.hh"
 
 // Custom includes
-#include <boost/foreach.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +106,7 @@ prefix_ void senf::emu::DVBModulationParameter::v_dumpTableRow(std::ostream & os
 
 prefix_ senf::emu::DVBModulationParameterRegistry::DVBModulationParameterRegistry()
 {
-    BOOST_FOREACH( DVBParam const & param, dvbParams ) {
+    for (DVBParam const & param : dvbParams) {
         DVBModulationParameter p (param.coding, param.rssi, param.rate, param.fec, param.modulation, param.guard_interval);
         registerModulation( p);
     }

@@ -31,7 +31,6 @@
 #include "WLANInterface.hh"
 
 // Custom includes
-#include <boost/foreach.hpp>
 #include <senf/Packets/80211Bundle/MCSInfo.hh>
 #include <senf/Utils/String.hh>
 #include <senf/Utils/senflikely.hh>
@@ -76,7 +75,7 @@ senf::emu::WLANModulationParameterRegistry::getLegacyModulationInfosOFDM()
 prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegistry()
 {
     // register HT modulations
-    BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
+    for (senf::WLAN_MCSInfo::Info const & info : senf::WLAN_MCSInfo::getInfos()) {
         if (info.index >= WLAN_MCSInfo::NUM_HT_INDEX)
             continue;
         for (unsigned i=0; i<4; ++i) {
@@ -90,7 +89,7 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
         }
     }
     // register VHT modulations
-    BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & info, senf::WLAN_MCSInfo::getInfos() ) {
+    for (senf::WLAN_MCSInfo::Info const & info : senf::WLAN_MCSInfo::getInfos()) {
         if (info.index >= WLAN_MCSInfo::NUM_VHT_INDEX)
             continue;
         for (unsigned i=0; i<8; ++i) {
@@ -103,11 +102,11 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
         }
     }
     // register non-HT legacy modulations
-    BOOST_FOREACH( LegacyModulationInfo mod, legacyInfos11b ) {
+    for (LegacyModulationInfo const & mod : legacyInfos11b) {
         WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy);
         registerModulation( p);
     }
-    BOOST_FOREACH( LegacyModulationInfo mod, legacyInfosOFDM ) {
+    for (LegacyModulationInfo const & mod : legacyInfosOFDM) {
         WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy);
         registerModulation( p);
     }

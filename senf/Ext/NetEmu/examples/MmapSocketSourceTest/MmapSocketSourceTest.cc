@@ -44,7 +44,6 @@
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/hexdump.hh>
 #include <boost/unordered/unordered_map.hpp>
-#include <boost/foreach.hpp>
 
 #include <senf/Socket/Protocols/Raw/PacketSocketHandle.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
@@ -111,7 +110,7 @@ public:
     
     void dump(std::ostream &os) {
         os << "(";
-        BOOST_FOREACH( EtherTypeMap::value_type & entry, payloadMap_) {
+        for (EtherTypeMap::value_type & entry : payloadMap_) {
             os << std::hex << "0x" << entry.first << "/" << std::dec << entry.second << ";";
         }
         os << ")";

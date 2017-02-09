@@ -34,7 +34,6 @@
 // Custom includes
 #include <linux/filter.h>
 #include <algorithm>
-#include <boost/foreach.hpp>
 #include <boost/icl/interval_set.hpp>
 #include <senf/Utils/algorithm.hh>
 #include <senf/Packets/80211Bundle/MCSInfo.hh>
@@ -308,7 +307,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
     else
         nlFreqRange = wnlc_.frequencies( WirelessNLController::Band_t(restrictedBand_));
     // register non-HT frequencies/bandwidth
-    BOOST_FOREACH( WirelessNLController::frequency_type freq, nlFreqRange ) {
+    for (WirelessNLController::frequency_type freq : nlFreqRange) {
         // TODO: (we need to think about this in more detail): filter out channels where the center frequency is smaller than the offset
         if ((frequencyOffset_ < 0) && (freq < unsigned(abs(frequencyOffset_))))
             continue;
@@ -322,7 +321,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
     if (htMode_ == HTMode::Disabled || htMode_ == HTMode::HT20only)
         return;
     // register HT40(+) frequencies/bandwidth
-    BOOST_FOREACH( WirelessNLController::frequency_type freq, wnlc_.frequencies() ) {
+    for (WirelessNLController::frequency_type freq : wnlc_.frequencies()) {
         if (boost::icl::contains(frequencyRanges, FrequencyRange(
                 freq + frequencyOffset_ - MHZ_TO_KHZ(10), freq + frequencyOffset_ + MHZ_TO_KHZ(30)))) {
             registerFrequency(freq + frequencyOffset_ + MHZ_TO_KHZ(10), MHZ_TO_KHZ(40));
@@ -331,7 +330,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
     if (htMode_ == HTMode::HT40only || !wnlc_.hasVHTCapabilities())
         return;
     // register VHT80( frequencies/bandwidth
-    BOOST_FOREACH( WirelessNLController::frequency_type freq, wnlc_.frequencies() ) {
+    for (WirelessNLController::frequency_type freq : wnlc_.frequencies()) {
         if (boost::icl::contains(frequencyRanges, FrequencyRange(
                 freq + frequencyOffset_ - MHZ_TO_KHZ(50), freq + frequencyOffset_ + MHZ_TO_KHZ(30)))) {
             registerFrequency(freq + frequencyOffset_ - MHZ_TO_KHZ(10), MHZ_TO_KHZ(80));
@@ -383,7 +382,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerModulations()
             legacyRates.insert( bitrates.legacy_24->begin(), bitrates.legacy_24->end());
         if (bitrates.legacy_5)
             legacyRates.insert( bitrates.legacy_5->begin(), bitrates.legacy_5->end());
-        BOOST_FOREACH( BitrateParameters::LegacyBitrate legacyRate, legacyRates) {
+        for (BitrateParameters::LegacyBitrate legacyRate : legacyRates) {
             registerModulation( registry.parameterIdByLegacyRate( legacyRate));
         }
     }
@@ -395,7 +394,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerModulations()
             mcsIndexes.insert( bitrates.mcs_24->begin(), bitrates.mcs_24->end());
         if (bitrates.mcs_5)
             mcsIndexes.insert( bitrates.mcs_5->begin(), bitrates.mcs_5->end());
-        BOOST_FOREACH( BitrateParameters::MCSIndex mcsIndex, mcsIndexes) {
+        for (BitrateParameters::MCSIndex mcsIndex : mcsIndexes) {
             if (htMode_ != HTMode::HT40only)
                 registerModulation( registry.parameterIdByMCS_HT( mcsIndex, MHZ_TO_KHZ(20), false));
             if (! wnlc_.hasHTCapabilities())

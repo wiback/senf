@@ -31,7 +31,6 @@
 #include "EmulatedWLANInterface.hh"
 
 // Custom includes
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <senf/Utils/Console/STLSupport.hh>
 #include <senf/Packets/80211Bundle/WLANBeaconPacket.hh>
@@ -189,7 +188,7 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
     case WLANModulationParameter::VHT:
         if (args.size() != 1 or not boost::algorithm::iequals(args[0], "all"))
             throw console::SyntaxErrorException("vht argument must be 'all'");
-        BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & mcsInfo, senf::WLAN_MCSInfo::getInfos() ) {
+        for (senf::WLAN_MCSInfo::Info const & mcsInfo : senf::WLAN_MCSInfo::getInfos()) {
             if (mcsInfo.index >= WLAN_MCSInfo::NUM_VHT_INDEX)
                continue;
             for (unsigned i=0; i<8; ++i) {
@@ -202,7 +201,7 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
     case WLANModulationParameter::HT: {
         if (args.size() == 1) {
             if (boost::algorithm::iequals(args[0], "all")) {  // register all HT modulations
-                BOOST_FOREACH( senf::WLAN_MCSInfo::Info const & mcsInfo, senf::WLAN_MCSInfo::getInfos() ) {
+                for (senf::WLAN_MCSInfo::Info const & mcsInfo : senf::WLAN_MCSInfo::getInfos()) {
                     if (mcsInfo.index >= WLAN_MCSInfo::NUM_HT_INDEX)
                         continue;
                     registerHTModulation(WLAN_MCSInfo::toHTIndex(mcsInfo.index, mcsInfo.streams));
@@ -224,7 +223,7 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
             } catch_bad_lexical_cast(args[0]);
             return;
         }
-        BOOST_FOREACH( std::string index, args ) {
+        for (std::string index : args) {
             try {  // register all given modulation indexes
                 registerHTModulation(boost::lexical_cast<unsigned>(index));
             } catch_bad_lexical_cast(index);
@@ -233,17 +232,17 @@ prefix_ void senf::emu::EmulatedWLANInterface::registerModulation(WLANModulation
     }
     case WLANModulationParameter::Legacy: {
         if (args.size() == 1 && boost::algorithm::iequals(args[0], "all")) {  // register all legacy modulations
-            BOOST_FOREACH( WLANModulationParameterRegistry::LegacyModulationInfo info,
-                    WLANModulationParameterRegistry::getLegacyModulationInfos11b() ) {
+            for (WLANModulationParameterRegistry::LegacyModulationInfo info :
+                    WLANModulationParameterRegistry::getLegacyModulationInfos11b()) {
                 registerLegacyModulation( info.rate);
             }
-            BOOST_FOREACH( WLANModulationParameterRegistry::LegacyModulationInfo info,
-                    WLANModulationParameterRegistry::getLegacyModulationInfosOFDM() ) {
+            for (WLANModulationParameterRegistry::LegacyModulationInfo info :
+                    WLANModulationParameterRegistry::getLegacyModulationInfosOFDM()) {
                 registerLegacyModulation( info.rate);
             }
             return;
         }
-        BOOST_FOREACH( std::string rate, args ) {
+        for (std::string rate : args) {
             try {  // register all given rates
                 registerLegacyModulation( boost::lexical_cast<unsigned>(rate));
             } catch_bad_lexical_cast(rate);

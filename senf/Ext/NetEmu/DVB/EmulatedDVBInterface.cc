@@ -32,7 +32,6 @@
 #include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 
 // Custom includes
-#include <boost/foreach.hpp>
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ prefix_ senf::emu::EmulatedDVBInterface::EmulatedDVBInterface()
     : modulationId_(0)
 {
     // register all known modulations
-    BOOST_FOREACH( ModulationParameter::id_t id, DVBModulationParameterRegistry::instance().parameterIds() ) {
+    for (ModulationParameter::id_t id : DVBModulationParameterRegistry::instance().parameterIds()) {
         registerModulation( id);
     }
 }
