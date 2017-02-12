@@ -406,12 +406,12 @@ prefix_ void senf::emu::WirelessNLController::set_regulatory(RegulatoryDomain co
         unsigned i = 0;
         for (auto const & rule : regDomain.rules) {
             nl_nested_attr_ptr params (msg, i++);
-            NLA_PUT_U32( msg, NL80211_ATTR_REG_RULE_FLAGS,         rule.flags());
-            NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_START,       rule.frequencyRangeBegin());
-            NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_END,         rule.frequencyRangeEnd());
-            NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_MAX_BW,      rule.maxBandwidth());
-            NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_EIRP,    rule.maxEIRP());
-            NLA_PUT_U32( msg, NL80211_FREQUENCY_ATTR_DFS_CAC_TIME, rule.cacTime());
+            NLA_PUT_U32( msg, NL80211_ATTR_REG_RULE_FLAGS,      rule.flags());
+            NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_START,    rule.frequencyRangeBegin());
+            NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_END,      rule.frequencyRangeEnd());
+            NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_MAX_BW,   rule.maxBandwidth());
+            NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_EIRP, rule.maxEIRP());
+            NLA_PUT_U32( msg, NL80211_ATTR_DFS_CAC_TIME,        rule.cacTime());
             if (rule.maxAntennaGain())
                 NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_ANT_GAIN, rule.maxAntennaGain());
         }
@@ -634,14 +634,14 @@ prefix_ int senf::emu::WirelessNLController::getRegDomain_cb(nl_msg * msg)
         GET_RULE_ATTR_OR_SKIP( max_bw_khz,       NL80211_ATTR_FREQ_RANGE_MAX_BW       );
         GET_RULE_ATTR_OR_SKIP( max_ant_gain_mbi, NL80211_ATTR_POWER_RULE_MAX_ANT_GAIN );
         GET_RULE_ATTR_OR_SKIP( max_eirp_mbm,     NL80211_ATTR_POWER_RULE_MAX_EIRP     );
-//        GET_RULE_ATTR_OR_SKIP( cac_time_ms,      NL80211_FREQUENCY_ATTR_DFS_CAC_TIME  );
+        GET_RULE_ATTR_OR_SKIP( cac_time_ms,      NL80211_ATTR_DFS_CAC_TIME            );
 
         regDomain_.rules.insert( RegulatoryRule()
                 .frequencyRange(start_freq_khz, end_freq_khz)
                 .maxBandwidth(max_bw_khz)
                 .maxAntennaGain(max_ant_gain_mbi)
                 .maxEIRP(max_eirp_mbm)
-//                .cacTime(cac_time_ms)
+                .cacTime(cac_time_ms)
                 .flags(flags) );
     }
 
