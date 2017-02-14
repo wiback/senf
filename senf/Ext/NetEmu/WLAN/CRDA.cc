@@ -77,6 +77,18 @@ prefix_ senf::emu::CRDA::CRDA()
         debugRegd_ = getenv("DEBUGREGD");
     }
 
+    // check if we should switch to a specific DFS Region
+    std::uint8_t dfsRegion (std::uint8_t(RegulatoryDomain::DFSRegion::Unset));
+    try {
+        std::fstream fs;
+        fs.open(DEFAULT_CRDA_DFS_REGION_FILE, std::fstream::in);
+        if (fs.is_open()) {
+            fs >> dfsRegion;
+            fs.close();
+        }
+    }
+    catch (...) {};
+    
     if (debugRegd()) {
         logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
 
@@ -84,7 +96,7 @@ prefix_ senf::emu::CRDA::CRDA()
 
         // Regd debug world regulatory domain
         worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
-        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
+        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion(dfsRegion);
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
                                      .maxBandwidth(20000)
@@ -108,7 +120,7 @@ prefix_ senf::emu::CRDA::CRDA()
     } else {
         // regular world regulatory domain
         worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
-        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion::Unset;
+        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion(dfsRegion);
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
                                      .maxBandwidth(20000)

@@ -19,8 +19,9 @@
 namespace senf {
 namespace emu {
 
-#define DEFAULT_CRDA_SYNC_FILE "/dev/shm/NetEMU-CRDA.sync"
-#define CRDA_SLAVE_NAME        "wiback-crda"
+#define DEFAULT_CRDA_SYNC_FILE       "/dev/shm/NetEMU-CRDA.sync"
+#define DEFAULT_CRDA_DFS_REGION_FILE "/dev/shm/NetEMU-CRDA-DFS-Region"
+#define CRDA_SLAVE_NAME              "wiback-crda"
 
     class CRDA
     {
