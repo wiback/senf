@@ -64,19 +64,6 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
     dir.add("cachedRegDomains", fty::Command(&CRDA::cachedRegDomains, this));
 
-    // sync our CRDA behavior with the ath.ko module's debugRegd setting
-    int fd (::open("/sys/module/ath/parameters/debugRegd", O_RDONLY));
-    if (fd != -1) {
-        char buf[1];
-        if ((::read(fd, buf, sizeof(buf))) > 0) {
-            debugRegd_ = (buf[0] == '1');
-        }
-        ::close(fd);
-    }
-    else {
-        debugRegd_ = getenv("DEBUGREGD");
-    }
-
     // check if we should switch to a specific DFS Region
     std::uint8_t dfsRegion (std::uint8_t(RegulatoryDomain::DFSRegion::Unset));
     try {
@@ -89,7 +76,7 @@ prefix_ senf::emu::CRDA::CRDA()
     }
     catch (...) {};
     
-    if (debugRegd()) {
+    if (dfsRegion == std::uint8_t(RegulatoryDomain::DFSRegion::Unset)) {
         logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
 
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "debugRegd mode enabled.") );
