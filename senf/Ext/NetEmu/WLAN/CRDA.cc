@@ -65,7 +65,7 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("cachedRegDomains", fty::Command(&CRDA::cachedRegDomains, this));
 
     // check if we should switch to a specific DFS Region
-    std::uint8_t dfsRegion (std::uint8_t(RegulatoryDomain::DFSRegion::Unset));
+    unsigned dfsRegion (unsigned(RegulatoryDomain::DFSRegion::Unset));
     try {
         std::fstream fs;
         fs.open(DEFAULT_CRDA_DFS_REGION_FILE, std::fstream::in);
@@ -76,7 +76,7 @@ prefix_ senf::emu::CRDA::CRDA()
     }
     catch (...) {};
     
-    if (dfsRegion == std::uint8_t(RegulatoryDomain::DFSRegion::Unset)) {
+    if (dfsRegion == unsigned(RegulatoryDomain::DFSRegion::Unset)) {
         logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
 
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "debugRegd mode enabled.") );
