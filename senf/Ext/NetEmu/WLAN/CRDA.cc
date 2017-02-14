@@ -235,6 +235,12 @@ prefix_ senf::emu::RegulatoryDomain const & senf::emu::CRDA::regDomain()
     return currentRegDomain_;
 }
 
+prefix_ senf::emu::RegulatoryDomain const & senf::emu::CRDA::worldRegDomain()
+    const
+{
+    return worldRegDomain_;
+}
+
 prefix_ bool senf::emu::CRDA::equalsKernel()
 {
     try {

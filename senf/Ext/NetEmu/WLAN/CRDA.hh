@@ -37,6 +37,7 @@ namespace emu {
 
         bool regDomain(senf::emu::RegulatoryDomain regDomain);
         senf::emu::RegulatoryDomain const & regDomain() const;
+        senf::emu::RegulatoryDomain const & worldRegDomain() const;
 
         bool equalsKernel();
 
