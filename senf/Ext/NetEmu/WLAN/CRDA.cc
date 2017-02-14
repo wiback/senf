@@ -64,8 +64,10 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
     dir.add("cachedRegDomains", fty::Command(&CRDA::cachedRegDomains, this));
 
+    // initialize our default DFS Region from the kernel setting
+    WirelessNLController wnlc;
+    unsigned dfsRegion (unsigned(wnlc.get_regulatory().dfsRegion));
     // check if we should switch to a specific DFS Region
-    unsigned dfsRegion (unsigned(RegulatoryDomain::DFSRegion::Unset));
     try {
         std::fstream fs;
         fs.open(DEFAULT_CRDA_DFS_REGION_FILE, std::fstream::in);
