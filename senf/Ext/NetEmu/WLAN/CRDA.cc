@@ -79,6 +79,7 @@ prefix_ senf::emu::CRDA::CRDA()
     catch (...) {};
     
     if (dfsRegion == unsigned(RegulatoryDomain::DFSRegion::Unset)) {
+        debugRegd_ = true;
         logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
 
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "debugRegd mode enabled.") );
