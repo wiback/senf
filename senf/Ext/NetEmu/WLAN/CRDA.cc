@@ -42,15 +42,15 @@ prefix_ std::string senf::emu::CRDA::slaveName()
     return CRDA_SLAVE_NAME;
 }
 
-prefix_ bool senf::emu::CRDA::debugRegd()
+prefix_ bool senf::emu::CRDA::debugRegdFlag()
     const
 {
-    return debugRegd_;
+    return debugRegdFlag_;
 }
 
 prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_(INITIAL_REG_ALPHA),
-      debugRegd_(false),
+      debugRegdFlag_(false),
       nonWirelessBox_(false),
       logTag_("[senf::emu::CRDA " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ")
 {
@@ -58,12 +58,22 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("kernelRegDomain",  fty::Command(&CRDA::kernelRegDomain, this));
     dir.add("worldRegDomain",   fty::Variable(boost::cref(worldRegDomain_)));
     dir.add("regDomain",        fty::Variable(boost::cref(currentRegDomain_)));
-    dir.add("debugRegd",        fty::Variable(boost::cref(debugRegd_)));
+    dir.add("debugRegdFlag",    fty::Variable(boost::cref(debugRegdFlag_)));
     dir.add("nonWirelessBox",   fty::Variable(boost::cref(nonWirelessBox_)));
     dir.add("syncFilename",     fty::Variable(boost::cref(syncFilename_)));
     dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
     dir.add("cachedRegDomains", fty::Command(&CRDA::cachedRegDomains, this));
 
+    try {
+        std::fstream fs;
+        fs.open("/sys/module/ath/parameters/debugRegd", std::fstream::in);
+        if (fs.is_open()) {
+            fs >> debugRegdFlag_;
+            fs.close();
+        }
+    }
+    catch (...) {};
+        
     // initialize our default DFS Region from the kernel setting
     WirelessNLController wnlc;
     unsigned dfsRegion (unsigned(wnlc.get_regulatory().dfsRegion));
@@ -79,10 +89,9 @@ prefix_ senf::emu::CRDA::CRDA()
     catch (...) {};
     
     if (dfsRegion == unsigned(RegulatoryDomain::DFSRegion::Unset)) {
-        debugRegd_ = true;
         logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
 
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "debugRegd mode enabled.") );
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "DFS-Unset mode enabled.") );
 
         // Regd debug world regulatory domain
         worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
@@ -298,17 +307,6 @@ prefix_ bool senf::emu::CRDA::regDomain(senf::emu::RegulatoryDomain regDomain)
     
     // set the new regDomain first, to avoid possible race conditions with the kernel CRDA upcall
     currentRegDomain_ = regDomain;
-    currentRegDomain_.rules.clear();
-    for (auto & rule : regDomain.rules) {
-        if (debugRegd_) {
-            auto r (rule);
-            r.dfsRequired(false);
-            r.noIR(false);
-            currentRegDomain_.rules.insert(r);
-        } else {
-            currentRegDomain_.rules.insert(rule);
-        }
-    }
     
     if (setRegCountry(currentRegDomain_.alpha2Country)) {
         return true;

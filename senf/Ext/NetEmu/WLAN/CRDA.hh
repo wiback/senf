@@ -41,7 +41,7 @@ namespace emu {
 
         bool equalsKernel();
 
-        bool debugRegd() const;
+        bool debugRegdFlag() const;
         
     private:
         CRDA();
@@ -64,7 +64,7 @@ namespace emu {
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
-        bool debugRegd_;
+        bool debugRegdFlag_;
         std::string syncFilename_;
         bool nonWirelessBox_;
         std::string logTag_;
