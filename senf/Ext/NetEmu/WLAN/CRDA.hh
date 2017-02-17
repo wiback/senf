@@ -42,6 +42,8 @@ namespace emu {
         bool equalsKernel();
 
         bool debugRegdFlag() const;
+
+        bool  writeRegionInfo(senf::emu::RegulatoryDomain::DFSRegion region);
         
     private:
         CRDA();

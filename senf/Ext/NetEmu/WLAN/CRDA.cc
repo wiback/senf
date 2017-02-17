@@ -168,6 +168,22 @@ prefix_ senf::emu::CRDA::CRDA()
     }
 }
 
+prefix_ bool senf::emu::CRDA::writeRegionInfo(senf::emu::RegulatoryDomain::DFSRegion region)
+{
+    bool rtn (true);
+    try {
+        std::fstream fs;
+        fs.open(DEFAULT_CRDA_DFS_REGION_FILE, std::fstream::out | std::fstream::trunc);
+        fs << unsigned(region) << std::endl;
+        fs.close();
+    }
+    catch (...) {
+        rtn = false;
+    }
+    
+    return rtn;
+}
+
 prefix_ bool  senf::emu::CRDA::pushRegulatory( senf::emu::RegulatoryDomain & reg)
 {
     try {
