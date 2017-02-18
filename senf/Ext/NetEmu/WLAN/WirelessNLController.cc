@@ -374,6 +374,7 @@ prefix_ void senf::emu::WirelessNLController::start_radarDetection(unsigned int 
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_RADAR_DETECT, CIB_IF, NLM_F_ACK));
 
     NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_FREQ, KHZ_TO_MHZ(freq));
+    NLA_PUT_U32(msg, NL80211_ATTR_CHANNEL_WIDTH, channelWidth(channelMode));
     if (channelType(channelMode) >= 0)
         NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, channelType(channelMode));
 
