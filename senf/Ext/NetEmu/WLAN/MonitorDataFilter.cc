@@ -558,7 +558,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             stats_.ht++;
             rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS_HT(
                 rtParser.mcs().mcsIndex(),
-                rtParser.mcs().bandwidth(),
+                rtParser.bandwidth(),
                 rtParser.mcs().guardInterval() );
         }
         else if (rtParser.vhtPresent()) {
