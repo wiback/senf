@@ -56,6 +56,7 @@ namespace emu {
             PTPOnly   = NL80211_RRF_PTP_ONLY,
             PTMPOnly  = NL80211_RRF_PTMP_ONLY,
             NoIR      = NL80211_RRF_NO_IR,
+            NoIBSS    = __NL80211_RRF_NO_IBSS,  // still seems to be reported by some kernels
             AutoBW    = NL80211_RRF_AUTO_BW
         };
 
@@ -123,7 +124,7 @@ namespace emu {
     std::ostream & operator<<(std::ostream & os, RegulatoryRule const & rule);
 
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( RegulatoryRule, Flags,
-            (NoOFDM)(NoCCK)(NoIndoor)(NoOutdoor)(DFS)(PTPOnly)(PTMPOnly)(NoIR)(AutoBW) );
+            (NoOFDM)(NoCCK)(NoIndoor)(NoOutdoor)(DFS)(PTPOnly)(PTMPOnly)(NoIR)(NoIBSS)(AutoBW) );
 
 
     struct RegulatoryDomain
