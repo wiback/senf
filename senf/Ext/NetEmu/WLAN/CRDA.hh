@@ -41,7 +41,7 @@ namespace emu {
 
         bool equalsKernel();
 
-        bool debugRegdFlag() const;
+        unsigned dfsRegionFlag() const;
 
         bool  writeRegionInfo(senf::emu::RegulatoryDomain::DFSRegion region);
         
@@ -66,7 +66,7 @@ namespace emu {
         std::string dummyCountry_;
         senf::emu::RegulatoryDomain worldRegDomain_;
         senf::emu::RegulatoryDomain currentRegDomain_;
-        bool debugRegdFlag_;
+        unsigned dfsRegionFlag_;
         std::string syncFilename_;
         bool nonWirelessBox_;
         std::string logTag_;

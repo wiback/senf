@@ -42,15 +42,15 @@ prefix_ std::string senf::emu::CRDA::slaveName()
     return CRDA_SLAVE_NAME;
 }
 
-prefix_ bool senf::emu::CRDA::debugRegdFlag()
+prefix_ unsigned senf::emu::CRDA::dfsRegionFlag()
     const
 {
-    return debugRegdFlag_;
+    return dfsRegionFlag_;
 }
 
 prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_(INITIAL_REG_ALPHA),
-      debugRegdFlag_(false),
+      dfsRegionFlag_(0),
       nonWirelessBox_(false),
       logTag_("[senf::emu::CRDA " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ")
 {
@@ -58,7 +58,7 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("kernelRegDomain",  fty::Command(&CRDA::kernelRegDomain, this));
     dir.add("worldRegDomain",   fty::Variable(boost::cref(worldRegDomain_)));
     dir.add("regDomain",        fty::Variable(boost::cref(currentRegDomain_)));
-    dir.add("debugRegdFlag",    fty::Variable(boost::cref(debugRegdFlag_)));
+    dir.add("dfsRegionFlag",    fty::Variable(boost::cref(dfsRegionFlag_)));
     dir.add("nonWirelessBox",   fty::Variable(boost::cref(nonWirelessBox_)));
     dir.add("syncFilename",     fty::Variable(boost::cref(syncFilename_)));
     dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
@@ -66,9 +66,9 @@ prefix_ senf::emu::CRDA::CRDA()
 
     try {
         std::fstream fs;
-        fs.open("/sys/module/ath/parameters/debugRegd", std::fstream::in);
+        fs.open("/sys/module/ath/parameters/dfsRegion", std::fstream::in);
         if (fs.is_open()) {
-            fs >> debugRegdFlag_;
+            fs >> dfsRegionFlag_;
             fs.close();
         }
     }
@@ -137,6 +137,10 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxBandwidth(40000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(4900000, 5170000)
+                                     .maxBandwidth(80000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5170000, 5250000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000) );
@@ -154,6 +158,10 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5735000, 5835000)
+                                     .maxBandwidth(80000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(5835000, 6100000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
