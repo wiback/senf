@@ -1336,8 +1336,8 @@ prefix_ int senf::emu::WirelessNLController::processRadarEvent(nlattr ** msgAttr
         return NL_SKIP;
 
     RadarEvent event;
-    event.type = RadarEvent::Type(nla_get_u8(msgAttr[NL80211_ATTR_RADAR_EVENT]));
-    event.frequency = nla_get_u16(msgAttr[NL80211_ATTR_WIPHY_FREQ]);
+    event.type = RadarEvent::Type(nla_get_u32(msgAttr[NL80211_ATTR_RADAR_EVENT]));
+    event.frequency = nla_get_u32(msgAttr[NL80211_ATTR_WIPHY_FREQ]);
 
     radarEvent.signal(event);
 

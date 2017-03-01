@@ -1043,13 +1043,11 @@ senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statistic
 
 prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANInterface::dfsState(unsigned freq, unsigned bandwidth)
 {
-    WirelessNLController wnlc (monitorDev_);
-
     if (freq == 0 or bandwidth == 0)
         return WirelessNLController::DFSState::NoDFS;
 
     if (bandwidth == MHZ_TO_KHZ(20))
-        return wnlc.dfsState(freq - frequencyOffset_);
+        return wnlc_.dfsState(freq - frequencyOffset_);
 
     if (bandwidth == MHZ_TO_KHZ(40)) {
         /*             | noDFS  | usable    | available | unavailable
@@ -1058,8 +1056,8 @@ prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANI
          *   available |        |           | available | unavailable
          * unavailable |        |           |           | unavailable
          */
-        WirelessNLController::DFSState::Enum state1 (wnlc.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
-        WirelessNLController::DFSState::Enum state2 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
+        WirelessNLController::DFSState::Enum state1 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
+        WirelessNLController::DFSState::Enum state2 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
         if (state1 == WirelessNLController::DFSState::NoDFS and state2 == WirelessNLController::DFSState::NoDFS)
             return WirelessNLController::DFSState::NoDFS;
         if (state1 == WirelessNLController::DFSState::Unavailable or state2 == WirelessNLController::DFSState::Unavailable)
@@ -1076,10 +1074,10 @@ prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANI
          *   available |        |           | available | unavailable
          * unavailable |        |           |           | unavailable
          */
-        WirelessNLController::DFSState::Enum state1 (wnlc.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(30)));
-        WirelessNLController::DFSState::Enum state2 (wnlc.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
-        WirelessNLController::DFSState::Enum state3 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
-        WirelessNLController::DFSState::Enum state4 (wnlc.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(30)));
+        WirelessNLController::DFSState::Enum state1 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(30)));
+        WirelessNLController::DFSState::Enum state2 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
+        WirelessNLController::DFSState::Enum state3 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
+        WirelessNLController::DFSState::Enum state4 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(30)));
 
         if (state1 == WirelessNLController::DFSState::NoDFS and
             state2 == WirelessNLController::DFSState::NoDFS and
@@ -1103,6 +1101,38 @@ prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANI
     }
     
     throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::startCAC(unsigned int freq, unsigned int bandwidth)
+{
+    if (! enabled())
+        throw senf::SystemException(
+            "startCAC() failed: Interface (" + device() + ") is down ", ENETDOWN);
+
+    WirelessNLController::ChannelMode::Enum channelMode;
+    switch (bandwidth) {
+    case MHZ_TO_KHZ(20):
+        channelMode = (htMode_ == HTMode::Disabled
+                       ? WirelessNLController::ChannelMode::NoHT20
+                       : WirelessNLController::ChannelMode::HT20);
+        break;
+    case MHZ_TO_KHZ(40):
+        channelMode = WirelessNLController::ChannelMode::HT40Plus;
+        freq -= MHZ_TO_KHZ(10);
+        break;
+    case MHZ_TO_KHZ(80):
+        channelMode = WirelessNLController::ChannelMode::VHT80;
+        freq -= MHZ_TO_KHZ(30);
+        break;
+    default:
+        throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
+    }
+
+    // reset device (CAC)
+    netctl_.down();
+    netctl_.up();
+
+    wnlc_.start_radarDetection(freq, channelMode);
 }
 
 #undef MHZ_TO_KHZ
