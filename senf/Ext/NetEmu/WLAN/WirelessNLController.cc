@@ -1145,8 +1145,8 @@ prefix_ senf::emu::WirelessNLController::frequency_type  senf::emu::WirelessNLCo
         frequency_type freq, ChannelMode::Enum channelMode)
 {
     unsigned int vht80[] = {
-            MHZ_TO_KHZ(5180), MHZ_TO_KHZ(5260), MHZ_TO_KHZ(5500),
-            MHZ_TO_KHZ(5580), MHZ_TO_KHZ(5660), MHZ_TO_KHZ(5745) };
+        MHZ_TO_KHZ(4920), MHZ_TO_KHZ(5180), MHZ_TO_KHZ(5260), MHZ_TO_KHZ(5500),
+        MHZ_TO_KHZ(5580), MHZ_TO_KHZ(5660), MHZ_TO_KHZ(5745) };
     unsigned j;
 
     switch (channelMode) {
