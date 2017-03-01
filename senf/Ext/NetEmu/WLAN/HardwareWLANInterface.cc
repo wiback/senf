@@ -1132,7 +1132,7 @@ prefix_ void senf::emu::HardwareWLANInterface::startCAC(unsigned int freq, unsig
     netctl_.down();
     netctl_.up();
 
-    wnlc_.start_radarDetection(freq, channelMode);
+    wnlc_.start_radarDetection(freq-frequencyOffset_, channelMode);
 }
 
 #undef MHZ_TO_KHZ
