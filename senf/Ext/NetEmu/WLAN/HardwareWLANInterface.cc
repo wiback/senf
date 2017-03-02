@@ -564,7 +564,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
         dataSource(true);
     }
 
-    frequencyHint();
+    frequencyHint(0);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_annotationMode(bool a)
@@ -688,7 +688,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsign
         }
     }
 
-    frequencyHint();
+    frequencyHint(bw_);
 
     // drop all old frames from the kernel queues
     flushRxQueues();
@@ -904,7 +904,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController
         break;
     }
 
-    frequencyHint();
+    frequencyHint(bw_);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters)
@@ -929,7 +929,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController
         break;
     }
 
-    frequencyHint();
+    frequencyHint(bw_);
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::leaveCell()
@@ -1014,10 +1014,10 @@ prefix_ void senf::emu::HardwareWLANInterface::maxBurst(unsigned maxBurst)
     source.maxBurst(maxBurst);
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::frequencyHint()
+prefix_ void senf::emu::HardwareWLANInterface::frequencyHint(unsigned bandwidth)
 {
     unsigned freq (wnlc_.frequency() / 1000);
-    spectralScanner_.frequency(freq, frequencyOffset() / 1000);
+    spectralScanner_.frequency(freq, bandwidth / 1000, frequencyOffset() / 1000);
     monitorDataFilter.frequency(freq);
 }
 

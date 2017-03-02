@@ -62,7 +62,10 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
         spectralFFTPeriod(0x08);
         spectralShortRepeat(true);
     } else {
-        spectralBins(128);
+        // for 20Mhz:  64 bins
+        // for 40Mhz: 128 bins
+        // for 80Mhz: 256 bins (might not work)
+        spectralBins(64);
     }
     spectralCount(8);
 }
@@ -107,13 +110,31 @@ prefix_ void senf::emu::AthSpectralScan::disable()
     }
 }
 
-prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq, std::int32_t offset)
+prefix_ void senf::emu::AthSpectralScan::frequency(std::uint32_t freq, std::uint32_t bandwidth, std::int32_t offset)
 {
     if (!spectralHandle_) {
         frequency_ = 0;
         frequencyOffset_ = 0;
         callback_ = dummy;        
         return;
+    }
+
+    if (bandwidth > 0) {
+        switch (bandwidth) {
+        case 20:
+            spectralBins(64);
+            break;
+        case 40:
+            spectralBins(128);
+            break;
+        case 80:
+            // this might not work !!!
+            spectralBins(256);
+            break;
+        default:
+            spectralBins(64);
+            break;
+        }
     }
 
     frequencyOffset_ = offset;

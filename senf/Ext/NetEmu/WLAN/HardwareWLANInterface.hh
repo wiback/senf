@@ -121,7 +121,7 @@ namespace emu {
 
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
 
-        void frequencyHint();
+        void frequencyHint(unsigned bandwidth);
 
         void spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb);
         void spectralScanCallback();
