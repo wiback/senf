@@ -393,7 +393,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     if (a2 == "00") {
         if (worldRegDomain_.isEqualKernel(wnlc.get_regulatory())) {
             SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "World RegDomain already set. Ignoring request.") );
-            return;
+            // return;
         }
     } else {
         if (a2 == "US" and !currentRegDomain_.alpha2Country.empty()) {
@@ -431,7 +431,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
 
     // wait a bit before we unlock
-    sleep(2);
+    usleep(500000);
     removeCurrentAlpha();
 }
 
