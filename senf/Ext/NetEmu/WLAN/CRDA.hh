@@ -52,7 +52,6 @@ namespace emu {
         // Common
         bool setRegCountry(std::string alpha2Country);
         void kernelRegDomain(std::ostream & os);
-        bool pushRegulatory( senf::emu::RegulatoryDomain & reg);
 
         // enure we only have one CRDA instance for ALPHA
         void removeCurrentAlpha();

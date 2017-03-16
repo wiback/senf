@@ -157,18 +157,6 @@ prefix_ senf::emu::CRDA::CRDA()
     }
 }
 
-prefix_ bool  senf::emu::CRDA::pushRegulatory( senf::emu::RegulatoryDomain & reg)
-{
-    try {
-        WirelessNLController wnlc;
-        wnlc.set_regulatory( reg);
-    } catch (senf::ExceptionMixin & e) {
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Setting regulatory domain failed: " << e.message() << ", " << reg) );
-        return false;
-    }
-    return true;
-}
-
 prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename)
 {
     if (filename.empty())
@@ -430,15 +418,20 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
     
     regDomain.alpha2Country = a2;
-    
-    if( not pushRegulatory( regDomain)) {
+
+    try {
+        wnlc.set_regulatory( regDomain);
+    } catch (senf::ExceptionMixin & e) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Setting regulatory domain failed: " << e.message() << ", " << regDomain) );
         removeCurrentAlpha();
         return;
     }
 
-    removeCurrentAlpha();
-    
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
+
+    sleep(1);
+    
+    removeCurrentAlpha();
 }
 
 prefix_ void senf::emu::CRDA::help(int exit_status)
