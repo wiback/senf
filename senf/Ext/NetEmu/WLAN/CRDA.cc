@@ -407,7 +407,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         }
     } else {
         if (a2 == "US" and !currentRegDomain_.alpha2Country.empty()) {
-            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "RegDomain US should not be requested from userspace with a2 = " << a2) );
+            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "RegDomain US should not be requested from userspace. Ignoring request.") );
             return;
         }
         try {
@@ -471,6 +471,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
         senf::console::ConfigFile regDb (syncFilename_);
         regDb.ignoreMissing();
         regDb.parse(senf::console::root());
+        ::unlink(syncFilename_.c_str());
     }
     catch(...) {};
     
