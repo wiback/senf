@@ -412,7 +412,8 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Another CRDA instance is already active and pushing ALPHA=" << readCurrentAlpha() << ". Ignoring request.") );
         return;
     }
-    
+
+    // write the lock file
     writeCurrentAlpha(a2);
     
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
@@ -429,8 +430,8 @@ prefix_ void senf::emu::CRDA::setRegulatory()
 
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
 
-    sleep(1);
-    
+    // wait a bit before we unlock
+    sleep(2);
     removeCurrentAlpha();
 }
 
