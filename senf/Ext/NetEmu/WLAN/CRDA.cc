@@ -406,6 +406,10 @@ prefix_ void senf::emu::CRDA::setRegulatory()
             return;
         }
     } else {
+        if (a2 == "US" and !currentRegDomain_.alpha2Country.empty()) {
+            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "RegDomain US should not be requested from userspace with a2 = " << a2) );
+            return;
+        }
         try {
             if (wnlc.get_regulatory().alpha2Country == a2) {
                 SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2) );
