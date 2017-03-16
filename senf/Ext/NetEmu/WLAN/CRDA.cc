@@ -399,7 +399,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         return;
     }
 
-    auto regDomain (currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0 ? currentRegDomain_ : worldRegDomain_);
+    auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
 
     if( regDomain.alpha2Country.empty())
             regDomain.alpha2Country = a2;
@@ -473,6 +473,11 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     //    declare -x UDEV_LOG="3"
     //    declare -x USEC_INITIALIZED="62694593"
 
+    if (!a2) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring request.") );
+        exit (EXIT_FAILURE);
+    }
+    
     std::vector<std::string> nonOptions;
     senf::console::ProgramOptions cmdlineOptions (argc, argv, senf::console::root());
     cmdlineOptions.nonOptions(nonOptions);
