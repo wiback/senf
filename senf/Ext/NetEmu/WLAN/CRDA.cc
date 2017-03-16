@@ -344,6 +344,38 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
     return true;
 }
 
+void senf::emu::CRDA::writeCurrentAlpha(std::string alpha)
+{
+    try {
+        std::fstream fs;
+        fs.open(CRDA_ALPHA_FILE, std::fstream::out | std::fstream::trunc);
+        fs << alpha;
+        fs.close();
+    }
+    catch(...) {
+    }
+}
+
+std::string senf::emu::CRDA::readCurrentAlpha()
+{
+    std::string alpha;
+    try {
+        std::fstream fs;
+        fs.open(CRDA_ALPHA_FILE, std::fstream::in);
+        fs >> alpha;
+        fs.close();
+    }
+    catch(...) {
+    }
+
+    return alpha;
+}
+
+void senf::emu::CRDA::removeCurrentAlpha()
+{
+    ::unlink(CRDA_ALPHA_FILE);
+}
+
 prefix_ void senf::emu::CRDA::kernelRegDomain(std::ostream & os)
 {
     try {
@@ -387,14 +419,25 @@ prefix_ void senf::emu::CRDA::setRegulatory()
             }
         } catch (...) {};
     }
+
+    if (!readCurrentAlpha().empty()) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Another CRDA instance is already active and pushing ALPHA=" << readCurrentAlpha() << ". Ignoring request.") );
+        return;
+    }
+    
+    writeCurrentAlpha(a2);
     
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
     
     regDomain.alpha2Country = a2;
     
-    if( not pushRegulatory( regDomain))
+    if( not pushRegulatory( regDomain)) {
+        removeCurrentAlpha();
         return;
+    }
 
+    removeCurrentAlpha();
+    
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
 }
 

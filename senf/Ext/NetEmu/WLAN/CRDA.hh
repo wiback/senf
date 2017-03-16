@@ -21,6 +21,7 @@ namespace emu {
 
 #define DEFAULT_CRDA_SYNC_FILE       "/dev/shm/NetEMU-CRDA.sync"
 #define CRDA_SLAVE_NAME              "wiback-crda"
+#define CRDA_ALPHA_FILE              "/dev/shm/NetEMU-CRDA.alpha"
 
     class CRDA
     {
@@ -53,6 +54,12 @@ namespace emu {
         void kernelRegDomain(std::ostream & os);
         bool pushRegulatory( senf::emu::RegulatoryDomain & reg);
 
+        // enure we only have one CRDA instance for ALPHA
+        void removeCurrentAlpha();
+        void writeCurrentAlpha(std::string alpha);
+        std::string readCurrentAlpha();
+
+        
         // Slave CRDA only
         void setRegulatory();
         void help(int exit_status);
