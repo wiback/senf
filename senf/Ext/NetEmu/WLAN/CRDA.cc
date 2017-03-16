@@ -50,7 +50,7 @@ prefix_ unsigned senf::emu::CRDA::dfsRegionFlag()
 
 prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_(INITIAL_REG_ALPHA),
-      dfsRegionFlag_(0),
+      dfsRegionFlag_(unsigned(RegulatoryDomain::DFSRegion::Unset)),
       nonWirelessBox_(false),
       logTag_("[senf::emu::CRDA " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ")
 {
@@ -73,29 +73,15 @@ prefix_ senf::emu::CRDA::CRDA()
         }
     }
     catch (...) {};
-        
-    // initialize our default DFS Region from the kernel setting
-    WirelessNLController wnlc;
-    unsigned dfsRegion (unsigned(wnlc.get_regulatory().dfsRegion));
-    // check if we should switch to a specific DFS Region
-    try {
-        std::fstream fs;
-        fs.open(DEFAULT_CRDA_DFS_REGION_FILE, std::fstream::in);
-        if (fs.is_open()) {
-            fs >> dfsRegion;
-            fs.close();
-        }
-    }
-    catch (...) {};
-    
-    if (dfsRegion == unsigned(RegulatoryDomain::DFSRegion::Unset)) {
+
+    if (dfsRegionFlag() == unsigned(RegulatoryDomain::DFSRegion::Unset)) {
         logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
 
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "DFS-Unset mode enabled.") );
 
         // Regd debug world regulatory domain
         worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
-        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion(dfsRegion);
+        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion(dfsRegionFlag());
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
                                      .maxBandwidth(20000)
@@ -119,7 +105,7 @@ prefix_ senf::emu::CRDA::CRDA()
     } else {
         // regular world regulatory domain
         worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
-        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion(dfsRegion);
+        worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion(dfsRegionFlag());
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(700000, 800000)
                                      .maxBandwidth(20000)
@@ -169,22 +155,6 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxBandwidth(2160000)
                                      .maxEIRP(1000) );
     }
-}
-
-prefix_ bool senf::emu::CRDA::writeRegionInfo(senf::emu::RegulatoryDomain::DFSRegion region)
-{
-    bool rtn (true);
-    try {
-        std::fstream fs;
-        fs.open(DEFAULT_CRDA_DFS_REGION_FILE, std::fstream::out | std::fstream::trunc);
-        fs << unsigned(region) << std::endl;
-        fs.close();
-    }
-    catch (...) {
-        rtn = false;
-    }
-    
-    return rtn;
 }
 
 prefix_ bool  senf::emu::CRDA::pushRegulatory( senf::emu::RegulatoryDomain & reg)
@@ -402,7 +372,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     WirelessNLController wnlc;
     if (a2 == "00") {
         if (worldRegDomain_.isEqualKernel(wnlc.get_regulatory())) {
-            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "World RegDomain already set") );
+            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "World RegDomain already set. Ignoring request.") );
             return;
         }
     } else {
@@ -412,7 +382,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         }
         try {
             if (wnlc.get_regulatory().alpha2Country == a2) {
-                SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2) );
+                SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2 << ". Ignoring request.") );
                 return;
             }
         } catch (...) {};
