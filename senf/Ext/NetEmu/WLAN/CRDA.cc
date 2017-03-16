@@ -399,19 +399,25 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         return;
     }
 
-    try {
-        WirelessNLController wnlc;
-        if (wnlc.get_regulatory().alpha2Country == a2) {
-           SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2) );
-           return;
+    WirelessNLController wnlc;
+    if (a2 == "00") {
+        if (worldRegDomain_.isEqualKernel(wnlc.get_regulatory())) {
+            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "World RegDomain already set") );
+            return;
         }
-    } catch (...) {};
-
+    } else {
+        try {
+            if (wnlc.get_regulatory().alpha2Country == a2) {
+                SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2) );
+                return;
+            }
+        } catch (...) {};
+    }
+    
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
-
-//    if( regDomain.alpha2Country.empty())
-            regDomain.alpha2Country = a2;
-
+    
+    regDomain.alpha2Country = a2;
+    
     if( not pushRegulatory( regDomain))
         return;
 
