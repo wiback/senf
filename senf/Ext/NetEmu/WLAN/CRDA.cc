@@ -392,7 +392,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     WirelessNLController wnlc;
     if (a2 == "00") {
         if (worldRegDomain_.isEqualKernel(wnlc.get_regulatory())) {
-            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "World RegDomain already set. Ignoring request.") );
+            // SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "World RegDomain already set. Ignoring request.") );
             // return;
         }
     } else {
@@ -402,8 +402,8 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         }
         try {
             if (wnlc.get_regulatory().alpha2Country == a2) {
-                SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2 << ". Ignoring request.") );
-                return;
+                //                SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2 << ". Ignoring request.") );
+                // return;
             }
         } catch (...) {};
     }
