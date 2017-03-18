@@ -41,7 +41,7 @@
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/greater.hpp>
-#include <boost/ptr_container/ptr_map.hpp>
+#include <boost/ptr_container/ptr_unordered_map.hpp>
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/singleton.hh>
 #include <senf/config.hh>
@@ -94,7 +94,7 @@ namespace detail {
                 { return sizeof(Annotation); }
         };
 
-        typedef boost::ptr_map<key_type, RegistrationBase> Registry;
+        typedef boost::ptr_unordered_map<key_type, RegistrationBase> Registry;
         // Index must be a multi-map since two identically named classes
         // both in the anonymous namespace both have the same demangled name.
         // we could sort on the mangled name instead ...

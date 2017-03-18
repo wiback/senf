@@ -67,7 +67,6 @@ prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash)
 {
     *(((std::uint32_t *)hash)+0) = (*((std::uint32_t const *)&(*this)[0]));
     *(((std::uint16_t *)hash)+2) = (*((std::uint16_t const *)&(*this)[4]));
-//    return (std::uint64_t(*((std::uint32_t const *)&(*this)[0]))) + (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<32);
 }
 
 prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash, boost::uint16_t otherKey)
