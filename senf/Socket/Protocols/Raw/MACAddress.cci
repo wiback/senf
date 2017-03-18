@@ -131,8 +131,8 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
     const
 {
     // this is equivalent to the below, but twice as fast
-    // return be64toh((std::uint64_t(*((std::uint32_t const *)&(*this)[0]))<<16) | (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<48));
-    
+    return be64toh((std::uint64_t(*((std::uint32_t const *)&(*this)[0]))<<16) | (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<48));
+    /*
     return
         (boost::uint64_t( (*this)[0] ) << 40) |
         (boost::uint64_t( (*this)[1] ) << 32) |
@@ -140,6 +140,7 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
         (boost::uint64_t( (*this)[3] ) << 16) |
         (boost::uint64_t( (*this)[4] ) <<  8) |
         (boost::uint64_t( (*this)[5] )      );
+    */
 }
 
 prefix_ void senf::MACAddress::hash(boost::uint64_t * hash)
@@ -168,6 +169,11 @@ prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
 prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
 {
     return mac == eui64;
+}
+
+prefix_ bool senf::operator<(MACAddress const & me, MACAddress const & other)
+{
+    return me.uint64() < other.uint64();
 }
 
 prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) SENF_NOEXCEPT

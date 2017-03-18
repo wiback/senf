@@ -151,7 +151,8 @@ namespace senf {
 
     bool operator==(MACAddress const & mac, EUI64 const & eui64);
     bool operator==(EUI64 const & eui64, MACAddress const & mac);
-   
+    bool operator<(MACAddress const & me, MACAddress const & other);
+    
     std::size_t hash_value(MACAddress const & mac) SENF_NOEXCEPT;
 
 }
