@@ -41,7 +41,7 @@
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/greater.hpp>
-#include <boost/ptr_container/ptr_unordered_map.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
 #include <senf/Utils/TypeInfo.hh>
 #include <senf/Utils/singleton.hh>
 #include <senf/config.hh>
