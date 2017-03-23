@@ -36,15 +36,19 @@
 
 #define prefix_ 
 
-prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(senf::MACAddress const & id)
+prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(bool rxMode, senf::MACAddress const & id)
     : id_ (id),
-      rawMode_(false),
-      annotate_(false),
+      annotate_(false), rxMode_(rxMode),
       pvid_(std::uint16_t(-1))
 {
     route(input, output).autoThrottling( false);
     input.throttlingDisc(senf::ppi::ThrottlingDiscipline::NONE);
-    input.onRequest(&EthernetAnnotator::request);
+    if (rxMode_)
+        input.onRequest(&EthernetAnnotator::requestRx);
+    else
+        input.onRequest(&EthernetAnnotator::requestTx);
+
+    handle_pkt = std::bind(&senf::emu::EthernetAnnotator::handle_pkt_dummy, this, std::placeholders::_1);
 }
 
 prefix_ void senf::emu::EthernetAnnotator::id(MACAddress const & id)
@@ -58,15 +62,15 @@ prefix_ senf::MACAddress const & senf::emu::EthernetAnnotator::id()
     return id_;
 }
 
-prefix_ void senf::emu::EthernetAnnotator::rawMode(bool r, std::uint16_t pvid)
-{
-    rawMode_ = r;
-    pvid_ = pvid;
-}
-
 prefix_ void senf::emu::EthernetAnnotator::annotate(bool a)
 {
     annotate_ = a;
+    if (rxMode_ and (pvid_ == std::uint16_t(-1))) {
+        if (annotate_)
+            handle_pkt = std::bind(&senf::emu::EthernetAnnotator::handle_pkt_dummy_annotate, this, std::placeholders::_1);
+        else
+            handle_pkt = std::bind(&senf::emu::EthernetAnnotator::handle_pkt_dummy, this, std::placeholders::_1);
+    }
 }
 
 prefix_ bool senf::emu::EthernetAnnotator::annotate()
@@ -75,7 +79,7 @@ prefix_ bool senf::emu::EthernetAnnotator::annotate()
     return annotate_;
 }
 
-prefix_ void senf::emu::EthernetAnnotator::request()
+prefix_ void senf::emu::EthernetAnnotator::requestRx()
 {
     senf::EthernetPacket const & eth (input());
 
@@ -105,32 +109,95 @@ prefix_ void senf::emu::EthernetAnnotator::request()
         }
     }
     
-    if (SENF_UNLIKELY(rawMode_)) {
-        if (pvid_ != std::uint16_t(-1)) {
-            auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
-            if (!vlan)
-                return;
-            if (vlan->vlanId() != pvid_) {
-                return;
-            }
-            // remove VLAN TAG here
-            std::uint16_t tl (vlan->type_length());
-            ::memmove(
-                      vlan.data().begin(),
-                      vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
-                      vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
-            EthernetPacket tmp(eth);
-            tmp.data().resize( tmp.size() - senf::EthVLanPacketParser::fixed_bytes);
-            tmp->type_length() = tl;
-            tmp.reparse();
-        }
-        if (annotate_)
-            output(prependAnnotationsPacket(eth));
-        else
-            output(eth);
-    } else {
-        output(eth);
+    handle_pkt(eth);
+}
+    
+prefix_ void senf::emu::EthernetAnnotator::requestTx()
+{
+    senf::EthernetPacket const & eth (input());
+
+    handle_pkt(eth);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::insertTag(std::uint16_t pvid)
+{
+    pvid_ = pvid;
+    handle_pkt = std::bind(&senf::emu::EthernetAnnotator::handle_pkt_insert_tag, this, std::placeholders::_1);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::removeTag(std::uint16_t pvid)
+{
+    pvid_ = pvid;
+    handle_pkt = std::bind(&senf::emu::EthernetAnnotator::handle_pkt_remove_tag, this, std::placeholders::_1);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::clearTag()
+{
+    pvid_ = std::uint16_t(-1);
+    handle_pkt = std::bind(&senf::emu::EthernetAnnotator::handle_pkt_dummy, this, std::placeholders::_1);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::handle_pkt_dummy(senf::EthernetPacket const & eth)
+{    
+    output(eth);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::handle_pkt_dummy_annotate(senf::EthernetPacket const & eth)
+{    
+    output(prependAnnotationsPacket(eth));
+}
+
+prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetPacket const & eth)
+{
+    auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
+    if (!vlan)
+        return;
+    if (vlan->vlanId() != pvid_) {
+        return;
     }
+    // remove VLAN TAG here
+    std::uint16_t tl (vlan->type_length());
+    ::memmove(
+              vlan.data().begin(),
+              vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
+              vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
+    EthernetPacket tmp(eth);
+    tmp.data().resize( tmp.size() - senf::EthVLanPacketParser::fixed_bytes);
+    tmp->type_length() = tl;
+    tmp.reparse();
+
+    if (SENF_UNLIKELY(annotate_))
+        output(prependAnnotationsPacket(eth));
+    else
+        output(eth);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::handle_pkt_insert_tag(senf::EthernetPacket const & eth)
+{
+    senf::EthVLanPacket vlan (eth.next<senf::EthVLanPacket>(senf::nothrow));
+    if (SENF_UNLIKELY(vlan)) {
+        // drop already tagged frames
+        return;
+    }
+    
+    std::uint16_t tl (eth->type_length());
+    senf::Packet pkt (eth.next(senf::nothrow));
+    if (SENF_LIKELY(pkt)) {
+        senf::EthVLanPacket vtmp (senf::EthVLanPacket::createInsertBefore(pkt));
+        vtmp->vlanId() = pvid_;
+        vtmp->type_length() = tl;
+        EthernetPacket(eth).finalizeTo(vtmp);
+    } else {
+        senf::EthVLanPacket vtmp (senf::EthVLanPacket::createAfter(eth));
+        vtmp->vlanId() = pvid_;
+        vtmp->type_length() = tl;
+        EthernetPacket(eth).finalizeTo(vtmp);
+    }
+
+    if (SENF_UNLIKELY(annotate_))
+        output(prependAnnotationsPacket(eth));
+    else
+        output(eth);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

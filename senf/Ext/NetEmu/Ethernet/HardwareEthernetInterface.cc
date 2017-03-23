@@ -42,10 +42,11 @@
 
 prefix_ senf::emu::detail::HardwareEthernetInterfaceNet::HardwareEthernetInterfaceNet()
     : socket (senf::noinit), source (socket), sink (socket),
-      netOutput (annotator_.output), netInput (pvidInserter_.input)
+      annotatorRx_(true), annotatorTx_(false),
+      netOutput (annotatorRx_.output), netInput (annotatorTx_.input)
 {
-    senf::ppi::connect(source.output, annotator_.input);
-    senf::ppi::connect(pvidInserter_.output, sink.input);
+    senf::ppi::connect(source.output, annotatorRx_.input);
+    senf::ppi::connect(annotatorTx_.output, sink.input);
 }
 
 prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::assignSockets(ConnectedMMapPacketSocketHandle & socket_)
@@ -152,7 +153,7 @@ namespace {
 
 prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::string const & device)
     : EthernetInterface (netOutput, netInput), dev_ (device), ctrl_ (dev_),
-      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(std::uint16_t(-1))
+      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(std::uint16_t(-1)), accessMode_(true)
 {
     EthernetInterface::init();
     HardwareInterface::init();
@@ -200,7 +201,7 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
              .doc("get max burst rate"));
     consoleDir()
         .add("pvid", fty::Command(
-                 SENF_MEMBINDFNP(bool, HardwareEthernetInterface, pvid, (std::uint16_t)))
+                 SENF_MEMBINDFNP(bool, HardwareEthernetInterface, pvid, (std::uint16_t, bool)))
              .doc( "enables filtering for a specific PVID (VLAN ID must be 0...4095)"));
     consoleDir()
         .add("pvid", fty::Command(
@@ -210,7 +211,7 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
 
     console::provideDirectory(interfaceDir(),"by-device").add(dev_, fty::Link(consoleDir()));
 
-    annotator_.id(id());
+    annotatorRx_.id(id());
 
     if (ctrl_.isUp())
         init_sockets();
@@ -295,7 +296,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_id(MACAddress const & mac)
 {
     DisableInterfaceGuard guard (*this);
     ctrl_.hardwareAddress(mac);
-    annotator_.id(id());
+    annotatorRx_.id(id());
 }
 
 prefix_ senf::MACAddress senf::emu::HardwareEthernetInterface::v_id()
@@ -316,20 +317,29 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool p)
     ctrl_.promisc(p);
     init_sockets();
     // inform the annotator about our promisc state (if promisc is on, all frames will be prepended with an AnnotationsPacket)
-    annotator_.rawMode(p, pvid_);
-    // inserter should only be active in promisc mode
-    pvidInserter_.rawMode(p ? pvid_ : std::uint16_t(-1));
+    if (p and (pvid_ != (std::uint16_t(-1)))) {
+        if (accessMode_) {
+            annotatorRx_.insertTag(pvid_);
+            annotatorTx_.removeTag(pvid_);
+        } else {
+            annotatorRx_.removeTag(pvid_);
+            annotatorTx_.insertTag(pvid_);
+        }
+    } else {
+        annotatorRx_.clearTag();
+        annotatorTx_.clearTag();
+    }
 }
 
 prefix_ bool senf::emu::HardwareEthernetInterface::v_annotationMode()
     const
 {
-    return annotator_.annotate();
+    return annotatorRx_.annotate();
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_annotationMode(bool a)
 {
-    annotator_.annotate(a);
+    annotatorRx_.annotate(a);
 }
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::v_mtu()
@@ -399,13 +409,14 @@ prefix_ std::uint16_t senf::emu::HardwareEthernetInterface::pvid()
     return pvid_;
 }
 
-prefix_ bool senf::emu::HardwareEthernetInterface::pvid(std::uint16_t p)
+prefix_ bool senf::emu::HardwareEthernetInterface::pvid(std::uint16_t p, bool accessMode)
 {
     if (p > 4095 and p != std::uint16_t(-1))
         return false;
     
     close_sockets();
     pvid_ = p;
+    accessMode_ = accessMode;
     init_sockets();
     return true;
 }

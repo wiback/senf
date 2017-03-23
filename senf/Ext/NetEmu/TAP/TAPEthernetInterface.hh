@@ -68,7 +68,7 @@ namespace emu {
         void maxBurst(unsigned maxBurst);
 
         std::uint16_t pvid() const;
-        bool     pvid(std::uint16_t p); 
+        bool     pvid(std::uint16_t p, bool accessMode); 
 
     protected:
         EthernetController & ethController();
@@ -81,6 +81,7 @@ namespace emu {
 
     private:
         std::uint16_t pvid_;
+        bool accessMode_;
         
         void init_sockets();
         void close_sockets();

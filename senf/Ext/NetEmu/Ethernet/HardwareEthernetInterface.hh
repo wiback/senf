@@ -67,7 +67,7 @@ namespace emu {
         void setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb);
 
         std::uint16_t pvid() const;
-        bool     pvid(std::uint16_t p); 
+        bool     pvid(std::uint16_t p, bool accessMode); 
         
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);
@@ -124,6 +124,7 @@ namespace emu {
         unsigned sndBufSize_;
         unsigned qlen_;
         std::uint16_t  pvid_;
+        bool accessMode_;
 
         friend struct detail::HardwareEthernetInterfaceNet;
         friend class EthernetAnnotator;

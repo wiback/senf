@@ -84,7 +84,7 @@ namespace {
 prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const & device)
     : TAPEthernetInterfaceNet(device),
       EthernetInterface (netOutput, netInput),
-      pvid_(std::uint16_t(-1))
+      pvid_(std::uint16_t(-1)), accessMode_(true)
 {
     BidirectionalWiredInterface::init();
     HardwareInterface::init();
@@ -108,7 +108,7 @@ prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const 
              .doc("get max burst rate"));
     consoleDir()
         .add("pvid", fty::Command(
-                 SENF_MEMBINDFNP(bool, TAPEthernetInterface, pvid, (std::uint16_t)))
+                 SENF_MEMBINDFNP(bool, TAPEthernetInterface, pvid, (std::uint16_t, bool)))
              .doc( "enables filtering for a specific PVID (VLAN ID must be 0...4095)"));
     consoleDir()
         .add("pvid", fty::Command(
@@ -224,12 +224,13 @@ prefix_ std::uint16_t senf::emu::TAPEthernetInterface::pvid()
     return pvid_;
 }
 
-prefix_ bool senf::emu::TAPEthernetInterface::pvid(std::uint16_t p)
+prefix_ bool senf::emu::TAPEthernetInterface::pvid(std::uint16_t p, bool accessMode)
 {
     if (p > 4095 and p != std::uint16_t(-1))
         return false;
     
     pvid_ = p;
+    accessMode_ = accessMode;
     annotator_.rawMode(promisc(), pvid_);
     pvidRemover_.rawMode(pvid_);
 

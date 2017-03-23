@@ -39,6 +39,8 @@
 namespace senf {
 namespace emu {
 
+    typedef std::function<void (senf::EthernetPacket const & eth)> HandleEthPkt;
+    
     class EthernetAnnotator
         : public senf::ppi::module::Module
     {
@@ -48,22 +50,31 @@ namespace emu {
         ppi::connector::PassiveInput<senf::EthernetPacket> input;
         ppi::connector::ActiveOutput<senf::EthernetPacket> output;
 
-        EthernetAnnotator(senf::MACAddress const & id_ = senf::MACAddress::None);
+        EthernetAnnotator(bool rxMode, senf::MACAddress const & id_ = senf::MACAddress::None);
 
         void id(MACAddress const & id);
         MACAddress const & id() const;
 
-        void rawMode(bool r, std::uint16_t pvid = std::uint16_t(-1));
+        void insertTag(std::uint16_t pvid);
+        void removeTag(std::uint16_t pvid);
+        void clearTag();
         void annotate(bool a);
         bool annotate() const;
 
     private:
-        void request();
+        void requestRx();
+        void requestTx();
+        
+        void handle_pkt_dummy(senf::EthernetPacket const & eth);
+        void handle_pkt_dummy_annotate(senf::EthernetPacket const & eth);
+        void handle_pkt_insert_tag(senf::EthernetPacket const & eth);
+        void handle_pkt_remove_tag(senf::EthernetPacket const & eth);
 
         MACAddress id_;
-        bool rawMode_;
         bool annotate_;
+        bool rxMode_;
         std::uint16_t pvid_;
+        HandleEthPkt handle_pkt;
     };
 }}
 

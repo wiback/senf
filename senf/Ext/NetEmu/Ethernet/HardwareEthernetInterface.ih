@@ -54,8 +54,8 @@ namespace detail {
         ppi::module::ActiveQueueSocketSource<EthernetPacket> source;
         ppi::module::PassiveQueueSocketSink<> sink;
 
-        EthernetAnnotator annotator_;
-        PVIDInserter pvidInserter_;
+        EthernetAnnotator annotatorRx_;
+        EthernetAnnotator annotatorTx_;
 
         ppi::connector::ActiveOutputJack<EthernetPacket> netOutput;
         ppi::connector::PassiveInputJack<EthernetPacket> netInput;
