@@ -42,13 +42,14 @@
 
 prefix_ senf::emu::detail::TAPEthernetInterfaceNet::TAPEthernetInterfaceNet(std::string const & device)
     : socket (TapSocketHandle(device)),
-      dev_(device), ctrl_(device), annotator_(ctrl_.hardwareAddress()),
-      netOutput (annotator_.output), netInput (pvidRemover_.input)
+      dev_(device), ctrl_(device),
+      annotatorRx_(true, false, ctrl_.hardwareAddress()), annotatorTx_(false, false),
+      netOutput (annotatorRx_.output), netInput (annotatorTx_.input)
 {
     socket.blocking(false);
 
-    senf::ppi::connect(source.output, annotator_.input);
-    senf::ppi::connect(pvidRemover_.output, sink.input);
+    senf::ppi::connect(source.output, annotatorRx_.input);
+    senf::ppi::connect(annotatorTx_.output, sink.input);
 }
 
 prefix_ void senf::emu::detail::TAPEthernetInterfaceNet::assignSockets(bool on)
@@ -118,7 +119,7 @@ prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const 
 
     console::provideDirectory(interfaceDir(),"by-device").add(dev_, fty::Link(consoleDir()));
 
-    annotator_.id(id());
+    annotatorRx_.id(id());
 
     if (enabled()) {
         assignSockets(true);
@@ -157,7 +158,7 @@ prefix_ void senf::emu::TAPEthernetInterface::v_id(MACAddress const & mac)
 {
     DisableInterfaceGuard guard (*this);
     ctrl_.hardwareAddress(mac);
-    annotator_.id(mac);
+    annotatorRx_.id(mac);
 }
 
 prefix_ senf::MACAddress senf::emu::TAPEthernetInterface::v_id()
@@ -172,23 +173,20 @@ prefix_ bool senf::emu::TAPEthernetInterface::v_promisc()
     return ctrl_.promisc();
 }
 
-prefix_ void senf::emu::TAPEthernetInterface::v_promisc(bool v)
+prefix_ void senf::emu::TAPEthernetInterface::v_promisc(bool p)
 {
-    ctrl_.promisc(v);
-    // inform the annotator about our promisc state (if promisc is on, all frames will be prepended with an AnnotationsPacket)
-    annotator_.rawMode(v, pvid_);
-    pvidRemover_.rawMode(pvid_);
+    ctrl_.promisc(p);
 }
 
 prefix_ bool senf::emu::TAPEthernetInterface::v_annotationMode()
     const
 {
-    return annotator_.annotate();
+    return annotatorRx_.annotate();
 }
 
 prefix_ void senf::emu::TAPEthernetInterface::v_annotationMode(bool a)
 {
-    annotator_.annotate(a);
+    annotatorRx_.annotate(a);
 }
 
 prefix_ unsigned senf::emu::TAPEthernetInterface::v_mtu()
@@ -231,8 +229,19 @@ prefix_ bool senf::emu::TAPEthernetInterface::pvid(std::uint16_t p, bool accessM
     
     pvid_ = p;
     accessMode_ = accessMode;
-    annotator_.rawMode(promisc(), pvid_);
-    pvidRemover_.rawMode(pvid_);
+
+    if (pvid_ != (std::uint16_t(-1))) {
+        if (accessMode_) {
+            annotatorRx_.insertTag(pvid_);
+            annotatorTx_.removeTag(pvid_);
+        } else {
+            annotatorRx_.removeTag(pvid_);
+            annotatorTx_.insertTag(pvid_);
+        }
+    } else {
+        annotatorRx_.clearTag();
+        annotatorTx_.clearTag();
+    }
 
     return true;
 }

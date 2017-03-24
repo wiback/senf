@@ -82,7 +82,7 @@ namespace emu {
     private:
         std::uint16_t pvid_;
         bool accessMode_;
-        
+
         void init_sockets();
         void close_sockets();
         

@@ -42,7 +42,7 @@
 
 prefix_ senf::emu::detail::HardwareEthernetInterfaceNet::HardwareEthernetInterfaceNet()
     : socket (senf::noinit), source (socket), sink (socket),
-      annotatorRx_(true), annotatorTx_(false),
+      annotatorRx_(true, true), annotatorTx_(false, true),
       netOutput (annotatorRx_.output), netInput (annotatorTx_.input)
 {
     senf::ppi::connect(source.output, annotatorRx_.input);
@@ -329,6 +329,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool p)
         annotatorRx_.clearTag();
         annotatorTx_.clearTag();
     }
+
+    // switch to promisc rx method, which works around possibily misconfigured VLAN offloading 
+    annotatorRx_.promisc(p);
 }
 
 prefix_ bool senf::emu::HardwareEthernetInterface::v_annotationMode()

@@ -28,8 +28,8 @@
 /** \file
     \brief HardwareEthernetInterface internal header */
 
-#ifndef IH_SENF_Ext_NetEmu_EthernetAnnotator_
-#define IH_SENF_Ext_NetEmu_EthernetAnnotator 1
+#ifndef IH_SENF_Ext_NetEmu_Ethernet_EthernetAnnotator_
+#define IH_SENF_Ext_NetEmu_Ethernet_EthernetAnnotator_ 1
 
 // Custom includes
 #include <senf/PPI/QueueSocketSourceSink.hh>
@@ -50,11 +50,12 @@ namespace emu {
         ppi::connector::PassiveInput<senf::EthernetPacket> input;
         ppi::connector::ActiveOutput<senf::EthernetPacket> output;
 
-        EthernetAnnotator(bool rxMode, senf::MACAddress const & id_ = senf::MACAddress::None);
+        EthernetAnnotator(bool rxMode, bool mmapMode, senf::MACAddress const & id_ = senf::MACAddress::None);
 
         void id(MACAddress const & id);
         MACAddress const & id() const;
 
+        void promisc(bool p);
         void insertTag(std::uint16_t pvid);
         void removeTag(std::uint16_t pvid);
         void clearTag();
@@ -63,18 +64,23 @@ namespace emu {
 
     private:
         void requestRx();
+        void requestRxMMAP();
+        void requestRxMMAPpromisc();
         void requestTx();
-        
+
+        void netemu_annotaions(senf::EthernetPacket const & eth);
+
         void handle_pkt_dummy(senf::EthernetPacket const & eth);
         void handle_pkt_dummy_annotate(senf::EthernetPacket const & eth);
         void handle_pkt_insert_tag(senf::EthernetPacket const & eth);
         void handle_pkt_remove_tag(senf::EthernetPacket const & eth);
 
         MACAddress id_;
-        bool annotate_;
-        bool rxMode_;
         std::uint16_t pvid_;
         HandleEthPkt handle_pkt;
+        bool annotate_;
+        bool rxMode_;
+        bool mmapMode_;
     };
 }}
 

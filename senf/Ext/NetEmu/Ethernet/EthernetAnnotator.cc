@@ -36,17 +36,24 @@
 
 #define prefix_ 
 
-prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(bool rxMode, senf::MACAddress const & id)
+prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(bool rxMode, bool mmapMode, senf::MACAddress const & id)
     : id_ (id),
-      annotate_(false), rxMode_(rxMode),
-      pvid_(std::uint16_t(-1))
+      pvid_(std::uint16_t(-1)),
+      annotate_(false),
+      rxMode_(rxMode), mmapMode_(mmapMode)
 {
     route(input, output).autoThrottling( false);
     input.throttlingDisc(senf::ppi::ThrottlingDiscipline::NONE);
-    if (rxMode_)
-        input.onRequest(&EthernetAnnotator::requestRx);
-    else
+    if (rxMode_) {
+        if (mmapMode_) {
+            input.onRequest(&EthernetAnnotator::requestRxMMAP);
+        } else {
+            input.onRequest(&EthernetAnnotator::requestRx);
+        }
+    }
+    else {
         input.onRequest(&EthernetAnnotator::requestTx);
+    }
 
     handle_pkt = std::bind(&senf::emu::EthernetAnnotator::handle_pkt_dummy, this, std::placeholders::_1);
 }
@@ -79,15 +86,19 @@ prefix_ bool senf::emu::EthernetAnnotator::annotate()
     return annotate_;
 }
 
-prefix_ void senf::emu::EthernetAnnotator::requestRx()
+prefix_ void senf::emu::EthernetAnnotator::promisc(bool p)
 {
-    senf::EthernetPacket const & eth (input());
+    if (rxMode_ and mmapMode_) {
+        if (p)
+            input.onRequest(&EthernetAnnotator::requestRxMMAPpromisc);
+        else
+            input.onRequest(&EthernetAnnotator::requestRxMMAP);
+    }
+}
 
+prefix_ void senf::emu::EthernetAnnotator::netemu_annotaions(senf::EthernetPacket const & eth)
+{    
     eth.annotation<annotations::Interface>().value = id_;
-
-    // set the rx timestamp. Careful: this assumes that we are using an MMAP source !
-    eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
-    
     {
         emu::annotations::Quality const & q (eth.annotation<emu::annotations::Quality>());
         q.rssi  = 127;            // for now, we report the maximum signal 'quality'
@@ -95,8 +106,37 @@ prefix_ void senf::emu::EthernetAnnotator::requestRx()
         q.snr = 255;
         q.flags.frameLength = eth.size();
     }
+}
+
+prefix_ void senf::emu::EthernetAnnotator::requestRx()
+{
+    senf::EthernetPacket const & eth (input());
+
+    netemu_annotaions(eth);
+    eth.annotation<annotations::Timestamp>().fromScheduler();
+
+    handle_pkt(eth);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::requestRxMMAP()
+{
+    senf::EthernetPacket const & eth (input());
+
+    netemu_annotaions(eth);
+    eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
+    
+    handle_pkt(eth);
+}
+
+prefix_ void senf::emu::EthernetAnnotator::requestRxMMAPpromisc()
+{
+    senf::EthernetPacket const & eth (input());
+
+    netemu_annotaions(eth);
+    eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
 
     // check, if the h/w has removed the VLAN tag...
+    // this might happen if VLAN offloading is not configured/working properly !!!
     boost::optional<unsigned> vlanId (eth.annotation<senf::ppi::QueueBufferAnnotation>()->vlan());
     if (SENF_UNLIKELY(vlanId)) {
         if (pvid_ == std::uint16_t(-1) or pvid_ == (*vlanId & 0xfff)) {
@@ -111,7 +151,8 @@ prefix_ void senf::emu::EthernetAnnotator::requestRx()
     
     handle_pkt(eth);
 }
-    
+
+
 prefix_ void senf::emu::EthernetAnnotator::requestTx()
 {
     senf::EthernetPacket const & eth (input());
@@ -150,11 +191,10 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_dummy_annotate(senf::Ether
 prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetPacket const & eth)
 {
     auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
-    if (!vlan)
-        return;
-    if (vlan->vlanId() != pvid_) {
+    if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_))) {
         return;
     }
+
     // remove VLAN TAG here
     std::uint16_t tl (vlan->type_length());
     ::memmove(
