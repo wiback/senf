@@ -153,7 +153,7 @@ namespace {
 
 prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::string const & device)
     : EthernetInterface (netOutput, netInput), dev_ (device), ctrl_ (dev_),
-      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(std::uint16_t(-1)), accessMode_(true)
+      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(std::uint16_t(-1)), accessMode_(false)
 {
     EthernetInterface::init();
     HardwareInterface::init();
@@ -257,6 +257,22 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
     if (promisc()) {
         HardwareEthernetInterfaceNet::setupBPF(id(), true); // SRC only
     }
+
+    if (promisc() and (pvid_ != (std::uint16_t(-1)))) {
+        if (accessMode_) {
+            annotatorRx_.insertTag(pvid_);
+            annotatorTx_.removeTag(pvid_);
+        } else {
+            annotatorRx_.removeTag(pvid_);
+            annotatorTx_.insertTag(pvid_);
+        }
+    } else {
+        annotatorRx_.clearTag();
+        annotatorTx_.clearTag();
+    }
+
+    // switch to promisc rx method, which works around possibily misconfigured VLAN offloading 
+    annotatorRx_.promisc(promisc());
 }
 
 prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
@@ -316,22 +332,6 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_promisc(bool p)
     close_sockets();
     ctrl_.promisc(p);
     init_sockets();
-    // inform the annotator about our promisc state (if promisc is on, all frames will be prepended with an AnnotationsPacket)
-    if (p and (pvid_ != (std::uint16_t(-1)))) {
-        if (accessMode_) {
-            annotatorRx_.insertTag(pvid_);
-            annotatorTx_.removeTag(pvid_);
-        } else {
-            annotatorRx_.removeTag(pvid_);
-            annotatorTx_.insertTag(pvid_);
-        }
-    } else {
-        annotatorRx_.clearTag();
-        annotatorTx_.clearTag();
-    }
-
-    // switch to promisc rx method, which works around possibily misconfigured VLAN offloading 
-    annotatorRx_.promisc(p);
 }
 
 prefix_ bool senf::emu::HardwareEthernetInterface::v_annotationMode()
