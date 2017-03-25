@@ -35,7 +35,6 @@
 #include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
 #include <senf/PPI/QueueSocketSourceSink.hh>
 #include "EthernetAnnotator.hh"
-#include "PVIDInserter.hh"
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
