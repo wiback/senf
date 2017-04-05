@@ -53,7 +53,7 @@ init_client(std::string iface, unsigned qlen, unsigned frameSize,
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).blocking(false);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
     // we use a smaller tx queue to reduce tx latency
-    this->init_mmap(frameSize, qlen, qlen/3, reserve, qDiscBypass);
+    this->init_mmap(frameSize, qlen, qlen/2, reserve, qDiscBypass);
 }
 
 template <class Policy>
