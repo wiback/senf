@@ -126,9 +126,9 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
     senf::detail::QueueInfo & qi (* senf::detail::QueuePolicyBase::qinfo(handle_));
     unsigned usage (qi.usageRx());
 
-    // simple RED (i.e. due to CPU overload) starting at > 33% usage
-    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
-        usage = maxBurst_ / (usage-1);
+    // simple RED (i.e. due to CPU overload) starting at > 25% usage
+    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/4))) {
+        usage = maxBurst_ / usage;
     } else {
         usage = 0;
     }
@@ -298,12 +298,12 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
     if (SENF_UNLIKELY(!handle_))
         return;
 
-    // simple RED starting at > 30% usage
+    // simple RED starting at > 25% usage
     senf::detail::QueueInfo & qi (* senf::detail::QueuePolicyBase::qinfo(handle_));
     unsigned usage (qi.usageTx());
 
-    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
-        if ((boost::uint32_t(rand()) % (qi.tx.qlen)) < ((usage-1) * qi.tx.qlen/senf::detail::QueueInfo::NUM_SAMPLES)) {
+    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/4))) {
+        if ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < usage) {
             if (!redFilterCallback_(packet)) {
                 qi.txStats.red++;
                 red_++;

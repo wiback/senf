@@ -45,7 +45,7 @@ namespace detail {
     
     struct QueueInfo
     {
-        static constexpr std::uint16_t NUM_SAMPLES = 6;
+        static constexpr std::uint16_t NUM_SAMPLES = 8;
 
         unsigned char * map;
         unsigned hdrlen;
@@ -63,8 +63,8 @@ namespace detail {
                                     // to differentiate between empty and full head/tail range
 
             // we devide the ring buffer in NUM_SAMPLES slices and keep a pointer to tp_status
-            // of the first frame of each slide. In usageRx/TX() we check how many of those samples report 'used by kernel'.
-            // This provides a rough estimate of ring bugger usage by the kernel
+            // of the first frame of each slide. In usageRx/Tx() we check how many of those samples report 'used by kernel'.
+            // This provides a rough estimate of ring buffer usage by the kernel
             std::uint32_t * samples[NUM_SAMPLES];  
         };
 
