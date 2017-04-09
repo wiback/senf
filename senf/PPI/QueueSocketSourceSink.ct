@@ -151,8 +151,8 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             pk.template annotation<senf::ppi::ReadTimestamp>().value = senf::ClockService::now();
 #endif
             ifo = PacketInfo(pk);
-            
-            if (SENF_UNLIKELY((usage > 0) and ((burst_ % usage) == 0) and !redFilterCallback_(pk))) {
+           
+            if (SENF_UNLIKELY( (usage > 0) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < usage) and !redFilterCallback_(pk))) {
                 // drop frame
                 qi.rxStats.red++;
                 red_++;
