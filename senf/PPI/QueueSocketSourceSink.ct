@@ -145,7 +145,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             ifo = PacketInfo(pk);
 
             unsigned usage (qi.usageRx());
-            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/3)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage-1)) and !redFilterCallback_(pk))) {
+            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/3)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage)) and !redFilterCallback_(pk))) {
                 // drop frame
                 qi.rxStats.red++;
                 red_++;
@@ -153,10 +153,10 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
                 // process frame
                 output(pk);
             }
-            if (SENF_UNLIKELY(ifo.is_shared() and handle_)) {
-                qi.rxStats.extMemory++;
-                ifo.releaseExternalMemory();
-            }
+        }
+        if (SENF_UNLIKELY(ifo.is_shared() and handle_)) {
+            qi.rxStats.extMemory++;
+            ifo.releaseExternalMemory();
         }
     }
 #ifdef SENF_DEBUG
@@ -295,7 +295,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
     unsigned usage (qi.usageTx());
 
     if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
-        if ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage-1)) {
+        if ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage)) {
             if (!redFilterCallback_(packet)) {
                 qi.txStats.red++;
                 red_++;
