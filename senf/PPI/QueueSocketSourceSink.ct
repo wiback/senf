@@ -124,7 +124,6 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
         return;
 
     senf::detail::QueueInfo & qi (* senf::detail::QueuePolicyBase::qinfo(handle_));
-    unsigned usage (qi.usageRx());
 
     flushPending_ = false;
     for (burst_ = 1; SENF_LIKELY(handle_ and (burst_ <= maxBurst_) and !flushPending_); burst_++) {
@@ -134,7 +133,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             
         PacketInfo ifo;
         {
-           Packet pk (Packet::create(
+            Packet pk (Packet::create(
                            buf->frameBegin(),
                            buf->size(),
                            buf->frameSize(),
@@ -144,8 +143,9 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             pk.template annotation<senf::ppi::ReadTimestamp>().value = senf::ClockService::now();
 #endif
             ifo = PacketInfo(pk);
-           
-            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/3)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < usage) and !redFilterCallback_(pk))) {
+
+            unsigned usage (qi.usageRx());
+            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/3)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage-1)) and !redFilterCallback_(pk))) {
                 // drop frame
                 qi.rxStats.red++;
                 red_++;
@@ -153,11 +153,10 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
                 // process frame
                 output(pk);
             }
-        }
-        
-        if (SENF_UNLIKELY(ifo.is_shared() and handle_)) {
-            qi.rxStats.extMemory++;
-            ifo.releaseExternalMemory();
+            if (SENF_UNLIKELY(ifo.is_shared() and handle_)) {
+                qi.rxStats.extMemory++;
+                ifo.releaseExternalMemory();
+            }
         }
     }
 #ifdef SENF_DEBUG
@@ -296,7 +295,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
     unsigned usage (qi.usageTx());
 
     if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
-        if ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < usage) {
+        if ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage-1)) {
             if (!redFilterCallback_(packet)) {
                 qi.txStats.red++;
                 red_++;
