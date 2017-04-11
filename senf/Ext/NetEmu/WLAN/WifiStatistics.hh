@@ -44,12 +44,13 @@ namespace emu {
 
     struct WifiStatisticsData {
         senf::StatisticsData signal;
-        std::uint32_t total;
+        std::uint32_t total; 
+        std::uint32_t totalBytes;
         std::uint32_t badFCS; 
         std::uint32_t rTx;
 
         WifiStatisticsData() {
-            total = badFCS = rTx = 0;
+            total = totalBytes = badFCS = rTx = 0;
         };
     };
 

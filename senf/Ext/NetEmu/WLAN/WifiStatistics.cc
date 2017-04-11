@@ -111,9 +111,13 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                         map_.find(mac)->second.total = it->second.get<std::uint32_t>("");
                         num++;
                     }
+                    else if (it->first == "totalBytes") {
+                        map_.find(mac)->second.totalBytes = it->second.get<std::uint32_t>("");
+                        num++;
+                    }
                 }
             }
-            if (num != 4) {
+            if (num != 5) {
                 map_.clear();
                 return false;
             }
