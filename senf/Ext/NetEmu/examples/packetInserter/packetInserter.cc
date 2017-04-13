@@ -82,7 +82,8 @@ prefix_ std::string initInterface(Configuration & config)
             senf::emu::WirelessNLController::MonitorFlags::OtherBSS);
     
     senf::NetdeviceController(name).up();
-
+    senf::NetdeviceController(name).mtu(2300);
+    wnlc.set_retryLimit(1, 1);
     wnlc.set_frequency(config.frequency*1000, config.ht40 ? senf::emu::WirelessNLController::ChannelMode::HT40Plus : senf::emu::WirelessNLController::ChannelMode::HT20);
     
     return name;
@@ -103,11 +104,12 @@ int main(int argc, char const * argv[])
     senf::PacketSocketHandle handle;
     handle.bind(senf::LLSocketAddress(ifName));
     handle.blocking(false);
+    handle.protocol().sndbuf(256000);
     
     senf::scheduler::SignalEvent sigint  (SIGINT,  handleSignal);
     senf::scheduler::SignalEvent sigterm (SIGTERM, handleSignal);
 
-    unsigned legacyRate (senf::emu::WLANModulationParameterRegistry::getLegacyModulationInfosOFDM()[6].rate);
+    unsigned legacyRate (senf::emu::WLANModulationParameterRegistry::getLegacyModulationInfosOFDM()[0].rate);
     // Radiotap
     senf::RadiotapPacket radiotap (senf::RadiotapPacket::create());
     radiotap->init_rate() << legacyRate / 500;  // radiotap rate() unit is 500 Kbps
@@ -115,8 +117,8 @@ int main(int argc, char const * argv[])
     senf::WLANPacket_DataFrame wlanData (senf::WLANPacket_DataFrame::createAfter(radiotap));
     wlanData->receiverAddress() << senf::MACAddress::Broadcast;
     wlanData->destinationAddress() << senf::MACAddress::Broadcast;
-    wlanData->transmitterAddress() << senf::MACAddress::None;
-    wlanData->sourceAddress() << senf::MACAddress::None;
+    wlanData->transmitterAddress() << senf::MACAddress::from_string("00:1b:21:65:f6:5e");
+    wlanData->sourceAddress() << senf::MACAddress::from_string("00:1b:21:65:f6:5e");
     // LLC - EthExtOUI - Data
     senf::LlcSnapPacket llc (senf::LlcSnapPacket::createAfter(wlanData));
     senf::EthOUIExtensionPacket ouiExt (senf::EthOUIExtensionPacket::createAfter(llc));
