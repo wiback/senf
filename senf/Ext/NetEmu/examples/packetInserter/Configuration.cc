@@ -44,7 +44,7 @@ prefix_ Configuration::Configuration()
       duration(senf::ClockService::seconds(10)),
       frequency(5180),
       ht40(false),
-      txPeriod(senf::ClockService::microsecons(100)),
+      txPeriod(senf::ClockService::microseconds(100)),
       txDuration(senf::ClockService::microseconds(10)),
       txPower(20)
 {
@@ -56,7 +56,6 @@ prefix_ Configuration::Configuration()
 
     initDir.add("verbose", fty::Variable(verbose));
     initDir.add("phy-name", fty::Variable(phyName));
-    initDir.add("debug-fs", fty::Variable(debugFS));
     initDir.add("reporting-interval", fty::Variable( reportingInterval)
                 .parser(senf::parseClockServiceInterval));
     initDir.add("duration", fty::Variable(duration)

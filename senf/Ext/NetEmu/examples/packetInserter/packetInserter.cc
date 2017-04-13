@@ -37,7 +37,11 @@
 #include <senf/Ext/NetEmu/WLAN/WirelessNLController.hh>
 #include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
 #include <senf/PPI/QueueSocketSourceSink.hh>
+#include <senf/Packets/80211Bundle/RadiotapPacket.hh>
+#include <senf/Packets/80211Bundle/WLANPacket.hh>
+#include <senf/Ext/NetEmu/WLAN/HardwareWLANInterface.hh>
 
+#include "Configuration.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,18 +120,22 @@ int main(int argc, char const * argv[])
     // LLC - EthExtOUI - Data
     senf::LlcSnapPacket llc (senf::LlcSnapPacket::createAfter(wlanData));
     senf::EthOUIExtensionPacket ouiExt (senf::EthOUIExtensionPacket::createAfter(llc));
-    ouiExt->oui() << IEEE::OUI::Fraunhofer_FOKUS;
+    ouiExt->oui() << 0x001113u; // FhG FOKUS
     senf::DataPacket::createAfter(ouiExt, 2048u);
     radiotap.finalizeAll();
     radiotap->init_dbmTxAttenuation() = configuration.txPower;
 
-    SENF::ClockService::clock_type startTime (senf::ClockService::now());
+    unsigned sent (0);
+    senf::ClockService::clock_type startTime (senf::ClockService::now());
     while (senf::ClockService::now() - startTime < configuration.duration) {
         radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
             radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber() + 1);
-        senf::IGNORE( ::write(handle.fd(), radiotap.data().begin(), radiotap.size()));
+        if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
+		sent++;
     }
     
+    std::cout << "Pkts sent: " << sent << std::endl;
+
     return exitCode_;
 }
 
