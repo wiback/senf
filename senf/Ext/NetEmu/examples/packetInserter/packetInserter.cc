@@ -48,7 +48,7 @@
 
 void handleSignal(siginfo_t const &)
 {
-    senf::scheduler::terminate();
+    exit(0);
 }
 
 namespace {
@@ -80,6 +80,8 @@ prefix_ std::string initInterface(Configuration & config)
             senf::emu::WirelessNLController::MonitorFlags::PLCPFail |
             senf::emu::WirelessNLController::MonitorFlags::Control  |
             senf::emu::WirelessNLController::MonitorFlags::OtherBSS);
+
+    usleep(500000);
     
     senf::NetdeviceController(name).up();
     senf::NetdeviceController(name).mtu(2300);
@@ -126,7 +128,9 @@ int main(int argc, char const * argv[])
     senf::DataPacket::createAfter(ouiExt, 2048u);
     radiotap.finalizeAll();
     radiotap->init_dbmTxAttenuation() = configuration.txPower;
-
+    radiotap->init_txFlags().noAck(true);
+    radiotap->txFlags().noSeq(true);
+        
     unsigned sent (0);
     senf::ClockService::clock_type startTime (senf::ClockService::now());
     while (senf::ClockService::now() - startTime < configuration.duration) {

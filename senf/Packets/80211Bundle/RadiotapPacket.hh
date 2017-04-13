@@ -93,7 +93,7 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_SKIP_BITS(          6       );
+        SENF_PARSER_SKIP_BITS(         14       );
         SENF_PARSER_BITFIELD ( badPlcp, 1, bool );
         SENF_PARSER_SKIP_BITS(          1       );
 
@@ -104,7 +104,9 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_SKIP_BITS(        5       );
+        SENF_PARSER_SKIP_BITS(       11       );
+        SENF_PARSER_BITFIELD ( noSeq, 1, bool );
+        SENF_PARSER_BITFIELD ( noAck, 1, bool );
         SENF_PARSER_BITFIELD ( txRts, 1, bool );
         SENF_PARSER_BITFIELD ( txCts, 1, bool );
         SENF_PARSER_BITFIELD ( fail,  1, bool );
