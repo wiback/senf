@@ -85,8 +85,8 @@ prefix_ std::string initInterface(Configuration & config)
     
     senf::NetdeviceController(name).up();
     senf::NetdeviceController(name).mtu(2300);
-    wnlc.set_retryLimit(1, 1);
-    wnlc.set_frequency(config.frequency*1000, config.ht40 ? senf::emu::WirelessNLController::ChannelMode::HT40Plus : senf::emu::WirelessNLController::ChannelMode::HT20);
+    senf::emu::WirelessNLController(name).set_frequency(config.frequency*1000,
+                                                        config.ht40 ? senf::emu::WirelessNLController::ChannelMode::HT40Plus : senf::emu::WirelessNLController::ChannelMode::HT20);
     
     return name;
 }
@@ -137,7 +137,7 @@ int main(int argc, char const * argv[])
         radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
             radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber() + 1);
         if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
-		sent++;
+            sent++;
     }
     
     std::cout << "Pkts sent: " << sent << std::endl;
