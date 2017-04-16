@@ -49,7 +49,7 @@ prefix_ Configuration::Configuration()
       txPeriod(senf::ClockService::microseconds(1000)),
       txDuration(senf::ClockService::microseconds(100)),
       txPower(20),
-      txFrameLength(1024)
+      txFrameLength(256)
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));

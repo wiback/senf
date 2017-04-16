@@ -84,7 +84,7 @@ prefix_ std::string initInterface(Configuration & config)
     usleep(500000);
     
     senf::NetdeviceController(name).up();
-    senf::NetdeviceController(name).mtu(2300);
+    senf::NetdeviceController(name).mtu(2304);
     senf::emu::WirelessNLController(name).set_frequency(config.frequency*1000,
                                                         config.ht40 ? senf::emu::WirelessNLController::ChannelMode::HT40Plus : senf::emu::WirelessNLController::ChannelMode::HT20);
     wnlc.set_txpower(senf::emu::WirelessNLController::TxPowerSetting::Fixed, config.txPower);
@@ -143,13 +143,20 @@ int main(int argc, char const * argv[])
     std::uint64_t sent (0), dropped (0);
     
     senf::ClockService::clock_type startTime (senf::ClockService::now());
+    senf::ClockService::clock_type nextTime (startTime);
     while (senf::ClockService::now() - startTime < configuration.duration) {
-        radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
+        for (unsigned b = 0; b < burst; b++) {
+            radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
             radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber() + 1);
-        if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
-            sent++;
-        else
-            dropped++;
+            if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
+                sent++;
+            else
+                dropped++;
+        }
+        if (configuration.txPeriod) {
+            nextTime += configuration.txPeriod;
+            while (senf::ClockService::now() < nextTime);
+        }
     }
     senf::ClockService::clock_type endTime (senf::ClockService::now());
     
