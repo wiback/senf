@@ -73,6 +73,7 @@ prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool fo
         }
     }
 
+    packet.data().releaseExternalMemory();
     queue_.emplace(packet);
     queueSize_ += packet.size();
     return true;

@@ -309,6 +309,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
                 handle_DuplicateFrame(ethp);
                 return;
             }
+            ethp.data().releaseExternalMemory();
             record.queue.at(delta) = ethp;
             
             while (! record.queue.empty() && record.queue.front()) {
