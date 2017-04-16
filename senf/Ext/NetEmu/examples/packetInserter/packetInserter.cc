@@ -87,6 +87,7 @@ prefix_ std::string initInterface(Configuration & config)
     senf::NetdeviceController(name).mtu(2300);
     senf::emu::WirelessNLController(name).set_frequency(config.frequency*1000,
                                                         config.ht40 ? senf::emu::WirelessNLController::ChannelMode::HT40Plus : senf::emu::WirelessNLController::ChannelMode::HT20);
+    wnlc.set_txpower(senf::emu::WirelessNLController::TxPowerSetting::Fixed, config.txPower);
     
     return name;
 }
@@ -106,41 +107,53 @@ int main(int argc, char const * argv[])
     senf::PacketSocketHandle handle;
     handle.bind(senf::LLSocketAddress(ifName));
     handle.blocking(false);
-    handle.protocol().sndbuf(256000);
+    handle.protocol().sndbuf(65536);
     
     senf::scheduler::SignalEvent sigint  (SIGINT,  handleSignal);
     senf::scheduler::SignalEvent sigterm (SIGTERM, handleSignal);
 
-    unsigned legacyRate (senf::emu::WLANModulationParameterRegistry::getLegacyModulationInfosOFDM()[0].rate);
     // Radiotap
     senf::RadiotapPacket radiotap (senf::RadiotapPacket::create());
-    radiotap->init_rate() << legacyRate / 500;  // radiotap rate() unit is 500 Kbps
+    // radiotap rate() unit is 500 Kbps
+    unsigned rate (senf::emu::WLANModulationParameterRegistry::getLegacyModulationInfosOFDM()[configuration.rateIdx].rate);
+    radiotap->init_rate() << rate / 500;
     // WlanData
     senf::WLANPacket_DataFrame wlanData (senf::WLANPacket_DataFrame::createAfter(radiotap));
-    wlanData->receiverAddress() << senf::MACAddress::Broadcast;
-    wlanData->destinationAddress() << senf::MACAddress::Broadcast;
+    wlanData->receiverAddress() << configuration.destination;
+    wlanData->destinationAddress() << configuration.destination;
     wlanData->transmitterAddress() << senf::MACAddress::from_string("00:1b:21:65:f6:5e");
     wlanData->sourceAddress() << senf::MACAddress::from_string("00:1b:21:65:f6:5e");
     // LLC - EthExtOUI - Data
     senf::LlcSnapPacket llc (senf::LlcSnapPacket::createAfter(wlanData));
     senf::EthOUIExtensionPacket ouiExt (senf::EthOUIExtensionPacket::createAfter(llc));
     ouiExt->oui() << 0x001113u; // FhG FOKUS
-    senf::DataPacket::createAfter(ouiExt, 2048u);
+    radiotap.finalizeAll();
+    senf::DataPacket::createAfter(ouiExt, configuration.txFrameLength - wlanData.size());
     radiotap.finalizeAll();
     radiotap->init_dbmTxAttenuation() = configuration.txPower;
     radiotap->init_txFlags().noAck(true);
     radiotap->txFlags().noSeq(true);
-        
-    unsigned sent (0);
+
+    // fix this to include preamable, fcs...
+    std::uint64_t airTime (wlanData.size() * 8 * 1000 / rate);
+    unsigned burst (senf::ClockService::in_microseconds(configuration.txDuration) / airTime);
+    std::cout << "txPeriod " << senf::ClockService::in_microseconds(configuration.txPeriod) << "us, txDuration " << senf::ClockService::in_microseconds(configuration.txDuration) << "us";
+    std::cout << ", rate " << rate << " kbps, frameLength " << wlanData.size() << " bytes, frameAirTime " << airTime << "us, pktBurst " << burst << std::endl;
+    
+    std::uint64_t sent (0), dropped (0);
+    
     senf::ClockService::clock_type startTime (senf::ClockService::now());
     while (senf::ClockService::now() - startTime < configuration.duration) {
         radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
             radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber() + 1);
         if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
             sent++;
+        else
+            dropped++;
     }
+    senf::ClockService::clock_type endTime (senf::ClockService::now());
     
-    std::cout << "Pkts sent: " << sent << std::endl;
+    std::cout << "pkts sent " << sent << ", pkts dropped " << dropped << ", avg txRate " << (std::uint64_t(sent * wlanData.size() * 8 * 1000) / senf::ClockService::in_microseconds(endTime - startTime)) << " kbps" << std::endl;
 
     return exitCode_;
 }

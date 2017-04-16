@@ -31,6 +31,7 @@
 // Custom includes
 #include <senf/Socket/Protocols/INet.hh>
 #include <senf/Utils/Logger.hh>
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -45,11 +46,14 @@ public:
     senf::ClockService::clock_type duration;
     unsigned frequency;
     bool ht40;
-
+    unsigned rateIdx;
+    senf::MACAddress destination;
+    
     senf::ClockService::clock_type txPeriod;
     senf::ClockService::clock_type txDuration;
     unsigned txPower;
-        
+    unsigned txFrameLength;
+
     Configuration();
 
     void help();

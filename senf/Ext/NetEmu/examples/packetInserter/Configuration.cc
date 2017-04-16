@@ -44,9 +44,12 @@ prefix_ Configuration::Configuration()
       duration(senf::ClockService::seconds(10)),
       frequency(5180),
       ht40(false),
-      txPeriod(senf::ClockService::microseconds(100)),
-      txDuration(senf::ClockService::microseconds(10)),
-      txPower(20)
+      rateIdx(0),
+      destination(senf::MACAddress::Broadcast),
+      txPeriod(senf::ClockService::microseconds(1000)),
+      txDuration(senf::ClockService::microseconds(100)),
+      txPower(20),
+      txFrameLength(1024)
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));
@@ -63,12 +66,16 @@ prefix_ Configuration::Configuration()
 
     initDir.add("frequency", fty::Variable(frequency));
     initDir.add("ht40", fty::Variable(ht40));
+    initDir.add("rateIdx", fty::Variable(rateIdx));
+
+    initDir.add("destination", fty::Variable(destination));
 
     initDir.add("tx-period", fty::Variable(txPeriod)
                 .parser(senf::parseClockServiceInterval));
     initDir.add("tx-duration", fty::Variable(txDuration)
                 .parser(senf::parseClockServiceInterval));
     initDir.add("tx-power", fty::Variable(txPower));
+    initDir.add("tx-frame-length", fty::Variable(txFrameLength));
 
     // always turn those on, where available
     enableHighresTimers();
