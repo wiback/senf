@@ -46,20 +46,6 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-void handleSignal(siginfo_t const &)
-{
-    exit(0);
-}
-
-namespace {
-    int exitCode_ (0);
-}
-
-void exitCode(int code)
-{
-    exitCode_ = code;
-}
-
 prefix_ std::string initInterface(Configuration & config)
 {
     senf::emu::WirelessNLController wnlc (senf::emu::WirelessNLController(config.phyName).phyName());
@@ -106,12 +92,8 @@ int main(int argc, char const * argv[])
 
     senf::PacketSocketHandle handle;
     handle.bind(senf::LLSocketAddress(ifName));
-    handle.blocking(false);
     handle.protocol().sndbuf(65536);
     
-    senf::scheduler::SignalEvent sigint  (SIGINT,  handleSignal);
-    senf::scheduler::SignalEvent sigterm (SIGTERM, handleSignal);
-
     // Radiotap
     senf::RadiotapPacket radiotap (senf::RadiotapPacket::create());
     // radiotap rate() unit is 500 Kbps
@@ -129,40 +111,60 @@ int main(int argc, char const * argv[])
     ouiExt->oui() << 0x001113u; // FhG FOKUS
     radiotap.finalizeAll();
     senf::DataPacket::createAfter(ouiExt, configuration.txFrameLength - wlanData.size());
-    radiotap.finalizeAll();
     radiotap->init_dbmTxAttenuation() = configuration.txPower;
     radiotap->init_txFlags().noAck(true);
     radiotap->txFlags().noSeq(true);
+    radiotap.finalizeAll();
 
-    // fix this to include preamable, fcs...
+    std::cout << " * radio " << ifName << ", frequency " << configuration.frequency << " kHz, txPower " << configuration.txPower << " dBm" << std::endl;
+    // we could improve this to properly include preamable, fcs, etc. in airtime calculation...
     std::uint64_t airTime (wlanData.size() * 8 * 1000 / rate);
     unsigned burst (senf::ClockService::in_microseconds(configuration.txDuration) / airTime);
-    std::cout << "txPeriod " << senf::ClockService::in_microseconds(configuration.txPeriod) << "us, txDuration " << senf::ClockService::in_microseconds(configuration.txDuration) << "us";
-    std::cout << ", rate " << rate << " kbps, frameLength " << wlanData.size() << " bytes, frameAirTime " << airTime << "us, pktBurst " << burst << std::endl;
+    std::cout << " * txPeriod " << senf::ClockService::in_microseconds(configuration.txPeriod) << " us, txDuration " << senf::ClockService::in_microseconds(configuration.txDuration) << " us";
+    std::cout << ", rate " << rate << " kbps" << std::endl;
+    std::cout << " * frameLength (without FCS) " << wlanData.size() << " bytes, frameAirTime " << airTime << " us, pktBurst " << burst << " (" << airTime * burst << " us)" << std::endl;
+
+    if (configuration.txPeriod and configuration.txDuration) {
+        handle.blocking(false);
+    } 
+    else if (!configuration.txPeriod and !configuration.txDuration) {
+        handle.blocking(true);
+    }
+    else {
+        std::cerr << "Invalid TX configuration. Either specify txPeriod and txDuration or set both to 0 for 'send-as-fast-as-possible'" << std::endl;
+        exit(1);
+    }
     
     std::uint64_t sent (0), dropped (0);
-    
+
     senf::ClockService::clock_type startTime (senf::ClockService::now());
     senf::ClockService::clock_type nextTime (startTime);
     while (senf::ClockService::now() - startTime < configuration.duration) {
-        for (unsigned b = 0; b < burst; b++) {
-            radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
-            radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber() + 1);
+        if (configuration.txPeriod and configuration.txDuration) {
+            for (unsigned b = 0; b < burst; b++) {
+                radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
+                    radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber() + 1);
+                if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
+                    sent++;
+                else
+                    dropped++;
+            }
+            nextTime += configuration.txPeriod;
+            while (senf::ClockService::now() < nextTime);
+        } else {
             if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
                 sent++;
             else
                 dropped++;
         }
-        if (configuration.txPeriod) {
-            nextTime += configuration.txPeriod;
-            while (senf::ClockService::now() < nextTime);
-        }
     }
     senf::ClockService::clock_type endTime (senf::ClockService::now());
-    
-    std::cout << "pkts sent " << sent << ", pkts dropped " << dropped << ", avg txRate " << (std::uint64_t(sent * wlanData.size() * 8 * 1000) / senf::ClockService::in_microseconds(endTime - startTime)) << " kbps" << std::endl;
 
-    return exitCode_;
+    // +4 => incl. FCS in calculation
+    unsigned actualTxRate ((sent * (wlanData.size() + 4)  * 8 * 1000) / senf::ClockService::in_microseconds(endTime - startTime));
+    std::cout << "=> pkts sent " << sent << ", pkts dropped " << dropped << ", actual txRate (incl. FCS) " << actualTxRate << " kbps (" << (actualTxRate * 100) / rate << " %)." << std::endl;
+
+    return 0;
 }
 
 

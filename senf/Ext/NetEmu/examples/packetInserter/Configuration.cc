@@ -46,10 +46,10 @@ prefix_ Configuration::Configuration()
       ht40(false),
       rateIdx(0),
       destination(senf::MACAddress::Broadcast),
-      txPeriod(senf::ClockService::microseconds(1000)),
-      txDuration(senf::ClockService::microseconds(100)),
-      txPower(20),
-      txFrameLength(256)
+      txPeriod(senf::ClockService::microseconds(0)),
+      txDuration(senf::ClockService::microseconds(0)),
+      txPower(10),
+      txFrameLength(2304)
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));
