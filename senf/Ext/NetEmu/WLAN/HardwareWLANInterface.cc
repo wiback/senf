@@ -627,7 +627,6 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
     WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
     BitrateParameters bratePara;
 
-    // @tho: There must be a better way to decide which mcs/legacy modulation to provide for either 2.4 or 5.x GHz bands
     if (wnlc_.frequency() <= 3000000) { 
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
             if (modPara.type == WLANModulationParameter::Legacy) {
