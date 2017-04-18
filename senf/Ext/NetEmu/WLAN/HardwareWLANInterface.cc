@@ -627,39 +627,55 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
     WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
     BitrateParameters bratePara;
 
-    if (wnlc_.frequency() <= 3000000) { 
+    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() <= 3000000)) { 
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
-            if (modPara.type == WLANModulationParameter::Legacy) {
+            switch (modPara.type) {
+            case WLANModulationParameter::Automatic:
+            case WLANModulationParameter::VHT:
+                bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
+            case WLANModulationParameter::HT:
+                bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
+            case WLANModulationParameter::Legacy:
                 bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
+            case WLANModulationParameter::Unknown:
+                break;
+            }
+            if (modPara.type == WLANModulationParameter::Legacy) {
                 bratePara.legacy_24->insert(modPara.rate);
             }
             if (modPara.type == WLANModulationParameter::HT) {
-                bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
                 bratePara.mcs_24->insert(modPara.index);
             }
             if (modPara.type == WLANModulationParameter::VHT) {
-                bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
                 bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
             }
         }
     }
-    if (wnlc_.frequency() >= 4900000) {
+    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() >= 4900000)) {
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_5GHZ)) {
-            if (modPara.type == WLANModulationParameter::Legacy) {
+            switch (modPara.type) {
+            case WLANModulationParameter::Automatic:
+            case WLANModulationParameter::VHT:
+                bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
+            case WLANModulationParameter::HT:
+                bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
+            case WLANModulationParameter::Legacy:
                 bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());
+            case WLANModulationParameter::Unknown:
+                break;
+            }
+            if (modPara.type == WLANModulationParameter::Legacy) {
                 bratePara.legacy_5->insert(modPara.rate);
             }
             if (modPara.type == WLANModulationParameter::HT) {
-                bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
                 bratePara.mcs_5->insert(modPara.index);
             }
             if (modPara.type == WLANModulationParameter::VHT) {
-                bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
                 bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
             }
         }
     }
-
+    
     wnlc_.set_bitrates(bratePara);
     modId_ = modPara.id;
 
