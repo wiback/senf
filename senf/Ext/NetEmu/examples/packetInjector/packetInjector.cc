@@ -144,18 +144,28 @@ int main(int argc, char const * argv[])
             for (unsigned b = 0; b < burst; b++) {
                 radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber(
                     radiotap.next<senf::WLANPacket_DataFrame>()->sequenceNumber() + 1);
-                if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
+                if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size())) {
                     sent++;
-                else
+                }
+                else {
                     dropped++;
+                    if (configuration.verbose) {
+                        std::cerr << "!" << std::flush;
+                    }
+                }
             }
             nextTime += configuration.txPeriod;
             while (senf::ClockService::now() < nextTime);
         } else {
-            if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size()))
+            if (write(handle.fd(), radiotap.data().begin(), radiotap.size()) == signed(radiotap.size())) {
                 sent++;
-            else
+            }
+            else {
                 dropped++;
+                if (configuration.verbose) {
+                    std::cerr << "!" << std::flush;
+                }
+            }
         }
     }
     senf::ClockService::clock_type endTime (senf::ClockService::now());
