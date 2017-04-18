@@ -624,32 +624,36 @@ prefix_ unsigned senf::emu::HardwareWLANInterface::v_bandwidth()
 
 prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParameter::id_t id)
 {
-#define insertParameterIfTypeMatch(typeMatch, colType, col, value)       \
-        col.reset( colType());                                           \
-        if (typeMatch) col->insert( value);
-
     WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
     BitrateParameters bratePara;
 
     // @tho: There must be a better way to decide which mcs/legacy modulation to provide for either 2.4 or 5.x GHz bands
-    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() < 3000000)) { 
+    if (wnlc_.frequency() <= 3000000) { 
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
-            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::Legacy,
-                                        BitrateParameters::LegacyBitrateSet, bratePara.legacy_24, modPara.rate);
-            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::HT,
-                                        BitrateParameters::MCSIndexSet, bratePara.mcs_24, modPara.index);
+            if (modPara.type == WLANModulationParameter::Legacy) {
+                bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
+                bratePara.legacy_24->insert(modPara.rate);
+            }
+            if (modPara.type == WLANModulationParameter::HT) {
+                bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
+                bratePara.mcs_24->insert(modPara.index);
+            }
             if (modPara.type == WLANModulationParameter::VHT) {
                 bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
                 bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
             }
         }
     }
-    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() > 5000000)) {
+    if (wnlc_.frequency() >= 4900000) {
         if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_5GHZ)) {
-            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::Legacy,
-                                        BitrateParameters::LegacyBitrateSet, bratePara.legacy_5, modPara.rate);
-            insertParameterIfTypeMatch( modPara.type == WLANModulationParameter::HT,
-                                        BitrateParameters::MCSIndexSet, bratePara.mcs_5, modPara.index);
+            if (modPara.type == WLANModulationParameter::Legacy) {
+                bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());
+                bratePara.legacy_5->insert(modPara.rate);
+            }
+            if (modPara.type == WLANModulationParameter::HT) {
+                bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
+                bratePara.mcs_5->insert(modPara.index);
+            }
             if (modPara.type == WLANModulationParameter::VHT) {
                 bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
                 bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
