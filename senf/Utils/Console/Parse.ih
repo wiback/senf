@@ -229,42 +229,42 @@ namespace detail {
                     ;
 
                 statement
-                    =    path_expected(path)      [ bind(&PD::beginCommand)(d_, path_) ]
+                    =    path_expected(path)      [ ::phoenix::bind(&PD::beginCommand)(d_, path_) ]
                       >> arguments
                       >> end_of_statement_expected(
                            ( group_start | statement_end )
-                                                  [ bind(&PD::endCommand)(d_) ]
+                                                  [ ::phoenix::bind(&PD::endCommand)(d_) ]
                          )
                     ;
 
                 builtin
                     =    self.keyword_p()("cd")
                       >> path_expected(path)
-                      >> eps_p                    [ bind(&PD::builtin_cd)(d_, path_) ]
+                      >> eps_p                    [ ::phoenix::bind(&PD::builtin_cd)(d_, path_) ]
                     |    self.keyword_p()("ls")
                       >> ! path
-                      >> eps_p                    [ bind(&PD::builtin_ls)(d_, path_) ]
+                      >> eps_p                    [ ::phoenix::bind(&PD::builtin_ls)(d_, path_) ]
                     |    self.keyword_p()("ll")
                       >> ! path
-                      >> eps_p                    [ bind(&PD::builtin_ll)(d_, path_) ]
+                      >> eps_p                    [ ::phoenix::bind(&PD::builtin_ll)(d_, path_) ]
                     |    self.keyword_p()("lr")
                       >> ! path
-                      >> eps_p                    [ bind(&PD::builtin_lr)(d_, path_) ]
-                    |    self.keyword_p()("exit")   [ bind(&PD::builtin_exit)(d_) ]
+                      >> eps_p                    [ ::phoenix::bind(&PD::builtin_lr)(d_, path_) ]
+                    |    self.keyword_p()("exit")   [ ::phoenix::bind(&PD::builtin_exit)(d_) ]
                     |    self.keyword_p()("help")
                       >> ! path
-                      >> eps_p                    [ bind(&PD::builtin_help)(d_, path_) ]
+                      >> eps_p                    [ ::phoenix::bind(&PD::builtin_help)(d_, path_) ]
                     |    self.keyword_p()("echo")
                       >> ! arguments
-                      >> eps_p                    [ bind(&PD::builtin_echo)(d_) ]
+                      >> eps_p                    [ ::phoenix::bind(&PD::builtin_echo)(d_) ]
                     ;
 
                 group_start
-                    =    ch_p('{')                [ bind(&PD::pushDirectory)(d_) ]
+                    =    ch_p('{')                [ ::phoenix::bind(&PD::pushDirectory)(d_) ]
                     ;
 
                 group_close
-                    =    ch_p('}')                [ bind(&PD::popDirectory)(d_) ]
+                    =    ch_p('}')                [ ::phoenix::bind(&PD::popDirectory)(d_) ]
                     ;
 
                 arguments
@@ -272,7 +272,7 @@ namespace detail {
                     ;
 
                 argument
-                    =    simple_argument          [ bind(&PD::pushToken)(d_, token_) ]
+                    =    simple_argument          [ ::phoenix::bind(&PD::pushToken)(d_, token_) ]
                     |    balanced_tokens
                     ;
 
@@ -309,8 +309,8 @@ namespace detail {
                     ;
 
                 opt_path
-                    = ! path                      [ bind(&PD::beginCommand)(d_, path_) ]
-                                                  [ bind(&PD::endCommand)(d_) ]
+                    = ! path                      [ ::phoenix::bind(&PD::beginCommand)(d_, path_) ]
+                                                  [ ::phoenix::bind(&PD::endCommand)(d_) ]
                     ;
 
                 path                    // Returns value in context.path
@@ -336,7 +336,7 @@ namespace detail {
                                                         Token::ArgumentGroupOpen,
                                                         "(",
                                                         pos_) ]
-                                                  [ bind(&PD::pushToken)(d_, token_) ]
+                                                  [ ::phoenix::bind(&PD::pushToken)(d_, token_) ]
                       >> * token
                       >> eps_p                    [ pos_ = positionOf(arg1) ]
                       >> closing_paren_expected(ch_p(')'))
@@ -344,12 +344,12 @@ namespace detail {
                                                         Token::ArgumentGroupClose,
                                                         ")",
                                                         pos_) ]
-                                                  [ bind(&PD::pushToken)(d_, token_) ]
+                                                  [ ::phoenix::bind(&PD::pushToken)(d_, token_) ]
                     ;
 
                 token
-                    =    simple_argument          [ bind(&PD::pushToken)(d_, token_) ]
-                    |    punctuation              [ bind(&PD::pushToken)(d_, token_) ]
+                    =    simple_argument          [ ::phoenix::bind(&PD::pushToken)(d_, token_) ]
+                    |    punctuation              [ ::phoenix::bind(&PD::pushToken)(d_, token_) ]
                     |    balanced_tokens
                     ;
 
