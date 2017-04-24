@@ -92,7 +92,7 @@ int main(int argc, char const * argv[])
 
     senf::PacketSocketHandle handle;
     handle.bind(senf::LLSocketAddress(ifName));
-    handle.protocol().sndbuf(65536);
+    handle.protocol().sndbuf(configuration.sndBuf);
     
     // Radiotap
     senf::RadiotapPacket radiotap (senf::RadiotapPacket::create());

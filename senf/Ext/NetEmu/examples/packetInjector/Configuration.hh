@@ -54,6 +54,8 @@ public:
     unsigned txPower;
     unsigned txFrameLength;
 
+    unsigned sndBuf;
+
     Configuration();
 
     void help();

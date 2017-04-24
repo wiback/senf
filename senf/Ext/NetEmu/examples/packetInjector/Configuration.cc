@@ -49,7 +49,8 @@ prefix_ Configuration::Configuration()
       txPeriod(senf::ClockService::microseconds(0)),
       txDuration(senf::ClockService::microseconds(0)),
       txPower(10),
-      txFrameLength(2304)
+      txFrameLength(2304),
+      sndBuf(txFrameLength * 8)
 {
     namespace fty = senf::console::factory;
     senf::console::DirectoryNode & initDir (senf::console::root().add("init", fty::Directory()));
@@ -76,6 +77,8 @@ prefix_ Configuration::Configuration()
                 .parser(senf::parseClockServiceInterval));
     initDir.add("tx-power", fty::Variable(txPower));
     initDir.add("tx-frame-length", fty::Variable(txFrameLength));
+
+    initDir.add("sndBuf", fty::Variable(sndBuf));
 
     // always turn those on, where available
     enableHighresTimers();
