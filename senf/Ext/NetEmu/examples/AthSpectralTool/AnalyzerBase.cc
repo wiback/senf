@@ -94,7 +94,7 @@ prefix_ bool AnalyzerBase::startSpectralScan()
 
     bool rtn = athSpectralScan_.callback(
                std::bind(&AnalyzerBase::processSpectralEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
-    athSpectralScan_.frequency(configuration_.frequency);
+    athSpectralScan_.frequency(configuration_.frequency, 0, 0);
     return rtn;
 }
 
@@ -142,7 +142,7 @@ prefix_ void AnalyzerBase::request()
         
         // determine data rate
         if (rtParser.mcsPresent()) {
-            unsigned id (senf::emu::WLANModulationParameterRegistry::instance().parameterIdByMCS(
+            unsigned id (senf::emu::WLANModulationParameterRegistry::instance().parameterIdByMCS_HT(
                               rtParser.mcs().mcsIndex(),
                               rtParser.mcs().bandwidth(),
                               rtParser.mcs().guardInterval() ));
@@ -150,7 +150,13 @@ prefix_ void AnalyzerBase::request()
         }
         else if (rtParser.vhtPresent()) {
             // we need to extend the Modulation registry to support VHT...
-            rate = 1000000;  // 1Gbps (dummy for now)
+            unsigned id (senf::emu::WLANModulationParameterRegistry::instance().parameterIdByMCS_VHT(
+                rtParser.vht().mcs_user0(),
+                rtParser.vht().nss_user0(),
+                rtParser.bandwidth(),
+                rtParser.vht().guardInterval() ));
+                        
+            rate = senf::emu::WLANModulationParameterRegistry::instance().findModulationById(id).rate;
         }
         else if (rtParser.ratePresent()) {
             rate = rtParser.rate() * 500;
