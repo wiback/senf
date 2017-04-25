@@ -53,6 +53,7 @@ prefix_ void senf::emu::detail::HardwareEthernetInterfaceNet::assignSockets(Conn
 {
     source.handle(socket_);
     sink.handle(socket_);
+
     if (!socket_) {
         if(socket) {
             socket.close();
@@ -469,9 +470,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
 {
     if (HardwareEthernetInterfaceNet::socket.valid()) {
         auto rs (HardwareEthernetInterfaceNet::socket.protocol().rxStats());
-        os << "MMAP Rx stats: "; rs.dump(os);
+        os << "MMAP Rx (fd=" << socket.protocol().fd() << ", avail " << socket.protocol().available() << ") stats: "; rs.dump(os);
         auto ts (HardwareEthernetInterfaceNet::socket.protocol().txStats());
-        os << " MMAP Tx stats: "; ts.dump(os);
+        os << " MMAP Tx (fd=" << socket.protocol().fd() << ") stats: "; ts.dump(os);
     } else {
         os << "Socket closed. No stats available.";
     }

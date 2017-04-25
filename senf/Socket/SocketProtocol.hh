@@ -215,6 +215,11 @@ namespace senf {
                                              empty, the <tt>\<\<</tt> operator will add add a comma
                                              as separator. */
 
+        int fd() const;                 ///< Get file descriptor
+                                        /**< Returns the file descriptor this protocol instance
+                                             references. This is the same as <tt>fh().fd()</tt> but
+                                             is implemented here since it is needed so often. */
+
     protected:
         FileHandle fh() const;          ///< Get a FileHandle for this instance
                                         /**< This member will re turn a FileHandle instance for this
@@ -222,11 +227,6 @@ namespace senf {
                                              instance to a ClientSocketHandle / ServerSocketHandle
                                              as long as you know some of the socket policy using
                                              static_socket_cast or dynamic_socket_cast */
-
-        int fd() const;                 ///< Get file descriptor
-                                        /**< Returns the file descriptor this protocol instance
-                                             references. This is the same as <tt>fh().fd()</tt> but
-                                             is implemented here since it is needed so often. */
 
         void fd(int) const;             ///< Initialize file descriptor
                                         /**< Assigns the file descriptor to the file handle, this

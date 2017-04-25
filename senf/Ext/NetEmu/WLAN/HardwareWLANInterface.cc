@@ -777,14 +777,14 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
 
     if (HardwareWLANInterfaceNet::monSocket) {
         auto rs (HardwareWLANInterfaceNet::monSocket.protocol().rxStats());
-        os << "MMAP Rx (monitor) stats: "; rs.dump(os);
+        os << "MMAP Rx (monitor, fd=" << monSocket.protocol().fd() << ", avail " << socket.protocol().available() << ") stats: "; rs.dump(os);
     } else {
         auto rs (HardwareWLANInterfaceNet::socket.protocol().rxStats());
-        os << "MMAP Rx (data) stats: "; rs.dump(os);
+        os << "MMAP Rx (data, fd=" << socket.protocol().fd() << ", avail " << socket.protocol().available() << ") stats: "; rs.dump(os);
     }
     if (HardwareWLANInterfaceNet::socket) {
         auto ts (HardwareWLANInterfaceNet::socket.protocol().txStats());
-        os << " MMAP Tx (data) stats: "; ts.dump(os);
+        os << "MMAP Tx (data, fd=" << socket.protocol().fd() << ") stats: "; ts.dump(os);
     }
 
     os << std::endl;

@@ -97,6 +97,8 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::handl
     red_ = 0;
     handle_ = handle;
     event_.set(handle_, IOEvent::Read);
+    if (handle)
+        event_.enabled(true);
 }
 
 #ifdef SENF_DEBUG
