@@ -81,9 +81,14 @@ for moduleid, (type, cs) in modules.iteritems():
         opts = []
         if "Passive" in type: opts.append("arrowtail=odot");
         if "Output" in type and peerid is not None:
-            if "Active" in type and connectors[peerid][1]:
-                opts.append("arrowhead=tee")
-                opts.append('headlabel="!"')                 
+            try:
+                if "Active" in type and connectors[peerid][1]:
+                    opts.append("arrowhead=tee")
+                    opts.append('headlabel="!"')                
+            except:
+                connectors[peerid]=(peerid,True)
+                opts.append("arrowhead=none")
+                opts.append('headlabel="!"')                
             if "Passive" in type and connectors[connectorid][1]:
                 opts.append("arrowtail=tee")
                 opts.append('taillabel="!"')
