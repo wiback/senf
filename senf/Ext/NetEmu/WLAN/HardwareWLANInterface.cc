@@ -1062,10 +1062,10 @@ senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statistic
     return wifiStatistics_.statisticsMap(tag);
 }
 
-prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANInterface::dfsState(unsigned freq, unsigned bandwidth)
+prefix_ std::pair<senf::emu::WirelessNLController::DFSState::Enum,std::uint32_t> senf::emu::HardwareWLANInterface::dfsState(unsigned freq, unsigned bandwidth)
 {
     if (freq == 0 or bandwidth == 0)
-        return WirelessNLController::DFSState::NoDFS;
+        return std::make_pair(WirelessNLController::DFSState::NoDFS, 0);
 
     if (bandwidth == MHZ_TO_KHZ(20))
         return wnlc_.dfsState(freq - frequencyOffset_);
@@ -1077,15 +1077,15 @@ prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANI
          *   available |        |           | available | unavailable
          * unavailable |        |           |           | unavailable
          */
-        WirelessNLController::DFSState::Enum state1 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
-        WirelessNLController::DFSState::Enum state2 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
-        if (state1 == WirelessNLController::DFSState::NoDFS and state2 == WirelessNLController::DFSState::NoDFS)
-            return WirelessNLController::DFSState::NoDFS;
-        if (state1 == WirelessNLController::DFSState::Unavailable or state2 == WirelessNLController::DFSState::Unavailable)
-            return WirelessNLController::DFSState::Unavailable;
-        if (state1 == WirelessNLController::DFSState::Usable or state2 == WirelessNLController::DFSState::Usable)
-            return WirelessNLController::DFSState::Usable;
-        return WirelessNLController::DFSState::Available;
+        auto state1 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
+        auto state2 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
+        if (state1.first == WirelessNLController::DFSState::NoDFS and state2.first == WirelessNLController::DFSState::NoDFS)
+            return std::make_pair(WirelessNLController::DFSState::NoDFS, 0);
+        if (state1.first == WirelessNLController::DFSState::Unavailable or state2.first == WirelessNLController::DFSState::Unavailable)
+            return std::make_pair(WirelessNLController::DFSState::Unavailable, std::max(state1.second, state2.second));
+        if (state1.first == WirelessNLController::DFSState::Usable or state2.first == WirelessNLController::DFSState::Usable)
+            return std::make_pair(WirelessNLController::DFSState::Usable, std::min(state1.second, state2.second));
+        return std::make_pair(WirelessNLController::DFSState::Available, std::min(state1.second, state2.second));
     }
 
     if (bandwidth == MHZ_TO_KHZ(80)) {
@@ -1095,30 +1095,30 @@ prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::HardwareWLANI
          *   available |        |           | available | unavailable
          * unavailable |        |           |           | unavailable
          */
-        WirelessNLController::DFSState::Enum state1 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(30)));
-        WirelessNLController::DFSState::Enum state2 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
-        WirelessNLController::DFSState::Enum state3 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
-        WirelessNLController::DFSState::Enum state4 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(30)));
+        auto state1 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(30)));
+        auto state2 (wnlc_.dfsState(freq - frequencyOffset_ - MHZ_TO_KHZ(10)));
+        auto state3 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(10)));
+        auto state4 (wnlc_.dfsState(freq - frequencyOffset_ + MHZ_TO_KHZ(30)));
 
-        if (state1 == WirelessNLController::DFSState::NoDFS and
-            state2 == WirelessNLController::DFSState::NoDFS and
-            state3 == WirelessNLController::DFSState::NoDFS and
-            state4 == WirelessNLController::DFSState::NoDFS)
-            return WirelessNLController::DFSState::NoDFS;
+        if (state1.first == WirelessNLController::DFSState::NoDFS and
+            state2.first == WirelessNLController::DFSState::NoDFS and
+            state3.first == WirelessNLController::DFSState::NoDFS and
+            state4.first == WirelessNLController::DFSState::NoDFS)
+            return std::make_pair(WirelessNLController::DFSState::NoDFS, 0);
         
-        if (state1 == WirelessNLController::DFSState::Unavailable or
-            state2 == WirelessNLController::DFSState::Unavailable or
-            state3 == WirelessNLController::DFSState::Unavailable or
-            state4 == WirelessNLController::DFSState::Unavailable)
-            return WirelessNLController::DFSState::Unavailable;
+        if (state1.first == WirelessNLController::DFSState::Unavailable or
+            state2.first == WirelessNLController::DFSState::Unavailable or
+            state3.first == WirelessNLController::DFSState::Unavailable or
+            state4.first == WirelessNLController::DFSState::Unavailable)
+            return std::make_pair(WirelessNLController::DFSState::Unavailable, std::max({state1.second, state2.second, state3.second, state4.second}));
         
-        if (state1 == WirelessNLController::DFSState::Usable or
-            state2 == WirelessNLController::DFSState::Usable or
-            state3 == WirelessNLController::DFSState::Usable or
-            state4 == WirelessNLController::DFSState::Usable)
-            return WirelessNLController::DFSState::Usable;
+        if (state1.first == WirelessNLController::DFSState::Usable or
+            state2.first == WirelessNLController::DFSState::Usable or
+            state3.first == WirelessNLController::DFSState::Usable or
+            state4.first == WirelessNLController::DFSState::Usable)
+            return std::make_pair(WirelessNLController::DFSState::Usable, std::min({state1.second, state2.second, state3.second, state4.second}));
         
-        return WirelessNLController::DFSState::Available;
+        return std::make_pair(WirelessNLController::DFSState::Available, std::min({state1.second, state2.second, state3.second, state4.second}));
     }
     
     throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;

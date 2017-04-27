@@ -338,7 +338,7 @@ namespace emu {
 
         void set_txQueueParameters(boost::uint8_t queue, boost::uint16_t cwMin, boost::uint16_t cwMax, boost::uint8_t aifs, boost::uint16_t txop);
 
-        DFSState::Enum dfsState(frequency_type freq);
+        std::pair<DFSState::Enum,std::uint32_t> dfsState(frequency_type freq);
         void start_radarDetection(unsigned int freq, ChannelMode::Enum = ChannelMode::NoHT20);
 
         void set_regulatory_request(std::string const & alpha2Country);
@@ -465,7 +465,7 @@ namespace emu {
         NetlinkMsgCallback netlinkMsgCb_;
         NetlinkMsgCallback netlinkEventCb_;
         int bandtype_;
-        typedef std::map<frequency_type, DFSState::Enum> DFSStateMap;
+        typedef std::map<frequency_type, std::pair<DFSState::Enum,std::uint32_t>> DFSStateMap;
         DFSStateMap dfsStates_;
         RegulatoryDomain regDomain_;
         boost::optional<std::set<BitrateParameters::MCSIndex> > tmpMCSRates_;

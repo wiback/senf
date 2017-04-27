@@ -113,7 +113,7 @@ namespace emu {
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 
-        WirelessNLController::DFSState::Enum dfsState(unsigned freq, unsigned bw);
+        std::pair<senf::emu::WirelessNLController::DFSState::Enum,std::uint32_t> dfsState(unsigned freq, unsigned bw);
         void startCAC(unsigned int freq, unsigned int bandwidth);
 
         void dumpMmapStats(std::ostream & os);

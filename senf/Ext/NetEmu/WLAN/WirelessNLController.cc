@@ -328,14 +328,14 @@ prefix_ int senf::emu::WirelessNLController::netlink_cb(nl_msg * msg)
     return NL_SKIP;
 }
 
-prefix_ senf::emu::WirelessNLController::DFSState::Enum senf::emu::WirelessNLController::dfsState(frequency_type freq)
+prefix_ std::pair<senf::emu::WirelessNLController::DFSState::Enum,std::uint32_t> senf::emu::WirelessNLController::dfsState(frequency_type freq)
 {
     getWiphy();
     DFSStateMap::const_iterator state (dfsStates_.find(freq));
     if (state != dfsStates_.end()) {
         return state->second;
     }
-    return DFSState::NoDFS;
+    return std::make_pair(DFSState::NoDFS, 0);
 }
 
 prefix_ void senf::emu::WirelessNLController::set_frequency(frequency_type freq, ChannelMode::Enum channelMode)
@@ -700,7 +700,8 @@ prefix_ int senf::emu::WirelessNLController::getWiphy_cb(nl_msg * msg)
 
             if (freqAttr[NL80211_FREQUENCY_ATTR_DFS_STATE]) {
                 uint32_t state = nla_get_u32(freqAttr[NL80211_FREQUENCY_ATTR_DFS_STATE]);
-                dfsStates_[MHZ_TO_KHZ(f)] = DFSState::Enum(state);
+                uint32_t time  = nla_get_u32(freqAttr[NL80211_FREQUENCY_ATTR_DFS_TIME]);
+                dfsStates_[MHZ_TO_KHZ(f)] = std::make_pair(DFSState::Enum(state), time);
             }
         }
 
