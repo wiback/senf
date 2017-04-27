@@ -1082,7 +1082,7 @@ prefix_ std::pair<senf::emu::WirelessNLController::DFSState::Enum,std::uint32_t>
         if (state1.first == WirelessNLController::DFSState::NoDFS and state2.first == WirelessNLController::DFSState::NoDFS)
             return std::make_pair(WirelessNLController::DFSState::NoDFS, 0);
         if (state1.first == WirelessNLController::DFSState::Unavailable or state2.first == WirelessNLController::DFSState::Unavailable)
-            return std::make_pair(WirelessNLController::DFSState::Unavailable, std::max(state1.second, state2.second));
+            return std::make_pair(WirelessNLController::DFSState::Unavailable, std::min(state1.second, state2.second));
         if (state1.first == WirelessNLController::DFSState::Usable or state2.first == WirelessNLController::DFSState::Usable)
             return std::make_pair(WirelessNLController::DFSState::Usable, std::min(state1.second, state2.second));
         return std::make_pair(WirelessNLController::DFSState::Available, std::min(state1.second, state2.second));
@@ -1110,7 +1110,7 @@ prefix_ std::pair<senf::emu::WirelessNLController::DFSState::Enum,std::uint32_t>
             state2.first == WirelessNLController::DFSState::Unavailable or
             state3.first == WirelessNLController::DFSState::Unavailable or
             state4.first == WirelessNLController::DFSState::Unavailable)
-            return std::make_pair(WirelessNLController::DFSState::Unavailable, std::max({state1.second, state2.second, state3.second, state4.second}));
+            return std::make_pair(WirelessNLController::DFSState::Unavailable, std::min({state1.second, state2.second, state3.second, state4.second}));
         
         if (state1.first == WirelessNLController::DFSState::Usable or
             state2.first == WirelessNLController::DFSState::Usable or
