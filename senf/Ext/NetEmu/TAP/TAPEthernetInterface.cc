@@ -41,7 +41,7 @@
 // senf::emu::detail::TAPEthernetInterfaceNet
 
 prefix_ senf::emu::detail::TAPEthernetInterfaceNet::TAPEthernetInterfaceNet(std::string const & device)
-    : socket (senf::noinit),
+    : socket (TapSocketHandle(device)),
       dev_(device), ctrl_(device),
       annotatorRx_(true, false, ctrl_.hardwareAddress()), annotatorTx_(false, false),
       netOutput (annotatorRx_.output), netInput (annotatorTx_.input)
@@ -55,14 +55,12 @@ prefix_ senf::emu::detail::TAPEthernetInterfaceNet::TAPEthernetInterfaceNet(std:
 prefix_ void senf::emu::detail::TAPEthernetInterfaceNet::assignSockets(bool on)
 {
     if (on) {
-        socket = TapSocketHandle(dev_);
-        socket.blocking(false);
         source.handle(socket);
         sink.handle(socket);
     } else {
-        socket.close();
-        source.handle(socket);
-        sink.handle(socket);
+        static TapSocketHandle skt (senf::noinit);
+        source.handle(skt);
+        sink.handle(skt);
     }
 }
 
