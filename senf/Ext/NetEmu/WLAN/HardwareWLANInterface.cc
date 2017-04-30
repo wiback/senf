@@ -903,6 +903,20 @@ senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
             meshId, freq-frequencyOffset_, channelMode) );
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::setCellJoined(unsigned bandwidth)
+{ 
+    if (bandwidth == 0) {
+        closeDataSocket();
+    } else {
+        if (bandwidth != 20000 and bandwidth != 40000 and bandwidth != 80000) {
+            throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
+        } 
+        openDataSocket();
+        bw_ = bandwidth;
+        frequencyHint(bw_);   
+    }
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController::MeshJoinParameters const & parameters)
 {
     openDataSocket();

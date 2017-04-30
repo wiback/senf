@@ -81,6 +81,7 @@ namespace emu {
         WirelessNLController::MeshJoinParameters::ptr joinMesh(std::string const & meshId, unsigned int freq, unsigned int bandwidth);
         void leaveCell();
         bool cellJoined() const;
+        void setCellJoined(unsigned bandwidth);  // bw==0 => cell left (close data socket)
         
         int frequencyOffset() const;
         void frequencyOffset(int offset);
