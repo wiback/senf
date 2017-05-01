@@ -126,7 +126,7 @@ prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::flush()
     }
 
     try {
-        while (handle_.readable() && reader_(handle_));
+        while (handle_ && handle_.readable() && reader_(handle_));
     }
     catch (...) {};
 }

@@ -699,8 +699,7 @@ prefix_ void senf::emu::MonitorDataFilter::requestPlain()
     eth.annotation<annotations::Interface>().value = id_;
     
     // set the rx timestamp. Careful: this assumes that we are using an MMAP source !
-    eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
-    
+    eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));    
     {
         emu::annotations::Quality const & q (eth.annotation<emu::annotations::Quality>());
         q.rssi  = 110;            // for now, we report the maximum signal 'quality'
