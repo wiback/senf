@@ -471,11 +471,12 @@ prefix_ void senf::emu::HardwareWLANInterface::openMonitorSocket()
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::closeMonitorSocket()
-{ 
+{
+    monSource.handle(ConnectedMMapReadPacketSocketHandle(senf::noinit));
+
     if (HardwareWLANInterfaceNet::monSocket.valid())
         HardwareWLANInterfaceNet::monSocket.close();
 
-    assignMonitorSocket(HardwareWLANInterfaceNet::monSocket);
 
     // in non-monitor mode, we enable the wifi_statistics module
     wifiStatistics_.enable(true);
@@ -497,11 +498,13 @@ prefix_ bool senf::emu::HardwareWLANInterface::cellJoined()
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::closeDataSocket()
-{ 
+{
+    source.handle(ConnectedMMapPacketSocketHandle(senf::noinit));
+    sink.handle(ConnectedMMapPacketSocketHandle(senf::noinit));
+    
     if (HardwareWLANInterfaceNet::socket.valid())
         HardwareWLANInterfaceNet::socket.close();
     
-    HardwareWLANInterfaceNet::assignDataSocket(HardwareWLANInterfaceNet::socket);
     netctl_.down();
 }
 

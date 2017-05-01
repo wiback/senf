@@ -58,9 +58,8 @@ prefix_ void senf::emu::detail::TAPEthernetInterfaceNet::assignSockets(bool on)
         source.handle(socket);
         sink.handle(socket);
     } else {
-        static TapSocketHandle skt (senf::noinit);
-        source.handle(skt);
-        sink.handle(skt);
+        source.handle( TapSocketHandle(senf::noinit));
+        sink.handle( TapSocketHandle(senf::noinit));
     }
 }
 
