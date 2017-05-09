@@ -52,7 +52,7 @@ init_client(std::string iface, unsigned qlen, unsigned frameSize,
     this->init_packetSocket(type, protocol);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).blocking(false);
     static_socket_cast< ClientSocketHandle<Policy> >(this->fh()).bind(LLSocketAddress(iface));
-    this->init_mmap(frameSize, qlen, qlen, reserve, qDiscBypass);
+    this->init_mmap(frameSize, qlen, qlen*2/3, reserve, qDiscBypass);
 }
 
 template <class Policy>
