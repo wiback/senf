@@ -68,7 +68,8 @@ namespace emu {
         void maxBurst(unsigned maxBurst);
 
         std::uint16_t pvid() const;
-        bool     pvid(std::uint16_t p, bool accessMode); 
+        bool pvid(std::uint16_t p, bool accessMode); 
+        std::uint32_t vlanMismatch();
 
     protected:
         EthernetController & ethController();

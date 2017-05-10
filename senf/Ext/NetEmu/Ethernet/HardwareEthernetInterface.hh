@@ -67,8 +67,9 @@ namespace emu {
         void setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb);
 
         std::uint16_t pvid() const;
-        bool     pvid(std::uint16_t p, bool accessMode); 
-        
+        bool pvid(std::uint16_t p, bool accessMode); 
+        std::uint32_t vlanMismatch();
+
         unsigned sndBuf();
         void     sndBuf(unsigned sndbuf);
         unsigned rcvBuf();

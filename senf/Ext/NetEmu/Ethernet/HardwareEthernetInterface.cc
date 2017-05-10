@@ -425,6 +425,10 @@ prefix_ bool senf::emu::HardwareEthernetInterface::pvid(std::uint16_t p, bool ac
     return true;
 }
 
+prefix_ std::uint32_t senf::emu::HardwareEthernetInterface::vlanMismatch()
+{
+    return HardwareEthernetInterfaceNet::annotatorRx_.vlanMismatch() + HardwareEthernetInterfaceNet::annotatorTx_.vlanMismatch();
+}
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::qlen()
     const
