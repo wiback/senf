@@ -62,13 +62,15 @@ namespace emu {
         void annotate(bool a);
         bool annotate() const;
 
+        std::uint32_t vlanMismatch();
+
     private:
         void requestRx();
         void requestRxMMAP();
         void requestRxMMAPpromisc();
         void requestTx();
 
-        void netemu_annotaions(senf::EthernetPacket const & eth);
+        void netemu_annotations(senf::EthernetPacket const & eth);
 
         void handle_pkt_dummy(senf::EthernetPacket const & eth);
         void handle_pkt_dummy_annotate(senf::EthernetPacket const & eth);
@@ -77,6 +79,7 @@ namespace emu {
 
         MACAddress id_;
         std::uint16_t pvid_;
+        std::uint32_t vlanMismatch_;
         HandleEthPkt handle_pkt;
         bool annotate_;
         bool rxMode_;

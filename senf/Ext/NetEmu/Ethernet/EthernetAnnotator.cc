@@ -39,6 +39,7 @@
 prefix_ senf::emu::EthernetAnnotator::EthernetAnnotator(bool rxMode, bool mmapMode, senf::MACAddress const & id)
     : id_ (id),
       pvid_(std::uint16_t(-1)),
+      vlanMismatch_(0),
       annotate_(false),
       rxMode_(rxMode), mmapMode_(mmapMode)
 {
@@ -96,7 +97,14 @@ prefix_ void senf::emu::EthernetAnnotator::promisc(bool p)
     }
 }
 
-prefix_ void senf::emu::EthernetAnnotator::netemu_annotaions(senf::EthernetPacket const & eth)
+prefix_ std::uint32_t senf::emu::EthernetAnnotator::vlanMismatch()
+{
+    std::uint32_t tmp (vlanMismatch_);
+    vlanMismatch_ = 0;
+    return tmp;
+}
+
+prefix_ void senf::emu::EthernetAnnotator::netemu_annotations(senf::EthernetPacket const & eth)
 {    
     eth.annotation<annotations::Interface>().value = id_;
     {
@@ -112,7 +120,7 @@ prefix_ void senf::emu::EthernetAnnotator::requestRx()
 {
     senf::EthernetPacket const & eth (input());
 
-    netemu_annotaions(eth);
+    netemu_annotations(eth);
     eth.annotation<annotations::Timestamp>().fromScheduler();
 
     handle_pkt(eth);
@@ -122,7 +130,7 @@ prefix_ void senf::emu::EthernetAnnotator::requestRxMMAP()
 {
     senf::EthernetPacket const & eth (input());
 
-    netemu_annotaions(eth);
+    netemu_annotations(eth);
     eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
     
     handle_pkt(eth);
@@ -132,7 +140,7 @@ prefix_ void senf::emu::EthernetAnnotator::requestRxMMAPpromisc()
 {
     senf::EthernetPacket const & eth (input());
 
-    netemu_annotaions(eth);
+    netemu_annotations(eth);
     eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
 
     // check, if the h/w has removed the VLAN tag...
@@ -192,6 +200,7 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetP
 {
     auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
     if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_))) {
+        vlanMismatch_++;
         return;
     }
 
@@ -216,7 +225,7 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_insert_tag(senf::EthernetP
 {
     senf::EthVLanPacket vlan (eth.next<senf::EthVLanPacket>(senf::nothrow));
     if (SENF_UNLIKELY(vlan)) {
-        // drop already tagged frames
+        vlanMismatch_++;
         return;
     }
     
