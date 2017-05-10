@@ -69,7 +69,8 @@ namespace emu {
 
         std::uint16_t pvid() const;
         bool pvid(std::uint16_t p, bool accessMode); 
-        std::uint32_t vlanMismatch();
+        std::uint32_t vlanMismatchRx();
+        std::uint32_t vlanMismatchTx();
 
     protected:
         EthernetController & ethController();

@@ -245,9 +245,14 @@ prefix_ bool senf::emu::TAPEthernetInterface::pvid(std::uint16_t p, bool accessM
     return true;
 }
 
-prefix_ std::uint32_t senf::emu::TAPEthernetInterface::vlanMismatch()
+prefix_ std::uint32_t senf::emu::TAPEthernetInterface::vlanMismatchRx()
 {
-    return TAPEthernetInterfaceNet::annotatorRx_.vlanMismatch() + TAPEthernetInterfaceNet::annotatorTx_.vlanMismatch();
+    return TAPEthernetInterfaceNet::annotatorRx_.vlanMismatch();
+}
+
+prefix_ std::uint32_t senf::emu::TAPEthernetInterface::vlanMismatchTx()
+{
+    return TAPEthernetInterfaceNet::annotatorTx_.vlanMismatch();
 }
 
 prefix_ unsigned senf::emu::TAPEthernetInterface::maxBurst()
