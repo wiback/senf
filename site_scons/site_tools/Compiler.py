@@ -33,7 +33,7 @@ def CheckCXXVersion(context, fail=False, min=None, max=None):
             if version.startswith('Ubuntu') or version.startswith('Debian'):
                 version = version.split()[3].split('-')[0]
             else:
-                version = version.split()[2]
+                version = version.split()[2].split('-')[0]
             if proc.returncode < 0: 
                 version = None
         except IndexError: pass
