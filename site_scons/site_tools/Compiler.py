@@ -30,7 +30,7 @@ def CheckCXXVersion(context, fail=False, min=None, max=None):
         proc = subprocess.Popen((context.env['CXX'], '-v'), stderr=subprocess.PIPE)
         try:
             version = proc.communicate()[1]
-            if version.startswith('Ubuntu'):
+            if version.startswith('Ubuntu') or version.startswith('Debian'):
                 version = version.split()[3].split('-')[0]
             else:
                 version = version.split()[2]
