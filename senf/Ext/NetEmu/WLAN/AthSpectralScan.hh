@@ -91,12 +91,6 @@ namespace emu {
         std::uint32_t frequency_;
         std::int32_t frequencyOffset_;
 
-        unsigned spectralPeriod_;
-        unsigned spectralFFTPeriod_;
-        unsigned spectralShortRepeat_;
-        unsigned spectralBins_;
-        unsigned spectralCount_;
-
         unsigned spectralFrames_;
         unsigned spectralValidSamples_;
         unsigned spectralUnknown_;
@@ -104,7 +98,6 @@ namespace emu {
         unsigned spectralFrequencyMismatch_;
         
         void handleSpectralEvent(int fd);
-
     };
 
 }}

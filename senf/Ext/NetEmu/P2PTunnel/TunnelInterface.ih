@@ -42,7 +42,7 @@ namespace emu {
 
 namespace detail {
 
-    template <class Controller> class TunnelInterfaceNet;
+    template <class Controller> struct TunnelInterfaceNet;
 
     template <class Controller>
     class TunnelIOHelper
