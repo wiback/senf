@@ -76,27 +76,33 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
                  "senf::ppi::connector::Connector::connect(): (source) "
                  "Missing route() or noroute()" );
     // The connector is already connected
-    if (peer_)
+    if (peer_) {
+        auto const & _tmp_to_make_clang_happy_ (peer_->module());
         throw DuplicateConnectionException()
             << " in module: " << prettyName(typeid(*module_))
-            << ", source module: " << prettyName(typeid(peer_->module()));
+            << ", source module: " << prettyName(typeid(_tmp_to_make_clang_happy_));
+    }
     // The target connector is not registered -> route() or noroute() statement missing
     SENF_ASSERT( target.module_,
                  "senf::ppi::connector::Connector::connect(): (target) "
                  "Missing route() or noroute()" );
     // The target connector is already connected
-    if (target.peer_)
+    if (target.peer_) {
+        auto const & _tmp_to_make_clang_happy_ (target.peer_->module());
         throw DuplicateConnectionException()
             << " in module: " << prettyName(typeid(*module_))
-            << ", target module: " << prettyName(typeid(target.peer_->module()));
+            << ", target module: " << prettyName(typeid(_tmp_to_make_clang_happy_));
+    }
     if (! (v_packetTypeId() == typeid(void) ||
            target.v_packetTypeId() == typeid(void) ||
-           v_packetTypeId() == target.v_packetTypeId()) )
+           v_packetTypeId() == target.v_packetTypeId()) ) {
+        auto const & _tmp_to_make_clang_happy_ (target.module());
         throw IncompatibleConnectorsException()
             << ": " << prettyName(v_packetTypeId())
             << " [in module " << prettyName(typeid(*module_))  << "] "
             << ", " << prettyName(target.v_packetTypeId())
-            << " [in module " << prettyName(typeid(*target.module_)) << "]";
+            << " [in module " << prettyName(typeid(_tmp_to_make_clang_happy_)) << "]";
+    }
 
     peer_ = &target;
     target.peer_ = this;
@@ -144,8 +150,9 @@ prefix_ void senf::ppi::connector::Connector::throttleTrace(char const * label,
     if (tracingState() == NO_TRACING)
         return;
     SENF_LOG_BLOCK(({
+        auto const & _tmp_to_make_clang_happy_ (module());
         log << "PPI throttling trace: " << label << " " << type << " on " << & module()
-            << " " << prettyName(typeid(module())) << " connector 0x" << this << "\n";
+            << " " << prettyName(typeid(_tmp_to_make_clang_happy_)) << " connector 0x" << this << "\n";
     }));
 }
 

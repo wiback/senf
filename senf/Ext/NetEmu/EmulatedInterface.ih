@@ -113,7 +113,7 @@ namespace detail {
                                         ///< Start statistics generation or change interval
 
     private:
-        virtual void v_handlePacket(PacketHeader const & p);
+        virtual void v_handlePacket(PacketHeader const & p) override;
         void statisticsUpdate();
 
         typedef std::map<std::pair<unsigned,unsigned>, boost::uint32_t> SeqNoMap;
@@ -156,7 +156,7 @@ namespace detail {
         void startStatistics(ClockService::clock_type pollInterval);
 
     private:
-        virtual void v_handlePacket(PacketHeader const & p);
+        virtual void v_handlePacket(PacketHeader const & p) override;
         void statisticsUpdate();
 
         ClockService::clock_type maxDelay_;

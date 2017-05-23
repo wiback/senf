@@ -76,7 +76,7 @@ namespace module {
                                              \see connector::GenericPassiveInput::throttlingDisc() */
 
     private:
-        virtual void v_init();
+        virtual void v_init() override;
 
         void onInput();
         void onOutput();

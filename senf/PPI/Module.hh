@@ -360,7 +360,7 @@ namespace module {
 #   define SENF_PPI_MODULE(name)                                                                  \
     public:                                                                                       \
         ~ name() { destroy(); }                                                                   \
-        void macro_SENF_PPI_MODULE_missing() {}                                                   \
+        void macro_SENF_PPI_MODULE_missing() override {}                                          \
     private:
 
 }}}

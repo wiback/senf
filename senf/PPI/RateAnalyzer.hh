@@ -95,7 +95,7 @@ namespace module {
                                         ///< Start generating statistics at given interval
 
     private:
-        void v_handlePacket(Packet const & p);
+        void v_handlePacket(Packet const & p) override;
         void tick();
 
         senf::ppi::IntervalTimer timer_;

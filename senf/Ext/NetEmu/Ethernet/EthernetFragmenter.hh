@@ -72,8 +72,8 @@ namespace emu {
     };
 
     class EthernetFragmenterModule
-        : public EthernetFragmenterBase, 
-          public senf::ppi::module::Module
+        : public senf::ppi::module::Module,
+          public EthernetFragmenterBase 
     {
         SENF_PPI_MODULE( EthernetFragmenterModule );
 

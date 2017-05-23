@@ -157,10 +157,10 @@ namespace detail {
         std::pair<INet6SocketAddress,unsigned> v_getTxInfo(Packet const & eth) const override;
 
     private:
-        void v_handleCtrlPacket(EthernetPacket const & ctrlPacket, INet6SocketAddress const & srcAddr, Handle & handle);
-        signed v_processSequenceNumber(TunnelHeaderPacket const & thdr, INet6SocketAddress const & srcAddr);
-        bool v_writePacket(Handle & handle, PacketType & packet);
-        void v_dumpInfo(std::ostream & os) const;
+        void v_handleCtrlPacket(EthernetPacket const & ctrlPacket, INet6SocketAddress const & srcAddr, Handle & handle) override;
+        signed v_processSequenceNumber(TunnelHeaderPacket const & thdr, INet6SocketAddress const & srcAddr) override;
+        bool v_writePacket(Handle & handle, PacketType & packet) override;
+        void v_dumpInfo(std::ostream & os) const override;
         void sendSetupRequest();
         void processTimeout();
         void resetTimer();
@@ -283,11 +283,11 @@ namespace detail {
         std::pair<INet6SocketAddress,unsigned> v_getTxInfo(Packet const & eth) const override;
 
     private:
-        void v_handleCtrlPacket(EthernetPacket const & ctrlPacket, INet6SocketAddress const & srcAddr, Handle & handle);
-        signed v_processSequenceNumber(TunnelHeaderPacket const & thdr, INet6SocketAddress const & srcAddr);
-        bool v_writePacket(Handle & handle, PacketType & packet);
-        void v_dumpInfo(std::ostream & os) const;
-        void v_timeoutChanged();
+        void v_handleCtrlPacket(EthernetPacket const & ctrlPacket, INet6SocketAddress const & srcAddr, Handle & handle) override;
+        signed v_processSequenceNumber(TunnelHeaderPacket const & thdr, INet6SocketAddress const & srcAddr) override;
+        bool v_writePacket(Handle & handle, PacketType & packet) override;
+        void v_dumpInfo(std::ostream & os) const override;
+        void v_timeoutChanged() override;
         void sendSetupRequest();
         void processTimeout();
 

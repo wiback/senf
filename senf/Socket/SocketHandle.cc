@@ -49,7 +49,8 @@ prefix_ void senf::SocketBody::state(SocketStateMap & map, unsigned lod)
     map["file.refcount"]   << refcount();
     map["socket.server"]   << isServer();
     map["socket.protocol"] << v_protocolName();
-    map["socket.protocol.policy"] << prettyName(typeid(protocol().policy()));
+    auto const & _tmp_to_make_clang_happy_ (protocol().policy());
+    map["socket.protocol.policy"] << prettyName(typeid(_tmp_to_make_clang_happy_));
     protocol().state(map,lod);
 }
 

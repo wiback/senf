@@ -125,7 +125,7 @@ namespace debug {
 
     private:
         void request();
-        virtual void v_init();
+        virtual void v_init() override;
 
         Queue packets_;
     };

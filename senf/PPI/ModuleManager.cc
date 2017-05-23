@@ -147,10 +147,12 @@ prefix_ void senf::ppi::ModuleManager::dumpModules(std::ostream & os)
 {
     for (ModuleRegistry::const_iterator i (moduleRegistry_.begin()), i_end (moduleRegistry_.end());
          i != i_end; ++i) {
-        os << *i << " " << prettyName(typeid(**i)) << "\n";
+        auto const & _tmp_to_make_clang_happy_ (**i);
+        os << *i << " " << prettyName(typeid(_tmp_to_make_clang_happy_)) << "\n";
         for (module::Module::ConnectorRegistry::iterator j ((*i)->connectorRegistry_.begin()),
                  j_end ((*i)->connectorRegistry_.end()); j != j_end; ++j) {
-            os << "  " << *j << " " << prettyName(typeid(**j));
+            auto const & _tmp_to_make_clang_happy2_ (**j);
+            os << "  " << *j << " " << prettyName(typeid(_tmp_to_make_clang_happy2_));
             if ((**j).connected()) {
                 os << " " << & (*j)->peer();
                 connector::PassiveConnector * pc (dynamic_cast<connector::PassiveConnector *>(*j));
