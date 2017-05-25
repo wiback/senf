@@ -131,7 +131,7 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
     const
 {
     // this is equivalent to the below, but twice as fast
-    return be64toh((std::uint64_t(*((std::uint32_t const *)&(*this)[0]))<<16) | (std::uint64_t(*((std::uint16_t const *)&(*this)[4]))<<48));
+    return be64toh((boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&(*this)[0]))<<16) | (boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&(*this)[4]))<<48));
     /*
     return
         (boost::uint64_t( (*this)[0] ) << 40) |

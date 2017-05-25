@@ -70,12 +70,12 @@ prefix_ void senf::ppi::IOEvent::cb(int event)
             if (::getsockopt(fd_, SOL_SOCKET, SO_ERROR, &err, &len) < 0)
                 err = 0;
             char buf[1024];
-            sockaddr *addr = (sockaddr*) buf;
+            sockaddr *addr = reinterpret_cast<sockaddr*>(buf);
             len = sizeof(buf);
             std::string msg;
             if (::getsockname(fd_, addr, &len) == 0) {
                 if (addr->sa_family == AF_PACKET) {
-                    sockaddr_ll *sa = (sockaddr_ll*) addr;
+                    sockaddr_ll *sa = reinterpret_cast<sockaddr_ll*>(addr);
                     if (sa->sll_ifindex > 0) {
                         char name[256];
                         ::bzero(name, 256);
