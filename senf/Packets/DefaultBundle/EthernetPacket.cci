@@ -65,8 +65,8 @@ prefix_ bool senf::MACAddressParser::null()
 prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash, boost::uint16_t otherKey)
     const
 {
-    std::copy(&(*this)[0], &(*this)[5], (std::uint8_t*)hash);
-    std::copy(&otherKey,   &otherKey,  ((std::uint16_t*)hash) + 3);
+    std::copy(&(*this)[0], &(*this)[6]+1, (std::uint8_t*)hash);
+    std::copy(&otherKey,   &otherKey+1,  ((std::uint16_t*)hash) + 3);
 }
 
 
