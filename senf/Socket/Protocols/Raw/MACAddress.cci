@@ -143,19 +143,11 @@ prefix_ boost::uint64_t senf::MACAddress::uint64()
     */
 }
 
-prefix_ void senf::MACAddress::hash(boost::uint64_t * hash)
-    const
-{
-    *(((std::uint32_t *)hash)+0) = (*((std::uint32_t const *)&(*this)[0]));
-    *(((std::uint16_t *)hash)+2) = (*((std::uint16_t const *)&(*this)[4]));
-}
-
 prefix_ void senf::MACAddress::hash(boost::uint64_t * hash, boost::uint16_t otherKey)
     const
 { 
-    *(((std::uint32_t *)hash)+0) = (*((std::uint32_t const *)&(*this)[0]));
-    *(((std::uint16_t *)hash)+2) = (*((std::uint16_t const *)&(*this)[4]));
-    *(((std::uint16_t *)hash)+3) = otherKey;
+    std::copy(&(*this)[0], &(*this)[5], (std::uint8_t*)hash);
+    std::copy(&otherKey,   &otherKey,  ((std::uint16_t*)hash) + 3);
 }
 
 
