@@ -135,16 +135,18 @@ prefix_ void senf::emu::TAPEthernetInterface::v_enable()
 {
     if (! enabled()) {
         ctrl_.up();
-        TAPEthernetInterfaceNet::assignSockets(true);
     }
+
+    TAPEthernetInterfaceNet::assignSockets(true);
 }
 
 prefix_ void senf::emu::TAPEthernetInterface::v_disable()
 {
     if (enabled()) {
-        TAPEthernetInterfaceNet::assignSockets(false);
         ctrl_.down();
     }
+
+    TAPEthernetInterfaceNet::assignSockets(false);
 }
 
 prefix_ bool senf::emu::TAPEthernetInterface::v_enabled()
