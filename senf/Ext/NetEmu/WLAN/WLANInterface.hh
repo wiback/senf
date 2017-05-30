@@ -97,6 +97,8 @@ namespace emu {
         ModulationParameter::id_t parameterIdAuto() const;
         ModulationParameter::id_t parameterIdUnknown() const;
 
+        unsigned getMaxStreams_VHT() const;
+        
     private:
         WLANModulationParameterRegistry();
 
