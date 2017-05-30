@@ -186,19 +186,6 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     return parameterIdUnknown_;
 }
 
-prefix_ unsigned senf::emu::WLANModulationParameterRegistry::getMaxStreams_VHT()
-    const
-{
-    unsigned maxNSS (0);
-    for (auto const & m : modulations_) {
-        if( m.second.type == WLANModulationParameter::VHT) {
-            maxNSS = std::max(maxNSS, m.second.streams);
-        }
-    }
-
-    return maxNSS;
-}
-
 prefix_ senf::emu::WLANModulationParameter::WLANModulationParameter(std::string const & _label, short _minRssi,
         unsigned _rate, unsigned _bandwidth, Type _type, unsigned _streams, unsigned _index,  bool _shortGI)
     : ModulationParameter(_label, _minRssi, _rate, _bandwidth, WLANInterface::linkTypeId),
@@ -328,6 +315,20 @@ prefix_ boost::uint8_t senf::emu::WLANInterface::v_linkTypeId()
     const
 {
     return linkTypeId;
+}
+
+prefix_ unsigned senf::emu::WLANInterface::maxNSS()
+    const
+{
+    unsigned maxNSS (0);
+    for (auto const & m : modulationParameterIds()) {
+        auto const & id (WLANModulationParameterRegistry::instance().findModulationById(m));
+        if(id.type == WLANModulationParameter::VHT) {
+            maxNSS = std::max(maxNSS, id.streams);
+        }
+    }
+
+    return maxNSS;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -206,6 +206,7 @@ namespace emu {
         ///\name Wireless Modulation
         //\{
         ModulationParameterIds const & modulationParameterIds() const; ///< Get list of valid parameters
+        unsigned maxNSS() const; ///< Get max numer of spatial stream;
         //\}
 
         ///\name Frequency/bandwidth
