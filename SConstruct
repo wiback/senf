@@ -120,7 +120,7 @@ env.Append(
                                '${str(CXX).split("/")[-1].startswith("g++") and "$CXXFLAGS_GCC" or None}',
                                '${str(CXX).split("/")[-1] == "clang++" and "$CXXFLAGS_CLANG" or None}',
                                '${debug_final and "-g" or None}'],
-    CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics','-fno-stack-protector',
+    CXXFLAGS_final         = [ '-O3', '-fno-threadsafe-statics','-fno-stack-protector', '-fipa-pta',
                                "${profile and ' ' or '-ffunction-sections'}" ],
     CXXFLAGS_normal        = [ '-O2', '-g' ],
     CXXFLAGS_debug         = [ '-O0', '-g' ],
