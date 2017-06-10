@@ -401,7 +401,7 @@ prefix_ void senf::emu::WirelessNLController::set_regulatory(RegulatoryDomain co
     {
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_REG_RULES);
         unsigned i = 0;
-        for (auto const & rule : regDomain.rules) {
+        for (RegulatoryRule const & rule : regDomain.rules) {
             nl_nested_attr_ptr params (msg, i++);
             NLA_PUT_U32( msg, NL80211_ATTR_REG_RULE_FLAGS,      rule.flags());
             NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_START,    rule.frequencyRangeBegin());
@@ -497,7 +497,6 @@ prefix_ void senf::emu::WirelessNLController::set_bitrates(BitrateParameters p)
         for (int nss = 0; nss < NL80211_VHT_NSS_MAX; nss++)
             txrate_vht_5.mcs[nss] = p.vht_mcs_table_5->at(nss).to_ulong();
     }
-
     {
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_TX_RATES);
         if (legacy_24 or mcs_24 or p.vht_mcs_table_24 or p.gi_24) {
@@ -1041,7 +1040,7 @@ namespace {
     T readTokenFromFile(boost::filesystem::path const & path)
     {
         boost::filesystem::ifstream file;
-        file.exceptions( std::ifstream::failbit | std::ifstream::badbit);
+        file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         file.open(path, std::ios::in);
         T token;
         file >> token;
@@ -1142,7 +1141,7 @@ prefix_ int senf::emu::WirelessNLController::channelType(ChannelMode::Enum chann
     throw InvalidArgumentException("invalid channelMode ") << channelMode;
 }
 
-prefix_ senf::emu::WirelessNLController::frequency_type  senf::emu::WirelessNLController::centerFreq(
+prefix_ senf::emu::WirelessNLController::frequency_type senf::emu::WirelessNLController::centerFreq(
         frequency_type freq, ChannelMode::Enum channelMode)
 {
     unsigned int vht80[] = {
@@ -1252,6 +1251,25 @@ prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters co
         NLA_PUT( msg, NL80211_ATTR_HT_CAPABILITY_MASK,
                  sizeof(parameters.htCapabilitiesMask_.get()),
                  parameters.htCapabilitiesMask_.get_ptr());
+    }
+
+    send_and_wait4response(msg);
+}
+
+prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::vector<frequency_type> const & frequencies)
+{
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_TRIGGER_SCAN, CIB_IF, NLM_F_ACK));
+
+    nl_msg_ptr ssids (nlMsg());
+    NLA_PUT(ssids, 1, 0, "");
+    NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_SSIDS, ssids);
+
+    if (not frequencies.empty()) {
+        nl_msg_ptr freqs (nlMsg());
+        int i = 1;
+        for (frequency_type f : frequencies)
+            NLA_PUT_U32(freqs, i++, f);
+        NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_FREQUENCIES, freqs);
     }
 
     send_and_wait4response(msg);

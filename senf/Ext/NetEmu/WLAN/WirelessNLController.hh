@@ -312,7 +312,6 @@ namespace emu {
 
     public:
         typedef boost::iterator_range<Frequencies_iterator> FrequencyRange;
-        typedef boost::iterator_range<BitrateList::iterator> BitrateRange;
         typedef boost::function<int (nl_msg *)> NetlinkMsgCallback;
 
         WirelessNLController();
@@ -340,6 +339,9 @@ namespace emu {
 
         std::pair<DFSState::Enum,std::uint32_t> dfsState(frequency_type freq);
         void start_radarDetection(unsigned int freq, ChannelMode::Enum = ChannelMode::NoHT20);
+
+        template <typename ForwardReadableRange>
+        void trigger_scan(ForwardReadableRange const & frequencies);
 
         void set_regulatory_request(std::string const & alpha2Country);
         void set_regulatory(RegulatoryDomain const & regDomain);
@@ -418,6 +420,8 @@ namespace emu {
 
         void do_ibss_join(IbssJoinParameters const & parameters);
         void do_mesh_join(MeshJoinParameters const & parameters);
+
+        void do_trigger_scan(std::vector<frequency_type> const & frequencies);
 
         void getWiphy();
 
