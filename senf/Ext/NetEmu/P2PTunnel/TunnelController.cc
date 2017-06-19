@@ -131,58 +131,59 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
         // ignore EGAIN, etc.
         return senf::EthernetPacket();
     }
-    
+
     stats_.rxPackets++;
-    
-    if (SENF_UNLIKELY((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes + senf::EthernetPacketParser::fixed_bytes)) or 
-                      (thdr->reserved() != TunnelHeaderPacketType::reservedMagic))) {
-        stats_.rxIgnored++;
-        return EthernetPacket();
-    }
 
-    senf::EthernetPacket eth(thdr.next<senf::EthernetPacket>());
-
-    if (SENF_UNLIKELY(isTunnelCtrlPacket(eth))) {
-        try {
+    try {
+        if (SENF_UNLIKELY((thdr.size() < (TunnelHeaderPacket::Parser::fixed_bytes + senf::EthernetPacketParser::fixed_bytes)) or 
+                          (thdr->reserved() != TunnelHeaderPacketType::reservedMagic))) {
+            stats_.rxIgnored++;
+            return EthernetPacket();
+        }
+        
+        senf::EthernetPacket eth(thdr.next<senf::EthernetPacket>());
+        
+        if (SENF_UNLIKELY(isTunnelCtrlPacket(eth))) {
             v_handleCtrlPacket( eth, addr, handle);
             stats_.rxControl++;
-        } catch (TruncatedPacketException &) {}
-        return EthernetPacket();
+            return EthernetPacket();
+        }
+
+        stats_.rxData++;
+        
+        // Ctrl Frames do not have a valid seqNo, so perform this here where we only see Data frames
+        signed diff = v_processSequenceNumber(thdr, addr);
+        
+        eth.annotation<annotations::Interface>().value = interface_.id();
+        eth.annotation<annotations::Timestamp>().fromSocketProtocol(handle.protocol());
+        annotations::Quality & q (eth.annotation<annotations::Quality>());
+        q.rssi  =  126; // one step below Ethernet to ensure native Ethernet Links yield a better SNR - this requires more thinking/integration
+        q.noise = -128;
+        q.snr   = q.rssi - q.noise;
+        q.flags.frameLength = eth.size();
+        
+        if (SENF_LIKELY(diff == 1)) {
+            // all is fine
+        }
+        else if ( diff == 0) {
+            q.flags.frameDuplicate = true;
+        }
+        else if (diff > 1) {
+            q.setLoss(diff - 1); 
+        } else {
+            q.flags.frameReordered = true;
+        }
+        
+        if (reassembler_.isFragmentedPacket(eth)) {
+            if (reassembler_.processFrame(eth))
+                return reassembler_.reassembledPacket();
+        } else {
+            return eth;
+        }
+    } catch (TruncatedPacketException &) {
     }
-
-    stats_.rxData++;
-
-    // Ctrl Frames do not have a valid seqNo, so perform this here where we only see Data frames
-    signed diff = v_processSequenceNumber(thdr, addr);
-
-    eth.annotation<annotations::Interface>().value = interface_.id();
-    eth.annotation<annotations::Timestamp>().fromSocketProtocol(handle.protocol());
-    annotations::Quality & q (eth.annotation<annotations::Quality>());
-    q.rssi  =  126; // one step below Ethernet to ensure native Ethernet Links yield a better SNR - this requires more thinking/integration
-    q.noise = -128;
-    q.snr   = q.rssi - q.noise;
-    q.flags.frameLength = eth.size();
-
-    if (SENF_LIKELY(diff == 1)) {
-        // all is fine
-    }
-    else if ( diff == 0) {
-        q.flags.frameDuplicate = true;
-    }
-    else if (diff > 1) {
-        q.setLoss(diff - 1); 
-    } else {
-        q.flags.frameReordered = true;
-    }
-
-    if (reassembler_.isFragmentedPacket(eth)) {
-        if (reassembler_.processFrame(eth))
-            return reassembler_.reassembledPacket();
-    } else {
-        return eth;
-    }
-
-    // no output packet due to reassembling
+    
+    // no output packet due to reassembling or exception caught
     return  EthernetPacket();
 }
 
