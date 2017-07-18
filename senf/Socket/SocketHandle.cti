@@ -149,7 +149,7 @@ prefix_ Target senf::dynamic_socket_cast(Source handle)
     try {
         return Target::cast_dynamic(handle);
     }
-    SENF_WRAP_EXC(std::bad_cast)
+    SENF_WRAP_EXC_MSG(std::bad_cast, "in dynamic_socket_cast()")
 }
 
 template <class Target, class Source>
@@ -207,7 +207,7 @@ prefix_ Facet & senf::SocketHandle<SPolicy>::facet()
     try {
         return dynamic_cast<Facet &>(protocol());
     }
-    SENF_WRAP_EXC(std::bad_cast)
+    SENF_WRAP_EXC_MSG(std::bad_cast, "in SocketHandle::facet()")
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

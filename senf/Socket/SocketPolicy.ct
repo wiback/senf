@@ -56,7 +56,7 @@ checkBaseOf(SocketPolicyBase const & other)
     try {
         BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SENF_SOCKET_POLICIES )
     }
-    SENF_WRAP_EXC(std::bad_cast)
+    SENF_WRAP_EXC_MSG(std::bad_cast, "in SP_CheckPolicy")
 
 #   undef SP_CheckPolicy
 }

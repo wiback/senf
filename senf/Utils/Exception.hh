@@ -236,6 +236,14 @@ namespace senf {
                 throw senf::WrapException<Ex>(base);                                              \
         }
 
+#   define SENF_WRAP_EXC_MSG(Ex, Msg)                                                             \
+        catch (Ex const & base) {                                                                 \
+            if (dynamic_cast<senf::ExceptionMixin const *>(&base))                                \
+                throw;                                                                            \
+            else                                                                                  \
+                throw senf::WrapException<Ex>(base) << " " << Msg;                                \
+        }
+
     template <class Exc, class Arg>
     typename boost::enable_if< boost::is_convertible<Exc*,ExceptionMixin*>, Exc & >::type
     operator<<(Exc const & exc, Arg const & arg); ///< Extend exception description
