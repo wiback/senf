@@ -95,7 +95,7 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
         throw console::SyntaxErrorException();
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type time)
+prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type const & time)
 {
     if (scheduler::now() - baseClock_ > clock_type(1000000000ll))
         restart_m();
@@ -104,7 +104,7 @@ prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type 
         * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
 }
 
-prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_type clock)
+prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_type const & clock)
 {
     if (clock == clock_type(0))
         return abstime_type();

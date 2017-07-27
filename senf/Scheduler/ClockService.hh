@@ -118,7 +118,7 @@ namespace senf {
 
         static clock_type now();  ///< Return current clock value
 
-        static abstime_type abstime(clock_type clock); ///< Convert clock to absolute time
+        static abstime_type abstime(clock_type const & clock); ///< Convert clock to absolute time
                                         /**< This member converts a clock value into an absolute
                                              <a href="http://www.boost.org/doc/libs/release/libs/date_time/index.html">Boost.DateTime</a>
                                              value.
@@ -127,7 +127,7 @@ namespace senf {
                                                  monotonous, absolute time may be non-monotonous if
                                                  the system date/time is changed. */
 
-        static reltime_type reltime(clock_type clock); ///< Convert clock to relative time
+        static reltime_type reltime(clock_type const & clock); ///< Convert clock to relative time
                                         /**< This member converts a clock value into a relative
                                              <a href="http://www.boost.org/doc/libs/release/libs/date_time/index.html">Boost.DateTime</a>
                                              time interval
@@ -143,6 +143,11 @@ namespace senf {
                                         ///< Convert legacy time_t to clock value
                                         /**< This member converts an absolute time value
                                              represented as a time_t value into a clock value */
+
+        static time_t to_time_t(senf::ClockService::clock_type const & time);
+                                        ///< Convert legacy time_t to clock value to legacy time_t
+                                        /**< This member converts a clock value into an absolute time value
+                                             represented as a time_t in UTC !*/
 
         static clock_type from_timeval(timeval const & time);
                                         ///< Convert legacy timeval to clock value
@@ -180,8 +185,8 @@ namespace senf {
     private:
         ClockService();
 
-        abstime_type abstime_m(clock_type clock);
-        clock_type clock_m(abstime_type time);
+        abstime_type abstime_m(clock_type const & clock);
+        clock_type clock_m(abstime_type const & time);
         void restart_m();
 
         boost::posix_time::ptime baseAbstime_;

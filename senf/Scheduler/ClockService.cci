@@ -75,12 +75,12 @@ prefix_ void senf::ClockService::restart_m()
 
 // public members
 
-prefix_ senf::ClockService::abstime_type senf::ClockService::abstime(clock_type clock)
+prefix_ senf::ClockService::abstime_type senf::ClockService::abstime(clock_type const & clock)
 {
     return instance().abstime_m(clock);
 }
 
-prefix_ senf::ClockService::reltime_type senf::ClockService::reltime(clock_type clock)
+prefix_ senf::ClockService::reltime_type senf::ClockService::reltime(clock_type const & clock)
 {
 #ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
     return boost::posix_time::nanoseconds(
@@ -100,6 +100,12 @@ prefix_ senf::ClockService::clock_type senf::ClockService::from_time_t(time_t co
 {
     return clock( boost::posix_time::from_time_t(time) );
 }
+
+prefix_ time_t senf::ClockService::to_time_t(senf::ClockService::clock_type const & time)
+{
+    return (abstime(time) - boost::posix_time::from_time_t(0)).total_seconds();
+}
+
 
 prefix_ senf::ClockService::clock_type_coarse senf::ClockService::coarseDiff(clock_type_coarse const & newer, clock_type_coarse const & older)
 {
