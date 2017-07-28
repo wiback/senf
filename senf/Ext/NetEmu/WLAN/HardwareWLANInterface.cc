@@ -283,8 +283,10 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         .add("spectralScanStats", fty::Command(&HardwareWLANInterface::spectralScanStats, this)
              .doc("current spectralScanner stats."));
 
-    console::provideDirectory(interfaceDir(), "by-device")
-        .add(device(), fty::Link(consoleDir()));
+    // remove any (possibly existing) previous link...
+    console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    // ...before installing a fresh one
+    console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 
     if (enabled())
         init_sockets();

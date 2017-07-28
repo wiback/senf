@@ -210,7 +210,10 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
              .doc( "report the currently configured PVID (-1 means none)"));
 
 
-    console::provideDirectory(interfaceDir(),"by-device").add(dev_, fty::Link(consoleDir()));
+    // remove any (possibly existing) previous link...
+    console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    // ...before installing a fresh one
+    console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 
     annotatorRx_.id(id());
 
