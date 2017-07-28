@@ -294,7 +294,7 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         init_sockets();
 
     if (!spectralScanner_.detected()) {
-        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath9k spectral scanner not detected for " << wnlc_.phyName() << ". DebugFS mounted at /sys/kernel/debug ?") );
+        SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath spectral scanner not detected for " << wnlc_.phyName() << ". DebugFS mounted at /sys/kernel/debug ?") );
     } else {
         SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath spectral scanner detected for " << wnlc_.phyName()) );
     }
