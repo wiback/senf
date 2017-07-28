@@ -284,7 +284,9 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
              .doc("current spectralScanner stats."));
 
     // remove any (possibly existing) previous link...
-    console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    try {
+        console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    } catch (...) {};
     // ...before installing a fresh one
     console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 

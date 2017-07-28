@@ -211,7 +211,9 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
 
 
     // remove any (possibly existing) previous link...
-    console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    try {
+        console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    } catch (...) {};
     // ...before installing a fresh one
     console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 
