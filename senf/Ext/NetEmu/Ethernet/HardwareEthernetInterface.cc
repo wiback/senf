@@ -152,8 +152,8 @@ namespace {
     };
 }
 
-prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::string const & device)
-    : EthernetInterface (netOutput, netInput), dev_ (device), ctrl_ (dev_),
+prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::string const & dev)
+    : EthernetInterface (netOutput, netInput), dev_ (dev), ctrl_ (dev_),
       rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(std::uint16_t(-1)), accessMode_(false)
 {
     EthernetInterface::init();
