@@ -103,7 +103,7 @@ prefix_ senf::ClockService::clock_type senf::ClockService::from_time_t(time_t co
 
 prefix_ time_t senf::ClockService::to_time_t(senf::ClockService::clock_type const & time)
 {
-    return (abstime(time) - boost::posix_time::from_time_t(0)).total_seconds();
+    return  (abstime(time) -  boost::posix_time::from_time_t(0)).total_seconds();
 }
 
 
