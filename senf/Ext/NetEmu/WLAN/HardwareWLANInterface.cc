@@ -566,10 +566,8 @@ prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
     if (p) {
         openMonitorSocket();
         dataSource(false);
-        netctl_.down();
     } else {
         closeMonitorSocket();
-        netctl_.up();
         dataSource(true);
     }
 
@@ -1177,6 +1175,13 @@ prefix_ void senf::emu::HardwareWLANInterface::startCAC(unsigned int freq, unsig
     netctl_.up();
 
     wnlc_.start_radarDetection(freq-frequencyOffset_, channelMode);
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::cacAborted()
+{
+    try {
+        netctl_.down();
+    } catch (...) {};
 }
 
 #undef MHZ_TO_KHZ
