@@ -566,8 +566,10 @@ prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
     if (p) {
         openMonitorSocket();
         dataSource(false);
+        netctl_.down();
     } else {
         closeMonitorSocket();
+        netctl_.up();
         dataSource(true);
     }
 
