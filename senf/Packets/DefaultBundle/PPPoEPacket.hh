@@ -82,8 +82,13 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
 
-    struct PPPoEDPacketType : public PPPoEPacketTypeBase<PPPoEDPacketType> {};
-    struct PPPoESPacketType : public PPPoEPacketTypeBase<PPPoESPacketType> {};
+    struct PPPoEDPacketType : public PPPoEPacketTypeBase<PPPoEDPacketType> {
+        static const EtherTypes::key_t etherType = 0x8863;
+
+    };
+    struct PPPoESPacketType : public PPPoEPacketTypeBase<PPPoESPacketType> {
+        static const EtherTypes::key_t etherType = 0x8864;
+    };
 
     typedef ConcretePacket<PPPoEDPacketType> PPPoEDPacket;
     typedef ConcretePacket<PPPoESPacketType> PPPoESPacket;

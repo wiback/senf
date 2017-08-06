@@ -39,8 +39,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8863, senf::PPPoEDPacket );  // PPPoE Discovery
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8864, senf::PPPoESPacket );  // PPPoE Session
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::PPPoEDPacketType::etherType, senf::PPPoEDPacket );  // PPPoE Discovery
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::PPPoESPacketType::etherType, senf::PPPoESPacket );  // PPPoE Session
 
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::PPPoEDPacket );
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::PPPoESPacket );
