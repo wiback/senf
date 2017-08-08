@@ -183,7 +183,10 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
 
-        static const EtherTypes::key_t etherType = 0x8100;
+        // C-TAG
+        static const EtherTypes::key_t etherType  = 0x8100;
+        // S-TAG
+        static const EtherTypes::key_t etherTypeSTag = 0x88a8;
     };
 
     /** \brief Ethernet VLAN tag typedef

@@ -203,7 +203,7 @@ receiveModule(InterfaceDecorator & interface)
         return dynamic_cast<ReceiverDecoratorImplementation<ReceiveModule>&>(
             interface.receiverDecorator()).receiveModule();
     }
-    SENF_WRAP_EXC_MSG(std::bad_cast, "in (ReceiveModule &)")
+    SENF_WRAP_EXC_MSG(std::bad_cast, "in (ReceiveModule &). Type is " + senf::prettyName(typeid(const_cast<InterfaceDecorator &>(interface))))
 }
 
 template <class ReceiveModule, class TransmitModule>
@@ -215,7 +215,7 @@ receiveModule(InterfaceDecorator const & interface)
         return dynamic_cast<ReceiverDecoratorImplementation<ReceiveModule> const &>(
             interface.receiverDecorator()).receiveModule();
     }
-    SENF_WRAP_EXC_MSG(std::bad_cast, "in (ReceiveModule const &)")
+    SENF_WRAP_EXC_MSG(std::bad_cast, "in (ReceiveModule const &). Type is " + senf::prettyName(typeid(const_cast<InterfaceDecorator &>(interface))))
 }
 
 template <class ReceiveModule, class TransmitModule>
@@ -227,7 +227,7 @@ transmitModule(InterfaceDecorator & interface)
         return dynamic_cast<TransmitterDecoratorImplementation<TransmitModule> &>(
             interface.transmitterDecorator()).transmitModule();
     }
-    SENF_WRAP_EXC_MSG(std::bad_cast, "in (TransmitModule &)")
+    SENF_WRAP_EXC_MSG(std::bad_cast, "in (TransmitModule &). Type is " + senf::prettyName(typeid(const_cast<InterfaceDecorator &>(interface))))
 }
 
 template <class ReceiveModule, class TransmitModule>
@@ -239,7 +239,7 @@ transmitModule(InterfaceDecorator const & interface)
         return dynamic_cast<TransmitterDecoratorImplementation<TransmitModule> const &>(
             interface.transmitterDecorator()).transmitModule();
     }
-    SENF_WRAP_EXC_MSG(std::bad_cast, "in (TransmitModule const &)")
+    SENF_WRAP_EXC_MSG(std::bad_cast, "in (TransmitModule const &). Type is " + senf::prettyName(typeid(const_cast<InterfaceDecorator &>(interface))))
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

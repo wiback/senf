@@ -43,6 +43,7 @@
 
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x6558,                                     senf::EthernetPacket       );
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanPacketType::etherType,         senf::EthVLanPacket        );
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanPacketType::etherTypeSTag,     senf::EthVLanPacket        );
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthOUIExtensionPacketType::etherType, senf::EthOUIExtensionPacket);
 
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::EthernetPacket        );
