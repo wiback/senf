@@ -40,12 +40,21 @@ prefix_ void senf::ppi::module::QueueEthVLanFilter::request()
     EthernetPacket eth (input());
     QueueBufferAnnotation const & buffer (eth.annotation<QueueBufferAnnotation>());
     boost::optional<unsigned> vlanId (buffer->vlan());
+    unsigned tpid (buffer->tpid());
     if (vlanId) {
-        EthVLanPacket vlan (EthVLanPacket::createInsertBefore(eth.next()));
-        vlan->vlanId() << *vlanId;
-        vlan->type_length() << eth->type_length();
-        eth.finalizeTo(vlan);
-        vlan.reparse();
+        if (tpid == EthVLanSPacketType::etherType) {
+            EthVLanSPacket vlan (EthVLanSPacket::createInsertBefore(eth.next()));
+            vlan->vlanId() << *vlanId;
+            vlan->type_length() << eth->type_length();
+            eth.finalizeTo(vlan);
+            vlan.reparse();
+        } else {
+            EthVLanCPacket vlan (EthVLanCPacket::createInsertBefore(eth.next()));
+            vlan->vlanId() << *vlanId;
+            vlan->type_length() << eth->type_length();
+            eth.finalizeTo(vlan);
+            vlan.reparse();
+        }
     }
     output(eth);
 }

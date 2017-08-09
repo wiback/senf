@@ -43,7 +43,7 @@ prefix_ senf::emu::EthernetFragmenterBase::EthernetFragmenterBase()
 prefix_ bool senf::emu::EthernetFragmenterBase::fragmentationRequired(senf::EthernetPacket const & eth, unsigned threshold)
 {
     unsigned payloadSize (eth.size() - senf::EthernetPacketParser::fixed_bytes -
-                          (eth->type_length() == senf::EthVLanPacketType::etherType) * senf::EthVLanPacketParser::fixed_bytes);
+             ((eth->type_length() == senf::EthVLanCPacketType::etherType) or (eth->type_length() == senf::EthVLanSPacketType::etherType)) * senf::EthVLanPacketParser::fixed_bytes);
     
     return payloadSize > threshold;
 }
@@ -59,24 +59,25 @@ prefix_ void senf::emu::EthernetFragmenterBase::do_fragmentFrame(senf::EthernetP
 {
     typedef senf::Packet::size_type size_type;
     unsigned fragmentNr (1);
-    bool vlanPresent (pkt->type_length() == senf::EthVLanPacketType::etherType);
+    bool vlanCPresent (pkt->type_length() == senf::EthVLanCPacketType::etherType);
+    bool vlanSPresent (pkt->type_length() == senf::EthVLanSPacketType::etherType);
     size_type payloadSize (pkt.size() - senf::EthernetPacketParser::fixed_bytes);
     senf::PacketData::iterator payloadIter (std::next( pkt.data().begin(), senf::EthernetPacketParser::fixed_bytes +
-                                                       (vlanPresent * senf::EthVLanPacketParser::fixed_bytes)));
+                                                       ((vlanCPresent||vlanSPresent) * senf::EthVLanPacketParser::fixed_bytes)));
     senf::PacketData::iterator payloadEnd (pkt.data().end());
 
     fragmentationCount_++;
 
     do {
         senf::EthernetPacket eth (pkt.clone());
-        EthernetFragmentPacket fragmentHeader (EthernetFragmentPacket::createAfter(senf::EthOUIExtensionPacket::createAfter(vlanPresent ? eth.next() : eth) ));
+        EthernetFragmentPacket fragmentHeader (EthernetFragmentPacket::createAfter(senf::EthOUIExtensionPacket::createAfter((vlanCPresent||vlanSPresent) ? eth.next() : eth) ));
 
         size_type fragmentPayloadSize (std::min( size_type(std::distance(payloadIter, payloadEnd)),
                 threshold - senf::EthOUIExtensionPacketParser::fixed_bytes - EthernetFragmentPacketParser::fixed_bytes));
 
         int fragmentSize (
                 senf::EthernetPacketParser::fixed_bytes +
-                (vlanPresent ? senf::EthVLanPacketParser::fixed_bytes : 0u) +
+                ((vlanCPresent||vlanSPresent) ? senf::EthVLanPacketParser::fixed_bytes : 0u) +
                 senf::EthOUIExtensionPacketParser::fixed_bytes +
                 EthernetFragmentPacketParser::fixed_bytes +
                 fragmentPayloadSize );
@@ -91,7 +92,12 @@ prefix_ void senf::emu::EthernetFragmenterBase::do_fragmentFrame(senf::EthernetP
         fragmentHeader->moreFragment() << (payloadIter != payloadEnd);
         fragmentHeader->size() << (fragmentNr == 1 ? payloadSize : fragmentPayloadSize);
         fragmentHeader->fragmentNr() << fragmentNr++;
-        fragmentHeader->type_length() << (vlanPresent ? pkt.next<senf::EthVLanPacket>()->type_length() : pkt->type_length());
+        if (vlanSPresent)
+            fragmentHeader->type_length() << pkt.next<senf::EthVLanSPacket>()->type_length();
+        else if (vlanCPresent)
+            fragmentHeader->type_length() << pkt.next<senf::EthVLanCPacket>()->type_length();
+        else
+            fragmentHeader->type_length() << pkt->type_length();
 
         eth.finalizeTo(fragmentHeader);
 

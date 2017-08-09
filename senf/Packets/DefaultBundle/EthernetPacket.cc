@@ -42,12 +42,13 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x6558,                                     senf::EthernetPacket       );
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanPacketType::etherType,         senf::EthVLanPacket        );
-SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanPacketType::etherTypeSTag,     senf::EthVLanPacket        );
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanSPacketType::etherType,        senf::EthVLanSPacket       );
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthVLanCPacketType::etherType,        senf::EthVLanCPacket       );
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, senf::EthOUIExtensionPacketType::etherType, senf::EthOUIExtensionPacket);
 
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::EthernetPacket        );
-SENF_PACKET_INSTANTIATE_TEMPLATE( senf::EthVLanPacket         );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::EthVLanSPacket         );
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::EthVLanCPacket         );
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::EthOUIExtensionPacket );
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,27 +90,47 @@ prefix_ void senf::EthernetPacketType::finalize(packet p)
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::EthVLanPacketType
+// senf::EthVLanSPacketType
 
-prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
+prefix_ void senf::EthVLanSPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
-    os << "Ethernet 802.1q (VLAN):\n"
+    os << "Ethernet 802.1ad (VLAN S-Tag):\n"
        << senf::fieldName("priority")    << p->priority() << std::endl
        << senf::fieldName("cfi")         << p->cfi() << std::endl
-       << senf::fieldName("vlan-ID")     << p->vlanId() << std::endl
-       << senf::fieldName("ethertype")
+       << senf::fieldName("vlanId")     << p->vlanId() << std::endl
+       << senf::fieldName("etherType")
             << "0x" << std::hex << std::setw(4) << std::setfill('0')
             << std::right << p->type_length() << std::endl;
 }
 
-prefix_ void senf::EthVLanPacketType::finalize(packet p)
+prefix_ void senf::EthVLanSPacketType::finalize(packet p)
 {
     p->type_length() << key(p.next(nothrow));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::EthVLanPacketType
+// senf::EthVLanCPacketType
+
+prefix_ void senf::EthVLanCPacketType::dump(packet p, std::ostream & os)
+{
+    boost::io::ios_all_saver ias(os);
+    os << "Ethernet 802.1q (VLAN C-Tag):\n"
+       << senf::fieldName("priority")    << p->priority() << std::endl
+       << senf::fieldName("cfi")         << p->cfi() << std::endl
+       << senf::fieldName("vlanId")     << p->vlanId() << std::endl
+       << senf::fieldName("etherType")
+            << "0x" << std::hex << std::setw(4) << std::setfill('0')
+            << std::right << p->type_length() << std::endl;
+}
+
+prefix_ void senf::EthVLanCPacketType::finalize(packet p)
+{
+    p->type_length() << key(p.next(nothrow));
+}
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::EthOUIExtensionPacketType
 
 prefix_ void senf::EthOUIExtensionPacketType::dump(packet p, std::ostream & os)
 {

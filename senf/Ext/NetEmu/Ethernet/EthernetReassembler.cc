@@ -42,10 +42,22 @@ prefix_ senf::emu::EthernetReassemblerBase::EthernetReassemblerBase()
 
 prefix_ bool senf::emu::EthernetReassemblerBase::isFragmentedPacket(senf::EthernetPacket const & eth)
 {
-    return ( eth->type_length() == senf::EthOUIExtensionPacketType::etherType ||
-               (eth->type_length() == senf::EthVLanPacketType::etherType &&
-                eth.next<senf::EthVLanPacket>()->type_length() == senf::EthOUIExtensionPacketType::etherType) ) &&
-                eth.find<EthernetFragmentPacket>(senf::nothrow);
+    if (eth->type_length() == senf::EthOUIExtensionPacketType::etherType and eth.next<EthernetFragmentPacket>(senf::nothrow))
+        return true;
+
+    if (eth->type_length() == senf::EthVLanCPacketType::etherType) {
+        if ((eth.next<senf::EthVLanCPacket>()->type_length() == senf::EthOUIExtensionPacketType::etherType) &&
+            eth.find<EthernetFragmentPacket>(senf::nothrow))
+            return true;
+    }
+
+    if (eth->type_length() == senf::EthVLanSPacketType::etherType) {
+        if ((eth.next<senf::EthVLanSPacket>()->type_length() == senf::EthOUIExtensionPacketType::etherType) &&
+            eth.find<EthernetFragmentPacket>(senf::nothrow))
+            return true;
+    }
+
+    return false;
 }
 
 prefix_ senf::EthernetPacket & senf::emu::EthernetReassemblerBase::reassembledPacket()
@@ -74,12 +86,16 @@ prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPack
     fragmentsProcessed_++;
     
     if (fragmentNr == 1) {
-        bool vlanPresent (eth->type_length() == senf::EthVLanPacketType::etherType);
+        bool vlanCPresent (eth->type_length() == senf::EthVLanCPacketType::etherType);
+        bool vlanSPresent (eth->type_length() == senf::EthVLanSPacketType::etherType);
         reassembledPacket_ = eth.clone();
         senf::Packet p (reassembledPacket_);
-        if (vlanPresent) {
+        if (vlanSPresent) {
             p = p.next();
-            reassembledPacket_.next<senf::EthVLanPacket>()->type_length() << fragment->type_length();
+            reassembledPacket_.next<senf::EthVLanSPacket>()->type_length() << fragment->type_length();
+        } else if (vlanCPresent) {
+            p = p.next();
+            reassembledPacket_.next<senf::EthVLanCPacket>()->type_length() << fragment->type_length();
         } else {
             reassembledPacket_->type_length() << fragment->type_length();
         }

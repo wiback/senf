@@ -144,10 +144,10 @@ namespace senf {
         SENF_PARSER_FINALIZE( EthVLanPacketParser );
     };
 
-    /** \brief Ethernet VLAN tag
+    /** \brief Ethernet VLAN S-Tag
 
         \par Packet type (typedef):
-            \ref EthVLanPacket
+            \ref EthVLanSPacket
 
         \par Fields:
             \ref EthVLanPacketParser
@@ -161,12 +161,61 @@ namespace senf {
 
         \ingroup protocolbundle_default
      */
-    struct EthVLanPacketType
+    struct EthVLanSPacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<EthVLanPacketType, EtherTypes>
+          public PacketTypeMixin<EthVLanSPacketType, EtherTypes>
     {
-        typedef PacketTypeMixin<EthVLanPacketType, EtherTypes> mixin;
-        typedef ConcretePacket<EthVLanPacketType> packet;
+        typedef PacketTypeMixin<EthVLanSPacketType, EtherTypes> mixin;
+        typedef ConcretePacket<EthVLanSPacketType> packet;
+        typedef EthVLanPacketParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::initSize;
+        using mixin::init;
+
+        /** \todo Add LLC/SNAP support -> only use the registry
+            for type() values >=1536, otherwise expect an LLC header */
+        static key_t nextPacketKey(packet p)
+            { return p->type_length(); }
+
+        /// Dump given EthVLanPacket in readable form to given output stream
+        static void dump(packet p, std::ostream & os);
+        static void finalize(packet p);
+
+        // S-TAG
+        static const EtherTypes::key_t etherType = 0x88a8;
+    };
+
+    /** \brief Ethernet VLAN S-Tag typedef
+        \ingroup protocolbundle_default
+     */
+    typedef ConcretePacket<EthVLanSPacketType> EthVLanSPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( EthVLanSPacket );
+
+    /** \brief Ethernet VLAN C-Tag
+
+        \par Packet type (typedef):
+            \ref EthVLanCPacket
+
+        \par Fields:
+            \ref EthVLanPacketParser
+            \image html EthVLanPacket.png
+
+        \par Associated registries:
+            \ref EtherTypes
+
+        \par Finalize action:
+            Set \a type from type of next packet if found in \ref EtherTypes
+
+        \ingroup protocolbundle_default
+     */
+    struct EthVLanCPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<EthVLanCPacketType, EtherTypes>
+    {
+        typedef PacketTypeMixin<EthVLanCPacketType, EtherTypes> mixin;
+        typedef ConcretePacket<EthVLanCPacketType> packet;
         typedef EthVLanPacketParser parser;
 
         using mixin::nextPacketRange;
@@ -184,18 +233,17 @@ namespace senf {
         static void finalize(packet p);
 
         // C-TAG
-        static const EtherTypes::key_t etherType  = 0x8100;
-        // S-TAG
-        static const EtherTypes::key_t etherTypeSTag = 0x88a8;
+        static const EtherTypes::key_t etherType = 0x8100;
     };
 
-    /** \brief Ethernet VLAN tag typedef
+    /** \brief Ethernet VLAN C-Tag typedef
         \ingroup protocolbundle_default
      */
-    typedef ConcretePacket<EthVLanPacketType> EthVLanPacket;
-    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( EthVLanPacket );
+    typedef ConcretePacket<EthVLanCPacketType> EthVLanCPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( EthVLanCPacket );
 
 
+    
     struct EthOUIExtensionPacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()

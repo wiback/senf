@@ -149,11 +149,19 @@ prefix_ void senf::emu::EthernetAnnotator::requestRxMMAPpromisc()
     if (SENF_UNLIKELY(vlanId)) {
         if (pvid_ == std::uint16_t(-1) or pvid_ == (*vlanId & 0xfff)) {
             // if no PVID is specified, but the TAG back in...
-            EthVLanPacket vlan (EthVLanPacket::createInsertBefore(eth.next()));
-            vlan->vlanId() << *vlanId;
-            vlan->type_length() << eth->type_length();
-            EthernetPacket(eth).finalizeTo(vlan);
-            vlan.reparse();
+            if (eth.annotation<senf::ppi::QueueBufferAnnotation>()->tpid() == EthVLanSPacketType::etherType) {
+                EthVLanSPacket vlan (EthVLanSPacket::createInsertBefore(eth.next()));
+                vlan->vlanId() << *vlanId;
+                vlan->type_length() << eth->type_length();
+                EthernetPacket(eth).finalizeTo(vlan);
+                vlan.reparse();
+            } else {
+                EthVLanCPacket vlan (EthVLanCPacket::createInsertBefore(eth.next()));
+                vlan->vlanId() << *vlanId;
+                vlan->type_length() << eth->type_length();
+                EthernetPacket(eth).finalizeTo(vlan);
+                vlan.reparse();
+            }
         }
     }
     
@@ -198,23 +206,33 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_dummy_annotate(senf::Ether
 
 prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetPacket const & eth)
 {
-    auto vlan (eth.find<EthVLanPacket>(senf::nothrow));
-    if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_))) {
+    if (eth->type_length() == EthVLanCPacketType::etherType) {
+        auto vlan (eth.find<EthVLanCPacket>(senf::nothrow));
+        if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_))) {
+            vlanMismatch_++;
+            return;
+        }
+        
+        // remove VLAN TAG here
+        std::uint16_t tl (vlan->type_length());
+        ::memmove(
+                  vlan.data().begin(),
+                  vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
+                  vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
+
+        EthernetPacket tmp(eth);
+        tmp.data().resize( tmp.size() - senf::EthVLanPacketParser::fixed_bytes);
+        tmp->type_length() = tl;
+        tmp.reparse();
+    } else if (eth->type_length() == EthVLanSPacketType::etherType) {
+        // we do not support S-Tags for now
+        vlanMismatch_++;
+        return;
+    } else {
         vlanMismatch_++;
         return;
     }
-
-    // remove VLAN TAG here
-    std::uint16_t tl (vlan->type_length());
-    ::memmove(
-              vlan.data().begin(),
-              vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
-              vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
-    EthernetPacket tmp(eth);
-    tmp.data().resize( tmp.size() - senf::EthVLanPacketParser::fixed_bytes);
-    tmp->type_length() = tl;
-    tmp.reparse();
-
+    
     if (SENF_UNLIKELY(annotate_))
         output(prependAnnotationsPacket(eth));
     else
@@ -223,8 +241,13 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetP
 
 prefix_ void senf::emu::EthernetAnnotator::handle_pkt_insert_tag(senf::EthernetPacket const & eth)
 {
-    senf::EthVLanPacket vlan (eth.next<senf::EthVLanPacket>(senf::nothrow));
-    if (SENF_UNLIKELY(vlan)) {
+    senf::EthVLanCPacket vlanC (eth.next<senf::EthVLanCPacket>(senf::nothrow));
+    if (SENF_UNLIKELY(vlanC)) {
+        vlanMismatch_++;
+        return;
+    }
+    senf::EthVLanSPacket vlanS (eth.next<senf::EthVLanSPacket>(senf::nothrow));
+    if (SENF_UNLIKELY(vlanS)) {
         vlanMismatch_++;
         return;
     }
@@ -232,12 +255,12 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_insert_tag(senf::EthernetP
     std::uint16_t tl (eth->type_length());
     senf::Packet pkt (eth.next(senf::nothrow));
     if (SENF_LIKELY(pkt)) {
-        senf::EthVLanPacket vtmp (senf::EthVLanPacket::createInsertBefore(pkt));
+        senf::EthVLanCPacket vtmp (senf::EthVLanCPacket::createInsertBefore(pkt));
         vtmp->vlanId() = pvid_;
         vtmp->type_length() = tl;
         EthernetPacket(eth).finalizeTo(vtmp);
     } else {
-        senf::EthVLanPacket vtmp (senf::EthVLanPacket::createAfter(eth));
+        senf::EthVLanCPacket vtmp (senf::EthVLanCPacket::createAfter(eth));
         vtmp->vlanId() = pvid_;
         vtmp->type_length() = tl;
         EthernetPacket(eth).finalizeTo(vtmp);

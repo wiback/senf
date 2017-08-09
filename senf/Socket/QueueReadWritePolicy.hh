@@ -92,6 +92,8 @@ namespace senf {
                                         ///< return incoming interface address
         boost::optional<unsigned> vlan() const;
                                         ///< return the preprocessed VLAN TCI if any
+        unsigned tpid() const;
+                                        ///< return the preprocessed VLAN TPID
 
         void resize(size_type sz
 #ifdef SENF_ENABLE_TPACKET_OFFSET

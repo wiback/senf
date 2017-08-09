@@ -243,6 +243,13 @@ prefix_ boost::optional<unsigned> senf::SocketQueueBuffer::vlan()
         ? boost::optional<unsigned>(hdr().tp_vlan_tci) : boost::none;
 }
 
+prefix_ unsigned senf::SocketQueueBuffer::tpid()
+    const
+{
+    return hdr().tp_status & TP_STATUS_VLAN_TPID_VALID ? hdr().tp_vlan_tpid : 0x8100;
+}
+
+
 prefix_ void senf::SocketQueueBuffer::resize(size_type sz
 #ifdef SENF_ENABLE_TPACKET_OFFSET
                                              , int offset
