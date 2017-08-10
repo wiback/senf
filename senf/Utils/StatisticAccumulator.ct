@@ -41,19 +41,19 @@
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T const & value)
-    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0), last_avg_(0)
+    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0)
 {
     accumulate(value);
 }
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
-    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0), last_avg_(0)
+    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::min()), cnt_(0)
 {}
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T sum, T sumSquared, T min, T max, unsigned count)
-    : sum_squared_(sumSquared), sum_(sum), min_(min), max_(max), cnt_(count), last_avg_(0)
+    : sum_squared_(sumSquared), sum_(sum), min_(min), max_(max), cnt_(count)
 {}
 
 template <class T>
@@ -72,9 +72,6 @@ prefix_ float senf::StatisticAccumulator<T>::stddev()
 template <class T>
 prefix_ void senf::StatisticAccumulator<T>::clear()
 {
-    if (cnt_ > 0) {
-        last_avg_ = avg();
-    }
     cnt_ = 0;
     sum_squared_ = 0;
     sum_ = 0;
@@ -87,7 +84,7 @@ prefix_ void senf::StatisticAccumulator<T>::data(StatisticsData & data_)
     const
 {
     if (cnt_ == 0) {
-        data_.min = data_.avg = data_.max = last_avg_;
+        data_.min = data_.avg = data_.max = NAN;
         data_.stddev = NAN;
         data_.cnt = 0;
     } else {
