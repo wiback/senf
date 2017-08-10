@@ -42,7 +42,7 @@ prefix_ senf::emu::EthernetReassemblerBase::EthernetReassemblerBase()
 
 prefix_ bool senf::emu::EthernetReassemblerBase::isFragmentedPacket(senf::EthernetPacket const & eth)
 {
-    if (eth->type_length() == senf::EthOUIExtensionPacketType::etherType and eth.next<EthernetFragmentPacket>(senf::nothrow))
+    if (eth->type_length() == senf::EthOUIExtensionPacketType::etherType and eth.find<EthernetFragmentPacket>(senf::nothrow))
         return true;
 
     if (eth->type_length() == senf::EthVLanCPacketType::etherType) {
@@ -68,7 +68,7 @@ prefix_ senf::EthernetPacket & senf::emu::EthernetReassemblerBase::reassembledPa
 
 prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPacket const & eth)
 {
-    EthernetFragmentPacket const & fragment (eth.next().find<EthernetFragmentPacket>(senf::nothrow));
+    EthernetFragmentPacket const & fragment (eth.find<EthernetFragmentPacket>(senf::nothrow));
     if (SENF_UNLIKELY(!fragment)) {
         // clone here to be on the safe side - this should not happen anyway
         reassembledPacket_ = eth.clone();
