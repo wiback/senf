@@ -77,7 +77,7 @@ prefix_ void senf::emu::EthernetFragmenterBase::do_fragmentFrame(senf::EthernetP
 
         int fragmentSize (
                 senf::EthernetPacketParser::fixed_bytes +
-                ((vlanCPresent||vlanSPresent) ? senf::EthVLanPacketParser::fixed_bytes : 0u) +
+                ((vlanCPresent||vlanSPresent) * senf::EthVLanPacketParser::fixed_bytes) +
                 senf::EthOUIExtensionPacketParser::fixed_bytes +
                 EthernetFragmentPacketParser::fixed_bytes +
                 fragmentPayloadSize );
