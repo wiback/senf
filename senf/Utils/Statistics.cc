@@ -312,23 +312,17 @@ prefix_ std::string senf::Statistics::v_path()
 prefix_ void senf::Collector::enter(unsigned n, unsigned cnt, float min, float avg, float max, float dev)
 {
     updated_ = false;
-
-    if (cnt == 0)
-        n = 0;
     
     if (cnt > 0) {
         if (min < accMin_) accMin_ = min;
         if (max > accMax_) accMax_ = max;
-    } else {
-        // no valid data
-        l_++;
     }
-    
-    if (i_ + l_ + n >= rank_) {
+
+    if ((i_+l_) + n >= rank_) {
         if (cnt > 0) {
-            accCnt_ += (rank_ - (i_+l_)) * cnt;
-            accSum_ += (rank_- (i_+l_))*avg;
-            accSumSq_ += (rank_ - (i_+l_))*(rank_ - (i_+l_))*(avg*avg + dev*dev);
+            accCnt_   += (rank_ - (i_+l_)) * cnt;
+            accSum_   += (rank_ - (i_+l_)) * avg;
+            accSumSq_ += (rank_ - (i_+l_)) * (rank_ - (i_+l_)) * (avg*avg + dev*dev);
         }
         float accAvg (accSum_ / rank_);
         float accDev (std::sqrt(std::max(0.0f,accSumSq_ / rank_ - accAvg*accAvg)));
@@ -338,7 +332,7 @@ prefix_ void senf::Collector::enter(unsigned n, unsigned cnt, float min, float a
         accSum_ = 0.0f;
         accSumSq_ = 0.0f;
         accMax_ = -FLT_MAX;
-        n -= (rank_ - i_ -l_);
+        n -= (rank_ - (i_+l_));
         i_ = 0;
         l_ = 0;
 
@@ -350,13 +344,16 @@ prefix_ void senf::Collector::enter(unsigned n, unsigned cnt, float min, float a
         updated_ = true;
     }
 
-    if (cnt>0) {
-        accCnt_ += n * cnt;
-        accSum_ += n * avg;
-        accSumSq_ += n*n*(avg*avg+dev*dev);
+    if (cnt > 0) {
+        accCnt_   += n   * cnt;
+        accSum_   += n   * avg;
+        accSumSq_ += n*n * (avg*avg+dev*dev);
         i_ += n;
         if (min < accMin_) accMin_ = min;
         if (max > accMax_) accMax_ = max;
+    } else {
+        // account for 'no valid data'
+        l_ += n;
     }
 }
 
