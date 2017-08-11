@@ -162,17 +162,20 @@ prefix_ void senf::StatisticsBase::generateOutput()
         i->second.avg = i->second.dev = 0.0f;
         Queue::const_iterator j (queue_.begin());
         Queue::const_iterator const j_end (queue_.end());
-        unsigned n (0);
+        unsigned n (0), num (0);
         for (; n < i->second.n && j != j_end; ++n, ++j) {
-            i->second.cnt += j->cnt;
-            i->second.min = std::min(i->second.min, j->min);
-            i->second.avg += j->avg;
-            i->second.max = std::max( i->second.max, j->max);
-            i->second.dev += j->dev;
+            if (j->cnt > 0) {
+                i->second.cnt += j->cnt;
+                i->second.min = std::min(i->second.min, j->min);
+                i->second.avg += j->avg;
+                i->second.max = std::max( i->second.max, j->max);
+                i->second.dev += j->dev;
+                num++;
+            }
         }
-        if (n > 0) {
-            i->second.avg /= n;
-            i->second.dev /= n;
+        if (num > 0) {
+            i->second.avg /= num;
+            i->second.dev /= num;
         }
         i->second.signal(i->second.cnt, i->second.min, i->second.avg, i->second.max, i->second.dev);
     }
