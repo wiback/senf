@@ -96,6 +96,13 @@ prefix_ void senf::StatisticAccumulator<T>::accumulate(T value)
     max_ = std::max(max_, value);
 }
 
+template <class T>
+prefix_ senf::StatisticAccumulator<T>::operator bool()
+    const
+{
+    return cnt_ > 0;
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

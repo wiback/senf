@@ -37,7 +37,7 @@
 // senf::StatisticsData
 
 prefix_ senf::StatisticsData::StatisticsData()
-    : min(0.0f), avg(0.0f), max(0.0f), stddev(0.0f), cnt(0)
+    : min(NAN), avg(NAN), max(NAN), stddev(NAN), cnt(0)
 {}
 
 prefix_ senf::StatisticsData::StatisticsData(float min_, float avg_, float max_, float stddev_, unsigned cnt_)
@@ -50,18 +50,16 @@ prefix_ senf::StatisticsData::StatisticsData(float singleValue)
 
 prefix_ void senf::StatisticsData::clear()
 {
-    min = 0.0f;
-    max = 0.0f;
-    avg = stddev = 0.0f;
+    min = max = NAN;
+    avg = stddev = NAN;
     cnt = 0;
 }
 
-prefix_ bool senf::StatisticsData::valid()
+prefix_ senf::StatisticsData::operator bool()
     const
 {
     return cnt > 0;
 }
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

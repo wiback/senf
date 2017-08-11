@@ -46,7 +46,8 @@ namespace senf {
          StatisticsData(float singleValue);
 
          void clear();
-         bool valid() const;
+
+         operator bool() const;
 
          float min;
          float avg;
@@ -117,6 +118,10 @@ namespace senf {
         StatisticsData data() const;    ///< Returns the accumulated data as a tuple
                                         /**< This method returns the accumulated information
                                              as a tuple.*/
+
+        operator bool() const;          ///< Returns true if valid data is present
+                                        /**< This method indicates if valid data is present */
+
     private:
         T sum_squared_;
         T sum_;
