@@ -540,6 +540,7 @@ namespace senf {
 
         unsigned rank_;
         unsigned i_;
+        unsigned l_;
         unsigned accCnt_;
         float accMin_;
         float accSum_;
