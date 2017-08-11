@@ -324,8 +324,8 @@ prefix_ void senf::Collector::enter(unsigned n, unsigned cnt, float min, float a
             accSum_   += (rank_ - (i_+l_)) * avg;
             accSumSq_ += (rank_ - (i_+l_)) * (rank_ - (i_+l_)) * (avg*avg + dev*dev);
         }
-        float accAvg (accSum_ / rank_);
-        float accDev (std::sqrt(std::max(0.0f,accSumSq_ / rank_ - accAvg*accAvg)));
+        float accAvg (accSum_ / (rank_ - l_));
+        float accDev (std::sqrt(std::max(0.0f,accSumSq_ / (rank_ - l_) - accAvg*accAvg)));
         StatisticsBase::enter(1, accCnt_, accMin_, accAvg, accMax_, accDev);
         accCnt_ = 0;
         accMin_ = FLT_MAX;
