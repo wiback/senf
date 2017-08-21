@@ -86,6 +86,13 @@ prefix_ senf::emu::EthernetController::Duplex_mode senf::emu::EthernetController
     }
 }
 
+prefix_ std::string senf::emu::EthernetController::duplexAsString()
+    const
+{
+    static const std::string duplexModes[] = { "half", "full", "unknown" };
+    return duplexModes[std::min(unsigned(duplex()),2u)];
+}
+
 prefix_ bool senf::emu::EthernetController::hasLink()
     const
 {
