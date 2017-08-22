@@ -77,12 +77,14 @@ namespace emu {
         virtual void v_mcAdd(MACAddress const & address);
         virtual void v_mcDrop(MACAddress const & address);
         virtual boost::uint8_t v_linkTypeId() const;
+        std::string const & v_device() const override;
 
         detail::TunnelControllerBase & ctrlBase_;
         INet6SocketAddress socketAddress_;
         boost::shared_ptr<InterfaceIdFactoryBase> ifaceIdFactory_;
         MACAddress id_;
         bool isUp_;
+        std::string dev_;
     };
 
 

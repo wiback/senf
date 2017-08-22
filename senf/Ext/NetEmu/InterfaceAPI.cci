@@ -116,6 +116,12 @@ prefix_ boost::uint8_t senf::emu::Interface::linkTypeId()
     return v_linkTypeId();
 }
 
+prefix_ std::string const & senf::emu::Interface::device()
+    const
+{
+    return v_device();
+}
+
 prefix_ senf::console::DirectoryNode & senf::emu::Interface::consoleDir()
     const
 {

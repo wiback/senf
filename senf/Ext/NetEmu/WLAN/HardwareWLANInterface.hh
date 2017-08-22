@@ -66,7 +66,7 @@ namespace emu {
 
         explicit HardwareWLANInterface(std::pair<std::string,std::string> interfaces);
 
-        std::string const & device() const;
+        std::string const & v_device() const override;
                                         ///< Get name of physical device
         std::string const & monitorDevice() const;
                                         ///< Get current monitor %interface

@@ -67,8 +67,11 @@ namespace emu {
         virtual void v_frequency(unsigned frequency, unsigned bandwidth);
         virtual void v_coverageRange(unsigned distance);
 
+        std::string const & v_device() const override;
+
         ModulationParameter::id_t modulationId_;
         MACAddress id_;
+        std::string dev_;
     };
 
 

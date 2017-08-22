@@ -58,7 +58,7 @@ namespace {
 
 prefix_ senf::emu::EmulatedEthernetInterface::EmulatedEthernetInterface()
     : Base(receiveOutput, transmitInput), vlanGroupRange_ ("239.203.0.0/16"),
-      portbase_(11264), vlanId_(0)
+      portbase_(11264), vlanId_(0), dev_("NetEMU-Ethernet")
 {
     ppi::connect(receiverJack, receiveInput);
     ppi::connect(transmitOutput, transmitterJack);
@@ -116,6 +116,13 @@ prefix_ void senf::emu::EmulatedEthernetInterface::vlan(boost::uint16_t id)
     UDPClientHandle::Address addr (vlanGroupRange_.host(vlanId_),portbase_+vlanId_);
     emulationAddress(addr);
 }
+
+prefix_ std::string const & senf::emu::EmulatedEthernetInterface::v_device()
+    const
+{
+    return dev_;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::detail::EmulatedEthernetReceiveFilter

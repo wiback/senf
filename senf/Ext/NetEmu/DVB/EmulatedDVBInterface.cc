@@ -40,12 +40,18 @@
 // senf::emu::detail::EmulatedDVBInterface
 
 prefix_ senf::emu::EmulatedDVBInterface::EmulatedDVBInterface()
-    : modulationId_(0)
+    : modulationId_(0), dev_("NetEMU-DVB")
 {
     // register all known modulations
     for (ModulationParameter::id_t id : DVBModulationParameterRegistry::instance().parameterIds()) {
         registerModulation( id);
     }
+}
+
+prefix_ std::string const & senf::emu::EmulatedDVBInterface::v_device()
+    const
+{
+    return dev_;
 }
 
 prefix_ void senf::emu::EmulatedDVBInterface::init()

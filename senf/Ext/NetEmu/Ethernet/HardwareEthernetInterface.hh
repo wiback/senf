@@ -61,7 +61,7 @@ namespace emu {
 
         HardwareEthernetInterface(std::string const & name);
 
-        std::string device() const;
+        std::string const & v_device() const override;
 
         void setREDFilterCallbackRx(senf::ppi::REDFilterCallback const & cb);
         void setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb);

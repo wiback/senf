@@ -93,6 +93,8 @@ namespace emu {
         virtual ModulationParameter::id_t v_modulationId() const;
         virtual void v_modulationId(ModulationParameter::id_t id);
 
+        std::string const & v_device() const override;
+
         std::string iface_;
         NetdeviceController ctrl_;
         int txPower_;
@@ -117,6 +119,8 @@ namespace emu {
 
         virtual void v_id(MACAddress const & id);
         virtual MACAddress v_id() const;
+        
+        std::string const & v_device() const override;
 
         virtual bool v_promisc() const;
         virtual void v_promisc(bool v);
@@ -141,6 +145,7 @@ namespace emu {
         int tsPid_;
         int stuffingPid_;
         DVBSocketController dvbController;
+        std::string dev_;
 
         friend struct detail::HardwareDVBReceiverInterfaceNet;
     };

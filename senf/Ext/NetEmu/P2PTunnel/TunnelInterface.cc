@@ -206,7 +206,7 @@ prefix_ senf::emu::TunnelInterfaceBase::TunnelInterfaceBase(Output & output, Inp
         detail::TunnelControllerBase & ctrlBase, INet6SocketAddress const & address)
     : BidirectionalWiredInterface(output, input),
       ctrlBase_(ctrlBase), socketAddress_(address), ifaceIdFactory_( new SimpleInterfaceIdFactory()),
-      id_(ifaceIdFactory_->getId()), isUp_(false)
+      id_(ifaceIdFactory_->getId()), isUp_(false), dev_("NetEMU-P2PTunnel")
 {
     BidirectionalWiredInterface::init();
     HardwareInterface::init();
@@ -327,6 +327,12 @@ prefix_ boost::uint8_t senf::emu::TunnelInterfaceBase::v_linkTypeId()
     const
 {
     return 5; // RADIUS network access server (NAS)-Port-Type for "virtual" (see RFC 2865)
+}
+
+prefix_ std::string const & senf::emu::TunnelInterfaceBase::v_device()
+    const
+{
+    return dev_;
 }
 
 

@@ -62,7 +62,7 @@ namespace emu {
 
         TAPEthernetInterface(std::string const & name);
 
-        std::string device() const;
+        std::string const & v_device() const override;
 
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);

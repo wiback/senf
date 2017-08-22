@@ -59,6 +59,8 @@ namespace emu {
 
         EmulatedEthernetInterface();
 
+        std::string const & v_device() const override;
+
         void init();
         //TODO: limit vlanID to 12 usable bits
         void vlan(boost::uint16_t id);
@@ -73,6 +75,7 @@ namespace emu {
         unsigned portbase_;
         MACAddress id_;
         boost::uint16_t vlanId_;
+        std::string dev_;
 
         friend struct detail::EmulatedEthernetInterfaceNet;
     };

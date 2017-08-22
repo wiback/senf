@@ -180,6 +180,12 @@ prefix_ void senf::emu::HardwareDVBSenderInterface::v_modulationId(ModulationPar
     modulationId_ = id;
 }
 
+prefix_ std::string const & senf::emu::HardwareDVBSenderInterface::v_device()
+    const
+{
+    return iface_;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::detail::ActiveDVBSocketSource
@@ -305,7 +311,8 @@ prefix_ senf::emu::HardwareDVBReceiverInterface const & senf::emu::detail::Hardw
 prefix_ senf::emu::HardwareDVBReceiverInterface::HardwareDVBReceiverInterface()
     :  WirelessReceiver( HardwareDVBReceiverInterfaceNet::forwardSwitch.output),
        ifaceIdFactory_( new SimpleInterfaceIdFactory()), id_(ifaceIdFactory_->getId()), stuffingPid_(8190),
-       dvbController( DVBFrontendHandle(0, 0), membind(&HardwareDVBReceiverInterface::tuneEvent, this))
+       dvbController( DVBFrontendHandle(0, 0), membind(&HardwareDVBReceiverInterface::tuneEvent, this)),
+       dev_("DVB-Receiver")
 {
     HardwareDVBInterface::init();
     WirelessReceiver::init();
@@ -388,6 +395,13 @@ prefix_ senf::MACAddress senf::emu::HardwareDVBReceiverInterface::v_id()
 {
     return id_;
 }
+
+prefix_ std::string const & senf::emu::HardwareDVBReceiverInterface::v_device()
+    const
+{
+    return dev_;
+}
+
 
 prefix_ boost::shared_ptr<senf::emu::InterfaceIdFactoryBase> senf::emu::HardwareDVBReceiverInterface::ifaceIdFactory()
 {

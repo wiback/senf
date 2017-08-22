@@ -78,6 +78,7 @@ namespace emu {
         // interface
         virtual void v_id(MACAddress const & eui);
         virtual MACAddress v_id() const;
+        std::string const & v_device() const override;
 
         // modulation
         virtual ModulationParameter::id_t v_modulationId() const;
@@ -91,6 +92,7 @@ namespace emu {
         ModulationParameter::id_t modulationId_;
         int power_;
         Mode mode_;
+        std::string dev_;
 
         friend struct detail::EmulatedWLANInterfaceNet;
     };

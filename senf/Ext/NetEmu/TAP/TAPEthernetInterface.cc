@@ -92,10 +92,6 @@ prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const 
     namespace fty = console::factory;
 
     consoleDir()
-        .add("device",
-             fty::Command(SENF_MEMBINDFNP(std::string, TAPEthernetInterface, device, () const))
-             .overloadDoc("Get Ethernet network device name.") );
-    consoleDir()
         .add("mmapStats", fty::Command(&TAPEthernetInterface::dumpMmapStats, this)
         .doc("dumps and resets the socket's RX/TX statistics"));
     consoleDir()
@@ -125,7 +121,7 @@ prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const 
     }
 }
 
-prefix_ std::string senf::emu::TAPEthernetInterface::device()
+prefix_ std::string const & senf::emu::TAPEthernetInterface::v_device()
     const
 {
     return dev_;

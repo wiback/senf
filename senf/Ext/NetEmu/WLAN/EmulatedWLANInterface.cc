@@ -62,7 +62,7 @@ namespace {
 
 prefix_ senf::emu::EmulatedWLANInterface::EmulatedWLANInterface()
     : Base(receiveOutput, transmitInput), modulationId_(0),
-      power_(0), mode_(ADHOC)
+      power_(0), mode_(ADHOC), dev_("NetEMU-WLAN")
 {
     ppi::connect(receiverJack, receiveInput);
     ppi::connect(transmitOutput, transmitterJack);
@@ -130,6 +130,12 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::EmulatedWLANInterface::v
     const
 {
     return modulationId_;
+}
+
+prefix_ std::string const & senf::emu::EmulatedWLANInterface::v_device()
+    const
+{
+    return dev_;
 }
 
 prefix_ void senf::emu::EmulatedWLANInterface::v_modulationId(ModulationParameter::id_t id)

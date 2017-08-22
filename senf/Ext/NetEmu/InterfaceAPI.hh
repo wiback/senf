@@ -235,6 +235,8 @@ namespace emu {
         void deviceId(InterfaceDeviceId id);
         InterfaceDeviceId deviceId() const;
 
+        std::string const & device() const;
+        
         boost::uint8_t linkTypeId() const;
         std::string interfaceTypeName() const;
 
@@ -299,7 +301,8 @@ namespace emu {
         virtual void v_id(MACAddress const & id) = 0; ///< Called to set %interface mac address
         virtual MACAddress v_id() const = 0; ///< Return the %interface mac address
         virtual boost::uint8_t v_linkTypeId() const = 0;
-
+        virtual std::string const & v_device() const = 0;
+        
     private:
         typedef boost::ptr_map<std::string, senf::Statistics> Statistics;
         Statistics statistics_;

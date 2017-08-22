@@ -162,10 +162,6 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
     namespace fty = console::factory;
 
     consoleDir()
-        .add("device",
-             fty::Command(SENF_MEMBINDFNP(std::string, HardwareEthernetInterface, device, () const))
-             .overloadDoc("Get Ethernet network device name.") );
-    consoleDir()
         .add("mmapStats", fty::Command(&HardwareEthernetInterface::dumpMmapStats, this)
         .doc("dumps and resets the MMAP RX/TX statistics"));
     consoleDir()
@@ -223,7 +219,7 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
         init_sockets();
 }
 
-prefix_ std::string senf::emu::HardwareEthernetInterface::device()
+prefix_ std::string const & senf::emu::HardwareEthernetInterface::v_device()
     const
 {
     return dev_;

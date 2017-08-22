@@ -238,10 +238,6 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
                 SENF_MEMFNP(void, WirelessNLController, coverageClass, (unsigned)), &wnlc_)
         .overloadDoc("set the coverage class"));
     consoleDir()
-        .add("device", fty::Command(
-                SENF_MEMBINDFNP(std::string const &, HardwareWLANInterface, device, () const))
-        .doc("Get WLAN network device name.") );
-    consoleDir()
         .add("monitorDevice", fty::Command(
                 SENF_MEMBINDFNP(std::string const &, HardwareWLANInterface, monitorDevice, () const))
         .overloadDoc("Get monitor device name.\n"
@@ -437,7 +433,7 @@ prefix_ void senf::emu::HardwareWLANInterface::registerTxPowers()
     registerTxPower(100, 3000);
 }
 
-prefix_ std::string const & senf::emu::HardwareWLANInterface::device()
+prefix_ std::string const & senf::emu::HardwareWLANInterface::v_device()
     const
 {
     return dev_;
