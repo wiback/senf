@@ -68,8 +68,8 @@ prefix_ void senf::emu::Interface::init()
             .overloadDoc("Get interface id (MACAddress)") );
     consoleDir().add("deviceId", fty::Command(SENF_MEMBINDFNP(InterfaceDeviceId, Interface, deviceId, () const ))
             .overloadDoc("Get interface device id") );
-    consoleDir().add("deviceId", fty::Command(SENF_MEMBINDFNP(InterfaceDeviceId, Interface, deviceId, () const ))
-            .overloadDoc("Get interface device id") );
+    consoleDir().add("deviceId", fty::Command(SENF_MEMBINDFNP(void, Interface, deviceId, (InterfaceDeviceId) ))
+            .overloadDoc("Set interface device id)") );
     consoleDir().add("device", fty::Command(SENF_MEMBINDFNP(std::string const &, Interface, device, () const ))
             .overloadDoc("Returns the interface device name") );
     consoleDir().add("type", fty::Command(&Interface::interfaceTypeName, this)
