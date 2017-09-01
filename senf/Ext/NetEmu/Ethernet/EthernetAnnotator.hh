@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <senf/PPI/QueueSocketSourceSink.hh>
+#include <senf/Ext/NetEmu/VLanId.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,8 +57,8 @@ namespace emu {
         MACAddress const & id() const;
 
         void promisc(bool p);
-        void insertTag(std::uint16_t pvid);
-        void removeTag(std::uint16_t pvid);
+        void insertTag(VLanId const & pvid);
+        void removeTag(VLanId const & pvid);
         void clearTag();
         void annotate(bool a);
         bool annotate() const;
@@ -78,7 +79,7 @@ namespace emu {
         void handle_pkt_remove_tag(senf::EthernetPacket const & eth);
 
         MACAddress id_;
-        std::uint16_t pvid_;
+        VLanId pvid_;
         std::uint32_t vlanMismatch_;
         HandleEthPkt handle_pkt;
         bool annotate_;

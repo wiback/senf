@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <senf/PPI/QueueingSocketSink.hh>
+#include <senf/Ext/NetEmu/VLanId.hh>
 #include "senf/Ext/NetEmu/InterfaceAPIBase.hh"
 #include "senf/Ext/NetEmu/Ethernet/EthernetController.hh"
 #include "senf/Ext/NetEmu/Ethernet/EthernetInterface.hh"
@@ -67,8 +68,8 @@ namespace emu {
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 
-        std::uint16_t pvid() const;
-        bool pvid(std::uint16_t p, bool accessMode); 
+        VLanId const & pvid() const;
+        bool pvid(VLanId const & p, bool accessMode); 
         std::uint32_t vlanMismatchRx();
         std::uint32_t vlanMismatchTx();
 
@@ -82,7 +83,7 @@ namespace emu {
         virtual void v_mtu(unsigned v);
 
     private:
-        std::uint16_t pvid_;
+        VLanId pvid_;
         bool accessMode_;
 
         void init_sockets();

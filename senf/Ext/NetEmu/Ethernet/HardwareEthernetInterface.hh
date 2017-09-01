@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <senf/PPI/QueueingSocketSink.hh>
+#include <senf/Ext/NetEmu/VLanId.hh>
 #include "EthernetController.hh"
 #include "EthernetInterface.hh"
 
@@ -66,8 +67,8 @@ namespace emu {
         void setREDFilterCallbackRx(senf::ppi::REDFilterCallback const & cb);
         void setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb);
 
-        std::uint16_t pvid() const;
-        bool pvid(std::uint16_t p, bool accessMode); 
+        VLanId const & pvid() const;
+        bool pvid(VLanId const & p, bool accessMode); 
         std::uint32_t vlanMismatchRx();
         std::uint32_t vlanMismatchTx();
 
@@ -125,7 +126,7 @@ namespace emu {
         unsigned rcvBufSize_;
         unsigned sndBufSize_;
         unsigned qlen_;
-        std::uint16_t  pvid_;
+        VLanId  pvid_;
         bool accessMode_;
 
         friend struct detail::HardwareEthernetInterfaceNet;

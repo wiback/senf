@@ -1,0 +1,143 @@
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+//
+
+// Custom includes
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+
+#define prefix_ inline
+///////////////////////////////cci.p////////////////////////////////////////
+
+
+prefix_ bool senf::emu::VLanId::hasCTag(senf::EthernetPacket const & eth)
+{
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    return *reinterpret_cast<std::uint16_t*>(&eth.data()[12]) == 0x0081u;
+#else
+    return *reinterpret_cast<std::uint16_t*>(&eth.data()[12]) == 0x8100u;
+#endif
+}
+
+prefix_ bool senf::emu::VLanId::hasSTag(senf::EthernetPacket const & eth)
+{
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    return *reinterpret_cast<std::uint16_t*>(&eth.data()[12]) == 0xa888u;
+#else
+    return *reinterpret_cast<std::uint16_t*>(&eth.data()[12]) == 0x88a8u;
+#endif
+}
+
+prefix_ bool senf::emu::VLanId::hasTag(senf::EthernetPacket const & eth)
+{
+    return hasCTag(eth) or hasSTag(eth);
+}
+
+prefix_ std::uint16_t senf::emu::VLanId::payloadTypeLength(senf::EthernetPacket const & eth)
+{
+    unsigned offset (12);  // first typeLength
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    while (((offset+2) <= eth.size()) and ((*reinterpret_cast<std::uint16_t*>(&eth.data()[offset]) == 0x0081u) or (*reinterpret_cast<std::uint16_t*>(&eth.data()[offset]) == 0xa888u)))
+        offset += 4;
+#else
+    while (((offset+2) <= eth.size()) and ((*reinterpret_cast<std::uint16_t*>(&eth.data()[offset]) == 0x8100u) or (*reinterpret_cast<std::uint16_t*>(&eth.data()[offset]) == 0x88a8u)))
+        offset += 4;
+#endif
+    if ((offset+2) <= eth.size())
+        return be16toh(*reinterpret_cast<std::uint16_t*>(&eth.data()[offset]));
+
+    // inavlid TL after VLAN stack
+    return 0;
+}
+
+template <class PKT>
+prefix_ PKT senf::emu::VLanId::payload(senf::EthernetPacket const & eth)
+{
+    senf::Packet pkt (eth);
+    do {
+        pkt = pkt.next();
+    }
+    while (pkt and (pkt.is<senf::EthVLanCPacket>() or pkt.is<senf::EthVLanSPacket>()));
+
+    if (pkt and pkt.is<PKT>())
+        return pkt.as<PKT> ();
+
+    return PKT ();
+}
+
+
+prefix_ senf::emu::VLanId::VLanId(VLanId const & other)
+    : id_(other.id_), type_(other.type_)
+{
+}
+
+// Fast path assumption is, we have a tag
+prefix_ senf::emu::VLanId::VLanId(senf::EthernetPacket const & eth)
+{
+    if (SENF_LIKELY(hasCTag(eth))) {
+        id_ = ((eth.data()[14] & 0xf) << 8) + eth.data()[15];
+        type_ = CTag;
+    }
+    else if (SENF_LIKELY(hasSTag(eth))) {
+        id_ = ((eth.data()[14] & 0xf) << 8) + eth.data()[15];
+        type_ = STag;
+    } else {
+        id_ = 0xfff;
+        type_ = NoTag;
+    }
+}
+
+prefix_ std::uint16_t senf::emu::VLanId::id()
+    const
+{
+    return id_;
+}
+
+prefix_ senf::emu::VLanId::Type senf::emu::VLanId::type()
+    const
+{
+    return Type(type_);
+}
+
+prefix_ senf::emu::VLanId::operator bool()
+    const
+{
+    return type_ != NoTag;
+}
+
+prefix_ bool senf::emu::VLanId::stag()
+    const
+{
+    return type_ == STag;
+}
+
+prefix_ bool senf::emu::VLanId::ctag()
+    const
+{
+    return type_ == CTag;
+}
+
+prefix_ bool senf::emu::VLanId::sameTagType(VLanId const & other)
+    const
+{
+    return type_ == other.type_;
+}
+
+prefix_ bool senf::emu::VLanId::operator<(VLanId const & other)
+    const
+{
+    // For now, do not differentiate between STag/CTag
+    return ((type_ == NoTag) < (other.type_ == NoTag)) or (((type_ == NoTag) == (other.type_ == NoTag)) and id_ < other.id_);
+}
+
+prefix_ bool senf::emu::VLanId::operator==(VLanId const & other)
+    const
+{
+    // For now, do not differentiate between STag/CTag
+    return id_ == other.id_ && ((type_ == NoTag) == (other.type_ == NoTag));
+}
+
+///////////////////////////////cci.e////////////////////////////////////////
+#undef prefix_

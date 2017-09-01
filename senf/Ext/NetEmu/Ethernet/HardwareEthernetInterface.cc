@@ -154,7 +154,7 @@ namespace {
 
 prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::string const & dev)
     : EthernetInterface (netOutput, netInput), dev_ (dev), ctrl_ (dev_),
-      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(std::uint16_t(-1)), accessMode_(false)
+      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512), pvid_(VLanId::None), accessMode_(false)
 {
     EthernetInterface::init();
     HardwareInterface::init();
@@ -198,11 +198,11 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
              .doc("get max burst rate"));
     consoleDir()
         .add("pvid", fty::Command(
-                 SENF_MEMBINDFNP(bool, HardwareEthernetInterface, pvid, (std::uint16_t, bool)))
+                 SENF_MEMBINDFNP(bool, HardwareEthernetInterface, pvid, (VLanId const &, bool)))
              .doc( "enables filtering for a specific PVID (VLAN ID must be 0...4095)"));
     consoleDir()
         .add("pvid", fty::Command(
-                 SENF_MEMBINDFNP(std::uint16_t, HardwareEthernetInterface, pvid, () const))
+                 SENF_MEMBINDFNP(VLanId const &, HardwareEthernetInterface, pvid, () const))
              .doc( "report the currently configured PVID (-1 means none)"));
 
 
@@ -241,14 +241,14 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 {
     std::string vlanDevice (device() + "." + senf::str(pvid_));
 
-    if (!promisc() and pvid_ != std::uint16_t(-1)) {
+    if (!promisc() and pvid_) {
         NetdeviceController nc (device());
-        nc.addVLAN(pvid_);
+        nc.addVLAN(pvid_.id());
         NetdeviceController ncv (vlanDevice);
         ncv.up();
     }
     
-    ConnectedMMapPacketSocketHandle socket_ ((promisc() or pvid_ == std::uint16_t(-1) ? device() : vlanDevice),
+    ConnectedMMapPacketSocketHandle socket_ (((promisc() or !pvid_) ? device() : vlanDevice),
                                              qlen_, SENF_EMU_MAXMTU);
 
     socket_.protocol().rcvbuf( rcvBufSize_);
@@ -260,7 +260,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
         HardwareEthernetInterfaceNet::setupBPF(id(), true); // SRC only
     }
 
-    if (promisc() and (pvid_ != (std::uint16_t(-1)))) {
+    if (promisc() and pvid_) {
         if (accessMode_) {
             annotatorRx_.insertTag(pvid_);
             annotatorTx_.removeTag(pvid_);
@@ -279,9 +279,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 
 prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
 {
-    if (!promisc() and pvid_ != std::uint16_t(-1)) {
+    if (!promisc() and pvid_) {
         NetdeviceController nc (device());
-        nc.delVLAN(pvid_);
+        nc.delVLAN(pvid_.id());
     }
 
     ConnectedMMapPacketSocketHandle skt (senf::noinit);
@@ -408,17 +408,17 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::rcvBuf()
     return rcvBufSize_ = HardwareEthernetInterfaceNet::rcvBuf();
 }
 
-prefix_ std::uint16_t senf::emu::HardwareEthernetInterface::pvid()
+prefix_ senf::emu::VLanId const & senf::emu::HardwareEthernetInterface::pvid()
     const
 {
     return pvid_;
 }
 
-prefix_ bool senf::emu::HardwareEthernetInterface::pvid(std::uint16_t p, bool accessMode)
+prefix_ bool senf::emu::HardwareEthernetInterface::pvid(VLanId const & p, bool accessMode)
 {
-    if (p > 4095 and p != std::uint16_t(-1))
+    if (!accessMode and p.stag())
         return false;
-    
+
     close_sockets();
     pvid_ = p;
     accessMode_ = accessMode;
