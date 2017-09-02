@@ -162,6 +162,9 @@ prefix_ void senf::emu::EthernetAnnotator::requestRxMMAPpromisc()
                 EthernetPacket(eth).finalizeTo(vlan);
                 vlan.reparse();
             }
+        } else {
+            vlanMismatch_++;
+            return;
         }
     }
     
@@ -213,7 +216,7 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetP
             return;
         }
         
-        // remove VLAN TAG here
+        // remove outer VLAN C-TAG here
         std::uint16_t tl (vlan->type_length());
         ::memmove(
                   vlan.data().begin(),
@@ -225,9 +228,23 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetP
         tmp->type_length() = tl;
         tmp.reparse();
     } else if (eth->type_length() == EthVLanSPacketType::etherType) {
-        // we do not support S-Tags for now
-        vlanMismatch_++;
-        return;
+        auto vlan (eth.find<EthVLanSPacket>(senf::nothrow));
+        if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_.id()))) {
+            vlanMismatch_++;
+            return;
+        }
+        
+        // remove outer VLAN S-TAG here
+        std::uint16_t tl (vlan->type_length());
+        ::memmove(
+                  vlan.data().begin(),
+                  vlan.data().begin() + senf::EthVLanPacketParser::fixed_bytes,
+                  vlan.size() - senf::EthVLanPacketParser::fixed_bytes);
+
+        EthernetPacket tmp(eth);
+        tmp.data().resize( tmp.size() - senf::EthVLanPacketParser::fixed_bytes);
+        tmp->type_length() = tl;
+        tmp.reparse();
     } else {
         vlanMismatch_++;
         return;
@@ -241,19 +258,24 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetP
 
 prefix_ void senf::emu::EthernetAnnotator::handle_pkt_insert_tag(senf::EthernetPacket const & eth)
 {
-    senf::EthVLanCPacket const & vlanC (eth.next<senf::EthVLanCPacket>(senf::nothrow));
-    if (SENF_UNLIKELY(vlanC)) {
-        vlanMismatch_++;
+    // If a C-TAG PVID is configured, we only except untagged frames
+    if (pvid_.ctag()) {
+        senf::EthVLanCPacket const & vlanC (eth.next<senf::EthVLanCPacket>(senf::nothrow));
+        if (SENF_UNLIKELY(vlanC)) {
+            vlanMismatch_++;
+            return;
+        }
+        senf::EthVLanSPacket const & vlanS (eth.next<senf::EthVLanSPacket>(senf::nothrow));
+        if (SENF_UNLIKELY(vlanS)) {
+            vlanMismatch_++;
         return;
-    }
-    senf::EthVLanSPacket const & vlanS (eth.next<senf::EthVLanSPacket>(senf::nothrow));
-    if (SENF_UNLIKELY(vlanS)) {
-        vlanMismatch_++;
-        return;
+        }
+    } else {
+        // S-TAGs are always added
     }
     
     std::uint16_t tl (eth->type_length());
-    senf::Packet pkt (eth.next(senf::nothrow));
+    senf::Packet const & pkt (eth.next(senf::nothrow));
     if (SENF_LIKELY(pkt)) {
         if (pvid_.ctag()) {
             senf::EthVLanCPacket vtmp (senf::EthVLanCPacket::createInsertBefore(pkt));
