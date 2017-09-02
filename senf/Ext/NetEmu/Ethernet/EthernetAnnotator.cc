@@ -163,28 +163,6 @@ prefix_ void senf::emu::EthernetAnnotator::requestRxMMAPpromisc()
         }
     }
 
-    // If a PVID is configured, filter out non-matching packets
-    if (pvid_) {
-        if (eth->type_length() == EthVLanCPacketType::etherType) {
-            auto const & vlan (eth.next<EthVLanCPacket>(senf::nothrow));
-            if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_.id()) or !pvid_.ctag())) {
-                vlanMismatch_++;
-                return;
-            }
-        }
-        else if (eth->type_length() == EthVLanSPacketType::etherType) {
-            auto const & vlan (eth.next<EthVLanSPacket>(senf::nothrow));
-            if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_.id()) or !pvid_.stag())) {
-                vlanMismatch_++;
-                return;
-            }
-        } else {
-            vlanMismatch_++;
-            return;
-        }
-    }
-
-
     handle_pkt(eth);
 }
 
