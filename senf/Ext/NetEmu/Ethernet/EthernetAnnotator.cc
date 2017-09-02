@@ -228,7 +228,7 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetP
 {
     if (eth->type_length() == EthVLanCPacketType::etherType) {
         auto vlan (eth.next<EthVLanCPacket>(senf::nothrow));
-        if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_.id()))) {
+        if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_.id()) or !pvid_.ctag())) {
             vlanMismatch_++;
             return;
         }
@@ -246,7 +246,7 @@ prefix_ void senf::emu::EthernetAnnotator::handle_pkt_remove_tag(senf::EthernetP
         tmp.reparse();
     } else if (eth->type_length() == EthVLanSPacketType::etherType) {
         auto vlan (eth.next<EthVLanSPacket>(senf::nothrow));
-        if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_.id()))) {
+        if (SENF_UNLIKELY(!vlan or (vlan->vlanId() != pvid_.id()) or !pvid_.stag())) {
             vlanMismatch_++;
             return;
         }
