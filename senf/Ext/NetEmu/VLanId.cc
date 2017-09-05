@@ -48,7 +48,7 @@ void senf::emu::senf_console_parse_argument(senf::console::ParseCommandInfo::Tok
         VLanId::Type type (VLanId::NoTag);
         std::string targ (tokens[0].value());
         if (targ == "None") {
-            vlanId == VLanId::None;
+            vlanId = VLanId::None;
             valid = true;
         } else if (!targ.empty() and targ.back() == 's') {
             targ.pop_back();
