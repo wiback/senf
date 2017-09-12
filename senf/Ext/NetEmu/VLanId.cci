@@ -56,12 +56,11 @@ template <class PKT>
 prefix_ PKT senf::emu::VLanId::payload(senf::EthernetPacket const & eth)
 {
     senf::Packet pkt (eth);
-    do {
+    while (pkt and (pkt.is<senf::EthVLanCPacket>() or pkt.is<senf::EthVLanSPacket>())) {
         pkt = pkt.next();
     }
-    while (pkt and (pkt.is<senf::EthVLanCPacket>() or pkt.is<senf::EthVLanSPacket>()));
 
-    if (pkt and pkt.is<PKT>())
+    if (SENF_LIKELY(pkt) and pkt.is<PKT>())
         return pkt.as<PKT> ();
 
     return PKT ();
