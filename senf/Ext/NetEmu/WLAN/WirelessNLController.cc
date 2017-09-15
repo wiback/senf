@@ -315,11 +315,13 @@ prefix_ void senf::emu::WirelessNLController::send_and_wait4response(nl_msg_ptr 
 prefix_ void senf::emu::WirelessNLController::nlPutChannelDef(nl_msg_ptr msg, frequency_type freq, ChannelMode::Enum channelMode)
 {
     NLA_PUT_U32 ( msg, NL80211_ATTR_WIPHY_FREQ, KHZ_TO_MHZ(freq));
-    NLA_PUT_U32 ( msg, NL80211_ATTR_CHANNEL_WIDTH, channelWidth(channelMode));
-    if (channelType(channelMode) == NL80211_CHAN_NO_HT or channelType(channelMode) == NL80211_CHAN_HT20)
+    if (channelType(channelMode) == NL80211_CHAN_NO_HT or channelType(channelMode) == NL80211_CHAN_HT20) {
         NLA_PUT_U32 ( msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, channelType(channelMode));
-    else
+    }
+    else {
+        NLA_PUT_U32 ( msg, NL80211_ATTR_CHANNEL_WIDTH, channelWidth(channelMode));
         NLA_PUT_U32 ( msg, NL80211_ATTR_CENTER_FREQ1, KHZ_TO_MHZ(centerFreq(freq, channelMode)));
+    }
 }
 
 prefix_ int senf::emu::WirelessNLController::netlink_cb(nl_msg * msg)
