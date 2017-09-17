@@ -84,7 +84,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
         boost::property_tree::read_json(file, pt);
         file.close();        
 
-        unsigned num; // keep track of numer of parsed items (we need 4)
+        unsigned num; // keep track of numer of parsed items (we need 8)
         for (boost::property_tree::ptree::value_type & v : pt) {
             senf::MACAddress mac(senf::MACAddress::from_string(v.first));
             map_.insert(std::make_pair(mac, WifiStatisticsData()));
@@ -103,8 +103,16 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                         map_.find(mac)->second.badFCS = it->second.get<std::uint32_t>("");
                         num++;
                     }
+                    if (it->first == "badFCSBytes") {
+                        map_.find(mac)->second.badFCSBytes = it->second.get<std::uint32_t>("");
+                        num++;
+                    }
                     else if (it->first == "rTx") {
                         map_.find(mac)->second.rTx = it->second.get<std::uint32_t>("");
+                        num++;
+                    }
+                    else if (it->first == "rTxBytes") {
+                        map_.find(mac)->second.rTxBytes = it->second.get<std::uint32_t>("");
                         num++;
                     }
                     else if (it->first == "total") {
@@ -113,6 +121,10 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                     }
                     else if (it->first == "totalBytes") {
                         map_.find(mac)->second.totalBytes = it->second.get<std::uint32_t>("");
+                        num++;
+                    }
+                    else if (it->first == "airTime") {
+                        map_.find(mac)->second.airTime = it->second.get<std::uint32_t>("");
                         num++;
                     }
                     else if (it->first == "bssId") {
@@ -129,7 +141,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                     }
                 }
             }
-            if (num != 5) {
+            if (num != 8) {
                 map_.clear();
                 return false;
             }

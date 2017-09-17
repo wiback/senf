@@ -47,13 +47,16 @@ namespace emu {
         std::uint32_t total; 
         std::uint32_t totalBytes;
         std::uint32_t badFCS; 
+        std::uint32_t badFCSBytes; 
         std::uint32_t rTx;
+        std::uint32_t rTxBytes;
+        std::uint32_t airTime;
         senf::MACAddress bssId;
         std::string ssId;
         std::string type;
         
         WifiStatisticsData() {
-            total = totalBytes = badFCS = rTx = 0;
+            total = totalBytes = badFCS = badFCSBytes = rTx = rTxBytes = airTime = 0;
         };
     };
 
