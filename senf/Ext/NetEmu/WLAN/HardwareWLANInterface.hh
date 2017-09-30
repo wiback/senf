@@ -120,6 +120,7 @@ namespace emu {
 
         void dumpMmapStats(std::ostream & os);
         void dumpFilterStats(std::ostream & os);
+        bool isDead() const;
 
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
 

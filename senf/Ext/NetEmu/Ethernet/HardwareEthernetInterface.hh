@@ -84,6 +84,7 @@ namespace emu {
         std::pair<unsigned,unsigned> txDropped();
 
         void dumpMmapStats(std::ostream & os);
+        bool isDead() const;
 
 #ifdef SENF_DEBUG
         unsigned burstMax();

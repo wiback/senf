@@ -96,6 +96,8 @@ namespace detail {
         void init(unsigned rxqlen, unsigned txqlen);
         unsigned usageRx() const;
         unsigned usageTx() const;
+
+        bool interfaceDead() const;
     };
 
     struct QueuePolicyBase

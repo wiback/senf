@@ -489,6 +489,15 @@ prefix_ void senf::emu::HardwareEthernetInterface::dumpMmapStats(std::ostream & 
     os << std::endl;
 }
 
+prefix_ bool senf::emu::HardwareEthernetInterface::isDead()
+    const
+{
+    if (HardwareEthernetInterfaceNet::socket)
+        return socket.protocol().interfaceDead();
+    return false;  // do not call us if the iface is not active
+}
+
+
 #ifdef SENF_DEBUG
 
 prefix_ unsigned senf::emu::HardwareEthernetInterface::burstMax()

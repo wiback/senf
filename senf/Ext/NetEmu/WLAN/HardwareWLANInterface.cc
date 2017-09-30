@@ -793,6 +793,14 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpMmapStats(std::ostream & os)
     os << std::endl;
 }
 
+prefix_ bool senf::emu::HardwareWLANInterface::isDead()
+    const
+{
+    if (HardwareWLANInterfaceNet::socket)
+        return socket.protocol().interfaceDead();
+    return false;  // do not call us if the iface is not active
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::frequencyOffset(int offset)
 {
     if (offset == frequencyOffset_)

@@ -119,6 +119,12 @@ prefix_ void senf::detail::QueueInfo::inc(unsigned char * & ptr, Queue const & q
         ptr = q.begin;
 }
 
+prefix_ bool senf::detail::QueueInfo::interfaceDead()
+    const
+{
+    // a simple check, if the underlying interface is 'dead' or not responding (i.e. claims to have a 'link' but is not sending/receiving - ath9k bug ?)
+    return (rxStats.received == 0) and (txStats.sent == 0 and (txStats.overrun > 0 or txStats.red > 0 or txStats.dropped > 0));
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::SocketQueueBuffer

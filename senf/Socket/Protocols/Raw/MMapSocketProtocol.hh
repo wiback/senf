@@ -49,6 +49,7 @@ namespace senf {
         void terminate() const;
         detail::QueueInfo::TxStats txStats() const;
         detail::QueueInfo::RxStats rxStats() const;
+        bool interfaceDead() const;
 
     protected:
         void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen, unsigned reserve = 0, bool qDiscBypass = false) const;

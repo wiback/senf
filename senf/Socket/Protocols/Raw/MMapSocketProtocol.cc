@@ -175,6 +175,15 @@ prefix_ unsigned senf::MMapReadableSocketProtocol::available()
     return static_cast<detail::QueueInfo *>(senf::FileHandleAccess::extraPtr(fh()))->frameSize;
 }
 
+prefix_ bool senf::MMapSocketProtocol::interfaceDead()
+    const
+{
+    bool rtn (qi_.interfaceDead());
+    ::memset(&qi_.txStats, 0, sizeof(qi_.txStats));
+    ::memset(&qi_.rxStats, 0, sizeof(qi_.rxStats));
+    return rtn;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
