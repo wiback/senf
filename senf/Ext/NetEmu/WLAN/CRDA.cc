@@ -501,9 +501,14 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
 
     if (!a2) {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring request.") );
-        exit (EXIT_FAILURE);
+        return -EINVAL;
     }
-    
+
+    if ((strlen(a2) != 2) or ((strcmp(a2, "00") != 0) and (!isalpha(a2[0]) or !isalpha(a2[1])))) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Illegal COUNTRY alpha: '" << a2 << "'. Ignoring request.") );
+        return -EINVAL;
+    }
+
     std::vector<std::string> nonOptions;
     senf::console::ProgramOptions cmdlineOptions (argc, argv, senf::console::root());
     cmdlineOptions.nonOptions(nonOptions);
