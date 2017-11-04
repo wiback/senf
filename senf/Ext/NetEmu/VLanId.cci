@@ -83,7 +83,7 @@ prefix_ senf::emu::VLanId::VLanId(senf::EthernetPacket const & eth)
         id_ = ((eth.data()[14] & 0xf) << 8) + eth.data()[15];
         type_ = STag;
     } else {
-        id_ = 0xfff;
+        id_ = 0;  // id == 0 is treated as untagged
         type_ = NoTag;
     }
 }
@@ -143,14 +143,14 @@ prefix_ std::size_t std::hash<senf::emu::VLanId>::operator() (senf::emu::VLanId 
 {
     hash<std::uint16_t> hasher;
     // id() == 0 ane NoTag both map to 0 (untagged)
-    return hasher(v.id() * std::uint16_t(bool(v)));
+    return hasher(v.id());
 }
 
 prefix_ std::size_t senf::emu::hash_value(senf::emu::VLanId const & v)
 {
     boost::hash<std::uint16_t> hasher;
     // id() == 0 ane NoTag both map to 0 (untagged)
-    return hasher(v.id() * std::uint16_t(bool(v)));
+    return hasher(v.id());
 }
 
 
