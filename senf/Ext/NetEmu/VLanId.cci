@@ -138,5 +138,21 @@ prefix_ bool senf::emu::VLanId::operator==(VLanId const & other)
     return id_ == other.id_ && ((type_ == NoTag) == (other.type_ == NoTag));
 }
 
+prefix_ size_t std::hash<senf::emu::VLanId>::operator() (senf::emu::VLanId const & v)
+    const
+{
+    hash<std::uint16_t> hasher;
+    // id() == 0 ane None both map to 0 (untagged)
+    return hasher(v.id() * std::uint16_t(!!v.type()));
+}
+
+prefix_ std::size_t senf::emu::hash_value(senf::emu::VLanId const & v)
+{
+    boost::hash<std::uint16_t> hasher;
+    // id() == 0 ane None both map to 0 (untagged)
+    return hasher(v.id() * std::uint16_t(!!v.type()));
+}
+
+
 ///////////////////////////////cci.e////////////////////////////////////////
 #undef prefix_

@@ -70,11 +70,7 @@ namespace emu {
 namespace std {
     template <>
     struct hash<senf::emu::VLanId> {
-        size_t operator () (const senf::emu::VLanId &v) const {
-            hash<unsigned> hasher;
-            // id() == 0 ane None both map to 0 (untagged)
-            return hasher(v.id() * unsigned(bool(v)));
-        }
+        size_t operator () (senf::emu::VLanId const & v) const;
     };
 }
 

@@ -20,13 +20,6 @@ prefix_ senf::emu::VLanId::VLanId(std::uint16_t id, Type type)
 {
 }
 
-std::size_t senf::emu::hash_value(senf::emu::VLanId const & v)
-{
-    boost::hash<unsigned> hasher;
-    // id() == 0 ane None both map to 0 (untagged)
-    return hasher(v.id() * unsigned(bool(v)));
-}
-
 prefix_ std::ostream & senf::emu::operator<<(std::ostream & os, VLanId const & vlanId)
 {
     if (vlanId) {
