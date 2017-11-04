@@ -138,7 +138,7 @@ prefix_ bool senf::emu::VLanId::operator==(VLanId const & other)
     return id_ == other.id_ && ((type_ == NoTag) == (other.type_ == NoTag));
 }
 
-prefix_ size_t std::hash<senf::emu::VLanId>::operator() (senf::emu::VLanId const & v)
+prefix_ std::size_t std::hash<senf::emu::VLanId>::operator() (senf::emu::VLanId const & v)
     const
 {
     hash<std::uint16_t> hasher;
