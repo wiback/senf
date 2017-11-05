@@ -143,14 +143,14 @@ prefix_ std::size_t std::hash<senf::emu::VLanId>::operator() (senf::emu::VLanId 
 {
     hash<std::uint16_t> hasher;
     // id() == 0 ane NoTag both map to 0 (untagged)
-    return hasher(v.id() * std::uint16_t(bool(v)));
+    return hasher(v.id());
 }
 
 prefix_ std::size_t senf::emu::hash_value(senf::emu::VLanId const & v)
 {
     boost::hash<std::uint16_t> hasher;
     // id() == 0 ane NoTag both map to 0 (untagged)
-    return hasher(v.id() * std::uint16_t(bool(v)));
+    return hasher(v.id());
 }
 
 
