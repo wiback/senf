@@ -13,7 +13,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-senf::emu::VLanId const senf::emu::VLanId::None = senf::emu::VLanId(0xfff, NoTag);
+senf::emu::VLanId const senf::emu::VLanId::None = senf::emu::VLanId(0x0, NoTag);
 
 prefix_ senf::emu::VLanId::VLanId(std::uint16_t id, Type type)
     : id_(id & 0xfff), type_(type)
