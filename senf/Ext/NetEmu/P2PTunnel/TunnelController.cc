@@ -32,6 +32,7 @@
 
 // Custom includes
 #include <senf/Utils/String.hh>
+#include <senf/Ext/NetEmu/VLanId.hh>
 #include "TunnelHeaderPacket.hh"
 #include "TunnelCtrlPacket.hh"
 #include "TunnelInterface.hh"
@@ -173,10 +174,16 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
         } else {
             q.flags.frameReordered = true;
         }
-        
-        if (reassembler_.isFragmentedPacket(eth)) {
-            if (reassembler_.processFrame(eth))
+
+        // fragmented frame ?
+        if (SENF_UNLIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
+            return eth;
+        }    
+        auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
+        if (extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
+            if (reassembler_.processFrame(eth, extOUI.next<EthernetFragmentPacket>())) {
                 return reassembler_.reassembledPacket();
+            }
         } else {
             return eth;
         }
@@ -184,7 +191,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
     }
     
     // no output packet due to reassembling or exception caught
-    return  EthernetPacket();
+    return EthernetPacket();
 }
 
 

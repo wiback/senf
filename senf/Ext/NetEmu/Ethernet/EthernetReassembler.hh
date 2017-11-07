@@ -43,9 +43,7 @@ namespace emu {
         EthernetReassemblerBase();
         virtual ~EthernetReassemblerBase() {};
 
-        static bool isFragmentedPacket(senf::EthernetPacket const & eth);
-
-        bool processFrame(senf::EthernetPacket const & eth);
+        bool processFrame(senf::EthernetPacket const & eth, EthernetFragmentPacket const & fragment);
         senf::EthernetPacket & reassembledPacket();
 
         unsigned fragmentsInvalid();

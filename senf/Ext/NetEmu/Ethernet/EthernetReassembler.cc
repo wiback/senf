@@ -26,6 +26,7 @@
 //       Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
 
 #include "EthernetReassembler.hh"
+#include <senf/Ext/NetEmu/VLanId.hh>
 
 // Custom includes
 
@@ -40,42 +41,14 @@ prefix_ senf::emu::EthernetReassemblerBase::EthernetReassemblerBase()
 {
 }
 
-prefix_ bool senf::emu::EthernetReassemblerBase::isFragmentedPacket(senf::EthernetPacket const & eth)
-{
-    if (eth->type_length() == senf::EthOUIExtensionPacketType::etherType and eth.find<EthernetFragmentPacket>(senf::nothrow))
-        return true;
-
-    if (eth->type_length() == senf::EthVLanCPacketType::etherType) {
-        if ((eth.next<senf::EthVLanCPacket>()->type_length() == senf::EthOUIExtensionPacketType::etherType) &&
-            eth.find<EthernetFragmentPacket>(senf::nothrow))
-            return true;
-    }
-
-    if (eth->type_length() == senf::EthVLanSPacketType::etherType) {
-        if ((eth.next<senf::EthVLanSPacket>()->type_length() == senf::EthOUIExtensionPacketType::etherType) &&
-            eth.find<EthernetFragmentPacket>(senf::nothrow))
-            return true;
-    }
-
-    return false;
-}
-
 prefix_ senf::EthernetPacket & senf::emu::EthernetReassemblerBase::reassembledPacket()
 {
     return reassembledPacket_;
 }
 
 
-prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPacket const & eth)
+prefix_ bool senf::emu::EthernetReassemblerBase::processFrame(senf::EthernetPacket const & eth, EthernetFragmentPacket const & fragment)
 {
-    EthernetFragmentPacket const & fragment (eth.find<EthernetFragmentPacket>(senf::nothrow));
-    if (SENF_UNLIKELY(!fragment)) {
-        // clone here to be on the safe side - this should not happen anyway
-        reassembledPacket_ = eth.clone();
-        packetsUnfragmented_++;
-        return true;
-    }
-
     std::uint8_t fragmentNr (fragment->fragmentNr());
     if (SENF_UNLIKELY(fragmentNr != nextFragmentNr_)){
         fragmentsInvalid_++;
@@ -159,10 +132,16 @@ prefix_ senf::emu::EthernetReassemblerModule::EthernetReassemblerModule()
 prefix_ void senf::emu::EthernetReassemblerModule::onRequest()
 {
     senf::EthernetPacket const & eth (input());
+
+    if (SENF_UNLIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
+        output(eth);
+    }
     
-    if (isFragmentedPacket(eth)) {
-        if (processFrame(eth))
+    auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
+    if (extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
+        if (processFrame(eth, extOUI.next<EthernetFragmentPacket>())) {
             output(reassembledPacket());
+        }
     } else {
         output(eth);
     }
