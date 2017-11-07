@@ -139,7 +139,7 @@ prefix_ void senf::emu::EthernetReassemblerModule::onRequest()
     }
     
     auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
-    if (extOUI and extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
+    if (extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
         if (processFrame(eth, extOUI.next<EthernetFragmentPacket>())) {
             output(reassembledPacket());
         }

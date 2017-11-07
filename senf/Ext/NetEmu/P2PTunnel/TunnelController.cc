@@ -180,7 +180,7 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
             return eth;
         }    
         auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
-        if (extOUI and extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
+        if (extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
             if (reassembler_.processFrame(eth, extOUI.next<EthernetFragmentPacket>())) {
                 return reassembler_.reassembledPacket();
             }
