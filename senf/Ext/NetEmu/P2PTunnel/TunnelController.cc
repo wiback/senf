@@ -176,11 +176,11 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
         }
 
         // fragmented frame ?
-        if (SENF_UNLIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
+        if (SENF_LIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
             return eth;
         }    
         auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
-        if (extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
+        if (extOUI and extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
             if (reassembler_.processFrame(eth, extOUI.next<EthernetFragmentPacket>())) {
                 return reassembler_.reassembledPacket();
             }
