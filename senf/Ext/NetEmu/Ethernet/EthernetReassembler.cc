@@ -135,6 +135,7 @@ prefix_ void senf::emu::EthernetReassemblerModule::onRequest()
 
     if (SENF_LIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
         output(eth);
+        return;
     }
     
     auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
