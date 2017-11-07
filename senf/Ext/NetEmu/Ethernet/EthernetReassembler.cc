@@ -133,12 +133,12 @@ prefix_ void senf::emu::EthernetReassemblerModule::onRequest()
 {
     senf::EthernetPacket const & eth (input());
 
-    if (SENF_UNLIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
+    if (SENF_LIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
         output(eth);
     }
     
     auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
-    if (extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
+    if (extOUI and extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
         if (processFrame(eth, extOUI.next<EthernetFragmentPacket>())) {
             output(reassembledPacket());
         }
