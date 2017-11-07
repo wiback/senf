@@ -88,7 +88,8 @@ namespace emu {
         boost::unordered_map<senf::MACAddress,std::uint16_t> const & fragThreshMap() const;
         void reset();
         void bypass(bool on);
-        
+        bool bypass() const;
+
     private:
         void v_outputFragment(senf::EthernetPacket const & eth)  override;
 
@@ -97,6 +98,7 @@ namespace emu {
 
         boost::unordered_map<senf::MACAddress,std::uint16_t> fragThreshMap_;
         std::uint16_t  defaultFragThresh_;
+        bool bypass_;
      };
 }}
 

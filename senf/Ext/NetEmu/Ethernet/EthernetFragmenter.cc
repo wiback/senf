@@ -129,8 +129,8 @@ prefix_ void senf::emu::EthernetFragmenter::fragmentFrame(senf::EthernetPacket c
 prefix_ senf::emu::EthernetFragmenterModule::EthernetFragmenterModule(std::uint16_t defaultFragThresh)
     : defaultFragThresh_(std::max(std::uint16_t(576),defaultFragThresh))
 {
-    route( input, output).autoThrottling(false);
-    input.onRequest( &EthernetFragmenterModule::onRequest);
+    route( input, output).autoThrottling(false); 
+    bypass (false);
     input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
 }
 
@@ -173,9 +173,15 @@ prefix_ void senf::emu::EthernetFragmenterModule::reset()
 
 prefix_ void senf::emu::EthernetFragmenterModule::bypass(bool on)
 {
-    input.onRequest( on ? &EthernetFragmenterModule::onRequestBypass : &EthernetFragmenterModule::onRequest); 
+    input.onRequest( on ? &EthernetFragmenterModule::onRequestBypass : &EthernetFragmenterModule::onRequest);
+    bypass_ = on;
 }
 
+prefix_ bool senf::emu::EthernetFragmenterModule::bypass()
+    const
+{
+    return bypass_;
+}
 
 prefix_ void senf::emu::EthernetFragmenterModule::v_outputFragment(senf::EthernetPacket const & eth)
 {
