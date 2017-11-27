@@ -117,7 +117,7 @@ namespace config {
 # endif
 #
 # ifndef SENF_PACKET_VECTOR_SIZE_INDEX
-#     define SENF_PACKET_VECTOR_SIZE_INDEX 12
+#     define SENF_PACKET_VECTOR_SIZE_INDEX 11
 # endif
 #
 # ifndef SENF_PACKET_VECTOR_HEADROOM
