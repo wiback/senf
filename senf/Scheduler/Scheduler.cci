@@ -49,6 +49,11 @@ prefix_ senf::ClockService::clock_type const & senf::scheduler::now()
     return scheduler::detail::FdManager::instance().eventTime();
 }
 
+prefix_ senf::ClockService::clock_type senf::scheduler::nowDiff(ClockService::clock_type const & older)
+{
+    return now() - older;
+}
+
 prefix_ senf::ClockService::clock_type_coarse const & senf::scheduler::nowCoarse()
 {
     return scheduler::detail::FdManager::instance().eventTimeCoarse();

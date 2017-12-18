@@ -273,6 +273,12 @@ namespace scheduler {
      */
     ClockService::clock_type const & now();
 
+    /** \brief Returns (approximate) time difference between 'older' and now()
+
+        Note: The scheduler must be running() for this time to be accurate.
+     */
+    ClockService::clock_type nowDiff(ClockService::clock_type const & older);
+
     /** \brief Returns (approximate) current time (coarse, 1ms precision)
 
         This call will return the current time as far as it is already known to the scheduler.
