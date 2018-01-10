@@ -242,10 +242,8 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
     std::string vlanDevice (device() + "." + senf::str(pvid_));
 
     if (!promisc() and pvid_) {
-        NetdeviceController nc (device());
-        nc.addVLAN(pvid_.id());
-        NetdeviceController ncv (vlanDevice);
-        ncv.up();
+        ctrl_.addVLAN(pvid_.id());
+        NetdeviceController(vlanDevice).up();
     }
     
     ConnectedMMapPacketSocketHandle socket_ (((promisc() or !pvid_) ? device() : vlanDevice),
@@ -280,8 +278,11 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
 {
     if (!promisc() and pvid_) {
-        NetdeviceController nc (device());
-        nc.delVLAN(pvid_.id());
+        try {
+            ctrl_.delVLAN(pvid_.id());
+        }
+        catch (...) {
+        }
     }
 
     ConnectedMMapPacketSocketHandle skt (senf::noinit);
