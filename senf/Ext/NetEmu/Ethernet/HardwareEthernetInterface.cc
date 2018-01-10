@@ -301,7 +301,11 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_disable()
 {
     if (enabled()) {
         close_sockets();
-        ctrl_.down();
+        try {
+            ctrl_.down();
+        }
+        catch (...) {
+        }            
     }
 }
 
