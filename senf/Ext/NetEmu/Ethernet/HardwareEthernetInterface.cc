@@ -277,12 +277,12 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 
 prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
 {
-    if (!promisc() and pvid_) {
-        try {
+    try {
+        if (!promisc() and pvid_) {
             ctrl_.delVLAN(pvid_.id());
         }
-        catch (...) {
-        }
+    }
+    catch (...) {
     }
 
     ConnectedMMapPacketSocketHandle skt (senf::noinit);
@@ -291,7 +291,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
 
 prefix_ void senf::emu::HardwareEthernetInterface::v_enable()
 {
-    if (! enabled()) {
+    if (!enabled()) {
         ctrl_.up();
         init_sockets();
     }
