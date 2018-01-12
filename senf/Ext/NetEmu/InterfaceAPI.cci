@@ -78,9 +78,7 @@ prefix_ bool senf::emu::Interface::enabled()
 prefix_ senf::MACAddress senf::emu::Interface::id()
     const
 {
-    if (! id_)
-        id_ = v_id();
-    return id_;
+    return id_ = v_id();
 }
 
 prefix_ unsigned senf::emu::Interface::index()
