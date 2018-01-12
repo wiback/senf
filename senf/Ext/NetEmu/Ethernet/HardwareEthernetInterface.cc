@@ -299,6 +299,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_enable()
         if (initialId_ != id()) {
             // if so, reset it to the initial Id (i.e. USB Ethernet)
             SENF_LOG((senf::log::IMPORTANT)("Id (MAC Address) of device " << device() << " has changed to " << id() << ". Resetting it back to " << initialId_));
+            // iface must be down before changing Id
+            ctrl_.down();
+            // reset to old Id here
             id(initialId_);
         }
         // make sure the interface is 'up'
