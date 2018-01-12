@@ -292,7 +292,7 @@ prefix_ void senf::emu::HardwareEthernetInterface::close_sockets()
 prefix_ void senf::emu::HardwareEthernetInterface::v_enable()
 {
     if (!enabled()) {
-        // we might have a new ifidex_ (i.e. after USB Ethernet unplug/plug)
+        // we might have a new ifindex_ (i.e. after USB Ethernet unplug/plug)
         ctrl_.reset(device());
         // make sure the interface is 'up'
         ctrl_.up();
