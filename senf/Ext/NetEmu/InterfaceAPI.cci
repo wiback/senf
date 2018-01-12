@@ -75,7 +75,7 @@ prefix_ bool senf::emu::Interface::enabled()
     return v_enabled();
 }
 
-prefix_ senf::MACAddress senf::emu::Interface::id()
+prefix_ senf::MACAddress const & senf::emu::Interface::id()
     const
 {
     return id_ = v_id();

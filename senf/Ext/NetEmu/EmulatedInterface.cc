@@ -48,16 +48,17 @@ prefix_ void senf::emu::detail::EmulatedInterfaceReceiveFilter::request()
     EthernetPacket e (p.find<EthernetPacket>(senf::nothrow));
 
     Interface & iface (receiver_.EmulatedReceiver::basei::interface());
+    auto const & ifaceId (iface.id());
 
     if (e) {
         // Drop self-looped packets
-        if (e->source() == iface.id())
+        if (e->source() == ifaceId)
             return;
 
         // Drop all packets not addressed to us
         if (! iface.receiver().promisc() ) {
             MACAddress dst (e->destination());
-            if (! dst.multicast() && dst != iface.id())
+            if (! dst.multicast() && dst != ifaceId)
                 return;
         }
     } else { //non-data frames (i.e no Ethernet header in stack)
@@ -70,7 +71,7 @@ prefix_ void senf::emu::detail::EmulatedInterfaceReceiveFilter::request()
         if (! w)
             return;
         // Drop self-looped packets
-        if (w->sourceAddress() == iface.id())
+        if (w->sourceAddress() == ifaceId)
             return;
     }
 
@@ -80,7 +81,7 @@ prefix_ void senf::emu::detail::EmulatedInterfaceReceiveFilter::request()
                                        << p->nodeId() << "," << p->interfaceIndex()));
 
     p.annotation<annotations::Timestamp>().fromSocketProtocol(receiver_.EmulatedReceiver::emui::interface().emulationSocket().protocol());  
-    p.annotation<annotations::Interface>().value = iface.id();
+    p.annotation<annotations::Interface>().value = ifaceId;
 
     output(p);
 }

@@ -226,7 +226,7 @@ namespace emu {
         unsigned index() const;          ///< Get %interface index
 
         void id(MACAddress const & eui); ///< Change %interface MAC
-        MACAddress id() const;           ///< Get %interface MAC Address
+        MACAddress const & id() const;           ///< Get %interface MAC Address
 
         static unsigned nodeId();        ///< Get unique node id
                                          /**< The nodeId defaults to the process id */
