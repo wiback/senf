@@ -129,6 +129,7 @@ namespace emu {
         unsigned qlen_;
         VLanId  pvid_;
         bool accessMode_;
+        senf::MACAddress initialId_;
 
         friend struct detail::HardwareEthernetInterfaceNet;
         friend class EthernetAnnotator;

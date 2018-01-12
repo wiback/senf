@@ -213,7 +213,8 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
     // ...before installing a fresh one
     console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 
-    annotatorRx_.id(id());
+    initialId_ = id();
+    annotatorRx_.id(initialId_);
 
     if (ctrl_.isUp())
         init_sockets();
@@ -294,6 +295,11 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_enable()
     if (!enabled()) {
         // we might have a new ifindex_ (i.e. after USB Ethernet unplug/plug)
         ctrl_.reset(device());
+        // did our ID change ?  
+        if (initialId_ != id()) {
+            // if so, reset it to the initial Id (i.e. USB Ethernet)
+            id(initialId_);
+        }
         // make sure the interface is 'up'
         ctrl_.up();
         // open the MMAP sockets
