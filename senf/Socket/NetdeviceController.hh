@@ -62,6 +62,8 @@ namespace senf {
                                         ///< Construct a new controller for the given interface name.
         explicit NetdeviceController(int interface_index);
                                         ///< Construct a new controller for the given interface index.
+        void reset(std::string const & interface_name);
+                                        ///< reset the ifindex_ from the given iface_name (i.e. after USB Ethernet unplug/plug
         int interfaceIndex() const;     ///< return the interface index
         MACAddress hardwareAddress() const;
                                         ///< return hardware address

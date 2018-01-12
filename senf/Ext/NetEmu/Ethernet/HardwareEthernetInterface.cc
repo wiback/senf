@@ -239,6 +239,9 @@ prefix_ void senf::emu::HardwareEthernetInterface::v_mcDrop(MACAddress const & a
 
 prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
 {
+    // we might have a new ifidex_ (i.e. after USB Ethernet unplig/plug)
+    ctrl_.reset(device());
+
     std::string vlanDevice (device() + "." + senf::str(pvid_));
 
     if (!promisc() and pvid_) {

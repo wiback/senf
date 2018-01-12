@@ -55,17 +55,22 @@
 prefix_ senf::NetdeviceController::NetdeviceController(std::string const & interface_name)
     : sockfd_ (sockfd())
 {
-    struct ifreq ifr;
-    ::memset( &ifr, 0, sizeof(ifr));
-    interface_name.copy( ifr.ifr_name, IFNAMSIZ);
-    doIoctl(ifr, SIOCGIFINDEX, "Could not discover the index of interface \"" + interface_name + "\"");
-    ifindex_ = ifr.ifr_ifindex;
+    reset(interface_name);
 }
 
 prefix_ senf::NetdeviceController::NetdeviceController(int interface_index)
     : sockfd_ (sockfd())
 {
     ifindex_ = interface_index;
+}
+
+prefix_ void senf::NetdeviceController::reset(std::string const & interface_name)
+{
+    struct ifreq ifr;
+    ::memset( &ifr, 0, sizeof(ifr));
+    interface_name.copy( ifr.ifr_name, IFNAMSIZ);
+    doIoctl(ifr, SIOCGIFINDEX, "Could not discover the index of interface \"" + interface_name + "\"");
+    ifindex_ = ifr.ifr_ifindex;
 }
 
 prefix_ std::string senf::NetdeviceController::interfaceName()
