@@ -115,12 +115,12 @@ namespace scheduler {
         void enable();                  ///< Enable timer
 
         void action(Callback const & cb); ///< Change timer event callback
-        void timeout(ClockService::clock_type timeout, bool initiallyEnabled=true);
+        void timeout(ClockService::clock_type const & timeout, bool initiallyEnabled=true);
                                         ///< Re-arm or move timeout
                                         /**< \param[in] timeout new timeout time
                                              \param[in] initiallyEnabled if set \c false, do not
                                                  enable callback automatically. */
-        ClockService::clock_type timeout() const;
+        ClockService::clock_type const & timeout() const;
                                         ///< Get current/last timeout value
 
     private:

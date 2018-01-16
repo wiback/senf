@@ -50,7 +50,7 @@ namespace detail {
     public:
         virtual ~TimerSource();
 
-        virtual void timeout(ClockService::clock_type timeout) = 0;
+        virtual void timeout(ClockService::clock_type const & timeout) = 0;
         virtual void notimeout() = 0;
 
         virtual void enable() = 0;
@@ -67,7 +67,7 @@ namespace detail {
         POSIXTimerSource();
         ~POSIXTimerSource();
 
-        virtual void timeout(ClockService::clock_type timeout);
+        virtual void timeout(ClockService::clock_type const & timeout);
         virtual void notimeout();
 
         virtual void enable();
@@ -90,7 +90,7 @@ namespace detail {
         : public TimerSource
     {
     public:
-        virtual void timeout(ClockService::clock_type timeout);
+        virtual void timeout(ClockService::clock_type const & timeout);
         virtual void notimeout();
 
         virtual void enable();
@@ -105,7 +105,7 @@ namespace detail {
         TimerFDTimerSource();
         ~TimerFDTimerSource();
 
-        virtual void timeout(ClockService::clock_type timeout);
+        virtual void timeout(ClockService::clock_type const & timeout);
         virtual void notimeout();
 
         virtual void enable();

@@ -74,7 +74,7 @@ prefix_ void senf::scheduler::TimerEvent::action(Callback const & cb)
     cb_ = cb;
 }
 
-prefix_ void senf::scheduler::TimerEvent::timeout(ClockService::clock_type timeout,
+prefix_ void senf::scheduler::TimerEvent::timeout(ClockService::clock_type const & timeout,
                                                   bool initiallyEnabled)
 {
     disable();
@@ -83,7 +83,7 @@ prefix_ void senf::scheduler::TimerEvent::timeout(ClockService::clock_type timeo
         enable();
 }
 
-prefix_ senf::ClockService::clock_type senf::scheduler::TimerEvent::timeout()
+prefix_ senf::ClockService::clock_type const & senf::scheduler::TimerEvent::timeout()
     const
 {
     return timeout_;

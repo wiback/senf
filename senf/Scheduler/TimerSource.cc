@@ -89,7 +89,7 @@ prefix_ senf::scheduler::detail::POSIXTimerSource::~POSIXTimerSource()
 }
 
 prefix_ void
-senf::scheduler::detail::POSIXTimerSource::timeout(ClockService::clock_type timeout)
+senf::scheduler::detail::POSIXTimerSource::timeout(ClockService::clock_type const & timeout)
 {
     if (! timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
@@ -161,7 +161,7 @@ prefix_ void senf::scheduler::detail::POSIXTimerSource::reschedule()
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::scheduler::detail::PollTimerSource
 
-prefix_ void senf::scheduler::detail::PollTimerSource::timeout(ClockService::clock_type timeout)
+prefix_ void senf::scheduler::detail::PollTimerSource::timeout(ClockService::clock_type const & timeout)
 {
     ClockService::clock_type now (ClockService::now());
     int delay (ClockService::in_milliseconds(timeout-now)+1);
@@ -199,7 +199,7 @@ prefix_ senf::scheduler::detail::TimerFDTimerSource::~TimerFDTimerSource()
 }
 
 prefix_ void
-senf::scheduler::detail::TimerFDTimerSource::timeout(ClockService::clock_type timeout)
+senf::scheduler::detail::TimerFDTimerSource::timeout(ClockService::clock_type const & timeout)
 {
     if (!timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
