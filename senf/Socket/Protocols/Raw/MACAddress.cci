@@ -48,7 +48,7 @@ prefix_ senf::MACAddress::MACAddress()
 prefix_ senf::MACAddress::MACAddress(senf::NoInit_t)
 {}
 
-prefix_ senf::MACAddress::MACAddress(boost::uint64_t v)
+prefix_ senf::MACAddress::MACAddress(boost::uint64_t const & v)
 {
     (*this)[0] = boost::uint8_t( v >> 40 );
     (*this)[1] = boost::uint8_t( v >> 32 );

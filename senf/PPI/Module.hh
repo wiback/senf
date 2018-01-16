@@ -302,11 +302,11 @@ namespace module {
                                                  type as an additional template parameter. */
 #endif
 
-        ClockService::clock_type time() const; ///< Time-stamp of the currently processing event
+        ClockService::clock_type const & time() const; ///< Time-stamp of the currently processing event
                                         /**< If available, this returns the scheduled time of the
                                              event. */
 
-        ClockService::clock_type now() const; ///< Current time of the currently processing event
+        ClockService::clock_type const & now() const; ///< Current time of the currently processing event
 
 #ifndef DOXYGEN
         virtual void macro_SENF_PPI_MODULE_missing() = 0;

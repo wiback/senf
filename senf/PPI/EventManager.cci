@@ -50,12 +50,12 @@ prefix_ senf::ppi::EventManager & senf::ppi::EventManager::instance()
     return manager;
 }
 
-prefix_ senf::ClockService::clock_type senf::ppi::EventManager::now()
+prefix_ senf::ClockService::clock_type const & senf::ppi::EventManager::now()
 {
     return scheduler::now();
 }
 
-prefix_ senf::ClockService::clock_type senf::ppi::EventManager::time()
+prefix_ senf::ClockService::clock_type const & senf::ppi::EventManager::time()
 {
     return eventTime_;
 }
@@ -73,7 +73,7 @@ prefix_ senf::ppi::EventManager::~EventManager()
     alive_ = false;
 }
 
-prefix_ void senf::ppi::EventManager::eventTime(ClockService::clock_type time)
+prefix_ void senf::ppi::EventManager::eventTime(ClockService::clock_type const & time)
 {
     eventTime_ = time;
 }

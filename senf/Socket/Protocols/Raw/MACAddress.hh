@@ -92,7 +92,7 @@ namespace senf {
 
         MACAddress();                   ///< Construct zero-initialized address
         MACAddress(senf::NoInit_t);     ///< Construct uninitialized (!) address
-        explicit MACAddress(boost::uint64_t v); ///< Construct MACAddress constants
+        explicit MACAddress(boost::uint64_t const & v); ///< Construct MACAddress constants
 
         static MACAddress from_string(std::string const & s);
                                         ///< Construct address from string representation

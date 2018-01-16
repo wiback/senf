@@ -83,8 +83,8 @@ namespace ppi {
         //\}
         //-////////////////////////////////////////////////////////////////////////
 
-        ClockService::clock_type now(); ///< Current time at last event dispatch
-        ClockService::clock_type time(); ///< Expected time of the last event
+        ClockService::clock_type const & now(); ///< Current time at last event dispatch
+        ClockService::clock_type const & time(); ///< Expected time of the last event
 
     protected:
 
@@ -103,7 +103,7 @@ namespace ppi {
         typedef boost::ptr_vector<detail::EventBindingBase> EventRegistrations;
         EventRegistrations registrations_;
 
-        void eventTime(ClockService::clock_type time);
+        void eventTime(ClockService::clock_type const & time);
 
         ClockService::clock_type eventTime_;
 

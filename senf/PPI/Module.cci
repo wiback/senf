@@ -74,13 +74,13 @@ prefix_ senf::ppi::module::Module::~Module()
     moduleManager().unregisterModule(*this);
 }
 
-prefix_ senf::ClockService::clock_type senf::ppi::module::Module::time()
+prefix_ senf::ClockService::clock_type const & senf::ppi::module::Module::time()
     const
 {
     return eventManager().time();
 }
 
-prefix_ senf::ClockService::clock_type senf::ppi::module::Module::now()
+prefix_ senf::ClockService::clock_type const & senf::ppi::module::Module::now()
     const
 {
     return eventManager().now();
