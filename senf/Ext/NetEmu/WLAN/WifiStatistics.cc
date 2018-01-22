@@ -98,47 +98,55 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                             it->second.get<std::int32_t>("max"),
                             it->second.get<std::uint32_t>("count")).data();
                     num++;
-                } else {
-                    if (it->first == "badFCS") {
-                        map_.find(mac)->second.badFCS = it->second.get<std::uint32_t>("");
-                        num++;
-                    }
-                    if (it->first == "badFCSBytes") {
-                        map_.find(mac)->second.badFCSBytes = it->second.get<std::uint32_t>("");
-                        num++;
-                    }
-                    else if (it->first == "rTx") {
-                        map_.find(mac)->second.rTx = it->second.get<std::uint32_t>("");
-                        num++;
-                    }
-                    else if (it->first == "rTxBytes") {
-                        map_.find(mac)->second.rTxBytes = it->second.get<std::uint32_t>("");
-                        num++;
-                    }
-                    else if (it->first == "total") {
-                        map_.find(mac)->second.total = it->second.get<std::uint32_t>("");
-                        num++;
-                    }
-                    else if (it->first == "totalBytes") {
-                        map_.find(mac)->second.totalBytes = it->second.get<std::uint32_t>("");
-                        num++;
-                    }
-                    else if (it->first == "airTime") {
-                        map_.find(mac)->second.airTime = it->second.get<std::uint32_t>("");
-                        num++;
-                    }
-                    else if (it->first == "bssId") {
-                        // optional
-                        map_.find(mac)->second.bssId = senf::MACAddress::from_string(it->second.get<std::string>(""));
-                    }
-                    else if (it->first == "ssId") {
-                        // optional
-                        map_.find(mac)->second.ssId = it->second.get<std::string>("");
-                    }
-                    else if (it->first == "type") {
-                        // optional
-                        map_.find(mac)->second.type = it->second.get<std::string>("");
-                    }
+                }
+                else if (it->first == "bitrate") {
+                    // optional
+                    map_.find(mac)->second.bitrate = StatisticAccumulator<std::int64_t>(
+                            it->second.get<std::int32_t>("sum"),
+                            it->second.get<std::int64_t>("sum2"),
+                            it->second.get<std::int32_t>("min"),
+                            it->second.get<std::int32_t>("max"),
+                            it->second.get<std::uint32_t>("count")).data();
+                }
+                else if (it->first == "badFCS") {
+                    map_.find(mac)->second.badFCS = it->second.get<std::uint32_t>("");
+                    num++;
+                }
+                else if (it->first == "badFCSBytes") {
+                    map_.find(mac)->second.badFCSBytes = it->second.get<std::uint32_t>("");
+                    num++;
+                }
+                else if (it->first == "rTx") {
+                    map_.find(mac)->second.rTx = it->second.get<std::uint32_t>("");
+                    num++;
+                }
+                else if (it->first == "rTxBytes") {
+                    map_.find(mac)->second.rTxBytes = it->second.get<std::uint32_t>("");
+                    num++;
+                }
+                else if (it->first == "total") {
+                    map_.find(mac)->second.total = it->second.get<std::uint32_t>("");
+                    num++;
+                }
+                else if (it->first == "totalBytes") {
+                    map_.find(mac)->second.totalBytes = it->second.get<std::uint32_t>("");
+                    num++;
+                }
+                else if (it->first == "airTime") {
+                    map_.find(mac)->second.airTime = it->second.get<std::uint32_t>("");
+                    num++;
+                }
+                else if (it->first == "bssId") {
+                    // optional
+                    map_.find(mac)->second.bssId = senf::MACAddress::from_string(it->second.get<std::string>(""));
+                }
+                else if (it->first == "ssId") {
+                    // optional
+                    map_.find(mac)->second.ssId = it->second.get<std::string>("");
+                }
+                else if (it->first == "type") {
+                    // optional
+                    map_.find(mac)->second.type = it->second.get<std::string>("");
                 }
             }
             if (num != 8) {
