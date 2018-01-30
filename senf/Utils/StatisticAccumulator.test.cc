@@ -59,7 +59,7 @@ SENF_AUTO_TEST_CASE(StatisticAccumulator)
 
     s(0,sa);
 
-    BOOST_CHECK_EQUAL( sa.max(), std::numeric_limits<int>::min());
+    BOOST_CHECK_EQUAL( sa.max(), std::numeric_limits<int>::lowest());
     BOOST_CHECK_EQUAL( sa.min(), std::numeric_limits<int>::max());
 //    BOOST_CHECK( (boost::math::isnan)( sa.avg()));
     BOOST_CHECK( ::isnan( sa.avg()) != 0);
