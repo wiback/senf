@@ -84,8 +84,8 @@ senf::emu::WirelessInterface::frequencies()
 {
     frequency_is_whitelisted predicate (whitelistedFrequencies_);
     return boost::make_iterator_range(
-            make_filter_iterator( predicate, frequencies_.begin(), frequencies_.end()),
-            make_filter_iterator( predicate, frequencies_.end(),   frequencies_.end()) );
+        boost::make_filter_iterator( predicate, frequencies_.begin(), frequencies_.end()),
+        boost::make_filter_iterator( predicate, frequencies_.end(),   frequencies_.end()) );
 }
 
 prefix_ senf::emu::WirelessInterface::WirelessInterface()

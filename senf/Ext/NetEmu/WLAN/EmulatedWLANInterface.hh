@@ -76,17 +76,17 @@ namespace emu {
         void registerModulation(WLANModulationParameter::Type type, std::vector<std::string> args);
 
         // interface
-        virtual void v_id(MACAddress const & eui);
-        virtual MACAddress v_id() const;
+        virtual void v_id(MACAddress const & eui) override;
+        virtual MACAddress v_id() const override;
         std::string const & v_device() const override;
 
         // modulation
-        virtual ModulationParameter::id_t v_modulationId() const;
-        virtual void v_modulationId(ModulationParameter::id_t);
+        virtual ModulationParameter::id_t v_modulationId() const override;
+        virtual void v_modulationId(ModulationParameter::id_t) override;
 
         // txpower
-        virtual int v_txPower() const;
-        virtual void v_txPower(int power);
+        virtual int v_txPower() const override;
+        virtual void v_txPower(int power) override;
 
         MACAddress id_;
         ModulationParameter::id_t modulationId_;

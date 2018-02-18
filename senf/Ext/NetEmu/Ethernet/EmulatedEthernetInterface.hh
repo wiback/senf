@@ -68,8 +68,8 @@ namespace emu {
 
     private:
         // interface
-        virtual void v_id(MACAddress const & eui);
-        virtual MACAddress v_id() const;
+        virtual void v_id(MACAddress const & eui) override;
+        virtual MACAddress v_id() const override;
 
         INet4Network vlanGroupRange_;
         unsigned portbase_;

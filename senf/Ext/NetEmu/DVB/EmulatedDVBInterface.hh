@@ -55,17 +55,17 @@ namespace emu {
         void init();
 
         virtual void v_tune(DVBModulationParameter::fec_rate_t fec, DVBModulationParameter::modulation_t mod,
-                DVBModulationParameter::guard_interval_t gi, unsigned frequency);
+                DVBModulationParameter::guard_interval_t gi, unsigned frequency) override;
 
-        virtual void v_id(MACAddress const & id);
-        virtual MACAddress v_id() const;
-        virtual void v_enable();
-        virtual void v_disable();
-        virtual bool v_enabled() const;
-        virtual unsigned v_frequency() const;
-        virtual unsigned v_bandwidth() const;
-        virtual void v_frequency(unsigned frequency, unsigned bandwidth);
-        virtual void v_coverageRange(unsigned distance);
+        virtual void v_id(MACAddress const & id) override;
+        virtual MACAddress v_id() const override;
+        virtual void v_enable() override;
+        virtual void v_disable() override;
+        virtual bool v_enabled() const override;
+        virtual unsigned v_frequency() const override;
+        virtual unsigned v_bandwidth() const override;
+        virtual void v_frequency(unsigned frequency, unsigned bandwidth) override;
+        virtual void v_coverageRange(unsigned distance) override;
 
         std::string const & v_device() const override;
 
@@ -94,14 +94,14 @@ namespace emu {
         using EmulatedDVBInterface::registerFrequency;
 
     private:
-        virtual ModulationParameter::id_t v_modulationId() const;
-        virtual void v_modulationId(ModulationParameter::id_t id);
-        virtual int v_txPower() const;
-        virtual void v_txPower(int power);
-        virtual unsigned v_mtu() const;
-        virtual void v_mtu(unsigned v);
-        virtual void v_initEmulationInterface();
-        virtual void v_deinitEmulationInterface();
+        virtual ModulationParameter::id_t v_modulationId() const override;
+        virtual void v_modulationId(ModulationParameter::id_t id) override;
+        virtual int v_txPower() const override;
+        virtual void v_txPower(int power) override;
+        virtual unsigned v_mtu() const override;
+        virtual void v_mtu(unsigned v) override;
+        virtual void v_initEmulationInterface() override;
+        virtual void v_deinitEmulationInterface() override;
 
         int power_;
 
@@ -127,14 +127,14 @@ namespace emu {
         using EmulatedDVBInterface::registerFrequency;
 
     private:
-        virtual bool v_promisc() const;
-        virtual void v_promisc(bool v);
-        virtual bool v_annotationMode() const;
-        virtual void v_annotationMode(bool v);
-        virtual void v_mcAdd(MACAddress const & address);
-        virtual void v_mcDrop(MACAddress const & address);
-        virtual void v_initEmulationInterface();
-        virtual void v_deinitEmulationInterface();
+        virtual bool v_promisc() const override;
+        virtual void v_promisc(bool v) override;
+        virtual bool v_annotationMode() const override;
+        virtual void v_annotationMode(bool v) override;
+        virtual void v_mcAdd(MACAddress const & address) override;
+        virtual void v_mcDrop(MACAddress const & address) override;
+        virtual void v_initEmulationInterface() override;
+        virtual void v_deinitEmulationInterface() override;
 
         friend struct detail::EmulatedDVBReceiverInterfaceNet;
     };

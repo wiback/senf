@@ -77,21 +77,21 @@ namespace emu {
         HardwareDVBSenderInterface(std::string const & iface);
 
     private:
-        virtual void v_enable();
-        virtual void v_disable();
-        virtual bool v_enabled() const;
+        virtual void v_enable() override;
+        virtual void v_disable() override;
+        virtual bool v_enabled() const override;
 
-        virtual unsigned v_mtu() const;
-        virtual void v_mtu(unsigned v);
+        virtual unsigned v_mtu() const override;
+        virtual void v_mtu(unsigned v) override;
 
-        virtual void v_id(MACAddress const & id);
-        virtual MACAddress v_id() const;
+        virtual void v_id(MACAddress const & id) override;
+        virtual MACAddress v_id() const override;
 
-        virtual int v_txPower() const;
-        virtual void v_txPower(int power);
+        virtual int v_txPower() const override;
+        virtual void v_txPower(int power) override;
 
-        virtual ModulationParameter::id_t v_modulationId() const;
-        virtual void v_modulationId(ModulationParameter::id_t id);
+        virtual ModulationParameter::id_t v_modulationId() const override;
+        virtual void v_modulationId(ModulationParameter::id_t id) override;
 
         std::string const & v_device() const override;
 
@@ -113,26 +113,26 @@ namespace emu {
         void ifaceIdFactory(boost::shared_ptr<InterfaceIdFactoryBase> factory);
 
     private:
-        virtual void v_enable();
-        virtual void v_disable();
-        virtual bool v_enabled() const;
+        virtual void v_enable() override;
+        virtual void v_disable() override;
+        virtual bool v_enabled() const override;
 
-        virtual void v_id(MACAddress const & id);
-        virtual MACAddress v_id() const;
+        virtual void v_id(MACAddress const & id) override;
+        virtual MACAddress v_id() const override;
         
         std::string const & v_device() const override;
 
-        virtual bool v_promisc() const;
-        virtual void v_promisc(bool v);
+        virtual bool v_promisc() const override;
+        virtual void v_promisc(bool v) override;
 
-        virtual bool v_annotationMode() const;
-        virtual void v_annotationMode(bool a);
+        virtual bool v_annotationMode() const override;
+        virtual void v_annotationMode(bool a) override;
 
-        virtual void v_mcAdd(MACAddress const & address);
-        virtual void v_mcDrop(MACAddress const & address);
+        virtual void v_mcAdd(MACAddress const & address) override;
+        virtual void v_mcDrop(MACAddress const & address) override;
 
         virtual void v_tune(DVBModulationParameter::fec_rate_t fec, DVBModulationParameter::modulation_t mod,
-                DVBModulationParameter::guard_interval_t gi, unsigned frequency);
+                DVBModulationParameter::guard_interval_t gi, unsigned frequency) override;
         void tuneEvent(const struct dvb_frontend_event & ev);
         void tune(std::string const & channelName);
         using DVBInterface::tune;

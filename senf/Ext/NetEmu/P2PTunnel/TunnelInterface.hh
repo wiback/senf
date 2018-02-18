@@ -71,12 +71,12 @@ namespace emu {
 
     private:
         // interface API
-        virtual bool v_enabled() const;
-        virtual void v_id(MACAddress const & id);
-        virtual MACAddress v_id() const;
-        virtual void v_mcAdd(MACAddress const & address);
-        virtual void v_mcDrop(MACAddress const & address);
-        virtual boost::uint8_t v_linkTypeId() const;
+        virtual bool v_enabled() const override;
+        virtual void v_id(MACAddress const & id) override;
+        virtual MACAddress v_id() const override;
+        virtual void v_mcAdd(MACAddress const & address) override;
+        virtual void v_mcDrop(MACAddress const & address) override;
+        virtual boost::uint8_t v_linkTypeId() const override;
         std::string const & v_device() const override;
 
         detail::TunnelControllerBase & ctrlBase_;
@@ -118,14 +118,14 @@ namespace emu {
 
     private:
         // interface API
-        virtual void v_enable();
-        virtual void v_disable();
-        virtual unsigned v_mtu() const;
-        virtual void v_mtu(unsigned v);
-        virtual bool v_promisc() const;
-        virtual void v_promisc(bool v);
-        virtual bool v_annotationMode() const;
-        virtual void v_annotationMode(bool a);
+        virtual void v_enable() override;
+        virtual void v_disable() override;
+        virtual unsigned v_mtu() const override;
+        virtual void v_mtu(unsigned v) override;
+        virtual bool v_promisc() const override;
+        virtual void v_promisc(bool v) override;
+        virtual bool v_annotationMode() const override;
+        virtual void v_annotationMode(bool a) override;
 
     private:
         unsigned sndBufSize_;
@@ -165,14 +165,14 @@ namespace emu {
 
     private:
         // interface API
-        virtual void v_enable();
-        virtual void v_disable();
-        virtual unsigned v_mtu() const;
-        virtual void v_mtu(unsigned v);
-        virtual bool v_promisc() const;
-        virtual void v_promisc(bool v);
-        virtual bool v_annotationMode() const;
-        virtual void v_annotationMode(bool a);
+        virtual void v_enable() override;
+        virtual void v_disable() override;
+        virtual unsigned v_mtu() const override;
+        virtual void v_mtu(unsigned v) override;
+        virtual bool v_promisc() const override;
+        virtual void v_promisc(bool v) override;
+        virtual bool v_annotationMode() const override;
+        virtual void v_annotationMode(bool a) override;
 
         tunnel::Capacity capacity_;
 

@@ -151,38 +151,38 @@ namespace emu {
         void closeDataSocket();
         
         // interface
-        virtual void v_enable();
-        virtual void v_disable();
-        virtual bool v_enabled() const;
-        virtual void v_id(MACAddress const & id);
-        virtual MACAddress v_id() const;
-        virtual bool v_annotationMode() const;
-        virtual void v_annotationMode(bool a);
-        virtual bool v_promisc() const;
-        virtual void v_promisc(bool v);
-        virtual void v_mcAdd(MACAddress const & address);
-        virtual void v_mcDrop(MACAddress const & address);
-        virtual unsigned v_mtu() const;
-        virtual void v_mtu(unsigned v);
-        virtual void v_flushRxQueues();
-        virtual void v_flushTxQueues();
-        virtual void v_coverageRange(unsigned distance);
+        virtual void v_enable() override;
+        virtual void v_disable() override;
+        virtual bool v_enabled() const override;
+        virtual void v_id(MACAddress const & id) override;
+        virtual MACAddress v_id() const override;
+        virtual bool v_annotationMode() const override;
+        virtual void v_annotationMode(bool a) override;
+        virtual bool v_promisc() const override;
+        virtual void v_promisc(bool v) override;
+        virtual void v_mcAdd(MACAddress const & address) override;
+        virtual void v_mcDrop(MACAddress const & address) override;
+        virtual unsigned v_mtu() const override;
+        virtual void v_mtu(unsigned v) override;
+        virtual void v_flushRxQueues() override;
+        virtual void v_flushTxQueues() override;
+        virtual void v_coverageRange(unsigned distance) override;
 
         void do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters);
         void do_mesh_join(WirelessNLController::MeshJoinParameters const & parameters);
 
         // modulation
-        virtual ModulationParameter::id_t v_modulationId() const;
-        virtual void v_modulationId(ModulationParameter::id_t);
+        virtual ModulationParameter::id_t v_modulationId() const override;
+        virtual void v_modulationId(ModulationParameter::id_t) override;
 
         // channel frequency
-        virtual unsigned v_frequency() const;
-        virtual unsigned v_bandwidth() const;
-        virtual void v_frequency(unsigned freq, unsigned bw);
+        virtual unsigned v_frequency() const override;
+        virtual unsigned v_bandwidth() const override;
+        virtual void v_frequency(unsigned freq, unsigned bw) override;
 
         // txpower
-        virtual int v_txPower() const;
-        virtual void v_txPower(int power);
+        virtual int v_txPower() const override;
+        virtual void v_txPower(int power) override;
 
         std::string dev_;
         std::string monitorDev_;

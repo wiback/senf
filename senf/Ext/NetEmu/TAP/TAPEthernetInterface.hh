@@ -76,11 +76,11 @@ namespace emu {
     protected:
         EthernetController & ethController();
 
-        virtual void v_enable();
-        virtual void v_disable();
+        virtual void v_enable() override;
+        virtual void v_disable() override;
 
-        virtual unsigned v_mtu() const;
-        virtual void v_mtu(unsigned v);
+        virtual unsigned v_mtu() const override;
+        virtual void v_mtu(unsigned v) override;
 
     private:
         VLanId pvid_;
@@ -90,17 +90,17 @@ namespace emu {
         void close_sockets();
         
         // interface
-        virtual bool v_enabled() const;
-        virtual void v_id(MACAddress const & id);
-        virtual bool v_annotationMode() const;
-        virtual void v_annotationMode(bool a);
-        virtual bool v_promisc() const;
-        virtual void v_promisc(bool v);
-        virtual void v_mcAdd(MACAddress const & address);
-        virtual void v_mcDrop(MACAddress const & address);
-        virtual void v_flushRxQueues();
+        virtual bool v_enabled() const override;
+        virtual void v_id(MACAddress const & id) override;
+        virtual bool v_annotationMode() const override;
+        virtual void v_annotationMode(bool a) override;
+        virtual bool v_promisc() const override;
+        virtual void v_promisc(bool v) override;
+        virtual void v_mcAdd(MACAddress const & address) override;
+        virtual void v_mcDrop(MACAddress const & address) override;
+        virtual void v_flushRxQueues() override;
 
-        virtual MACAddress v_id() const;
+        virtual MACAddress v_id() const override;
         
         void dumpMmapStats(std::ostream & os);
 
