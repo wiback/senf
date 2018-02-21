@@ -407,6 +407,19 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     if (argc == 1)
         help(EXIT_SUCCESS);
 
+    char *a2 = getenv("COUNTRY");
+    char *action = getenv("ACTION");
+
+    if (!a2 or !action)
+        return -EINVAL;
+    
+    SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Action " << action << ", COUNTRY " << (a2 ? a2 : "(unset)") << ", regDomain.alpha " << (currentRegDomain_ ? currentRegDomain_.alpha2Country : "(unset)")) );
+
+    if ((strlen(a2) != 2) or ((strcmp(a2, "00") != 0) and (!isalpha(a2[0]) or !isalpha(a2[1])))) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Illegal COUNTRY alpha: '" << a2 << "'. Ignoring request.") );
+        return -EINVAL;
+    }
+    
     CRDA & crda (instance());
 
     crda.logTarget_.route<senf::log::MESSAGE>();
@@ -429,10 +442,6 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     }
     catch(...) {};
     
-    char *a2 = getenv("COUNTRY");
-    char *action = getenv("ACTION");
-    SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Action " << action << ", COUNTRY " << (a2 ? a2 : "(unset)") << ", regDomain.alpha " << (currentRegDomain_ ? currentRegDomain_.alpha2Country : "(unset)")) );
-
     // udev rule file will add '--setRegulatory' arg to command line
     //    declare -x ACTION="change"
     //    declare -x COUNTRY="AA"
@@ -445,16 +454,6 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     //    declare -x SUBSYSTEM="platform"
     //    declare -x UDEV_LOG="3"
     //    declare -x USEC_INITIALIZED="62694593"
-
-    if (!a2) {
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring request.") );
-        return -EINVAL;
-    }
-
-    if ((strlen(a2) != 2) or ((strcmp(a2, "00") != 0) and (!isalpha(a2[0]) or !isalpha(a2[1])))) {
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Illegal COUNTRY alpha: '" << a2 << "'. Ignoring request.") );
-        return -EINVAL;
-    }
 
     std::vector<std::string> nonOptions;
     senf::console::ProgramOptions cmdlineOptions (argc, argv, senf::console::root());
