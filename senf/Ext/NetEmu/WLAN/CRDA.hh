@@ -21,7 +21,6 @@ namespace emu {
 
 #define DEFAULT_CRDA_SYNC_FILE       "/dev/shm/NetEMU-CRDA.sync"
 #define CRDA_SLAVE_NAME              "wiback-crda"
-#define CRDA_ALPHA_FILE              "/dev/shm/NetEMU-CRDA.alpha"
 
     class CRDA
     {
@@ -65,7 +64,6 @@ namespace emu {
         senf::emu::RegulatoryDomain currentRegDomain_;
         unsigned dfsRegionFlag_;
         std::string syncFilename_;
-        bool nonWirelessBox_;
         std::string logTag_;
         
         // here we keep a cache of known regDomains which we have already pushed into the kernel

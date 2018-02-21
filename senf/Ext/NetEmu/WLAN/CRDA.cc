@@ -51,7 +51,6 @@ prefix_ unsigned senf::emu::CRDA::dfsRegionFlag()
 prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_(INITIAL_REG_ALPHA),
       dfsRegionFlag_(unsigned(RegulatoryDomain::DFSRegion::Unset)),
-      nonWirelessBox_(false),
       logTag_("[senf::emu::CRDA " + senf::str(getpid()) + "] ")
 {
     namespace fty = senf::console::factory;
@@ -59,7 +58,6 @@ prefix_ senf::emu::CRDA::CRDA()
     dir.add("worldRegDomain",   fty::Variable(boost::cref(worldRegDomain_)));
     dir.add("regDomain",        fty::Variable(boost::cref(currentRegDomain_)));
     dir.add("dfsRegionFlag",    fty::Variable(boost::cref(dfsRegionFlag_)));
-    dir.add("nonWirelessBox",   fty::Variable(boost::cref(nonWirelessBox_)));
     dir.add("syncFilename",     fty::Variable(boost::cref(syncFilename_)));
     dir.add("dummyCountry",     fty::Variable(boost::cref(dummyCountry_)));
     dir.add("cachedRegDomains", fty::Command(&CRDA::cachedRegDomains, this));
@@ -187,23 +185,15 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             // store the new mapping (if the mapping already exists, this does nothing)
             cachedRegDomains_.insert(currentRegDomain_);
         } catch (...) {
-            nonWirelessBox_ = true;
             currentRegDomain_ = worldRegDomain_;
             currentRegDomain_.alpha2Country = WORLD_REG_ALPHA;
             SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
         }
     } else {
         logTag_ += "(SLV) ";
-        try {
-            WirelessNLController wnlc;
-            wnlc.get_regulatory();
-        } catch (...) {
-            nonWirelessBox_ = true;
-            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "No Wireless Subsystem found.") );
-        }
         // The kernel waits for about 3s for CRDA to act
-        // Delaying us here a bit, seems to help avoding alpha=98 issue when more radio are present (i.e. on N4C)
-        usleep(100000 + (rand() % 1000000));
+        // Delaying us here a bit, seems to help avoding alpha=98 issue when more radios are present (i.e. on N4C)
+        usleep((rand() % 500000));
     }
     
     return true;
@@ -307,9 +297,6 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
         }
         alpha2Country = std::string(a2);
     }
-
-    if (nonWirelessBox_)
-        return true;
 
     try {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Writing regDomain tmpfile " << currentRegDomain_) );
