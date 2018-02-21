@@ -170,9 +170,7 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
         catch(...) {
             return false;
         }
-    }
 
-    if (masterMode) {
         try {
             WirelessNLController wnlc;
             currentRegDomain_ = wnlc.get_regulatory();
@@ -191,9 +189,6 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
         }
     } else {
         logTag_ += "(SLV) ";
-        // The kernel waits for about 3s for CRDA to act
-        // Delaying us here a bit, seems to help avoding alpha=98 issue when more radios are present (i.e. on N4C)
-        // usleep((rand() % 500000));
     }
     
     return true;
