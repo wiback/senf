@@ -53,12 +53,6 @@ namespace emu {
         bool setRegCountry(std::string alpha2Country);
         void kernelRegDomain(std::ostream & os);
 
-        // enure we only have one CRDA instance for ALPHA
-        void removeCurrentAlpha();
-        void writeCurrentAlpha(std::string alpha);
-        std::string readCurrentAlpha();
-
-        
         // Slave CRDA only
         void setRegulatory();
         void help(int exit_status);

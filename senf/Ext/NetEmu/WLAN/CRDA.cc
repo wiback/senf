@@ -52,7 +52,7 @@ prefix_ senf::emu::CRDA::CRDA()
     : dummyCountry_(INITIAL_REG_ALPHA),
       dfsRegionFlag_(unsigned(RegulatoryDomain::DFSRegion::Unset)),
       nonWirelessBox_(false),
-      logTag_("[senf::emu::CRDA " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ")
+      logTag_("[senf::emu::CRDA " + senf::str(getpid()) + "] ")
 {
     namespace fty = senf::console::factory;
     dir.add("kernelRegDomain",  fty::Command(&CRDA::kernelRegDomain, this));
@@ -75,7 +75,7 @@ prefix_ senf::emu::CRDA::CRDA()
     catch (...) {};
 
     if (dfsRegionFlag() == unsigned(RegulatoryDomain::DFSRegion::Unset)) {
-        logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "/"  + senf::str(senf::ClockService::in_milliseconds(senf::ClockService::now()) % 100000) + "] ";
+        logTag_ = "[senf::emu::CRDA_DEBUG " + senf::str(getpid()) + "] ";
 
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "DFS-Unset mode enabled.") );
 
@@ -193,6 +193,7 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "No Wireless Subsystem found. This node might be a non-wireless box. Defaulting to build-in worldRegDomain " << currentRegDomain_) );
         }
     } else {
+        logTag_ += "(SLV) ";
         try {
             WirelessNLController wnlc;
             wnlc.get_regulatory();
@@ -200,6 +201,9 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
             nonWirelessBox_ = true;
             SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "No Wireless Subsystem found.") );
         }
+        // The kernel waits for about 3s for CRDA to act
+        // Delaying us here a bit, seems to help avoding alpha=98 issue when more radio are present (i.e. on N4C)
+        usleep(100000 + (rand() % 1000000));
     }
     
     return true;
@@ -301,6 +305,7 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
             SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring Request.") );
             return false;
         }
+        alpha2Country = std::string(a2);
     }
 
     if (nonWirelessBox_)
@@ -330,38 +335,6 @@ prefix_ bool senf::emu::CRDA::setRegCountry(std::string alpha2Country)
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Requested Regulatory Country " << alpha2Country ) );
 
     return true;
-}
-
-void senf::emu::CRDA::writeCurrentAlpha(std::string alpha)
-{
-    try {
-        std::fstream fs;
-        fs.open(CRDA_ALPHA_FILE, std::fstream::out | std::fstream::trunc);
-        fs << alpha;
-        fs.close();
-    }
-    catch(...) {
-    }
-}
-
-std::string senf::emu::CRDA::readCurrentAlpha()
-{
-    std::string alpha;
-    try {
-        std::fstream fs;
-        fs.open(CRDA_ALPHA_FILE, std::fstream::in);
-        fs >> alpha;
-        fs.close();
-    }
-    catch(...) {
-    }
-
-    return alpha;
-}
-
-void senf::emu::CRDA::removeCurrentAlpha()
-{
-    ::unlink(CRDA_ALPHA_FILE);
 }
 
 prefix_ void senf::emu::CRDA::kernelRegDomain(std::ostream & os)
@@ -407,14 +380,6 @@ prefix_ void senf::emu::CRDA::setRegulatory()
             }
         } catch (...) {};
     }
-
-    if (!readCurrentAlpha().empty()) {
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Another CRDA instance is already active and pushing ALPHA=" << readCurrentAlpha() << ". Ignoring request.") );
-        return;
-    }
-
-    // write the lock file
-    writeCurrentAlpha(a2);
     
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
     
@@ -424,15 +389,10 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         wnlc.set_regulatory( regDomain);
     } catch (senf::ExceptionMixin & e) {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Setting regulatory domain failed: " << e.message() << ", " << regDomain) );
-        removeCurrentAlpha();
         return;
     }
 
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
-
-    // wait a bit before we unlock
-    usleep(500000);
-    removeCurrentAlpha();
 }
 
 prefix_ void senf::emu::CRDA::help(int exit_status)
