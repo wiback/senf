@@ -349,23 +349,9 @@ prefix_ void senf::emu::CRDA::setRegulatory()
         return;
     }
 
-    WirelessNLController wnlc;
-    if (a2 == "00") {
-        if (worldRegDomain_.isEqualKernel(wnlc.get_regulatory())) {
-            // SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "World RegDomain already set. Ignoring request.") );
-            // return;
-        }
-    } else {
-        if (a2 == "US" and !currentRegDomain_.alpha2Country.empty()) {
-            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "RegDomain US should not be requested from userspace. Ignoring request.") );
-            return;
-        }
-        try {
-            if (wnlc.get_regulatory().alpha2Country == a2) {
-                //                SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "KERNEL ALPHA is already == " << a2 << ". Ignoring request.") );
-                // return;
-            }
-        } catch (...) {};
+    if (a2 == "US" and !currentRegDomain_.alpha2Country.empty()) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "RegDomain US should not be requested from userspace. Ignoring request.") );
+        return;
     }
     
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
@@ -373,12 +359,13 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     regDomain.alpha2Country = a2;
 
     try {
-        wnlc.set_regulatory( regDomain);
+        WirelessNLController wnlc;
+        wnlc.set_regulatory(regDomain);
     } catch (senf::ExceptionMixin & e) {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Setting regulatory domain failed: " << e.message() << ", " << regDomain) );
         return;
     }
-
+    
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
 }
 
