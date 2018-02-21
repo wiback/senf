@@ -193,7 +193,7 @@ prefix_ bool senf::emu::CRDA::init(bool masterMode, std::string const & filename
         logTag_ += "(SLV) ";
         // The kernel waits for about 3s for CRDA to act
         // Delaying us here a bit, seems to help avoding alpha=98 issue when more radios are present (i.e. on N4C)
-        usleep((rand() % 500000));
+        // usleep((rand() % 500000));
     }
     
     return true;
