@@ -273,10 +273,6 @@ senf::emu::WirelessNLController::nlMsgHeader(uint8_t cmd, CmdIdBy idBy, int flag
     const
 {
     nl_msg_ptr msg (nlMsg());
-    if (cmd == NL80211_CMD_SET_REG) {
-        // taken from CRDA 3.13
-        genlmsg_put(msg.get(), 0, 0, nl80211Id_, 0, flags, NL80211_CMD_SET_REG, 0);
-    } else {
     genlmsg_put( msg.get(),
             NL_AUTO_PID,    // pid
             NL_AUTO_SEQ,    // sequence number of message
@@ -285,7 +281,6 @@ senf::emu::WirelessNLController::nlMsgHeader(uint8_t cmd, CmdIdBy idBy, int flag
             flags,          // message flags
             cmd,            // netlink command
             0 );            // protocol version
-    }
     switch (idBy) {
     case CIB_PHY:
         if (phyIndex_ == -1)
