@@ -187,19 +187,19 @@ prefix_ senf::emu::WirelessNLController::WirelessNLController(std::string const 
     if (phyIndex_ == -1)
         throw senf::SystemException( "Could not discover the index of " , EINVAL) << interface;
 
-    init();
+    init(true); // disable seqNoCheck
 }
 
-prefix_ senf::emu::WirelessNLController::WirelessNLController()
+prefix_ senf::emu::WirelessNLController::WirelessNLController(bool disableSeqNoCheck)
     : radarEvent(*this), regulatoryDomainChangeEvent(*this),
       ifIndex_(0), phyIndex_(-1),
       nl_sock_(nullptr, nl_socket_free), nl_cache_(nullptr, nl_cache_free), nl_cb_(nullptr, nl_cb_put),
       nl_event_sock_(nullptr, nl_socket_free), nl_event_cb_(nullptr, nl_cb_put)
 {
-    init();
+    init(disableSeqNoCheck);
 }
 
-prefix_ void senf::emu::WirelessNLController::init()
+prefix_ void senf::emu::WirelessNLController::init(bool disableSeqNoCheck)
 {
     frequency_ = 0;
     ifaceType_ = IfaceType::Unknown;
@@ -209,7 +209,7 @@ prefix_ void senf::emu::WirelessNLController::init()
     netlinkMsgCb_ = senf::membind(&WirelessNLController::netlink_cb, this);
     netlinkEventCb_ = senf::membind(&WirelessNLController::netlink_event_cb, this);
 
-    initNlSock(nl_sock_);
+    initNlSock(nl_sock_, disableSeqNoCheck);
     initNlCb(nl_sock_, nl_cb_, netlinkMsgCb_);
     initNlCache(nl_sock_, nl_cache_);
 
@@ -218,7 +218,7 @@ prefix_ void senf::emu::WirelessNLController::init()
         SENF_THROW_SYSTEM_EXCEPTION( "nl80211 not found");
 }
 
-prefix_ void senf::emu::WirelessNLController::initNlSock(nl_sock_ptr & sock)
+prefix_ void senf::emu::WirelessNLController::initNlSock(nl_sock_ptr & sock, bool disableSeqNoCheck)
 {
     sock.reset(nl_socket_alloc());
     if (not sock)
@@ -227,7 +227,8 @@ prefix_ void senf::emu::WirelessNLController::initNlSock(nl_sock_ptr & sock)
     if (genl_connect(sock.get()))
         SENF_THROW_SYSTEM_EXCEPTION( "Failed to connect generic netlink socket");
 
-    nl_socket_disable_seq_check(sock.get());
+    if (disableSeqNoCheck)
+        nl_socket_disable_seq_check(sock.get());
     nl_socket_disable_auto_ack(sock.get());
 }
 

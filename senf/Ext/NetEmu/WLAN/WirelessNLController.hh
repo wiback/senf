@@ -314,7 +314,7 @@ namespace emu {
         typedef boost::iterator_range<Frequencies_iterator> FrequencyRange;
         typedef boost::function<int (nl_msg *)> NetlinkMsgCallback;
 
-        WirelessNLController();
+        WirelessNLController(bool disableSeqNoCheck = true);
         WirelessNLController(std::string const & interface);
 
         IbssJoinParameters::ptr ibss_join(std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode);
@@ -408,8 +408,8 @@ namespace emu {
         typedef int (WirelessNLController::* CallbackMemPtr)(nl_msg *);
         enum CmdIdBy { CIB_NONE, CIB_PHY, CIB_IF };
 
-        void init();
-        void initNlSock(nl_sock_ptr & sock);
+        void init(bool disableSeqNoCheck = true);
+        void initNlSock(nl_sock_ptr & sock, bool disableSeqNoCheck = true);
         void initNlCache(nl_sock_ptr & sock, nl_cache_ptr & cache);
         void initNlCb(nl_sock_ptr & sock, nl_cb_ptr & cb, NetlinkMsgCallback & msgcb);
 

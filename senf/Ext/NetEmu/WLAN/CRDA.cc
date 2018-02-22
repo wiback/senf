@@ -354,7 +354,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     regDomain.alpha2Country = a2;
 
     try {
-        WirelessNLController wnlc;
+        WirelessNLController wnlc (false);  // do not disable seqNoChecks
         wnlc.set_regulatory(regDomain);
     } catch (senf::ExceptionMixin & e) {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Setting regulatory domain failed: " << e.message() << ", " << regDomain) );
