@@ -13,18 +13,18 @@
 
 int main(int argc, char const * argv[])
 {
-    if (boost::filesystem::path(argv[0]).filename() == senf::emu::CRDA::instance().slaveName()) {
+//    if (boost::filesystem::path(argv[0]).filename() == senf::emu::CRDA::instance().slaveName()) {
         senf::emu::CRDA::instance().init();
         return senf::emu::CRDA::instance().run(argc, argv);
-    }
-
-    // true ==> MasterMode
-    if (!senf::emu::CRDA::instance().init(true)) {
-        std::cerr << "Failed to init CRDA ?!?" << std::endl;
-        return 1;
-    }
-
-    return senf::emu::CRDA::instance().run(argc, argv);
+//    }
+//
+//    // true ==> MasterMode
+//    if (!senf::emu::CRDA::instance().init(true)) {
+//        std::cerr << "Failed to init CRDA ?!?" << std::endl;
+//        return 1;
+//    }
+//
+//    return senf::emu::CRDA::instance().run(argc, argv);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
