@@ -392,7 +392,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     char *a2 = getenv("COUNTRY");
     char *action = getenv("ACTION");
 
-    if (!a2 or !action)
+    if (!a2 and strcmp(action,"change") == 0)
         return -EINVAL;
         
     CRDA & crda (instance());
