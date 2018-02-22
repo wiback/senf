@@ -402,7 +402,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     namespace fty = senf::console::factory;
     senf::console::root().add("help",          fty::Command( &CRDA::help, &crda).arg(senf::console::kw::default_value = EXIT_SUCCESS) );
     senf::console::root().add("setRegCountry", fty::Command( &CRDA::setRegCountry, &crda).arg(senf::console::kw::default_value = "") );
-    senf::console::root().add("setRegulatory", fty::Command( &CRDA::setRegulatoryDirect, &crda) );
+    senf::console::root().add("setRegulatory", fty::Command( &CRDA::setRegulatory, &crda) );
     senf::console::root().add("getRegulatory", fty::Command( &CRDA::kernelRegDomain, &crda) );
     senf::console::root().add("regDomain",     fty::Variable(currentRegDomain_));
     senf::console::root().add("debug",         fty::Command( &CRDA::debugEnable, &crda) );
@@ -455,6 +455,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     
     return EXIT_SUCCESS;
 }
+
 
 //
 // The below has been taken from crda-3.13
@@ -560,12 +561,12 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
 
     if(a2.empty()) {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring request.") );
-        return -EINVAL; 
+        exit(-EINVAL); 
     }
 
     if (a2 == "US" and !currentRegDomain_.alpha2Country.empty()) {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "RegDomain US should not be requested from userspace. Ignoring request.") );
-        return -EINVAL;
+        exit(-EINVAL);
     }
     
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
@@ -588,7 +589,7 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
         
     r = nl80211_init(&nlstate);
     if (r) {
-        return -EIO;
+        exit(-EIO);
     }
     
     msg = nlmsg_alloc();
@@ -652,11 +653,12 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
     nl80211_cleanup(&nlstate);
     
     if (r) {
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Error pushing regDomain to kernel as " << regDomain) );
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Error (" << r << ") pushing regDomain to kernel as " << regDomain) );
     } else {
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
     }
-    return r;
+
+    exit(r);
 }
 
 
