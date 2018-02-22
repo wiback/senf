@@ -54,6 +54,8 @@ namespace emu {
 
         // Slave CRDA only
         void setRegulatory();
+        int setRegulatoryDirect();
+
         void help(int exit_status);
         void debugEnable();
         

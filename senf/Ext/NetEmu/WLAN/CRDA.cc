@@ -350,7 +350,7 @@ prefix_ void senf::emu::CRDA::setRegulatory()
     }
     
     auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
-    
+
     regDomain.alpha2Country = a2;
 
     try {
@@ -402,7 +402,7 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     namespace fty = senf::console::factory;
     senf::console::root().add("help",          fty::Command( &CRDA::help, &crda).arg(senf::console::kw::default_value = EXIT_SUCCESS) );
     senf::console::root().add("setRegCountry", fty::Command( &CRDA::setRegCountry, &crda).arg(senf::console::kw::default_value = "") );
-    senf::console::root().add("setRegulatory", fty::Command( &CRDA::setRegulatory, &crda) );
+    senf::console::root().add("setRegulatory", fty::Command( &CRDA::setRegulatoryDirect, &crda) );
     senf::console::root().add("getRegulatory", fty::Command( &CRDA::kernelRegDomain, &crda) );
     senf::console::root().add("regDomain",     fty::Variable(currentRegDomain_));
     senf::console::root().add("debug",         fty::Command( &CRDA::debugEnable, &crda) );
@@ -455,6 +455,205 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
     
     return EXIT_SUCCESS;
 }
+
+//
+// The below has been taken from crda-3.13
+//
+
+#include <netlink/genl/genl.h>
+#include <netlink/genl/family.h>
+#include <netlink/genl/ctrl.h>
+#include <netlink/msg.h>
+#include <netlink/attr.h>
+#include "nl80211-new.h"
+
+struct nl80211_state {
+        struct nl_sock *nl_sock;
+        struct nl_cache *nl_cache;
+        struct genl_family *nl80211;
+};
+
+static int nl80211_init(struct nl80211_state *state)
+{
+        int err;
+
+        state->nl_sock = nl_socket_alloc();
+        if (!state->nl_sock) {
+                fprintf(stderr, "Failed to allocate netlink sock.\n");
+                return -ENOMEM;
+        }
+
+        if (genl_connect(state->nl_sock)) {
+                fprintf(stderr, "Failed to connect to generic netlink.\n");
+                err = -ENOLINK;
+                goto out_sock_destroy;
+        }
+
+        if (genl_ctrl_alloc_cache(state->nl_sock, &state->nl_cache)) {
+                fprintf(stderr, "Failed to allocate generic netlink cache.\n");
+                err = -ENOMEM;
+                goto out_sock_destroy;
+        }
+
+        state->nl80211 = genl_ctrl_search_by_name(state->nl_cache, "nl80211");
+        if (!state->nl80211) {
+                fprintf(stderr, "nl80211 not found.\n");
+                err = -ENOENT;
+                goto out_cache_free;
+        }
+
+        return 0;
+
+ out_cache_free:
+        nl_cache_free(state->nl_cache);
+ out_sock_destroy:
+        nl_socket_free(state->nl_sock);
+        return err;
+}
+
+static void nl80211_cleanup(struct nl80211_state *state)
+{
+    genl_family_put(state->nl80211);
+    nl_cache_free(state->nl_cache);
+    nl_socket_free(state->nl_sock);
+}
+
+static int reg_handler(struct nl_msg __attribute__((unused)) *msg,
+                        void __attribute__((unused)) *arg)
+{
+    return NL_SKIP;
+}
+
+static int wait_handler(struct nl_msg __attribute__((unused)) *msg, void *arg)
+{
+    int *finished = (int*) arg;
+    *finished = 1;
+    return NL_STOP;
+}
+
+static int error_handler(struct sockaddr_nl __attribute__((unused)) *nla,
+                            struct nlmsgerr *err,
+                            void __attribute__((unused)) *arg)
+{
+    fprintf(stderr, "nl80211 error %d\n", err->error);
+    exit(err->error);
+}
+
+static int put_reg_rule(senf::emu::RegulatoryRule const & rule, struct nl_msg *msg)
+{
+    NLA_PUT_U32( msg, NL80211_ATTR_REG_RULE_FLAGS,      rule.flags());
+    NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_START,    rule.frequencyRangeBegin());
+    NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_END,      rule.frequencyRangeEnd());
+    NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_MAX_BW,   rule.maxBandwidth());
+    NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_ANT_GAIN, rule.maxAntennaGain());
+    NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_EIRP, rule.maxEIRP());
+    
+    return 0;
+    
+ nla_put_failure:
+    return -1;
+}
+
+prefix_ int senf::emu::CRDA::setRegulatoryDirect()
+{
+    std::string a2 (getenv("COUNTRY") ? getenv("COUNTRY") : "");
+
+    if(a2.empty()) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "COUNTRY not set. Ignoring request.") );
+        return -EINVAL; 
+    }
+
+    if (a2 == "US" and !currentRegDomain_.alpha2Country.empty()) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "RegDomain US should not be requested from userspace. Ignoring request.") );
+        return -EINVAL;
+    }
+    
+    auto regDomain ((currentRegDomain_ && a2.compare("00") != 0 && a2.compare("US") != 0) ? currentRegDomain_ : worldRegDomain_);
+
+    regDomain.alpha2Country = a2;
+
+    int i = 0, r;
+    struct nl80211_state nlstate;
+    struct nl_cb *cb = NULL;
+    struct nl_msg *msg;
+    int finished = 0;
+    struct nlattr *nl_reg_rules;
+
+        
+    r = nl80211_init(&nlstate);
+    if (r) {
+        return -EIO;
+    }
+    
+    msg = nlmsg_alloc();
+    if (!msg) {
+        fprintf(stderr, "Failed to allocate netlink message.\n");
+        r = -1;
+        goto out;
+    }
+    
+    genlmsg_put(msg, 0, 0, genl_family_get_id(nlstate.nl80211), 0,
+                0, NL80211_CMD_SET_REG, 0);
+    
+    NLA_PUT_STRING(msg, NL80211_ATTR_REG_ALPHA2, regDomain.alpha2Country.c_str());
+    NLA_PUT_U8(msg, NL80211_ATTR_DFS_REGION, std::uint8_t(regDomain.dfsRegion));
+    
+    nl_reg_rules = nla_nest_start(msg, NL80211_ATTR_REG_RULES);
+    if (!nl_reg_rules) {
+        r = -1;
+        goto nla_put_failure;
+    }
+
+    for (RegulatoryRule const & rule : regDomain.rules) {
+        struct nlattr *nl_reg_rule;
+        nl_reg_rule = nla_nest_start(msg, i);
+        if (!nl_reg_rule)
+            goto nla_put_failure;
+        
+        r = put_reg_rule(rule, msg);
+        if (r)
+            goto nla_put_failure;
+        
+        nla_nest_end(msg, nl_reg_rule);
+    }
+    
+    nla_nest_end(msg, nl_reg_rules);
+    
+    cb = nl_cb_alloc(NL_CB_CUSTOM);
+    if (!cb)
+        goto cb_out;
+
+    r = nl_send_auto_complete(nlstate.nl_sock, msg);
+    
+    if (r < 0) {
+        fprintf(stderr, "Failed to send regulatory request: %d\n", r);
+        goto cb_out;
+    }
+    
+    nl_cb_set(cb, NL_CB_VALID, NL_CB_CUSTOM, reg_handler, NULL);
+    nl_cb_set(cb, NL_CB_ACK, NL_CB_CUSTOM, wait_handler, &finished);
+    nl_cb_err(cb, NL_CB_CUSTOM, error_handler, NULL);
+    
+    if (!finished) {
+        r = nl_wait_for_ack(nlstate.nl_sock);
+        if (r < 0) {
+            fprintf(stderr, "Failed to set regulatory domain: "
+                    "%d\n", r);
+            goto cb_out;
+        }
+    }
+    
+ cb_out:
+    nl_cb_put(cb);
+ nla_put_failure:
+        nlmsg_free(msg);
+ out:
+        nl80211_cleanup(&nlstate);
+        
+        return r;
+}
+
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
