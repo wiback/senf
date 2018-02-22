@@ -409,9 +409,11 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
 
     SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Action " << action << ", COUNTRY " << a2 << ", regDomain.alpha " << (currentRegDomain_ ? currentRegDomain_.alpha2Country : "(unset)")) );
 
-    if ((strlen(a2) != 2) or ((strcmp(a2, "00") != 0) and (!isalpha(a2[0]) or !isalpha(a2[1])))) {
-        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Illegal COUNTRY alpha: '" << a2 << "'. Ignoring request.") );
+    if (a2) {
+        if ((strlen(a2) != 2) or ((strcmp(a2, "00") != 0) and (!isalpha(a2[0]) or !isalpha(a2[1])))) {
+            SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Illegal COUNTRY alpha: '" << a2 << "'. Ignoring request.") );
         return -EINVAL;
+        }
     }
     
     try {
