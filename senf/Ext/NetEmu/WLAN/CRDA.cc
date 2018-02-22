@@ -415,17 +415,19 @@ prefix_ int senf::emu::CRDA::run(int argc, char const ** argv)
         return -EINVAL;
         }
     }
-    
-    try {
-        // Try to read and parse the redDBFile written by the main process
-        // If present and valid, this will call setRegDomain
-        senf::console::ConfigFile regDb (syncFilename_);
-        regDb.ignoreMissing();
-        regDb.parse(senf::console::root());
-        ::unlink(syncFilename_.c_str());
+
+    if (strcmp(action,"change") == 0) {
+        try {
+            // Try to read and parse the redDBFile written by the main process
+            // If present and valid, this will call setRegDomain
+            senf::console::ConfigFile regDb (syncFilename_);
+            regDb.ignoreMissing();
+            regDb.parse(senf::console::root());
+            ::unlink(syncFilename_.c_str());
+        }
+        catch(...) {};
     }
-    catch(...) {};
-    
+
     // udev rule file will add '--setRegulatory' arg to command line
     //    declare -x ACTION="change"
     //    declare -x COUNTRY="AA"
