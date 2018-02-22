@@ -405,7 +405,7 @@ prefix_ void senf::emu::WirelessNLController::set_regulatory(RegulatoryDomain co
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_REG_RULES);
         unsigned i = 0;
         for (RegulatoryRule const & rule : regDomain.rules) {
-            nl_nested_attr_ptr params (msg, i++);
+            nl_nested_attr_ptr params (msg, i);  // crda-3.13 always passes i == 0 here, so let's do the same 
             NLA_PUT_U32( msg, NL80211_ATTR_REG_RULE_FLAGS,      rule.flags());
             NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_START,    rule.frequencyRangeBegin());
             NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_END,      rule.frequencyRangeEnd());
