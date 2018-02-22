@@ -572,6 +572,12 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
 
     regDomain.alpha2Country = a2;
 
+    //
+    // From here, we exec the original CRDA code using our regDomain
+    //
+
+    SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Executing CRDA code to setRegulatory for " << regDomain) );
+    
     int i = 0, r;
     struct nl80211_state nlstate;
     struct nl_cb *cb = NULL;
@@ -587,7 +593,6 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
     
     msg = nlmsg_alloc();
     if (!msg) {
-        fprintf(stderr, "Failed to allocate netlink message.\n");
         r = -1;
         goto out;
     }
@@ -600,7 +605,6 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
     
     nl_reg_rules = nla_nest_start(msg, NL80211_ATTR_REG_RULES);
     if (!nl_reg_rules) {
-        r = -1;
         goto nla_put_failure;
     }
 
@@ -626,7 +630,6 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
     r = nl_send_auto_complete(nlstate.nl_sock, msg);
     
     if (r < 0) {
-        fprintf(stderr, "Failed to send regulatory request: %d\n", r);
         goto cb_out;
     }
     
@@ -637,8 +640,6 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
     if (!finished) {
         r = nl_wait_for_ack(nlstate.nl_sock);
         if (r < 0) {
-            fprintf(stderr, "Failed to set regulatory domain: "
-                    "%d\n", r);
             goto cb_out;
         }
     }
@@ -646,11 +647,16 @@ prefix_ int senf::emu::CRDA::setRegulatoryDirect()
  cb_out:
     nl_cb_put(cb);
  nla_put_failure:
-        nlmsg_free(msg);
+    nlmsg_free(msg);
  out:
-        nl80211_cleanup(&nlstate);
-        
-        return r;
+    nl80211_cleanup(&nlstate);
+    
+    if (r) {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Error pushing regDomain to kernel as " << regDomain) );
+    } else {
+        SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "Regulatory rules pushed to kernel as " << regDomain) );
+    }
+    return r;
 }
 
 
