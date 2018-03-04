@@ -85,15 +85,23 @@ prefix_ bool senf::MACAddress::multicast()
 prefix_ bool senf::MACAddress::broadcast()
     const
 {
+    // this is faster than the lambda stuff below
+    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) ^ *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0xffff0000;
+    /*
     using boost::lambda::_1;
     return std::find_if(begin(),end(), _1 != 0xffu) == end();
+    */
 }
 
 prefix_ bool senf::MACAddress::boolean_test()
     const
 {
+    // this is faster than the lambda stuff below
+    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) != 0;
+    /*
     using boost::lambda::_1;
     return std::find_if(begin(),end(), _1 != 0x00u) != end();
+    */
 }
 
 prefix_ boost::uint32_t senf::MACAddress::oui()
