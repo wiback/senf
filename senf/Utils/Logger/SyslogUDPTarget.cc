@@ -94,7 +94,12 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
         for (unsigned j (0); j < i->size(); j += sz) {
             line = prf;
             line += std::string(*i, j, sz);
-            handle_.write(line);
+            try {
+                handle_.write(line);
+            }
+            catch(...) {
+                // ignore write/send errors
+            }
         }
 }
 
