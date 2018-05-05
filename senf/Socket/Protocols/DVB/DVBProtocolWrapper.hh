@@ -49,8 +49,7 @@ namespace senf {
     public:
         enum Flags {CHECK_CRC = DMX_CHECK_CRC,
             ONESHOT = DMX_ONESHOT,
-            IMMEDIATE_START = DMX_IMMEDIATE_START,
-            KERNEL_CLIENT = DMX_KERNEL_CLIENT};
+            IMMEDIATE_START = DMX_IMMEDIATE_START};
         senf::console::ScopedDirectory<> dir;
 
         DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh);
@@ -78,8 +77,7 @@ namespace senf {
     public:
         enum Flags {CHECK_CRC = DMX_CHECK_CRC,
             ONESHOT = DMX_ONESHOT,
-            IMMEDIATE_START = DMX_IMMEDIATE_START,
-            KERNEL_CLIENT = DMX_KERNEL_CLIENT};
+            IMMEDIATE_START = DMX_IMMEDIATE_START};
         senf::console::ScopedDirectory<> dir;
 
         DVBPESProtocolWrapper(senf::DVBDemuxPESHandle sh);

@@ -46,10 +46,10 @@ SENF_CONSOLE_REGISTER_ENUM( dmx_pes_type_t, (DMX_PES_AUDIO0)(DMX_PES_VIDEO0)(DMX
 
 namespace senf {
     SENF_CONSOLE_REGISTER_ENUM_MEMBER(DVBSectionProtocolWrapper, Flags,
-            (CHECK_CRC)(ONESHOT)(IMMEDIATE_START)(KERNEL_CLIENT));
+            (CHECK_CRC)(ONESHOT)(IMMEDIATE_START));
 
     SENF_CONSOLE_REGISTER_ENUM_MEMBER(DVBPESProtocolWrapper, Flags,
-            (CHECK_CRC)(ONESHOT)(IMMEDIATE_START)(KERNEL_CLIENT));
+            (CHECK_CRC)(ONESHOT)(IMMEDIATE_START));
 }
 
 prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh)
@@ -80,7 +80,7 @@ prefix_ senf::DVBSectionProtocolWrapper::DVBSectionProtocolWrapper(senf::DVBDemu
             .arg("filter", "filter",
                  kw::default_value = 62,
                  kw::default_doc = "0x3e")
-            .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START, KERNEL_CLIENT",
+            .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START",
                  kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC,
                  kw::default_doc = "(IMMEDIATE_START CHECK_CRC)")
             .arg("mask", "mask",
@@ -117,7 +117,7 @@ prefix_ senf::DVBPESProtocolWrapper::DVBPESProtocolWrapper(senf::DVBDemuxPESHand
             .arg("pesType", "PES type: DMX_PES_AUDIO[0-3] DMX_PES_VIDEO[0-3] "
                             "DMX_PES_TELETEXT[0-3], DMX_PES_SUBTITLE[0-3], DMX_PES_PCR[0-3], "
                             "DMX_PES_OTHER")
-            .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START, KERNEL_CLIENT",
+            .arg("flags", "or-able: CHECK_CRC, ONESHOT, IMMEDIATE_START",
                  kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC,
                  kw::default_doc = "(IMMEDIATE_START CHECK_CRC)")
             .doc("Sets parameters for PES filter.") );
