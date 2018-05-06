@@ -37,34 +37,32 @@
 
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::RTPPacket );
 
-namespace
+struct pt_item
 {
-    std::string ptName(int pt)
-    {
-        struct pt_item
-        {
-            int pt;
-            std::string name;
-        };
-        static pt_item ptList[27] = {
-            {0,"PCMU"},{1,"1016"},{2,"G721"},{3,"GSM"},
-            {5,"DVI8"},{6,"DVI16"},{7,"LPC"},{8,"PCMA"},
-            {9,"G722"},{10,"L16"},{11,"L16S"},{14,"MPA"},
-            {25,"CELB"},{26,"JPEG"},{31,"H261"},{32,"MPV"},
-            {33,"MP2T"},{34,"263"},{110,"MPEG AAC"},{111,"11L16"},
-            {112,"11L16S"},{113,"22L16"},{114,"22L16S"},{115,"32L16"},
-            {116,"32L16S"},{127,"HTML"},{-1,""}
-        };
-        int n = 0;
-        while (ptList[n].pt != -1)
-        {
-            if (ptList[n].pt == pt)
-                return ptList[n].name;
-            ++n;
-        }
+    int pt;
+    std::string name;
+};
 
-        return "UNKNOWN";
+static pt_item ptList[] = {
+    {0,"PCMU"},{1,"1016"},{2,"G721"},{3,"GSM"},
+    {5,"DVI8"},{6,"DVI16"},{7,"LPC"},{8,"PCMA"},
+    {9,"G722"},{10,"L16"},{11,"L16S"},{14,"MPA"},
+    {25,"CELB"},{26,"JPEG"},{31,"H261"},{32,"MPV"},
+    {33,"MP2T"},{34,"263"},{110,"MPEG AAC"},{111,"11L16"},
+    {112,"11L16S"},{113,"22L16"},{114,"22L16S"},{115,"32L16"},
+    {116,"32L16S"},{127,"HTML"},{-1,""}
+};
+
+static std::string ptName(int pt)
+{
+    int n = 0;
+    while (ptList[n].pt != -1){
+        if (ptList[n].pt == pt)
+            return ptList[n].name;
+        ++n;
     }
+    
+    return "UNKNOWN";
 }
 
 prefix_ void senf::RTPPacketType::dump(packet p, std::ostream & os)
