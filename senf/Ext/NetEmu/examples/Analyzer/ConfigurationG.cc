@@ -41,7 +41,7 @@ extern "C" {
 #include <senf/Utils/Logger.hh>
 #include <senf/Utils/Console.hh>
 #include <senf/Scheduler/Scheduler.hh>
-#include "Configuration.hh"
+#include "ConfigurationG.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

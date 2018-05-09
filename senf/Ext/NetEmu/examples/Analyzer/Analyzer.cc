@@ -44,7 +44,7 @@
 #include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Socket/NetdeviceController.hh>
 
-#include "Configuration.hh"
+#include "ConfigurationA.hh"
 #include "InternalThroughputTestPacket.hh"
 
 #define prefix_
