@@ -45,6 +45,7 @@
 #include <senf/Socket/NetdeviceController.hh>
 
 #include "Configuration.hh"
+#include "InternalThroughputTestPacket.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,11 +71,14 @@ public:
         eth->source()      << mac;
         eth->destination() << config.destination;
         auto ouiExt (senf::EthOUIExtensionPacket::createAfter(eth));
-        ouiExt->oui() << 0x1113;
-        ouiExt->ext_type() << 0x60;
-        senf::DataPacket data(senf::DataPacket::createAfter(ouiExt, config.pktSize - eth.size()));
+        auto testPkt (emu::InternalThroughputTestPacket::createAfter(ouiExt));
+        senf::DataPacket data(senf::DataPacket::createAfter(testPkt, config.pktSize - eth.size()));
         eth.finalizeAll();
 
+        testPkt->sessionId() << 1;
+        testPkt->numPkts()   << numPkts_;
+        testPkt->magic()     << 0xaffe;
+        
         SENF_LOG((senf::log::IMPORTANT) ("Starting generator on iface " << config.interface << " with MAC " << mac
                                          << ", destination " << config.destination 
                                          << ", pktSize " << config.pktSize 
@@ -86,9 +90,13 @@ public:
 
     void sendPkts() {
         // push packets into MMAP buffer
-        for (unsigned n = 0; n < numPkts_; n++) {
+        auto testPkt (eth.find<emu::InternalThroughputTestPacket>());
+        testPkt->timestamp() << senf::ClockService::in_nanoseconds(senf::scheduler::now());
+        for (unsigned n = 0; n < numPkts_ + 10; n++) {
+            testPkt->seqNo() << std::min(n, numPkts_-1);
             output(eth.clone());
         }
+
         // terminate us in 1s
         timer.action(boost::bind(&Generator::terminate, this));
         timer.timeout(senf::scheduler::now() + senf::ClockService::seconds(1));

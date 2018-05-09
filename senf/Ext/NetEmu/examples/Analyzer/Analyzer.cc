@@ -45,6 +45,7 @@
 #include <senf/Socket/NetdeviceController.hh>
 
 #include "Configuration.hh"
+#include "InternalThroughputTestPacket.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,11 +58,10 @@ class Analyzer : public senf::ppi::module::Module
 public:
     senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
     senf::MACAddress ourMAC_;
-    unsigned pktCount_;
+    std::vector<std::int64_t> tstamps;
     
     Analyzer(senf::MACAddress const & mac, Configuration const & config) :
-        ourMAC_(mac),
-        pktCount_(0)
+        ourMAC_(mac)
     {
         noroute(input);
         input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
@@ -78,10 +78,29 @@ public:
 
         if (eth->destination() == ourMAC_) {
             if (eth.next<senf::EthOUIExtensionPacket>(senf::nothrow)) {
-                // we have a valid packet
-                pktCount_++;
-                SENF_LOG( (senf::log::IMPORTANT) ("Packet #" << pktCount_ << " received with length " << eth.size()
-                                                  << ", timestamp " << eth.annotation<senf::emu::annotations::Timestamp>().as_clock_type()) );
+                auto extOUI (eth.next<senf::EthOUIExtensionPacket>());
+                if (extOUI.next<emu::InternalThroughputTestPacket>(senf::nothrow)) {
+                    // we have a valid packet
+                    auto testPkt (extOUI.next<emu::InternalThroughputTestPacket>());
+                    auto rxTstamp (senf::ClockService::in_nanoseconds(eth.annotation<senf::emu::annotations::Timestamp>().as_clock_type()));
+                    tstamps.push_back(rxTstamp);
+
+                    SENF_LOG( (senf::log::IMPORTANT) ("Packet #" << testPkt->seqNo() << "/" << testPkt->numPkts() << " received with length " << eth.size()
+                                                      << ", timestamp " << rxTstamp) );
+                    
+                    if (testPkt->seqNo() == (testPkt->numPkts() - 1)) {
+                        // Analysis of tstamp vector here
+
+                        std::cerr << "tstamps ";
+                        for (auto const & ts : tstamps) {
+                            std::cerr << ts << " ";
+                        }
+                        std::cerr << std::endl;
+                        
+                        // we are done
+                        senf::scheduler::terminate();
+                    }
+                }
             }
         }
     }
