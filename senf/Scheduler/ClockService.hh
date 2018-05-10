@@ -116,6 +116,9 @@ namespace senf {
 
         //-////////////////////////////////////////////////////////////////////////
 
+        static constexpr clock_type        maxTime = std::numeric_limits<clock_type>::max();
+        static constexpr clock_type_coarse maxTimeCoarse = std::numeric_limits<clock_type_coarse>::max();
+        
         static clock_type now();  ///< Return current clock value
 
         static abstime_type abstime(clock_type const & clock); ///< Convert clock to absolute time
