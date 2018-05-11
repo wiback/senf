@@ -88,21 +88,27 @@ public:
                     SENF_LOG( (senf::log::IMPORTANT) ("Packet #" << testPkt->seqNo() << "/" << testPkt->numPkts() << " received with length " << eth.size()
                                                       << ", timestamp " << rxTstamp) );
                     
-                    if (testPkt->seqNo() == (testPkt->numPkts() - 1)) {
+                    if (testPkt->seqNo() == (testPkt->numPkts() - 1)) { 
                         // Analysis of tstamp vector here
-
-                        std::cerr << "tstamps ";
-                        for (auto const & ts : tstamps) {
-                            std::cerr << ts << " ";
-                        }
-                        std::cerr << std::endl;
-                        
+                        analyzeData();                        
                         // we are done
                         senf::scheduler::terminate();
                     }
                 }
             }
         }
+    }
+
+    //
+    // Your code here !!!
+    //
+    
+    void analyzeData() {
+        std::cerr << "tstamps ";
+        for (auto const & ts : tstamps) {
+            std::cerr << ts << " ";
+        }
+        std::cerr << std::endl;
     }
 };
 
