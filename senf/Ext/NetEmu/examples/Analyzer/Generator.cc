@@ -73,16 +73,18 @@ public:
         auto ouiExt (senf::EthOUIExtensionPacket::createAfter(eth));
         auto testPkt (emu::InternalThroughputTestPacket::createAfter(ouiExt));
         senf::DataPacket data(senf::DataPacket::createAfter(testPkt, config.pktSize - eth.size()));
-        eth.finalizeAll();
 
-        testPkt->sessionId() << 1;
+        testPkt->sessionId() << config.sessionId;
         testPkt->numPkts()   << numPkts_;
         testPkt->magic()     << 0xaffe;
-        
+
+        eth.finalizeAll();
+
         SENF_LOG((senf::log::IMPORTANT) ("Starting generator on iface " << config.interface << " with MAC " << mac
                                          << ", destination " << config.destination 
                                          << ", pktSize " << config.pktSize 
-                                         << ", numPackets " << config.numPackets));
+                                         << ", numPackets " << config.numPackets
+                                         << ", sessionId " << config.sessionId));
 
         // trigger sendPkts() in 1s
         timer.timeout(senf::scheduler::now() + senf::ClockService::seconds(1));
@@ -93,7 +95,7 @@ public:
         auto testPkt (eth.find<emu::InternalThroughputTestPacket>());
         testPkt->timestamp() << senf::ClockService::in_nanoseconds(senf::scheduler::now());
         for (unsigned n = 0; n < numPkts_ + 10; n++) {
-            testPkt->seqNo() << std::min(n, numPkts_-1);
+            testPkt->seqNo() << std::min(n, numPkts_);  // pktNum==numPkts means 'FIN'
             output(eth.clone());
         }
 

@@ -48,6 +48,7 @@ public:
     boost::uint32_t pktSize;
     std::string interface;
     senf::MACAddress destination;
+    unsigned sessionId;
 
     Configuration();
 

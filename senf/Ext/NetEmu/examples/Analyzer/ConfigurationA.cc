@@ -48,10 +48,7 @@ extern "C" {
 
 prefix_ Configuration::Configuration() :
     verbose( false),
-    numPackets(10),
-    pktSize(1000),
-    interface( "eth0"),
-    destination( senf::MACAddress::Broadcast)
+    interface( "eth0")
 { 
     namespace fty = senf::console::factory;
     namespace kw = senf::console::kw;
@@ -60,10 +57,7 @@ prefix_ Configuration::Configuration() :
     initDir.add("version", fty::Command( &Configuration::version, this));
     initDir.add("realtime-scheduling", fty::Command( &Configuration::enableRealtimeScheduling, this));
     initDir.add("verbose", fty::Variable( verbose));
-    initDir.add("num-packets", fty::Variable( numPackets));
-    initDir.add("packet-size", fty::Variable( pktSize));
     initDir.add("interface", fty::Variable( interface));
-    initDir.add("destination", fty::Variable( destination));
     
     // always turn those on, where available
     enableHighresTimers();

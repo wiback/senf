@@ -51,7 +51,8 @@ prefix_ Configuration::Configuration() :
     numPackets(10),
     pktSize(1000),
     interface( "eth0"),
-    destination( senf::MACAddress::Broadcast)
+    destination( senf::MACAddress::Broadcast),
+    sessionId(1)
 { 
     namespace fty = senf::console::factory;
     namespace kw = senf::console::kw;
@@ -64,6 +65,7 @@ prefix_ Configuration::Configuration() :
     initDir.add("packet-size", fty::Variable( pktSize));
     initDir.add("interface", fty::Variable( interface));
     initDir.add("destination", fty::Variable( destination));
+    initDir.add("sessionId", fty::Variable( sessionId));
     
     // always turn those on, where available
     enableHighresTimers();

@@ -59,9 +59,11 @@ public:
     senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
     senf::MACAddress ourMAC_;
     std::vector<std::int64_t> tstamps;
-    
+    unsigned sessionId_;
+
     Analyzer(senf::MACAddress const & mac, Configuration const & config) :
-        ourMAC_(mac)
+        ourMAC_(mac),
+        sessionId_(0)
     {
         noroute(input);
         input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
@@ -77,23 +79,29 @@ public:
         eth.annotation<senf::emu::annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));
 
         if (eth->destination() == ourMAC_) {
-            if (eth.next<senf::EthOUIExtensionPacket>(senf::nothrow)) {
-                auto extOUI (eth.next<senf::EthOUIExtensionPacket>());
-                if (extOUI.next<emu::InternalThroughputTestPacket>(senf::nothrow)) {
-                    // we have a valid packet
-                    auto testPkt (extOUI.next<emu::InternalThroughputTestPacket>());
-                    auto rxTstamp (senf::ClockService::in_nanoseconds(eth.annotation<senf::emu::annotations::Timestamp>().as_clock_type()));
+            auto testPkt (eth.find<emu::InternalThroughputTestPacket>(senf::nothrow));
+            if (testPkt) {
+                if (sessionId_ == 0 and testPkt->seqNo() < testPkt->numPkts())
+                    sessionId_ = testPkt->sessionId();
+                if (sessionId_ != testPkt->sessionId()) {
+                    SENF_LOG( (senf::log::IMPORTANT) ("Packet #" << testPkt->seqNo() << " ignored due to mismatching sessionId") );
+                    return;
+                }
+ 
+                // we have a valid packet
+                auto rxTstamp (senf::ClockService::in_nanoseconds(eth.annotation<senf::emu::annotations::Timestamp>().as_clock_type()));
+                
+                SENF_LOG( (senf::log::IMPORTANT) ("Packet #" << testPkt->seqNo() << "/" << testPkt->numPkts() << " received with length " << eth.size()
+                                                  << ", timestamp " << rxTstamp) );
+                
+                if (testPkt->seqNo() < testPkt->numPkts()) { 
                     tstamps.push_back(rxTstamp);
-
-                    SENF_LOG( (senf::log::IMPORTANT) ("Packet #" << testPkt->seqNo() << "/" << testPkt->numPkts() << " received with length " << eth.size()
-                                                      << ", timestamp " << rxTstamp) );
-                    
-                    if (testPkt->seqNo() == (testPkt->numPkts() - 1)) { 
-                        // Analysis of tstamp vector here
-                        analyzeData();                        
-                        // we are done
-                        senf::scheduler::terminate();
-                    }
+                } else {
+                    // Analysis of tstamp vector here
+                    analyzeData(testPkt->numPkts(), eth.size());                        
+                    // we are done
+                    tstamps.clear();
+                    sessionId_ = 0;
                 }
             }
         }
@@ -103,7 +111,7 @@ public:
     // Your code here !!!
     //
     
-    void analyzeData() {
+    void analyzeData(unsigned numPkts, unsigned pktSize) {
         std::cerr << "tstamps ";
         for (auto const & ts : tstamps) {
             std::cerr << ts << " ";

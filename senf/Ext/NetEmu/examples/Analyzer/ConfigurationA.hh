@@ -43,11 +43,7 @@ class Configuration
 
 public:
     bool verbose;
-    boost::uint64_t numPackets;
-    boost::uint32_t pktsPerSecond;
-    boost::uint32_t pktSize;
     std::string interface;
-    senf::MACAddress destination;
 
     Configuration();
 
