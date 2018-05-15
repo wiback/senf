@@ -127,7 +127,7 @@ int main(int argc, char const * argv[])
     senf::MACAddress macAddr(netdevCtrl.hardwareAddress());
 
     // qlen 512, frameSize 4096
-    senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 512, 4096);
+    senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
     senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket> source (socket);
 
     Analyzer analyzer(macAddr, configuration);

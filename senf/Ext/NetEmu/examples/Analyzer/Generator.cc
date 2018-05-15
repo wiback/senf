@@ -123,7 +123,7 @@ int main(int argc, char const * argv[])
     senf::MACAddress macAddr(netdevCtrl.hardwareAddress());
 
     // qlen 512, frameSize 4096
-    senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 512, 4096);
+    senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
     senf::ppi::module::PassiveQueueSocketSink<> sink(socket);
 
     Generator generator(macAddr, configuration);

@@ -67,6 +67,7 @@ prefix_ Configuration::Configuration() :
     
     // always turn those on, where available
     enableHighresTimers();
+    enableRealtimeScheduling();
 }
 
 prefix_ void Configuration::help()
