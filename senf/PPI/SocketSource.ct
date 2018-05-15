@@ -104,10 +104,15 @@ prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::read()
     flush_pending_ = false;
     for (burst_ = 1; handle_ and !flush_pending_ and (burst_ <= maxBurst_); ++burst_) {
         typename Reader::PacketType p (reader_(handle_));
-        if (SENF_LIKELY(p and (p.data().size() > 0)))
-            output( p);
-        else
+        if (SENF_LIKELY(p and (p.data().size() > 0))) {
+            rxStats_.received++;
+            output(p);
+        }
+        else {
+            if (burst_ == 1)
+                rxStats_.noop++;
             break;
+        }
     }
 
     burst_ = 0;

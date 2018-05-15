@@ -147,6 +147,26 @@ namespace module {
 
         void flush();
 
+        struct RxStats {
+            RxStats () {
+                clear();
+            }
+            void clear() {
+                memset(this, 0, sizeof(*this));
+            }
+            void dump(std::ostream & os) const {
+                os << "received "  << received << ", "
+                   << "noop "       << noop << ".";
+            }
+
+            unsigned received;
+            unsigned noop;
+        };
+
+        RxStats & rxStats() {
+            return rxStats_;
+        }
+        
     private:
         Handle handle_;
         IOEvent event_;
@@ -154,6 +174,7 @@ namespace module {
         unsigned maxBurst_;
         unsigned burst_;
         bool flush_pending_;
+        RxStats rxStats_;
         void read();
     };
 

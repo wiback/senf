@@ -267,7 +267,8 @@ prefix_ void senf::emu::TAPEthernetInterface::maxBurst(unsigned maxBurst)
 prefix_ void senf::emu::TAPEthernetInterface::dumpMmapStats(std::ostream & os)
 {
     if (TAPEthernetInterfaceNet::socket.valid()) {
-        os << "Socket acvtive (fd=" << socket.protocol().fd() << ", avail " << socket.protocol().available() << "), but no stats collection implemented (yet)" << std::endl;
+        os << "Socket acvtive (fd=" << socket.protocol().fd() << ", available " << socket.protocol().available() << "), RxStats: ";
+        source.rxStats().dump(os); os << " TxStats: "; sink.txStats().dump(os); os << std::endl;
     } else {
         os << "Socket closed. Not stats available." << std::endl;
     }

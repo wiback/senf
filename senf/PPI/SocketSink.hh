@@ -349,12 +349,33 @@ namespace module {
                                         /**< Assigning an empty or in-valid() handle will disable
                                              the module until a new valid handle is assigned. */
 
+        struct TxStats {
+            TxStats () {
+                clear();
+            }
+            void clear() {
+                memset(this, 0, sizeof(*this));
+            }
+            void dump(std::ostream & os) const {
+                os << "sent "  << sent << ", "
+                   << "error "       << error << ".";
+            }
+
+            unsigned sent;
+            unsigned error;
+        };
+
+        TxStats & txStats() {
+            return txStats_;
+        }
+
     private:
         void write();
         void checkThrottle();
 
         Handle handle_;
         Writer writer_;
+        TxStats txStats_;
     };
 
 }}}

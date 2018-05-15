@@ -124,7 +124,10 @@ prefix_ senf::ppi::module::PassiveSocketSink<Writer>::PassiveSocketSink(Handle c
 template <class Writer>
 prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::write()
 {
-    writer_(handle_,input());
+    if (writer_(handle_,input()))
+        txStats_.sent++;
+    else
+        txStats_.error++;
 }
 
 template <class Writer>
