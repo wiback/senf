@@ -15,6 +15,5 @@ rev = 'r' + os.popen("svnversion").read().strip().lower()
 if rev == 'rexported':
     rev = os.popen("gitsvnversion").read().strip().lower()
 
-env.Default( env.Program('Analyzer',  ['Analyzer.cc',  'ConfigurationA.cc', 'InternalThroughputTestPacket.cc']) )
-env.Default( env.Program('Generator', ['Generator.cc', 'ConfigurationG.cc', 'InternalThroughputTestPacket.cc']) )
+env.Default( env.Program('Analyzer',  ['Analyzer.cc',  'Configuration.cc', 'InternalThroughputTestPacket.cc']) )
 

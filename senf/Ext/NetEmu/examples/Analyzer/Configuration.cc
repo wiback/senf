@@ -41,7 +41,7 @@ extern "C" {
 #include <senf/Utils/Logger.hh>
 #include <senf/Utils/Console.hh>
 #include <senf/Scheduler/Scheduler.hh>
-#include "ConfigurationG.hh"
+#include "Configuration.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ prefix_ Configuration::Configuration() :
     numPackets(10),
     pktSize(1000),
     interface( "eth0"),
-    destination( senf::MACAddress::Broadcast),
+    destination(senf::MACAddress::None),
     sessionId(1)
 { 
     namespace fty = senf::console::factory;

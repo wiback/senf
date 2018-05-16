@@ -37,19 +37,78 @@
 #include <senf/Packets/DataPacket.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/hexdump.hh>
-
 #include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
 #include <senf/PPI/QueueSocketSourceSink.hh>
 #include <senf/PPI/PPI.hh>
-#include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Socket/NetdeviceController.hh>
 
-#include "ConfigurationA.hh"
+#include <senf/Ext/NetEmu/Annotations.hh>
+
+#include "Configuration.hh"
 #include "InternalThroughputTestPacket.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+class Generator : public senf::ppi::module::Module
+{
+    SENF_PPI_MODULE(Generator);
+
+public:
+    senf::ppi::connector::ActiveOutput<senf::EthernetPacket> output;
+    senf::scheduler::TimerEvent timer;
+    senf::EthernetPacket eth;
+    unsigned numPkts_;
+
+    Generator(senf::MACAddress const & mac, Configuration const & config) :
+        timer("trigger", boost::bind(&Generator::sendPkts, this)),
+        eth(senf::EthernetPacket::create()),
+        numPkts_(config.numPackets)
+    {
+        noroute(output);
+        
+        eth->source()      << mac;
+        eth->destination() << config.destination;
+        auto ouiExt (senf::EthOUIExtensionPacket::createAfter(eth));
+        auto testPkt (emu::InternalThroughputTestPacket::createAfter(ouiExt));
+        senf::DataPacket data(senf::DataPacket::createAfter(testPkt, config.pktSize - eth.size()));
+
+        testPkt->sessionId() << config.sessionId;
+        testPkt->numPkts()   << numPkts_;
+        testPkt->magic()     << 0xaffe;
+
+        eth.finalizeAll();
+
+        SENF_LOG((senf::log::IMPORTANT) ("Starting generator on iface " << config.interface << " with MAC " << mac
+                                         << ", destination " << config.destination 
+                                         << ", pktSize " << config.pktSize 
+                                         << ", numPackets " << config.numPackets
+                                         << ", sessionId " << config.sessionId));
+
+        // trigger sendPkts() in 1s
+        timer.timeout(senf::scheduler::now() + senf::ClockService::seconds(1));
+    }
+
+    void sendPkts() {
+        // push packets into MMAP buffer
+        auto testPkt (eth.find<emu::InternalThroughputTestPacket>());
+        testPkt->timestamp() << senf::ClockService::in_nanoseconds(senf::scheduler::now());
+        for (unsigned n = 0; n < numPkts_ + 10; n++) {
+            testPkt->seqNo() << std::min(n, numPkts_);  // pktNum==numPkts means 'FIN'
+            output(eth.clone());
+        }
+
+        // terminate us in 1s
+        timer.action(boost::bind(&Generator::terminate, this));
+        timer.timeout(senf::scheduler::now() + senf::ClockService::seconds(1));
+        // flush/send will be trigger as soon as we exit this method
+    }
+
+    void terminate() {
+        senf::scheduler::terminate();
+    }
+};
 
 class Analyzer : public senf::ppi::module::Module
 {
@@ -134,14 +193,20 @@ int main(int argc, char const * argv[])
     netdevCtrl.up();
     senf::MACAddress macAddr(netdevCtrl.hardwareAddress());
 
-    // qlen 512, frameSize 4096
-    senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
-    senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket> source (socket);
-
-    Analyzer analyzer(macAddr, configuration);
-
-    senf::ppi::connect( source, analyzer);
-    senf::ppi::run();
+    if (configuration.destination) {
+        // we are supposed to run as a generator
+        senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 2048, 4096);
+        senf::ppi::module::PassiveQueueSocketSink<> sink(socket);
+        Generator generator(macAddr, configuration);
+        senf::ppi::connect( generator, sink);
+        senf::ppi::run();
+    } else {
+        senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 2048, 4096);
+        senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket> source (socket);
+        Analyzer analyzer(macAddr, configuration);
+        senf::ppi::connect( source, analyzer);
+        senf::ppi::run();
+    }
 }
 
 
