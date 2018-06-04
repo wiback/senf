@@ -49,8 +49,8 @@ prefix_ senf::emu::ModulationParameter::ModulationParameter(std::string const & 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::ModulationParameterRegistry::registerModulation(ModulationParameter & parameter)
 {
     parameter.id = boost::uint32_t(parameter.linkTypeId) << 24 | boost::uint32_t(parameter.v_modulationId());
-    modulations_.erase(parameter.id);
-    modulations_.insert( parameter.id, parameter.v_clone());
+    if (modulations_.count(parameter.id) == 0)
+        modulations_.insert( parameter.id, parameter.v_clone());
     return parameter.id;
 }
 
