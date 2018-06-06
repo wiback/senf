@@ -201,7 +201,7 @@ prefix_ senf::emu::WirelessNLController::WirelessNLController(bool disableSeqNoC
 
 prefix_ void senf::emu::WirelessNLController::init(bool disableSeqNoCheck)
 {
-    frequency_ = 0;
+    memset(&survey_, 0, sizeof(survey_));
     ifaceType_ = IfaceType::Unknown;
     hasHTCapabilities_ = false;
     hasVHTCapabilities_ = false;
@@ -846,23 +846,40 @@ prefix_ int senf::emu::WirelessNLController::getSurvey_cb(nl_msg * msg)
             NLAttributePolicies::surveyPolicy) != 0)
         return NL_SKIP;
 
-    if (not sinfo[NL80211_SURVEY_INFO_FREQUENCY])
-        return NL_SKIP;
-
-    if (firstMutlipartMsg_ or sinfo[NL80211_SURVEY_INFO_IN_USE]) {
-        frequency_ = MHZ_TO_KHZ( nla_get_u32(sinfo[NL80211_SURVEY_INFO_FREQUENCY]));
-        firstMutlipartMsg_ = false;
+    if (sinfo[NL80211_SURVEY_INFO_FREQUENCY]) {
+        if (firstMutlipartMsg_ or sinfo[NL80211_SURVEY_INFO_IN_USE]) {
+            survey_.frequency = MHZ_TO_KHZ( nla_get_u32(sinfo[NL80211_SURVEY_INFO_FREQUENCY]));
+            firstMutlipartMsg_ = false;
+        }
     }
+
+    if (sinfo[NL80211_SURVEY_INFO_NOISE])
+        survey_.noise = nla_get_u8(sinfo[NL80211_SURVEY_INFO_NOISE]);
+    if (sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME])
+        survey_.channelTime = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME]);
+    if (sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_BUSY])
+        survey_.channelTimeBusy = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_BUSY]);
+    if (sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_EXT_BUSY])
+        survey_.channelTimeExtBusy = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_EXT_BUSY]);
+    if (sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_RX])
+        survey_.channelTimeRx = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_RX]);
+    if (sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_TX])
+        survey_.channelTimeTx = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_TX]);
+
     return NL_OK;
 }
 
-prefix_ senf::emu::WirelessNLController::frequency_type senf::emu::WirelessNLController::frequency()
+prefix_ senf::emu::WirelessNLController::Survey const & senf::emu::WirelessNLController::survey()
 {
     firstMutlipartMsg_ = true;
-    frequency_ = 0;
+    memset(&survey_, 0, sizeof(survey_));
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_GET_SURVEY, CIB_IF, NLM_F_DUMP));
     send_and_wait4response(msg, &WirelessNLController::getSurvey_cb);
-    return frequency_;
+    return survey_;
+}
+prefix_ senf::emu::WirelessNLController::frequency_type senf::emu::WirelessNLController::frequency()
+{
+    return survey().frequency;
 }
 
 prefix_ std::string senf::emu::WirelessNLController::IfaceType::str(Enum type)

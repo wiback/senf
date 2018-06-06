@@ -237,6 +237,16 @@ namespace emu {
         typedef unsigned bitrate_type;
         typedef unsigned frequency_type;
 
+        struct Survey {
+            frequency_type frequency;
+            std::uint8_t   noise;
+            std::uint64_t  channelTime;
+            std::uint64_t  channelTimeBusy;
+            std::uint64_t  channelTimeExtBusy;
+            std::uint64_t  channelTimeRx;
+            std::uint64_t  channelTimeTx;
+        };
+        
     private:
         typedef std::multimap<Band_t, frequency_type> Frequencies;
         typedef boost::transform_iterator< ::__gnu_cxx::select2nd<Frequencies::value_type>,
@@ -372,6 +382,7 @@ namespace emu {
         static int channelType(ChannelMode::Enum channelMode);
         static frequency_type centerFreq(frequency_type freq, ChannelMode::Enum channelMode);
 
+        Survey const & survey();
         frequency_type frequency();
         FrequencyRange frequencies();
         FrequencyRange frequencies(Band_t band);
@@ -449,7 +460,7 @@ namespace emu {
         Frequencies frequencies_;
         BitrateParameters bitrates_;
         bool firstMutlipartMsg_;
-        frequency_type frequency_;
+        Survey survey_;
         IfaceType::Enum ifaceType_;
         unsigned coverageClass_;
         bool hasHTCapabilities_;

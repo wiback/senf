@@ -278,6 +278,9 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
     consoleDir()
         .add("spectralScanStats", fty::Command(&HardwareWLANInterface::spectralScanStats, this)
              .doc("current spectralScanner stats."));
+    consoleDir()
+        .add("dumpSurvey", fty::Command(&HardwareWLANInterface::dumpSurvey, this)
+             .doc("current survey stats"));
 
     // remove any (possibly existing) previous link...
     try {
@@ -1191,6 +1194,15 @@ prefix_ void senf::emu::HardwareWLANInterface::cacAborted()
 prefix_ senf::emu::WirelessNLController::NetlinkEvent<senf::emu::RadarEvent> & senf::emu::HardwareWLANInterface::radarEvent()
 {
     return wnlc_.radarEvent;
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::dumpSurvey(std::ostream & os)
+{
+    auto const & survey (wnlc_.survey());
+
+    os << "frequency " << survey.frequency << ", noise " << unsigned(survey.noise) << ", channelTime " << survey.channelTime
+       << ", channelTimeBusy " << survey.channelTimeBusy << ", channelTimeExtBusy " << survey.channelTimeExtBusy
+       << ", channelTimeRx " << survey.channelTimeRx << ", channelTimeTx " << survey.channelTimeTx << std::endl;
 }
 
 
