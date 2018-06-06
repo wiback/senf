@@ -1288,7 +1288,7 @@ prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::vector<freque
         nl_msg_ptr freqs (nlMsg());
         int i = 1;
         for (frequency_type f : frequencies)
-            NLA_PUT_U32(freqs, i++, f);
+            NLA_PUT_U32(freqs, i++, KHZ_TO_MHZ(f));
         NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_FREQUENCIES, freqs);
     }
 

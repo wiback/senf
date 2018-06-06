@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <boost/icl/interval_set.hpp>
 #include <senf/Utils/algorithm.hh>
+#include <senf/Utils/String.hh>
 #include <senf/Packets/80211Bundle/MCSInfo.hh>
 #include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Ext/NetEmu/config.hh>
@@ -281,6 +282,9 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
     consoleDir()
         .add("dumpSurvey", fty::Command(&HardwareWLANInterface::dumpSurvey, this)
              .doc("current survey stats"));
+    consoleDir()
+        .add("triggerScan", fty::Command(&HardwareWLANInterface::triggerScan, this)
+             .doc("triggers a fresh scan"));
 
     // remove any (possibly existing) previous link...
     try {
@@ -1205,6 +1209,11 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpSurvey(std::ostream & os)
        << ", channelTimeRx " << survey.channelTimeRx << ", channelTimeTx " << survey.channelTimeTx << std::endl;
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::triggerScan(std::ostream & os, std::vector<WirelessNLController::frequency_type> const & frequencies)
+{
+    os << "Triggering new scan on frequencies " << (frequencies.empty() ? "all" : "(" + senf::stringJoin(frequencies, " ") + ")") << std::endl;
+    wnlc_.do_trigger_scan(frequencies);
+}
 
 #undef MHZ_TO_KHZ
 #undef IGNORE_EXCPETION
