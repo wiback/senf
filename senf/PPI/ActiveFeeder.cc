@@ -41,6 +41,7 @@
 // senf::ppi::module::ActiveFeeder
 
 prefix_ senf::ppi::module::ActiveFeeder::ActiveFeeder()
+    : idle_("Active Feeder")
 {
     route(input,idle_);
     route(idle_,output);
