@@ -1188,6 +1188,12 @@ prefix_ void senf::emu::HardwareWLANInterface::cacAborted()
     } catch (...) {};
 }
 
+prefix_ senf::emu::WirelessNLController::NetlinkEvent<senf::emu::RadarEvent> & senf::emu::HardwareWLANInterface::radarEvent()
+{
+    return wnlc_.radarEvent;
+}
+
+
 #undef MHZ_TO_KHZ
 #undef IGNORE_EXCPETION
 

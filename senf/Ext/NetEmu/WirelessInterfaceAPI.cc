@@ -50,7 +50,7 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::ModulationParameterRegis
 {
     parameter.id = boost::uint32_t(parameter.linkTypeId) << 24 | boost::uint32_t(parameter.v_modulationId());
     if (modulations_.count(parameter.id) == 0)
-        modulations_.insert( parameter.id, parameter.v_clone());
+        modulations_.insert(parameter.id, parameter.v_clone());
     return parameter.id;
 }
 

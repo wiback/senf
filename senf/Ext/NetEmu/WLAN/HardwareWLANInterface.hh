@@ -129,7 +129,9 @@ namespace emu {
         void spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb);
         void spectralScanCallback();
         void spectralScanStats(std::ostream & os);
-        
+
+        senf::emu::WirelessNLController::NetlinkEvent<RadarEvent> & radarEvent();
+
     protected:
         NetdeviceController netctl_;
         mutable WirelessNLController wnlc_;
