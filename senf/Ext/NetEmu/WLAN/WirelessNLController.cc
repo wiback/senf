@@ -1327,7 +1327,7 @@ prefix_ int senf::emu::WirelessNLController::triggerScan_cb(nl_msg * msg)
     return NL_SKIP;
 }
 
-prefix_ std::set<senf::emu::WirelessNLController::ScanResults> const & senf::emu::WirelessNLController::getScan()
+prefix_ std::multiset<senf::emu::WirelessNLController::ScanResults> const & senf::emu::WirelessNLController::getScan()
 {
     scanResults_.clear();
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_GET_SCAN, CIB_IF, NLM_F_DUMP));
@@ -1353,8 +1353,7 @@ prefix_ int senf::emu::WirelessNLController::getScan_cb(nl_msg * msg)
     if (!bss[NL80211_BSS_BSSID])
         return NL_SKIP;
 
-    ScanResults res;
-    res.bssId = senf::MACAddress::from_data((char*)nla_data(bss[NL80211_BSS_BSSID]));
+    ScanResults res(bss[NL80211_BSS_BSSID] ? senf::MACAddress::from_data((char*)nla_data(bss[NL80211_BSS_BSSID])) : senf::MACAddress::None);
     if (bss[NL80211_BSS_TSF])
         res.tsf = nla_get_u64(bss[NL80211_BSS_TSF]);
     if (bss[NL80211_BSS_FREQUENCY])

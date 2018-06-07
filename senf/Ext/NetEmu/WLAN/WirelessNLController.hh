@@ -258,6 +258,9 @@ namespace emu {
         };
 
         struct ScanResults {
+            ScanResults(senf::MACAddress const & bssid) :
+                bssId(bssid) {};
+            
             frequency_type   frequency;
             std::uint64_t    tsf;
             senf::MACAddress bssId;
@@ -462,7 +465,7 @@ namespace emu {
         void do_trigger_scan(std::vector<frequency_type> const & frequencies);
         int triggerScan_cb(nl_msg * msg);
         int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
-        std::set<ScanResults> const & getScan();
+        std::multiset<ScanResults> const & getScan();
         int getScan_cb(nl_msg * msg);
 
         void getWiphy();
@@ -492,7 +495,7 @@ namespace emu {
         BitrateParameters bitrates_;
         bool firstMutlipartMsg_;
         Survey survey_;
-        std::set<ScanResults> scanResults_;
+        std::multiset<ScanResults> scanResults_;
         IfaceType::Enum ifaceType_;
         unsigned coverageClass_;
         bool hasHTCapabilities_;
