@@ -861,10 +861,8 @@ prefix_ int senf::emu::WirelessNLController::getSurvey_cb(nl_msg * msg)
             NLAttributePolicies::surveyPolicy) != 0)
         return NL_SKIP;
 
-    Survey survey;
+    Survey survey (!!sinfo[NL80211_SURVEY_INFO_IN_USE]);
     
-    survey.inUse = !!sinfo[NL80211_SURVEY_INFO_IN_USE];
-
     if (sinfo[NL80211_SURVEY_INFO_FREQUENCY])
         survey.frequency = MHZ_TO_KHZ(nla_get_u32(sinfo[NL80211_SURVEY_INFO_FREQUENCY]));
     if (sinfo[NL80211_SURVEY_INFO_NOISE])

@@ -248,6 +248,11 @@ namespace emu {
         typedef unsigned frequency_type;
 
         struct Survey {
+            Survey (bool inuse) {
+                memset(this, 0, sizeof(*this));
+                inUse = inuse;
+            };
+
             frequency_type frequency;
             std::uint8_t   noise;
             std::uint64_t  channelTime;
@@ -264,8 +269,10 @@ namespace emu {
         };
 
         struct ScanResults {
-            ScanResults(senf::MACAddress const & bssid) :
-                bssId(bssid) {};
+            ScanResults(senf::MACAddress const & bssid) {
+                memset(this, 0, sizeof(*this));
+                bssId = bssid;
+            };
             
             frequency_type   frequency;
             std::uint64_t    tsf;

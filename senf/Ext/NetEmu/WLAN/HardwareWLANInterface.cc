@@ -1213,7 +1213,7 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpSurvey(std::ostream & os)
     os << "Lastest survey data, sorted by frequency" << std::endl;
 
     for( auto const & survey : wnlc_.survey()) {
-        os << "frequency " << survey.frequency << ", noise " << unsigned(survey.noise) << ", channelTime " << survey.channelTime
+        os << survey.frequency << ": inUse " << survey.inUse << ", noise " << unsigned(survey.noise) << ", channelTime " << survey.channelTime
            << ", channelTimeBusy " << survey.channelTimeBusy << ", channelTimeExtBusy " << survey.channelTimeExtBusy
            << ", channelTimeRx " << survey.channelTimeRx << ", channelTimeTx " << survey.channelTimeTx << std::endl;
     }
@@ -1230,7 +1230,7 @@ prefix_ void senf::emu::HardwareWLANInterface::getScan(std::ostream & os)
     os << "Lastest scan data, sorted by bssId" << std::endl;
 
     for (auto const & sd : wnlc_.getScan()){
-        os << sd.bssId << ": tsf " << sd.tsf << ", frequency " << sd.frequency << ", signalMBM " << (float(sd.signalMBM) / 100.0f) << ", signalUnspec " << unsigned(sd.signalUnspec) << std::endl;
+        os << sd.bssId << ": tsf " << sd.tsf << ", frequency " << sd.frequency << ", signalMBM " << (float(int(sd.signalMBM)) / 100.0f) << ", signalUnspec " << unsigned(sd.signalUnspec) << std::endl;
     }
 }
 
