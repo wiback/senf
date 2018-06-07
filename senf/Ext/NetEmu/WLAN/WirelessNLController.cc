@@ -1327,10 +1327,12 @@ prefix_ int senf::emu::WirelessNLController::triggerScan_cb(nl_msg * msg)
     return NL_SKIP;
 }
 
-prefix_ void senf::emu::WirelessNLController::getScan()
+prefix_ std::set<senf::emu::WirelessNLController::ScanResults> const & senf::emu::WirelessNLController::getScan()
 {
+    scanResults_.clear();
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_GET_SCAN, CIB_IF, NLM_F_DUMP));
     send_and_wait4response(msg, &WirelessNLController::getScan_cb);
+    return scanResults_;
 }
 
 prefix_ int senf::emu::WirelessNLController::getScan_cb(nl_msg * msg)
@@ -1352,7 +1354,17 @@ prefix_ int senf::emu::WirelessNLController::getScan_cb(nl_msg * msg)
         return NL_SKIP;
     if (!bss[NL80211_BSS_INFORMATION_ELEMENTS])
         return NL_SKIP;
-      
+
+    ScanResults res;
+    res.tsf = nla_get_u64(bss[NL80211_BSS_TSF]);
+    res.frequency = MHZ_TO_KHZ(nla_get_u32(bss[NL80211_BSS_TSF]));
+    res.beaconInterval = nla_get_u16(bss[NL80211_BSS_BEACON_INTERVAL]);
+    res.bssId = senf::MACAddress::from_data((char*)nla_data(bss[NL80211_BSS_BSSID]));
+    res.capability = nla_get_u16(bss[NL80211_BSS_CAPABILITY]);
+    res.signalMBM = nla_get_u32(bss[NL80211_BSS_SIGNAL_MBM]);
+    res.signalUnspec = nla_get_u8(bss[NL80211_BSS_SIGNAL_UNSPEC]);
+    scanResults_.insert(res);
+    
     return NL_SKIP;
 }
 

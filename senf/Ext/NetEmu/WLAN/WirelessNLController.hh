@@ -256,7 +256,23 @@ namespace emu {
             std::uint64_t  channelTimeRx;
             std::uint64_t  channelTimeTx;
         };
-        
+
+        struct ScanResults {
+            frequency_type   frequency;
+            std::uint64_t    tsf;
+            senf::MACAddress bssId;
+            std::uint16_t    beaconInterval;
+            std::uint16_t    capability;
+            std::uint32_t    signalMBM;
+            std::uint8_t     signalUnspec;
+            std::uint32_t    status;
+            std::uint32_t    seenMsAgo;
+
+            bool operator<(ScanResults const & other) const {
+                return bssId < other.bssId;
+            };
+        };
+
     private:
         typedef std::multimap<Band_t, frequency_type> Frequencies;
         typedef boost::transform_iterator< ::__gnu_cxx::select2nd<Frequencies::value_type>,
@@ -446,7 +462,7 @@ namespace emu {
         void do_trigger_scan(std::vector<frequency_type> const & frequencies);
         int triggerScan_cb(nl_msg * msg);
         int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
-        void getScan();
+        std::set<ScanResults> const & getScan();
         int getScan_cb(nl_msg * msg);
 
         void getWiphy();
@@ -476,6 +492,7 @@ namespace emu {
         BitrateParameters bitrates_;
         bool firstMutlipartMsg_;
         Survey survey_;
+        std::set<ScanResults> scanResults_;
         IfaceType::Enum ifaceType_;
         unsigned coverageClass_;
         bool hasHTCapabilities_;
