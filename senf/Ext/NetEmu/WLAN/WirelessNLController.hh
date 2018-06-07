@@ -255,6 +255,12 @@ namespace emu {
             std::uint64_t  channelTimeExtBusy;
             std::uint64_t  channelTimeRx;
             std::uint64_t  channelTimeTx;
+            bool           inUse;
+
+            bool operator<(Survey const & other) const {
+                return frequency < other.frequency;
+            };
+
         };
 
         struct ScanResults {
@@ -266,7 +272,7 @@ namespace emu {
             senf::MACAddress bssId;
             std::uint16_t    beaconInterval;
             std::uint16_t    capability;
-            std::uint32_t    signalMBM;
+            std::int32_t     signalMBM;
             std::uint8_t     signalUnspec;
             std::uint32_t    status;
             std::uint32_t    seenMsAgo;
@@ -410,8 +416,8 @@ namespace emu {
         static int channelWidth(ChannelMode::Enum channelMode);
         static int channelType(ChannelMode::Enum channelMode);
         static frequency_type centerFreq(frequency_type freq, ChannelMode::Enum channelMode);
-
-        Survey const & survey();
+        
+        std::set<Survey> const & survey();
         frequency_type frequency();
         FrequencyRange frequencies();
         FrequencyRange frequencies(Band_t band);
@@ -494,7 +500,7 @@ namespace emu {
         Frequencies frequencies_;
         BitrateParameters bitrates_;
         bool firstMutlipartMsg_;
-        Survey survey_;
+        std::set<Survey> survey_;
         std::multiset<ScanResults> scanResults_;
         IfaceType::Enum ifaceType_;
         unsigned coverageClass_;

@@ -1210,11 +1210,13 @@ prefix_ senf::emu::WirelessNLController::NetlinkEvent<senf::emu::ScanEvent> & se
 
 prefix_ void senf::emu::HardwareWLANInterface::dumpSurvey(std::ostream & os)
 {
-    auto const & survey (wnlc_.survey());
+    os << "Lastest survey data, sorted by frequency" << std::endl;
 
-    os << "frequency " << survey.frequency << ", noise " << unsigned(survey.noise) << ", channelTime " << survey.channelTime
-       << ", channelTimeBusy " << survey.channelTimeBusy << ", channelTimeExtBusy " << survey.channelTimeExtBusy
-       << ", channelTimeRx " << survey.channelTimeRx << ", channelTimeTx " << survey.channelTimeTx << std::endl;
+    for( auto const & survey : wnlc_.survey()) {
+        os << "frequency " << survey.frequency << ", noise " << unsigned(survey.noise) << ", channelTime " << survey.channelTime
+           << ", channelTimeBusy " << survey.channelTimeBusy << ", channelTimeExtBusy " << survey.channelTimeExtBusy
+           << ", channelTimeRx " << survey.channelTimeRx << ", channelTimeTx " << survey.channelTimeTx << std::endl;
+    }
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::triggerScan(std::ostream & os, std::vector<WirelessNLController::frequency_type> const & frequencies)
@@ -1226,8 +1228,9 @@ prefix_ void senf::emu::HardwareWLANInterface::triggerScan(std::ostream & os, st
 prefix_ void senf::emu::HardwareWLANInterface::getScan(std::ostream & os)
 {
     os << "Lastest scan data, sorted by bssId" << std::endl;
+
     for (auto const & sd : wnlc_.getScan()){
-        os << sd.bssId << ": tsf, " << sd.tsf << ", frequency " << sd.frequency << ", signalMBM " << sd.signalMBM << ", signalUnspec " << sd.signalUnspec << std::endl;
+        os << sd.bssId << ": tsf " << sd.tsf << ", frequency " << sd.frequency << ", signalMBM " << (float(sd.signalMBM) / 100.0f) << ", signalUnspec " << unsigned(sd.signalUnspec) << std::endl;
     }
 }
 
