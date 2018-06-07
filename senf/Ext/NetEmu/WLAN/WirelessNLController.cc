@@ -1352,17 +1352,21 @@ prefix_ int senf::emu::WirelessNLController::getScan_cb(nl_msg * msg)
 
     if (!bss[NL80211_BSS_BSSID])
         return NL_SKIP;
-    if (!bss[NL80211_BSS_INFORMATION_ELEMENTS])
-        return NL_SKIP;
 
     ScanResults res;
-    res.tsf = nla_get_u64(bss[NL80211_BSS_TSF]);
-    res.frequency = MHZ_TO_KHZ(nla_get_u32(bss[NL80211_BSS_TSF]));
-    res.beaconInterval = nla_get_u16(bss[NL80211_BSS_BEACON_INTERVAL]);
     res.bssId = senf::MACAddress::from_data((char*)nla_data(bss[NL80211_BSS_BSSID]));
-    res.capability = nla_get_u16(bss[NL80211_BSS_CAPABILITY]);
-    res.signalMBM = nla_get_u32(bss[NL80211_BSS_SIGNAL_MBM]);
-    res.signalUnspec = nla_get_u8(bss[NL80211_BSS_SIGNAL_UNSPEC]);
+    if (bss[NL80211_BSS_TSF])
+        res.tsf = nla_get_u64(bss[NL80211_BSS_TSF]);
+    if (bss[NL80211_BSS_FREQUENCY])
+        res.frequency = MHZ_TO_KHZ(nla_get_u32(bss[NL80211_BSS_FREQUENCY]));
+    if (bss[NL80211_BSS_BEACON_INTERVAL])
+        res.beaconInterval = nla_get_u16(bss[NL80211_BSS_BEACON_INTERVAL]);
+    if (bss[NL80211_BSS_CAPABILITY])
+        res.capability = nla_get_u16(bss[NL80211_BSS_CAPABILITY]);
+    if (bss[NL80211_BSS_SIGNAL_MBM])
+        res.signalMBM = nla_get_u32(bss[NL80211_BSS_SIGNAL_MBM]);
+    if (bss[NL80211_BSS_SIGNAL_UNSPEC])
+        res.signalUnspec = nla_get_u8(bss[NL80211_BSS_SIGNAL_UNSPEC]);
     scanResults_.insert(res);
     
     return NL_SKIP;
