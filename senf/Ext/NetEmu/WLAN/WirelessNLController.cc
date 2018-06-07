@@ -880,7 +880,7 @@ prefix_ int senf::emu::WirelessNLController::getSurvey_cb(nl_msg * msg)
 
     survey_.insert(survey);
     
-    return NL_OK;
+    return NL_SKIP;
 }
 
 prefix_ std::set<senf::emu::WirelessNLController::Survey> const & senf::emu::WirelessNLController::survey()
