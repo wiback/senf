@@ -158,6 +158,16 @@ namespace emu {
         Type type;
     };
 
+    struct ScanEvent
+    {
+        static const NetlinkMulticastGroup::Enum MCGroup = NetlinkMulticastGroup::Scan;
+
+        enum Type {
+            COMPLETED = 0, ABORTED = 1 };
+
+        Type type;
+    };
+    
     struct BitrateParameters
     {
     	/* VHT MCS */
@@ -410,6 +420,7 @@ namespace emu {
 
         NetlinkEvent<RadarEvent> radarEvent;
         NetlinkEvent<RegulatoryDomainChangeEvent> regulatoryDomainChangeEvent;
+        NetlinkEvent<ScanEvent> scanEvent;
 
     private:
         typedef boost::shared_ptr<nl_msg> nl_msg_ptr;

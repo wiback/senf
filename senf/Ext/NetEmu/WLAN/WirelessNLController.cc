@@ -171,7 +171,7 @@ namespace {
 // senf::emu::WirelessNLController
 
 prefix_ senf::emu::WirelessNLController::WirelessNLController(std::string const & interface)
-    : radarEvent(*this), regulatoryDomainChangeEvent(*this),
+    : radarEvent(*this), regulatoryDomainChangeEvent(*this), scanEvent(*this),
       ifIndex_(0), phyIndex_(-1),
       nl_sock_(nullptr, nl_socket_free), nl_cache_(nullptr, nl_cache_free), nl_cb_(nullptr, nl_cb_put),
       nl_event_sock_(nullptr, nl_socket_free), nl_event_cb_(nullptr, nl_cb_put)
@@ -191,7 +191,7 @@ prefix_ senf::emu::WirelessNLController::WirelessNLController(std::string const 
 }
 
 prefix_ senf::emu::WirelessNLController::WirelessNLController(bool disableSeqNoCheck)
-    : radarEvent(*this), regulatoryDomainChangeEvent(*this),
+    : radarEvent(*this), regulatoryDomainChangeEvent(*this), scanEvent(*this),
       ifIndex_(0), phyIndex_(-1),
       nl_sock_(nullptr, nl_socket_free), nl_cache_(nullptr, nl_cache_free), nl_cb_(nullptr, nl_cb_put),
       nl_event_sock_(nullptr, nl_socket_free), nl_event_cb_(nullptr, nl_cb_put)
@@ -1313,6 +1313,19 @@ prefix_ int senf::emu::WirelessNLController::triggerScan_cb(nl_msg * msg)
 
 prefix_ int senf::emu::WirelessNLController::processScanResponse(std::uint8_t cmd, nlattr ** msgAttr)
 {
+    ScanEvent event;
+    if (cmd == NL80211_CMD_SCAN_ABORTED) {
+        event.type = ScanEvent::Type::ABORTED;
+    }
+    else if (cmd == NL80211_CMD_NEW_SCAN_RESULTS) {
+        event.type = ScanEvent::Type::COMPLETED;
+    }
+    else {
+        return NL_SKIP;
+    }
+
+    scanEvent.signal(event);
+
     return NL_OK;
 }
 
