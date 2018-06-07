@@ -1278,7 +1278,7 @@ prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters co
 
 prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::vector<frequency_type> const & frequencies)
 {
-    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_TRIGGER_SCAN, CIB_IF, NLM_F_ACK));
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_TRIGGER_SCAN, CIB_IF, 0));
 
     nl_msg_ptr ssids (nlMsg());
     NLA_PUT(ssids, 1, 0, "");
@@ -1292,7 +1292,28 @@ prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::vector<freque
         NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_FREQUENCIES, freqs);
     }
 
-    send_and_wait4response(msg);
+    send_and_wait4response(msg, &WirelessNLController::triggerScan_cb);
+}
+
+prefix_ int senf::emu::WirelessNLController::triggerScan_cb(nl_msg * msg)
+{
+    nlattr * msgAttr[NL80211_ATTR_MAX + 1];
+    genlmsghdr * msgHdr = reinterpret_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
+    nla_parse(msgAttr, NL80211_ATTR_MAX, genlmsg_attrdata(msgHdr, 0), genlmsg_attrlen(msgHdr, 0), NULL);
+
+    switch (msgHdr->cmd) {
+    case NL80211_CMD_SCAN_ABORTED:
+        return processScanResponse(msgHdr->cmd, msgAttr);
+    case NL80211_CMD_NEW_SCAN_RESULTS:
+        return processScanResponse(msgHdr->cmd, msgAttr);
+    }
+
+    return NL_SKIP;
+}
+
+prefix_ int senf::emu::WirelessNLController::processScanResponse(std::uint8_t cmd, nlattr ** msgAttr)
+{
+    return NL_OK;
 }
 
 prefix_ void senf::emu::WirelessNLController::get_multicastGroups()

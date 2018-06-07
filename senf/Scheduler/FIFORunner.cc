@@ -294,7 +294,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdog(int, siginfo_t * si, 
 prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
 {
     // We don't care if the write commands below fail, we just give our best to inform the user
-    senf::IGNORE( write(1, "*** Scheduler task hanging (pid ",34) );
+    senf::IGNORE( write(1, "*** Scheduler task hanging (pid ", 32) );
     static char pid[7];
     ::snprintf(pid, 7, "%6d", ::getpid());
     pid[6] = 0;

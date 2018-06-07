@@ -433,6 +433,8 @@ namespace emu {
         void do_mesh_join(MeshJoinParameters const & parameters);
 
         void do_trigger_scan(std::vector<frequency_type> const & frequencies);
+        int triggerScan_cb(nl_msg * msg);
+        int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
 
         void getWiphy();
 
