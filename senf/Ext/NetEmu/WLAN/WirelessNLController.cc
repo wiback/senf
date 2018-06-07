@@ -125,6 +125,7 @@ namespace {
         static nla_policy ratePolicy[NL80211_BITRATE_ATTR_MAX + 1];
         static nla_policy surveyPolicy[NL80211_SURVEY_INFO_MAX + 1];
         static nla_policy regRulePolicy[NL80211_FREQUENCY_ATTR_MAX + 1];
+        static nla_policy bssPolicy[NL80211_BSS_MAX + 1];
 
         static bool init() {
             memset( freqPolicy, 0, sizeof(freqPolicy));
@@ -154,6 +155,19 @@ namespace {
             regRulePolicy[NL80211_ATTR_POWER_RULE_MAX_EIRP]    .type = NLA_U32;
             regRulePolicy[NL80211_ATTR_DFS_CAC_TIME]           .type = NLA_U32;
 
+            memset( bssPolicy, 0, sizeof(bssPolicy));
+            bssPolicy[NL80211_BSS_TSF].type = NLA_U64;
+            bssPolicy[NL80211_BSS_FREQUENCY].type = NLA_U32;
+            //bssPolicy[NL80211_BSS_BSSID] = {};
+            bssPolicy[NL80211_BSS_BEACON_INTERVAL].type = NLA_U16;
+            bssPolicy[NL80211_BSS_CAPABILITY].type = NLA_U16;
+            //bssPolicy[NL80211_BSS_INFORMATION_ELEMENTS] = { };
+            bssPolicy[NL80211_BSS_SIGNAL_MBM].type = NLA_U32;
+            bssPolicy[NL80211_BSS_SIGNAL_UNSPEC].type = NLA_U8;
+            bssPolicy[NL80211_BSS_STATUS].type = NLA_U32;
+            bssPolicy[NL80211_BSS_SEEN_MS_AGO].type = NLA_U32;
+            //bssPolicy[NL80211_BSS_BEACON_IES] = { };
+
             return true;
         }
     };
@@ -162,7 +176,8 @@ namespace {
     nla_policy NLAttributePolicies::ratePolicy[NL80211_BITRATE_ATTR_MAX + 1];
     nla_policy NLAttributePolicies::surveyPolicy[NL80211_SURVEY_INFO_MAX + 1];
     nla_policy NLAttributePolicies::regRulePolicy[NL80211_FREQUENCY_ATTR_MAX + 1];
-
+    nla_policy NLAttributePolicies::bssPolicy[NL80211_BSS_MAX + 1];
+    
     bool __attribute__((unused))
         _nlAttributePolicies_initialized (NLAttributePolicies::init());
 }
@@ -877,6 +892,7 @@ prefix_ senf::emu::WirelessNLController::Survey const & senf::emu::WirelessNLCon
     send_and_wait4response(msg, &WirelessNLController::getSurvey_cb);
     return survey_;
 }
+
 prefix_ senf::emu::WirelessNLController::frequency_type senf::emu::WirelessNLController::frequency()
 {
     return survey().frequency;
@@ -1278,7 +1294,7 @@ prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters co
 
 prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::vector<frequency_type> const & frequencies)
 {
-    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_TRIGGER_SCAN, CIB_IF, 0));
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_TRIGGER_SCAN, CIB_IF, NLM_F_ACK));
 
     nl_msg_ptr ssids (nlMsg());
     NLA_PUT(ssids, 1, 0, "");
@@ -1308,6 +1324,35 @@ prefix_ int senf::emu::WirelessNLController::triggerScan_cb(nl_msg * msg)
         return processScanResponse(msgHdr->cmd, msgAttr);
     }
 
+    return NL_SKIP;
+}
+
+prefix_ void senf::emu::WirelessNLController::getScan()
+{
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_GET_SCAN, CIB_IF, NLM_F_DUMP));
+    send_and_wait4response(msg, &WirelessNLController::getScan_cb);
+}
+
+prefix_ int senf::emu::WirelessNLController::getScan_cb(nl_msg * msg)
+{
+    nlattr * msgAttr[NL80211_ATTR_MAX + 1];
+    nlattr * bss[NL80211_BSS_MAX + 1];
+    
+    genlmsghdr * msgHdr = reinterpret_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
+    nla_parse(msgAttr, NL80211_ATTR_MAX, genlmsg_attrdata(msgHdr, 0), genlmsg_attrlen(msgHdr, 0), NULL);
+    
+    if (not msgAttr[NL80211_ATTR_BSS])
+        return NL_SKIP;
+
+    if (nla_parse_nested(bss, NL80211_BSS_MAX, msgAttr[NL80211_ATTR_BSS],
+                         NLAttributePolicies::bssPolicy) != 0)
+        return NL_SKIP;
+
+    if (!bss[NL80211_BSS_BSSID])
+        return NL_SKIP;
+    if (!bss[NL80211_BSS_INFORMATION_ELEMENTS])
+        return NL_SKIP;
+      
     return NL_SKIP;
 }
 

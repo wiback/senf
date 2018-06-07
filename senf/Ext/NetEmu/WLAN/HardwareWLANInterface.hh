@@ -131,10 +131,12 @@ namespace emu {
         void spectralScanStats(std::ostream & os);
 
         senf::emu::WirelessNLController::NetlinkEvent<RadarEvent> & radarEvent();
+        senf::emu::WirelessNLController::NetlinkEvent<ScanEvent>  & scanEvent();
 
         void triggerScan(std::ostream & os, std::vector<WirelessNLController::frequency_type> const & frequencies);
+        void getScan(std::ostream & os);
         void dumpSurvey(std::ostream & os);
-
+        
     protected:
         NetdeviceController netctl_;
         mutable WirelessNLController wnlc_;

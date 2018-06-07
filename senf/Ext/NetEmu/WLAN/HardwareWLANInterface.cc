@@ -285,6 +285,9 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
     consoleDir()
         .add("triggerScan", fty::Command(&HardwareWLANInterface::triggerScan, this)
              .doc("triggers a fresh scan"));
+    consoleDir()
+        .add("getScan", fty::Command(&HardwareWLANInterface::getScan, this)
+             .doc("retrieves latest scan results"));
 
     // remove any (possibly existing) previous link...
     try {
@@ -1200,6 +1203,11 @@ prefix_ senf::emu::WirelessNLController::NetlinkEvent<senf::emu::RadarEvent> & s
     return wnlc_.radarEvent;
 }
 
+prefix_ senf::emu::WirelessNLController::NetlinkEvent<senf::emu::ScanEvent> & senf::emu::HardwareWLANInterface::scanEvent()
+{
+    return wnlc_.scanEvent;
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::dumpSurvey(std::ostream & os)
 {
     auto const & survey (wnlc_.survey());
@@ -1214,6 +1222,13 @@ prefix_ void senf::emu::HardwareWLANInterface::triggerScan(std::ostream & os, st
     os << "Triggering new scan on frequencies " << (frequencies.empty() ? "all" : "(" + senf::stringJoin(frequencies, " ") + ")") << std::endl;
     wnlc_.do_trigger_scan(frequencies);
 }
+
+prefix_ void senf::emu::HardwareWLANInterface::getScan(std::ostream & os)
+{
+    os << "Retrieving lastest scan data." << std::endl;
+    wnlc_.getScan();
+}
+
 
 #undef MHZ_TO_KHZ
 #undef IGNORE_EXCPETION

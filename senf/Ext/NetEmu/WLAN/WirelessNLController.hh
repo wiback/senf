@@ -446,6 +446,8 @@ namespace emu {
         void do_trigger_scan(std::vector<frequency_type> const & frequencies);
         int triggerScan_cb(nl_msg * msg);
         int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
+        void getScan();
+        int getScan_cb(nl_msg * msg);
 
         void getWiphy();
 
