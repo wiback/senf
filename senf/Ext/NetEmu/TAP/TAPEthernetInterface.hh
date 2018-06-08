@@ -62,6 +62,7 @@ namespace emu {
             TAPEthernetInterface, Interface::Decorator> Decorator;
 
         TAPEthernetInterface(std::string const & name);
+        ~TAPEthernetInterface();
 
         std::string const & v_device() const override;
 

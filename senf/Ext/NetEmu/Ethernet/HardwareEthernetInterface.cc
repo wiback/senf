@@ -206,11 +206,6 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
              .doc( "report the currently configured PVID (-1 means none)"));
 
 
-    // remove any (possibly existing) previous link...
-    try {
-        console::provideDirectory(interfaceDir(),"by-device").remove(device());
-    } catch (...) {};
-    // ...before installing a fresh one
     console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 
     initialId_ = id();
@@ -218,6 +213,13 @@ prefix_ senf::emu::HardwareEthernetInterface::HardwareEthernetInterface(std::str
 
     if (ctrl_.isUp())
         init_sockets();
+}
+
+prefix_ senf::emu::HardwareEthernetInterface::~HardwareEthernetInterface()
+{
+    try {
+        console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    } catch (...) {};
 }
 
 prefix_ std::string const & senf::emu::HardwareEthernetInterface::v_device()

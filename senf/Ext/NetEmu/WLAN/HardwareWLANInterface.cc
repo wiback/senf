@@ -289,11 +289,6 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
         .add("getScan", fty::Command(&HardwareWLANInterface::getScan, this)
              .doc("retrieves latest scan results"));
 
-    // remove any (possibly existing) previous link...
-    try {
-        console::provideDirectory(interfaceDir(),"by-device").remove(device());
-    } catch (...) {};
-    // ...before installing a fresh one
     console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 
     if (enabled())
@@ -304,6 +299,13 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
     } else {
         SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath spectral scanner detected for " << wnlc_.phyName()) );
     }
+}
+
+prefix_ senf::emu::HardwareWLANInterface::~HardwareWLANInterface()
+{
+    try {
+        console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    } catch (...) {};
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::registerFrequencies()
@@ -1230,7 +1232,7 @@ prefix_ void senf::emu::HardwareWLANInterface::getScan(std::ostream & os)
     os << "Lastest scan data, sorted by bssId" << std::endl;
 
     for (auto const & sd : wnlc_.getScan()){
-        os << sd.bssId << ": tsf " << sd.tsf << ", frequency " << sd.frequency << ", signal " << (float(int(sd.signalMBM)) / 100.0f) << ", signalUnspec " << unsigned(sd.signalUnspec) << std::endl;
+        os << sd.bssId << ": tsf " << sd.tsf << ", frequency " << sd.frequency << ", signal " << sd.signal << ", signalUnspec " << unsigned(sd.signalUnspec) << std::endl;
     }
 }
 

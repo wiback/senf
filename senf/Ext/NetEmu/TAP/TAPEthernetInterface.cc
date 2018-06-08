@@ -121,6 +121,13 @@ prefix_ senf::emu::TAPEthernetInterface::TAPEthernetInterface(std::string const 
     }
 }
 
+prefix_ senf::emu::TAPEthernetInterface::~TAPEthernetInterface()
+{
+    try {
+        console::provideDirectory(interfaceDir(),"by-device").remove(device());
+    } catch (...) {};
+}
+
 prefix_ std::string const & senf::emu::TAPEthernetInterface::v_device()
     const
 {

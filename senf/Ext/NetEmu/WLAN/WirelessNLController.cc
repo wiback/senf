@@ -1366,7 +1366,7 @@ prefix_ int senf::emu::WirelessNLController::getScan_cb(nl_msg * msg)
     if (bss[NL80211_BSS_CAPABILITY])
         res.capability = nla_get_u16(bss[NL80211_BSS_CAPABILITY]);
     if (bss[NL80211_BSS_SIGNAL_MBM])
-        res.signalMBM = nla_get_u32(bss[NL80211_BSS_SIGNAL_MBM]);
+        res.signal = int(nla_get_u32(bss[NL80211_BSS_SIGNAL_MBM])) / 100;
     if (bss[NL80211_BSS_SIGNAL_UNSPEC])
         res.signalUnspec = nla_get_u8(bss[NL80211_BSS_SIGNAL_UNSPEC]);
     scanResults_.insert(res);

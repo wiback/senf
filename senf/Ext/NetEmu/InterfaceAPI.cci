@@ -28,6 +28,7 @@
 /** \file
     \brief InterfaceAPI inline non-template implementation */
 
+#include <senf/Utils/String.hh>
 #include "InterfaceAPI.ih"
 
 // Custom includes
@@ -39,7 +40,12 @@
 // senf::emu::Interface
 
 prefix_ senf::emu::Interface::~Interface()
-{}
+{
+    try {
+        // can't call id() anymore, as this would call v_id()
+        console::provideDirectory(interfaceDir(),"by-id").remove(senf::str(id_));
+    } catch (...) {};
+}
 
 prefix_ bool senf::emu::Interface::canTransmit()
     const

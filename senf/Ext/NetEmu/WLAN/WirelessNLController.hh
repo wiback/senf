@@ -279,7 +279,7 @@ namespace emu {
             senf::MACAddress bssId;
             std::uint16_t    beaconInterval;
             std::uint16_t    capability;
-            std::int32_t     signalMBM;
+            std::int32_t     signal;
             std::uint8_t     signalUnspec;
             std::uint32_t    status;
             std::uint32_t    seenMsAgo;
