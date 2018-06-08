@@ -1369,6 +1369,16 @@ prefix_ int senf::emu::WirelessNLController::getScan_cb(nl_msg * msg)
         res.signal = int(nla_get_u32(bss[NL80211_BSS_SIGNAL_MBM])) / 100;
     if (bss[NL80211_BSS_SIGNAL_UNSPEC])
         res.signalUnspec = nla_get_u8(bss[NL80211_BSS_SIGNAL_UNSPEC]);
+
+    if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
+        res.informationElementsLength = nla_len(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
+        memcpy(res.informationElements, nla_data(bss[NL80211_BSS_INFORMATION_ELEMENTS]), res.informationElementsLength);
+    }
+    if (bss[NL80211_BSS_BEACON_IES]) {
+        res.beaconInformationElementsLength = nla_len(bss[NL80211_BSS_BEACON_IES]);
+        memcpy(res.beaconInformationElements, nla_data(bss[NL80211_BSS_BEACON_IES]), res.beaconInformationElementsLength);
+    }
+
     scanResults_.insert(res);
     
     return NL_SKIP;

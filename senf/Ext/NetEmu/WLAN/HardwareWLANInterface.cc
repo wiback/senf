@@ -1232,7 +1232,8 @@ prefix_ void senf::emu::HardwareWLANInterface::getScan(std::ostream & os)
     os << "Lastest scan data, sorted by bssId" << std::endl;
 
     for (auto const & sd : wnlc_.getScan()){
-        os << sd.bssId << ": tsf " << sd.tsf << ", frequency " << sd.frequency << ", signal " << sd.signal << ", signalUnspec " << unsigned(sd.signalUnspec) << std::endl;
+        os << sd.bssId << ": tsf " << sd.tsf << ", frequency " << sd.frequency << ", signal " << sd.signal
+           << "beaconIELength " << sd.beaconInformationElementsLength << ", IELength " << sd.informationElementsLength << std::endl;
     }
 }
 

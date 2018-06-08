@@ -283,7 +283,11 @@ namespace emu {
             std::uint8_t     signalUnspec;
             std::uint32_t    status;
             std::uint32_t    seenMsAgo;
-
+            std::uint8_t     informationElements[NL80211_ATTR_MAX_SCAN_IE_LEN];
+            unsigned         informationElementsLength;
+            std::uint8_t     beaconInformationElements[NL80211_ATTR_MAX_SCAN_IE_LEN];
+            unsigned         beaconInformationElementsLength;
+            
             bool operator<(ScanResults const & other) const {
                 return bssId < other.bssId;
             };
