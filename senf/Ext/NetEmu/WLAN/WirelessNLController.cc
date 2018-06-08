@@ -328,6 +328,17 @@ prefix_ void senf::emu::WirelessNLController::send_and_wait4response(nl_msg_ptr 
     callback_ = nullptr;
 }
 
+prefix_ void senf::emu::WirelessNLController::send(nl_msg_ptr const & msg)
+{
+    int r;
+    if ((r = nl_send_auto_complete(nl_sock_.get(), msg.get())) > 0) {
+        if ((r = nl_wait_for_ack( nl_sock_.get())) != 0)
+            throw NetlinkException(r);
+    } else {
+        throw NetlinkException(r);
+    }
+}
+
 prefix_ void senf::emu::WirelessNLController::nlPutChannelDef(nl_msg_ptr msg, frequency_type freq, ChannelMode::Enum channelMode)
 {
     NLA_PUT_U32 ( msg, NL80211_ATTR_WIPHY_FREQ, KHZ_TO_MHZ(freq));
@@ -1311,23 +1322,7 @@ prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::vector<freque
         NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_FREQUENCIES, freqs);
     }
 
-    send_and_wait4response(msg, &WirelessNLController::triggerScan_cb);
-}
-
-prefix_ int senf::emu::WirelessNLController::triggerScan_cb(nl_msg * msg)
-{
-    nlattr * msgAttr[NL80211_ATTR_MAX + 1];
-    genlmsghdr * msgHdr = reinterpret_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
-    nla_parse(msgAttr, NL80211_ATTR_MAX, genlmsg_attrdata(msgHdr, 0), genlmsg_attrlen(msgHdr, 0), NULL);
-
-    switch (msgHdr->cmd) {
-    case NL80211_CMD_SCAN_ABORTED:
-        return processScanResponse(msgHdr->cmd, msgAttr);
-    case NL80211_CMD_NEW_SCAN_RESULTS:
-        return processScanResponse(msgHdr->cmd, msgAttr);
-    }
-
-    return NL_SKIP;
+    send(msg);
 }
 
 prefix_ std::multiset<senf::emu::WirelessNLController::ScanResults> const & senf::emu::WirelessNLController::getScan()

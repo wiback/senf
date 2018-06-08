@@ -283,10 +283,10 @@ namespace emu {
             std::uint8_t     signalUnspec;
             std::uint32_t    status;
             std::uint32_t    seenMsAgo;
-            std::uint8_t     informationElements[NL80211_ATTR_MAX_SCAN_IE_LEN];
-            unsigned         informationElementsLength;
-            std::uint8_t     beaconInformationElements[NL80211_ATTR_MAX_SCAN_IE_LEN];
-            unsigned         beaconInformationElementsLength;
+            int              informationElementsLength;
+            int              beaconInformationElementsLength;
+            std::uint8_t     informationElements[4096];
+            std::uint8_t     beaconInformationElements[4096];
             
             bool operator<(ScanResults const & other) const {
                 return bssId < other.bssId;
@@ -475,12 +475,12 @@ namespace emu {
         static void nlPutChannelDef(nl_msg_ptr msg, frequency_type freq, ChannelMode::Enum channelMode);
         nl_msg_ptr nlMsgHeader(uint8_t cmd, CmdIdBy idBy, int flags=0) const;
         void send_and_wait4response(nl_msg_ptr const & msg, CallbackMemPtr cb = nullptr);
+        void send(nl_msg_ptr const & msg);
 
         void do_ibss_join(IbssJoinParameters const & parameters);
         void do_mesh_join(MeshJoinParameters const & parameters);
 
         void do_trigger_scan(std::vector<frequency_type> const & frequencies);
-        int triggerScan_cb(nl_msg * msg);
         int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
         std::multiset<ScanResults> const & getScan();
         int getScan_cb(nl_msg * msg);
