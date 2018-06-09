@@ -1306,18 +1306,20 @@ prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters co
     send_and_wait4response(msg);
 }
 
-prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::vector<frequency_type> const & frequencies)
+prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::set<frequency_type> const & frequencies, std::set<std::string> const & ssids)
 {
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_TRIGGER_SCAN, CIB_IF, NLM_F_ACK));
-
-    nl_msg_ptr ssids (nlMsg());
-    NLA_PUT(ssids, 1, 0, "");
-    NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_SSIDS, ssids);
-
+    
+    if (not ssids.empty()) {
+        nl_msg_ptr ms (nlMsg());
+        NLA_PUT(ms, 1, 0, "");  // TODO: what's the proper format here ?
+        NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_SSIDS, ms);
+    }
+    
     if (not frequencies.empty()) {
         nl_msg_ptr freqs (nlMsg());
         int i = 1;
-        for (frequency_type f : frequencies)
+        for (frequency_type const & f : frequencies)
             NLA_PUT_U32(freqs, i++, KHZ_TO_MHZ(f));
         NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_FREQUENCIES, freqs);
     }

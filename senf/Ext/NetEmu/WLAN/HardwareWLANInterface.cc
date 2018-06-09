@@ -1210,6 +1210,11 @@ prefix_ senf::emu::WirelessNLController::NetlinkEvent<senf::emu::ScanEvent> & se
     return wnlc_.scanEvent;
 }
 
+prefix_ senf::emu::WirelessNLController & senf::emu::HardwareWLANInterface::wirelessNLController()
+{
+    return wnlc_;
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::dumpSurvey(std::ostream & os)
 {
     os << "Lastest survey data, sorted by frequency" << std::endl;
@@ -1221,7 +1226,7 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpSurvey(std::ostream & os)
     }
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::triggerScan(std::ostream & os, std::vector<WirelessNLController::frequency_type> const & frequencies)
+prefix_ void senf::emu::HardwareWLANInterface::triggerScan(std::ostream & os, std::set<WirelessNLController::frequency_type> const & frequencies)
 {
     os << "Triggering new scan on frequencies " << (frequencies.empty() ? "all" : "(" + senf::stringJoin(frequencies, " ") + ")") << std::endl;
     wnlc_.do_trigger_scan(frequencies);

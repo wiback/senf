@@ -81,7 +81,7 @@ prefix_ void senf::emu::WirelessNLController::NetlinkEvent<EventType>::disable()
 template <typename ForwardReadableRange>
 prefix_ void senf::emu::WirelessNLController::trigger_scan(ForwardReadableRange const & frequencies)
 {
-    std::vector<frequency_type> freqs;
+    std::set<frequency_type> freqs;
     std::copy(boost::begin(frequencies), boost::end(frequencies), std::back_inserter(freqs));
     do_trigger_scan(freqs);
 }

@@ -398,6 +398,7 @@ namespace emu {
 
         template <typename ForwardReadableRange>
         void trigger_scan(ForwardReadableRange const & frequencies);
+        void do_trigger_scan(std::set<frequency_type> const & frequencies, std::set<std::string> const & ssids = {});
 
         void set_regulatory_request(std::string const & alpha2Country);
         void set_regulatory(RegulatoryDomain const & regDomain);
@@ -480,7 +481,6 @@ namespace emu {
         void do_ibss_join(IbssJoinParameters const & parameters);
         void do_mesh_join(MeshJoinParameters const & parameters);
 
-        void do_trigger_scan(std::vector<frequency_type> const & frequencies);
         int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
         std::multiset<ScanResults> const & getScan();
         int getScan_cb(nl_msg * msg);
