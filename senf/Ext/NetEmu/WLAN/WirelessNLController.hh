@@ -343,6 +343,7 @@ namespace emu {
             MeshJoinParameters(Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode);
 
             Callback callback_;
+            bool handleDFS_;
             std::string meshId_;
             frequency_type freq_;
             ChannelMode::Enum channelMode_;
@@ -364,6 +365,7 @@ namespace emu {
             MeshJoinParameters::ptr vendorMetric(bool enable);
             MeshJoinParameters::ptr vendorPathSelection(bool enable);
             MeshJoinParameters::ptr vendorSynchronization(bool enable);
+            MeshJoinParameters::ptr handleDFS(bool flag);
         };
 
     public:

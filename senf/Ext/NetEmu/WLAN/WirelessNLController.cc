@@ -1242,7 +1242,10 @@ prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters co
     nlPutChannelDef(msg, parameters.freq_, parameters.channelMode_);
 
     if (parameters.beaconInterval_)
-        NLA_PUT_U32( msg, NL80211_ATTR_BEACON_INTERVAL, parameters.beaconInterval_.get());
+        NLA_PUT_U32(msg, NL80211_ATTR_BEACON_INTERVAL, parameters.beaconInterval_.get());
+
+    if (parameters.handleDFS_)
+        NLA_PUT_FLAG(msg, NL80211_ATTR_HANDLE_DFS);
 
     {
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_MESH_SETUP);
@@ -1636,7 +1639,7 @@ prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::Wire
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::MeshJoinParameters(
         Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode)
-    : callback_(cb), meshId_(meshId), freq_(freq), channelMode_(channelMode)
+    : callback_(cb), handleDFS_(false), meshId_(meshId), freq_(freq), channelMode_(channelMode)
 {}
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::~MeshJoinParameters()
@@ -1647,6 +1650,12 @@ prefix_ senf::emu::WirelessNLController::MeshJoinParameters::~MeshJoinParameters
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::beaconInterval(boost::optional<boost::uint32_t> interval)
 {
     beaconInterval_ = interval;
+    return shared_from_this();
+}
+
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::handleDFS(bool flag)
+{
+    handleDFS_ = flag;
     return shared_from_this();
 }
 
