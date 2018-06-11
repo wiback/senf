@@ -1312,7 +1312,9 @@ prefix_ void senf::emu::WirelessNLController::do_trigger_scan(std::set<frequency
     
     if (not ssids.empty()) {
         nl_msg_ptr ms (nlMsg());
-        NLA_PUT(ms, 1, 0, "");  // TODO: what's the proper format here ?
+        for (auto const & s : ssids){
+            NLA_PUT(ms, NL80211_SCHED_SCAN_MATCH_ATTR_SSID, strlen(s.c_str()), s.c_str());
+        }
         NLA_PUT_NESTED( msg, NL80211_ATTR_SCAN_SSIDS, ms);
     }
     
