@@ -50,6 +50,7 @@ prefix_ Configuration::Configuration() :
     verbose( false),
     numPackets(10),
     pktSize(1000),
+    sendBuffer(256*1024),
     interface( "eth0"),
     destination(senf::MACAddress::None),
     sessionId(1)
@@ -63,6 +64,7 @@ prefix_ Configuration::Configuration() :
     initDir.add("verbose", fty::Variable( verbose));
     initDir.add("num-packets", fty::Variable( numPackets));
     initDir.add("packet-size", fty::Variable( pktSize));
+    initDir.add("send-buffer", fty::Variable( sendBuffer));
     initDir.add("interface", fty::Variable( interface));
     initDir.add("destination", fty::Variable( destination));
     initDir.add("sessionId", fty::Variable( sessionId));

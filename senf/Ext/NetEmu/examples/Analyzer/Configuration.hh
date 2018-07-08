@@ -46,6 +46,7 @@ public:
     boost::uint64_t numPackets;
     boost::uint32_t pktsPerSecond;
     boost::uint32_t pktSize;
+    std::uint32_t   sendBuffer;
     std::string interface;
     senf::MACAddress destination;
     unsigned sessionId;
