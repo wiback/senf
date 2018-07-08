@@ -211,7 +211,7 @@ public:
               std::cout << "(loss after " << start->first << ", diff=" << it->first - start->first << ")";
         }
         std::cout << std::endl;
-        std::cout << "stats " << txTime.data() << std::endl;        
+        std::cout << "stats " << txTime.data() << ", capacity " << (float(pktSize * 8) / txTime.data().avg) << "Gbps" << std::endl;        
    }
 };
 
