@@ -206,7 +206,7 @@ template <class Connector>
 prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocketSink()
     : handle_ ()
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
-              senf::scheduler::EventHook::POST, false)
+                  senf::scheduler::EventHook::POST, false)
     , redFilterCallback_(redFilterDrop)
     , red_(0)
     , dropped_(0)
@@ -218,6 +218,8 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
     input.throttlingDisc( ThrottlingDiscipline::NONE);
+
+    registerEvent(writeEvent_, &PassiveQueueSocketSink::send);
 }
 
 template <class Connector>
@@ -225,6 +227,7 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     : handle_ (handle)
     , eventHook_ ("PassiveQueueSocketSink", senf::membind(&PassiveQueueSocketSink::send, this),
               senf::scheduler::EventHook::POST, false)
+    , writeEvent_(handle_, IOEvent::Write)
     , redFilterCallback_(redFilterDrop)
     , red_(0)
     , dropped_(0)  
@@ -236,6 +239,8 @@ prefix_ senf::ppi::module::PassiveQueueSocketSink<Connector>::PassiveQueueSocket
     noroute(input);
     input.onRequest(&PassiveQueueSocketSink::write);
     input.throttlingDisc( ThrottlingDiscipline::NONE);
+
+    registerEvent(writeEvent_, &PassiveQueueSocketSink::send);
 }
 
 template <class Connector>
@@ -251,6 +256,8 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::handle(Handle
 {
     handle_ = handle;
     eventHook_.disable();
+    writeEvent_.set(handle_, IOEvent::Write);
+    writeEvent_.enabled(false);
     red_ = dropped_ = 0;
 }
 
@@ -274,7 +281,14 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 {
     if (handle_) {
-        handle_.send();
+        if (handle_.send() > 0) {
+            // we might have more pending data to send
+            // we can not precisely determine this right now as qi.txUsage() only reports in 1/9 of ring size
+            // so let's just try once. If there's nothing to send we will disable this event below
+            writeEvent_.enabled(true);
+        } else {
+            writeEvent_.enabled(false);
+        }
         eventHook_.disable();
     }
 

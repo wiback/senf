@@ -75,6 +75,7 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::flush()
 {
     QueueWritePolicy::flush(handle_);
     eventHook_.disable();
+    writeEvent_.enabled(false);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

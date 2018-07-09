@@ -396,10 +396,10 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
     }
 }
 
-prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
+prefix_ ssize_t senf::QueueWritePolicy::send(FileHandle & handle)
 {
     if (SENF_UNLIKELY(!handle))
-        return;
+        return -1;
     
     detail::QueueInfo & qi (* qinfo(handle));
     unsigned char * last_tail (qi.tx.tail);
@@ -416,8 +416,9 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         qi.tx.idle = true;
     }
 
+    ssize_t sent (0);
     for (;;) {
-        if (::send(handle.fd(), NULL, 0, MSG_DONTWAIT) < 0) {
+        if ((sent = ::send(handle.fd(), NULL, 0, MSG_DONTWAIT)) < 0) {
             switch (errno) {
             case EINTR:
                 // We used to break here as 3.16.x seems to throw tons of those and 'continue' caused a busy-loop
@@ -471,6 +472,8 @@ prefix_ void senf::QueueWritePolicy::send(FileHandle & handle)
         }
         break;
     }
+
+    return sent;
 }
 
 prefix_ unsigned senf::QueueWritePolicy::write(FileHandle & handle, char const * buffer,

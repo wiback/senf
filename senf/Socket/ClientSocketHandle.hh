@@ -445,9 +445,9 @@ namespace senf {
          */
         boost::optional<typename SPolicy::WritePolicy::Buffer> enqueue();
 
-        void send();                    ///< Send all data in the write queue
-                                        /**< This call will send out all frames allocated since the
-                                             last call to \ref send(). */
+        ssize_t send();                    ///< Send all data in the write queue
+                                           /**< This call will send out all frames allocated since the
+                                              last call to \ref send(). */
 
         //\}
         //-////////////////////////////////////////////////////////////////////////

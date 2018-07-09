@@ -158,6 +158,7 @@ namespace module {
 
         Handle handle_;
         scheduler::EventHook eventHook_;
+        IOEvent writeEvent_;
         REDFilterCallback redFilterCallback_;
         unsigned red_;
         unsigned dropped_;
