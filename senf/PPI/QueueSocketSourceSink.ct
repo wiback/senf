@@ -280,8 +280,8 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::setREDFilterC
 template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::send()
 {
-    if (handle_) {
-        if (handle_.send() > 0) {
+    if (SENF_LIKELY(handle_)) {
+        if (SENF_LIKELY(handle_.send() > 0)) {
             // we might have more pending data to send
             // we can not precisely determine this right now as qi.txUsage() only reports in 1/9 of ring size
             // so let's just try once. If there's nothing to send we will disable this event below

@@ -418,7 +418,7 @@ prefix_ ssize_t senf::QueueWritePolicy::send(FileHandle & handle)
 
     ssize_t sent (0);
     for (;;) {
-        if ((sent = ::send(handle.fd(), NULL, 0, MSG_DONTWAIT)) < 0) {
+        if (SENF_UNLIKELY((sent = ::send(handle.fd(), NULL, 0, MSG_DONTWAIT)) < 0)) {
             switch (errno) {
             case EINTR:
                 // We used to break here as 3.16.x seems to throw tons of those and 'continue' caused a busy-loop

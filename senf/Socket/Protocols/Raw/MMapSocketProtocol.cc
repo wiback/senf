@@ -128,7 +128,7 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         v = 1;
         setsockopt(fd(), SOL_PACKET, PACKET_QDISC_BYPASS, (char*)&v, sizeof(v));
     }
-
+    
     senf::FileHandleAccess::extraPtr(fh(), &qi_);
 }
 
