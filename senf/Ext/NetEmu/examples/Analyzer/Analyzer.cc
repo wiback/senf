@@ -200,18 +200,26 @@ public:
              std::cerr << "Insufficient data for evaluation" << std::endl;
              return;
         }
+        std::map<std::uint32_t,std::uint32_t> distribution;
         senf::StatisticAccumulator<std::uint64_t> txTime;
         auto start (tstamps.begin());
         for (auto it (std::next(start)); it != tstamps.end(); it++, start++) {
             if (it->first - start->first == 1) { 
               std::cout << "(" << start->first << " " << it->second - start->second << ")";
               txTime.accumulate(it->second - start->second);
+              distribution[(it->second - start->second)/1000]++;
             }
             else
               std::cout << "(loss after " << start->first << ", diff=" << it->first - start->first << ")";
         }
         std::cout << std::endl;
-        std::cout << "stats " << txTime.data() << ", capacity " << (float(pktSize * 8) / txTime.data().avg) << "Gbps" << std::endl;        
+        
+        std::cout << "Sample distribution in us: ";
+        for (auto const & d : distribution) {
+            std::cout << "(" << d.first << " => " << d.second << ")";
+        }
+        std::cout << std::endl;
+        std::cout << "stats " << txTime.data() << ", capacity " << (float(pktSize * 8) / txTime.data().avg) << " Gbps" << std::endl;        
    }
 };
 

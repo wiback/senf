@@ -15,5 +15,12 @@ rev = 'r' + os.popen("svnversion").read().strip().lower()
 if rev == 'rexported':
     rev = os.popen("gitsvnversion").read().strip().lower()
 
-env.Default( env.Program('Analyzer',  ['Analyzer.cc',  'Configuration.cc', 'InternalThroughputTestPacket.cc']) )
+### the boost libs should be linked staticly:
+boostlibs = [ '-l%s' % lib for lib in env['LIBS'] if lib.startswith('$BOOST') ]
+env.Replace( LIBS      = [ lib for lib in env['LIBS'] if not lib.startswith('$BOOST') ] )
+env.Append(  LINKFLAGS = [ '-Wl,-Bdynamic' ],
+             LINKCOM   = ' -Wl,-Bstatic ' + ' '.join(boostlibs) + ' -Wl,-Bdynamic' )
+
+
+env.Default( env.Program('Analyzer',  ['Analyzer.cc',  'Configuration.cc', 'InternalThroughputTestPacket.cc', '${BUNDLEDIR}/AllBundles${LIBADDSUFFIX}.o'] ) )
 
