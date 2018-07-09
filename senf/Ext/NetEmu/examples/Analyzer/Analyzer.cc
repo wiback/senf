@@ -200,8 +200,8 @@ public:
              std::cerr << "Insufficient data for evaluation" << std::endl;
              return;
         }
-        std::map<std::uint32_t,std::uint32_t> distribution;
-        senf::StatisticAccumulator<std::uint64_t> txTime;
+        std::map<std::int32_t,std::uint32_t> distribution;
+        senf::StatisticAccumulator<std::int64_t> txTime;
         auto start (tstamps.begin());
         for (auto it (std::next(start)); it != tstamps.end(); it++, start++) {
             if (it->first - start->first == 1) { 
@@ -242,7 +242,7 @@ int main(int argc, char const * argv[])
 
     if (configuration.destination) {
         // we are supposed to run as a generator
-        senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 2048, 4096);
+        senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
         socket.protocol().sndbuf(configuration.sendBuffer);
         std::cout << "*** Using sndBuf size of " << socket.protocol().sndbuf() << " bytes. Max burstLength is " << socket.protocol().sndbuf() / configuration.pktSize << std::endl;
         senf::ppi::module::PassiveQueueSocketSink<> sink(socket);
@@ -254,8 +254,9 @@ int main(int argc, char const * argv[])
         auto ts (socket.protocol().txStats());
         ts.dump(std::cout); std::cout << std::endl;
     } else {
-        senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 2048, 4096);
+        senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
         senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket> source (socket);
+        source.maxBurst(configuration.numPackets);
         Analyzer analyzer(macAddr, configuration);
         senf::ppi::connect( source, analyzer);
         senf::ppi::run();
