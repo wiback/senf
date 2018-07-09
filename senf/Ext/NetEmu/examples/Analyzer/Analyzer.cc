@@ -215,10 +215,13 @@ public:
         std::cout << std::endl;
         
         std::cout << "Sample distribution in us: ";
+        std::uint64_t avg (0), count (0);
         for (auto const & d : distribution) {
             std::cout << "(" << d.first << " => " << d.second << ")";
+            avg += d.first * d.second;
+            count += d.second;
         }
-        std::cout << std::endl;
+        std::cout << ", avg " << (avg / count) << std::endl;
         std::cout << "stats " << txTime.data() << ", capacity " << (float(pktSize * 8) / txTime.data().avg) << " Gbps" << std::endl;        
    }
 };
