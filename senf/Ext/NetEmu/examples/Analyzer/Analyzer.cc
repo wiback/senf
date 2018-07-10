@@ -32,6 +32,7 @@
 //#include "MCSniffer.ih"
 
 // Custom includes
+#include <linux/net_tstamp.h>
 #include <senf/Scheduler/Scheduler.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/DataPacket.hh>
@@ -256,6 +257,12 @@ int main(int argc, char const * argv[])
     } else {
         senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
         senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket> source (socket);
+        socket.protocol().timestamping(SOF_TIMESTAMPING_RX_SOFTWARE | SOF_TIMESTAMPING_RX_HARDWARE);
+        try {
+            netdevCtrl.timestamping(HWTSTAMP_TX_OFF, HWTSTAMP_FILTER_ALL);
+        } catch(senf::Exception & ex) {
+            std::cerr << "Can not enable hw rx timestamping to due " << ex.what() << std::endl;
+        }
         source.maxBurst(configuration.numPackets);
         Analyzer analyzer(macAddr, configuration);
         senf::ppi::connect( source, analyzer);
