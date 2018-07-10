@@ -257,11 +257,13 @@ int main(int argc, char const * argv[])
     } else {
         senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
         senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket> source (socket);
-        socket.protocol().timestamping(SOF_TIMESTAMPING_RX_HARDWARE | SOF_TIMESTAMPING_RAW_HARDWARE);
         try {
+            socket.protocol().timestamping(SOF_TIMESTAMPING_RX_HARDWARE | SOF_TIMESTAMPING_RAW_HARDWARE);
             netdevCtrl.timestamping(HWTSTAMP_TX_OFF, HWTSTAMP_FILTER_ALL);
         } catch(senf::Exception & ex) {
             std::cerr << "Can not enable hw rx timestamping to due " << ex.what() << std::endl;
+            std::cerr << "Switching to RX_SOFTWARE timestamping" << std::endl;
+            socket.protocol().timestamping(SOF_TIMESTAMPING_RX_SOFTWARE);
         }
         source.maxBurst(configuration.numPackets);
         Analyzer analyzer(macAddr, configuration);
