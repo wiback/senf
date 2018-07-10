@@ -38,6 +38,7 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <linux/if_vlan.h>
+#include <linux/net_tstamp.h>
 #include <boost/weak_ptr.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <senf/Utils/Exception.hh>
@@ -211,6 +212,14 @@ prefix_ void senf::NetdeviceController::delVLAN(std::uint16_t vlanId)
     doIoctl (vlan_request, SIOCSIFVLAN, "failed to delete VLAN interface");
 }
 
+prefix_ void senf::NetdeviceController::timestamping(int txType, int rxFilter)
+{
+    struct hwtstamp_config hwconf = { 0, txType, rxFilter};
+    struct ifreq ifr;
+    ifrName( ifr);
+    ifr.ifr_data = (char*) &hwconf;
+    doIoctl( ifr, SIOCSHWTSTAMP, "Failed to set hw timestamp config");
+}
 
 prefix_ int senf::NetdeviceController::interfaceIndex()
     const

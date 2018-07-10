@@ -108,6 +108,10 @@ namespace senf {
                                         ///< delete a VLAN interface 
                                         /**< Note, that this is a privileged operation. */
 
+        void timestamping(int txType, int rxFilter);
+                                        ///< configures hw timestamping for RX and/or TX 
+                                        /**< Note, that this is a privileged operation. */
+
         
         bool isUp() const;              ///< return \c true if interface is up
         void up();                      ///< ifconfig up interface
