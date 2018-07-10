@@ -257,7 +257,7 @@ int main(int argc, char const * argv[])
     } else {
         senf::ConnectedMMapPacketSocketHandle socket (configuration.interface, 1024, 4096);
         senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket> source (socket);
-        socket.protocol().timestamping(SOF_TIMESTAMPING_RX_SOFTWARE | SOF_TIMESTAMPING_RX_HARDWARE);
+        socket.protocol().timestamping(SOF_TIMESTAMPING_RX_HARDWARE | SOF_TIMESTAMPING_RAW_HARDWARE);
         try {
             netdevCtrl.timestamping(HWTSTAMP_TX_OFF, HWTSTAMP_FILTER_ALL);
         } catch(senf::Exception & ex) {
