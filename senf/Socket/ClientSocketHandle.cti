@@ -317,7 +317,7 @@ senf::ClientSocketHandle<SPolicy>::enqueue()
 }
 
 template <class SPolicy>
-prefix_ ssize_t senf::ClientSocketHandle<SPolicy>::send()
+prefix_ bool senf::ClientSocketHandle<SPolicy>::send()
 {
     return SPolicy::WritePolicy::send(*this);
 }

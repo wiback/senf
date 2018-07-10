@@ -148,7 +148,7 @@ namespace senf {
         typedef SocketQueueBuffer::size_type size_type;
 
         static boost::optional<Buffer> enqueue(FileHandle & handle);
-        static ssize_t send(FileHandle & handle);
+        static bool send(FileHandle & handle);
         static void flush(FileHandle & handle);
 
         // classic write API
