@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <linux/if_packet.h>
+#include <linux/net_tstamp.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -182,6 +183,12 @@ prefix_ bool senf::MMapSocketProtocol::interfaceDead()
     ::memset(&qi_.txStats, 0, sizeof(qi_.txStats));
     ::memset(&qi_.rxStats, 0, sizeof(qi_.rxStats));
     return rtn;
+}
+
+prefix_ void senf::MMapSocketProtocol::timestamping(int sofFlags)
+{
+    if (setsockopt(fd(), SOL_PACKET, PACKET_TIMESTAMP, (char*)&sofFlags, sizeof(sofFlags)) != 0)
+        SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TIMESTAMP");   
 }
 
 

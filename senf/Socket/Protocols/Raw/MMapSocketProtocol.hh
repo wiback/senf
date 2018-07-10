@@ -51,6 +51,8 @@ namespace senf {
         detail::QueueInfo::RxStats rxStats() const;
         bool interfaceDead() const;
 
+        void timestamping(int sofFlags);
+
     protected:
         void init_mmap(unsigned frameSize, unsigned rxqlen, unsigned txqlen, unsigned reserve = 0, bool qDiscBypass = false) const;
         void close_mmap() const;
