@@ -553,7 +553,7 @@ namespace console {
                                              \param[in] range Range of tokens to  parse
                                              \param[in] msg Error message */
 
-        ~CheckedArgumentIteratorWrapper() throw(SyntaxErrorException);
+        ~CheckedArgumentIteratorWrapper();
                                         ///< Check, if all arguments are parsed
                                         /**< The destructor validates, that all arguments are parsed
                                              correctly when leaving the scope, in which the wrapper

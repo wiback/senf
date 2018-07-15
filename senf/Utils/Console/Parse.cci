@@ -264,7 +264,6 @@ CheckedArgumentIteratorWrapper(ParseCommandInfo::TokensRange const & range,
 {}
 
 prefix_ senf::console::CheckedArgumentIteratorWrapper::~CheckedArgumentIteratorWrapper()
-    throw(SyntaxErrorException)
 {
     if (i_ != e_ && ! std::uncaught_exception())
         throw SyntaxErrorException(msg_);
