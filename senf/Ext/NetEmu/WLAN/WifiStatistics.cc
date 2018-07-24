@@ -72,13 +72,12 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
 {
     if (timestamp_ and (tag_ == tag))
         return true;
-    
     map_.clear();
     timestamp_ = senf::ClockService::clock_type(0);
 
     try {
-        boost::filesystem::ifstream file;
-        file.exceptions( std::ifstream::failbit | std::ifstream::badbit);
+	std::ifstream file;
+        //file.exceptions( std::ifstream::failbit | std::ifstream::badbit);
         file.open(debugFsPath_ + "stats", std::ios::in);
         boost::property_tree::ptree pt;
         boost::property_tree::read_json(file, pt);
@@ -159,11 +158,10 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                 }
             }
             if (num != 8) {
-                map_.clear();
-                return false;
+                map_.erase(mac);
             }
         }
-    } catch(...) {
+    } catch(std::exception const & ex) {
         map_.clear();
         return false;
     }
