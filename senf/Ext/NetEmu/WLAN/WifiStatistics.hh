@@ -74,6 +74,8 @@ namespace emu {
         WifiStatisticsMap const & map() const;
         ClockService::clock_type const & timestamp() const;
         std::uint32_t tag() const;
+        std::uint32_t invalidEntries() const;
+        std::uint32_t ioErrors() const;
 
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
 
@@ -82,6 +84,8 @@ namespace emu {
         WifiStatisticsMap map_;
         ClockService::clock_type timestamp_;
         std::uint32_t tag_;
+        std::uint32_t invalidEntries_;
+        std::uint32_t ioErrors_;
     };
     
 }

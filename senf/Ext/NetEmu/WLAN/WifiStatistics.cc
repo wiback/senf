@@ -44,7 +44,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::emu::WifiStatistics::WifiStatistics(std::string ifName, std::string debugFS)
-    : timestamp_ (senf::ClockService::clock_type(0)), tag_(0)
+    : timestamp_ (senf::ClockService::clock_type(0)), tag_(0),
+      invalidEntries_(0), ioErrors_(0)
 {
     debugFsPath_ = debugFS + "/wifi_statistics/" + ifName + "/";
 }
@@ -72,22 +73,18 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
 {
     if (timestamp_ and (tag_ == tag))
         return true;
+    
     map_.clear();
     timestamp_ = senf::ClockService::clock_type(0);
 
     try {
-	std::ifstream file;
-        //file.exceptions( std::ifstream::failbit | std::ifstream::badbit);
-        file.open(debugFsPath_ + "stats", std::ios::in);
         boost::property_tree::ptree pt;
-        boost::property_tree::read_json(file, pt);
-        file.close();        
+        boost::property_tree::read_json(debugFsPath_ + "stats", pt);
 
-        unsigned num; // keep track of numer of parsed items (we need 8)
-        for (boost::property_tree::ptree::value_type & v : pt) {
+        for (auto const & v : pt) {
             senf::MACAddress mac(senf::MACAddress::from_string(v.first));
             map_.insert(std::make_pair(mac, WifiStatisticsData()));
-            num = 0;
+            unsigned num (0);  // keep track of numer of parsed items (we need 8)
             for (auto it = v.second.begin(); it != v.second.end(); it++) {
                 if (it->first == "signal") {
                     map_.find(mac)->second.signal = StatisticAccumulator<std::int64_t>(
@@ -107,7 +104,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                             it->second.get<std::int32_t>("max"),
                             it->second.get<std::uint32_t>("count")).data();
                 }
-                else if (it->first == "bitrateOther") {
+                else if (it->first == "bitrateNonData") {
                     // optional
                     map_.find(mac)->second.bitrateNonData = StatisticAccumulator<std::int64_t>(
                             it->second.get<std::int32_t>("sum"),
@@ -158,16 +155,19 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                 }
             }
             if (num != 8) {
+                invalidEntries_++;
                 map_.erase(mac);
             }
         }
     } catch(std::exception const & ex) {
+        ioErrors_++;
         map_.clear();
         return false;
     }
 
     tag_ = tag;
     timestamp_ = senf::scheduler::now();
+
     return true;
 }
 
@@ -187,6 +187,18 @@ prefix_ std::uint32_t senf::emu::WifiStatistics::tag()
     const
 {
     return tag_;
+}
+
+prefix_ std::uint32_t senf::emu::WifiStatistics::invalidEntries()
+    const
+{
+    return invalidEntries_;
+}
+
+prefix_ std::uint32_t senf::emu::WifiStatistics::ioErrors()
+    const
+{
+    return ioErrors_;
 }
 
 prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::statisticsMap(std::uint32_t tag)
