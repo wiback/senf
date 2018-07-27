@@ -260,6 +260,7 @@ int main(int argc, char const * argv[])
         try {
             socket.protocol().timestamping(SOF_TIMESTAMPING_RX_HARDWARE | SOF_TIMESTAMPING_RAW_HARDWARE);
             netdevCtrl.timestamping(HWTSTAMP_TX_OFF, HWTSTAMP_FILTER_ALL);
+            std::cerr << "Switching to RX_HARDWARE timestamping" << std::endl;
         } catch(senf::Exception & ex) {
             std::cerr << "Can not enable hw rx timestamping to due " << ex.what() << std::endl;
             std::cerr << "Switching to RX_SOFTWARE timestamping" << std::endl;
