@@ -362,7 +362,15 @@ senf::QueueWritePolicy::enqueue(FileHandle & handle)
         qi.tx.idle = false;
         return bf;
     }
+
+    // our TX MMAP ring is full
     qi.txStats.overrun++;
+    
+    // let's trigger a send() to push out the packets
+    // this should be handled via the writable event, but it can't hurt...
+    if (handle.writeable())
+        send(handle);
+
     return boost::none;
 }
 
