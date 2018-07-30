@@ -48,16 +48,18 @@ prefix_ void senf::scheduler::TimerEventProxy<IdType>::ChangeTimeout::operator()
 }
 
 template<typename IdType>
-prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & description)
+prefix_ senf::scheduler::TimerEventProxy<IdType>::TimerEventProxy(std::string const & description, ClockService::clock_type const & callbackDurationThreshold, DurationExceededCallback decb)
     : entrySetById_( entrySet_.template get<Id>()),
       entrySetByTimeout_( entrySet_.template get<Timeout>()),
-      timer_( "TimerEventProxy " + description, membind(&TimerEventProxy<IdType>::timerEvent, this))
+      timer_( "TimerEventProxy " + description, membind(&TimerEventProxy<IdType>::timerEvent, this)),
+      callbackDurationThreshold_(callbackDurationThreshold),
+      durationExceededCallback_(decb)
 {}
 
 template<typename IdType>
 prefix_ void senf::scheduler::TimerEventProxy<IdType>::timerEvent()
 {
-    ClockService::clock_type now = scheduler::now();
+    ClockService::clock_type now (callbackDurationThreshold_ ? ClockService::now() : scheduler::now());
     typename EntrySetByTimeout_t::iterator it = entrySetByTimeout_.begin();
     while (it != entrySetByTimeout_.end() && it->timeout <= now) {
         Entry item (*it);
@@ -66,6 +68,14 @@ prefix_ void senf::scheduler::TimerEventProxy<IdType>::timerEvent()
         // call callback
         item.cb(now, item.id);
         it = entrySetByTimeout_.begin();
+        if (callbackDurationThreshold_) {
+            ClockService::clock_type tend ( ClockService::now());
+            callbackDurations_.accumulate(ClockService::in_milliseconds(tend - now));
+            if (durationExceededCallback_ and ((tend - now) > callbackDurationThreshold_)) {
+                durationExceededCallback_(item.id, tend - now, callbackDurations_.data());
+            }
+            now = tend;
+        }
     }
     if (entrySet_.size() > 0)
         timer_.timeout(entrySetByTimeout_.begin()->timeout);
@@ -128,6 +138,15 @@ prefix_ void senf::scheduler::TimerEventProxy<IdType>::clear()
     entrySet_.clear();
     timer_.disable();
 }
+
+template<typename IdType>
+prefix_ senf::StatisticsData senf::scheduler::TimerEventProxy<IdType>::callbackDurationStats()
+{
+    auto tmp (callbackDurations_.data());
+    callbackDurations_.clear();
+    return tmp;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

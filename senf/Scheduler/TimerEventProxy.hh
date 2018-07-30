@@ -38,6 +38,7 @@
 #include <boost/multi_index/member.hpp>
 #include <senf/Scheduler/ClockService.hh>
 #include <senf/Scheduler/TimerEvent.hh>
+#include <senf/Utils/StatisticAccumulator.hh>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 namespace senf {
@@ -57,10 +58,14 @@ namespace scheduler {
     {
     public:
         typedef boost::function<void(ClockService::clock_type const &, IdType const &)> Callback;
+        typedef boost::function<void(IdType const & id, senf::ClockService::clock_type const & duration, StatisticsData const & durationsStats)> DurationExceededCallback;
 
-        TimerEventProxy(std::string const & description = "");
+        TimerEventProxy(std::string const & description = "",
+                        senf::ClockService::clock_type const & callbackDurationWarningThreshold = senf::ClockService::clock_type(0),
+                        DurationExceededCallback _decb = 0);
                                         ///< Instantiate a TimerEventProxy
                                         /**< \param[in] description Descriptive name (purely informational) */
+                                        /**< \param[in] If !=0, the max. time a callback may take for execuion before a warning is generated */
 
         void add(ClockService::clock_type const & timeout, IdType const & id, Callback cb);
                                         ///< Add new deadline timer
@@ -77,7 +82,9 @@ namespace scheduler {
         unsigned numEvents() const;     ///< Returns the number of pending timer events
 
         void clear();                   ///< Clears all pending timer events
-        
+
+        StatisticsData callbackDurationStats(); ///< Returns and clears the timeInCallback statistics
+
     private:
 #ifndef DOXYGEN
         struct Entry {
@@ -118,8 +125,12 @@ namespace scheduler {
         EntrySetByTimeout_t & entrySetByTimeout_;
 
         scheduler::TimerEvent timer_;
-
+        ClockService::clock_type callbackDurationThreshold_;
+        StatisticAccumulator<std::uint64_t> callbackDurations_;
+        DurationExceededCallback durationExceededCallback_;
+        
         void timerEvent();  // callback for the Scheduler timer event
+
     };
 
 }}
