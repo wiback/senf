@@ -44,6 +44,7 @@ namespace emu {
 
     struct WifiStatisticsData {
         senf::StatisticsData signal;
+        senf::StatisticsData signalNonData;
         senf::StatisticsData bitrate;
         senf::StatisticsData bitrateNonData;
         std::uint32_t total; 

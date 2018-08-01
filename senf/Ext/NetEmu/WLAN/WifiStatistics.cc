@@ -95,6 +95,15 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                             it->second.get<std::uint32_t>("count")).data();
                     num++;
                 }
+                if (it->first == "signalNonData") {
+                    // otional
+                    map_.find(mac)->second.signalNonData = StatisticAccumulator<std::int64_t>(
+                            it->second.get<std::int32_t>("sum"),
+                            it->second.get<std::int64_t>("sum2"),
+                            it->second.get<std::int32_t>("min"),
+                            it->second.get<std::int32_t>("max"),
+                            it->second.get<std::uint32_t>("count")).data();
+                }
                 else if (it->first == "bitrate") {
                     // optional
                     map_.find(mac)->second.bitrate = StatisticAccumulator<std::int64_t>(
