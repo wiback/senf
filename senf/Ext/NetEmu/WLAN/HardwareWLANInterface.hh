@@ -75,6 +75,7 @@ namespace emu {
 
         void setREDFilterCallbackRx(senf::ppi::REDFilterCallback const & cb);
         void setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb);
+        void setREDFilterCallbackRxMonitor(senf::ppi::REDFilterCallback const & cb);
 
         MonitorDataFilterStatistics filterStats();
         void monitorDropUnknownMCS(bool q);

@@ -55,9 +55,15 @@ prefix_ void senf::emu::HardwareWLANInterface::setREDFilterCallbackRx(senf::ppi:
 {
     source.setREDFilterCallback(cb);
 }
+
 prefix_ void senf::emu::HardwareWLANInterface::setREDFilterCallbackTx(senf::ppi::REDFilterCallback const & cb)
 {
     sink.setREDFilterCallback(cb);
+}
+
+prefix_ void senf::emu::HardwareWLANInterface::setREDFilterCallbackRxMonitor(senf::ppi::REDFilterCallback const & cb)
+{
+    monSource.setREDFilterCallback(cb);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
