@@ -264,7 +264,12 @@ int main(int argc, char const * argv[])
         } catch(senf::Exception & ex) {
             std::cerr << "Can not enable hw rx timestamping to due " << ex.what() << std::endl;
             std::cerr << "Switching to RX_SOFTWARE timestamping" << std::endl;
-            socket.protocol().timestamping(SOF_TIMESTAMPING_RX_SOFTWARE);
+            try {
+                socket.protocol().timestamping(SOF_TIMESTAMPING_RX_SOFTWARE);
+            } catch(senf::Exception & ex) {
+                std::cerr << "Can not enable software rx timestamping to due " << ex.what() << std::endl;
+                std::cerr << "Continueing with kernel defaults" << std::endl;
+            }
         }
         source.maxBurst(configuration.numPackets);
         Analyzer analyzer(macAddr, configuration);
