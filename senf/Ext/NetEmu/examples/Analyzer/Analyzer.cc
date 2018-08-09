@@ -138,8 +138,10 @@ public:
     senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
     senf::MACAddress ourMAC_;
     std::map<std::uint32_t,std::int64_t> tstamps;
+    senf::StatisticAccumulator<float> ThroughputDiffs;
     unsigned sessionId_;
     bool verbose_;
+    unsigned OLd_numPkts=50;
 
     Analyzer(senf::MACAddress const & mac, Configuration const & config) :
         ourMAC_(mac),
@@ -203,8 +205,10 @@ public:
         }
         std::map<std::int32_t,std::uint32_t> distribution;
         senf::StatisticAccumulator<std::int64_t> txTime;
+
         auto start (tstamps.begin());
         for (auto it (std::next(start)); it != tstamps.end(); it++, start++) {
+
             if (it->first - start->first == 1) { 
               std::cout << "(" << start->first << " " << it->second - start->second << ")";
               txTime.accumulate(it->second - start->second);
@@ -213,18 +217,51 @@ public:
             else
               std::cout << "(loss after " << start->first << ", diff=" << it->first - start->first << ")";
         }
+
         std::cout << std::endl;
         
         std::cout << "Sample distribution in us: ";
         std::uint64_t avg (0), count (0);
+
+
         for (auto const & d : distribution) {
-            std::cout << "(" << d.first << " => " << d.second << ")";
+            std::cout << "(" << d.first << " => " << d.second << ")" << std::endl;
             avg += d.first * d.second;
             count += d.second;
         }
+
+        //Accumulating Link Capacity for each flow
+        float Link_Capacity;
+        float Throughput_avg,Throughput_deviation;
+
+        Link_Capacity = (float(pktSize * 8) / txTime.data().avg);
+
+       	if(OLd_numPkts==numPkts){
+       	}
+       	else{
+
+            auto data (ThroughputDiffs.data());
+            std::cout << "Results="<< " " << OLd_numPkts << " " << (Throughput_avg=data.avg) << " " << (Throughput_deviation=data.stddev) << std::endl;
+            //cout << "max=" << (max=data.max) << endl ;
+            //cout << "min=" << (min=data.min) << endl ;
+            //cout << "Total_avg=" << (avg=data.avg) << endl ;
+            //cout << "st_deviation=" << (deviation=data.stddev) << endl ;
+            //cout << "count=" << (data_count=data.cnt) << endl ;
+            //cout << "Total_Packets=" << OLd_numPkts << endl;
+
+            ThroughputDiffs.clear();
+            OLd_numPkts+=10;
+
+       	}
+       	ThroughputDiffs.accumulate(Link_Capacity);
+
         std::cout << ", avg " << (avg / count) << std::endl;
-        std::cout << "stats " << txTime.data() << ", capacity " << (float(pktSize * 8) / txTime.data().avg) << " Gbps" << std::endl;        
-   }
+        std::cout << "stats " << txTime.data() << ", Link_Capacity " << Link_Capacity << " Gbps" << std::endl;
+
+
+
+
+    }
 };
 
 
