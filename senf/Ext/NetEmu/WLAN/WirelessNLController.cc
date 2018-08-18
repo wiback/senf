@@ -1227,10 +1227,10 @@ prefix_ void senf::emu::WirelessNLController::mesh_leave()
 }
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::mesh_join(
-        std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode)
+        std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
 {
     return MeshJoinParameters::ptr( new MeshJoinParameters(
-            membind(&WirelessNLController::do_mesh_join, this), meshId, freq, channelMode) );
+        membind(&WirelessNLController::do_mesh_join, this), meshId, freq, channelMode, success) );
 }
 
 prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters const & parameters)
@@ -1269,10 +1269,10 @@ prefix_ void senf::emu::WirelessNLController::ibss_leave()
 }
 
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::ibss_join(
-        std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode)
+        std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
 {
     return IbssJoinParameters::ptr( new IbssJoinParameters(
-            membind(&WirelessNLController::do_ibss_join, this), ssid, freq, channelMode) );
+        membind(&WirelessNLController::do_ibss_join, this), ssid, freq, channelMode, success) );
 }
 
 prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters const & parameters)
@@ -1587,13 +1587,18 @@ prefix_ void senf::emu::WirelessNLController::leave_multicastGroup(NetlinkMultic
 // WirelessNLController::IbssJoinParameters
 
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::IbssJoinParameters(
-        Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode)
-    : callback_(cb), handleDFS_(false), ssid_(ssid), freq_(freq), channelMode_(channelMode)
+    Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
+    : callback_(cb), handleDFS_(false), ssid_(ssid), freq_(freq), channelMode_(channelMode), success_(success)
 {}
 
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::~IbssJoinParameters()
 {
-    callback_(*this);
+    try {
+        callback_(*this);
+        success_ = true;
+    } catch (...) {
+        success_ = false;
+    }
 }
 
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::handleDFS(bool flag)
@@ -1638,13 +1643,18 @@ prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::Wire
 // WirelessNLController::MeshJoinParameters
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::MeshJoinParameters(
-        Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode)
-    : callback_(cb), handleDFS_(false), meshId_(meshId), freq_(freq), channelMode_(channelMode)
+    Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
+    : callback_(cb), handleDFS_(false), meshId_(meshId), freq_(freq), channelMode_(channelMode), success_(success)
 {}
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::~MeshJoinParameters()
 {
-    callback_(*this);
+    try {
+        callback_(*this);
+        success_ = true;
+    } catch (...) {
+        success_ = false;
+    }
 }
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::beaconInterval(boost::optional<boost::uint32_t> interval)

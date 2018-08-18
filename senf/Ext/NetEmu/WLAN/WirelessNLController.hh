@@ -305,7 +305,7 @@ namespace emu {
             typedef boost::function<void (IbssJoinParameters const &)> Callback;
             typedef boost::shared_ptr<IbssJoinParameters> ptr;
 
-            IbssJoinParameters(Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode);
+            IbssJoinParameters(Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
             void initHTCapabilities();
 
@@ -314,6 +314,7 @@ namespace emu {
             std::string ssid_;
             frequency_type freq_;
             ChannelMode::Enum channelMode_;
+            bool & success_;
             senf::MACAddress bssid_;
             std::vector<unsigned char> ies_;
             boost::optional<ieee80211_ht_cap> htCapabilities_;
@@ -340,13 +341,14 @@ namespace emu {
             typedef boost::function<void (MeshJoinParameters const &)> Callback;
             typedef boost::shared_ptr<MeshJoinParameters> ptr;
 
-            MeshJoinParameters(Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode);
+            MeshJoinParameters(Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
             Callback callback_;
             bool handleDFS_;
             std::string meshId_;
             frequency_type freq_;
             ChannelMode::Enum channelMode_;
+            bool & success_;
             std::vector<unsigned char> ies_;
             boost::optional<boost::uint32_t> beaconInterval_;
             boost::optional<boost::uint8_t> vendorMetric_;
@@ -375,10 +377,10 @@ namespace emu {
         WirelessNLController(bool disableSeqNoCheck = true);
         WirelessNLController(std::string const & interface);
 
-        IbssJoinParameters::ptr ibss_join(std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode);
+        IbssJoinParameters::ptr ibss_join(std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
         void ibss_leave();
 
-        MeshJoinParameters::ptr mesh_join(std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode);
+        MeshJoinParameters::ptr mesh_join(std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
         void mesh_leave();
 
         void set_frequency(frequency_type freq, ChannelMode::Enum = ChannelMode::NoHT20);

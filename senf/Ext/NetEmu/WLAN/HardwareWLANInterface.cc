@@ -864,7 +864,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_coverageRange(unsigned distance
 
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr
 senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
-        unsigned int freq, unsigned int bandwidth)
+                                            unsigned int freq, unsigned int bandwidth, bool & success)
 {
     if (! enabled())
         throw senf::SystemException(
@@ -891,12 +891,12 @@ senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
 
     return WirelessNLController::IbssJoinParameters::ptr( new WirelessNLController::IbssJoinParameters(
             membind(&HardwareWLANInterface::do_ibss_join, this),
-            ssid, freq-frequencyOffset_, channelMode) );
+            ssid, freq-frequencyOffset_, channelMode, success) );
 }
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr
 senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
-        unsigned int freq, unsigned int bandwidth)
+                                           unsigned int freq, unsigned int bandwidth, bool & success)
 {
     if (! enabled())
         throw senf::SystemException(
@@ -923,7 +923,7 @@ senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
     
     return WirelessNLController::MeshJoinParameters::ptr( new WirelessNLController::MeshJoinParameters(
             membind(&HardwareWLANInterface::do_mesh_join, this),
-            meshId, freq-frequencyOffset_, channelMode) );
+            meshId, freq-frequencyOffset_, channelMode, success) );
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::setCellJoined(unsigned bandwidth)
