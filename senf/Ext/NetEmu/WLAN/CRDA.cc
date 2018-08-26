@@ -115,13 +115,11 @@ prefix_ senf::emu::CRDA::CRDA()
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2457000, 2482000)
                                      .maxBandwidth(20000)
-                                     .maxEIRP(3000)
-                                     .noIR(true));
+                                     .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(2474000, 2494000)
                                      .maxBandwidth(20000)
-                                     .maxEIRP(3000)
-                                     .noIR(true));
+                                     .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(3000000, 4000000)
                                      .maxBandwidth(40000)
@@ -138,26 +136,22 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .frequencyRange(5250000, 5330000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000)
-                                     .noIR(true)
                                      .cacTime(0)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5490000, 5730000)
                                      .maxBandwidth(160000)
                                      .maxEIRP(3000)
-                                     .noIR(true)
                                      .cacTime(0)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5735000, 5835000)
                                      .maxBandwidth(80000)
-                                     .maxEIRP(3000)
-                                     .noIR(true) );
+                                     .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(5835000, 6100000)
                                      .maxBandwidth(80000)
-                                     .maxEIRP(3000)
-                                     .noIR(true) );
+                                     .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(57240000, 63720000)
                                      .maxBandwidth(2160000)
