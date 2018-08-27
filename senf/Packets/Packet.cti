@@ -221,6 +221,7 @@ prefix_ Parser senf::operator<<(Parser target, ConcretePacket<PacketType> const 
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>::ConcretePacket()
+    : Packet()
 {}
 
 template <class PacketType>

@@ -48,7 +48,7 @@ prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr const & packet)
 prefix_ senf::PacketInterpreterBase::ptr const & senf::Packet::ptr()
     const
 {
-    SENF_ASSERT(packet_, "Invalid operation (dereferencing) on in-valid() Packet");
+    SENF_ASSERT(packet_, "Invalid operation (dereferencing) on invalid Packet");
     return packet_;
 }
 
@@ -62,8 +62,8 @@ prefix_ senf::Packet::Packet(Packet const & other)
 
 prefix_ senf::Packet & senf::Packet::operator=(Packet const & other)
 {
-    pktCount_++;
-    packet_ = other.packet_;
+    if (this != &other)
+        packet_ = other.packet_;
     return *this;
 }
 
