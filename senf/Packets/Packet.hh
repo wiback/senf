@@ -184,9 +184,13 @@ namespace senf {
                                              ConcretePacket into a general Packet, losing the
                                              protocol specific interface. */
 
+        // the below is needed to implement an 'active' Packet Handle Counter
+        Packet & operator=(Packet const &);
         Packet(Packet const & other);
+        Packet(Packet && other) noexcept;
         ~Packet();
 
+        
         static std::int32_t const & pktCount();
 
         //\}

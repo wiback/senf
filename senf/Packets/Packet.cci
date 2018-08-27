@@ -60,6 +60,19 @@ prefix_ senf::Packet::Packet(Packet const & other)
     pktCount_++;
 }
 
+prefix_ senf::Packet & senf::Packet::operator=(Packet const & other)
+{
+    packet_ = other.packet_;
+    return *this;
+}
+
+prefix_ senf::Packet::Packet(Packet && other)
+    noexcept
+    : packet_(std::move(other.packet_))
+{
+    pktCount_++;
+}
+
 prefix_ senf::Packet::Packet()
 {
     pktCount_++;    

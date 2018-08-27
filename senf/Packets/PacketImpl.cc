@@ -74,7 +74,7 @@ namespace {
                     .add("dumpAnnotationRegistry",
                          fty::Command(&senf::dumpPacketAnnotationRegistry));
                 senf::packetConsoleDir()
-                    .add("pktCount",
+                    .add("pktHandleCount",
                          fty::Command(&ConsoleDirRegistration::pktCount));
             }
 
