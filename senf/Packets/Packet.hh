@@ -184,6 +184,7 @@ namespace senf {
                                              ConcretePacket into a general Packet, losing the
                                              protocol specific interface. */
 
+        Packet(Packet const & other);
         ~Packet();
 
         static std::int32_t const & pktCount();

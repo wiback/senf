@@ -54,6 +54,12 @@ prefix_ senf::PacketInterpreterBase::ptr const & senf::Packet::ptr()
 
 // public structors
 
+prefix_ senf::Packet::Packet(Packet const & other)
+    : packet_(other.packet_)
+{
+    pktCount_++;
+}
+
 prefix_ senf::Packet::Packet()
 {
     pktCount_++;    
