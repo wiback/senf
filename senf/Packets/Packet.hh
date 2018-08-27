@@ -184,6 +184,10 @@ namespace senf {
                                              ConcretePacket into a general Packet, losing the
                                              protocol specific interface. */
 
+        ~Packet();
+
+        static std::int32_t const & pktCount();
+
         //\}
         //-////////////////////////////////////////////////////////////////////////
 
@@ -535,6 +539,8 @@ namespace senf {
 
     private:
         PacketInterpreterBase::ptr packet_;
+
+        static std::int32_t pktCount_;
 
         template <class PacketType>
         friend class ConcretePacket;

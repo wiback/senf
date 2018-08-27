@@ -73,6 +73,9 @@ namespace {
                 senf::packetConsoleDir()
                     .add("dumpAnnotationRegistry",
                          fty::Command(&senf::dumpPacketAnnotationRegistry));
+                senf::packetConsoleDir()
+                    .add("pktCount",
+                         fty::Command(&ConsoleDirRegistration::pktCount));
             }
 
         static void memoryStatus(std::ostream & os)
@@ -94,6 +97,11 @@ namespace {
                     ;
             }
 
+        static void pktCount(std::ostream & os)
+            {
+                os << senf::Packet::pktCount() << std::endl;
+            }
+        
         static ConsoleDirRegistration instance_;
     };
 

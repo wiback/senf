@@ -41,7 +41,9 @@
 
 prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr const & packet)
     : packet_(packet)
-{}
+{
+    pktCount_++;
+}
 
 prefix_ senf::PacketInterpreterBase::ptr const & senf::Packet::ptr()
     const
@@ -53,7 +55,15 @@ prefix_ senf::PacketInterpreterBase::ptr const & senf::Packet::ptr()
 // public structors
 
 prefix_ senf::Packet::Packet()
-{}
+{
+    pktCount_++;    
+}
+
+prefix_ senf::Packet::~Packet()
+{
+    pktCount_--;    
+}
+
 
 // public members
 

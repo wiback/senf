@@ -37,6 +37,13 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+std::int32_t senf::Packet::pktCount_ = 0;
+
+prefix_ std::int32_t const & senf::Packet::pktCount()
+{
+    return pktCount_;    
+}
+
 prefix_ senf::PacketInterpreterBase::ptr senf::Packet::getNext(PacketInterpreterBase::optional_range const & range)
     const
 {
