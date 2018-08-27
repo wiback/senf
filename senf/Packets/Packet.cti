@@ -32,6 +32,7 @@
 
 // Custom includes
 #include <senf/Utils/Exception.hh>
+#include <senf/Utils/senflikely.hh>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +45,9 @@
 template <class PacketType>
 prefix_ senf::Packet::Packet(ConcretePacket<PacketType> const & packet)
     : packet_(packet.ptr())
-{}
+{
+    pktCount_++;
+}
 
 // interpreter chain access
 
@@ -69,7 +72,7 @@ template <class OtherPacket>
 prefix_ OtherPacket const & senf::Packet::as()
     const
 {
-    if (!is<OtherPacket>())
+    if (SENF_UNLIKELY(!is<OtherPacket>()))
         throw make_WrapException(std::bad_cast())
             << ": called packet::as() with wrong PacketType: "
             << ((*this) ? typeId().prettyName() : "invalid packet")
@@ -83,7 +86,7 @@ prefix_ OtherPacket const & senf::Packet::as()
 template <class OtherPacket>
 prefix_ OtherPacket & senf::Packet::as()
 {
-    if (!is<OtherPacket>())
+    if (SENF_UNLIKELY(!is<OtherPacket>()))
         throw make_WrapException(std::bad_cast())
             << ": called packet::as() with wrong PacketType: "
             << ((*this) ? typeId().prettyName() : "invalid packet")
