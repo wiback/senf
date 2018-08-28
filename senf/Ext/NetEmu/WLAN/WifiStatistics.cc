@@ -69,7 +69,7 @@ prefix_ bool senf::emu::WifiStatistics::enable(bool on)
     return false;
 }
 
-prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
+prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
 {
     if (timestamp_ and (tag_ == tag))
         return true;
@@ -161,9 +161,13 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                     // optional
                     data.type = it->second.get<std::string>("");
                 }
+                else if (it->first == "lastSeen") {
+                    // optional
+                    data.lastSeen = senf::ClockService::milliseconds(it->second.get<std::uint32_t>(""));
+                }
             }
             if (num == 8) {
-                if (data.totalBytes > 0) {
+                if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
                     // only add entries with had activity
                     map_.emplace(std::make_pair(senf::MACAddress::from_string(v.first), data));
                 }
@@ -213,9 +217,9 @@ prefix_ std::uint32_t senf::emu::WifiStatistics::ioErrors()
     return ioErrors_;
 }
 
-prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::statisticsMap(std::uint32_t tag)
+prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
 {
-    pollStatistics(tag);
+    pollStatistics(tag, maxAge);
     return map_;
 }
 

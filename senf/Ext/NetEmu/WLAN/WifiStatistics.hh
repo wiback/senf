@@ -54,12 +54,14 @@ namespace emu {
         std::uint32_t rTx;
         std::uint32_t rTxBytes;
         std::uint32_t airTime;
+        senf::ClockService::clock_type lastSeen;
         senf::MACAddress bssId;
         std::string ssId;
         std::string type;
         
         WifiStatisticsData() {
             total = totalBytes = badFCS = badFCSBytes = rTx = rTxBytes = airTime = 0;
+            lastSeen = senf::ClockService::clock_type(0);
         };
     };
 
@@ -71,14 +73,14 @@ namespace emu {
         ~WifiStatistics();
         
         bool enable(bool on = true);
-        bool pollStatistics(std::uint32_t tag);
+        bool pollStatistics(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
         WifiStatisticsMap const & map() const;
         ClockService::clock_type const & timestamp() const;
         std::uint32_t tag() const;
         std::uint32_t invalidEntries() const;
         std::uint32_t ioErrors() const;
 
-        WifiStatisticsMap const & statisticsMap(std::uint32_t tag);
+        WifiStatisticsMap const & statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
 
     private:
         std::string debugFsPath_;
