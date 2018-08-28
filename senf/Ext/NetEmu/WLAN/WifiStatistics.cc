@@ -82,12 +82,11 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
         boost::property_tree::read_json(debugFsPath_ + "stats", pt);
 
         for (auto const & v : pt) {
-            senf::MACAddress mac(senf::MACAddress::from_string(v.first));
-            map_.insert(std::make_pair(mac, WifiStatisticsData()));
+            WifiStatisticsData data;
             unsigned num (0);  // keep track of numer of parsed items (we need 8)
             for (auto it = v.second.begin(); it != v.second.end(); it++) {
                 if (it->first == "signal") {
-                    map_.find(mac)->second.signal = StatisticAccumulator<std::int64_t>(
+                    data.signal = StatisticAccumulator<std::int64_t>(
                             it->second.get<std::int32_t>("sum"),
                             it->second.get<std::int64_t>("sum2"),
                             it->second.get<std::int32_t>("min"),
@@ -97,7 +96,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                 }
                 if (it->first == "signalNonData") {
                     // otional
-                    map_.find(mac)->second.signalNonData = StatisticAccumulator<std::int64_t>(
+                    data.signalNonData = StatisticAccumulator<std::int64_t>(
                             it->second.get<std::int32_t>("sum"),
                             it->second.get<std::int64_t>("sum2"),
                             it->second.get<std::int32_t>("min"),
@@ -106,7 +105,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                 }
                 else if (it->first == "bitrate") {
                     // optional
-                    map_.find(mac)->second.bitrate = StatisticAccumulator<std::int64_t>(
+                    data.bitrate = StatisticAccumulator<std::int64_t>(
                             it->second.get<std::int32_t>("sum"),
                             it->second.get<std::int64_t>("sum2"),
                             it->second.get<std::int32_t>("min"),
@@ -115,7 +114,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                 }
                 else if (it->first == "bitrateNonData") {
                     // optional
-                    map_.find(mac)->second.bitrateNonData = StatisticAccumulator<std::int64_t>(
+                    data.bitrateNonData = StatisticAccumulator<std::int64_t>(
                             it->second.get<std::int32_t>("sum"),
                             it->second.get<std::int64_t>("sum2"),
                             it->second.get<std::int32_t>("min"),
@@ -123,49 +122,53 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag)
                             it->second.get<std::uint32_t>("count")).data();
                 }
                 else if (it->first == "badFCS") {
-                    map_.find(mac)->second.badFCS = it->second.get<std::uint32_t>("");
+                    data.badFCS = it->second.get<std::uint32_t>("");
                     num++;
                 }
                 else if (it->first == "badFCSBytes") {
-                    map_.find(mac)->second.badFCSBytes = it->second.get<std::uint32_t>("");
+                    data.badFCSBytes = it->second.get<std::uint32_t>("");
                     num++;
                 }
                 else if (it->first == "rTx") {
-                    map_.find(mac)->second.rTx = it->second.get<std::uint32_t>("");
+                    data.rTx = it->second.get<std::uint32_t>("");
                     num++;
                 }
                 else if (it->first == "rTxBytes") {
-                    map_.find(mac)->second.rTxBytes = it->second.get<std::uint32_t>("");
+                    data.rTxBytes = it->second.get<std::uint32_t>("");
                     num++;
                 }
                 else if (it->first == "total") {
-                    map_.find(mac)->second.total = it->second.get<std::uint32_t>("");
+                    data.total = it->second.get<std::uint32_t>("");
                     num++;
                 }
                 else if (it->first == "totalBytes") {
-                    map_.find(mac)->second.totalBytes = it->second.get<std::uint32_t>("");
+                    data.totalBytes = it->second.get<std::uint32_t>("");
                     num++;
                 }
                 else if (it->first == "airTime") {
-                    map_.find(mac)->second.airTime = it->second.get<std::uint32_t>("");
+                    data.airTime = it->second.get<std::uint32_t>("");
                     num++;
                 }
                 else if (it->first == "bssId") {
                     // optional
-                    map_.find(mac)->second.bssId = senf::MACAddress::from_string(it->second.get<std::string>(""));
+                    data.bssId = senf::MACAddress::from_string(it->second.get<std::string>(""));
                 }
                 else if (it->first == "ssId") {
                     // optional
-                    map_.find(mac)->second.ssId = it->second.get<std::string>("");
+                    data.ssId = it->second.get<std::string>("");
                 }
                 else if (it->first == "type") {
                     // optional
-                    map_.find(mac)->second.type = it->second.get<std::string>("");
+                    data.type = it->second.get<std::string>("");
                 }
             }
-            if (num != 8) {
+            if (num == 8) {
+                if (data.totalBytes > 0) {
+                    // only add entries with had activity
+                    map_.emplace(std::make_pair(senf::MACAddress::from_string(v.first), data));
+                }
+            } else {
                 invalidEntries_++;
-                map_.erase(mac);
             }
         }
     } catch(std::exception const & ex) {

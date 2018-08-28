@@ -29,7 +29,7 @@
 #define HH_SENF_Ext_NetEmu_WLAN_WifiStatistics_ 1
 
 // Custom includes
-#include <map>
+#include <unordered_map>
 #include <boost/property_tree/ptree.hpp>
 #include <senf/Socket/FileHandle.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
@@ -63,7 +63,7 @@ namespace emu {
         };
     };
 
-    typedef std::map<senf::MACAddress,WifiStatisticsData> WifiStatisticsMap;
+    typedef std::unordered_map<senf::MACAddress,WifiStatisticsData> WifiStatisticsMap;
 
     class WifiStatistics {
     public:
