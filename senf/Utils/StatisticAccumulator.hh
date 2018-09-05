@@ -122,6 +122,8 @@ namespace senf {
         operator bool() const;          ///< Returns true if valid data is present
                                         /**< This method indicates if valid data is present */
 
+        StatisticAccumulator<T> operator +=(StatisticAccumulator<T> const & other);
+        
     private:
         T sum_squared_;
         T sum_;
