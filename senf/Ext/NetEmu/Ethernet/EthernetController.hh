@@ -52,6 +52,7 @@ namespace emu {
         unsigned speed() const;
         Duplex_mode duplex() const;
         std::string duplexAsString() const;
+        static std::string duplexAsString(Duplex_mode mode);
         bool hasLink() const;
         bool nWayReset();
     };
