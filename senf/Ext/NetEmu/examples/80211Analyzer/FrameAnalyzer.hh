@@ -30,8 +30,8 @@
 
 // Custom includes
 #include <senf/Scheduler/TimerEvent.hh>
-#include <senf/Packets/80211Bundle/RadiotapPacket.hh>
 #include <senf/Packets/80211Bundle/WLANPacket.hh>
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 #include <senf/PPI/Module.hh>
 #include "PacketStatistics.hh"
 #include "Configuration.hh"
@@ -44,8 +44,7 @@ class FrameAnalyzer
     SENF_PPI_MODULE(FrameAnalyzer);
 
 public:
-    senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
-    senf::ppi::connector::PassiveInput<senf::RadiotapPacket> monitor;
+    senf::ppi::connector::PassiveInput<senf::AnnotationsPacket> input;
 
     FrameAnalyzer(Configuration const & configuration);
 
@@ -74,19 +73,18 @@ private:
     boost::uint64_t                numPackets_;
 
     void request();
-    void requestMonitor();
     void timerEvent();
     void initWaitEvent();
 
-    void handleReceivedFrame(senf::Packet & pkt);
-    void handleCorruptFrame(senf::Packet & pkt);
-    void handleOtherFrame(senf::Packet & pkt);
-    void handleDataFrame(senf::EthernetPacket & eth);
-    void handleManagementFrame(senf::WLANPacket_MgtFrame & pkt);
-    void handleControlFrame(senf::WLANPacket_CtrlFrame & ctl);
+    void handleReceivedFrame(senf::Packet const & pkt);
+    void handleCorruptFrame(senf::Packet const & pkt);
+    void handleOtherFrame(senf::Packet const & pkt);
+    void handleDataFrame(senf::EthernetPacket const & eth);
+    void handleManagementFrame(senf::WLANPacket_MgtFrame const & pkt);
+    void handleControlFrame(senf::WLANPacket_CtrlFrame const & ctl);
 
-    virtual bool v_handleUDPPacket(senf::EthernetPacket & eth,
-            senf::IPv4Packet & ip4, senf::UDPPacket & udp) = 0;
+    virtual bool v_handleUDPPacket(senf::EthernetPacket const & eth,
+            senf::IPv4Packet const & ip4, senf::UDPPacket const & udp) = 0;
 
     virtual void v_report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration) {}
 };

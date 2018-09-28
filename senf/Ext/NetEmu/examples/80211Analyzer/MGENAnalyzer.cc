@@ -53,8 +53,8 @@ prefix_ FlowStatistics & MGENAnalyzer::getFlowStats(boost::uint32_t flowId)
     return flowStatsMap.find( flowId)->second;
 }
 
-prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket & eth,
-        senf::IPv4Packet & ip4, senf::UDPPacket & udp)
+prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth,
+        senf::IPv4Packet const& ip4, senf::UDPPacket const & udp)
 {
     // check for matching source addr/port
     if (((configuration_.source.address() != senf::INet4Address::None) && (configuration_.source.address() != ip4->destination().value())) ||

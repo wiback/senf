@@ -29,7 +29,6 @@
 
 // Custom includes
 #include <senf/Scheduler/Scheduler.hh>
-#include <senf/Ext/NetEmu/Annotations.hh>
 #include <senf/Ext/NetEmu/WLAN/WLANInterface.hh>
 #include "80211Analyzer.hh"
 
@@ -47,9 +46,6 @@ prefix_ FrameAnalyzer::FrameAnalyzer(Configuration const & configuration)
     noroute(input);
     input.onRequest( &FrameAnalyzer::request);
     input.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
-    noroute(monitor);
-    monitor.onRequest( &FrameAnalyzer::requestMonitor);
-    monitor.throttlingDisc( senf::ppi::ThrottlingDiscipline::NONE);
     if (configuration.maxWait != senf::ClockService::milliseconds(0))
         initWait_.timeout( senf::scheduler::now() + configuration.maxWait);
 }
@@ -84,54 +80,6 @@ prefix_ void FrameAnalyzer::resetStartTime()
     initWait_.disable();
 }
 
-prefix_ void FrameAnalyzer::requestMonitor()
-{
-    if (startTime_ > senf::ClockService::clock_type(0) && configuration_.duration > senf::ClockService::clock_type(0)) {
-        // we've been started
-        if ((senf::scheduler::now() - startTime_) >= configuration_.duration) {
-            senf::scheduler::terminate();
-        }
-    }
-
-    senf::RadiotapPacket rt (monitor());
-    senf::emu::annotations::Quality const & q (rt.annotation<senf::emu::annotations::Quality>());
-
-    handleReceivedFrame(rt);
-
-    if (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(
-        rt.annotation<senf::emu::annotations::WirelessModulation>().id).rate == 0) {
-        handleOtherFrame(rt);
-        return;
-    }
-
-    if (q.flags.frameCorrupt) {
-        handleCorruptFrame(rt);
-        return;
-    }
-
-    switch (rt->frameType()) {
-    case 0x00:
-    {
-        senf::WLANPacket_MgtFrame wlanp (rt.next<senf::WLANPacket_MgtFrame>(senf::nothrow));
-        if (wlanp) {
-            handleManagementFrame(wlanp);
-        }
-    }
-    break;
-    case 0x01:
-    {
-        senf::WLANPacket_CtrlFrame wlanp (rt.next<senf::WLANPacket_CtrlFrame>(senf::nothrow));
-        if (wlanp) {
-            handleControlFrame(wlanp);
-        }
-    }
-    break;
-    default:
-        handleOtherFrame(rt);
-        break;
-    }
-}
-
 prefix_ void FrameAnalyzer::request()
 {
     if (startTime_ > senf::ClockService::clock_type(0) && configuration_.duration > senf::ClockService::clock_type(0)) {
@@ -141,25 +89,40 @@ prefix_ void FrameAnalyzer::request()
         }
     }
 
-    senf::EthernetPacket eth (input());
-    senf::emu::annotations::Quality const & q (eth.annotation<senf::emu::annotations::Quality>());
+    senf::AnnotationsPacket const & ap (input());
+    
+    handleReceivedFrame(ap);
 
-    handleReceivedFrame(eth);
-
-    if (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(
-        eth.annotation<senf::emu::annotations::WirelessModulation>().id).rate == 0) {
-        handleOtherFrame(eth);
+    if (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate == 0) {
+        handleOtherFrame(ap);
         return;
     }
 
-    if (q.flags.frameCorrupt) {
-        handleCorruptFrame(eth);
+    if (ap->corrupt()) {
+        handleCorruptFrame(ap);
+        return;
+    }
+    
+    senf::WLANPacket_MgtFrame wlanm (ap.next<senf::WLANPacket_MgtFrame>(senf::nothrow));
+    if (wlanm) {
+        handleManagementFrame(wlanm);
         return;
     }
 
-    handleDataFrame(eth);
+    senf::WLANPacket_CtrlFrame wlanc (ap.next<senf::WLANPacket_CtrlFrame>(senf::nothrow));
+    if (wlanc) {
+        handleControlFrame(wlanc);
+        return;
+    }
+
+    senf::EthernetPacket eth (ap.next<senf::EthernetPacket>(senf::nothrow));
+    if (eth) {
+        handleDataFrame(eth);
+        return;
+    }
+
+    handleOtherFrame(ap);
 }
-
 
 //////////////////////////////////////////////////
 
@@ -174,32 +137,32 @@ prefix_ void FrameAnalyzer::resetStats()
     dataNonUDP.v_reset();
 }
 
-prefix_ void FrameAnalyzer::handleReceivedFrame(senf::Packet & pkt)
+prefix_ void FrameAnalyzer::handleReceivedFrame(senf::Packet const & pkt)
 {
     received.v_analyze(pkt);
 }
 
-prefix_ void FrameAnalyzer::handleCorruptFrame(senf::Packet & pkt)
+prefix_ void FrameAnalyzer::handleCorruptFrame(senf::Packet const & pkt)
 {
     corrupt.v_analyze(pkt);
 }
 
-prefix_ void FrameAnalyzer::handleOtherFrame(senf::Packet & pkt)
+prefix_ void FrameAnalyzer::handleOtherFrame(senf::Packet const & pkt)
 {
     other.v_analyze(pkt);
 }
 
-prefix_ void FrameAnalyzer::handleManagementFrame(senf::WLANPacket_MgtFrame & pkt)
+prefix_ void FrameAnalyzer::handleManagementFrame(senf::WLANPacket_MgtFrame const & pkt)
 {
     management.v_analyze(pkt);
 }
 
-prefix_ void FrameAnalyzer::handleControlFrame(senf::WLANPacket_CtrlFrame & pkt)
+prefix_ void FrameAnalyzer::handleControlFrame(senf::WLANPacket_CtrlFrame const & pkt)
 {
     control.v_analyze(pkt);
 }
 
-prefix_ void FrameAnalyzer::handleDataFrame(senf::EthernetPacket & eth)
+prefix_ void FrameAnalyzer::handleDataFrame(senf::EthernetPacket const & eth)
 {
     data.v_analyze( eth, eth.size());
 

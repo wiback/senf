@@ -47,7 +47,7 @@ prefix_ void PacketStatistics::v_reset()
     airtime = senf::ClockService::seconds(0);
 }
 
-prefix_ bool PacketStatistics::analyze(senf::Packet & pkt, unsigned payloadSize)
+prefix_ bool PacketStatistics::analyze(senf::Packet const & pkt, unsigned payloadSize)
 {
     senf::emu::annotations::Quality & q (pkt.annotation<senf::emu::annotations::Quality>());
     unsigned rateInBps = senf::emu::WLANModulationParameterRegistry::instance().findModulationById(
@@ -69,7 +69,7 @@ prefix_ bool PacketStatistics::analyze(senf::Packet & pkt, unsigned payloadSize)
     return true;
 }
 
-prefix_ bool PacketStatistics::v_analyze(senf::Packet & pkt, unsigned payloadSize)
+prefix_ bool PacketStatistics::v_analyze(senf::Packet const & pkt, unsigned payloadSize)
 {
     senf::emu::annotations::Quality & q (pkt.annotation<senf::emu::annotations::Quality>());
 
@@ -116,7 +116,7 @@ prefix_ void FlowStatistics::v_reset()
     loss.reset();
 }
 
-prefix_ bool FlowStatistics::v_analyze(senf::Packet & pkt, unsigned payloadSize)
+prefix_ bool FlowStatistics::v_analyze(senf::Packet const & pkt, unsigned payloadSize)
 {
     senf::emu::annotations::Quality & q (pkt.annotation<senf::emu::annotations::Quality>());
     unsigned rateInBps = senf::emu::WLANModulationParameterRegistry::instance().findModulationById(
@@ -133,7 +133,7 @@ prefix_ bool FlowStatistics::v_analyze(senf::Packet & pkt, unsigned payloadSize)
     return true;
 }
 
-prefix_ bool FlowStatistics::v_analyze(MGENPacket & mgen, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
+prefix_ bool FlowStatistics::v_analyze(MGENPacket const & mgen, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
 {
     if (!v_analyze(mgen, payloadSize))
         return false;
@@ -152,7 +152,7 @@ prefix_ bool FlowStatistics::v_analyze(MGENPacket & mgen, unsigned payloadSize, 
     return true;
 }
 
-prefix_ bool FlowStatistics::v_analyze(IperfUDPPacket & iperf, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
+prefix_ bool FlowStatistics::v_analyze(IperfUDPPacket const & iperf, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
 {
     if (!v_analyze(iperf, payloadSize))
         return false;

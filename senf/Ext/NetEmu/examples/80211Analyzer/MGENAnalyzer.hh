@@ -48,7 +48,7 @@ private:
 public:
     MGENAnalyzer(Configuration const & configuration);
 
-    bool v_handleUDPPacket(senf::EthernetPacket & eth, senf::IPv4Packet & ip4, senf::UDPPacket & udp);
+    bool v_handleUDPPacket(senf::EthernetPacket const & eth, senf::IPv4Packet const & ip4, senf::UDPPacket const & udp);
     void v_report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration);
 };
 

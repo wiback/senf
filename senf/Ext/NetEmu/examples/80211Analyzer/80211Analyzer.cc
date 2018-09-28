@@ -142,7 +142,6 @@ int main(int argc, char const * argv[])
 
     senf::ppi::connect( source, filter);
     senf::ppi::connect( filter, analyzer);
-    senf::ppi::connect( filter.monitor, analyzer.monitor);
 
     if (configuration.csvMode) {
         SENF_LOG((senf::log::IMPORTANT)("CSV order: flowId,tstamp,pps,brateInKbps,retriesPerSec,len_min,len_avg,len_max,len_stddev,rssi_min,rssi_avg,rssi_max,rssi_stdev,mcs_min,mcs_avg,mcs_max,mcs_stddev,(latency_min,latency_avg,latency_max,latency_stddev,loss%,duplicate,late)(received,data,corrupt,control,management,other,dataNonUDP,nonMGEN)"));

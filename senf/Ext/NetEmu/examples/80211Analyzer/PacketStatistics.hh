@@ -50,8 +50,8 @@ public:
     virtual ~PacketStatistics() {}
 
     virtual void v_reset();
-    virtual bool v_analyze(senf::Packet & pkt, unsigned payloadSize = 0);
-    bool analyze(senf::Packet & pkt, unsigned payloadSize);
+    virtual bool v_analyze(senf::Packet const & pkt, unsigned payloadSize = 0);
+    bool analyze(senf::Packet const & pkt, unsigned payloadSize);
 
     float pktsPerSecond(senf::ClockService::clock_type reportingInterval);
     float bitsPerSecond(senf::ClockService::clock_type reportingInterval);
@@ -161,9 +161,9 @@ public:
     FlowStatistics();
 
     void v_reset();
-    bool v_analyze(senf::Packet & pkt, unsigned payloadSize = 0);
-    bool v_analyze(MGENPacket & mgen, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
-    bool v_analyze(IperfUDPPacket & iperf, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
+    bool v_analyze(senf::Packet const & pkt, unsigned payloadSize = 0);
+    bool v_analyze(MGENPacket const & mgen, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
+    bool v_analyze(IperfUDPPacket const & iperf, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
 
     void getRssi(senf::StatisticsData & data);
     void getNoise(senf::StatisticsData & data);
