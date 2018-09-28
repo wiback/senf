@@ -105,19 +105,19 @@ prefix_ void FrameAnalyzer::request()
     
     senf::WLANPacket_MgtFrame wlanm (ap.next<senf::WLANPacket_MgtFrame>(senf::nothrow));
     if (wlanm) {
-        handleManagementFrame(wlanm);
+        handleManagementFrame(wlanm, ap);
         return;
     }
 
     senf::WLANPacket_CtrlFrame wlanc (ap.next<senf::WLANPacket_CtrlFrame>(senf::nothrow));
     if (wlanc) {
-        handleControlFrame(wlanc);
+        handleControlFrame(wlanc, ap);
         return;
     }
 
     senf::EthernetPacket eth (ap.next<senf::EthernetPacket>(senf::nothrow));
     if (eth) {
-        handleDataFrame(eth);
+        handleDataFrame(eth, ap);
         return;
     }
 
@@ -139,45 +139,45 @@ prefix_ void FrameAnalyzer::resetStats()
 
 prefix_ void FrameAnalyzer::handleReceivedFrame(senf::Packet const & pkt)
 {
-    received.v_analyze(pkt);
+    received.v_analyze(pkt, pkt.as<senf::AnnotationsPacket>());
 }
 
 prefix_ void FrameAnalyzer::handleCorruptFrame(senf::Packet const & pkt)
 {
-    corrupt.v_analyze(pkt);
+    corrupt.v_analyze(pkt, pkt.as<senf::AnnotationsPacket>());
 }
 
 prefix_ void FrameAnalyzer::handleOtherFrame(senf::Packet const & pkt)
 {
-    other.v_analyze(pkt);
+    other.v_analyze(pkt, pkt.as<senf::AnnotationsPacket>());
 }
 
-prefix_ void FrameAnalyzer::handleManagementFrame(senf::WLANPacket_MgtFrame const & pkt)
+prefix_ void FrameAnalyzer::handleManagementFrame(senf::WLANPacket_MgtFrame const & pkt, senf::AnnotationsPacket const & ap)
 {
-    management.v_analyze(pkt);
+    management.v_analyze(pkt, ap);
 }
 
-prefix_ void FrameAnalyzer::handleControlFrame(senf::WLANPacket_CtrlFrame const & pkt)
+prefix_ void FrameAnalyzer::handleControlFrame(senf::WLANPacket_CtrlFrame const & pkt, senf::AnnotationsPacket const & ap)
 {
-    control.v_analyze(pkt);
+    control.v_analyze(pkt, ap);
 }
 
-prefix_ void FrameAnalyzer::handleDataFrame(senf::EthernetPacket const & eth)
+prefix_ void FrameAnalyzer::handleDataFrame(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap)
 {
-    data.v_analyze( eth, eth.size());
+    data.v_analyze( eth, ap, eth.size());
 
     senf::IPv4Packet ip4 (eth.next<senf::IPv4Packet>(senf::nothrow));
     if (!ip4) {
-        dataNonUDP.v_analyze( eth);
+        dataNonUDP.v_analyze( eth, ap);
         return;
     }
     senf::UDPPacket udp (ip4.next<senf::UDPPacket>(senf::nothrow));
     if (!udp) {
-        dataNonUDP.v_analyze( eth);
+        dataNonUDP.v_analyze( eth, ap);
         return;
     }
 
-    if (v_handleUDPPacket( eth, ip4, udp)) {
+    if (v_handleUDPPacket( eth, ap, ip4, udp)) {
         if (configuration_.numPackets > 0) {
             if (++numPackets_ >= configuration_.numPackets) {
                 senf::scheduler::terminate();

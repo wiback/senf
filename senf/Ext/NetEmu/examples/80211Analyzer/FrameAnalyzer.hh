@@ -79,11 +79,11 @@ private:
     void handleReceivedFrame(senf::Packet const & pkt);
     void handleCorruptFrame(senf::Packet const & pkt);
     void handleOtherFrame(senf::Packet const & pkt);
-    void handleDataFrame(senf::EthernetPacket const & eth);
-    void handleManagementFrame(senf::WLANPacket_MgtFrame const & pkt);
-    void handleControlFrame(senf::WLANPacket_CtrlFrame const & ctl);
+    void handleDataFrame(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap);
+    void handleManagementFrame(senf::WLANPacket_MgtFrame const & pkt, senf::AnnotationsPacket const & ap);
+    void handleControlFrame(senf::WLANPacket_CtrlFrame const & ctl, senf::AnnotationsPacket const & ap);
 
-    virtual bool v_handleUDPPacket(senf::EthernetPacket const & eth,
+    virtual bool v_handleUDPPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
             senf::IPv4Packet const & ip4, senf::UDPPacket const & udp) = 0;
 
     virtual void v_report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration) {}

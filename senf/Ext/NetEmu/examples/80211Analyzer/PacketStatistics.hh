@@ -29,6 +29,7 @@
 #define __PACKETSTATISTICS_HH__
 
 // Custom includes
+#include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 #include <senf/Packets/DefaultBundle/UDPPacket.hh>
 #include <senf/Utils/StatisticAccumulator.hh>
 #include <senf/Scheduler/ClockService.hh>
@@ -50,8 +51,8 @@ public:
     virtual ~PacketStatistics() {}
 
     virtual void v_reset();
-    virtual bool v_analyze(senf::Packet const & pkt, unsigned payloadSize = 0);
-    bool analyze(senf::Packet const & pkt, unsigned payloadSize);
+    virtual bool v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize = 0);
+    bool analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize);
 
     float pktsPerSecond(senf::ClockService::clock_type reportingInterval);
     float bitsPerSecond(senf::ClockService::clock_type reportingInterval);
@@ -161,9 +162,9 @@ public:
     FlowStatistics();
 
     void v_reset();
-    bool v_analyze(senf::Packet const & pkt, unsigned payloadSize = 0);
-    bool v_analyze(MGENPacket const & mgen, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
-    bool v_analyze(IperfUDPPacket const & iperf, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
+    bool v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize = 0);
+    bool v_analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
+    bool v_analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
 
     void getRssi(senf::StatisticsData & data);
     void getNoise(senf::StatisticsData & data);

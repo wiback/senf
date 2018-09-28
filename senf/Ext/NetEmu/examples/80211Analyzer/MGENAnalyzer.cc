@@ -53,7 +53,7 @@ prefix_ FlowStatistics & MGENAnalyzer::getFlowStats(boost::uint32_t flowId)
     return flowStatsMap.find( flowId)->second;
 }
 
-prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth,
+prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
         senf::IPv4Packet const& ip4, senf::UDPPacket const & udp)
 {
     // check for matching source addr/port
@@ -71,7 +71,7 @@ prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth,
     if (configuration_.mgenMode) {
         MGENPacket mgen (udp.parseNextAs<MGENPacket>());
         if (mgen) {
-            getFlowStats(mgen->flowId()).v_analyze(mgen, udp.size(), configuration_.clockDrift, startTime());
+            getFlowStats(mgen->flowId()).v_analyze(mgen, ap, udp.size(), configuration_.clockDrift, startTime());
         } else {
             SENF_LOG((senf::log::CRITICAL)("Failed to parse mgen header"));
             exit(1);
@@ -80,13 +80,13 @@ prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth,
         if (configuration_.iperfMode) {
             IperfUDPPacket iperf (udp.parseNextAs<IperfUDPPacket>());
             if (iperf) {
-                getFlowStats(0).v_analyze(iperf, udp.size(), configuration_.clockDrift, startTime());
+                getFlowStats(0).v_analyze(iperf, ap, udp.size(), configuration_.clockDrift, startTime());
             } else {
                 SENF_LOG((senf::log::CRITICAL)("Failed to parse iperf header"));
                 exit(1);
             }
         } else {
-            getFlowStats(0).v_analyze( udp, udp.size());
+            getFlowStats(0).v_analyze( udp, ap, udp.size());
         }
     }
 

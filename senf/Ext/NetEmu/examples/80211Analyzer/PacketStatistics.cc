@@ -47,13 +47,11 @@ prefix_ void PacketStatistics::v_reset()
     airtime = senf::ClockService::seconds(0);
 }
 
-prefix_ bool PacketStatistics::analyze(senf::Packet const & pkt, unsigned payloadSize)
+prefix_ bool PacketStatistics::analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize)
 {
-    senf::emu::annotations::Quality & q (pkt.annotation<senf::emu::annotations::Quality>());
-    unsigned rateInBps = senf::emu::WLANModulationParameterRegistry::instance().findModulationById(
-                         pkt.annotation<senf::emu::annotations::WirelessModulation>().id).rate;
+    unsigned rateInBps (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate);
 
-    if (q.flags.frameDuplicate) {
+    if (ap->duplicated()) {
         // we've already seen this frame, so just count it as a 'retry'
         retry++;
         return false;
@@ -61,22 +59,20 @@ prefix_ bool PacketStatistics::analyze(senf::Packet const & pkt, unsigned payloa
 
     count++;
     bytes += payloadSize;
-    if (q.flags.frameRetransmitted)
+    if (ap->retransmitted())
         retry++;
 
-    airtime += senf::ClockService::microseconds( (q.flags.frameLength * 8 * 1000000) / rateInBps);
+    airtime += senf::ClockService::microseconds( (ap->length() * 8 * 1000000) / rateInBps);
 
     return true;
 }
 
-prefix_ bool PacketStatistics::v_analyze(senf::Packet const & pkt, unsigned payloadSize)
+prefix_ bool PacketStatistics::v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize)
 {
-    senf::emu::annotations::Quality & q (pkt.annotation<senf::emu::annotations::Quality>());
-
     if (payloadSize == 0)
-        payloadSize = q.flags.frameLength;
+        payloadSize = ap->length();
 
-    return analyze(pkt, payloadSize);
+    return analyze(pkt, ap, payloadSize);
 }
 
 prefix_ float PacketStatistics::pktsPerSecond(senf::ClockService::clock_type reportingInterval)
@@ -116,26 +112,24 @@ prefix_ void FlowStatistics::v_reset()
     loss.reset();
 }
 
-prefix_ bool FlowStatistics::v_analyze(senf::Packet const & pkt, unsigned payloadSize)
+prefix_ bool FlowStatistics::v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize)
 {
-    senf::emu::annotations::Quality & q (pkt.annotation<senf::emu::annotations::Quality>());
-    unsigned rateInBps = senf::emu::WLANModulationParameterRegistry::instance().findModulationById(
-                         pkt.annotation<senf::emu::annotations::WirelessModulation>().id).rate;
+    unsigned rateInBps (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate);
 
-    if (!PacketStatistics::analyze(pkt, payloadSize))
+    if (!PacketStatistics::analyze(pkt, ap, payloadSize))
         return false;
 
-    rssi.accumulate( q.rssi);
-    noise.accumulate( q.noise);
+    rssi.accumulate( ap->rssi());
+    //noise.accumulate( ap->noise());
     rate.accumulate( rateInBps);
     length.accumulate( payloadSize);
 
     return true;
 }
 
-prefix_ bool FlowStatistics::v_analyze(MGENPacket const & mgen, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
+prefix_ bool FlowStatistics::v_analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
 {
-    if (!v_analyze(mgen, payloadSize))
+    if (!v_analyze(mgen, ap, payloadSize))
         return false;
 
     // calculate the packet latency: clocks must be synced !!!
@@ -152,9 +146,9 @@ prefix_ bool FlowStatistics::v_analyze(MGENPacket const & mgen, unsigned payload
     return true;
 }
 
-prefix_ bool FlowStatistics::v_analyze(IperfUDPPacket const & iperf, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
+prefix_ bool FlowStatistics::v_analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
 {
-    if (!v_analyze(iperf, payloadSize))
+    if (!v_analyze(iperf, ap, payloadSize))
         return false;
 
     loss.update( iperf->id());
