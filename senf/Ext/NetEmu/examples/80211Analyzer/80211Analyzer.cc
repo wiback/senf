@@ -128,6 +128,7 @@ int main(int argc, char const * argv[])
 
     senf::emu::MonitorDataFilter filter (mac);
     filter.promisc(configuration.promisc);
+    filter.annotate(true);
     /*
     if (configuration.reorderBufferSize > senf::ClockService::milliseconds(0))
         filter.reorderTimeout(configuration.reorderTimeout);
