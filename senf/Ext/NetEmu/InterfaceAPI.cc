@@ -125,6 +125,12 @@ prefix_ void senf::emu::Receiver::init()
     interface().consoleDir().add("promisc",
             fty::Command(SENF_MEMBINDFNP(bool, Receiver, promisc, () const))
         .overloadDoc("Get promiscuous state.") );
+    interface().consoleDir().add("annotate",
+            fty::Command(SENF_MEMBINDFNP(void, Receiver, annotationMode, (bool) ))
+        .overloadDoc("Enable/disable annotation mode.") );
+    interface().consoleDir().add("annotate",
+            fty::Command(SENF_MEMBINDFNP(bool, Receiver, annotationMode, () const))
+        .overloadDoc("Get annotation mode (on/off).") );
     interface().consoleDir().add("mcAdd",
             fty::Command(&Receiver::mcAdd, this)
         .overloadDoc("Add multicast address to interface.") );
