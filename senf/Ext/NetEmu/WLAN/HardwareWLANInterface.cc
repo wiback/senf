@@ -1106,8 +1106,8 @@ prefix_ void senf::emu::HardwareWLANInterface::dumpWifiStatistics(std::ostream &
 {
     os << "=== Current (cached since last read) WifiStatsitics map, #" << wifiStatistics_.map().size() << " ===" << std::endl;
     for (auto const & m: wifiStatistics_.map()) {
-        os << m.first << " ==> pkts " << m.second.total << ", lastSeen " << senf::ClockService::in_seconds(senf::scheduler::nowDiff(m.second.lastSeen)) << "s"
-           << ", type " << m.second.type << std::endl;
+        os << m.first << " ==> pkts " << m.second.total << ", lastSeen " << senf::ClockService::in_seconds(m.second.lastSeen) << "s"
+           << ", signal " << m.second.signal << ", type " << m.second.type << std::endl;
     }
 }
 
