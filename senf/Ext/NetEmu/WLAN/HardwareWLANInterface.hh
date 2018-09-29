@@ -126,6 +126,7 @@ namespace emu {
         bool isDead() const;
 
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
+        void dumpWifiStatistics(std::ostream & os);
 
         void frequencyHint(unsigned bandwidth);
 

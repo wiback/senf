@@ -288,6 +288,9 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
     consoleDir()
         .add("getScan", fty::Command(&HardwareWLANInterface::getScan, this)
              .doc("retrieves latest scan results"));
+    consoleDir()
+        .add("wifiStatistics", fty::Command(&HardwareWLANInterface::dumpWifiStatistics, this)
+             .doc("Dumps current WifiStatistics."));
 
     console::provideDirectory(interfaceDir(),"by-device").add(device(), fty::Link(consoleDir()));
 
@@ -1094,10 +1097,20 @@ prefix_ void senf::emu::HardwareWLANInterface::spectralScanStats(std::ostream & 
     spectralScanner_.stats(os);
 }
 
-senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
+prefix_ senf::emu::WifiStatisticsMap const & senf::emu::HardwareWLANInterface::statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
 {
     return wifiStatistics_.statisticsMap(tag, maxAge);
 }
+
+prefix_ void senf::emu::HardwareWLANInterface::dumpWifiStatistics(std::ostream & os)
+{
+    os << "=== Current (cached since last read) WifiStatsitics map, #" << wifiStatistics_.map().size() << " ===" << std::endl;
+    for (auto const & m: wifiStatistics_.map()) {
+        os << m.first << " ==> pkts " << m.second.total << ", lastSeen " << senf::ClockService::in_seconds(senf::scheduler::nowDiff(m.second.lastSeen)) << "s"
+           << ", type " << m.second.type << std::endl;
+    }
+}
+
 
 prefix_ std::pair<senf::emu::WirelessNLController::DFSState::Enum,std::uint32_t> senf::emu::HardwareWLANInterface::dfsState(unsigned freq, unsigned bandwidth)
 {
