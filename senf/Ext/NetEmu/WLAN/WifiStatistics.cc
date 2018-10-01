@@ -84,86 +84,122 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
         for (auto const & v : pt) {
             WifiStatisticsData data;
             unsigned num (0);  // keep track of numer of parsed items (we need 8)
-            for (auto it = v.second.begin(); it != v.second.end(); it++) {
-                if (it->first == "signal") {
-                    data.signal = StatisticAccumulator<std::int64_t>(
-                            it->second.get<std::int32_t>("sum"),
-                            it->second.get<std::int64_t>("sum2"),
-                            it->second.get<std::int32_t>("min"),
-                            it->second.get<std::int32_t>("max"),
-                            it->second.get<std::uint32_t>("count")).data();
+            for (auto const & it : v.second) {
+                if (it.first == "signal") {
+                    std::uint32_t sum, min, max, count;
+                    std::uint64_t sum2;
+                    for (auto const & s : it.second) {
+                        if (s.first == "sum")
+                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "sum2")
+                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                        if (s.first == "min")
+                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "max")
+                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "count")
+                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                    }
+                    data.signal = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                     num++;
                 }
-                if (it->first == "signalNonData") {
+                else if (it.first == "signalNonData") {
                     // otional
-                    data.signalNonData = StatisticAccumulator<std::int64_t>(
-                            it->second.get<std::int32_t>("sum"),
-                            it->second.get<std::int64_t>("sum2"),
-                            it->second.get<std::int32_t>("min"),
-                            it->second.get<std::int32_t>("max"),
-                            it->second.get<std::uint32_t>("count")).data();
+                    std::uint32_t sum, min, max, count;
+                    std::uint64_t sum2;
+                    for (auto const & s : it.second) {
+                        if (s.first == "sum")
+                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "sum2")
+                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                        if (s.first == "min")
+                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "max")
+                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "count")
+                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                    }
+                    data.signalNonData = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                 }
-                else if (it->first == "bitrate") {
+                else if (it.first == "bitrate") {
                     // optional
-                    data.bitrate = StatisticAccumulator<std::int64_t>(
-                            it->second.get<std::int32_t>("sum"),
-                            it->second.get<std::int64_t>("sum2"),
-                            it->second.get<std::int32_t>("min"),
-                            it->second.get<std::int32_t>("max"),
-                            it->second.get<std::uint32_t>("count")).data();
+                    std::uint32_t sum, min, max, count;
+                    std::uint64_t sum2;
+                    for (auto const & s : it.second) {
+                        if (s.first == "sum")
+                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "sum2")
+                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                        if (s.first == "min")
+                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "max")
+                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "count")
+                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                    }
+                    data.bitrate = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                 }
-                else if (it->first == "bitrateNonData") {
+                else if (it.first == "bitrateNonData") {
                     // optional
-                    data.bitrateNonData = StatisticAccumulator<std::int64_t>(
-                            it->second.get<std::int32_t>("sum"),
-                            it->second.get<std::int64_t>("sum2"),
-                            it->second.get<std::int32_t>("min"),
-                            it->second.get<std::int32_t>("max"),
-                            it->second.get<std::uint32_t>("count")).data();
+                    std::uint32_t sum, min, max, count;
+                    std::uint64_t sum2;
+                    for (auto const & s : it.second) {
+                        if (s.first == "sum")
+                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "sum2")
+                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                        if (s.first == "min")
+                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "max")
+                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                        if (s.first == "count")
+                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                    }
+                    data.bitrateNonData = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                 }
-                else if (it->first == "badFCS") {
-                    data.badFCS = it->second.get<std::uint32_t>("");
+                else if (it.first == "badFCS") {
+                    data.badFCS = it.second.get<std::uint32_t>("");
                     num++;
                 }
-                else if (it->first == "badFCSBytes") {
-                    data.badFCSBytes = it->second.get<std::uint32_t>("");
+                else if (it.first == "badFCSBytes") {
+                    data.badFCSBytes = boost::lexical_cast<std::uint32_t>(it.second.data());
                     num++;
                 }
-                else if (it->first == "rTx") {
-                    data.rTx = it->second.get<std::uint32_t>("");
+                else if (it.first == "rTx") {
+                    data.rTx = boost::lexical_cast<std::uint32_t>(it.second.data());
                     num++;
                 }
-                else if (it->first == "rTxBytes") {
-                    data.rTxBytes = it->second.get<std::uint32_t>("");
+                else if (it.first == "rTxBytes") {
+                    data.rTxBytes = boost::lexical_cast<std::uint32_t>(it.second.data());
                     num++;
                 }
-                else if (it->first == "total") {
-                    data.total = it->second.get<std::uint32_t>("");
+                else if (it.first == "total") {
+                    data.total = boost::lexical_cast<std::uint32_t>(it.second.data());
                     num++;
                 }
-                else if (it->first == "totalBytes") {
-                    data.totalBytes = it->second.get<std::uint32_t>("");
+                else if (it.first == "totalBytes") {
+                    data.totalBytes = boost::lexical_cast<std::uint32_t>(it.second.data());
                     num++;
                 }
-                else if (it->first == "airTime") {
-                    data.airTime = it->second.get<std::uint32_t>("");
+                else if (it.first == "airTime") {
+                    data.airTime = boost::lexical_cast<std::uint32_t>(it.second.data());
                     num++;
                 }
-                else if (it->first == "bssId") {
+                else if (it.first == "bssId") {
                     // optional
-                    data.bssId = senf::MACAddress::from_string(it->second.get<std::string>(""));
+                    data.bssId = senf::MACAddress::from_string(boost::lexical_cast<std::string>(it.second.data()));
                 }
-                else if (it->first == "ssId") {
+                else if (it.first == "ssId") {
                     // optional
-                    data.ssId = it->second.get<std::string>("");
+                    data.ssId = boost::lexical_cast<std::string>(it.second.data());
                 }
-                else if (it->first == "type") {
+                else if (it.first == "type") {
                     // optional
-                    data.type = it->second.get<std::string>("");
+                    data.type = boost::lexical_cast<std::string>(it.second.data());
                 }
-                else if (it->first == "lastSeen") {
+                else if (it.first == "lastSeen") {
                     // optional
-                    data.lastSeen = senf::ClockService::milliseconds(it->second.get<std::uint32_t>(""));
+                    data.lastSeen = senf::ClockService::milliseconds(boost::lexical_cast<std::uint32_t>(it.second.data()));
                 }
             }
             if (num == 8) {
