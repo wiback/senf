@@ -104,7 +104,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
                     num++;
                 }
                 else if (it.first == "signalNonData") {
-                    // otional
+                    // optional
                     std::uint32_t sum(0), min(0), max(0), count(0);
                     std::uint64_t sum2 (0);
                     for (auto const & s : it.second) {
@@ -158,7 +158,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
                     data.bitrateNonData = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                 }
                 else if (it.first == "badFCS") {
-                    data.badFCS = it.second.get<std::uint32_t>("");
+                    data.badFCS = boost::lexical_cast<std::uint32_t>(it.second.data());
                     num++;
                 }
                 else if (it.first == "badFCSBytes") {
