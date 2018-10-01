@@ -141,8 +141,8 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
                 }
                 else if (it.first == "bitrateNonData") {
                     // optional
-                    std::uint32_t sum, min, max, count;
-                    std::uint64_t sum2;
+                    std::uint32_t sum(0), min(0), max(0), count(0);
+                    std::uint64_t sum2 (0);
                     for (auto const & s : it.second) {
                         if (s.first == "sum")
                             sum = boost::lexical_cast<std::uint32_t>(s.second.data());
