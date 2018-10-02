@@ -74,6 +74,7 @@ namespace emu {
         
         bool enable(bool on = true);
         bool pollStatistics(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
+        bool pollStatisticsCSV(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
         WifiStatisticsMap const & map() const;
         ClockService::clock_type const & timestamp() const;
         std::uint32_t tag() const;

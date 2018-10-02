@@ -38,6 +38,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/algorithm/string.hpp>
 #include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_
@@ -86,38 +87,40 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
             unsigned num (0);  // keep track of numer of parsed items (we need 8)
             for (auto const & it : v.second) {
                 if (it.first == "signal") {
-                    std::uint32_t sum(0), min(0), max(0), count(0);
+                    std::int32_t sum(0), min(0), max(0);
+                    std::uint32_t count(0);
                     std::uint64_t sum2 (0);
                     for (auto const & s : it.second) {
                         if (s.first == "sum")
-                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            sum = std::stoi(s.second.data());
                         if (s.first == "sum2")
-                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                            sum2 = std::stoull(s.second.data());
                         if (s.first == "min")
-                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            min = std::stoi(s.second.data());
                         if (s.first == "max")
-                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            max = std::stoi(s.second.data());
                         if (s.first == "count")
-                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            count = std::stoul(s.second.data());
                     }
                     data.signal = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                     num++;
                 }
                 else if (it.first == "signalNonData") {
                     // optional
-                    std::uint32_t sum(0), min(0), max(0), count(0);
+                    std::int32_t sum(0), min(0), max(0);
+                    std::uint32_t count(0);
                     std::uint64_t sum2 (0);
                     for (auto const & s : it.second) {
                         if (s.first == "sum")
-                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            sum = std::stoi(s.second.data());
                         if (s.first == "sum2")
-                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                            sum2 = std::stoull(s.second.data());
                         if (s.first == "min")
-                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            min = std::stoi(s.second.data());
                         if (s.first == "max")
-                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            max = std::stoi(s.second.data());
                         if (s.first == "count")
-                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            count = std::stoul(s.second.data());
                     }
                     data.signalNonData = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                 }
@@ -127,15 +130,15 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
                     std::uint64_t sum2 (0);
                     for (auto const & s : it.second) {
                         if (s.first == "sum")
-                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            sum = std::stoul(s.second.data());
                         if (s.first == "sum2")
-                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                            sum2 = std::stoull(s.second.data());
                         if (s.first == "min")
-                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            min = std::stoul(s.second.data());
                         if (s.first == "max")
-                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            max = std::stoul(s.second.data());
                         if (s.first == "count")
-                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            count = std::stoul(s.second.data());
                     }
                     data.bitrate = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                 }
@@ -145,66 +148,66 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
                     std::uint64_t sum2 (0);
                     for (auto const & s : it.second) {
                         if (s.first == "sum")
-                            sum = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            sum = std::stoul(s.second.data());
                         if (s.first == "sum2")
-                            sum2 = boost::lexical_cast<std::uint64_t>(s.second.data());
+                            sum2 = std::stoull(s.second.data());
                         if (s.first == "min")
-                            min = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            min = std::stoul(s.second.data());
                         if (s.first == "max")
-                            max = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            max = std::stoul(s.second.data());
                         if (s.first == "count")
-                            count = boost::lexical_cast<std::uint32_t>(s.second.data());
+                            count = std::stoul(s.second.data());
                     }
                     data.bitrateNonData = StatisticAccumulator<std::int64_t>(sum, sum2, min, max, count).data();
                 }
                 else if (it.first == "badFCS") {
-                    data.badFCS = boost::lexical_cast<std::uint32_t>(it.second.data());
+                    data.badFCS = std::stoul(it.second.data());
                     num++;
                 }
                 else if (it.first == "badFCSBytes") {
-                    data.badFCSBytes = boost::lexical_cast<std::uint32_t>(it.second.data());
+                    data.badFCSBytes = std::stoul(it.second.data());
                     num++;
                 }
                 else if (it.first == "rTx") {
-                    data.rTx = boost::lexical_cast<std::uint32_t>(it.second.data());
+                    data.rTx = std::stoul(it.second.data());
                     num++;
                 }
                 else if (it.first == "rTxBytes") {
-                    data.rTxBytes = boost::lexical_cast<std::uint32_t>(it.second.data());
+                    data.rTxBytes = std::stoul(it.second.data());
                     num++;
                 }
                 else if (it.first == "total") {
-                    data.total = boost::lexical_cast<std::uint32_t>(it.second.data());
+                    data.total = std::stoul(it.second.data());
                     num++;
                 }
                 else if (it.first == "totalBytes") {
-                    data.totalBytes = boost::lexical_cast<std::uint32_t>(it.second.data());
+                    data.totalBytes = std::stoul(it.second.data());
                     num++;
                 }
                 else if (it.first == "airTime") {
-                    data.airTime = boost::lexical_cast<std::uint32_t>(it.second.data());
+                    data.airTime = std::stoul(it.second.data());
                     num++;
                 }
                 else if (it.first == "bssId") {
                     // optional
-                    data.bssId = senf::MACAddress::from_string(boost::lexical_cast<std::string>(it.second.data()));
+                    data.bssId = senf::MACAddress::from_string(it.second.data());
                 }
                 else if (it.first == "ssId") {
                     // optional
-                    data.ssId = boost::lexical_cast<std::string>(it.second.data());
+                    data.ssId = it.second.data();
                 }
                 else if (it.first == "type") {
                     // optional
-                    data.type = boost::lexical_cast<std::string>(it.second.data());
+                    data.type = it.second.data();
                 }
                 else if (it.first == "lastSeen") {
                     // optional
-                    data.lastSeen = senf::ClockService::milliseconds(boost::lexical_cast<std::uint32_t>(it.second.data()));
+                    data.lastSeen = senf::ClockService::milliseconds(std::stoul(it.second.data()));
                 }
             }
             if (num == 8) {
                 if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
-                    // only add entries with had activity
+                    // only add entries with activity
                     map_.emplace(std::make_pair(senf::MACAddress::from_string(v.first), data));
                 }
             } else {
@@ -216,6 +219,74 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
         map_.clear();
         return false;
     }
+
+    tag_ = tag;
+    timestamp_ = senf::scheduler::now();
+
+    return true;
+}
+
+prefix_ bool senf::emu::WifiStatistics::pollStatisticsCSV(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
+{
+    if (timestamp_ and (tag_ == tag))
+        return true;
+    
+    map_.clear();
+    timestamp_ = senf::ClockService::clock_type(0);
+
+    try {
+        std::string dataLine;
+        std::ifstream statsFile (debugFsPath_ + "stats_csv");
+        if (statsFile.is_open()) {
+            while (std::getline(statsFile, dataLine)) {
+                std::vector<std::string> tokens;
+                boost::split(tokens, dataLine, [](char c){return c == ',';});
+                if (tokens.size() == 32) {
+                    WifiStatisticsData data;
+                    // Format: see wifi-statistics/station.c
+                    data.signal = StatisticAccumulator<std::int64_t>(std::stoi(tokens[1]), std::stoull(tokens[2]),
+                                                                     std::stoi(tokens[3]), std::stoi(tokens[4]),
+                                                                     std::stoul(tokens[5])).data();
+                    data.signalNonData = StatisticAccumulator<std::int64_t>(std::stoi(tokens[6]), std::stoull(tokens[7]),
+                                                                            std::stoi(tokens[8]), std::stoi(tokens[9]),
+                                                                            std::stoul(tokens[10])).data();
+                    data.bitrate = StatisticAccumulator<std::int64_t>(std::stoul(tokens[11]), std::stoull(tokens[12]),
+                                                                      std::stoul(tokens[13]), std::stoul(tokens[14]),
+                                                                      std::stoul(tokens[15])).data();
+                    data.bitrateNonData = StatisticAccumulator<std::int64_t>(std::stoul(tokens[16]), std::stoull(tokens[17]),
+                                                                             std::stoul(tokens[18]), std::stoul(tokens[19]),
+                                                                             std::stoul(tokens[20])).data();
+                    
+                    data.badFCS = std::stoul(tokens[21]);
+                    data.badFCSBytes = std::stoul(tokens[22]);
+                    data.rTx = std::stoul(tokens[23]);
+                    data.rTxBytes = std::stoul(tokens[24]);
+                    data.total = std::stoul(tokens[25]);
+                    data.totalBytes = std::stoul(tokens[26]);
+                    data.airTime = std::stoul(tokens[27]);
+                    data.lastSeen = std::stoul(tokens[28]);
+                    data.bssId = senf::MACAddress::from_string(tokens[29]);
+                    data.type = tokens[30];
+                    data.ssId = tokens[31];
+                    if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
+                        // only add entries with activity
+                        map_.emplace(std::make_pair(senf::MACAddress::from_string(tokens[0]), data));
+                    }
+                } else {
+                    invalidEntries_++;
+                }
+            }
+            statsFile.close();
+        } else {
+            ioErrors_++;
+            map_.clear();
+            return false;
+        }
+    } catch (...) {
+        ioErrors_++;
+        map_.clear();
+        return false;
+    };
 
     tag_ = tag;
     timestamp_ = senf::scheduler::now();
@@ -255,7 +326,7 @@ prefix_ std::uint32_t senf::emu::WifiStatistics::ioErrors()
 
 prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
 {
-    pollStatistics(tag, maxAge);
+    pollStatisticsCSV(tag, maxAge);
     return map_;
 }
 
