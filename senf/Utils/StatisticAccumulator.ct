@@ -41,20 +41,26 @@
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T const & value)
-    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::lowest()), cnt_(0)
+    : sum_(0), sum_squared_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::lowest()), cnt_(0)
 {
     accumulate(value);
 }
 
 template <class T>
 prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator()
-    : sum_squared_(0), sum_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::lowest()), cnt_(0)
+    : sum_(0), sum_squared_(0), min_( std::numeric_limits<T>::max()), max_( std::numeric_limits<T>::lowest()), cnt_(0)
 {}
 
 template <class T>
-prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T sum, T sumSquared, T min, T max, unsigned count)
-    : sum_squared_(sumSquared), sum_(sum), min_(min), max_(max), cnt_(count)
+prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(T const & sum, T const & sumSquared, T const & min, T const & max, unsigned count)
+    : sum_(sum), sum_squared_(sumSquared), min_(min), max_(max), cnt_(count) 
 {}
+
+template <class T>
+prefix_ senf::StatisticAccumulator<T>::StatisticAccumulator(senf::StatisticsData const & data)
+    : sum_(T(data.avg) * data.cnt), sum_squared_(sum_ * sum_), min_(T(data.min)), max_(T(data.max)), cnt_(data.cnt)
+{}
+
 
 template <class T>
 prefix_ float senf::StatisticAccumulator<T>::stddev()

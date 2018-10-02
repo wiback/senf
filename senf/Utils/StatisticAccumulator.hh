@@ -79,11 +79,12 @@ namespace senf {
     public:
         StatisticAccumulator(); 
         StatisticAccumulator(T const & value); 
-        StatisticAccumulator(T sum, T sumSquared, T min, T max, unsigned count);
+        StatisticAccumulator(T const & sum, T const & sumSquared, T const & min, T const & max, unsigned count);
+        StatisticAccumulator(senf::StatisticsData const & data);
 
         void clear();                   ///< Reset accumulated values.
                                         /**< This member reset all values. */
-        void accumulate(T value);       ///< Gather value to be accumulated.
+        void accumulate(T const & value); ///< Gather value to be accumulated.
                                         /**< This method accumulates a value.
                                              \param[in] value to be accumulated value */
 
@@ -125,8 +126,8 @@ namespace senf {
         StatisticAccumulator<T> operator +=(StatisticAccumulator<T> const & other);
         
     private:
-        T sum_squared_;
         T sum_;
+        T sum_squared_;
         T min_;
         T max_;
         unsigned cnt_;

@@ -87,7 +87,7 @@ prefix_ unsigned senf::StatisticAccumulator<T>::count()
 }
 
 template <class T>
-prefix_ void senf::StatisticAccumulator<T>::accumulate(T value)
+prefix_ void senf::StatisticAccumulator<T>::accumulate(T const & value)
 {
     sum_ += value;
     sum_squared_ += value * value;
