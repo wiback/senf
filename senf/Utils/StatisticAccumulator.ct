@@ -114,11 +114,13 @@ prefix_ senf::StatisticsData senf::StatisticAccumulator<T>::data()
 template <class T>
 prefix_ senf::StatisticAccumulator<T> senf::StatisticAccumulator<T>::operator+=(senf::StatisticAccumulator<T> const & other)
 {
-    this->sum_ += other.sum_;
-    this->sum_squared_ += other.sum_squared_;
-    this->cnt_ += other.cnt_;
-    this->min_ = std::min(min_,other.min_);
-    this->max_ = std::max(max_,other.max_);    
+    if (other.cnt_ > 0) {
+        this->sum_ += other.sum_;
+        this->sum_squared_ += other.sum_squared_;
+        this->cnt_ += other.cnt_;
+        this->min_ = std::min(min_,other.min_);
+        this->max_ = std::max(max_,other.max_);
+    }
     return *this;
 }
 
