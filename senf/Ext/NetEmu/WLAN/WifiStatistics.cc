@@ -243,7 +243,12 @@ static void fast_split(char *str, char sep, std::vector<char *> & tokens)
 
 static inline std::uint32_t atou(const char * str)
 {
-    return strtoul(str, NULL, 10);
+    std::uint32_t x (0);
+    while (*str != '\0') {
+        x = (x*10) + (*str - '0');
+        ++str;
+    }
+    return x;
 }
 
 static inline std::uint64_t atoull(const char * str)
