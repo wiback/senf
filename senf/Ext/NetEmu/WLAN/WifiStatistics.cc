@@ -234,6 +234,8 @@ static void fast_split(char *str, char sep, std::vector<char *> & tokens)
             str[stop] = '\0';
             tokens.emplace_back(str + start);
             start = stop + 1;
+        } else if (str[stop] == '\n') {
+            str[stop] = '\0';
         }
     }
     tokens.emplace_back(str + start);
