@@ -226,6 +226,29 @@ prefix_ bool senf::emu::WifiStatistics::pollStatistics(std::uint32_t tag, senf::
     return true;
 }
 
+static void fast_split(char *str, char sep, std::vector<char *> & tokens)
+{
+    unsigned int start = 0, stop;
+    for (stop = 0; str[stop]; stop++) {
+        if (str[stop] == sep) {
+            str[stop] = '\0';
+            tokens.emplace_back(str + start);
+            start = stop + 1;
+        }
+    }
+    tokens.emplace_back(str + start);
+}
+
+static inline std::uint32_t atou(const char * str)
+{
+    return strtoul(str, NULL, 10);
+}
+
+static inline std::uint64_t atoull(const char * str)
+{
+    return strtoull(str, NULL, 10);
+}
+
 prefix_ bool senf::emu::WifiStatistics::pollStatisticsCSV(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
 {
     if (timestamp_ and (tag_ == tag))
@@ -235,39 +258,39 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsCSV(std::uint32_t tag, sen
     timestamp_ = senf::ClockService::clock_type(0);
 
     try {
-        std::string dataLine;
-        std::ifstream statsFile (debugFsPath_ + "stats_csv");
-        if (statsFile.is_open()) {
-            while (std::getline(statsFile, dataLine)) {
-                std::vector<std::string> tokens;
-                boost::split(tokens, dataLine, [](char c){return c == ',';});
+        FILE * statsFile;
+        char  dataLine[512];
+        if ((statsFile = fopen((debugFsPath_ + "stats_csv").c_str(), "r")) != NULL) {
+            while (fgets(dataLine, sizeof(dataLine) -1, statsFile)) {
+                std::vector<char *> tokens;
+                fast_split(dataLine, ',', tokens);
                 if (tokens.size() == 32) {
                     WifiStatisticsData data;
                     // Format: see wifi-statistics/station.c
-                    data.signal = StatisticAccumulator<std::int64_t>(atoi(tokens[1].c_str()), atoll(tokens[2].c_str()),
-                                                                     atoi(tokens[3].c_str()), atoi(tokens[4].c_str()),
-                                                                     atoi(tokens[5].c_str())).data();
-                    data.signalNonData = StatisticAccumulator<std::int64_t>(atoi(tokens[6].c_str()), atoll(tokens[7].c_str()),
-                                                                            atoi(tokens[8].c_str()), atoi(tokens[9].c_str()),
-                                                                            atoi(tokens[10].c_str())).data();
-                    data.bitrate = StatisticAccumulator<std::int64_t>(atoi(tokens[11].c_str()), atoll(tokens[12].c_str()),
-                                                                      atoi(tokens[13].c_str()), atoi(tokens[14].c_str()),
-                                                                      atoi(tokens[15].c_str())).data();
-                    data.bitrateNonData = StatisticAccumulator<std::int64_t>(atoi(tokens[16].c_str()), atoll(tokens[17].c_str()),
-                                                                             atoi(tokens[18].c_str()), atoi(tokens[19].c_str()),
-                                                                             atoi(tokens[20].c_str())).data();
+                    data.signal         = StatisticAccumulator<std::int64_t>(atoi(tokens[1]), atoull(tokens[2]),
+                                                                             atoi(tokens[3]), atoi(tokens[4]),
+                                                                             atou(tokens[5])).data();
+                    data.signalNonData  = StatisticAccumulator<std::int64_t>(atoi(tokens[6]), atoull(tokens[7]),
+                                                                             atoi(tokens[8]), atoi(tokens[9]),
+                                                                             atou(tokens[10])).data();
+                    data.bitrate        = StatisticAccumulator<std::uint64_t>(atou(tokens[11]), atoull(tokens[12]),
+                                                                             atou(tokens[13]), atou(tokens[14]),
+                                                                             atou(tokens[15])).data();
+                    data.bitrateNonData = StatisticAccumulator<std::uint64_t>(atou(tokens[16]), atoull(tokens[17]),
+                                                                             atou(tokens[18]), atou(tokens[19]),
+                                                                             atou(tokens[20])).data();
 
-                    data.badFCS = atoi(tokens[21].c_str());
-                    data.badFCSBytes = atoi(tokens[22].c_str());
-                    data.rTx = atoi(tokens[23].c_str());
-                    data.rTxBytes = atoi(tokens[24].c_str());
-                    data.total = atoi(tokens[25].c_str());
-                    data.totalBytes = atoi(tokens[26].c_str());
-                    data.airTime = atoi(tokens[27].c_str());
-                    data.lastSeen = atoi(tokens[28].c_str());
-                    data.bssId = senf::MACAddress::from_string(tokens[29]);
-                    data.type = tokens[30];
-                    data.ssId = tokens[31];
+                    data.badFCS      = atou(tokens[21]);
+                    data.badFCSBytes = atou(tokens[22]);
+                    data.rTx         = atou(tokens[23]);
+                    data.rTxBytes    = atou(tokens[24]);
+                    data.total       = atou(tokens[25]);
+                    data.totalBytes  = atou(tokens[26]);
+                    data.airTime     = atou(tokens[27]);
+                    data.lastSeen    = atou(tokens[28]);
+                    data.bssId       = senf::MACAddress::from_string(tokens[29]);
+                    data.type        = tokens[30];
+                    data.ssId        = tokens[31];
                     if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
                         // only add entries with activity
                         map_.emplace(std::make_pair(senf::MACAddress::from_string(tokens[0]), data));
@@ -276,7 +299,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsCSV(std::uint32_t tag, sen
                     invalidEntries_++;
                 }
             }
-            statsFile.close();
+            fclose(statsFile);
         } else {
             ioErrors_++;
             map_.clear();
