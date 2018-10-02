@@ -244,27 +244,27 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsCSV(std::uint32_t tag, sen
                 if (tokens.size() == 32) {
                     WifiStatisticsData data;
                     // Format: see wifi-statistics/station.c
-                    data.signal = StatisticAccumulator<std::int64_t>(std::stoi(tokens[1]), std::stoull(tokens[2]),
-                                                                     std::stoi(tokens[3]), std::stoi(tokens[4]),
-                                                                     std::stoul(tokens[5])).data();
-                    data.signalNonData = StatisticAccumulator<std::int64_t>(std::stoi(tokens[6]), std::stoull(tokens[7]),
-                                                                            std::stoi(tokens[8]), std::stoi(tokens[9]),
-                                                                            std::stoul(tokens[10])).data();
-                    data.bitrate = StatisticAccumulator<std::int64_t>(std::stoul(tokens[11]), std::stoull(tokens[12]),
-                                                                      std::stoul(tokens[13]), std::stoul(tokens[14]),
-                                                                      std::stoul(tokens[15])).data();
-                    data.bitrateNonData = StatisticAccumulator<std::int64_t>(std::stoul(tokens[16]), std::stoull(tokens[17]),
-                                                                             std::stoul(tokens[18]), std::stoul(tokens[19]),
-                                                                             std::stoul(tokens[20])).data();
-                    
-                    data.badFCS = std::stoul(tokens[21]);
-                    data.badFCSBytes = std::stoul(tokens[22]);
-                    data.rTx = std::stoul(tokens[23]);
-                    data.rTxBytes = std::stoul(tokens[24]);
-                    data.total = std::stoul(tokens[25]);
-                    data.totalBytes = std::stoul(tokens[26]);
-                    data.airTime = std::stoul(tokens[27]);
-                    data.lastSeen = std::stoul(tokens[28]);
+                    data.signal = StatisticAccumulator<std::int64_t>(atoi(tokens[1].c_str()), atoll(tokens[2].c_str()),
+                                                                     atoi(tokens[3].c_str()), atoi(tokens[4].c_str()),
+                                                                     atoi(tokens[5].c_str())).data();
+                    data.signalNonData = StatisticAccumulator<std::int64_t>(atoi(tokens[6].c_str()), atoll(tokens[7].c_str()),
+                                                                            atoi(tokens[8].c_str()), atoi(tokens[9].c_str()),
+                                                                            atoi(tokens[10].c_str())).data();
+                    data.bitrate = StatisticAccumulator<std::int64_t>(atoi(tokens[11].c_str()), atoll(tokens[12].c_str()),
+                                                                      atoi(tokens[13].c_str()), atoi(tokens[14].c_str()),
+                                                                      atoi(tokens[15].c_str())).data();
+                    data.bitrateNonData = StatisticAccumulator<std::int64_t>(atoi(tokens[16].c_str()), atoll(tokens[17].c_str()),
+                                                                             atoi(tokens[18].c_str()), atoi(tokens[19].c_str()),
+                                                                             atoi(tokens[20].c_str())).data();
+
+                    data.badFCS = atoi(tokens[21].c_str());
+                    data.badFCSBytes = atoi(tokens[22].c_str());
+                    data.rTx = atoi(tokens[23].c_str());
+                    data.rTxBytes = atoi(tokens[24].c_str());
+                    data.total = atoi(tokens[25].c_str());
+                    data.totalBytes = atoi(tokens[26].c_str());
+                    data.airTime = atoi(tokens[27].c_str());
+                    data.lastSeen = atoi(tokens[28].c_str());
                     data.bssId = senf::MACAddress::from_string(tokens[29]);
                     data.type = tokens[30];
                     data.ssId = tokens[31];
