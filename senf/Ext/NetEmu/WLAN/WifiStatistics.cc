@@ -113,10 +113,10 @@ prefix_ bool senf::mmapFile::eof()
 }
 
 
-prefix_ off_t const & senf::mmapFile::size()
+prefix_ off_t senf::mmapFile::size()
     const
 {
-    return stat_.st_size;
+    return off_t(end_ - begin_);
 }
 
 
@@ -427,12 +427,12 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsBIN(std::uint32_t tag, sen
                                                                      stats.next<std::uint32_t>(), stats.next<std::uint32_t>(),
                                                                      stats.next<std::uint32_t>()).data();
             
+            data.total       = stats.next<std::uint32_t>();
+            data.totalBytes  = stats.next<std::uint32_t>();
             data.badFCS      = stats.next<std::uint32_t>();
             data.badFCSBytes = stats.next<std::uint32_t>();
             data.rTx         = stats.next<std::uint32_t>();
             data.rTxBytes    = stats.next<std::uint32_t>();
-            data.total       = stats.next<std::uint32_t>();
-            data.totalBytes  = stats.next<std::uint32_t>();
             data.airTime     = stats.next<std::uint32_t>();
             data.lastSeen    = senf::ClockService::milliseconds(stats.next<std::uint32_t>());
             data.bssId       = senf::MACAddress::from_data(stats.next(6));

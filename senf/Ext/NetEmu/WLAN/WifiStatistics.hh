@@ -54,7 +54,7 @@ namespace senf {
 
         void *begin() const;
         void *end() const;
-        off_t const & size() const;
+        off_t size() const;
         bool eof() const;
 
         template <class T>
