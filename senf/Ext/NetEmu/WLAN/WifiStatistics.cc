@@ -79,15 +79,17 @@ prefix_ void *senf::mmapFile::open(std::string const & fname)
         // mmap failed, fall back to a convential read()
         size_t bsize (stat_.st_size > 0 ? stat_.st_size : 32768);
         buffer_ = new std::uint8_t[bsize];
-        if (::read(fd_, buffer_, bsize) <= 0) {
+        if ((bsize = ::read(fd_, buffer_, bsize)) <= 0) {
             close (fd_); fd_ = -1;
             delete buffer_; buffer_ = NULL;
             return NULL;
         }
         begin_ = buffer_;
+        end_ = begin_ + bsize;
+    } else {
+        end_ = begin_ + stat_.st_size;
     }
 
-    end_ = begin_ + stat_.st_size;
     next_ = begin_;
     return begin_;
 }
