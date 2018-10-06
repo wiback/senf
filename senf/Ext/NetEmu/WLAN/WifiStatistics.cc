@@ -367,7 +367,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsCSV(std::uint32_t tag, sen
                     data.total       = atou(tokens[25]);
                     data.totalBytes  = atou(tokens[26]);
                     data.airTime     = atou(tokens[27]);
-                    data.lastSeen    = atou(tokens[28]);
+                    data.lastSeen    = senf::ClockService::milliseconds(atou(tokens[28]));
                     data.bssId       = senf::MACAddress::from_string(tokens[29]);
                     data.type        = tokens[30];
                     data.ssId        = tokens[31];
@@ -410,7 +410,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsBIN(std::uint32_t tag, sen
         while (!stats.eof()) {
             WifiStatisticsData data;
             senf::MACAddress mac (senf::MACAddress::from_data(stats.next(6)));
-            // Format: see wifi-statistics/station.c
+            // Format: see wifi-statistics kernel module
             data.signal         = StatisticAccumulator<std::int64_t>(stats.next<std::int32_t>(), stats.next<std::uint64_t>(),
                                                                      stats.next<std::int32_t>(), stats.next<std::int32_t>(),
                                                                      stats.next<std::uint32_t>()).data();
@@ -431,9 +431,25 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsBIN(std::uint32_t tag, sen
             data.total       = stats.next<std::uint32_t>();
             data.totalBytes  = stats.next<std::uint32_t>();
             data.airTime     = stats.next<std::uint32_t>();
-            data.lastSeen    = stats.next<std::uint32_t>();
+            data.lastSeen    = senf::ClockService::milliseconds(stats.next<std::uint32_t>());
             data.bssId       = senf::MACAddress::from_data(stats.next(6));
-            data.type        = stats.next<std::uint32_t>();
+            switch (stats.next<std::uint32_t>()) {
+            case 0:
+                data.type = "UNKNOWN";
+                break;
+            case 1:
+                data.type = "AP";
+                break;
+            case 2:
+                data.type = "STA";
+                break;
+            case 3:
+                data.type = "ADHOC";
+                break;
+            case 4:
+                data.type = "MESH";
+                break;
+            };
             data.ssId        = std::string((char*)stats.next(32+4));
             if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
                 // only add entries with activity
