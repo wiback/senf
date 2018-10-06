@@ -76,10 +76,10 @@ prefix_ void *senf::mmapFile::open(std::string const & fname)
     
     begin_ = (std::uint8_t *) mmap(0, stat_.st_size, PROT_READ, MAP_SHARED, fd_, 0);
     if (begin_ == MAP_FAILED) {
-        close (fd_); fd_ = -1;
         // mmap failed, fall back to a convential read()
         buffer_ = new std::uint8_t[stat_.st_size];
         if (::read(fd_, buffer_, stat_.st_size) != stat_.st_size) {
+            close (fd_); fd_ = -1;
             delete buffer_; buffer_ = NULL;
             return NULL;
         }
