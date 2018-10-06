@@ -46,7 +46,7 @@
 
 
 prefix_ senf::mmapFile::mmapFile(std::string const & fname)
-    : fd_(-1), begin_(NULL), end_(NULL), next_(NULL)
+    : fd_(-1), begin_(NULL), end_(NULL), next_(NULL), buffer_(NULL)
 {
     if (!fname.empty()) {
         if (!open(fname)) {
@@ -59,6 +59,8 @@ prefix_ senf::mmapFile::~mmapFile()
 {
     if (fd_ != -1)
         close(fd_);
+    if (buffer_)
+        delete buffer_;
 }
 
 prefix_ void *senf::mmapFile::open(std::string const & fname)
@@ -72,10 +74,16 @@ prefix_ void *senf::mmapFile::open(std::string const & fname)
         return NULL;
     }
     
-    begin_ = (std::uint8_t *) mmap(0, stat_.st_size, PROT_READ, 0, fd_, 0);
+    begin_ = (std::uint8_t *) mmap(0, stat_.st_size, PROT_READ, MAP_SHARED, fd_, 0);
     if (begin_ == MAP_FAILED) {
         close (fd_); fd_ = -1;
-        return NULL;
+        // mmap failed, fall back to a convential read()
+        buffer_ = new std::uint8_t[stat_.st_size];
+        if (::read(fd_, buffer_, stat_.st_size) != stat_.st_size) {
+            delete buffer_; buffer_ = NULL;
+            return NULL;
+        }
+        begin_ = buffer_;
     }
 
     end_ = begin_ + stat_.st_size;

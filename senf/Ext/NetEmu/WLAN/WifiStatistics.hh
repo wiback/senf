@@ -85,7 +85,7 @@ namespace senf {
     private:
         int fd_;
         struct stat stat_;
-        std::uint8_t *begin_, *end_, *next_;
+        std::uint8_t *begin_, *end_, *next_, *buffer_;
     };
 
 namespace emu {
