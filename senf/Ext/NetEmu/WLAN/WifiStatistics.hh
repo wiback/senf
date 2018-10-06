@@ -29,6 +29,9 @@
 #define HH_SENF_Ext_NetEmu_WLAN_WifiStatistics_ 1
 
 // Custom includes
+extern "C" {
+#  include <sys/stat.h>
+}
 #include <unordered_map>
 #include <boost/property_tree/ptree.hpp>
 #include <senf/Socket/FileHandle.hh>
@@ -40,6 +43,51 @@
 
 
 namespace senf {
+
+    class mmapFile
+    {
+    public:
+        mmapFile (std::string const & fname);
+        ~mmapFile ();
+
+        void *open(std::string const & fname);
+
+        void *begin() const;
+        void *end() const;
+        off_t const & size() const;
+        bool eof() const;
+
+        template <class T>
+        T const & next() {
+            if ((next_ + sizeof(T)) > end())
+                throw std::exception();
+            T* t ((T*) ((void*)next_));
+            next_ += sizeof(T);
+            return (T const &) *t; 
+        }
+
+        std::uint8_t *next(size_t const & len) {
+            if ((next_ + len) > end())
+                throw std::exception();
+            std::uint8_t *t ((std::uint8_t*)next_);
+            next_ += len;
+            return t;
+        }
+
+        template <class T>
+        T const & at(off_t const & pos) {
+            if ((begin_ + pos + sizeof(T)) > end())
+                throw std::exception();
+            T* t ((T*) ((void*)(begin_ + pos)));
+            return (T const &) *t; 
+        }        
+        
+    private:
+        int fd_;
+        struct stat stat_;
+        std::uint8_t *begin_, *end_, *next_;
+    };
+
 namespace emu {
 
     struct WifiStatisticsData {
@@ -75,6 +123,7 @@ namespace emu {
         bool enable(bool on = true);
         bool pollStatistics(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
         bool pollStatisticsCSV(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
+        bool pollStatisticsBIN(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
         WifiStatisticsMap const & map() const;
         ClockService::clock_type const & timestamp() const;
         std::uint32_t tag() const;

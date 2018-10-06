@@ -44,6 +44,71 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+
+prefix_ senf::mmapFile::mmapFile(std::string const & fname)
+    : fd_(-1), begin_(NULL), end_(NULL), next_(NULL)
+{
+    if (!fname.empty()) {
+        if (!open(fname)) {
+            throw std::exception();
+        }
+    }
+}
+
+prefix_ senf::mmapFile::~mmapFile()
+{
+    if (fd_ != -1)
+        close(fd_);
+}
+
+prefix_ void *senf::mmapFile::open(std::string const & fname)
+{
+    fd_ = ::open(fname.c_str(), O_RDONLY);
+    if (fd_ < 0)
+        return NULL;
+
+    if (fstat(fd_, &stat_) < 0) {
+        close (fd_); fd_ = -1;
+        return NULL;
+    }
+    
+    begin_ = (std::uint8_t *) mmap(0, stat_.st_size, PROT_READ, 0, fd_, 0);
+    if (begin_ == MAP_FAILED) {
+        close (fd_); fd_ = -1;
+        return NULL;
+    }
+
+    end_ = begin_ + stat_.st_size;
+    next_ = begin_;
+    return begin_;
+}
+
+prefix_ void *senf::mmapFile::begin()
+    const
+{
+    return begin_;
+}
+
+prefix_ void *senf::mmapFile::end()
+    const
+{
+    return end_;
+}
+
+prefix_ bool senf::mmapFile::eof()
+    const
+{
+    return next_ >= end_;
+}
+
+
+prefix_ off_t const & senf::mmapFile::size()
+    const
+{
+    return stat_.st_size;
+}
+
+
 prefix_ senf::emu::WifiStatistics::WifiStatistics(std::string ifName, std::string debugFS)
     : timestamp_ (senf::ClockService::clock_type(0)), tag_(0),
       invalidEntries_(0), ioErrors_(0)
@@ -324,6 +389,62 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsCSV(std::uint32_t tag, sen
     return true;
 }
 
+prefix_ bool senf::emu::WifiStatistics::pollStatisticsBIN(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
+{
+    if (timestamp_ and (tag_ == tag))
+        return true;
+    
+    map_.clear();
+    timestamp_ = senf::ClockService::clock_type(0);
+
+    try {
+        mmapFile stats(debugFsPath_ + "stats_bin");
+        while (!stats.eof()) {
+            WifiStatisticsData data;
+            senf::MACAddress mac (senf::MACAddress::from_data(stats.next(6)));
+            // Format: see wifi-statistics/station.c
+            data.signal         = StatisticAccumulator<std::int64_t>(stats.next<std::int32_t>(), stats.next<std::uint64_t>(),
+                                                                     stats.next<std::int32_t>(), stats.next<std::int32_t>(),
+                                                                     stats.next<std::uint32_t>()).data();
+            data.signalNonData  = StatisticAccumulator<std::int64_t>(stats.next<std::int32_t>(), stats.next<std::uint64_t>(),
+                                                                     stats.next<std::int32_t>(), stats.next<std::int32_t>(),
+                                                                     stats.next<std::uint32_t>()).data();
+            data.bitrate        = StatisticAccumulator<std::int64_t>(stats.next<std::uint32_t>(), stats.next<std::uint64_t>(),
+                                                                     stats.next<std::uint32_t>(), stats.next<std::uint32_t>(),
+                                                                     stats.next<std::uint32_t>()).data();
+            data.bitrateNonData = StatisticAccumulator<std::int64_t>(stats.next<std::uint32_t>(), stats.next<std::uint64_t>(),
+                                                                     stats.next<std::uint32_t>(), stats.next<std::uint32_t>(),
+                                                                     stats.next<std::uint32_t>()).data();
+            
+            data.badFCS      = stats.next<std::uint32_t>();
+            data.badFCSBytes = stats.next<std::uint32_t>();
+            data.rTx         = stats.next<std::uint32_t>();
+            data.rTxBytes    = stats.next<std::uint32_t>();
+            data.total       = stats.next<std::uint32_t>();
+            data.totalBytes  = stats.next<std::uint32_t>();
+            data.airTime     = stats.next<std::uint32_t>();
+            data.lastSeen    = stats.next<std::uint32_t>();
+            data.bssId       = senf::MACAddress::from_data(stats.next(6));
+            data.type        = stats.next<std::uint32_t>();
+            data.ssId        = std::string((char*)stats.next(32+4));
+            if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
+                // only add entries with activity
+                map_.emplace(std::make_pair(mac, data));
+            }
+        }
+    } catch (...) {
+        ioErrors_++;
+        map_.clear();
+        return false;
+    };
+
+    tag_ = tag;
+    timestamp_ = senf::scheduler::now();
+
+    return true;
+}
+
+
 prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::map()
     const
 {
@@ -356,7 +477,7 @@ prefix_ std::uint32_t senf::emu::WifiStatistics::ioErrors()
 
 prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
 {
-    pollStatisticsCSV(tag, maxAge);
+    pollStatisticsBIN(tag, maxAge);
     return map_;
 }
 
