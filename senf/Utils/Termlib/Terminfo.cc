@@ -274,19 +274,19 @@ prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
         case 'i': ++arg1; ++arg2; break;
         case 'c': result += char(stack.pop());  break;
         case 'x': base = 16; continue;
-        case '0': if (!base) base = 8;
+        case '0': if (!base) base = 8;  // fall through
         case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8':
         case '9': if (!base) base = 10;
             width = width * base + (*i - '0');
             continue;
-        case '\\': base = 0;
+        case '\\': base = 0;  // fall through
         case '{': continue;
         case '\'': if (*(i - 1) == '%') {
             if (*(i + 1) != '\\')
                 width = *++i;
             continue;
-        }
+        }  // fall through
         case '}': stack.push(width); break;
         // Binary operands are in infix (reversed) order
         case '+': stack.push(stack.pop() + stack.pop()); break;
@@ -304,7 +304,7 @@ prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
         case 'O': stack.push(stack.pop() || stack.pop()); break;
         case '!': stack.push(!stack.pop()); break;
         case '~': stack.push(~stack.pop()); break;
-        case 't': bCondValue = stack.pop();
+        case 't': bCondValue = stack.pop();  // fall through
         case 'e': if ((bCondValue = !bCondValue)) // this also supports elsif
             --(i = prgstr.begin() + std::min (prgstr.find ("%e", i-prgstr.begin()),
                                               prgstr.find ("%;", i-prgstr.begin())));

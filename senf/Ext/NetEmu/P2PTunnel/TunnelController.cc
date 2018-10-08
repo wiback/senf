@@ -654,6 +654,7 @@ prefix_ void senf::emu::detail::TunnelClientController::v_handleCtrlPacket(
 
     case TunnelCtrlPacketParser::SetupReject:
         SENF_LOG((senf::log::IMPORTANT)("Tunnel setup rejected."));
+        // fall through
     case TunnelCtrlPacketParser::TerminateRequest:
     case TunnelCtrlPacketParser::TerminateAck:
         SENF_LOG((senf::log::IMPORTANT)("Tunnel terminated."));

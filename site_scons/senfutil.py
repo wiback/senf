@@ -267,7 +267,7 @@ def ParseDefaultArguments(env, *extraArgs):
         BoolVariable('profile', 'compile and link with the profiling enabled option', False),
         BoolVariable('builddir', 'use build dir build/{platform}_{build_type}', False),
         BoolVariable('lto', 'enable link-time-optimization', False),
-        BoolVariable('cxx11', 'enable C++11 build', False),
+        BoolVariable('cxx11', 'enable C++11 build', True),
         *extraArgs
     )
 

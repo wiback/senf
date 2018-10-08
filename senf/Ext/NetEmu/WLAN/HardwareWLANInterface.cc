@@ -651,8 +651,10 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
             case WLANModulationParameter::Automatic:
             case WLANModulationParameter::VHT:
                 bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
+                // fall through
             case WLANModulationParameter::HT:
                 bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
+                // fall through
             case WLANModulationParameter::Legacy:
                 if (modPara.type != WLANModulationParameter::HT)
                     bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
@@ -676,8 +678,10 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
             case WLANModulationParameter::Automatic:
             case WLANModulationParameter::VHT:
                 bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
+                // fall through
             case WLANModulationParameter::HT:
                 bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
+                // fall through
             case WLANModulationParameter::Legacy:
                 if (modPara.type != WLANModulationParameter::HT)
                     bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());

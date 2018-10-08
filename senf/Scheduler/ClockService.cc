@@ -78,14 +78,14 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
         }
         switch (scale) {
         case 0: break;
-        case 'n': v /= 1000.0;
-        case 'u': v /= 1000.0;
+        case 'n': v /= 1000.0;  // fall through
+        case 'u': v /= 1000.0;  // fall through
         case 'm': v /= 1000.0;
         }
         switch (unit) {
-        case 'd': v *= 24.0;
-        case 'h': v *= 60.0;
-        case 'm': v *= 60.0;
+        case 'd': v *= 24.0;  // fall through
+        case 'h': v *= 60.0;  // fall through
+        case 'm': v *= 60.0;  // fall through
         case 's': v *= 1000000000.0;
         }
         out += ClockService::nanoseconds(ClockService::int64_type(v));

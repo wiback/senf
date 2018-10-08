@@ -177,6 +177,10 @@ senfutil.ParseDefaultArguments(
     BoolVariable('ubsan', 'build with enabled UndefinedBehaviorSanitizer', False),
 )
 
+if not env.GetOption('clean') and not env['cxx11']:
+    env.Fail( 'No C++11 standard enabled, which is required.. Please compile SENF with std=c++11:\n'
+              '  $ scons cxx11=1 ...\n')
+
 # Handle 'test_changes'
 if 'test_changes' in COMMAND_LINE_TARGETS and not env.has_key('only_tests'):
     import SparseTestHack
