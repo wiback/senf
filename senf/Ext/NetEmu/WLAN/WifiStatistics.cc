@@ -435,7 +435,6 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsBIN(std::uint32_t tag, sen
             data.rTxBytes    = stats.next<std::uint32_t>();
             data.airTime     = stats.next<std::uint32_t>();
             data.lastSeen    = senf::ClockService::milliseconds(stats.next<std::uint32_t>());
-            data.bssId       = senf::MACAddress::from_data(stats.next(6));
             switch (stats.next<std::uint32_t>()) {
             case 0:
                 data.type = "UNKNOWN";
@@ -453,6 +452,7 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsBIN(std::uint32_t tag, sen
                 data.type = "MESH";
                 break;
             };
+            data.bssId       = senf::MACAddress::from_data(stats.next(6));
             data.ssId        = std::string((char*)stats.next(32+4));
             if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
                 // only add entries with activity
