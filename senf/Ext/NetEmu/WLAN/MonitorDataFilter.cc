@@ -183,7 +183,7 @@ prefix_ senf::emu::MonitorDataFilterStatistics senf::emu::MonitorDataFilter::sta
     return stats_.stats();
 }
 
-prefix_ void senf::emu::MonitorDataFilter::handle_DuplicateFrame(EthernetPacket & eth)
+prefix_ void senf::emu::MonitorDataFilter::handle_DuplicateFrame(EthernetPacket const & eth)
 {
     stats_.duplicated++;
     if (promisc_) {
@@ -353,7 +353,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
     resetTimer();
 }
 
-prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket & rtp)
+prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket const & rtp)
 {
     // only push fake frame if promisc mode is on
     if (!promisc_)
@@ -402,11 +402,11 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
     }
     
     try {
-        WLANPacket_DataFrame data (rtp.next<WLANPacket_DataFrame>(senf::nothrow));
+        WLANPacket_DataFrame const & data (rtp.next<WLANPacket_DataFrame>(senf::nothrow));
         if (data && (data.size() >= WLANPacket_DataFrameParser::init_bytes)) {
             dst = data->destinationAddress();
         } else {
-            WLANPacket_MgtFrame mgt (rtp.next<WLANPacket_MgtFrame>(senf::nothrow));
+            WLANPacket_MgtFrame const & mgt (rtp.next<WLANPacket_MgtFrame>(senf::nothrow));
             if (mgt && (mgt.size() >= WLANPacket_MgtFrameParser::init_bytes)) {
                 dst = mgt->destinationAddress();
             }
@@ -450,14 +450,14 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
 }
 
 
-prefix_ void senf::emu::MonitorDataFilter::handle_badFCS(RadiotapPacket & rtPacket)
+prefix_ void senf::emu::MonitorDataFilter::handle_badFCS(RadiotapPacket const & rtPacket)
 {
     stats_.badFCS++;
     rtPacket.annotation<annotations::Quality>().flags.frameCorrupt = true;
     pushSubstituteEthernet( rtPacket);
 }
 
-prefix_ bool senf::emu::MonitorDataFilter::handle_ManagementFrame(RadiotapPacket & rtPacket, WLANPacket_MgtFrame & mgt)
+prefix_ bool senf::emu::MonitorDataFilter::handle_ManagementFrame(RadiotapPacket const & rtPacket, WLANPacket_MgtFrame const & mgt)
 {
     if (mgt.size() < WLANPacket_MgtFrameParser::init_bytes) {
         SENF_LOG( (WlanLogArea) (senf::log::VERBOSE) ("(" << id_ << ") dropping truncated management frame") );
@@ -471,7 +471,7 @@ prefix_ bool senf::emu::MonitorDataFilter::handle_ManagementFrame(RadiotapPacket
     return true;
 }
 
-prefix_ bool senf::emu::MonitorDataFilter::handle_CtrlFrame(RadiotapPacket & rtPacket, WLANPacket_CtrlFrame & ctrl)
+prefix_ bool senf::emu::MonitorDataFilter::handle_CtrlFrame(RadiotapPacket const & rtPacket, WLANPacket_CtrlFrame const & ctrl)
 {
     if (ctrl.size() < WLANPacket_CtrlFrameParser::init_bytes) {
         SENF_LOG( (WlanLogArea) (senf::log::VERBOSE) ("(" << id_ << ") dropping truncated ctrl frame") );
@@ -486,19 +486,19 @@ prefix_ bool senf::emu::MonitorDataFilter::handle_CtrlFrame(RadiotapPacket & rtP
 }
 
 
-prefix_ void senf::emu::MonitorDataFilter::handle_NonDataFrame(RadiotapPacket & rtPacket)
+prefix_ void senf::emu::MonitorDataFilter::handle_NonDataFrame(RadiotapPacket const & rtPacket)
 {
     // 
     // This might be somewhat less efficient, but we should just see a few frames per second (as we filter ACKs via BPF) 
     //
-    WLANPacket_MgtFrame mgt (rtPacket.next<WLANPacket_MgtFrame>(senf::nothrow));
+    WLANPacket_MgtFrame const & mgt (rtPacket.next<WLANPacket_MgtFrame>(senf::nothrow));
     if (mgt) {
         if (!handle_ManagementFrame( rtPacket, mgt)) {
             pushSubstituteEthernet( rtPacket);
         }
         return;
     }
-    WLANPacket_CtrlFrame ctrl (rtPacket.next<WLANPacket_CtrlFrame>(senf::nothrow));
+    WLANPacket_CtrlFrame const & ctrl (rtPacket.next<WLANPacket_CtrlFrame>(senf::nothrow));
     if (ctrl) {
         if (!handle_CtrlFrame( rtPacket, ctrl)) {
             pushSubstituteEthernet( rtPacket);
@@ -508,7 +508,7 @@ prefix_ void senf::emu::MonitorDataFilter::handle_NonDataFrame(RadiotapPacket & 
 
     // If we make it here, the frame type is not known (most likely, it is encrypted!)
     try {
-        DataPacket data (rtPacket.parseNextAs<DataPacket>());
+        DataPacket const & data (rtPacket.parseNextAs<DataPacket>());
         WLANPacketParser wlanParser (data.data().begin(), &data.data());
         stats_.unknownType++;
         SENF_LOG( (WlanLogArea) (senf::log::VERBOSE) ("(" << id_ << ") dropping frame of unknown frame type: "
@@ -547,7 +547,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
 
         // Set annotations: Quality
         {
-            annotations::Quality & q (rtPacket.annotation<annotations::Quality>());
+            annotations::Quality const & q (rtPacket.annotation<annotations::Quality>());
             q.rssi  = short(rtParser.dbmAntennaSignal());
             q.noise = (rtParser.dbmAntennaNoisePresent() ? short(rtParser.dbmAntennaNoise()) : short(DEFAULT_WLAN_NOISE));
             q.snr   = short(q.rssi - q.noise);
@@ -665,12 +665,12 @@ prefix_ void senf::emu::MonitorDataFilter::request()
     }
 }
 
-prefix_ void senf::emu::MonitorDataFilter::outExtUI(Packet & pkt, senf::MACAddress const & src_, senf::MACAddress const & dst_)
+prefix_ void senf::emu::MonitorDataFilter::outExtUI(Packet const & pkt, senf::MACAddress const & src_, senf::MACAddress const & dst_)
 {
     output(prependAnnotationsPacket(pkt, src_, dst_));
 }
 
-prefix_ void senf::emu::MonitorDataFilter::outData(senf::EthernetPacket & eth)
+prefix_ void senf::emu::MonitorDataFilter::outData(senf::EthernetPacket const & eth)
 {
     stats_.data++;
     if (SENF_UNLIKELY(annotate_))

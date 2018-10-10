@@ -156,16 +156,16 @@ namespace emu {
         void handleReorderedPacket(SequenceNumberMap::key_type key, unsigned & lastSeqNo, unsigned seqNo, senf::EthernetPacket & ethp);
         void flushQueue(SequenceNumberMap::key_type key);
 
-        void pushSubstituteEthernet(RadiotapPacket & rtPacket);
+        void pushSubstituteEthernet(RadiotapPacket const & rtPacket);
 
-        void outExtUI(Packet & pkt, senf::MACAddress const & src = senf::MACAddress::None, senf::MACAddress const & dst = senf::MACAddress::Broadcast);
-        void outData(senf::EthernetPacket & eth);
+        void outExtUI(Packet const & pkt, senf::MACAddress const & src = senf::MACAddress::None, senf::MACAddress const & dst = senf::MACAddress::Broadcast);
+        void outData(senf::EthernetPacket const & eth);
 
-        void handle_badFCS(RadiotapPacket & rtp);
-        void handle_DuplicateFrame(EthernetPacket & eth);
-        bool handle_ManagementFrame(RadiotapPacket & rtPacket, WLANPacket_MgtFrame & mgt);
-        bool handle_CtrlFrame(RadiotapPacket & rtPacket, WLANPacket_CtrlFrame & ctrl);
-        void handle_NonDataFrame(RadiotapPacket & rtPacket);
+        void handle_badFCS(RadiotapPacket const & rtp);
+        void handle_DuplicateFrame(EthernetPacket const & eth);
+        bool handle_ManagementFrame(RadiotapPacket const & rtPacket, WLANPacket_MgtFrame const & mgt);
+        bool handle_CtrlFrame(RadiotapPacket const & rtPacket, WLANPacket_CtrlFrame const & ctrl);
+        void handle_NonDataFrame(RadiotapPacket const & rtPacket);
 
         void request();
         void requestPlain();
