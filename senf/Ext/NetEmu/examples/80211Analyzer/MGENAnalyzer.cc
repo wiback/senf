@@ -69,7 +69,7 @@ prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth, s
     }
 
     if (configuration_.mgenMode) {
-        MGENPacket mgen (udp.parseNextAs<MGENPacket>());
+        MGENPacket const & mgen (udp.parseNextAs<MGENPacket>());
         if (mgen) {
             getFlowStats(mgen->flowId()).v_analyze(mgen, ap, udp.size(), configuration_.clockDrift, startTime());
         } else {
@@ -78,7 +78,7 @@ prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth, s
         }
     } else {
         if (configuration_.iperfMode) {
-            IperfUDPPacket iperf (udp.parseNextAs<IperfUDPPacket>());
+            IperfUDPPacket const & iperf (udp.parseNextAs<IperfUDPPacket>());
             if (iperf) {
                 getFlowStats(0).v_analyze(iperf, ap, udp.size(), configuration_.clockDrift, startTime());
             } else {
