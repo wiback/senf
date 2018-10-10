@@ -44,7 +44,7 @@ class FrameAnalyzer
     SENF_PPI_MODULE(FrameAnalyzer);
 
 public:
-    senf::ppi::connector::PassiveInput<senf::AnnotationsPacket> input;
+    senf::ppi::connector::PassiveInput<senf::EthernetPacket> input;
 
     FrameAnalyzer(Configuration const & configuration);
 

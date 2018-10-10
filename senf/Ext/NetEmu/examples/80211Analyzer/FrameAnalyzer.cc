@@ -89,7 +89,10 @@ prefix_ void FrameAnalyzer::request()
         }
     }
 
-    senf::AnnotationsPacket const & ap (input());
+    // Look for the Annotation Packet
+    senf::AnnotationsPacket const & ap (input().find<senf::AnnotationsPacket>(senf::nothrow));
+    if (!ap)
+        return;
     
     handleReceivedFrame(ap);
 
