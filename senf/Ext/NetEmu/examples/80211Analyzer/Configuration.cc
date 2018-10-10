@@ -72,9 +72,12 @@ prefix_ Configuration::Configuration()
     initDir.add("csv-mode", fty::Variable( csvMode));
     initDir.add("clockDrift", fty::Variable( clockDrift)
         .doc("Clock Drift between the nodes in ms/s (in MGEN mode). Defaults to 0."));
-    initDir.add("reporting-interval", fty::Variable( reportingInterval));
-    initDir.add("duration", fty::Variable( duration));
-    initDir.add("max-wait", fty::Variable( maxWait));
+    initDir.add("reporting-interval", fty::Variable( reportingInterval)
+        .parser(senf::parseClockServiceInterval) );
+    initDir.add("duration", fty::Variable( duration)
+        .parser(senf::parseClockServiceInterval) );
+    initDir.add("max-wait", fty::Variable( maxWait)
+        .parser(senf::parseClockServiceInterval) );
     initDir.add("num-packets",  fty::Variable( numPackets));
     initDir.add("monitor-device", fty::Variable( monitorDevice));
     initDir.add("reorder-packets", fty::Variable( reorderPackets));
