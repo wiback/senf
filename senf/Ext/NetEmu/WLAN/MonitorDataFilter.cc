@@ -532,7 +532,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         
         stats_.received++;
 
-        if (SENF_LIKELY(rtParser.channelOptionsPresent())) {
+        if (SENF_LIKELY(frequency_ and rtParser.channelOptionsPresent())) {
             if (SENF_UNLIKELY(rtParser.channelOptions().freq() != frequency_)) {
                 stats_.freqMismatch++;
                 return;
