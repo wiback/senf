@@ -90,7 +90,40 @@ namespace senf {
 
 namespace emu {
 
+    struct StatsDataCollectorKernel {
+        std::int32_t  sum;
+        std::uint64_t sum2;
+        std::int32_t  min, max;
+        std::uint32_t count;
+    };
+
+    struct StatsDataPktCountsKernel {
+        std::uint32_t rx_packets;
+        std::uint32_t rx_bytes;
+        std::uint32_t bad_fcs_packets;
+        std::uint32_t bad_fcs_bytes;
+        std::uint32_t rTx_packets;
+        std::uint32_t rTx_bytes;
+        std::uint32_t air_time;
+    };
+
+    
+    struct WifiStatsKernel {
+        std::uint8_t mac[6];
+        StatsDataCollectorKernel signal;
+        StatsDataCollectorKernel signalNonData;
+        StatsDataCollectorKernel bitrate;
+        StatsDataCollectorKernel bitrateNonData;
+        StatsDataPktCountsKernel pktCounts;
+        std::uint32_t lastSeen;
+        std::uint32_t type;
+        std::uint8_t bssid[6];
+        char ssid[36];
+    };
+    
     struct WifiStatisticsData {
+        enum Type {UNKNOWN, AP, STA, IBSS, MESH};
+
         senf::StatisticsData signal;
         senf::StatisticsData signalNonData;
         senf::StatisticsData bitrate;
@@ -105,18 +138,21 @@ namespace emu {
         senf::ClockService::clock_type lastSeen;
         senf::MACAddress bssId;
         std::string ssId;
-        std::string type;
+        Type type;
         
         WifiStatisticsData() {
             total = totalBytes = badFCS = badFCSBytes = rTx = rTxBytes = airTime = 0;
             lastSeen = senf::ClockService::clock_type(0);
         };
+
+        WifiStatisticsData(WifiStatsKernel const &);
     };
 
     typedef std::unordered_map<senf::MACAddress,WifiStatisticsData> WifiStatisticsMap;
 
     class WifiStatistics {
     public:
+
         WifiStatistics (std::string ifName, std::string debugFS = "/sys/kernel/debug");
         ~WifiStatistics();
         
