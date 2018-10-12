@@ -430,12 +430,13 @@ prefix_ bool senf::emu::WifiStatistics::pollStatisticsBIN(std::uint32_t tag, sen
     try {
         mmapFile stats(debugFsPath_ + "stats_bin");
         WifiStatsKernel *wsk ((WifiStatsKernel*) stats.begin());
-        while(wsk < ((WifiStatsKernel*) stats.end())) {
-            WifiStatisticsData data(*wsk++);
-            if (data.totalBytes > 0 and data.lastSeen <= maxAge) {
+        unsigned n (0), num (stats.size() / sizeof(WifiStatsKernel));
+        while(n < num) {
+            if (wsk[n].pktCounts.rx_packets > 0 and wsk[n].lastSeen <= senf::ClockService::in_milliseconds(maxAge)) {
                 // only add entries with activity
-                map_.emplace(std::make_pair(senf::MACAddress::from_data(wsk->mac), data));
-            }            
+                map_.emplace(std::make_pair(senf::MACAddress::from_data(wsk[n].mac), WifiStatisticsData (wsk[n])));
+            }
+            n++;
         }
     } catch (...) {
         ioErrors_++;

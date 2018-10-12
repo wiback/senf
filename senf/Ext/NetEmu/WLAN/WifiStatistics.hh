@@ -106,10 +106,8 @@ namespace emu {
         std::uint32_t rTx_bytes;
         std::uint32_t air_time;
     };
-
     
     struct WifiStatsKernel {
-        std::uint8_t mac[6];
         StatsDataCollectorKernel signal;
         StatsDataCollectorKernel signalNonData;
         StatsDataCollectorKernel bitrate;
@@ -117,6 +115,7 @@ namespace emu {
         StatsDataPktCountsKernel pktCounts;
         std::uint32_t lastSeen;
         std::uint32_t type;
+        std::uint8_t mac[6];
         std::uint8_t bssid[6];
         char ssid[36];
     };
