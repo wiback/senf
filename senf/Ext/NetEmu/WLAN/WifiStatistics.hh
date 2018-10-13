@@ -92,10 +92,10 @@ namespace emu {
 
     struct StatsDataCollectorKernel {
         std::int32_t  sum;
-        std::uint64_t sum2;
         std::int32_t  min, max;
         std::uint32_t count;
-    };
+        std::uint64_t sum2;
+    } __attribute__((packed));
 
     struct StatsDataPktCountsKernel {
         std::uint32_t rx_packets;
@@ -105,7 +105,7 @@ namespace emu {
         std::uint32_t rTx_packets;
         std::uint32_t rTx_bytes;
         std::uint32_t air_time;
-    };
+    } __attribute__((packed));
     
     struct WifiStatsKernel {
         StatsDataCollectorKernel signal;
@@ -118,7 +118,7 @@ namespace emu {
         std::uint8_t mac[6];
         std::uint8_t bssid[6];
         char ssid[36];
-    };
+    } __attribute__((packed));
     
     struct WifiStatisticsData {
         enum Type {UNKNOWN, AP, STA, IBSS, MESH};

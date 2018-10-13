@@ -483,7 +483,7 @@ prefix_ std::uint32_t senf::emu::WifiStatistics::ioErrors()
 
 prefix_ senf::emu::WifiStatisticsMap const & senf::emu::WifiStatistics::statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge)
 {
-    pollStatisticsCSV(tag, maxAge);
+    pollStatisticsBIN(tag, maxAge);
     return map_;
 }
 
