@@ -668,6 +668,9 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                 bratePara.mcs_24->insert(modPara.index);
             }
             if (modPara.type == WLANModulationParameter::VHT) {
+                // ath10k requires bits 0...7 to be set
+                for (unsigned n = 0; n <= 7; n++)
+                    bratePara.vht_mcs_table_24->at(modPara.streams-1).set(n);
                 bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
             }
         }
@@ -695,6 +698,9 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                 bratePara.mcs_5->insert(modPara.index);
             }
             if (modPara.type == WLANModulationParameter::VHT) {
+                // ath10k requires bits 0...7 to be set
+                for (unsigned n = 0; n <= 7; n++)
+                    bratePara.vht_mcs_table_5->at(modPara.streams-1).set(n);
                 bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
             }
         }
