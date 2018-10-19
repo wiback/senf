@@ -64,7 +64,7 @@ prefix_ std::ostream & senf::emu::annotations::operator<<(std::ostream & os, Int
     return os;
 }
 
-prefix_ std::size_t senf::emu::annotations::hash_value(Interface const & annotation) SENF_NOEXCEPT
+prefix_ std::size_t senf::emu::annotations::hash_value(Interface const & annotation) noexcept
 {
     return senf::hash_value(annotation.value);
 }

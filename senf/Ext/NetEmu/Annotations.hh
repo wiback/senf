@@ -65,7 +65,7 @@ namespace annotations {
      */
     std::ostream & operator<<(std::ostream & os, Interface const & annotation);
 
-    std::size_t hash_value(Interface const & mac) SENF_NOEXCEPT;
+    std::size_t hash_value(Interface const & mac) noexcept;
 
 
     struct FrameRxFlags{

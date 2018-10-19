@@ -34,14 +34,6 @@
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_STD__UNIQUE_PTR_VOID_
-#  define SENF_SMART_PTR  std::unique_ptr
-#  define SENF_MOVE(t)    std::move(t)
-#else
-#  define SENF_SMART_PTR  std::unique_ptr
-#  define SENF_MOVE(t)    t
-#endif
-
 #ifdef SENF_CXX11_ENABLED
 
 #include <type_traits>

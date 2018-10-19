@@ -132,9 +132,9 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode>
 senf::log::FileTarget::RegisterConsole::create(std::string const & filename,
                                                std::string const & nodename)
 {
-    SENF_SMART_PTR<Target> tp (new FileTarget(filename, nodename));
+    std::unique_ptr<Target> tp (new FileTarget(filename, nodename));
     Target & target (*tp.get());
-    detail::TargetRegistry::instance().dynamicTarget(SENF_MOVE(tp));
+    detail::TargetRegistry::instance().dynamicTarget(std::move(tp));
     return target.consoleDir().node().thisptr();
 }
 

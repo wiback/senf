@@ -173,9 +173,9 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode>
 senf::log::SyslogUDPTarget::RegisterConsole::create(INet4SocketAddress const & target,
                                                     LogFacility facility)
 {
-    SENF_SMART_PTR<Target> tp (new SyslogUDPTarget(target, facility));
+    std::unique_ptr<Target> tp (new SyslogUDPTarget(target, facility));
     Target & tg (*tp.get());
-    detail::TargetRegistry::instance().dynamicTarget(SENF_MOVE(tp));
+    detail::TargetRegistry::instance().dynamicTarget(std::move(tp));
     return tg.consoleDir().node().thisptr();
 }
 
@@ -183,9 +183,9 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode>
 senf::log::SyslogUDPTarget::RegisterConsole::create(INet4Address const & target,
                                                     LogFacility facility)
 {
-    SENF_SMART_PTR<Target> tp (new SyslogUDPTarget(target, facility));
+    std::unique_ptr<Target> tp (new SyslogUDPTarget(target, facility));
     Target & tg (*tp.get());
-    detail::TargetRegistry::instance().dynamicTarget(SENF_MOVE(tp));
+    detail::TargetRegistry::instance().dynamicTarget(std::move(tp));
     return tg.consoleDir().node().thisptr();
 }
 
@@ -193,9 +193,9 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode>
 senf::log::SyslogUDPTarget::RegisterConsole::create(INet6SocketAddress const & target,
                                                     LogFacility facility)
 {
-    SENF_SMART_PTR<Target> tp (new SyslogUDPTarget(target, facility));
+    std::unique_ptr<Target> tp (new SyslogUDPTarget(target, facility));
     Target & tg (*tp.get());
-    detail::TargetRegistry::instance().dynamicTarget(SENF_MOVE(tp));
+    detail::TargetRegistry::instance().dynamicTarget(std::move(tp));
     return tg.consoleDir().node().thisptr();
 }
 
@@ -203,9 +203,9 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode>
 senf::log::SyslogUDPTarget::RegisterConsole::create(INet6Address const & target,
                                                     LogFacility facility)
 {
-    SENF_SMART_PTR<Target> tp (new SyslogUDPTarget(target, facility));
+    std::unique_ptr<Target> tp (new SyslogUDPTarget(target, facility));
     Target & tg (*tp.get());
-    detail::TargetRegistry::instance().dynamicTarget(SENF_MOVE(tp));
+    detail::TargetRegistry::instance().dynamicTarget(std::move(tp));
     return tg.consoleDir().node().thisptr();
 }
 

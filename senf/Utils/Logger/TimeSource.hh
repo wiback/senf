@@ -84,7 +84,7 @@ namespace log {
 
         \ingroup config
      */
-    void timeSource(SENF_SMART_PTR<TimeSource> source);
+    void timeSource(std::unique_ptr<TimeSource> source);
 
     /** \brief Change %log message time source
 

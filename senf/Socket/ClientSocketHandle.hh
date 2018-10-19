@@ -521,7 +521,7 @@ namespace senf {
 
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);
-        explicit ClientSocketHandle(SENF_SMART_PTR<SocketBody> body);
+        explicit ClientSocketHandle(std::unique_ptr<SocketBody> body);
 
     private:
         friend class senf::ServerSocketHandle<SPolicy>;

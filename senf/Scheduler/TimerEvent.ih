@@ -70,7 +70,7 @@ namespace detail {
 
         bool empty() const;
 
-        void timerSource(SENF_SMART_PTR<TimerSource> timerSource);
+        void timerSource(std::unique_ptr<TimerSource> timerSource);
         TimerSource * timerSource();
 
     protected:

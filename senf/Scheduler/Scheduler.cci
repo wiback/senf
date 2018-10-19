@@ -92,7 +92,7 @@ prefix_ bool senf::scheduler::watchdogAbort()
 prefix_ void senf::scheduler::loresTimers()
 {
     detail::TimerDispatcher::instance().timerSource(
-            SENF_SMART_PTR<detail::TimerSource>(new detail::PollTimerSource()));
+            std::unique_ptr<detail::TimerSource>(new detail::PollTimerSource()));
 }
 
 prefix_ bool senf::scheduler::haveScalableHiresTimers()

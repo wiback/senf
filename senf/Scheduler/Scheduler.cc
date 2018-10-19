@@ -152,11 +152,11 @@ prefix_ void senf::scheduler::hiresTimers()
 #ifdef HAVE_TIMERFD_CREATE
     if (haveScalableHiresTimers())
         detail::TimerDispatcher::instance().timerSource(
-                SENF_SMART_PTR<detail::TimerSource>(new detail::TimerFDTimerSource()));
+                std::unique_ptr<detail::TimerSource>(new detail::TimerFDTimerSource()));
     else
 #endif
         detail::TimerDispatcher::instance().timerSource(
-                SENF_SMART_PTR<detail::TimerSource>(new detail::POSIXTimerSource()));
+                std::unique_ptr<detail::TimerSource>(new detail::POSIXTimerSource()));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -247,7 +247,7 @@ prefix_ senf::emu::detail::TunnelControllerBase & senf::emu::TunnelInterfaceBase
 
 prefix_ void senf::emu::TunnelInterfaceBase::qAlgorithm(senf::ppi::QueueingAlgorithm::ptr qAlgo)
 {
-    ctrlBase_.qAlgorithm( SENF_MOVE(qAlgo));
+    ctrlBase_.qAlgorithm( std::move(qAlgo));
     consoleDir().add("queue", qAlgorithm().consoleDir());
 }
 

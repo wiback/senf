@@ -43,7 +43,7 @@
 // senf::ppi::connector::Connector
 
 prefix_ senf::ppi::connector::Connector::Connector()
-    : peer_(SENF_NULLPTR), module_(SENF_NULLPTR)
+    : peer_(nullptr), module_(nullptr)
 #   ifndef SENF_PPI_NOTRACE
     , traceState_(NO_TRACING)
 #   endif
@@ -277,7 +277,7 @@ prefix_ void senf::ppi::connector::Connector::v_connected()
 // senf::ppi::connector::PassiveConnector
 
 prefix_ senf::ppi::connector::PassiveConnector::PassiveConnector()
-    : peer_(SENF_NULLPTR), remoteThrottled_(false), nativeThrottled_(false)
+    : peer_(nullptr), remoteThrottled_(false), nativeThrottled_(false)
 {
     namespace fty = console::factory;
     consoleDir().add("throttled", fty::Command( &PassiveConnector::throttled, this));
@@ -427,7 +427,7 @@ prefix_ senf::Packet const & senf::ppi::connector::InputConnector::operator()()
         v_requestEvent();
     if (fastPacket_) {
         Packet const * p = fastPacket_;
-        fastPacket_ = SENF_NULLPTR;
+        fastPacket_ = nullptr;
         v_dequeueEvent();
         SENF_PPI_TRACE(*p, "IN ");
         return *p;

@@ -68,7 +68,7 @@ senf::ppi::module::Module::route(EventDescriptor & input, connector::OutputConne
     {                                                                                       \
         detail::RouteHelper<Source,Target>::route(*this, source, target, source, target);   \
         return static_cast< Route<Source,Target> & >(                                       \
-                addRoute(SENF_SMART_PTR< RouteBase >(                                       \
+                addRoute(std::unique_ptr< RouteBase >(                                       \
                      new Route<Source,Target>(source, target))));                           \
     }
 
@@ -116,7 +116,7 @@ prefix_ void senf::ppi::module::Module::unregisterConnector(connector::Connector
 }
 
 prefix_ senf::ppi::RouteBase &
-senf::ppi::module::Module::addRoute(SENF_SMART_PTR<RouteBase> route)
+senf::ppi::module::Module::addRoute(std::unique_ptr<RouteBase> route)
 {
     routes_.push_back(route.release());
     return routes_.back();

@@ -236,8 +236,8 @@ namespace senf {
                                              ::dup2()). */
 
     private:
-        virtual SENF_SMART_PTR<SocketBody> clone(bool isServer) const = 0;
-        virtual SENF_SMART_PTR<SocketBody> clone(int fd, bool isServer) const = 0;
+        virtual std::unique_ptr<SocketBody> clone(bool isServer) const = 0;
+        virtual std::unique_ptr<SocketBody> clone(int fd, bool isServer) const = 0;
         virtual SocketBody & body() const = 0;
 
         friend class SocketBody;
@@ -300,8 +300,8 @@ namespace senf {
                                              this protocol instance */
 
     private:
-        virtual SENF_SMART_PTR<SocketBody> clone(bool isServer) const;
-        virtual SENF_SMART_PTR<SocketBody> clone(int fd, bool isServer) const;
+        virtual std::unique_ptr<SocketBody> clone(bool isServer) const;
+        virtual std::unique_ptr<SocketBody> clone(int fd, bool isServer) const;
         virtual SocketBody & body() const;
 
         Policy policy_;

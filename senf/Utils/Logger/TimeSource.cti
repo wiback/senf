@@ -41,7 +41,7 @@
 template <class Source>
 prefix_ void senf::log::timeSource()
 {
-    timeSource(SENF_SMART_PTR<TimeSource>(new Source()));
+    timeSource(std::unique_ptr<TimeSource>(new Source()));
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

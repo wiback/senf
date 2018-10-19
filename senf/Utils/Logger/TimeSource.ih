@@ -48,7 +48,7 @@ namespace detail {
         using senf::singleton<TimeSourceManager>::instance;
 
         time_type now();
-        void timeSource(SENF_SMART_PTR<TimeSource> source);
+        void timeSource(std::unique_ptr<TimeSource> source);
 
     private:
         TimeSourceManager();

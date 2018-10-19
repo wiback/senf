@@ -47,7 +47,7 @@ namespace ppi {
         console::ScopedDirectory<> dir_;
 
     public:
-        typedef SENF_SMART_PTR<QueueingAlgorithm> ptr;
+        typedef std::unique_ptr<QueueingAlgorithm> ptr;
 
         virtual ~QueueingAlgorithm() {};
 

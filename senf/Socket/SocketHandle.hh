@@ -163,7 +163,7 @@ namespace senf {
                                              \returns the \a Facet protocol facet of this socket */
 
     protected:
-        explicit SocketHandle(SENF_SMART_PTR<SocketBody> body);
+        explicit SocketHandle(std::unique_ptr<SocketBody> body);
                                         ///< Initialize SocketHandle providing the protocol
                                         /**< \param protocol Protocol class of the protocol
                                                  implemented by this socket handle

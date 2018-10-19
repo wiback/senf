@@ -34,7 +34,6 @@
 
 // Custom includes
 #include <boost/noncopyable.hpp>
-#include <senf/Utils/Cpp11Support/features.hh>
 #include <senf/Utils/Logger/TimeSource.hh>
 #include "FdEvent.hh"
 #include "TimerEvent.hh"
@@ -421,7 +420,7 @@ namespace scheduler {
                 __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__));
 
 #define SENF_SCHEDULER_WATCHDOG_CHECKPOINT_CLEAR()                                          \
-        senf::scheduler::detail::FIFORunner::instance().watchdogCheckpoint(SENF_NULLPTR);
+        senf::scheduler::detail::FIFORunner::instance().watchdogCheckpoint(nullptr);
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Scheduler.cci"

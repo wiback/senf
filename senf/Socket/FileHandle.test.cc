@@ -47,9 +47,9 @@ namespace {
     public:
         FHandle() {}
         FHandle(int fd)
-            : senf::FileHandle(SENF_SMART_PTR<senf::FileBody>(new senf::FileBody(fd))) {}
+            : senf::FileHandle(std::unique_ptr<senf::FileBody>(new senf::FileBody(fd))) {}
         FHandle(std::string const & name)
-            : senf::FileHandle(SENF_SMART_PTR<senf::FileBody>(new senf::FileBody()))
+            : senf::FileHandle(std::unique_ptr<senf::FileBody>(new senf::FileBody()))
             {
                 int rv = ::open(name.c_str(),O_RDWR|O_NONBLOCK) ;
                 if (rv<0)

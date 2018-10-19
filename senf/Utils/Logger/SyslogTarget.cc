@@ -92,9 +92,9 @@ prefix_ senf::log::SyslogTarget::RegisterConsole::RegisterConsole()
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>
 senf::log::SyslogTarget::RegisterConsole::create(LogFacility facility)
 {
-    SENF_SMART_PTR<Target> tp (new SyslogTarget(facility));
+    std::unique_ptr<Target> tp (new SyslogTarget(facility));
     Target & target (*tp.get());
-    detail::TargetRegistry::instance().dynamicTarget(SENF_MOVE(tp));
+    detail::TargetRegistry::instance().dynamicTarget(std::move(tp));
     return target.consoleDir().node().thisptr();
 }
 

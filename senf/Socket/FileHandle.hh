@@ -201,7 +201,7 @@ namespace senf {
         static FileHandle cast_dynamic(FileHandle handle); /**< \internal */
 
     protected:
-        explicit FileHandle(SENF_SMART_PTR<FileBody> body);
+        explicit FileHandle(std::unique_ptr<FileBody> body);
                                     ///< create new FileHandle instance
                                     /**< The FileHandle instance will take over ownership over the
                                        given FileBody instance which must have been allocated using
