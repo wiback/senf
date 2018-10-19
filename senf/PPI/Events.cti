@@ -122,7 +122,7 @@ prefix_ senf::ppi::EventManager & senf::ppi::EventImplementation<EventType>::man
 
 template <class EventType>
 prefix_ senf::ppi::EventImplementation<EventType>::EventImplementation()
-    : binding_(0)
+    : binding_(nullptr)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ template <class EventType>
 prefix_ void
 senf::ppi::EventImplementation<EventType>::setBinding(detail::EventBinding<Event> & binding)
 {
-    binding_ = & binding;
+    binding_ = &binding;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

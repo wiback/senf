@@ -316,24 +316,24 @@ prefix_ void senf::detail::PacketImpl::releaseExternalMemory()
 
 prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::first()
 {
-    return interpreters_.empty() ? 0 : & interpreters_.front();
+    return interpreters_.empty() ? nullptr : & interpreters_.front();
 }
 
 prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::last()
 {
-    return interpreters_.empty() ? 0 : & interpreters_.back();
+    return interpreters_.empty() ? nullptr : & interpreters_.back();
 }
 
 prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::next(PacketInterpreterBase * p)
 {
     interpreter_list::iterator i (interpreter_list::s_iterator_to(*p));
-    return (++i == interpreters_.end()) ? 0 : &*i;
+    return (++i == interpreters_.end()) ? nullptr : &*i;
 }
 
 prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::prev(PacketInterpreterBase * p)
 {
     interpreter_list::iterator i (interpreter_list::s_iterator_to(*p));
-    return (i == interpreters_.begin()) ? 0 : &*(--i);
+    return (i == interpreters_.begin()) ? nullptr : &*(--i);
 }
 
 prefix_ void senf::detail::PacketImpl::truncateInterpreters(PacketInterpreterBase * p)

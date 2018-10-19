@@ -57,7 +57,7 @@ prefix_ std::string const & senf::console::GenericNode::name()
 }
 
 prefix_ senf::console::GenericNode::GenericNode()
-    : parent_ (0)
+    : parent_ (nullptr)
 {}
 
 prefix_ void senf::console::GenericNode::name(std::string const & name)

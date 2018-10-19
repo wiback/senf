@@ -100,7 +100,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::NullTask::v_run()
 prefix_ char const * senf::scheduler::detail::FIFORunner::NullTask::v_type()
     const
 {
-    return 0;
+    return nullptr;
 }
 
 prefix_ std::string senf::scheduler::detail::FIFORunner::NullTask::v_info()

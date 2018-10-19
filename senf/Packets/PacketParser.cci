@@ -61,7 +61,7 @@ prefix_ senf::PacketParserBase::ParserProtector::ParserProtector(PacketParserBas
 prefix_ senf::PacketParserBase::ParserProtector::ParserProtector(ParserProtector const & other_)
     : safe_i_( *other_.parser_), parser_(other_.parser_)
 {
-    other_.parser_ = 0;
+    other_.parser_ = nullptr;
 }
 
 prefix_ senf::PacketParserBase::ParserProtector::~ParserProtector()

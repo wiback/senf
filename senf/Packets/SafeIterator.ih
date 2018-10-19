@@ -59,7 +59,7 @@ namespace packet {
 
 
     protected:
-        safe_data_iterator_base(PacketData * data = 0, size_type i = 0)
+        safe_data_iterator_base(PacketData * data = nullptr, size_type i = 0)
             : data_ (data), i_ (i) {}
 
         PacketData * data_;
@@ -76,11 +76,11 @@ namespace packet {
 
         operator ValueType * () const
             {
-                return data_ ? boost::next(data_->begin(), i_) : static_cast<ValueType *>(0);
+                return data_ ? boost::next(data_->begin(), i_) : static_cast<ValueType *>(nullptr);
             }
 
     protected:
-        safe_data_iterator_base(PacketData * data = 0, size_type i = 0)
+        safe_data_iterator_base(PacketData * data = nullptr, size_type i = 0)
             : data_ (data), i_ (i) {}
 
         PacketData * data_;

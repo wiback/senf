@@ -43,7 +43,7 @@ prefix_ senf::ppi::detail::EventBindingBase::~EventBindingBase()
 {
     descriptor_->enabled(false);
     module().unregisterEvent(*descriptor_);
-    descriptor_->binding_ = 0;
+    descriptor_->binding_ = nullptr;
 }
 
 prefix_ void senf::ppi::detail::EventBindingBase::eventTime(ClockService::clock_type time)

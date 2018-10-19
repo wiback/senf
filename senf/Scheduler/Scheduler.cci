@@ -107,7 +107,7 @@ prefix_ bool senf::scheduler::haveScalableHiresTimers()
 prefix_ bool senf::scheduler::usingHiresTimers()
 {
     return dynamic_cast<detail::PollTimerSource*>(
-            detail::TimerDispatcher::instance().timerSource()) == 0;
+            detail::TimerDispatcher::instance().timerSource()) == nullptr;
 }
 
 

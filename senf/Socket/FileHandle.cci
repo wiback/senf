@@ -51,7 +51,7 @@ prefix_ void senf::FileHandleAccess::extraPtr(FileHandle fh, void * ptr)
 // senf::FileBody
 
 prefix_ senf::FileBody::FileBody(int fd)
-    : fd_(fd), extraPtr_(NULL)
+    : fd_(fd), extraPtr_(nullptr)
 {}
 
 prefix_ senf::FileHandle senf::FileBody::handle()
@@ -242,7 +242,7 @@ prefix_ bool senf::FileHandle::is_shared()
 }
 
 prefix_ senf::FileHandle::FileHandle()
-    : body_(0)
+    : body_(nullptr)
 {}
 
 prefix_ senf::FileHandle::~FileHandle()

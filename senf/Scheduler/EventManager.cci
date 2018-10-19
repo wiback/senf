@@ -101,7 +101,7 @@ prefix_ void senf::scheduler::detail::Event::countRun()
 
 prefix_ bool senf::scheduler::detail::EventManager::IteratorFilter::operator()(Event const & e)
 {
-    return e.type() != 0;
+    return e.type() != nullptr;
 }
 
 prefix_ senf::scheduler::detail::EventManager::iterator

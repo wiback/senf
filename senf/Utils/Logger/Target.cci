@@ -41,12 +41,12 @@
 
 prefix_ void senf::log::Target::route(action_t action, int index)
 {
-    route(0, 0, NONE::value, action, index);
+    route(nullptr, nullptr, NONE::value, action, index);
 }
 
 prefix_ void senf::log::Target::unroute(action_t action)
 {
-    unroute(0, 0, NONE::value, action);
+    unroute(nullptr, nullptr, NONE::value, action);
 }
 
 prefix_ senf::log::Target::iterator senf::log::Target::begin()
@@ -89,7 +89,7 @@ prefix_ senf::log::Target::RoutingEntry::RoutingEntry(detail::StreamBase const *
 {}
 
 prefix_ senf::log::Target::RoutingEntry::RoutingEntry()
-    : stream_(0), area_(0), level_(0), action_(ACCEPT)
+    : stream_(nullptr), area_(nullptr), level_(0), action_(ACCEPT)
 {}
 
 prefix_ bool senf::log::Target::RoutingEntry::operator==(RoutingEntry const & other)

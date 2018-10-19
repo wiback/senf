@@ -35,7 +35,7 @@
 
 prefix_ int senf::ConnectedCommunicationPolicy::accept(FileHandle const & handle)
 {
-    return do_accept(handle, 0, 0);
+    return do_accept(handle, nullptr, 0);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
