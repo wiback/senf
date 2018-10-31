@@ -668,7 +668,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                 bratePara.mcs_24->insert(modPara.index);
             }
             if (modPara.type == WLANModulationParameter::VHT) {
-                // ath10k requires bits 0...7 to be set
+                // ath10k requires bits 0...7 to be set. Also there can not be gaps.
                 for (unsigned n = 1; n <= std::max(8u,modPara.index); n++)
                     bratePara.vht_mcs_table_24->at(modPara.streams-1).set(n-1);
                 bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
@@ -698,7 +698,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                 bratePara.mcs_5->insert(modPara.index);
             }
             if (modPara.type == WLANModulationParameter::VHT) {
-                // ath10k requires bits 0...7 to be set
+                // ath10k requires bits 0...7 to be set. Also there can not be gaps.
                 for (unsigned n = 1; n <= std::max(8u,modPara.index); n++)
                         bratePara.vht_mcs_table_5->at(modPara.streams-1).set(n-1);
                 bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
@@ -751,9 +751,15 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
                 }
             }
             if (*types.begin() == WLANModulationParameter::VHT) {
+                // ath10k requires bits 0...7 to be set. Also there can not be gaps.
+                std::map<unsigned,unsigned> maxMCS;
                 for (auto const & id : ids) {
                     WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
+                    maxMCS[modPara.streams-1] = std::max(7u, std::max(maxMCS[modPara.streams-1], modPara.index));
+                }
+                for (unsigned nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
+                    for (unsigned n = 0; n <= maxMCS[nss]; n++)
+                        bratePara.vht_mcs_table_24->at(nss).set(n);
                 }
             }
         }
@@ -787,9 +793,15 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
                 }
             }
             if (*types.begin() == WLANModulationParameter::VHT) {
+                // ath10k requires bits 0...7 to be set. Also there can not be gaps.
+                std::map<unsigned,unsigned> maxMCS;
                 for (auto const & id : ids) {
                     WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
+                    maxMCS[modPara.streams-1] = std::max(7u, std::max(maxMCS[modPara.streams-1], modPara.index));
+                }
+                for (unsigned nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
+                    for (unsigned n = 0; n <= maxMCS[nss]; n++)
+                        bratePara.vht_mcs_table_5->at(nss).set(n);
                 }
             }
         }
