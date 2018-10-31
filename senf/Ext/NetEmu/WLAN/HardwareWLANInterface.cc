@@ -656,7 +656,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                 bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
                 // fall through
             case WLANModulationParameter::Legacy:
-                if (modPara.type != WLANModulationParameter::HT)
+		if (modPara.type != WLANModulationParameter::HT and modPara.type != WLANModulationParameter::VHT)
                     bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
             case WLANModulationParameter::Unknown:
                 break;
@@ -669,8 +669,8 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
             }
             if (modPara.type == WLANModulationParameter::VHT) {
                 // ath10k requires bits 0...7 to be set
-                for (unsigned n = 0; n <= 7; n++)
-                    bratePara.vht_mcs_table_24->at(modPara.streams-1).set(n);
+                for (unsigned n = 1; n <= std::max(8u,modPara.index); n++)
+                    bratePara.vht_mcs_table_24->at(modPara.streams-1).set(n-1);
                 bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
             }
         }
@@ -686,7 +686,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
                 bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
                 // fall through
             case WLANModulationParameter::Legacy:
-                if (modPara.type != WLANModulationParameter::HT)
+                if (modPara.type != WLANModulationParameter::HT and modPara.type != WLANModulationParameter::VHT)
                     bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());
             case WLANModulationParameter::Unknown:
                 break;
@@ -699,8 +699,8 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
             }
             if (modPara.type == WLANModulationParameter::VHT) {
                 // ath10k requires bits 0...7 to be set
-                for (unsigned n = 0; n <= 7; n++)
-                    bratePara.vht_mcs_table_5->at(modPara.streams-1).set(n);
+                for (unsigned n = 1; n <= std::max(8u,modPara.index); n++)
+                        bratePara.vht_mcs_table_5->at(modPara.streams-1).set(n-1);
                 bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
             }
         }
@@ -733,7 +733,7 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
                 bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
                 // fall through
             case WLANModulationParameter::Legacy:
-                if (*types.begin() != WLANModulationParameter::HT)
+                if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::HT)
                     bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
             case WLANModulationParameter::Unknown:
                 break;
@@ -769,7 +769,7 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
                 bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
                 // fall through
             case WLANModulationParameter::Legacy:
-                if (*types.begin() != WLANModulationParameter::HT)
+                if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::VHT)
                     bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());
             case WLANModulationParameter::Unknown:
                 break;
