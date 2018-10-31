@@ -712,6 +712,95 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
 #undef insertParameterIfTypeMatch
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<ModulationParameter::id_t> const & ids)
+{
+    std::set<WLANModulationParameter::Type> types;
+    for (auto const & id : ids)
+        types.emplace(WLANModulationParameterRegistry::instance().findModulationById(id).type);
+    if (types.size() != 1) {
+        throw InvalidArgumentException("WLANModulationParameter mismatch");
+    }
+    
+    BitrateParameters bratePara;
+    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() <= 3000000)) { 
+        if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
+            switch (*types.begin()) {
+            case WLANModulationParameter::Automatic:
+            case WLANModulationParameter::VHT:
+                bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
+                // fall through
+            case WLANModulationParameter::HT:
+                bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
+                // fall through
+            case WLANModulationParameter::Legacy:
+                if (*types.begin() != WLANModulationParameter::HT)
+                    bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
+            case WLANModulationParameter::Unknown:
+                break;
+            }
+            if (*types.begin() == WLANModulationParameter::Legacy) {
+                for (auto const & id : ids) {
+                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                    bratePara.legacy_24->insert(modPara.rate);
+                }
+            }
+            if (*types.begin() == WLANModulationParameter::HT) {
+                for (auto const & id : ids) {
+                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                    bratePara.mcs_24->insert(modPara.index);
+                }
+            }
+            if (*types.begin() == WLANModulationParameter::VHT) {
+                for (auto const & id : ids) {
+                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                    bratePara.vht_mcs_table_24->at(modPara.streams-1).set(modPara.index);
+                }
+            }
+        }
+    }
+    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() >= 4900000)) {
+        if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_5GHZ)) {
+            switch (*types.begin()) {
+            case WLANModulationParameter::Automatic:
+            case WLANModulationParameter::VHT:
+                bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
+                // fall through
+            case WLANModulationParameter::HT:
+                bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
+                // fall through
+            case WLANModulationParameter::Legacy:
+                if (*types.begin() != WLANModulationParameter::HT)
+                    bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());
+            case WLANModulationParameter::Unknown:
+                break;
+            }
+            if (*types.begin() == WLANModulationParameter::Legacy) {
+                for (auto const & id : ids) {
+                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                    bratePara.legacy_5->insert(modPara.rate);
+                }
+            }
+            if (*types.begin() == WLANModulationParameter::HT) {
+                for (auto const & id : ids) {
+                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                    bratePara.mcs_5->insert(modPara.index);
+                }
+            }
+            if (*types.begin() == WLANModulationParameter::VHT) {
+                for (auto const & id : ids) {
+                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                    bratePara.vht_mcs_table_5->at(modPara.streams-1).set(modPara.index);
+                }
+            }
+        }
+    }
+    
+    wnlc_.set_bitrates(bratePara);
+    modId_ = *ids.rbegin();  // report the upper bound (our target rate, the other(s) are considered as fallbacks)
+
+#undef insertParameterIfTypeMatch
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::v_frequency(unsigned freq, unsigned bandwidth)
 {
     WirelessNLController wnlc (monitorDevice());

@@ -143,6 +143,9 @@ namespace emu {
 
         WirelessNLController & wirelessNLController();
 
+        // temporary member to allow testing MCS ranges
+        void modulationSet(std::set<ModulationParameter::id_t> const & ids);
+
     protected:
         NetdeviceController netctl_;
         mutable WirelessNLController wnlc_;
@@ -187,7 +190,6 @@ namespace emu {
         // modulation
         virtual ModulationParameter::id_t v_modulationId() const override;
         virtual void v_modulationId(ModulationParameter::id_t) override;
-
         // channel frequency
         virtual unsigned v_frequency() const override;
         virtual unsigned v_bandwidth() const override;
