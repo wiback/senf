@@ -733,7 +733,7 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
                 bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
                 // fall through
             case WLANModulationParameter::Legacy:
-                if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::HT)
+                if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::VHT)
                     bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
             case WLANModulationParameter::Unknown:
                 break;
@@ -797,11 +797,13 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
                 std::map<unsigned,unsigned> maxMCS;
                 for (auto const & id : ids) {
                     WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    maxMCS[modPara.streams-1] = std::max(7u, std::max(maxMCS[modPara.streams-1], modPara.index));
+                    maxMCS[modPara.streams-1] = std::max(8u, std::max(maxMCS[modPara.streams-1], modPara.index+1));
                 }
                 for (unsigned nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
-                    for (unsigned n = 0; n <= maxMCS[nss]; n++)
-                        bratePara.vht_mcs_table_5->at(nss).set(n);
+                    if (maxMCS[nss] > 0) {
+                        for (unsigned n = 1; n <= maxMCS[nss]; n++)
+                            bratePara.vht_mcs_table_5->at(nss).set(n-1);
+                    }
                 }
             }
         }
