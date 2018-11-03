@@ -53,7 +53,7 @@ prefix_ std::uint16_t senf::emu::VLanId::payloadTypeLength(senf::EthernetPacket 
 }
 
 template <class PKT>
-prefix_ PKT senf::emu::VLanId::payload(senf::EthernetPacket const & eth)
+prefix_ PKT const & senf::emu::VLanId::payload(senf::EthernetPacket const & eth)
 {
     senf::Packet pkt (eth);
     do {  // Skip EthernetPacket as we look for payload
@@ -63,7 +63,8 @@ prefix_ PKT senf::emu::VLanId::payload(senf::EthernetPacket const & eth)
     if (SENF_LIKELY(pkt) and pkt.is<PKT>())
         return pkt.as<PKT> ();
 
-    return PKT ();
+    static PKT empty;
+    return empty;
 }
 
 
