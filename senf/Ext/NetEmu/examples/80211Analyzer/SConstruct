@@ -27,7 +27,7 @@ import os
 import os.path
 import sys
 try: sys.path.append(((_ for _ in (os.path.join(os.path.sep.join(('..' for _ in range(_))),d,
-     'site_scons') for d in ('senf','Senf') for _ in range(len(os.getcwd().split('/'))))
+     'site_scons') for d in ('../../../../','senf','Senf') for _ in range(len(os.getcwd().split('/'))))
      if os.path.exists(_))).next())
 except: pass
 import senfutil
