@@ -179,7 +179,7 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
 {
     std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
-        if (m.second.type == type)
+        if ((m.second.type == type) and (m.second.rate > 0))
             res.emplace(m.first);
     }
     return res;
