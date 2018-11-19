@@ -174,6 +174,27 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     }
 }
 
+prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulationParameterRegistry::parameterIdsByType(WLANModulationParameter::Type type)
+    const
+{
+    std::set<ModulationParameter::id_t> res;
+    for (auto const & m : modulations_) {
+        if (m.second.type == type)
+            res.emplace(m.first);
+    }
+    return res;
+}
+
+prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulationParameterRegistry::parameterIdsByType(ModulationParameter::id_t id)
+    const
+{
+    Modulations::const_iterator it (modulations_.find(id));
+    if (it == modulations_.end())
+        return std::set<senf::emu::ModulationParameter::id_t> ();
+    
+    return parameterIdsByType(it->second.type);
+}
+
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAuto()
     const
 {

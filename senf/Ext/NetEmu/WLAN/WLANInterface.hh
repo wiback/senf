@@ -97,14 +97,17 @@ namespace emu {
         ModulationParameter::id_t parameterIdAuto() const;
         ModulationParameter::id_t parameterIdUnknown() const;
 
+        std::set<ModulationParameter::id_t> parameterIdsByType(WLANModulationParameter::Type type) const;
+        std::set<ModulationParameter::id_t> parameterIdsByType(ModulationParameter::id_t id) const;
+        
     private:
         WLANModulationParameterRegistry();
 
         ModulationParameter::id_t registerModulation(WLANModulationParameter & p);
 
-        typedef std::map<ModulationParameter::id_t, WLANModulationParameter> Modulations;
+        typedef boost::unordered_map<ModulationParameter::id_t, WLANModulationParameter> Modulations;
         Modulations modulations_;
-        std::map<boost::uint16_t, ModulationParameter::id_t> idMap_;
+        boost::unordered_map<boost::uint16_t, ModulationParameter::id_t> idMap_;
         ModulationParameter::id_t parameterIdAuto_;
         ModulationParameter::id_t parameterIdUnknown_;
     };
