@@ -810,7 +810,13 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
     }
     
     wnlc_.set_bitrates(bratePara);
-    modId_ = *ids.rbegin();  // report the upper bound (our target rate, the other(s) are considered as fallbacks)
+
+    // report the upper bound (our target rate, the other(s) are considered as fallbacks)
+    std::map<unsigned, ModulationParameter::id_t> rates;
+    for (auto const & i : ids) {
+        rates.insert(std::make_pair(WLANModulationParameterRegistry::instance().findModulationById(i).rate, i));
+    }
+    modId_ = rates.rbegin()->second;
 
 #undef insertParameterIfTypeMatch
 }
