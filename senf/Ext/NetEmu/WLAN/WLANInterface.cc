@@ -174,12 +174,12 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     }
 }
 
-prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulationParameterRegistry::parameterIdsByType(WLANModulationParameter::Type type, bool shortGI)
+prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulationParameterRegistry::parameterIdsByType(WLANModulationParameter::Type type, unsigned bandwidth, bool shortGI)
     const
 {
     std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
-        if ((m.second.type == type) and (m.second.rate > 0) and (m.second.shortGI == shortGI))
+        if ((m.second.type == type) and (m.second.rate > 0) and (m.second.shortGI == shortGI) and (m.second.bandwidth == bandwidth))
             res.emplace(m.first);
     }
     return res;
@@ -192,7 +192,7 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
     if (it == modulations_.end())
         return std::set<senf::emu::ModulationParameter::id_t> ();
     
-    return parameterIdsByType(it->second.type, it->second.shortGI);
+    return parameterIdsByType(it->second.type, it->second.bandwidth, it->second.shortGI);
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAuto()
