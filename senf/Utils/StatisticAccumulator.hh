@@ -35,6 +35,7 @@
 // Custom includes
 #include <math.h>
 #include <iosfwd>
+#include <boost/operators.hpp>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
@@ -47,7 +48,7 @@ namespace senf {
 
          void clear();
 
-         operator bool() const;
+         explicit operator bool() const;
 
          float min;
          float avg;
