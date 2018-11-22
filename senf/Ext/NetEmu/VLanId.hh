@@ -22,7 +22,8 @@ namespace emu {
     typedef std::uint16_t VLanTag;
 
     struct VLanId
-        : public boost::equality_comparable<VLanId>
+        : public boost::equality_comparable<VLanId>,
+          public boost::less_than_comparable<VLanId>
     {
         static VLanId const None;
 
