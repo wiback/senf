@@ -97,8 +97,7 @@ namespace emu {
         ModulationParameter::id_t parameterIdAuto() const;
         ModulationParameter::id_t parameterIdUnknown() const;
 
-        std::set<ModulationParameter::id_t> parameterIdsByType(WLANModulationParameter::Type type, unsigned bandwidth, bool shortGI) const;
-        std::set<ModulationParameter::id_t> parameterIdsByType(ModulationParameter::id_t id) const;
+        std::set<ModulationParameter::id_t> parameterIdsByType(ModulationParameter::id_t id, bool matchGI = false) const;
         
     private:
         WLANModulationParameterRegistry();
