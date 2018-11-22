@@ -57,6 +57,8 @@ namespace emu {
              \ref senf::emu::ModulationParameterRegistry
      */
     struct ModulationParameter
+        : public boost::equality_comparable<ModulationParameter>,
+          public boost::less_than_comparable<ModulationParameter>
     {
         typedef boost::uint32_t id_t;
         id_t id;  ///< unique identifier
@@ -78,6 +80,14 @@ namespace emu {
             Error();
         };
 
+        bool operator<(ModulationParameter const & other) const {
+            return id < other.id;
+        };
+
+        bool operator==(ModulationParameter const & other) const {
+            return id == other.id;
+        };
+        
     private:
         friend class ModulationParameterRegistry;
         virtual boost::uint16_t v_modulationId() const = 0;
