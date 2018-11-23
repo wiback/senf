@@ -119,7 +119,9 @@ prefix_ bool FlowStatistics::v_analyze(senf::Packet const & pkt, senf::Annotatio
     if (!PacketStatistics::analyze(pkt, ap, payloadSize))
         return false;
 
-    rssi.accumulate( ap->rssi());
+    if (ap->rssi() != 0) {
+        rssi.accumulate(ap->rssi());
+    }
     //noise.accumulate( ap->noise());
     rate.accumulate( rateInBps);
     length.accumulate( payloadSize);
