@@ -245,6 +245,12 @@ prefix_ void senf::emu::HardwareEthernetInterface::init_sockets()
     std::string vlanDevice (device() + "." + senf::str(pvid_));
 
     if (!promisc() and pvid_) {
+        // if there exists a VLAN interface, remove it first
+        try {
+            ctrl_.delVLAN(pvid_.id());
+        }
+        catch (...) {
+        }
         ctrl_.addVLAN(pvid_.id());
         NetdeviceController(vlanDevice).up();
     }
