@@ -184,7 +184,7 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
     std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
         if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth)
-            and (!matchGI or (m.second.shortGI == it->second.shortGI)))
+            and (!matchGI or (m.second.shortGI == it->second.shortGI)) and (m.second.streams <= it->second.streams))
             res.emplace(m.first);
     }
     return res;
