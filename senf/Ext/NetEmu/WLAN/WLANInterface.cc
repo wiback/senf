@@ -174,7 +174,7 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     }
 }
 
-prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulationParameterRegistry::parameterIdsByType(ModulationParameter::id_t id, bool matchGI)
+prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulationParameterRegistry::parameterIdsByType(ModulationParameter::id_t id, GIMatch giMatch)
     const
 {
     Modulations::const_iterator it (modulations_.find(id));
@@ -183,9 +183,25 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
     
     std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
-        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth)
-            and (!matchGI or (m.second.shortGI == it->second.shortGI)) and (m.second.streams <= it->second.streams))
-            res.emplace(m.first);
+        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.streams <= it->second.streams)) {
+            switch (giMatch) {
+            case Any:
+                res.emplace(m.first);
+                break;
+            case Equal:
+                if (m.second.shortGI == it->second.shortGI)
+                    res.emplace(m.first);
+                break;
+            case Short:
+                if (m.second.shortGI)
+                    res.emplace(m.first);
+                break;
+            case Long:
+                if (!m.second.shortGI)
+                    res.emplace(m.first);
+                break;
+            }
+        }
     }
     return res;
 }

@@ -82,6 +82,8 @@ namespace emu {
             return _instance;
         }
 
+        enum GIMatch {Any, Equal, Short, Long };
+
         struct LegacyModulationInfo {
             std::string coding;
             unsigned rate;
@@ -97,7 +99,7 @@ namespace emu {
         ModulationParameter::id_t parameterIdAuto() const;
         ModulationParameter::id_t parameterIdUnknown() const;
 
-        std::set<ModulationParameter::id_t> parameterIdsByType(ModulationParameter::id_t id, bool matchGI = false) const;
+        std::set<ModulationParameter::id_t> parameterIdsByType(ModulationParameter::id_t id, GIMatch giMatch = Any) const;
         
     private:
         WLANModulationParameterRegistry();
