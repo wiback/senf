@@ -215,7 +215,8 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     
     std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
-        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.streams == it->second.streams)) {
+        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth)
+            and (m.second.streams == it->second.streams) and (m.second.index == it->second.index)) {
             if (m.second.shortGI)
                 return m.first;
         }
@@ -233,7 +234,8 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     
     std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
-        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.streams == it->second.streams)) {
+        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth)
+            and (m.second.streams == it->second.streams) and (m.second.index == it->second.index)) {
             if (!m.second.shortGI)
                 return m.first;
         }
