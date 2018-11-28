@@ -103,11 +103,13 @@ prefix_ senf::emu::WLANModulationParameterRegistry::WLANModulationParameterRegis
     }
     // register non-HT legacy modulations
     for (LegacyModulationInfo const & mod : legacyInfos11b) {
-        WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy);
+        WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy, 1, 0);
         registerModulation( p);
     }
+    // add a 'pseudo' index for OFDM rates to allow treating them silimar to HT/VHT below
+    unsigned ind(0);
     for (LegacyModulationInfo const & mod : legacyInfosOFDM) {
-        WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy);
+        WLANModulationParameter p (mod.coding, mod.rssi, mod.rate, 20000, WLANModulationParameter::Legacy, 1, ind++);
         registerModulation( p);
     }
     // register the two 'special' modulations
@@ -213,7 +215,6 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     if (it == modulations_.end())
         return parameterIdUnknown_;
     
-    std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
         if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth)
             and (m.second.streams == it->second.streams) and (m.second.index == it->second.index)) {
@@ -232,7 +233,6 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     if (it == modulations_.end())
         return parameterIdUnknown_;
     
-    std::set<ModulationParameter::id_t> res;
     for (auto const & m : modulations_) {
         if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth)
             and (m.second.streams == it->second.streams) and (m.second.index == it->second.index)) {
@@ -241,6 +241,26 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
         }
     }
 
+    return parameterIdUnknown_;
+}
+
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdLower(ModulationParameter::id_t id, unsigned diff)
+    const
+{
+    Modulations::const_iterator it (modulations_.find(id));
+    if (it == modulations_.end())
+        return parameterIdUnknown_;
+    
+    if (it->second.index < diff)
+        diff = it->second.index;
+    
+    for (auto const & m : modulations_) {
+        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.shortGI == it->second.shortGI)
+            and (m.second.streams == it->second.streams) and (m.second.index == it->second.index - diff)) {
+            return m.first;
+        }
+    }
+    
     return parameterIdUnknown_;
 }
 
