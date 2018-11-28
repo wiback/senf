@@ -206,7 +206,7 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
     return res;
 }
 
-prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdsAsSGI(ModulationParameter::id_t id)
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAsSGI(ModulationParameter::id_t id)
     const
 {
     Modulations::const_iterator it (modulations_.find(id));
@@ -224,7 +224,7 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     return parameterIdUnknown_;
 }
 
-prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdsAsLGI(ModulationParameter::id_t id)
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAsLGI(ModulationParameter::id_t id)
     const
 {
     Modulations::const_iterator it (modulations_.find(id));
