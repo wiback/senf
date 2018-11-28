@@ -104,7 +104,7 @@ prefix_ void Configuration::help()
 
 prefix_ void Configuration::version()
 {
-    std::cerr << "1.2" << std::endl;
+    std::cerr << "2.0" << std::endl;
     exit(0);
 }
 
