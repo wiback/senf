@@ -100,6 +100,8 @@ namespace emu {
         ModulationParameter::id_t parameterIdUnknown() const;
 
         std::set<ModulationParameter::id_t> parameterIdsByType(ModulationParameter::id_t id, GIMatch giMatch = Any) const;
+        ModulationParameter::id_t parameterIdsAsLGI(ModulationParameter::id_t id) const;
+        ModulationParameter::id_t parameterIdsAsSGI(ModulationParameter::id_t id) const;
         
     private:
         WLANModulationParameterRegistry();

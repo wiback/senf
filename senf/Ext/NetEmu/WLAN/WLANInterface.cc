@@ -206,6 +206,43 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
     return res;
 }
 
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdsAsSGI(ModulationParameter::id_t id)
+    const
+{
+    Modulations::const_iterator it (modulations_.find(id));
+    if (it == modulations_.end())
+        return parameterIdUnknown_;
+    
+    std::set<ModulationParameter::id_t> res;
+    for (auto const & m : modulations_) {
+        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.streams == it->second.streams)) {
+            if (m.second.shortGI)
+                return m.first;
+        }
+    }
+
+    return parameterIdUnknown_;
+}
+
+prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdsAsLGI(ModulationParameter::id_t id)
+    const
+{
+    Modulations::const_iterator it (modulations_.find(id));
+    if (it == modulations_.end())
+        return parameterIdUnknown_;
+    
+    std::set<ModulationParameter::id_t> res;
+    for (auto const & m : modulations_) {
+        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.streams == it->second.streams)) {
+            if (!m.second.shortGI)
+                return m.first;
+        }
+    }
+
+    return parameterIdUnknown_;
+}
+
+
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAuto()
     const
 {
