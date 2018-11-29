@@ -33,9 +33,8 @@
 
 // Custom includes
 #include <iosfwd>
-#include <boost/cstdint.hpp>
 #include <boost/array.hpp>
-#include <senf/Utils/safe_bool.hh>
+#include <boost/operators.hpp>
 #include <senf/Utils/Tags.hh>
 
 //#include "MACAddress.mpp"
@@ -83,15 +82,16 @@ namespace senf {
         \ingroup addr_group
      */
     struct MACAddress
-        : public boost::array<boost::uint8_t,6>,
-          public comparable_safe_bool<MACAddress>
+        : public boost::array<std::uint8_t,6>,
+          public boost::equality_comparable<MACAddress>,
+          public boost::less_than_comparable<MACAddress>
     {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address
 
         MACAddress();                   ///< Construct zero-initialized address
         MACAddress(senf::NoInit_t);     ///< Construct uninitialized (!) address
-        explicit MACAddress(boost::uint64_t const & v); ///< Construct MACAddress constants
+        explicit MACAddress(std::uint64_t const & v); ///< Construct MACAddress constants
 
         static MACAddress from_string(std::string const & s);
                                         ///< Construct address from string representation
@@ -121,18 +121,21 @@ namespace senf {
         bool local() const;             ///< \c true, if address is locally administered
         bool multicast() const;         ///< \c true, if address is a group/multicast address
         bool broadcast() const;         ///< \c true, if address is the broadcast address
-        bool boolean_test() const;      ///< \c true, if address is not the zero address
+
+        explicit operator bool() const; ///< \c true, if address is not the zero address
+        bool operator==(MACAddress const & other) const;
+        bool operator<(MACAddress const & other) const;
 
         void local(bool flag);
         void multicast(bool flag);
 
-        boost::uint32_t oui() const;    ///< Return first 3 bytes of the address
-        boost::uint32_t nic() const;    ///< Return last 3 bytes of the address
+        std::uint32_t oui() const;    ///< Return first 3 bytes of the address
+        std::uint32_t nic() const;    ///< Return last 3 bytes of the address
 
-        boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
-        boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
+        std::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
+        std::uint64_t uint64() const; ///< Return MAC address as uint64 value
 
-        void hash(boost::uint64_t * hash, boost::uint16_t otherKey = 0) const; ///< computes a fast uint64 hash mixing in another 16 value
+        void hash(std::uint64_t * hash, std::uint16_t otherKey = 0) const; ///< computes a fast uint64 hash mixing in another 16 value
     };
 
     /** \brief Output MAC instance as it's string representation
@@ -149,7 +152,6 @@ namespace senf {
 
     bool operator==(MACAddress const & mac, EUI64 const & eui64);
     bool operator==(EUI64 const & eui64, MACAddress const & mac);
-    bool operator<(MACAddress const & me, MACAddress const & other);
 
     std::size_t hash_value(MACAddress const & mac) noexcept;
 }
