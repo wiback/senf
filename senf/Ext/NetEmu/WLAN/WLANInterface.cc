@@ -253,15 +253,18 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     
     if (it->second.index < diff)
         diff = it->second.index;
-    
-    for (auto const & m : modulations_) {
-        if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.shortGI == it->second.shortGI)
-            and (m.second.streams == it->second.streams) and (m.second.index == it->second.index - diff)) {
-            return m.first;
+
+    while (diff > 0) {
+        for (auto const & m : modulations_) {
+            if ((m.second.type == it->second.type) and (m.second.rate > 0) and (m.second.bandwidth == it->second.bandwidth) and (m.second.shortGI == it->second.shortGI)
+                and (m.second.streams == it->second.streams) and (m.second.index == it->second.index - diff)) {
+                return m.first;
+            }
         }
+        diff--;
     }
-    
-    return parameterIdUnknown_;
+
+    return id;
 }
 
 
