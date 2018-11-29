@@ -715,8 +715,13 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
 prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<ModulationParameter::id_t> const & ids)
 {
     std::set<WLANModulationParameter::Type> types;
-    for (auto const & id : ids)
-        types.emplace(WLANModulationParameterRegistry::instance().findModulationById(id).type);
+    try {
+        for (auto const & id : ids)
+            types.emplace(WLANModulationParameterRegistry::instance().findModulationById(id).type);
+    }
+    catch(std::exception & e) {
+        throw InvalidArgumentException("Unknown WLANModulationParameter") << e.what();
+    }
     if (types.size() != 1) {
         throw InvalidArgumentException("WLANModulationParameter mismatch");
     }

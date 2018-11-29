@@ -180,7 +180,7 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
     const
 {
     Modulations::const_iterator it (modulations_.find(id));
-    if (it == modulations_.end())
+    if (it == modulations_.end() or (id == parameterIdUnknown_))
         return std::set<senf::emu::ModulationParameter::id_t> ();
     
     std::set<ModulationParameter::id_t> res;
@@ -209,7 +209,7 @@ prefix_ std::set<senf::emu::ModulationParameter::id_t> senf::emu::WLANModulation
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterRegistry::parameterIdAsSGI(ModulationParameter::id_t id)
-    const
+     const
 {
     Modulations::const_iterator it (modulations_.find(id));
     if (it == modulations_.end())
@@ -248,7 +248,7 @@ prefix_ senf::emu::ModulationParameter::id_t senf::emu::WLANModulationParameterR
     const
 {
     Modulations::const_iterator it (modulations_.find(id));
-    if (it == modulations_.end())
+    if (it == modulations_.end() or (id == parameterIdUnknown_))
         return parameterIdUnknown_;
     
     if (it->second.index < diff)
