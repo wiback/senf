@@ -35,7 +35,6 @@
 #include <iosfwd>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
-#include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Tags.hh>
 
 //#include "MACAddress.mpp"
@@ -83,8 +82,7 @@ namespace senf {
         \ingroup addr_group
      */
     struct MACAddress
-        : public boost::array<boost::uint8_t,6>,
-          public comparable_safe_bool<MACAddress>
+        : public boost::array<boost::uint8_t,6>
     {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address
@@ -121,7 +119,8 @@ namespace senf {
         bool local() const;             ///< \c true, if address is locally administered
         bool multicast() const;         ///< \c true, if address is a group/multicast address
         bool broadcast() const;         ///< \c true, if address is the broadcast address
-        bool boolean_test() const;      ///< \c true, if address is not the zero address
+
+        explicit operator bool() const; ///< \c true, if address is not the zero address
 
         void local(bool flag);
         void multicast(bool flag);
