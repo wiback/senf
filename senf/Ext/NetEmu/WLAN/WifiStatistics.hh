@@ -32,7 +32,7 @@
 extern "C" {
 #  include <sys/stat.h>
 }
-#include <unordered_map>
+#include <boost/unordered/unordered_map.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <senf/Socket/FileHandle.hh>
 #include <senf/Socket/Protocols/Raw/MACAddress.hh>
@@ -147,7 +147,7 @@ namespace emu {
         WifiStatisticsData(WifiStatsKernel const &);
     };
 
-    typedef std::unordered_map<senf::MACAddress,WifiStatisticsData> WifiStatisticsMap;
+    typedef boost::unordered_map<senf::MACAddress,WifiStatisticsData> WifiStatisticsMap;
 
     class WifiStatistics {
     public:

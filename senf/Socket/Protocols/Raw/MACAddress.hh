@@ -132,6 +132,8 @@ namespace senf {
         boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
         boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
 
+        boost::uint32_t const & hash32() const;
+
         void hash(boost::uint64_t * hash, boost::uint16_t otherKey = 0) const; ///< computes a fast uint64 hash mixing in another 16 value
     };
 
@@ -151,16 +153,28 @@ namespace senf {
     bool operator==(EUI64 const & eui64, MACAddress const & mac);
     bool operator<(MACAddress const & me, MACAddress const & other);
 
+# if __SIZEOF_SIZE_T__ == 8
     std::size_t hash_value(MACAddress const & mac) noexcept;
+#elif __SIZEOF_SIZE_T__ == 4
+    std::size_t const & hash_value(MACAddress const & mac) noexcept;
+#else
+    std::size_t hash_value(MACAddress const & mac) noexcept;    
+#endif
 }
 
 #ifdef SENF_CXX11_ENABLED
 namespace std {
     template<> struct hash<senf::MACAddress>
     {
+# if __SIZEOF_SIZE_T__ == 8
         std::size_t operator()(senf::MACAddress const & mac) const noexcept {
             return senf::hash_value(mac);
         }
+#elif  __SIZEOF_SIZE_T__ == 4
+        std::size_t const & operator()(senf::MACAddress const & mac) const noexcept {
+            return mac.hash32();
+        }
+#endif
     };
 }
 #endif

@@ -158,6 +158,11 @@ prefix_ void senf::MACAddress::hash(boost::uint64_t * hash, boost::uint16_t othe
     std::copy(&otherKey,   &otherKey+1,  ((std::uint16_t*)hash) + 3);
 }
 
+prefix_ boost::uint32_t const & senf::MACAddress::hash32()
+    const
+{
+    return *( (std::uint32_t const *) &(reinterpret_cast<std::uint8_t const *> (&(*this))[2]));
+}
 
 prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
 {
@@ -176,19 +181,24 @@ prefix_ bool senf::operator<(MACAddress const & me, MACAddress const & other)
     return me.uint64() < other.uint64();
 }
 
+# if __SIZEOF_SIZE_T__ == 8
 prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) noexcept
 {
-# if __SIZEOF_SIZE_T__ == 8
-        return boost::hash<boost::uint64_t>().operator()(
-                (boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) |
-                 boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&mac[4])) );
-#elif  __SIZEOF_SIZE_T__ == 4
-        return boost::hash<boost::uint32_t>().operator()(
-                *reinterpret_cast<boost::uint32_t const *>(&mac[2]) );
-#else
-        BOOST_STATIC_ASSERT_MSG(true, "unknown sizeof(std::size_t)");
-#endif
+    return boost::hash<boost::uint64_t>().operator()(
+        (boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) |
+        boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&mac[4])) );
 }
+#elif __SIZEOF_SIZE_T__ == 4
+prefix_ std::size_t const & senf::hash_value(senf::MACAddress const & mac) noexcept
+{
+    return mac.hash32();
+}
+#else
+prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) noexcept
+{
+    BOOST_STATIC_ASSERT_MSG(true, "unknown sizeof(std::size_t)");
+}
+#endif
 
 
 
