@@ -51,15 +51,13 @@ prefix_ bool senf::MACAddressParser::multicast()
 prefix_ bool senf::MACAddressParser::broadcast()
     const
 {
-    using  boost::lambda::_1;
-    return std::find_if(i(), i(6), _1 != 0xffu) == i(6);
+    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) ^ *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0xffff0000;
 }
 
 prefix_ bool senf::MACAddressParser::null()
     const
 {
-    using  boost::lambda::_1;
-    return std::find_if(i(), i(6), _1 != 0x00u) == i(6);
+    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0;
 }
 
 prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash, boost::uint16_t otherKey)
