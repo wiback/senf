@@ -439,7 +439,7 @@ prefix_ void senf::emu::WirelessNLController::set_regulatory(RegulatoryDomain co
             NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_MAX_BW,   rule.maxBandwidth());
             NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_ANT_GAIN, rule.maxAntennaGain());
             NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_EIRP, rule.maxEIRP());
-//            NLA_PUT_U32( msg, NL80211_ATTR_DFS_CAC_TIME,        rule.cacTime());
+            NLA_PUT_U32( msg, NL80211_ATTR_DFS_CAC_TIME,        rule.cacTime());
         }
     }
 
