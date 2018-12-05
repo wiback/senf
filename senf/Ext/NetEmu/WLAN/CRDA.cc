@@ -552,7 +552,9 @@ static int put_reg_rule(senf::emu::RegulatoryRule const & rule, struct nl_msg *m
     NLA_PUT_U32( msg, NL80211_ATTR_FREQ_RANGE_MAX_BW,   rule.maxBandwidth());
     NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_ANT_GAIN, rule.maxAntennaGain());
     NLA_PUT_U32( msg, NL80211_ATTR_POWER_RULE_MAX_EIRP, rule.maxEIRP());
-    
+    if (rule.cacTime() > 0)
+        NLA_PUT_U32(msg, NL80211_ATTR_DFS_CAC_TIME, rule.cacTime());
+
     return 0;
     
  nla_put_failure:
