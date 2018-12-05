@@ -93,8 +93,12 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxBandwidth(40000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(4900000, 6100000)
+                                     .frequencyRange(4900000, 5815000)
                                      .maxBandwidth(80000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(5815000, 6100000)
+                                     .maxBandwidth(20000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(57240000, 63720000)
@@ -137,8 +141,12 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .cacTime(60000)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(5735000, 6100000)
+                                     .frequencyRange(5735000, 5815000)
                                      .maxBandwidth(80000)
+                                     .maxEIRP(3000) );
+        worldRegDomain_.rules.insert(RegulatoryRule()
+                                     .frequencyRange(5815000, 6100000)
+                                     .maxBandwidth(20000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
                                      .frequencyRange(57240000, 63720000)
