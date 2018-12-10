@@ -45,7 +45,7 @@ env.Replace( LIBS      = [ lib for lib in env['LIBS'] if not lib.startswith('$BO
 env.Append(  LINKFLAGS = [ '-Wl,-Bdynamic' ],
              LINKCOM   = ' -Wl,-Bstatic ' + ' '.join(boostlibs) + ' -Wl,-Bdynamic' )
 
-crda = env.Program('crda', sources + ['crda.cc', '${BUNDLEDIR}/AllBundles${LIBADDSUFFIX}.o'])
+crda = env.Program('crda', sources + ['crda.cc', '${BUNDLEDIR}/libsenf.a'])
 
 env.Command('strip', [crda], ['strip -Xxs crda'])
 
