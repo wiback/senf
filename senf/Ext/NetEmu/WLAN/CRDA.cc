@@ -129,13 +129,13 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .cacTime(60000)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(5470000, 5725000)
+                                     .frequencyRange(5470000, 5730000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000)
                                      .cacTime(60000)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(5725000, 5925000)
+                                     .frequencyRange(5735000, 5925000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()

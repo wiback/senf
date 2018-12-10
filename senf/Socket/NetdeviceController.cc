@@ -200,7 +200,7 @@ prefix_ void senf::NetdeviceController::addVLAN(std::uint16_t vlanId)
     vlan_request.cmd     = ADD_VLAN_CMD;
     vlan_request.u.VID   = vlanId;
     strncpy(vlan_request.device1, interfaceName().c_str(), sizeof(vlan_request.device1));
-    doIoctl (vlan_request, SIOCSIFVLAN, "failed to add VLAN interface");
+    doIoctl (vlan_request, SIOCSIFVLAN, "failed to add VLanId " + senf::str(vlanId) + " to " + interfaceName());
 }
 
 prefix_ void senf::NetdeviceController::delVLAN(std::uint16_t vlanId)
@@ -209,7 +209,7 @@ prefix_ void senf::NetdeviceController::delVLAN(std::uint16_t vlanId)
     memset(&vlan_request, 0, sizeof(vlan_request));
     vlan_request.cmd     = DEL_VLAN_CMD;
     strncpy(vlan_request.device1, (interfaceName() + "." + senf::str(vlanId)).c_str(), sizeof(vlan_request.device1));
-    doIoctl (vlan_request, SIOCSIFVLAN, "failed to delete VLAN interface");
+    doIoctl (vlan_request, SIOCSIFVLAN, "failed to delete VLanId " + senf::str(vlanId) + " from " + interfaceName());
 }
 
 prefix_ void senf::NetdeviceController::timestamping(int txType, int rxFilter)
