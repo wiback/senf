@@ -77,6 +77,8 @@ prefix_ senf::emu::CRDA::CRDA()
 
         SENF_LOG( (senf::log::IMPORTANT) (logTag_ << "DFS-Unset mode enabled.") );
 
+	// see: https://en.wikipedia.org/wiki/U-NII
+
         // Regd debug world regulatory domain
         worldRegDomain_.alpha2Country = "";  // leave this blank here !!!
         worldRegDomain_.dfsRegion = RegulatoryDomain::DFSRegion(dfsRegionFlag());
@@ -93,7 +95,7 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .maxBandwidth(40000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(4900000, 6100000)
+                                     .frequencyRange(4900000, 5925000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
@@ -127,13 +129,13 @@ prefix_ senf::emu::CRDA::CRDA()
                                      .cacTime(60000)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(5470000, 5730000)
+                                     .frequencyRange(5470000, 5725000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000)
                                      .cacTime(60000)
                                      .dfsRequired(true) );
         worldRegDomain_.rules.insert(RegulatoryRule()
-                                     .frequencyRange(5735000, 6100000)
+                                     .frequencyRange(5725000, 5925000)
                                      .maxBandwidth(80000)
                                      .maxEIRP(3000) );
         worldRegDomain_.rules.insert(RegulatoryRule()
