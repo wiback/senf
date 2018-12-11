@@ -77,9 +77,14 @@ prefix_ void senf::NetdeviceController::reset(std::string const & interface_name
 prefix_ std::string senf::NetdeviceController::interfaceName()
     const
 {
-    struct ifreq ifr;
-    ifrName( ifr);
-    return std::string( ifr.ifr_name);
+    try {
+        struct ifreq ifr;
+        ifrName( ifr);
+        return std::string( ifr.ifr_name);
+    }
+    catch(...) {
+        return "(interface not known)";
+    }
 }
 
 prefix_ void senf::NetdeviceController::interfaceName(std::string const & newname)
