@@ -960,6 +960,43 @@ prefix_ senf::emu::WirelessNLController::IfaceType::Enum senf::emu::WirelessNLCo
     return ifaceType_;
 }
 
+prefix_ void senf::emu::WirelessNLController::type(IfaceType::Enum type)
+{
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_SET_INTERFACE, CIB_IF));
+
+    switch (type) {
+    case IfaceType::Enum::AdHoc:
+        NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_ADHOC);
+        break;
+    case IfaceType::Enum::Station:
+        NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_STATION);
+        break;
+    case IfaceType::Enum::AP:
+        NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_AP);
+        break;
+    case IfaceType::Enum::APVLan:
+        NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_AP_VLAN);
+        break;
+    case IfaceType::Enum::WDS:
+        NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_WDS);
+        break;
+    case IfaceType::Enum::Monitor:
+        NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_MONITOR);
+        break;
+    case IfaceType::Enum::MeshPoint:
+        NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, NL80211_IFTYPE_MESH_POINT);
+        break;
+    case IfaceType::Enum::Unspecified:
+    case IfaceType::Enum::Unknown:
+    default:
+        throw senf::SystemException( "Unknown interface type ", EINVAL) << unsigned(type);
+        break;
+    }
+
+    send_and_wait4response(msg);
+}
+
+
 prefix_ void senf::emu::WirelessNLController::add_monInterface(std::string const & name, int flags)
 {
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_NEW_INTERFACE, CIB_PHY, NLM_F_ACK));

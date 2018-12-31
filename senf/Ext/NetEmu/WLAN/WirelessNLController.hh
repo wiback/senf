@@ -390,7 +390,7 @@ namespace emu {
         void add_adhocInterface(std::string const & name);
         void add_apInterface(std::string const & name);
         void add_meshInterface(std::string const & name, std::string const & meshId = "");
-
+        
         void del_interface(std::string const & name);
 
         void set_retryLimit(boost::uint8_t shortLimit, boost::uint8_t longLimit);
@@ -442,6 +442,7 @@ namespace emu {
         BitrateParameters const & bitrates();  ///< Return valid bitrates
 
         IfaceType::Enum type();
+        void type(IfaceType::Enum);
 
         std::set<Band_t> const & supportedBands();
 
