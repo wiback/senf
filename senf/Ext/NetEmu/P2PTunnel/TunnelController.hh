@@ -227,7 +227,7 @@ namespace detail {
 
             TunnelClient(MACAddress const & _macAddr, INet6SocketAddress const & _inetAddr)
                 : macAddr(_macAddr), inetAddr(_inetAddr), lastSeen(scheduler::now()), txSeqNo(0), rxSeqNo(0xffffffff), reSyncs(0),
-                  fragmentationThreshold(1280u - TunnelControllerBase::TunnelOverhead) {}
+                  fragmentationThreshold(1280u) {}
         };
 
         struct ByLastSeen {};

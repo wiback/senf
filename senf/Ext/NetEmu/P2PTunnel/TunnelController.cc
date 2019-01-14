@@ -226,10 +226,10 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
     
     if (!qAlgo_->empty()) {
         stats_.txOverrun++;
-        if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
+        if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second + TunnelOverhead)) {
              stats_.txDSQDropped += !qAlgo_->enqueue(pkt);
         } else {
-            fragmenter_.fragmentFrame(pkt,txInfo.second);
+            fragmenter_.fragmentFrame(pkt,txInfo.second + TunnelOverhead);
             bool force (false);  // if the first fragment has been enqueue()d, force all subsequent frags to be enqueue()d, as well
             for (auto & frag : fragmenter_.fragments()) {
                 if (!force and !qAlgo_->enqueue(frag, force)) {
@@ -242,7 +242,7 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
         return true;
     }
 
-    if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second)) {
+    if (isTunnelCtrlPacket(pkt) or !fragmenter_.fragmentationRequired(pkt,txInfo.second + TunnelOverhead)) {
         if (handle.writeable()) {
             do_sendPkt(handle, pkt, txInfo);
         } else {
@@ -252,7 +252,7 @@ prefix_ bool senf::emu::detail::TunnelControllerBase::sendPkt(Handle & handle, M
         return true;
     }
 
-    fragmenter_.fragmentFrame(pkt,txInfo.second);
+    fragmenter_.fragmentFrame(pkt,txInfo.second + TunnelOverhead);
     bool force (false);
     for (auto & frag : fragmenter_.fragments()) {
         if (handle.writeable()) {
@@ -555,10 +555,10 @@ prefix_ void senf::emu::detail::TunnelServerController::fragmentationThreshold(M
 
     Clients_by_macAddr::const_iterator client (clients_by_macAddr_.find(clientAddr));
     if ( client != clients_by_macAddr_.end()) {
-        clients_by_macAddr_.modify( client, TunnelClient::updateFragmentationThreshold(ft - TunnelOverhead));
+        clients_by_macAddr_.modify( client, TunnelClient::updateFragmentationThreshold(ft));
     } else {
         for (auto it = clients_by_macAddr_.begin(); it != clients_by_macAddr_.end(); it++) {
-            clients_by_macAddr_.modify( it, TunnelClient::updateFragmentationThreshold(ft - TunnelOverhead));
+            clients_by_macAddr_.modify( it, TunnelClient::updateFragmentationThreshold(ft));
         }
     }
 }
@@ -567,7 +567,7 @@ prefix_ unsigned senf::emu::detail::TunnelServerController::fragmentationThresho
     const
 {
     Clients_by_macAddr::const_iterator client (clients_by_macAddr_.find(clientAddr));
-    return client != clients_by_macAddr_.end() ? (client->fragmentationThreshold + TunnelOverhead) : 0;
+    return client != clients_by_macAddr_.end() ? (client->fragmentationThreshold) : 0;
 }
 
 
@@ -586,7 +586,7 @@ prefix_ void senf::emu::detail::TunnelServerController::v_dumpInfo(std::ostream 
         os << fmtClient
               % senf::str(client.inetAddr)
               % senf::str(client.macAddr)
-              % senf::str(client.fragmentationThreshold + TunnelOverhead)
+              % senf::str(client.fragmentationThreshold)
               % ClockService::in_seconds(scheduler::now() - client.lastSeen) % "sec."
               % get(client.capacity, tunnel::FromServerToClient)
               % get(client.capacity, tunnel::FromClientToServer)
@@ -778,13 +778,13 @@ prefix_ void senf::emu::detail::TunnelClientController::fragmentationThreshold(u
     if (ft == 0)
         ft = 1280u;
 
-    fragmentationThreshold_ = ft - TunnelOverhead;
+    fragmentationThreshold_ = ft;
 }
 
 prefix_ unsigned senf::emu::detail::TunnelClientController::fragmentationThreshold()
     const
 {
-    return fragmentationThreshold_ + TunnelOverhead;
+    return fragmentationThreshold_;
 }
 
 prefix_ void senf::emu::detail::TunnelClientController::v_timeoutChanged()
