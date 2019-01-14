@@ -337,6 +337,7 @@ prefix_ void senf::emu::detail::TunnelControllerBase::dumpInfo(std::ostream & os
        << "Enabled: " << (interface_.enabled() ? "yes" : "no") << std::endl
        << "Timeout: " << ClockService::in_seconds(timeout_) << " sec." << std::endl;
     os << "IOStats: " << stats_.stats().dump() << std::endl;
+    os << "qAlgo.size: " <<  qAlgo_->size() << std::endl;
     os << "Tunnel Overhead: " << TunnelOverhead << std::endl;
     os << "FragmentationStats: out " << fragmenter_.fragmentationCount() << ", in " << reassembler_.packetsReassembled() << std::endl;
 
