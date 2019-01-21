@@ -32,6 +32,7 @@
 #define HH_config_ 1
 
 // Custom includes
+#include <cstdint>
 #include <boost/cstdint.hpp>
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +40,8 @@
 namespace senf {
 namespace config {
 
-    typedef boost::int_fast64_t time_type;
+    typedef std::int64_t time_type;
+    typedef std::int32_t time_type_coarse;
 
 }}
 

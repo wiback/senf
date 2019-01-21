@@ -91,7 +91,7 @@ prefix_ senf::ClockService::reltime_type senf::ClockService::reltime(clock_type 
 #endif
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::clock(abstime_type time)
+prefix_ senf::ClockService::clock_type senf::ClockService::clock(abstime_type const & time)
 {
     return instance().clock_m(time);
 }
@@ -115,92 +115,92 @@ prefix_ senf::ClockService::clock_type_coarse senf::ClockService::coarseDiff(clo
     return diff;
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR std::int32_t senf::ClockService::coarseToMs(clock_type_coarse v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR std::int32_t senf::ClockService::coarseToMs(clock_type_coarse const & v)
 {
     return std::int32_t(v * 1);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::msToCoarse(std::int32_t v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::msToCoarse(std::int32_t const & v)
 {
     return clock_type_coarse(v * 1);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::fromCoarse(clock_type_coarse v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::fromCoarse(clock_type_coarse const & v)
 {
     return clock_type(v) * 1000000LL;
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::toCoarse(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type_coarse senf::ClockService::toCoarse(clock_type const & v)
 {
     return clock_type_coarse((SENF_CLOCKTYPEVAL(v) / 1000000LL) % 0x80000000);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::nanoseconds(int64_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::nanoseconds(int64_type const & v)
 {
     return clock_type(v);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::microseconds(int64_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::microseconds(int64_type const & v)
 {
     return v * nanoseconds(1000);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::milliseconds(int64_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::milliseconds(int64_type const & v)
 {
     return v * microseconds(1000);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::seconds(int64_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::seconds(int64_type const & v)
 {
     return v * milliseconds(1000);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::minutes(int64_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::minutes(int64_type const & v)
 {
     return v * seconds(60);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::hours(int64_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::hours(int64_type const & v)
 {
     return v * minutes(60);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::days(int64_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::clock_type senf::ClockService::days(int64_type const & v)
 {
     return v * hours(24);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_nanoseconds(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_nanoseconds(clock_type const & v)
 {
     return SENF_CLOCKTYPEVAL( v);
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_microseconds(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_microseconds(clock_type const & v)
 {
     return SENF_CLOCKTYPEVAL( v / nanoseconds(1000));
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_milliseconds(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_milliseconds(clock_type const & v)
 {
     return SENF_CLOCKTYPEVAL( v / microseconds(1000));
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_seconds(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_seconds(clock_type const & v)
 {
     return SENF_CLOCKTYPEVAL( v / milliseconds(1000));
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_minutes(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_minutes(clock_type const & v)
 {
     return SENF_CLOCKTYPEVAL( v / seconds(60));
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_hours(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_hours(clock_type const & v)
 {
     return SENF_CLOCKTYPEVAL( v / minutes(60));
 }
 
-prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_days(clock_type v)
+prefix_ SENF_CLOCKSERVICE_CONSTEXPR senf::ClockService::int64_type senf::ClockService::in_days(clock_type const & v)
 {
     return SENF_CLOCKTYPEVAL( v / hours(24));
 }
