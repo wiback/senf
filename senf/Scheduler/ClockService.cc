@@ -63,7 +63,7 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
     boost::sregex_iterator i (value.begin(), value.end(), rx);
     boost::sregex_iterator const i_end;
     std::string::const_iterator j (value.begin());
-    if (value.find('.') == std::string::npos) {
+    if (value.find('.') != std::string::npos) {
         // double version of parser
         for (; i != i_end; ++i) {
             boost::sregex_iterator::value_type::value_type match ((*i)[0]);
