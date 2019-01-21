@@ -63,33 +63,67 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
     boost::sregex_iterator i (value.begin(), value.end(), rx);
     boost::sregex_iterator const i_end;
     std::string::const_iterator j (value.begin());
-    for (; i != i_end; ++i) {
-        boost::sregex_iterator::value_type::value_type match ((*i)[0]);
-        long double v (boost::lexical_cast<long double>(std::string(j, match.first)));
-        char scale (0);
-        char unit (0);
-        if (match.length() == 2) {
-            scale = *match.first;
-            unit = *boost::next(match.first);
-        } else {
-            SENF_ASSERT( match.length() == 1,
-                         "Internal failure: RegEx match returns weird number of matches" );
-            unit = *match.first;
+    if (value.find('.') == std::string::npos) {
+        // double version of parser
+        for (; i != i_end; ++i) {
+            boost::sregex_iterator::value_type::value_type match ((*i)[0]);
+            long double v (boost::lexical_cast<long double>(std::string(j, match.first)));
+            char scale (0);
+            char unit (0);
+            if (match.length() == 2) {
+                scale = *match.first;
+                unit = *boost::next(match.first);
+            } else {
+                SENF_ASSERT( match.length() == 1,
+                             "Internal failure: RegEx match returns weird number of matches" );
+                unit = *match.first;
+            }
+            switch (scale) {
+            case 0: break;
+            case 'n': v /= 1000.0;  // fall through
+            case 'u': v /= 1000.0;  // fall through
+            case 'm': v /= 1000.0;
+            }
+            switch (unit) {
+            case 'd': v *= 24.0;  // fall through
+            case 'h': v *= 60.0;  // fall through
+            case 'm': v *= 60.0;  // fall through
+            case 's': v *= 1000000000.0;
+            }
+            out += ClockService::nanoseconds(ClockService::int64_type(v));
+            j = match.second;
         }
-        switch (scale) {
-        case 0: break;
-        case 'n': v /= 1000.0;  // fall through
-        case 'u': v /= 1000.0;  // fall through
-        case 'm': v /= 1000.0;
+    }
+    else {
+        // int64 version of parser
+        for (; i != i_end; ++i) {
+            boost::sregex_iterator::value_type::value_type match ((*i)[0]);
+            ClockService::int64_type v (boost::lexical_cast<ClockService::int64_type>(std::string(j, match.first)));
+            char scale (0);
+            char unit (0);
+            if (match.length() == 2) {
+                scale = *match.first;
+                unit = *boost::next(match.first);
+            } else {
+                SENF_ASSERT( match.length() == 1,
+                             "Internal failure: RegEx match returns weird number of matches" );
+                unit = *match.first;
+            }
+            switch (scale) {
+            case 0: break;
+            case 'n': v /= 1000;  // fall through
+            case 'u': v /= 1000;  // fall through
+            case 'm': v /= 1000;
+            }
+            switch (unit) {
+            case 'd': v *= 24;  // fall through
+            case 'h': v *= 60;  // fall through
+            case 'm': v *= 60;  // fall through
+            case 's': v *= 1000000000;
+            }
+            out += ClockService::nanoseconds(v);
+            j = match.second;
         }
-        switch (unit) {
-        case 'd': v *= 24.0;  // fall through
-        case 'h': v *= 60.0;  // fall through
-        case 'm': v *= 60.0;  // fall through
-        case 's': v *= 1000000000.0;
-        }
-        out += ClockService::nanoseconds(ClockService::int64_type(v));
-        j = match.second;
     }
     if (j != value.end())
         throw console::SyntaxErrorException();
