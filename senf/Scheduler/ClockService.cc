@@ -78,17 +78,17 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
                              "Internal failure: RegEx match returns weird number of matches" );
                 unit = *match.first;
             }
-            switch (scale) {
-            case 0: break;
-            case 'n': v /= 1000.0;  // fall through
-            case 'u': v /= 1000.0;  // fall through
-            case 'm': v /= 1000.0;
-            }
             switch (unit) {
             case 'd': v *= 24.0;  // fall through
             case 'h': v *= 60.0;  // fall through
             case 'm': v *= 60.0;  // fall through
             case 's': v *= 1000000000.0;
+            }
+            switch (scale) {
+            case 0: break;
+            case 'n': v /= 1000.0;  // fall through
+            case 'u': v /= 1000.0;  // fall through
+            case 'm': v /= 1000.0;
             }
             out += ClockService::nanoseconds(ClockService::int64_type(v));
             j = match.second;
@@ -109,17 +109,17 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
                              "Internal failure: RegEx match returns weird number of matches" );
                 unit = *match.first;
             }
-            switch (scale) {
-            case 0: break;
-            case 'n': v /= 1000;  // fall through
-            case 'u': v /= 1000;  // fall through
-            case 'm': v /= 1000;
-            }
             switch (unit) {
             case 'd': v *= 24;  // fall through
             case 'h': v *= 60;  // fall through
             case 'm': v *= 60;  // fall through
             case 's': v *= 1000000000;
+            }
+            switch (scale) {
+            case 0: break;
+            case 'n': v /= 1000;  // fall through
+            case 'u': v /= 1000;  // fall through
+            case 'm': v /= 1000;
             }
             out += ClockService::nanoseconds(v);
             j = match.second;
