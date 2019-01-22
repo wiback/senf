@@ -49,6 +49,49 @@
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+template <class T> static senf::ClockService::clock_type
+parseClockServiceInterval__(std::string const & value)
+{
+    senf::ClockService::clock_type out (senf::ClockService::clock_type(0));
+
+    static boost::sregex_iterator::regex_type rx ("[mun]?[dhms]");
+    boost::sregex_iterator i (value.begin(), value.end(), rx);
+    boost::sregex_iterator const i_end;
+    std::string::const_iterator j (value.begin());
+    for (; i != i_end; ++i) {
+        boost::sregex_iterator::value_type::value_type match ((*i)[0]);
+        T v (boost::lexical_cast<T>(std::string(j, match.first)));
+        char scale (0);
+        char unit (0);
+        if (match.length() == 2) {
+            scale = *match.first;
+            unit = *boost::next(match.first);
+        } else {
+            SENF_ASSERT( match.length() == 1,
+                         "Internal failure: RegEx match returns weird number of matches" );
+            unit = *match.first;
+        }
+        switch (unit) {
+        case 'd': v *= 24;  // fall through
+        case 'h': v *= 60;  // fall through
+        case 'm': v *= 60;  // fall through
+        case 's': v *= 1000000000;
+        }
+        switch (scale) {
+        case 0: break;
+        case 'n': v /= 1000;  // fall through
+        case 'u': v /= 1000;  // fall through
+        case 'm': v /= 1000;
+        }
+        out += senf::ClockService::nanoseconds(senf::ClockService::int64_type(v));
+        j = match.second;
+    }
+    if (j != value.end())
+        throw senf::console::SyntaxErrorException();
+
+    return out;
+}
+
 prefix_ void
 senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & tokens,
                                 ClockService::clock_type & out)
@@ -59,74 +102,13 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
         console::CheckedArgumentIteratorWrapper arg (tokens);
         console::parse( *(arg++), value );
     }
-    static boost::sregex_iterator::regex_type rx ("[mun]?[dhms]");
-    boost::sregex_iterator i (value.begin(), value.end(), rx);
-    boost::sregex_iterator const i_end;
-    std::string::const_iterator j (value.begin());
+
+    // only use the double parser for float values
     if (value.find('.') != std::string::npos) {
-        // double version of parser
-        for (; i != i_end; ++i) {
-            boost::sregex_iterator::value_type::value_type match ((*i)[0]);
-            long double v (boost::lexical_cast<long double>(std::string(j, match.first)));
-            char scale (0);
-            char unit (0);
-            if (match.length() == 2) {
-                scale = *match.first;
-                unit = *boost::next(match.first);
-            } else {
-                SENF_ASSERT( match.length() == 1,
-                             "Internal failure: RegEx match returns weird number of matches" );
-                unit = *match.first;
-            }
-            switch (unit) {
-            case 'd': v *= 24.0;  // fall through
-            case 'h': v *= 60.0;  // fall through
-            case 'm': v *= 60.0;  // fall through
-            case 's': v *= 1000000000.0;
-            }
-            switch (scale) {
-            case 0: break;
-            case 'n': v /= 1000.0;  // fall through
-            case 'u': v /= 1000.0;  // fall through
-            case 'm': v /= 1000.0;
-            }
-            out += ClockService::nanoseconds(ClockService::int64_type(v));
-            j = match.second;
-        }
+        out = parseClockServiceInterval__<long double>(value);
+    } else {
+        out = parseClockServiceInterval__<ClockService::int64_type>(value);
     }
-    else {
-        // int64 version of parser
-        for (; i != i_end; ++i) {
-            boost::sregex_iterator::value_type::value_type match ((*i)[0]);
-            ClockService::int64_type v (boost::lexical_cast<ClockService::int64_type>(std::string(j, match.first)));
-            char scale (0);
-            char unit (0);
-            if (match.length() == 2) {
-                scale = *match.first;
-                unit = *boost::next(match.first);
-            } else {
-                SENF_ASSERT( match.length() == 1,
-                             "Internal failure: RegEx match returns weird number of matches" );
-                unit = *match.first;
-            }
-            switch (unit) {
-            case 'd': v *= 24;  // fall through
-            case 'h': v *= 60;  // fall through
-            case 'm': v *= 60;  // fall through
-            case 's': v *= 1000000000;
-            }
-            switch (scale) {
-            case 0: break;
-            case 'n': v /= 1000;  // fall through
-            case 'u': v /= 1000;  // fall through
-            case 'm': v /= 1000;
-            }
-            out += ClockService::nanoseconds(v);
-            j = match.second;
-        }
-    }
-    if (j != value.end())
-        throw console::SyntaxErrorException();
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type const & time)
