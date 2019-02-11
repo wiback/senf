@@ -47,6 +47,8 @@
 namespace senf {
 namespace emu {
 
+    const short DEFAULT_WLAN_NOISE=-110;
+
     // forward declarations:
     class WLANModulationParameterRegistry;
 
