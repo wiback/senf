@@ -35,6 +35,8 @@
 #include <senf/Scheduler/ClockService.hh>
 #include "MGENPacket.hh"
 #include "IperfPacket.hh"
+#include "MPLSPacket.hh"
+#include "TIMPacket.hh"
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -165,6 +167,7 @@ public:
     bool v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize = 0);
     bool v_analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
     bool v_analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
+    bool v_analyze(senf::TIMPacket const & tim, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
 
     void getRssi(senf::StatisticsData & data);
     void getNoise(senf::StatisticsData & data);

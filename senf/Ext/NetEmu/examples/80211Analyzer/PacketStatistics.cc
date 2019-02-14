@@ -158,6 +158,26 @@ prefix_ bool FlowStatistics::v_analyze(IperfUDPPacket const & iperf, senf::Annot
     return true;
 }
 
+prefix_ bool FlowStatistics::v_analyze(senf::TIMPacket const & tim, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
+{
+    if (!v_analyze(tim, ap, payloadSize))
+        return false;
+
+    // calculate the packet latency: clocks must be synced !!!
+    timeval tv;
+    gettimeofday( &tv, NULL);
+    boost::int64_t current = boost::int64_t(tv.tv_sec)             * 1000000 + boost::int64_t(tv.tv_usec);
+    boost::int64_t packet  = boost::int64_t(tim->timestamp()) * 1000;
+    float clockDriftOffset = (float(senf::ClockService::in_microseconds(senf::ClockService::now() - startTime)) * clockDrift) / 1000000.0f;
+    latency.accumulate( (current - packet) - boost::int64_t(clockDriftOffset));
+
+    // now, calculate the loss
+    loss.update(tim->sequenceNumber());
+
+    return true;
+}
+
+
 prefix_ void FlowStatistics::getRssi(senf::StatisticsData & data)
 {
     rssi.data( data);

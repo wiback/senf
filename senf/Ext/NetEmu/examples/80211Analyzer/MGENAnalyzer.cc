@@ -53,6 +53,12 @@ prefix_ FlowStatistics & MGENAnalyzer::getFlowStats(boost::uint32_t flowId)
     return flowStatsMap.find( flowId)->second;
 }
 
+prefix_ bool MGENAnalyzer::v_handleMPLSPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
+        senf::MPLSPacket const& mpls, senf::TIMPacket const & tim)
+{
+    getFlowStats(mpls->label()).v_analyze(tim, ap, tim.size(), configuration_.clockDrift, startTime());
+}
+
 prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
         senf::IPv4Packet const& ip4, senf::UDPPacket const & udp)
 {

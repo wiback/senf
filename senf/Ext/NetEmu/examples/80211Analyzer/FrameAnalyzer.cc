@@ -167,26 +167,39 @@ prefix_ void FrameAnalyzer::handleControlFrame(senf::WLANPacket_CtrlFrame const 
 
 prefix_ void FrameAnalyzer::handleDataFrame(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap)
 {
-    data.v_analyze( eth, ap, eth.size());
+    data.v_analyze(eth, ap, eth.size());
 
-    senf::IPv4Packet const & ip4 (eth.next<senf::IPv4Packet>(senf::nothrow));
-    if (!ip4) {
-        dataNonUDP.v_analyze( eth, ap);
-        return;
-    }
-    senf::UDPPacket const & udp (ip4.next<senf::UDPPacket>(senf::nothrow));
-    if (!udp) {
-        dataNonUDP.v_analyze( eth, ap);
-        return;
-    }
-
-    if (v_handleUDPPacket( eth, ap, ip4, udp)) {
-        if (configuration_.numPackets > 0) {
-            if (++numPackets_ >= configuration_.numPackets) {
-                senf::scheduler::terminate();
+    senf::MPLSPacket const & mpls (eth.next<senf::MPLSPacket>(senf::nothrow));
+    if (mpls) {
+        senf::TIMPacket const & tim (eth.next<senf::TIMPacket>(senf::nothrow));
+        if (tim) {
+            if (v_handleMPLSPacket(eth, ap, mpls, tim)) {
+                if (configuration_.numPackets > 0) {
+                    if (++numPackets_ >= configuration_.numPackets) {
+                        senf::scheduler::terminate();
+                    }
+                }   
             }
         }
+        return;
     }
+    
+    senf::IPv4Packet const & ip4 (eth.next<senf::IPv4Packet>(senf::nothrow));
+    if (ip4) {
+        senf::UDPPacket const & udp (ip4.next<senf::UDPPacket>(senf::nothrow));
+        if (udp) {
+            if (v_handleUDPPacket( eth, ap, ip4, udp)) {
+                if (configuration_.numPackets > 0) {
+                    if (++numPackets_ >= configuration_.numPackets) {
+                        senf::scheduler::terminate();
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+    dataNonUDP.v_analyze(eth, ap);
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

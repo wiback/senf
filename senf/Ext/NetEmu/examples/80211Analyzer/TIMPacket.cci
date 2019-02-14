@@ -1,0 +1,152 @@
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Mathias Kretschmer <mathias.kretschmer@fokus.fraunhofer.de>
+//
+
+// Custom includes
+#include <senf/Utils/senflikely.hh>
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::TIMPacketType::nextPacketType(packet p)
+{
+    // it is assumed that a TIM header is always followed by a regular Ethernet frame
+    return senf::DataPacket::factory();
+}
+
+prefix_ void senf::TIMPacketType::finalize(packet p)
+{
+    p->oddSize() << p.size() % 2;
+}
+
+prefix_ senf::TIMPacketType::optional_range senf::TIMPacketType::nextPacketRange(packet const & p)
+{
+    return SENF_UNLIKELY(p.data().size() < parser::fixed_bytes) ?
+            PacketTypeBase::no_range() :
+            optional_range( range(
+                    p.data().begin() + parser::fixed_bytes,
+                    p.data().end() - ((p.size() % 2) ? 0 : p->oddSize()) ));
+}
+
+prefix_ std::int32_t senf::TIMPacketType::timeStampDiff(std::uint32_t current, std::uint32_t last)
+{
+    static constexpr std::int32_t maxSeq_     = TIMPacketParser::timestamp_t::max_value + 1;
+    static constexpr std::int32_t threshold_  = maxSeq_/10;
+
+    std::int32_t dist (current - last);
+
+    if (SENF_UNLIKELY(dist + threshold_ < 0))
+        return dist + maxSeq_;
+    if (SENF_UNLIKELY(dist - (maxSeq_ - threshold_) > 0))
+        return dist - maxSeq_;
+
+    return dist;
+}
+
+prefix_ std::int32_t senf::TIMPacketType::seqNoDiff(std::uint32_t current, std::uint32_t last)
+{
+    static constexpr std::int32_t maxSeq_     = TIMPacketParser::sequenceNumber_t::max_value + 1;
+    static constexpr std::int32_t threshold_  = maxSeq_/10;
+
+    std::int32_t dist (current - last);
+
+    if (SENF_UNLIKELY(dist + threshold_ < 0))
+        return dist + maxSeq_;
+    if (SENF_UNLIKELY(dist - (maxSeq_ - threshold_) > 0))
+        return dist - maxSeq_;
+
+    return dist;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::TIMSeqNoStats
+
+prefix_ void senf::TIMSeqNoStats::countGood(std::uint32_t payloadSize)
+{
+    good++;
+    goodBytes += payloadSize;
+}
+
+prefix_ bool senf::TIMSeqNoStats::process(std::uint32_t seqNo, std::uint32_t payloadSize)
+{
+    if (SENF_UNLIKELY(last_ == 0xFFFFFFFF)) {
+        countGood(payloadSize);
+        last_ = seqNo;
+        return true;
+    }
+
+    int diff (TIMPacketType::seqNoDiff(seqNo, last_));
+
+    if (SENF_LIKELY(diff == 1)) {
+        // no loss
+        countGood(payloadSize);
+        last_ = seqNo;
+        return true;
+    }
+    else if (diff == 0) {
+        // duplicate
+        duplicate++;
+    }
+    else if (diff < 0) {
+        // late frame(s) => reordering
+        if (diff <= -32) {
+            // resync to next expected SeqNo
+            resyncs++;
+            countGood(payloadSize);
+            last_ = seqNo;
+            return true;
+        } else {
+            // hm, Linux ieee80211 seems to allow reordering to happen for time to time...
+            // ... so, let's account for it, but not drop the frame
+            late++;
+            return true;
+        }
+    } else {
+        // frame loss
+        lost += diff-1;
+        countGood(payloadSize);
+        last_ = seqNo;
+        return true;
+    }
+    return false;
+}
+
+prefix_ bool senf::TIMSeqNoStats::processSeqNo(TIMPacket const & tim)
+{
+    return process(tim->sequenceNumber(), tim.size() - TIMPacketType::parser::fixed_bytes);
+}
+
+prefix_ bool senf::TIMSeqNoStats::processLLSeqNo(TIMPacket const & tim)
+{
+    return process(tim->linkLocalSeqNo(), tim.size() - TIMPacketType::parser::fixed_bytes);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::TIMTimestampStats
+
+prefix_ void senf::TIMTimestampStats::process(TIMPacket const & tim) {
+    std::int32_t diff (TIMPacketType::timeStampDiff(tim.annotation<senf::emu::annotations::Timestamp>().as_milli_seconds((TIMPacketParser::timestamp_t::max_value + 1)), tim->timestamp()));
+
+    // first packet seen => establish the typical delay
+    if (SENF_UNLIKELY(lastPD_ == 0x7FFFFFFF)) {
+        lastPD_ = diff;
+    }
+
+    pdv.accumulate(unsigned(abs(diff - lastPD_)));
+    lastPD_ = diff;
+
+    if (tim->syn()) {  // we need to also check if our clock is synced
+        if (SENF_UNLIKELY(diff < 0))
+            diff = (TIMPacketParser::timestamp_t::max_value + 1);  // error
+        delay.accumulate(unsigned(diff));
+    }
+}
+
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_

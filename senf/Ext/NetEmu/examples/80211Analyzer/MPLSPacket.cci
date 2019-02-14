@@ -1,0 +1,32 @@
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Mathias Kretschmer <mathias.kretschmer@fokus.fraunhofer.de>
+//
+
+// Custom includes
+#include <senf/Utils/senflikely.hh>
+#include "TIMPacket.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::MPLSPacketType::nextPacketType(packet p)
+{
+    if (SENF_LIKELY(p->s()))  // last MPLS header => our fast-path
+        return senf::TIMPacket::factory();
+    else
+        return MPLSPacket::factory();
+}
+
+prefix_ void senf::MPLSPacketType::finalize(packet p)
+{
+    if (SENF_UNLIKELY(p.next(senf::nothrow).is<MPLSPacket>()))  // not the last label on the MPLS stack
+        p->s_() << false;
+    else
+        p->s_() << true;
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_

@@ -85,6 +85,8 @@ private:
 
     virtual bool v_handleUDPPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
             senf::IPv4Packet const & ip4, senf::UDPPacket const & udp) = 0;
+    virtual bool v_handleMPLSPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
+            senf::MPLSPacket const & mpls, senf::TIMPacket const & tim) = 0;
 
     virtual void v_report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration) {}
 };
