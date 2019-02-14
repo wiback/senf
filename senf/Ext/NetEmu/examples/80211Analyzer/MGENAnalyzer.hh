@@ -38,6 +38,7 @@ class MGENAnalyzer : public FrameAnalyzer
 private:
     typedef std::map<boost::uint32_t,FlowStatistics> FlowStatisticsMap;
     FlowStatisticsMap flowStatsMap;
+    bool mplsDetected_;
 
     FlowStatistics & getFlowStats(boost::uint32_t flowId);
     float sumMgenFlow(senf::ClockService::clock_type const & actualDuration);

@@ -33,7 +33,8 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 prefix_ MGENAnalyzer::MGENAnalyzer(Configuration const & configuration) :
-    FrameAnalyzer( configuration)
+    FrameAnalyzer( configuration),
+    mplsDetected_(false)
 {
 }
 
@@ -56,7 +57,9 @@ prefix_ FlowStatistics & MGENAnalyzer::getFlowStats(boost::uint32_t flowId)
 prefix_ bool MGENAnalyzer::v_handleMPLSPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
         senf::MPLSPacket const& mpls, senf::TIMPacket const & tim)
 {
+    mplsDetected_ = true;
     getFlowStats(mpls->label()).v_analyze(tim, ap, tim.size(), configuration_.clockDrift, startTime());
+    return true;
 }
 
 prefix_ bool MGENAnalyzer::v_handleUDPPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
@@ -147,7 +150,7 @@ prefix_ void MGENAnalyzer::reportHuman(FlowStatistics & flow, senf::ClockService
     flow.getRate( data_);
     std::cout << "mcs "  << senf::str( senf::format::eng( data_.avg, data_.stddev).setprecision(5).showpoint().uppercase()) << " ";
 
-    if (configuration_.mgenMode) {
+    if (configuration_.mgenMode or mplsDetected_) {
         flow.getLatency( data_);
         std::cout << "latency "  << senf::str( senf::format::eng( data_.avg, data_.stddev).setprecision(5).showpoint().uppercase()) << " "
                   << "loss "  << flow.getLoss() * 100.0 << "% "
