@@ -43,9 +43,9 @@
 class PacketStatistics
 {
 public:
-    boost::uint64_t count;
-    boost::uint64_t bytes;
-    boost::uint64_t retry;
+    std::uint64_t count;
+    std::uint64_t bytes;
+    std::uint64_t retry;
 
     senf::ClockService::clock_type airtime;
 
@@ -149,7 +149,7 @@ public:
 };
 
 
-typedef senf::StatisticAccumulator<boost::int64_t> Accumulator;
+typedef senf::StatisticAccumulator<std::int64_t> Accumulator;
 
 class FlowStatistics : public PacketStatistics
 {
@@ -159,7 +159,7 @@ public:
     Accumulator rate;
     Accumulator length;
     Accumulator latency;
-    LossCalculator<boost::uint32_t> loss;
+    LossCalculator<std::uint32_t> loss;
 
     FlowStatistics();
 
@@ -175,8 +175,8 @@ public:
     void getLength(senf::StatisticsData & data);
     void getLatency(senf::StatisticsData & data);
     float getLoss();
-    boost::int64_t getPktsDuplicate();
-    boost::int64_t getPktsLate();
+    std::int64_t getPktsDuplicate();
+    std::int64_t getPktsLate();
 };
 
 

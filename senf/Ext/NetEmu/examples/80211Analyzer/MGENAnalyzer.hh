@@ -29,6 +29,7 @@
 #define __MGENANALYZER_HH__
 
 // Custom includes
+#include "unordered_map"
 #include "FrameAnalyzer.hh"
 
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -36,11 +37,11 @@
 class MGENAnalyzer : public FrameAnalyzer
 {
 private:
-    typedef std::map<boost::uint32_t,FlowStatistics> FlowStatisticsMap;
+    typedef std::unordered_map<std::uint32_t,FlowStatistics> FlowStatisticsMap;
     FlowStatisticsMap flowStatsMap;
     bool mplsDetected_;
 
-    FlowStatistics & getFlowStats(boost::uint32_t flowId);
+    FlowStatistics & getFlowStats(std::uint32_t flowId);
     float sumMgenFlow(senf::ClockService::clock_type const & actualDuration);
 
     void reportCSV(FlowStatistics & flow, senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration);

@@ -57,7 +57,7 @@ public:
     senf::INet4SocketAddress source;
     senf::INet4SocketAddress destination;
     senf::INet4SocketAddress logDestination;
-    boost::uint64_t numPackets;
+    std::uint64_t numPackets;
 
     Configuration();
 

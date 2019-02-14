@@ -38,7 +38,7 @@ prefix_ MGENAnalyzer::MGENAnalyzer(Configuration const & configuration) :
 {
 }
 
-prefix_ FlowStatistics & MGENAnalyzer::getFlowStats(boost::uint32_t flowId)
+prefix_ FlowStatistics & MGENAnalyzer::getFlowStats(std::uint32_t flowId)
 {
     FlowStatisticsMap::iterator it (flowStatsMap.find( flowId));
     if (it != flowStatsMap.end()) {

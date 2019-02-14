@@ -38,7 +38,7 @@
 prefix_ FrameAnalyzer::FrameAnalyzer(Configuration const & configuration)
     : configuration_(configuration),
       timer_("reportingTimer", senf::membind( &FrameAnalyzer::timerEvent, this)),
-      initWait_("maxWait timer", senf::membind( &FrameAnalyzer::initWaitEvent, this)),
+      initWait_("maxWaitTimer", senf::membind( &FrameAnalyzer::initWaitEvent, this)),
       startTime_(senf::ClockService::milliseconds(0)),
       nextTimeout_(senf::ClockService::milliseconds(0)),
       numPackets_(0)
@@ -89,10 +89,14 @@ prefix_ void FrameAnalyzer::request()
         }
     }
 
-    // Look for the Annotation Packet
-    senf::AnnotationsPacket const & ap (input().find<senf::AnnotationsPacket>(senf::nothrow));
-    if (!ap)
+    // Look for the Annotation Packet. If we have one, we have receiving cooked 802.11 frames...
+    senf::EthernetPacket const & ethIn (input());
+    senf::AnnotationsPacket const & ap (ethIn.find<senf::AnnotationsPacket>(senf::nothrow));
+    if (!ap) {
+        // If not, we receive plain data frames (Ethernet)
+        handleDataFrame(ethIn, ap);
         return;
+    }
     
     handleReceivedFrame(ap);
 

@@ -70,7 +70,7 @@ private:
     senf::scheduler::TimerEvent    initWait_;
     senf::ClockService::clock_type startTime_;
     senf::ClockService::clock_type nextTimeout_;
-    boost::uint64_t                numPackets_;
+    std::uint64_t                numPackets_;
 
     void request();
     void timerEvent();

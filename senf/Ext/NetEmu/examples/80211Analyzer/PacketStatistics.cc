@@ -137,10 +137,10 @@ prefix_ bool FlowStatistics::v_analyze(MGENPacket const & mgen, senf::Annotation
     // calculate the packet latency: clocks must be synced !!!
     timeval tv;
     gettimeofday( &tv, NULL);
-    boost::int64_t current = boost::int64_t(tv.tv_sec)             * 1000000 + boost::int64_t(tv.tv_usec);
-    boost::int64_t packet  = boost::int64_t(mgen->txTimeSeconds()) * 1000000 + boost::int64_t(mgen->txTimeMicroseconds());
+    std::int64_t current = std::int64_t(tv.tv_sec)             * 1000000 + std::int64_t(tv.tv_usec);
+    std::int64_t packet  = std::int64_t(mgen->txTimeSeconds()) * 1000000 + std::int64_t(mgen->txTimeMicroseconds());
     float clockDriftOffset = (float(senf::ClockService::in_microseconds(senf::ClockService::now() - startTime)) * clockDrift) / 1000000.0f;
-    latency.accumulate( (current - packet) - boost::int64_t(clockDriftOffset));
+    latency.accumulate( (current - packet) - std::int64_t(clockDriftOffset));
 
     // now, calculate the loss
     loss.update( mgen->sequenceNumber());
@@ -166,10 +166,10 @@ prefix_ bool FlowStatistics::v_analyze(senf::TIMPacket const & tim, senf::Annota
     // calculate the packet latency: clocks must be synced !!!
     timeval tv;
     gettimeofday( &tv, NULL);
-    boost::int64_t current = boost::int64_t(tv.tv_sec)             * 1000000 + boost::int64_t(tv.tv_usec);
-    boost::int64_t packet  = boost::int64_t(tim->timestamp()) * 1000;
+    std::int64_t current = std::int64_t(tv.tv_sec)             * 1000000 + std::int64_t(tv.tv_usec);
+    std::int64_t packet  = std::int64_t(tim->timestamp()) * 1000;
     float clockDriftOffset = (float(senf::ClockService::in_microseconds(senf::ClockService::now() - startTime)) * clockDrift) / 1000000.0f;
-    latency.accumulate( (current - packet) - boost::int64_t(clockDriftOffset));
+    latency.accumulate( (current - packet) - std::int64_t(clockDriftOffset));
 
     // now, calculate the loss
     loss.update(tim->sequenceNumber());
@@ -208,12 +208,12 @@ prefix_ float FlowStatistics::getLoss()
     return loss.getLoss();
 }
 
-prefix_ boost::int64_t FlowStatistics::getPktsDuplicate()
+prefix_ std::int64_t FlowStatistics::getPktsDuplicate()
 {
     return loss.getPktsDuplicate();
 }
 
-prefix_ boost::int64_t FlowStatistics::getPktsLate()
+prefix_ std::int64_t FlowStatistics::getPktsLate()
 {
     return loss.getPktsLate();
 }
