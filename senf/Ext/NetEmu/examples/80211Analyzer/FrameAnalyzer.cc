@@ -171,7 +171,7 @@ prefix_ void FrameAnalyzer::handleDataFrame(senf::EthernetPacket const & eth, se
 
     senf::MPLSPacket const & mpls (eth.next<senf::MPLSPacket>(senf::nothrow));
     if (mpls) {
-        senf::TIMPacket const & tim (eth.next<senf::TIMPacket>(senf::nothrow));
+        senf::TIMPacket const & tim (mpls.next<senf::TIMPacket>(senf::nothrow));
         if (tim) {
             if (v_handleMPLSPacket(eth, ap, mpls, tim)) {
                 if (configuration_.numPackets > 0) {
