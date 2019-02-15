@@ -196,8 +196,8 @@ static inline std::int32_t seqNoDelta(std::uint16_t current, std::uint32_t last)
     if (SENF_UNLIKELY(last == NO_SEQ_NO)) return INT_MAX;
 
     static constexpr std::int32_t maxSeq_     = 0xfff+1;
-    static constexpr std::int32_t threshold_  = maxSeq_/10;
-    
+    static constexpr std::int32_t threshold_  = maxSeq_/10;    
+
     std::int32_t dist(current - last);
 
     if (SENF_UNLIKELY(dist + threshold_ < 0))
@@ -528,7 +528,22 @@ prefix_ void senf::emu::MonitorDataFilter::request()
     try {
         RadiotapPacket rtPacket (input());
         RadiotapPacket::Parser rtParser (rtPacket.parser());
-                
+
+        stats_.received++;
+
+        if (SENF_LIKELY(frequency_ and rtParser.channelOptionsPresent())) {
+            if (SENF_UNLIKELY(rtParser.channelOptions().freq() != frequency_)) {
+                stats_.freqMismatch++;
+                return;
+            }
+        }
+
+        // Set Annotations: incoming interface
+        rtPacket.annotation<annotations::Interface>().value = id_;
+
+        // set the rx timestamp. Careful: this assumes that we are using an MMAP source !
+        rtPacket.annotation<annotations::Timestamp>().fromQueueBuffer(*(rtPacket.annotation<senf::ppi::QueueBufferAnnotation>().value));
+
         // Set annotations: Quality
         {
             annotations::Quality const & q (rtPacket.annotation<annotations::Quality>());
