@@ -43,8 +43,8 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define NO_SEQ_NO INT_MAX
-#define REORDER_MAX 192
-#define SEQ_EXPIRE 32
+#define REORDER_MAX 192  // should be more than enough
+#define SEQ_EXPIRE   24  // in ms
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::MonitorDataFilterStatistics
@@ -104,7 +104,7 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
        << ";reordered "          << reordered
        << ";maxReorderUsage "     << maxReorderSize << "/" << REORDER_MAX
        << ";reorderResync "      << reorderResync
-       << ";reorderedTimedOut "  << reorderedTimedOut << "(timeout is " << SEQ_EXPIRE << "ms)"
+       << ";reorderedTimedOut "  << reorderedTimedOut << " (timeout is " << SEQ_EXPIRE << "ms)"
        << ";reorderOverflows "   << reorderOverflows
        << ";seqNoExpired "       << seqNoExpired;
 
@@ -287,7 +287,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
         i = reorderMap_.emplace(std::make_pair(key, ReorderRecord())).first;
         resetTimer();
         i->second.nextExpectedSeqNo = (lastSeqNo + 1) & 0x0FFF;
-        i->second.queue.push_back(senf::EthernetPacket());
+        i->second.queue.emplace_back(senf::EthernetPacket());
         lastSeqNo = NO_SEQ_NO;
     }
     {
@@ -362,17 +362,17 @@ prefix_ void senf::emu::MonitorDataFilter::pushSubstituteEthernet(RadiotapPacket
     try {
         SequenceNumberMap::key_type key;
 
-        WLANPacket_DataFrame data (rtp.next<WLANPacket_DataFrame>(senf::nothrow));
+        WLANPacket_DataFrame const & data (rtp.next<WLANPacket_DataFrame>(senf::nothrow));
         if (data && (data.size() >= WLANPacket_DataFrameParser::init_bytes)) {
             data->sourceAddress().hash(&key);
             src = data->sourceAddress();
         } else {
-            WLANPacket_MgtFrame mgt (rtp.next<WLANPacket_MgtFrame>(senf::nothrow));
+            WLANPacket_MgtFrame const & mgt (rtp.next<WLANPacket_MgtFrame>(senf::nothrow));
             if (mgt && (mgt.size() >= WLANPacket_MgtFrameParser::init_bytes)) {
                 mgt->sourceAddress().hash(&key);
                 src = mgt->sourceAddress();
             } else {
-                WLANPacket_CtrlFrame ctrl (rtp.next<WLANPacket_CtrlFrame>(senf::nothrow));
+                WLANPacket_CtrlFrame const & ctrl (rtp.next<WLANPacket_CtrlFrame>(senf::nothrow));
                 if (ctrl && ctrl->is_rts() && (ctrl.size() >= WLANPacket_CtrlFrameParser::init_bytes)) {
                     ctrl->sourceAddress().hash(&key);
                     src = ctrl->sourceAddress();
@@ -700,9 +700,9 @@ prefix_ void senf::emu::MonitorDataFilter::requestPlain()
     eth.annotation<annotations::Timestamp>().fromQueueBuffer(*(eth.annotation<senf::ppi::QueueBufferAnnotation>().value));    
     {
         emu::annotations::Quality const & q (eth.annotation<emu::annotations::Quality>());
-        q.rssi  = 110;            // for now, we report the maximum signal 'quality'
-        q.noise = -128;           // this should be read out via ethtool commands (i.e. for fiber links)
-        q.snr = 238;
+        q.rssi  = 0;  // for now, we report the maximum signal 'quality'
+        q.noise = DEFAULT_WLAN_NOISE;
+        q.snr   = short(q.rssi - q.noise);
         q.flags.frameLength = eth.size();
     }
 
