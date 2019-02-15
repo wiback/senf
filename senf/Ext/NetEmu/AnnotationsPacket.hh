@@ -58,7 +58,9 @@ namespace senf {
         SENF_PARSER_BITFIELD( corrupt,       1, bool           );
         SENF_PARSER_BITFIELD( retransmitted, 1, bool           );
         SENF_PARSER_BITFIELD( duplicated,    1, bool           );
-        SENF_PARSER_BITFIELD( reordered,     1, bool           );
+        SENF_PARSER_BITFIELD( reordered,     1, bool           ); 
+        SENF_PARSER_BITFIELD( aggregated,    1, bool           );
+        SENF_PARSER_BITFIELD( unused,        7, unsigned       );
         SENF_PARSER_BITFIELD( gap,           8, unsigned       );
         SENF_PARSER_BITFIELD( length,       12, unsigned       );
 

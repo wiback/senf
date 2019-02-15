@@ -66,6 +66,7 @@ prefix_ void senf::AnnotationsPacketType::dump(packet p, std::ostream & os)
     os << senf::fieldName("flags.retransmitted") << format::dumpint(p->retransmitted().value()) << std::endl;
     os << senf::fieldName("flags.duplicated")    << format::dumpint(p->duplicated().value())    << std::endl;
     os << senf::fieldName("flags.reordered")     << format::dumpint(p->reordered().value())     << std::endl;
+    os << senf::fieldName("flags.aggregated")    << format::dumpint(p->aggregated().value())    << std::endl;
     os << senf::fieldName("flags.gap")           << format::dumpint(p->gap().value())           << std::endl;
     os << senf::fieldName("flags.length")        << format::dumpint(p->length().value())        << std::endl;
 }
@@ -142,6 +143,7 @@ prefix_ senf::EthernetPacket senf::prependAnnotationsPacket(Packet const & pkt, 
     ap->retransmitted() << pkt.annotation<emu::annotations::Quality>().flags.frameRetransmitted;
     ap->duplicated()    << pkt.annotation<emu::annotations::Quality>().flags.frameDuplicate;
     ap->reordered()     << pkt.annotation<emu::annotations::Quality>().flags.frameReordered;
+    ap->aggregated()    << pkt.annotation<emu::annotations::Quality>().flags.frameAggregated;
     ap->gap()           << pkt.annotation<emu::annotations::Quality>().flags.framePredecessorLost;
     ap->length()        << pkt.annotation<emu::annotations::Quality>().flags.frameLength;
     

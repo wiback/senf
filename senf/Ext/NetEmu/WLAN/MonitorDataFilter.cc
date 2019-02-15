@@ -44,7 +44,7 @@
 
 #define NO_SEQ_NO INT_MAX
 #define REORDER_MAX 192  // should be more than enough
-#define SEQ_EXPIRE   24  // in ms
+#define SEQ_EXPIRE   32  // in ms
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::MonitorDataFilterStatistics
@@ -98,13 +98,14 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
        << ",truncated "    << truncated    << " (" << float(truncated)    / float(received) * 100.0f << "%)"
        << ";retries "      << retries      << " (" << float(retries)      / float(received) * 100.0f << "%)"
        << ";duplicated "   << duplicated   << " (" << float(duplicated)   / float(received) * 100.0f << "%)"
+       << ";aggregated "   << aggregated   << " (" << float(aggregated)   / float(received) * 100.0f << "%)"
        << ";encrypted "    << encrypted    << " (" << float(encrypted)    / float(received) * 100.0f << "%)"
        << ";substitute "   << substitute   << " (" << float(substitute)   / float(received) * 100.0f << "%)"
        << ";lost "         << lost         << " (" << float(lost)         / float(received) * 100.0f << "%)"
        << ";reordered "          << reordered
        << ";maxReorderUsage "     << maxReorderSize << "/" << REORDER_MAX
        << ";reorderResync "      << reorderResync
-       << ";reorderedTimedOut "  << reorderedTimedOut << " (timeout is " << SEQ_EXPIRE << "ms)"
+       << ";reorderedTimedOut "  << reorderedTimedOut << " (timeout " << SEQ_EXPIRE << "ms)"
        << ";reorderOverflows "   << reorderOverflows
        << ";seqNoExpired "       << seqNoExpired;
 
@@ -527,22 +528,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
     try {
         RadiotapPacket rtPacket (input());
         RadiotapPacket::Parser rtParser (rtPacket.parser());
-        
-        stats_.received++;
-
-        if (SENF_LIKELY(frequency_ and rtParser.channelOptionsPresent())) {
-            if (SENF_UNLIKELY(rtParser.channelOptions().freq() != frequency_)) {
-                stats_.freqMismatch++;
-                return;
-            }
-        }
-        
-        // Set Annotations: incoming interface
-        rtPacket.annotation<annotations::Interface>().value = id_;
-
-        // set the rx timestamp. Careful: this assumes that we are using an MMAP source !
-        rtPacket.annotation<annotations::Timestamp>().fromQueueBuffer(*(rtPacket.annotation<senf::ppi::QueueBufferAnnotation>().value));
-
+                
         // Set annotations: Quality
         {
             annotations::Quality const & q (rtPacket.annotation<annotations::Quality>());
@@ -550,6 +536,8 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             q.noise = (rtParser.dbmAntennaNoisePresent() ? short(rtParser.dbmAntennaNoise()) : short(DEFAULT_WLAN_NOISE));
             q.snr   = short(q.rssi - q.noise);
             q.flags.frameLength = rtPacket.size() - rtParser.length();
+            // ampduStatus is present ==> frame is aggregated
+            stats_.aggregated += q.flags.frameAggregated = rtParser.ampduStatusPresent();
         }
 
         // determine MCS (rate)
@@ -575,7 +563,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         else {
             stats_.unknownMCS++;
             if (dropUnknownMCS_) {
-                SENF_LOG( (WlanLogArea) (senf::log::IMPORTANT)
+                SENF_LOG( (WlanLogArea) (senf::log::VERBOSE)
                           ( "(" << id_ << ") dropping packet with unknown datarate "));
                 return;
             }

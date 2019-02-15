@@ -69,6 +69,7 @@ namespace emu {
         unsigned truncated;
         unsigned retries;
         unsigned duplicated;
+        unsigned aggregated;
         unsigned management;
         unsigned control;
         unsigned data;

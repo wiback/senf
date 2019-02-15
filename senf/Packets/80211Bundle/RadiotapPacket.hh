@@ -181,6 +181,17 @@ namespace senf {
         SENF_PARSER_FINALIZE( RadiotapPacket_VHTParser );
     };
 
+        struct RadiotapPacket_AMPDUStatusParser : public PacketParserBase
+    {
+#       include SENF_FIXED_PARSER()
+
+        SENF_PARSER_FIELD ( flags,  UInt16Parser );
+        SENF_PARSER_FIELD ( crc,    UInt8Parser  );
+        SENF_PARSER_FIELD ( unused, UInt8Parser  );
+
+        SENF_PARSER_FINALIZE( RadiotapPacket_AMPDUStatusParser );
+    };
+
     
     /** \brief Parse an Radiotap header
 
@@ -338,6 +349,7 @@ namespace senf {
         FIELD( dataRetries,       UInt8Parser,                          DATA_RETRIES_INDEX      );
         FIELD( mcs,               RadiotapPacket_MCSParser,             MCS_INDEX               );
         FIELD( vht,               RadiotapPacket_VHTParser,             VHT_INDEX               );
+        FIELD( ampduStatus,       RadiotapPacket_AMPDUStatusParser,     A_MPDU_STATUS_INDEX     );
 
 #       undef FIELD
 
