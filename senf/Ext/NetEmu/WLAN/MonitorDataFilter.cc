@@ -44,7 +44,7 @@
 
 #define NO_SEQ_NO INT_MAX
 #define REORDER_MAX 128
-#define SEQ_EXPIRE 20
+#define SEQ_EXPIRE 32
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::MonitorDataFilterStatistics
@@ -74,7 +74,7 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
        << ",rate "        << (received*1000) / (senf::ClockService::in_milliseconds(duration())+1) << " pps";// +1 to avoid DIV_BY_ZERO
 
     if ((freqMismatch + legacy + ht + vht + unknownMCS) != received ||
-        (management + control + data + unknownType + badFCS + truncated) != received ||
+        (freqMismatch + management + control + data + unknownType + badFCS + truncated) != received ||
         duplicated > retries ||
         (truncated + badFCS + unknownType) != substitute)
         os << ",stats bad";
@@ -123,7 +123,7 @@ prefix_ std::string senf::emu::MonitorDataFilterStatistics::dump()
 // senf::emu::MonitorDataFilter
 
 prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const & id)
-    : maxReorderDelay_ (senf::ClockService::milliseconds(32)),
+    : maxReorderDelay_ (senf::ClockService::milliseconds(SEQ_EXPIRE)),
       reorderQueueTimer_( "ReorderQueueTimer_" + senf::str(id), senf::membind( &MonitorDataFilter::reorderQueueTick, this)),
       id_(id),
       promisc_(false),
@@ -284,7 +284,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
     if (i == reorderMap_.end()) {
         // We know that seqNo must be at least 2 packets ahead of lastSeqNo, otherwise
         // handleReorderPacket would not have been called.
-        i = reorderMap_.insert(std::make_pair(key, ReorderRecord())).first;
+        i = reorderMap_.emplace(std::make_pair(key, ReorderRecord())).first;
         resetTimer();
         i->second.nextExpectedSeqNo = (lastSeqNo + 1) & 0x0FFF;
         i->second.queue.push_back(senf::EthernetPacket());
@@ -634,10 +634,10 @@ prefix_ void senf::emu::MonitorDataFilter::request()
                 i->second.number = seqNo;
                 i->second.last = senf::scheduler::now();
             }
-            else if ((i->second.last + senf::ClockService::milliseconds( SEQ_EXPIRE)) < (senf::scheduler::now())) {
+            else if ((i->second.last + senf::ClockService::milliseconds(SEQ_EXPIRE)) < (senf::scheduler::now())) {
                 stats_.seqNoExpired++;
                 flushQueue(key);
-                sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
+                sequenceNumberMap_.emplace(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
             }
             else if (delta > 1) {
                 handleReorderedPacket(key, i->second.number, seqNo, eth);
@@ -646,14 +646,14 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             else if (delta < -REORDER_MAX) {
                 stats_.reorderResync++;
                 flushQueue(key);
-                sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
+                sequenceNumberMap_.emplace(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
             }
             else {
                 handle_DuplicateFrame(eth);
                 return;
             }
         } else {
-            sequenceNumberMap_.insert(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
+            sequenceNumberMap_.emplace(std::make_pair(key, SequenceNumber( seqNo, senf::scheduler::now())));
         }
 
         outData(eth);
