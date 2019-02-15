@@ -43,7 +43,7 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define NO_SEQ_NO INT_MAX
-#define REORDER_MAX 128
+#define REORDER_MAX 192
 #define SEQ_EXPIRE 32
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,10 +101,10 @@ prefix_ void senf::emu::MonitorDataFilterStatistics::dump(std::ostream & os)
        << ";encrypted "    << encrypted    << " (" << float(encrypted)    / float(received) * 100.0f << "%)"
        << ";substitute "   << substitute   << " (" << float(substitute)   / float(received) * 100.0f << "%)"
        << ";lost "         << lost         << " (" << float(lost)         / float(received) * 100.0f << "%)"
-       << ";maxReorderSize "     << maxReorderSize
        << ";reordered "          << reordered
-       << ";reorderedTimedOut "  << reorderedTimedOut
+       << ";maxReorderUsage "     << maxReorderSize << "/" << REORDER_MAX
        << ";reorderResync "      << reorderResync
+       << ";reorderedTimedOut "  << reorderedTimedOut << "(timeout is " << SEQ_EXPIRE << "ms)"
        << ";reorderOverflows "   << reorderOverflows
        << ";seqNoExpired "       << seqNoExpired;
 
@@ -294,7 +294,7 @@ prefix_ void senf::emu::MonitorDataFilter::handleReorderedPacket(SequenceNumberM
         ReorderRecord & record (i->second);
         
         int delta (seqNoDelta(seqNo, record.nextExpectedSeqNo));
-        if (delta <= REORDER_MAX) {
+        if (delta < REORDER_MAX) {
             if (delta < 0) {
                 handle_DuplicateFrame(ethp);
                 return;
