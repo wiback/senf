@@ -5,13 +5,12 @@
 //     Christian Niephaus <cni@berlios.de>
 //
 
-#ifndef HH_WiBACK_DataPlane_Packets_TIMPacket_
-#define HH_WiBACK_DataPlane_Packets_TIMPacket_ 1
+#ifndef HH_Senf_DataPlane_Packets_TIMPacket_
+#define HH_Senf_DataPlane_Packets_TIMPacket_ 1
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
-#include <senf/Scheduler/ClockService.hh>
-#include <senf/Utils/Statistics.hh>
+#include <senf/Utils/FlowStatistics.hh>
 #include <senf/Ext/NetEmu/Annotations.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -57,42 +56,23 @@ namespace senf {
     //
     // TIM SeqNo Stats Analyzer
     //
-    struct TIMSeqNoStats {
-        std::uint32_t last_;
-        std::uint32_t good;
-        std::uint32_t goodBytes;
-        std::uint32_t duplicate;
-        std::uint32_t late;
-        std::uint32_t lost;
-        std::uint32_t resyncs;
-        std::uint64_t goodTotal;
-        std::uint64_t goodBytesTotal;
-
+    class TIMSeqNoStats
+        : public senf::SequenceNumberStatistics
+    {
+    public:
         TIMSeqNoStats();
         TIMSeqNoStats(TIMPacket const & tim, bool llSeq = false);
-        virtual ~TIMSeqNoStats() {};
 
-        virtual void clear();
-        void reset();
-
-        void countGood(std::uint32_t payloadSize);
-        bool process(std::uint32_t seqNo, std::uint32_t payloadSize);
         bool processSeqNo(TIMPacket const & tim);
         bool processLLSeqNo(TIMPacket const & tim);
-
-        void dump(std::ostream & os, senf::ClockService::clock_type const & period = senf::ClockService::clock_type(0));
     };
 
-    struct TIMTimestampStats {
-        senf::StatisticAccumulator<std::uint32_t> delay;
-        senf::StatisticAccumulator<std::uint32_t> pdv;
-        // no unsigned here!
-        std::int32_t lastPD_;
-
+    class TIMTimestampStats
+        : public senf::TimestampStatistics
+    {
+    public:
         TIMTimestampStats();
 
-        void clear();
-        void reset();
         void process(TIMPacket const & tim);
     };
 }

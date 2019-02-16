@@ -1,0 +1,162 @@
+//
+// Copyright (C) 2009
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Mathias Kretschmer <mathias.kretschmer@fokus.fraunhofer.de>
+//
+
+// Custom includes
+#include <senf/Utils/senflikely.hh>
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::SequenceNumberStatistics
+
+prefix_ senf::SequenceNumberStatistics::SequenceNumberStatistics(std::int32_t maxValue, std::int32_t threshold, std::int32_t maxLate)
+    : Distance(maxValue, threshold),
+      maxLate_(maxLate)
+{
+    reset();
+}
+
+prefix_ void senf::SequenceNumberStatistics::reset()
+{
+    clear();
+    last_ = 0;
+    goodTotal = 0;
+    goodBytesTotal = 0;
+    firstUpdateAfterReset_ = true;
+}
+
+prefix_ void senf::SequenceNumberStatistics::clear()
+{
+    goodTotal += good;
+    goodBytesTotal += goodBytes;
+    good = goodBytes = duplicate = late = lost = 0;
+    resyncs = 0;
+}
+
+prefix_ std::int32_t senf::SequenceNumberStatistics::maxLate()
+    const
+{
+    return maxLate_;
+}
+
+prefix_ void senf::SequenceNumberStatistics::countGood(std::uint32_t payloadSize)
+{
+    good++;
+    goodBytes += payloadSize;
+}
+
+prefix_ bool senf::SequenceNumberStatistics::update(std::uint32_t seqNo, std::uint32_t payloadSize)
+{
+    if (SENF_UNLIKELY(firstUpdateAfterReset_)) {
+        firstUpdateAfterReset_ = false;
+        countGood(payloadSize);
+        last_ = seqNo;
+        return true;
+    }
+
+    auto diff (distance(seqNo, last_));
+
+    if (SENF_LIKELY(diff == 1)) {
+        // no loss
+        countGood(payloadSize);
+        last_ = seqNo;
+        return true;
+    }
+    else if (diff == 0) {
+        // duplicate
+        duplicate++;
+    }
+    else if (diff < 0) {
+        // late frame(s) => reordering
+        if (diff <= -maxLate_) {
+            // resync to next expected SeqNo
+            resyncs++;
+            countGood(payloadSize);
+            last_ = seqNo;
+            return true;
+        } else {
+            // we are tolerant to reordering here. So, let's account for it, ...
+            late++;
+            if (SENF_LIKELY(lost > 0)) {
+                // we counted this 'late' frame as lost before, so let's reduce the lost count here
+               lost--;
+               countGood(payloadSize);
+            }
+            // ... but not suggest to drop the frame
+            return true;
+        }
+    } else {
+        // frame loss
+        lost += diff-1;
+        countGood(payloadSize);
+        last_ = seqNo;
+        return true;
+    }
+
+    // essentially, we only indidate 'duplicates' to be dropped
+    return false;
+}
+
+prefix_ void senf::SequenceNumberStatistics::dump(std::ostream & os, senf::ClockService::clock_type const & period)
+    const
+{
+    os << "good " << good << ", goodBytes " << goodBytes;
+    if (period) {
+        os << ", good/s " << ((std::uint64_t(good) * 1000) / senf::ClockService::in_milliseconds(period));
+        os << ", goodBytes/s " << ((std::uint64_t(goodBytes) * 1000) / senf::ClockService::in_milliseconds(period));
+    }
+    os << ", duplicate " << duplicate << ", late " << late << ", lost " << lost;
+    os << ", resyncs " << resyncs;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::TimestampStatistics
+
+prefix_ senf::TimestampStatistics::TimestampStatistics(std::int32_t maxValue, std::int32_t threshold)
+    : Distance(maxValue, threshold)
+{
+    reset();
+}
+
+prefix_ void senf::TimestampStatistics::reset()
+{
+    clear();
+    lastPD_ = 0;
+    firstUpdateAfterReset_ = true;
+}
+
+prefix_ void senf::TimestampStatistics::clear()
+{
+    delay.clear();
+    pdv.clear();
+}
+
+
+prefix_ void senf::TimestampStatistics::update(std::uint32_t txTStamp, std::uint32_t rxTStamp, bool updateDelay)
+{
+    auto diff (distance(rxTStamp, txTStamp));
+
+    // first packet seen => establish the typical delay
+    if (SENF_UNLIKELY(firstUpdateAfterReset_)) {
+        firstUpdateAfterReset_ = false;
+        lastPD_ = diff;
+    }
+
+    pdv.accumulate(unsigned(abs(diff - lastPD_)));
+    lastPD_ = diff;
+
+    if (updateDelay) {
+        delay.accumulate(diff);
+    }
+}
+
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_

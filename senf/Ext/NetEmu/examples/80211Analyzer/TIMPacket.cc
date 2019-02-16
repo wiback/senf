@@ -30,11 +30,13 @@ prefix_ void senf::TIMPacketType::dump(packet p, std::ostream & os)
 // senf::TIMSeqNoStats
 
 prefix_ senf::TIMSeqNoStats::TIMSeqNoStats()
+    : SequenceNumberStatistics(TIMPacketParser::sequenceNumber_t::max_value + 1, (TIMPacketParser::sequenceNumber_t::max_value + 1) / 10, 64)
 {
     reset();
 }
 
 prefix_ senf::TIMSeqNoStats::TIMSeqNoStats(TIMPacket const & tim, bool llSeq)
+    : SequenceNumberStatistics(TIMPacketParser::sequenceNumber_t::max_value + 1, (TIMPacketParser::sequenceNumber_t::max_value + 1) / 10, 64)
 {
     reset();
 
@@ -45,52 +47,13 @@ prefix_ senf::TIMSeqNoStats::TIMSeqNoStats(TIMPacket const & tim, bool llSeq)
     }
 }
 
-prefix_ void senf::TIMSeqNoStats::clear()
-{
-    goodTotal += good;
-    goodBytesTotal += goodBytes;
-    good = goodBytes = duplicate = late = lost = 0;
-}
-
-prefix_ void senf::TIMSeqNoStats::reset()
-{
-    clear();
-    resyncs = 0;
-    last_ = 0xFFFFFFFF;
-    goodTotal = 0;
-    goodBytesTotal = 0;
-}
-
-prefix_ void senf::TIMSeqNoStats::dump(std::ostream & os, senf::ClockService::clock_type const & period)
-{
-    os << "good " << good << ", goodBytes " << goodBytes;
-    if (period) {
-        os << ", good/s " << ((std::uint64_t(good) * 1000) / senf::ClockService::in_milliseconds(period));
-        os << ", goodBytes/s " << ((std::uint64_t(goodBytes) * 1000) / senf::ClockService::in_milliseconds(period));
-    }
-    os << ", duplicate " << duplicate << ", late " << late << ", lost " << lost;
-    os << ", resyncs " << resyncs;
-}
-
-
 ///////////////////////////////////////////////////////////////////////////
 // senf::TIMTimestampStats
 
 prefix_ senf::TIMTimestampStats::TIMTimestampStats()
+    : TimestampStatistics(TIMPacketParser::timestamp_t::max_value + 1, (TIMPacketParser::timestamp_t::max_value + 1) / 10)
 {
     reset();
-}
-
-prefix_ void senf::TIMTimestampStats::clear()
-{
-    delay.clear();
-    pdv.clear();
-}
-
-prefix_ void senf::TIMTimestampStats::reset()
-{
-    clear();
-    lastPD_ = 0x7FFFFFFF;
 }
 
 
