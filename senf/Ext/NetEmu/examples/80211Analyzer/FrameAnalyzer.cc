@@ -259,23 +259,23 @@ static std::string flowIdAsString(PacketStatistics::Type type, std::uint32_t flo
 {
     switch (type) {
     case PacketStatistics::RECEIVED:
-        return "RECEIVED:" + senf::str(flowId);
+        return "RECEIVED " + senf::str(flowId);
     case PacketStatistics::CORRUPT:
-        return "CORRUPT:" + senf::str(flowId);
+        return "CORRUPT  " + senf::str(flowId);
     case PacketStatistics::DATA:
-        return "DATA:" + senf::str(flowId);
+        return "DATA     " + senf::str(flowId);
     case PacketStatistics::CTRL:
-        return "CTRL:" + senf::str(flowId);
+        return "CTRL     " + senf::str(flowId);
     case PacketStatistics::MNGT:
-        return "MNGT:" + senf::str(flowId);
+        return "MNGT     " + senf::str(flowId);
     case PacketStatistics::OTHER:
-        return "OTHER:" + senf::str(flowId);
+        return "OTHER    " + senf::str(flowId);
     case PacketStatistics::IPERF:
-        return "IPERF:" + senf::str(flowId);
+        return "IPERF    " + senf::str(flowId);
     case PacketStatistics::MGEN:
-        return "MGEN:" + senf::str(flowId);
+        return "MGEN     " + senf::str(flowId);
     case PacketStatistics::TIM: 
-        return "TIM:" + senf::str(flowId);
+        return "TIM      " + senf::str(flowId);
     }
 
     return "?!?UNKNOWN?!?";

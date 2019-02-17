@@ -29,7 +29,7 @@
 #define __FRAMEANALYZER_HH__
 
 // Custom includes
-#include <boost/ptr_container/ptr_unordered_map.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
 #include <senf/Scheduler/TimerEvent.hh>
 #include <senf/Packets/80211Bundle/WLANPacket.hh>
 #include <senf/Ext/NetEmu/AnnotationsPacket.hh>
@@ -51,7 +51,7 @@ public:
 
 protected:
     Configuration const & configuration_;
-    boost::ptr_unordered_map<std::pair<PacketStatistics::Type,std::uint32_t>,PacketStatistics> packetStatsMap;
+    boost::ptr_map<std::pair<PacketStatistics::Type,std::uint32_t>,PacketStatistics> packetStatsMap;
 
     PacketStatistics *flowStats(PacketStatistics::Type, std::uint32_t flowId);
     
