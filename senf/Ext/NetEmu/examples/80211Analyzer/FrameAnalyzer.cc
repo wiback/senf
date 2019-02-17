@@ -126,7 +126,7 @@ prefix_ void FrameAnalyzer::request()
 
     senf::EthernetPacket const & eth (ap.next<senf::EthernetPacket>(senf::nothrow));
     if (eth) {
-        if (handleDataFrame(ethIn, ap))
+        if (handleDataFrame(eth, ap))
             return;
     }
 
@@ -255,14 +255,40 @@ prefix_ void FrameAnalyzer::resetStats()
     }
 }
 
+static std::string flowIdAsString(PacketStatistics::Type type, std::uint32_t flowId)
+{
+    switch (type) {
+    case PacketStatistics::RECEIVED:
+        return "RECEIVED:" + senf::str(flowId);
+    case PacketStatistics::CORRUPT:
+        return "CORRUPT:" + senf::str(flowId);
+    case PacketStatistics::DATA:
+        return "DATA:" + senf::str(flowId);
+    case PacketStatistics::CTRL:
+        return "CTRL:" + senf::str(flowId);
+    case PacketStatistics::MNGT:
+        return "MNGT:" + senf::str(flowId);
+    case PacketStatistics::OTHER:
+        return "OTHER:" + senf::str(flowId);
+    case PacketStatistics::IPERF:
+        return "IPERF:" + senf::str(flowId);
+    case PacketStatistics::MGEN:
+        return "MGEN:" + senf::str(flowId);
+    case PacketStatistics::TIM: 
+        return "TIM:" + senf::str(flowId);
+    }
+
+    return "?!?UNKNOWN?!?";
+}
+
 prefix_ void FrameAnalyzer::report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration)
 {
     for (auto const & ps : packetStatsMap) {
         if (configuration_.csvMode) {
-            std::cout << ps.first.second << ",";
+            std::cout << flowIdAsString(ps.first.first, ps.first.second) << ",";
             ps.second->dump(std::cout, true);
         } else {
-            std::cout << "flowId " << ps.first.second << " ";
+            std::cout << flowIdAsString(ps.first.first, ps.first.second) << " ";
             ps.second->dump(std::cout, false);
         }
         std::cout << std::endl;

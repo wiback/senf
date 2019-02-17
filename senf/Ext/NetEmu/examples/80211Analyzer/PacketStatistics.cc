@@ -95,7 +95,7 @@ prefix_ void PacketStatistics::dump(std::ostream & os, bool csv)
     if (csv) {
     } else {
         os << " pkts " << length.count() << " size " << formatEng(length.data()) << " rssi " << formatEng(rssi.data()) << " rate " << formatEng(rate.data())
-           << " airTime " << senf::ClockService::in_microseconds(airtime) << "us retries" << retries << " aggregated " << aggregated;
+           << " airTime " << senf::ClockService::in_microseconds(airtime) << "us retries " << retries << " aggregated " << aggregated;
     }
 }
 
