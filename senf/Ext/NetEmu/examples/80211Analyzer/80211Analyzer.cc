@@ -36,7 +36,7 @@
 #include <senf/Socket/Protocols/Raw/MMapPacketSocketHandle.hh>
 #include <senf/PPI/QueueSocketSourceSink.hh>
 
-#include "MGENAnalyzer.hh"
+#include "FrameAnalyzer.hh"
 
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ int main(int argc, char const * argv[])
         filter.tsftHistogram().start();
     }
 
-    MGENAnalyzer analyzer (configuration);
+    FrameAnalyzer analyzer (configuration);
 
     senf::ppi::connect( source, filter);
     senf::ppi::connect( filter, analyzer);

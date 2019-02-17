@@ -29,6 +29,7 @@
 #define __FRAMEANALYZER_HH__
 
 // Custom includes
+#include <boost/ptr_container/ptr_unordered_map.hpp>
 #include <senf/Scheduler/TimerEvent.hh>
 #include <senf/Packets/80211Bundle/WLANPacket.hh>
 #include <senf/Ext/NetEmu/AnnotationsPacket.hh>
@@ -50,14 +51,10 @@ public:
 
 protected:
     Configuration const & configuration_;
-    PacketStatistics received;
-    PacketStatistics corrupt;
-    PacketStatistics control;
-    PacketStatistics management;
-    PacketStatistics other;
-    PacketStatistics data;
-    PacketStatistics dataNonUDP;
+    boost::ptr_unordered_map<std::pair<PacketStatistics::Type,std::uint32_t>,PacketStatistics> packetStatsMap;
 
+    PacketStatistics *flowStats(PacketStatistics::Type, std::uint32_t flowId);
+    
     void resetStats();
 
     void resetStartTime();
@@ -70,25 +67,21 @@ private:
     senf::scheduler::TimerEvent    initWait_;
     senf::ClockService::clock_type startTime_;
     senf::ClockService::clock_type nextTimeout_;
-    std::uint64_t                numPackets_;
+    std::uint64_t                  numPackets_;
+    bool                           mplsDetected_;
 
     void request();
     void timerEvent();
     void initWaitEvent();
 
-    void handleReceivedFrame(senf::Packet const & pkt);
-    void handleCorruptFrame(senf::Packet const & pkt);
-    void handleOtherFrame(senf::Packet const & pkt);
-    void handleDataFrame(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap);
-    void handleManagementFrame(senf::WLANPacket_MgtFrame const & pkt, senf::AnnotationsPacket const & ap);
-    void handleControlFrame(senf::WLANPacket_CtrlFrame const & ctl, senf::AnnotationsPacket const & ap);
+    bool handleDataFrame(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap);
 
-    virtual bool v_handleUDPPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
-            senf::IPv4Packet const & ip4, senf::UDPPacket const & udp) = 0;
-    virtual bool v_handleMPLSPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
-            senf::MPLSPacket const & mpls, senf::TIMPacket const & tim) = 0;
+    bool handleUDPPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
+                         senf::IPv4Packet const & ip4, senf::UDPPacket const & udp);
+    bool handleMPLSPacket(senf::EthernetPacket const & eth, senf::AnnotationsPacket const & ap,
+                          senf::MPLSPacket const & mpls, senf::TIMPacket const & tim);
 
-    virtual void v_report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration) {}
+    void report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration);
 };
 
 ///////////////////////////////hh.p////////////////////////////////////////

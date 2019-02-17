@@ -32,6 +32,7 @@
 #include <senf/Ext/NetEmu/AnnotationsPacket.hh>
 #include <senf/Packets/DefaultBundle/UDPPacket.hh>
 #include <senf/Utils/StatisticAccumulator.hh>
+#include <senf/Utils/FlowStatistics.hh>
 #include <senf/Scheduler/ClockService.hh>
 #include "MGENPacket.hh"
 #include "IperfPacket.hh"
@@ -42,143 +43,68 @@
 
 class PacketStatistics
 {
-public:
-    std::uint64_t count;
-    std::uint64_t bytes;
-    std::uint64_t retry;
+    typedef senf::StatisticAccumulator<std::int64_t> Accumulator;
 
+public:
+    enum Type { RECEIVED, CORRUPT, DATA, CTRL, MNGT, OTHER, IPERF, MGEN, TIM };
+
+    Accumulator rssi;
+    Accumulator rate;
+    Accumulator length;
+    std::uint64_t retries;
+    std::uint64_t aggregated;
     senf::ClockService::clock_type airtime;
 
     PacketStatistics();
-    virtual ~PacketStatistics() {}
+    
+    virtual void clear();
+    bool analyze(senf::AnnotationsPacket const & ap, std::uint16_t payloadSize);
 
-    virtual void v_reset();
-    virtual bool v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize = 0);
-    bool analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize);
-
-    float pktsPerSecond(senf::ClockService::clock_type reportingInterval);
-    float bitsPerSecond(senf::ClockService::clock_type reportingInterval);
-    float retryPerSecond(senf::ClockService::clock_type reportingInterval);
-    senf::ClockService::clock_type airtimePerSecond(senf::ClockService::clock_type reportingInterval);
+    virtual void dump(std::ostream & os, bool csv);
 };
-
-
-template <class T>
-class LossCalculator
-{
-private:
-    T maxSeq_;
-    T lastSeq_;
-    T threshold_;
-    bool initialized_;
-
-    T pktsGood_;
-    T pktsLost_;
-    T pktsLate_;
-    T pktsDuplicate_;
-
-    int seqDiff(T last, T current) {
-        int dist = current - last;
-        if (dist + int(threshold_) < 0)
-            return dist + maxSeq_;
-        if (dist - int(maxSeq_ + threshold_) > 0)
-            return dist - maxSeq_;
-        return dist;
-    }
-
-public:
-    void update(T newSeq) {
-        if (!initialized_) {
-            initialized_ = true;
-            lastSeq_ = newSeq;
-            pktsGood_ = 1;
-            return;
-        }
-
-        int diff = seqDiff( lastSeq_, newSeq);
-
-        if (diff == 1) {
-            // no loss
-            pktsGood_++;
-            lastSeq_ = newSeq;
-        }
-        else if (diff == 0) {
-            // duplicate
-            pktsDuplicate_++;
-        }
-        else if (diff < 0) {
-            // late frame(s) => reordering
-            pktsLate_++;
-        } else {
-            // frame loss
-            pktsLost_+= diff-1;
-            lastSeq_ = newSeq;
-        }
-    }
-
-    LossCalculator(T _maxSeq)
-        :  maxSeq_(_maxSeq)
-    {
-        initialized_ = false;
-        threshold_ = maxSeq_ / 10;
-
-        reset();
-    }
-
-    void reset() {
-        pktsGood_ = 0;
-        pktsLost_ = 0;
-        pktsLate_ = 0;
-        pktsDuplicate_ = 0;
-    }
-
-    float getLoss() {
-        if (pktsGood_ == 0)
-            return 0.0f;
-        else
-            return float(pktsLost_) / float(pktsGood_ + pktsLost_);
-    }
-
-    T getPktsDuplicate() {
-        return pktsDuplicate_;
-    }
-
-    T getPktsLate() {
-        return pktsLate_;
-    }
-};
-
-
-typedef senf::StatisticAccumulator<std::int64_t> Accumulator;
-
-class FlowStatistics : public PacketStatistics
+   
+class FlowStatistics
+    : public PacketStatistics
 {
 public:
-    Accumulator rssi;
-    Accumulator noise;
-    Accumulator rate;
-    Accumulator length;
-    Accumulator latency;
-    LossCalculator<std::uint32_t> loss;
+    senf::SequenceNumberStatistics seqNoStats;
+    senf::TimestampStatistics tstampStats;
+    
+    FlowStatistics(std::int32_t SmaxValue, std::int32_t Sthreshold, std::int32_t SmaxLate,
+                   std::int32_t TmaxValue, std::int32_t Tthreshold);
 
-    FlowStatistics();
+    void clear();
+    bool analyze(senf::AnnotationsPacket const & ap, std::uint16_t payloadSize, std::uint32_t seqNo, std::uint32_t txTSamp, std::uint32_t rxTStamp);
 
-    void v_reset();
-    bool v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize = 0);
-    bool v_analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
-    bool v_analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
-    bool v_analyze(senf::TIMPacket const & tim, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime);
-
-    void getRssi(senf::StatisticsData & data);
-    void getNoise(senf::StatisticsData & data);
-    void getRate(senf::StatisticsData & data);
-    void getLength(senf::StatisticsData & data);
-    void getLatency(senf::StatisticsData & data);
-    float getLoss();
-    std::int64_t getPktsDuplicate();
-    std::int64_t getPktsLate();
+    void dump(std::ostream & os, bool csv);
 };
 
+class FlowStatisticsMGEN
+    : public FlowStatistics
+{
+public:
+    FlowStatisticsMGEN();
+
+    bool analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap);
+};
+
+class FlowStatisticsIPERF
+    : public FlowStatistics
+{
+public:
+    FlowStatisticsIPERF();
+
+    bool analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap);
+};
+
+class FlowStatisticsTIM
+    : public FlowStatistics
+{
+public:
+    FlowStatisticsTIM();
+
+    bool analyze(senf::TIMPacket const & tim, senf::AnnotationsPacket const & ap);
+};
 
 ///////////////////////////////hh.p////////////////////////////////////////
 #endif

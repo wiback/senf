@@ -34,190 +34,148 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 prefix_ PacketStatistics::PacketStatistics()
 {
-    v_reset();
+    clear();
 }
 
-prefix_ void PacketStatistics::v_reset()
+prefix_ void PacketStatistics::clear()
 {
-    count = 0;
-    bytes = 0;
-    retry = 0;
-    airtime = senf::ClockService::seconds(0);
-}
-
-prefix_ bool PacketStatistics::analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize)
-{
-    unsigned rateInBps (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate);
-
-    if (ap->duplicated()) {
-        // we've already seen this frame, so just count it as a 'retry'
-        retry++;
-        return false;
-    }
-
-    count++;
-    bytes += payloadSize;
-    if (ap->retransmitted())
-        retry++;
-
-    airtime += senf::ClockService::microseconds( (ap->length() * 8 * 1000000) / rateInBps);
-
-    return true;
-}
-
-prefix_ bool PacketStatistics::v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize)
-{
-    if (payloadSize == 0)
-        payloadSize = ap->length();
-
-    return analyze(pkt, ap, payloadSize);
-}
-
-prefix_ float PacketStatistics::pktsPerSecond(senf::ClockService::clock_type reportingInterval)
-{
-    return float(count * 1000000) / float(senf::ClockService::in_microseconds( reportingInterval));
-}
-
-prefix_ float PacketStatistics::bitsPerSecond(senf::ClockService::clock_type reportingInterval)
-{
-    return float(bytes * 8 * 1000000) / float(senf::ClockService::in_microseconds( reportingInterval));
-}
-
-prefix_ float PacketStatistics::retryPerSecond(senf::ClockService::clock_type reportingInterval)
-{
-    return float((retry * 1000000)) / float(senf::ClockService::in_microseconds( reportingInterval));
-}
-
-prefix_ senf::ClockService::clock_type PacketStatistics::airtimePerSecond(senf::ClockService::clock_type reportingInterval)
-{
-    return airtime / reportingInterval;
-}
-
-prefix_ FlowStatistics::FlowStatistics()
-    : loss( 4294967295u)  // 32bit maximum
-{
-}
-
-prefix_ void FlowStatistics::v_reset()
-{
-    PacketStatistics::v_reset();
-
-    rssi.clear();
-    noise.clear();
-    rate.clear();
     length.clear();
-    latency.clear();
-    loss.reset();
+    rate.clear();
+    rssi.clear();
+
+    airtime = senf::ClockService::clock_type(0);
+    retries = aggregated = 0;
 }
 
-prefix_ bool FlowStatistics::v_analyze(senf::Packet const & pkt, senf::AnnotationsPacket const & ap, unsigned payloadSize)
+prefix_ bool PacketStatistics::analyze(senf::AnnotationsPacket const & ap, std::uint16_t payloadSize)
 {
-    unsigned rateInBps (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate);
+    length.accumulate(payloadSize);
 
-    if (!PacketStatistics::analyze(pkt, ap, payloadSize))
-        return false;
+    if (!ap)
+        return true;
+    
+    retries += ap->retransmitted();
+    aggregated += ap->aggregated();
+    
+    if (ap->modulationId() != 0) {
+        unsigned rateInBps (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate);
+        rate.accumulate(rateInBps);
+        airtime += senf::ClockService::microseconds( (ap->length() * 8 * 1000000) / rateInBps);  // need to add preamble
+    }
 
     if (ap->rssi() != 0) {
         rssi.accumulate(ap->rssi());
     }
-    //noise.accumulate( ap->noise());
-    rate.accumulate( rateInBps);
-    length.accumulate( payloadSize);
 
     return true;
 }
 
-prefix_ bool FlowStatistics::v_analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
+static std::string formatEng(senf::StatisticsData const & data)
 {
-    if (!v_analyze(mgen, ap, payloadSize))
+    return senf::str(senf::format::eng(data.avg, data.stddev).setprecision(6).showpoint().uppercase());
+}
+
+static std::string formatCSV(senf::StatisticsData const & data)
+{
+    std::stringstream ss;
+    if (data.cnt == 0)
+        ss << NAN << "," << NAN << "," << NAN << "," << NAN;
+    else
+        ss << data.min << "," << data.avg << "," << data.max << "," << data.stddev;
+
+    return ss.str();
+}
+
+
+prefix_ void PacketStatistics::dump(std::ostream & os, bool csv)
+{
+    if (csv) {
+    } else {
+        os << " pkts " << length.count() << " size " << formatEng(length.data()) << " rssi " << formatEng(rssi.data()) << " rate " << formatEng(rate.data())
+           << " airTime " << senf::ClockService::in_microseconds(airtime) << "us retries" << retries << " aggregated " << aggregated;
+    }
+}
+
+prefix_ FlowStatistics::FlowStatistics(std::int32_t SmaxValue, std::int32_t Sthreshold, std::int32_t SmaxLate,
+                                       std::int32_t TmaxValue, std::int32_t Tthreshold)
+    : seqNoStats(SmaxValue, Sthreshold, SmaxLate),
+      tstampStats(TmaxValue, Tthreshold)
+{
+    clear();
+}
+
+prefix_ void FlowStatistics::clear()
+{
+    PacketStatistics::clear();
+
+    seqNoStats.clear();
+    tstampStats.clear();
+}
+
+prefix_ bool FlowStatistics::analyze(senf::AnnotationsPacket const & ap, std::uint16_t payloadSize, std::uint32_t seqNo, std::uint32_t txTSamp, std::uint32_t rxTStamp)
+{
+    if (!PacketStatistics::analyze(ap, payloadSize))
         return false;
-
-    // calculate the packet latency: clocks must be synced !!!
-    timeval tv;
-    gettimeofday( &tv, NULL);
-    std::int64_t current = std::int64_t(tv.tv_sec)             * 1000000 + std::int64_t(tv.tv_usec);
-    std::int64_t packet  = std::int64_t(mgen->txTimeSeconds()) * 1000000 + std::int64_t(mgen->txTimeMicroseconds());
-    float clockDriftOffset = (float(senf::ClockService::in_microseconds(senf::ClockService::now() - startTime)) * clockDrift) / 1000000.0f;
-    latency.accumulate( (current - packet) - std::int64_t(clockDriftOffset));
-
-    // now, calculate the loss
-    loss.update( mgen->sequenceNumber());
+    
+    seqNoStats.update(seqNo, payloadSize);
+    tstampStats.update(txTSamp, rxTStamp, true);
 
     return true;
 }
 
-prefix_ bool FlowStatistics::v_analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
+prefix_ void FlowStatistics::dump(std::ostream & os, bool csv)
 {
-    if (!v_analyze(iperf, ap, payloadSize))
-        return false;
-
-    loss.update( iperf->id());
-
-    return true;
-}
-
-prefix_ bool FlowStatistics::v_analyze(senf::TIMPacket const & tim, senf::AnnotationsPacket const & ap, unsigned payloadSize, float clockDrift, senf::ClockService::clock_type startTime)
-{
-    if (!v_analyze(tim, ap, payloadSize))
-        return false;
-
-    // calculate the packet latency: clocks must be synced !!!
-    timeval tv;
-    gettimeofday( &tv, NULL);
-    std::int64_t current = std::int64_t(tv.tv_sec)             * 1000000 + std::int64_t(tv.tv_usec);
-    std::int64_t packet  = std::int64_t(tim->timestamp()) * 1000;
-    float clockDriftOffset = (float(senf::ClockService::in_microseconds(senf::ClockService::now() - startTime)) * clockDrift) / 1000000.0f;
-    latency.accumulate( (current - packet) - std::int64_t(clockDriftOffset));
-
-    // now, calculate the loss
-    loss.update(tim->sequenceNumber());
-
-    return true;
+    PacketStatistics::dump(os, csv);
+    
+    if (csv) {
+    } else {
+        os << " good " << seqNoStats.good << " goodBytes " << seqNoStats.goodBytes << " late " << seqNoStats.late << " duplicate " << seqNoStats.duplicate
+           << " lost " << seqNoStats.lost << " resyncs " << seqNoStats.resyncs << " pdv " << formatEng(tstampStats.pdv.data());
+    }
 }
 
 
-prefix_ void FlowStatistics::getRssi(senf::StatisticsData & data)
+prefix_ FlowStatisticsMGEN::FlowStatisticsMGEN()
+    : FlowStatistics(std::numeric_limits<std::uint32_t>::max(), std::numeric_limits<std::uint32_t>::max() / 10, 128,
+                     std::numeric_limits<std::uint32_t>::max(), std::numeric_limits<std::uint32_t>::max() / 10)
 {
-    rssi.data( data);
 }
 
-prefix_ void FlowStatistics::getNoise(senf::StatisticsData & data)
+prefix_ bool FlowStatisticsMGEN::analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap)
 {
-    noise.data( data);
+    std::uint32_t txTSamp (std::int64_t(mgen->txTimeSeconds()) * 1000 + std::int64_t(mgen->txTimeMicroseconds()) / 1000);
+    std::uint32_t rxTSamp (ap->timestamp() / 1000000);
+    return FlowStatistics::analyze(ap, mgen.size(), mgen->sequenceNumber(), txTSamp, rxTSamp);
 }
 
-prefix_ void FlowStatistics::getRate(senf::StatisticsData & data)
+prefix_ FlowStatisticsIPERF::FlowStatisticsIPERF()
+    : FlowStatistics(std::numeric_limits<std::int32_t>::max(), std::numeric_limits<std::int32_t>::max() / 10, 128,
+                     std::numeric_limits<std::uint32_t>::max(), std::numeric_limits<std::uint32_t>::max() / 10)
 {
-    rate.data( data);
 }
 
-prefix_ void FlowStatistics::getLength(senf::StatisticsData & data)
+prefix_ bool FlowStatisticsIPERF::analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap)
 {
-    length.data( data);
+    std::uint32_t txTSamp (std::int64_t(iperf->tv_sec()) * 1000 + std::int64_t(iperf->tv_usec()) / 1000);
+    std::uint32_t rxTSamp (ap->timestamp() / 1000000);
+    return FlowStatistics::analyze(ap, iperf.size(), iperf->id(), txTSamp, rxTSamp);
 }
 
-prefix_ void FlowStatistics::getLatency(senf::StatisticsData & data)
+prefix_ FlowStatisticsTIM::FlowStatisticsTIM()
+    : FlowStatistics(senf::TIMPacketParser::sequenceNumber_t::max_value + 1, (senf::TIMPacketParser::sequenceNumber_t::max_value + 1) / 10, 128,
+                     senf::TIMPacketParser::timestamp_t::max_value + 1, (senf::TIMPacketParser::timestamp_t::max_value + 1) / 10)
 {
-    latency.data( data);
 }
 
-prefix_ float FlowStatistics::getLoss()
+prefix_ bool FlowStatisticsTIM::analyze(senf::TIMPacket const & tim, senf::AnnotationsPacket const & ap)
 {
-    return loss.getLoss();
+    std::uint32_t txTSamp (tim->timestamp());
+    std::uint32_t rxTSamp (ap->timestamp() / 1000000);
+    return FlowStatistics::analyze(ap, tim.size(), tim->sequenceNumber(), txTSamp, rxTSamp);
 }
-
-prefix_ std::int64_t FlowStatistics::getPktsDuplicate()
-{
-    return loss.getPktsDuplicate();
-}
-
-prefix_ std::int64_t FlowStatistics::getPktsLate()
-{
-    return loss.getPktsLate();
-}
-
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
