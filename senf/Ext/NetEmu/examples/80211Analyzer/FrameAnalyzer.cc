@@ -261,22 +261,31 @@ static std::string flowIdAsString(PacketStatistics::Type type, std::uint32_t flo
     switch (type) {
     case PacketStatistics::RECEIVED:
         label = "RECEIVED " + senf::str(flowId);
+        break;
     case PacketStatistics::CORRUPT:
         label = "CORRUPT " + senf::str(flowId);
+        break;
     case PacketStatistics::DATA:
         label = "DATA " + senf::str(flowId);
+        break;
     case PacketStatistics::CTRL:
         label = "CTRL " + senf::str(flowId);
+        break;
     case PacketStatistics::MNGT:
         label = "MNGT " + senf::str(flowId);
+        break;
     case PacketStatistics::OTHER:
         label = "OTHER " + senf::str(flowId);
+        break;
     case PacketStatistics::IPERF:
         label = "IPERF " + senf::str(flowId);
+        break;
     case PacketStatistics::MGEN:
         label = "MGEN " + senf::str(flowId);
+        break;
     case PacketStatistics::TIM: 
         label = "TIM " + senf::str(flowId);
+        break;
     }
 
     label.resize(16, ' ');

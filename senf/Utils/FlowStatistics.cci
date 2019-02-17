@@ -35,7 +35,7 @@ prefix_ void senf::SequenceNumberStatistics::clear()
 {
     goodTotal += good;
     goodBytesTotal += goodBytes;
-    good = goodBytes = duplicate = late = lost = 0;
+    good = goodBytes = duplicate = late = lost = lostLate = lateMax = 0;
     resyncs = 0;
 }
 
@@ -83,9 +83,12 @@ prefix_ bool senf::SequenceNumberStatistics::update(std::uint32_t seqNo, std::ui
         } else {
             // we are tolerant to reordering here. So, let's account for it, ...
             late++;
+            lateMax = std::max(lateMax, std::uint32_t(-diff));
             if (SENF_LIKELY(lost > 0)) {
-                // we counted this 'late' frame as lost before, so let's reduce the lost count here
+               // we counted this 'late' frame as lost before, so let's reduce the lost count here
                lost--;
+               // count 'recovered' frames
+               lostLate++;
                countGood(payloadSize);
             }
             // ... but not suggest to drop the frame

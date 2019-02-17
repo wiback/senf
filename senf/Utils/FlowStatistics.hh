@@ -66,7 +66,9 @@ namespace senf {
         std::uint32_t goodBytes;
         std::uint32_t duplicate;
         std::uint32_t late;
+        std::uint32_t lateMax;
         std::uint32_t lost;
+        std::uint32_t lostLate;
         std::uint32_t resyncs;
         std::uint64_t goodTotal;
         std::uint64_t goodBytesTotal;

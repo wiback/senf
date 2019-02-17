@@ -132,8 +132,8 @@ prefix_ void FlowStatistics::dump(std::ostream & os, senf::ClockService::clock_t
     
     if (csv) {
     } else {
-        os << " good " << seqNoStats.good << " goodBytes " << seqNoStats.goodBytes << " late " << seqNoStats.late << " duplicate " << seqNoStats.duplicate
-           << " lost " << seqNoStats.lost << " resyncs " << seqNoStats.resyncs << " pdv " << formatEng(tstampStats.pdv.data());
+        os << " good " << seqNoStats.good << " goodBytes " << seqNoStats.goodBytes << " late " << seqNoStats.late << "/" << seqNoStats.lateMax << " duplicate " << seqNoStats.duplicate
+           << " lost " << seqNoStats.lost << " lostLate" << seqNoStats.lostLate << " resyncs " << seqNoStats.resyncs << " pdv " << formatEng(tstampStats.pdv.data());
     }
 }
 
