@@ -57,7 +57,7 @@ prefix_ void FrameAnalyzer::timerEvent()
     senf::ClockService::clock_type current (senf::ClockService::now());
     // call report with current time and the actual interval duration
     if (startTime_ > senf::ClockService::clock_type(0)) {
-        report( current - startTime_, configuration_.reportingInterval + (current - nextTimeout_));
+        report(current - startTime_, configuration_.reportingInterval + (current - nextTimeout_));
     }
     // restart timer fixing any potential scheduling issues
     nextTimeout_ += configuration_.reportingInterval;
@@ -257,39 +257,42 @@ prefix_ void FrameAnalyzer::resetStats()
 
 static std::string flowIdAsString(PacketStatistics::Type type, std::uint32_t flowId)
 {
+    std::string label ("?!?UNKNOWN?!?");
     switch (type) {
     case PacketStatistics::RECEIVED:
-        return "RECEIVED " + senf::str(flowId);
+        label = "RECEIVED " + senf::str(flowId);
     case PacketStatistics::CORRUPT:
-        return "CORRUPT  " + senf::str(flowId);
+        label = "CORRUPT " + senf::str(flowId);
     case PacketStatistics::DATA:
-        return "DATA     " + senf::str(flowId);
+        label = "DATA " + senf::str(flowId);
     case PacketStatistics::CTRL:
-        return "CTRL     " + senf::str(flowId);
+        label = "CTRL " + senf::str(flowId);
     case PacketStatistics::MNGT:
-        return "MNGT     " + senf::str(flowId);
+        label = "MNGT " + senf::str(flowId);
     case PacketStatistics::OTHER:
-        return "OTHER    " + senf::str(flowId);
+        label = "OTHER " + senf::str(flowId);
     case PacketStatistics::IPERF:
-        return "IPERF    " + senf::str(flowId);
+        label = "IPERF " + senf::str(flowId);
     case PacketStatistics::MGEN:
-        return "MGEN     " + senf::str(flowId);
+        label = "MGEN " + senf::str(flowId);
     case PacketStatistics::TIM: 
-        return "TIM      " + senf::str(flowId);
+        label = "TIM " + senf::str(flowId);
     }
 
-    return "?!?UNKNOWN?!?";
+    label.resize(16, ' ');
+    
+    return label;
 }
 
 prefix_ void FrameAnalyzer::report(senf::ClockService::clock_type const & timestamp, senf::ClockService::clock_type const & actualDuration)
 {
     for (auto const & ps : packetStatsMap) {
         if (configuration_.csvMode) {
-            std::cout << flowIdAsString(ps.first.first, ps.first.second) << ",";
-            ps.second->dump(std::cout, true);
+            std::cout << flowIdAsString(ps.first.first, ps.first.second) << "," << senf::ClockService::in_milliseconds(timestamp);
+            ps.second->dump(std::cout, actualDuration, true);
         } else {
-            std::cout << flowIdAsString(ps.first.first, ps.first.second) << " ";
-            ps.second->dump(std::cout, false);
+            std::cout << flowIdAsString(ps.first.first, ps.first.second) << " " << senf::ClockService::in_milliseconds(timestamp);
+            ps.second->dump(std::cout, actualDuration, false);
         }
         std::cout << std::endl;
     }

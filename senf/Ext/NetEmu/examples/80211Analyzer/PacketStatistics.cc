@@ -63,7 +63,7 @@ prefix_ bool PacketStatistics::analyze(senf::AnnotationsPacket const & ap, std::
     if (ap->modulationId() != 0) {
         unsigned rateInBps (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate);
         rate.accumulate(rateInBps);
-        airtime += senf::ClockService::microseconds( (ap->length() * 8 * 1000000) / rateInBps);  // need to add preamble
+        airtime += senf::ClockService::microseconds( (ap->length() * 8 * 1000) / rateInBps);  // need to add preamble
     }
 
     if (ap->rssi() != 0) {
@@ -90,7 +90,7 @@ static std::string formatCSV(senf::StatisticsData const & data)
 }
 
 
-prefix_ void PacketStatistics::dump(std::ostream & os, bool csv)
+prefix_ void PacketStatistics::dump(std::ostream & os, senf::ClockService::clock_type const & actualDuration, bool csv)
 {
     if (csv) {
     } else {
@@ -126,9 +126,9 @@ prefix_ bool FlowStatistics::analyze(senf::AnnotationsPacket const & ap, std::ui
     return true;
 }
 
-prefix_ void FlowStatistics::dump(std::ostream & os, bool csv)
+prefix_ void FlowStatistics::dump(std::ostream & os, senf::ClockService::clock_type const & actualDuration, bool csv)
 {
-    PacketStatistics::dump(os, csv);
+    PacketStatistics::dump(os, actualDuration, csv);
     
     if (csv) {
     } else {

@@ -60,7 +60,7 @@ public:
     virtual void clear();
     bool analyze(senf::AnnotationsPacket const & ap, std::uint16_t payloadSize);
 
-    virtual void dump(std::ostream & os, bool csv);
+    virtual void dump(std::ostream & os, senf::ClockService::clock_type const & actualDuration, bool csv);
 };
    
 class FlowStatistics
@@ -76,7 +76,7 @@ public:
     void clear();
     bool analyze(senf::AnnotationsPacket const & ap, std::uint16_t payloadSize, std::uint32_t seqNo, std::uint32_t txTSamp, std::uint32_t rxTStamp);
 
-    void dump(std::ostream & os, bool csv);
+    void dump(std::ostream & os, senf::ClockService::clock_type const & actualDuration, bool csv);
 };
 
 class FlowStatisticsMGEN
