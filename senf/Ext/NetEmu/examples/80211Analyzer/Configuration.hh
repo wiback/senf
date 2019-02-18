@@ -55,6 +55,7 @@ public:
     senf::ClockService::clock_type maxWait;
     std::string device;
     bool monitorMode;
+    bool analyzeTx;
     senf::INet4SocketAddress source;
     senf::INet4SocketAddress destination;
     senf::INet4SocketAddress logDestination;

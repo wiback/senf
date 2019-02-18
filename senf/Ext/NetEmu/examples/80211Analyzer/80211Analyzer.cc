@@ -141,7 +141,12 @@ int main(int argc, char const * argv[])
         // monitor mode specific confif
         filter.promisc(configuration.promisc);
         filter.annotate(true);
-        senf::emu::MonitorDataFilter::filterMonitorTxFrames(socket);
+        if (configuration.analyzeTx) {
+            senf::emu::MonitorDataFilter::filterMonitorRxFrames(socket);
+        }
+        else {
+            senf::emu::MonitorDataFilter::filterMonitorTxFrames(socket);
+        }
         // now, create the RT source
         auto *source (new senf::ppi::module::ActiveQueueSocketSource<senf::RadiotapPacket>(socket));
         senf::ppi::connect( *source, filter);

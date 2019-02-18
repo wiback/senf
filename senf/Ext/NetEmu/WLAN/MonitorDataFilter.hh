@@ -122,6 +122,8 @@ namespace emu {
         template <typename BSDSocket>
         static void filterMonitorTxFrames(BSDSocket sock);
         template <typename BSDSocket>
+        static void filterMonitorRxFrames(BSDSocket sock);
+        template <typename BSDSocket>
         static void filterMonitorTxAndCtlFrames(BSDSocket sock);
 
     private:

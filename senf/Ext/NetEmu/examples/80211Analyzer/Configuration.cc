@@ -53,6 +53,7 @@ prefix_ Configuration::Configuration()
       maxWait(senf::ClockService::milliseconds(0)),
       device("mon0"),
       monitorMode(true),
+      analyzeTx(false),
       destination(5001),
       numPackets(0)
 {
@@ -82,6 +83,7 @@ prefix_ Configuration::Configuration()
     initDir.add("num-packets",  fty::Variable( numPackets));
     initDir.add("monitor-device", fty::Command( &Configuration::monDev, this));
     initDir.add("device", fty::Command( &Configuration::dev, this));
+    initDir.add("analyze-tx", fty::Variable(analyzeTx));
     initDir.add("reorder-packets", fty::Variable( reorderPackets));
     initDir.add("reorder-timeout", fty::Variable( reorderTimeout)
         .parser(senf::parseClockServiceInterval) );

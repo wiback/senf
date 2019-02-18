@@ -49,6 +49,20 @@ prefix_ void senf::emu::MonitorDataFilter::filterMonitorTxFrames(BSDSocket sock)
 }
 
 template <typename BSDSocket>
+prefix_ void senf::emu::MonitorDataFilter::filterMonitorRxFrames(BSDSocket sock)
+{
+    // set up the BPF to tx frames inside the kernel
+     // BPF: tcpdump -i wiback-mon2 -dd '(radio[4] & 0x01 == 0)'  (TSFT NOT present ?)
+     static struct sock_filter BPF_code[] = {
+         { 0x30, 0, 0, 0x00000004 },
+         { 0x45, 0, 1, 0x00000001 },
+         { 0x06, 0, 0, 0x00000000 },
+         { 0x06, 0, 0, 0x00040000 }
+     };
+     sock.protocol().attachSocketFilter(BPF_code);
+}
+
+template <typename BSDSocket>
 prefix_ void senf::emu::MonitorDataFilter::filterMonitorTxAndCtlFrames(BSDSocket sock)
 {
     // set up the BPF to filter wlan ctl and tx frames inside the kernel
