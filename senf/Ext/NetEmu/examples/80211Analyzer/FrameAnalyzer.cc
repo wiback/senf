@@ -95,8 +95,11 @@ prefix_ void FrameAnalyzer::request()
     senf::AnnotationsPacket const & ap (ethIn.find<senf::AnnotationsPacket>(senf::nothrow));
     if (!ap) {
         // If not, we receive plain data frames (Ethernet)
-        if (!handleDataFrame(ethIn, ap))
+        flowStats(PacketStatistics::RECEIVED, 0)->analyze(ap, ethIn.size());
+        // let see, if we understand them
+        if (!handleDataFrame(ethIn, ap)) {
             flowStats(PacketStatistics::OTHER, 0)->analyze(ap, ethIn.size());
+        }
         return;
     }
 

@@ -53,7 +53,8 @@ public:
     senf::ClockService::clock_type reportingInterval;
     senf::ClockService::clock_type duration;
     senf::ClockService::clock_type maxWait;
-    std::string monitorDevice;
+    std::string device;
+    bool monitorMode;
     senf::INet4SocketAddress source;
     senf::INet4SocketAddress destination;
     senf::INet4SocketAddress logDestination;
@@ -65,6 +66,9 @@ public:
     void version();
     void enableHighresTimers();
     void enableRealtimeScheduling();
+
+    void dev(std::string const & d);
+    void monDev(std::string const & d);
 
     bool parse(int argc, char const *argv[]);
 };

@@ -38,21 +38,22 @@ extern "C" {
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 prefix_ Configuration::Configuration()
-    : mgenMode( false),
-      iperfMode( false),
-      bindSocket( true),
-      tsftHistogram( false),
-      verbose( false),
-      csvMode( false),
-      reorderPackets( true),
+    : mgenMode(false),
+      iperfMode(false),
+      bindSocket(true),
+      tsftHistogram(false),
+      verbose(false),
+      csvMode(false),
+      reorderPackets(true),
       promisc(true),
       clockDrift(0.0f),
-      reorderTimeout( senf::ClockService::milliseconds(0)),  // NetEmu default
-      reportingInterval( senf::ClockService::milliseconds(1000)),
-      duration( senf::ClockService::milliseconds(0)),
-      maxWait( senf::ClockService::milliseconds(0)),
-      monitorDevice( "mon0"),
-      destination( 5001),
+      reorderTimeout(senf::ClockService::milliseconds(0)),  // NetEmu default
+      reportingInterval(senf::ClockService::milliseconds(1000)),
+      duration(senf::ClockService::milliseconds(0)),
+      maxWait(senf::ClockService::milliseconds(0)),
+      device("mon0"),
+      monitorMode(true),
+      destination(5001),
       numPackets(0)
 {
     namespace fty = senf::console::factory;
@@ -79,7 +80,8 @@ prefix_ Configuration::Configuration()
     initDir.add("max-wait", fty::Variable( maxWait)
         .parser(senf::parseClockServiceInterval) );
     initDir.add("num-packets",  fty::Variable( numPackets));
-    initDir.add("monitor-device", fty::Variable( monitorDevice));
+    initDir.add("monitor-device", fty::Command( &Configuration::monDev, this));
+    initDir.add("device", fty::Command( &Configuration::dev, this));
     initDir.add("reorder-packets", fty::Variable( reorderPackets));
     initDir.add("reorder-timeout", fty::Variable( reorderTimeout)
         .parser(senf::parseClockServiceInterval) );
@@ -106,6 +108,18 @@ prefix_ void Configuration::version()
 {
     std::cerr << "2.0" << std::endl;
     exit(0);
+}
+
+prefix_ void Configuration::dev(std::string const & d)
+{
+    device = d;
+    monitorMode = false;
+}
+
+prefix_ void Configuration::monDev(std::string const & d)
+{
+    device = d;
+    monitorMode = true;
 }
 
 prefix_ void Configuration::enableHighresTimers()

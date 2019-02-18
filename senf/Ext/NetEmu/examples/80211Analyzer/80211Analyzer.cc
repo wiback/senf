@@ -112,7 +112,7 @@ int main(int argc, char const * argv[])
     try {
         std::ifstream fs;
         std::string buf;
-        fs.open( (std::string("/sys/class/net/") + configuration.monitorDevice + std::string("/address")).c_str());
+        fs.open( (std::string("/sys/class/net/") + configuration.device + std::string("/address")).c_str());
         fs >> buf;
         fs.close();
         mac = senf::MACAddress::from_string(buf);
@@ -120,20 +120,16 @@ int main(int argc, char const * argv[])
         SENF_LOG( (senf::log::CRITICAL) ("Failed to determine MAC address of monitor device") );
         exit(1);
     }
-    SENF_LOG((senf::log::IMPORTANT)("Determined MAC address for " << configuration.monitorDevice << " is " << mac));
+    SENF_LOG((senf::log::IMPORTANT)("Determined MAC address for " << configuration.device << " is " << mac));
 
-    senf::ConnectedMMapReadPacketSocketHandle socket(configuration.monitorDevice, 1024, SENF_EMU_MAXMTU);
-    senf::ppi::module::ActiveQueueSocketSource<senf::RadiotapPacket> source(socket);
+    senf::ConnectedMMapReadPacketSocketHandle socket(configuration.device, 1024, SENF_EMU_MAXMTU);
     socket.protocol().rcvbuf(4096);
 
     senf::emu::MonitorDataFilter filter (mac);
-    filter.promisc(configuration.promisc);
-    filter.annotate(true);
     /*
     if (configuration.reorderBufferSize > senf::ClockService::milliseconds(0))
         filter.reorderTimeout(configuration.reorderTimeout);
     */
-    senf::emu::MonitorDataFilter::filterMonitorTxFrames(socket);
 
     if (configuration.tsftHistogram) {
         filter.tsftHistogram().start();
@@ -141,9 +137,22 @@ int main(int argc, char const * argv[])
 
     FrameAnalyzer analyzer (configuration);
 
-    senf::ppi::connect( source, filter);
-    senf::ppi::connect( filter, analyzer);
-
+    if (configuration.monitorMode) {
+        // monitor mode specific confif
+        filter.promisc(configuration.promisc);
+        filter.annotate(true);
+        senf::emu::MonitorDataFilter::filterMonitorTxFrames(socket);
+        // now, create the RT source
+        auto *source (new senf::ppi::module::ActiveQueueSocketSource<senf::RadiotapPacket>(socket));
+        senf::ppi::connect( *source, filter);
+        senf::ppi::connect( filter, analyzer);
+    } else {
+        // plain ethernet source
+        auto *source (new senf::ppi::module::ActiveQueueSocketSource<senf::EthernetPacket>(socket));
+        senf::ppi::connect( *source, filter.input_plain);
+        senf::ppi::connect( filter, analyzer);
+    }
+    
     if (configuration.csvMode) {
         SENF_LOG((senf::log::IMPORTANT)("CSV order: flowId,tstamp,pps,brateInKbps,retriesPerSec,len_min,len_avg,len_max,len_stddev,rssi_min,rssi_avg,rssi_max,rssi_stdev,mcs_min,mcs_avg,mcs_max,mcs_stddev,(latency_min,latency_avg,latency_max,latency_stddev,loss%,duplicate,late)(received,data,corrupt,control,management,other,dataNonUDP,nonMGEN)"));
     }

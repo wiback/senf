@@ -133,7 +133,7 @@ prefix_ void FlowStatistics::dump(std::ostream & os, senf::ClockService::clock_t
     if (csv) {
     } else {
         os << " good " << seqNoStats.good << " goodBytes " << seqNoStats.goodBytes << " late " << seqNoStats.late << "/" << seqNoStats.lateMax << " duplicate " << seqNoStats.duplicate
-           << " lost " << seqNoStats.lost << " lostLate" << seqNoStats.lostLate << " resyncs " << seqNoStats.resyncs << " pdv " << formatEng(tstampStats.pdv.data());
+           << " lost " << seqNoStats.lost << " lostLate " << seqNoStats.lostLate << " resyncs " << seqNoStats.resyncs << " pdv " << formatEng(tstampStats.pdv.data());
     }
 }
 
@@ -147,7 +147,7 @@ prefix_ FlowStatisticsMGEN::FlowStatisticsMGEN()
 prefix_ bool FlowStatisticsMGEN::analyze(MGENPacket const & mgen, senf::AnnotationsPacket const & ap)
 {
     std::uint32_t txTSamp (std::int64_t(mgen->txTimeSeconds()) * 1000 + std::int64_t(mgen->txTimeMicroseconds()) / 1000);
-    std::uint32_t rxTSamp (ap->timestamp() / 1000000);
+    std::uint32_t rxTSamp (mgen.annotation<senf::emu::annotations::Timestamp>().as_milli_seconds());
     return FlowStatistics::analyze(ap, mgen.size(), mgen->sequenceNumber(), txTSamp, rxTSamp);
 }
 
@@ -160,7 +160,7 @@ prefix_ FlowStatisticsIPERF::FlowStatisticsIPERF()
 prefix_ bool FlowStatisticsIPERF::analyze(IperfUDPPacket const & iperf, senf::AnnotationsPacket const & ap)
 {
     std::uint32_t txTSamp (std::int64_t(iperf->tv_sec()) * 1000 + std::int64_t(iperf->tv_usec()) / 1000);
-    std::uint32_t rxTSamp (ap->timestamp() / 1000000);
+    std::uint32_t rxTSamp (iperf.annotation<senf::emu::annotations::Timestamp>().as_milli_seconds());
     return FlowStatistics::analyze(ap, iperf.size(), iperf->id(), txTSamp, rxTSamp);
 }
 
@@ -173,7 +173,7 @@ prefix_ FlowStatisticsTIM::FlowStatisticsTIM()
 prefix_ bool FlowStatisticsTIM::analyze(senf::TIMPacket const & tim, senf::AnnotationsPacket const & ap)
 {
     std::uint32_t txTSamp (tim->timestamp());
-    std::uint32_t rxTSamp (ap->timestamp() / 1000000);
+    std::uint32_t rxTSamp (tim.annotation<senf::emu::annotations::Timestamp>().as_milli_seconds(senf::TIMPacketParser::timestamp_t::max_value + 1));
     return FlowStatistics::analyze(ap, tim.size(), tim->sequenceNumber(), txTSamp, rxTSamp);
 }
 
