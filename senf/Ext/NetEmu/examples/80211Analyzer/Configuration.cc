@@ -45,7 +45,7 @@ prefix_ Configuration::Configuration()
       verbose(false),
       csvMode(false),
       reorderPackets(true),
-      promisc(true),
+      promisc(false),
       clockDrift(0.0f),
       reorderTimeout(senf::ClockService::milliseconds(0)),  // NetEmu default
       reportingInterval(senf::ClockService::milliseconds(1000)),

@@ -122,8 +122,8 @@ prefix_ void senf::SequenceNumberStatistics::dump(std::ostream & os, senf::Clock
 ///////////////////////////////////////////////////////////////////////////
 // senf::TimestampStatistics
 
-prefix_ senf::TimestampStatistics::TimestampStatistics(std::int32_t maxValue, std::int32_t threshold)
-    : Distance(maxValue, threshold)
+prefix_ senf::TimestampStatistics::TimestampStatistics(std::uint8_t bits)
+    : DifferenceSigned(bits)
 {
     reset();
 }
@@ -144,7 +144,7 @@ prefix_ void senf::TimestampStatistics::clear()
 
 prefix_ void senf::TimestampStatistics::update(std::uint32_t txTStamp, std::uint32_t rxTStamp, bool updateDelay)
 {
-    auto diff (distance(rxTStamp, txTStamp));
+    auto diff (difference(rxTStamp, txTStamp));
 
     // first packet seen => establish the typical delay
     if (SENF_UNLIKELY(firstUpdateAfterReset_)) {

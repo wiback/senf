@@ -20,14 +20,14 @@ namespace senf {
         {
         public:
             Distance(std::int32_t maxValue, std::int32_t threshold) :
-                maxValue_(maxValue), threshold_(threshold)
+                maxValue_(maxValue), threshold_(maxValue / 8)
             {
             }
 
             std::int32_t distance(std::uint32_t current, std::uint32_t last)
             {
                 std::int32_t dist (current - last);
-
+                
                 if (SENF_UNLIKELY(dist + threshold_ < 0))
                     return dist + maxValue_;
                 if (SENF_UNLIKELY(dist - (maxValue_ - threshold_) > 0))
@@ -35,10 +35,29 @@ namespace senf {
 
                 return dist;
             }
-
+            
         private:
             std::int32_t const maxValue_;
             std::int32_t const threshold_;
+        };
+
+        class DifferenceSigned
+        {
+        public:
+            DifferenceSigned(std::uint8_t bits) :
+                mask_(std::uint64_t(1 << bits) - 1),
+                limit_(1 << (bits-1))
+            {
+            }
+
+            std::int32_t difference(std::uint32_t current, std::uint32_t last)
+            {
+                return std::int32_t(((current - last) & mask_) ^ limit_) - limit_;
+            }
+  
+        private:
+            std::uint32_t const mask_;
+            std::uint32_t const limit_;
         };
     }
 
@@ -80,10 +99,10 @@ namespace senf {
     };
 
     struct TimestampStatistics
-        : public detail::Distance
+        : public detail::DifferenceSigned
     {
     public:
-        TimestampStatistics(std::int32_t maxValue, std::int32_t threshold);
+        TimestampStatistics(std::uint8_t bits);
         virtual ~TimestampStatistics() {};
 
         virtual void clear();
