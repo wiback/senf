@@ -45,13 +45,13 @@ prefix_ std::int32_t senf::SequenceNumberStatistics::maxLate()
     return maxLate_;
 }
 
-prefix_ void senf::SequenceNumberStatistics::countGood(std::uint32_t payloadSize)
+prefix_ void senf::SequenceNumberStatistics::countGood(std::uint32_t const & payloadSize)
 {
     good++;
     goodBytes += payloadSize;
 }
 
-prefix_ bool senf::SequenceNumberStatistics::update(std::uint32_t seqNo, std::uint32_t payloadSize)
+prefix_ bool senf::SequenceNumberStatistics::update(std::uint32_t const & seqNo, std::uint32_t const & payloadSize)
 {
     if (SENF_UNLIKELY(firstUpdateAfterReset_)) {
         firstUpdateAfterReset_ = false;
@@ -142,7 +142,7 @@ prefix_ void senf::TimestampStatistics::clear()
 }
 
 
-prefix_ void senf::TimestampStatistics::update(std::uint32_t txTStamp, std::uint32_t rxTStamp, bool updateDelay)
+prefix_ void senf::TimestampStatistics::update(std::uint32_t const & txTStamp, std::uint32_t const & rxTStamp, bool updateDelay)
 {
     auto diff (difference(rxTStamp, txTStamp));
 
