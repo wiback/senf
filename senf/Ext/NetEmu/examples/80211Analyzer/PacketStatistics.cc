@@ -100,9 +100,9 @@ prefix_ void PacketStatistics::dump(std::ostream & os, senf::ClockService::clock
 }
 
 prefix_ FlowStatistics::FlowStatistics(std::int32_t SmaxValue, std::int32_t Sthreshold, std::int32_t SmaxLate,
-                                       std::int32_t TmaxValue, std::int32_t Tthreshold)
+                                       std::uint8_t bits)
     : seqNoStats(SmaxValue, Sthreshold, SmaxLate),
-      tstampStats(TmaxValue, Tthreshold)
+      tstampStats(bits)
 {
     clear();
 }
@@ -140,7 +140,7 @@ prefix_ void FlowStatistics::dump(std::ostream & os, senf::ClockService::clock_t
 
 prefix_ FlowStatisticsMGEN::FlowStatisticsMGEN()
     : FlowStatistics(std::numeric_limits<std::uint32_t>::max(), std::numeric_limits<std::uint32_t>::max() / 10, 128,
-                     std::numeric_limits<std::uint32_t>::max(), std::numeric_limits<std::uint32_t>::max() / 10)
+                     32)
 {
 }
 
@@ -153,7 +153,7 @@ prefix_ bool FlowStatisticsMGEN::analyze(MGENPacket const & mgen, senf::Annotati
 
 prefix_ FlowStatisticsIPERF::FlowStatisticsIPERF()
     : FlowStatistics(std::numeric_limits<std::int32_t>::max(), std::numeric_limits<std::int32_t>::max() / 10, 128,
-                     std::numeric_limits<std::uint32_t>::max(), std::numeric_limits<std::uint32_t>::max() / 10)
+                     32)
 {
 }
 
@@ -166,7 +166,7 @@ prefix_ bool FlowStatisticsIPERF::analyze(IperfUDPPacket const & iperf, senf::An
 
 prefix_ FlowStatisticsTIM::FlowStatisticsTIM()
     : FlowStatistics(senf::TIMPacketParser::sequenceNumber_t::max_value + 1, (senf::TIMPacketParser::sequenceNumber_t::max_value + 1) / 10, 128,
-                     senf::TIMPacketParser::timestamp_t::max_value + 1, (senf::TIMPacketParser::timestamp_t::max_value + 1) / 10)
+                     14)
 {
 }
 

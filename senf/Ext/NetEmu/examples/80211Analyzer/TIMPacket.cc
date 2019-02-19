@@ -51,7 +51,7 @@ prefix_ senf::TIMSeqNoStats::TIMSeqNoStats(TIMPacket const & tim, bool llSeq)
 // senf::TIMTimestampStats
 
 prefix_ senf::TIMTimestampStats::TIMTimestampStats()
-    : TimestampStatistics(TIMPacketParser::timestamp_t::max_value + 1, (TIMPacketParser::timestamp_t::max_value + 1) / 10)
+    : TimestampStatistics(14)
 {
     reset();
 }
