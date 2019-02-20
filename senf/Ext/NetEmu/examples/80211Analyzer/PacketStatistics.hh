@@ -70,8 +70,7 @@ public:
     senf::SequenceNumberStatistics seqNoStats;
     senf::TimestampStatistics tstampStats;
     
-    FlowStatistics(std::int32_t SmaxValue, std::int32_t Sthreshold, std::int32_t SmaxLate,
-                   std::uint8_t bits);
+    FlowStatistics(std::uint8_t Sbits, std::int32_t SmaxLate, std::uint8_t Tbits);
 
     void clear();
     bool analyze(senf::AnnotationsPacket const & ap, std::uint16_t payloadSize, std::uint32_t seqNo, std::uint32_t txTSamp, std::uint32_t rxTStamp);

@@ -17,12 +17,12 @@ SENF_PACKET_INSTANTIATE_TEMPLATE( senf::TIMPacket );
 prefix_ void senf::TIMPacketType::dump(packet p, std::ostream & os)
 {
     os << "TIM Header: \n"
-       << "  linkLocal seqNo : " << p->linkLocalSeqNo() << std::endl
-       << "  sequence number : " << p->sequenceNumber() << std::endl
-       << "  timestamp : " << p->timestamp() << std::endl
+       << "  linkLocal seqNo : "  << p->linkLocalSeqNo() << std::endl
+       << "  sequence number : "  << p->sequenceNumber() << std::endl
+       << "  timestamp : "        << p->timestamp() << std::endl
        << "  GPS synchronized : " << p->syn() << std::endl
-       << "  Odd size flag : " << p->oddSize() << std::endl
-       << "  padding : " << p->padding() << std::endl;
+       << "  Odd size flag : "    << p->oddSize() << std::endl
+       << "  padding : "          << p->padding() << std::endl;
 }
 
 
@@ -30,13 +30,13 @@ prefix_ void senf::TIMPacketType::dump(packet p, std::ostream & os)
 // senf::TIMSeqNoStats
 
 prefix_ senf::TIMSeqNoStats::TIMSeqNoStats()
-    : SequenceNumberStatistics(TIMPacketParser::sequenceNumber_t::max_value + 1, (TIMPacketParser::sequenceNumber_t::max_value + 1) / 10, 64)
+    : SequenceNumberStatistics(22, 64)
 {
     reset();
 }
 
 prefix_ senf::TIMSeqNoStats::TIMSeqNoStats(TIMPacket const & tim, bool llSeq)
-    : SequenceNumberStatistics(TIMPacketParser::sequenceNumber_t::max_value + 1, (TIMPacketParser::sequenceNumber_t::max_value + 1) / 10, 64)
+    : SequenceNumberStatistics(22, 32)
 {
     reset();
 

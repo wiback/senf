@@ -5,8 +5,8 @@
 //     Christian Niephaus <cni@berlios.de>
 //
 
-#ifndef HH_Senf_DataPlane_Packets_TIMPacket_
-#define HH_Senf_DataPlane_Packets_TIMPacket_ 1
+#ifndef TIMPacket_
+#define TIMPacket_ 1
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
