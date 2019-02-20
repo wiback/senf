@@ -106,13 +106,9 @@ prefix_ time_t senf::ClockService::to_time_t(senf::ClockService::clock_type cons
     return  (abstime(time) -  boost::posix_time::from_time_t(0)).total_seconds();
 }
 
-
 prefix_ senf::ClockService::clock_type_coarse senf::ClockService::coarseDiff(clock_type_coarse const & newer, clock_type_coarse const & older)
 {
-    clock_type_coarse diff (newer - older);
-    if (SENF_UNLIKELY(diff < 0))
-        diff += 0x7fffffff;
-    return diff;
+    return (((newer - older) & 0x7fffffff) ^ 0x80000000) - 0x80000000;
 }
 
 prefix_ SENF_CLOCKSERVICE_CONSTEXPR std::int32_t senf::ClockService::coarseToMs(clock_type_coarse const & v)
