@@ -111,7 +111,8 @@ prefix_ std::string senf::emu::detail::TunnelIOStatistics::dump()
 const signed reSyncTresh = 256;
 
 prefix_ senf::emu::detail::TunnelControllerBase::TunnelControllerBase(TunnelInterfaceBase & interface)
-    : timeout_(senf::ClockService::seconds(20)), interface_(interface), qAlgo_( new senf::ppi::NoneQueueingAlgorithm())
+    : timeout_(senf::ClockService::seconds(20)), interface_(interface), qAlgo_( new senf::ppi::NoneQueueingAlgorithm()),
+      seqNoDiff_(17)
 {}
 
 prefix_ bool senf::emu::detail::TunnelControllerBase::isTunnelCtrlPacket(EthernetPacket const & eth)
@@ -409,7 +410,7 @@ prefix_ signed senf::emu::detail::TunnelServerController::v_processSequenceNumbe
         if (SENF_UNLIKELY(client->rxSeqNo == 0xffffffff)) {
             diff = 1;
         } else {
-            diff = TunnelHeaderPacketType::seqNoDiff(thdr->sequenceNumber(), client->rxSeqNo);
+            diff = seqNoDiff_.difference(thdr->sequenceNumber(), client->rxSeqNo);
         }
         if ((diff > 0) or (diff < -reSyncTresh)) {
             clients_by_inetAddr_.modify( client, TunnelClient::updateRxSeqNo(thdr->sequenceNumber()));
@@ -624,7 +625,7 @@ prefix_ signed senf::emu::detail::TunnelClientController::v_processSequenceNumbe
     if (SENF_UNLIKELY(rxSeqNo_ == 0xffffffff)) {
         diff = 1;
     } else {
-        diff = TunnelHeaderPacketType::seqNoDiff(thdr->sequenceNumber(), rxSeqNo_);
+        diff = seqNoDiff_.difference(thdr->sequenceNumber(), rxSeqNo_);
     }
     if ((diff > 0) or (diff < -reSyncTresh)) {
         rxSeqNo_ = thdr->sequenceNumber();

@@ -39,6 +39,7 @@
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include <senf/PPI/QueueingAlgorithm.hh>
+#include <senf/Utils/FlowStatistics.hh>
 #include <senf/Ext/NetEmu/Ethernet/EthernetFragmenter.hh>
 #include <senf/Ext/NetEmu/Ethernet/EthernetReassembler.hh>
 
@@ -135,6 +136,8 @@ namespace detail {
         EthernetFragmenter fragmenter_;
         EthernetReassembler reassembler_;
         TunnelIOStatistics stats_;
+    protected:
+        senf::Detail::DifferenceSigned seqNoDiff_;
     };
 
 

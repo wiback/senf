@@ -40,21 +40,6 @@ prefix_ void senf::emu::TunnelHeaderPacketType::finalize(packet p)
 {
 }
 
-prefix_ std::int32_t senf::emu::TunnelHeaderPacketType::seqNoDiff(std::uint32_t current, std::uint32_t last)
-{
-    static constexpr std::int32_t maxSeq_     = 0x1ffff+1;
-    static constexpr std::int32_t threshold_  = maxSeq_/10;
-    
-    std::int32_t dist(current - last);
-
-    if (SENF_UNLIKELY(dist + threshold_ < 0))
-        return dist + maxSeq_;
-    if (SENF_UNLIKELY(dist - (maxSeq_ - threshold_) > 0))
-        return dist - maxSeq_;
-    
-    return dist;
-}
-
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

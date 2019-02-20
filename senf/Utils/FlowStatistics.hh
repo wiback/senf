@@ -15,7 +15,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
-    namespace detail {
+    namespace Detail {
         class Distance
         {
         public:
@@ -62,7 +62,7 @@ namespace senf {
     }
 
     class SequenceNumberStatistics
-        : public detail::DifferenceSigned
+        : public Detail::DifferenceSigned
     {
     public:
         SequenceNumberStatistics(std::uint8_t bits, std::int32_t maxLate);
@@ -99,7 +99,7 @@ namespace senf {
     };
 
     struct TimestampStatistics
-        : public detail::DifferenceSigned
+        : public Detail::DifferenceSigned
     {
     public:
         TimestampStatistics(std::uint8_t bits);

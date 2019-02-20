@@ -54,8 +54,6 @@ namespace emu {
         : public senf::PacketTypeBase,
           public senf::PacketTypeMixin<TunnelHeaderPacketType>
     {
-        static constexpr std::uint32_t SeqNoBits = 17;
-        static constexpr std::uint32_t maxSeqNo  = 65536 * 2;
         static constexpr std::uint32_t reservedMagic = 0x4711 & 0x7fff;
  
         typedef senf::PacketTypeMixin<TunnelHeaderPacketType> mixin;
@@ -70,8 +68,6 @@ namespace emu {
         /// Dump given TunnelHeaderPacket in readable form to given output stream
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
-        // computes the difference between to 17bit-wide seqNos (TunnelHeader)
-        static std::int32_t seqNoDiff(std::uint32_t current, std::uint32_t last);
     };
 
     typedef senf::ConcretePacket<TunnelHeaderPacketType> TunnelHeaderPacket;
