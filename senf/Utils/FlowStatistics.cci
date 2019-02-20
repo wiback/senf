@@ -15,8 +15,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::SequenceNumberStatistics
 
-prefix_ senf::SequenceNumberStatistics::SequenceNumberStatistics(std::int32_t maxValue, std::int32_t threshold, std::int32_t maxLate)
-    : Distance(maxValue, threshold),
+prefix_ senf::SequenceNumberStatistics::SequenceNumberStatistics(std::uint8_t bits, std::int32_t maxLate)
+    : DifferenceSigned(bits),
       maxLate_(maxLate)
 {
     reset();
@@ -60,7 +60,7 @@ prefix_ bool senf::SequenceNumberStatistics::update(std::uint32_t const & seqNo,
         return true;
     }
 
-    auto diff (distance(seqNo, last_));
+    auto diff (difference(seqNo, last_));
 
     if (SENF_LIKELY(diff == 1)) {
         // no loss

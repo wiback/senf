@@ -62,10 +62,10 @@ namespace senf {
     }
 
     class SequenceNumberStatistics
-        : public detail::Distance
+        : public detail::DifferenceSigned
     {
     public:
-        SequenceNumberStatistics(std::int32_t maxValue, std::int32_t threshold, std::int32_t maxLate);
+        SequenceNumberStatistics(std::uint8_t bits, std::int32_t maxLate);
         virtual ~SequenceNumberStatistics() {};
 
         virtual void clear();
