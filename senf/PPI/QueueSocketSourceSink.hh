@@ -59,7 +59,7 @@ namespace ppi {
 
     std::ostream & operator<<(std::ostream & os, QueueBufferAnnotation const & annotation);
 
-    typedef std::function<bool (senf::Packet const & pkt)> REDFilterCallback;
+    typedef std::function<bool (senf::Packet const & pkt, std::uint32_t usage)> REDFilterCallback;
     
 namespace module {
 

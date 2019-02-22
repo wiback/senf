@@ -147,7 +147,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             ifo = PacketInfo(pk);
 
             unsigned usage (qi.usageRx());
-            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/3)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage)) and !redFilterCallback_(pk))) {
+            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/4)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage)) and !redFilterCallback_(pk, usage))) {
                 // drop frame
                 qi.rxStats.red++;
                 red_++;
@@ -302,16 +302,18 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::write()
 {
     Packet const & packet (input());
 
-    if (SENF_UNLIKELY(!handle_))
+    if (SENF_UNLIKELY(!handle_)) {
+        dropped_++;
         return;
+    }
 
     // simple RED starting at > 33% usage
     senf::detail::QueueInfo & qi (* senf::detail::QueuePolicyBase::qinfo(handle_));
     unsigned usage (qi.usageTx());
 
-    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/3))) {
+    if (SENF_UNLIKELY(usage > (senf::detail::QueueInfo::NUM_SAMPLES/4))) {
         if ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage)) {
-            if (!redFilterCallback_(packet)) {
+            if (!redFilterCallback_(packet, usage)) {
                 qi.txStats.red++;
                 red_++;
                 return;
