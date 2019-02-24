@@ -147,7 +147,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             ifo = PacketInfo(pk);
 
             unsigned usage (qi.usageRx());
-            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/3)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage))
+            if (SENF_UNLIKELY( (usage > (senf::detail::QueueInfo::NUM_SAMPLES/2)) and ((std::uint32_t(rand()) % senf::detail::QueueInfo::NUM_SAMPLES) < (usage))
                                and !redFilterCallback_(pk, (usage * 100) / senf::detail::QueueInfo::NUM_SAMPLES))) {
                 // drop frame
                 qi.rxStats.red++;
