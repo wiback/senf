@@ -216,7 +216,7 @@ prefix_ senf::emu::WirelessNLController::WirelessNLController(bool disableSeqNoC
 
 prefix_ void senf::emu::WirelessNLController::init(bool disableSeqNoCheck)
 {
-    memset(&survey_, 0, sizeof(survey_));
+    survey_.clear();
     ifaceType_ = IfaceType::Unknown;
     hasHTCapabilities_ = false;
     hasVHTCapabilities_ = false;
