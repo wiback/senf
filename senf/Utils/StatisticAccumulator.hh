@@ -41,6 +41,7 @@
 namespace senf {
 
      struct StatisticsData
+        : public boost::less_than_comparable<StatisticsData>
      {
          StatisticsData();
          StatisticsData(float min_, float avg_, float max_, float stddev_, unsigned cnt_);
@@ -49,6 +50,7 @@ namespace senf {
          void clear();
 
          explicit operator bool() const;
+         bool operator<(StatisticsData const & other) const;
 
          float min;
          float avg;
@@ -121,7 +123,7 @@ namespace senf {
                                         /**< This method returns the accumulated information
                                              as a tuple.*/
 
-        operator bool() const;          ///< Returns true if valid data is present
+        explicit operator bool() const; ///< Returns true if valid data is present
                                         /**< This method indicates if valid data is present */
 
         StatisticAccumulator<T> operator +=(StatisticAccumulator<T> const & other);
@@ -134,7 +136,38 @@ namespace senf {
         unsigned cnt_;
     };
 
+    template <class T>
+    class StatisticsEWMA
+        : public boost::less_than_comparable<StatisticsEWMA<T>>
+    {
+    public:
+        StatisticsEWMA(float alpha = 0.25f, T const & value = T());
+        
+        void clear(T const & value = T()); ///< Reset accumulated values.
+                                            /**< This member reset all values. */
+        void accumulate(T const & value);   ///< Gather value to be accumulated.
+        void accumulateWithLoss(T const & value, unsigned numLost); ///< Gather value to be accumulated.
+
+        bool operator<(StatisticsEWMA<T> const & other) const;
+        
+        explicit operator bool() const;     ///< Returns true if valid data is present
+                                            /**< This method indicates if valid data is present */
+
+        unsigned count() const;             ///< Returns count of accumulated values.
+                                            /**< This method returns count of accumulated
+                                                 values of the current accumulation.*/
+        T const & ewma() const;
+
+        float const & alpha() const;
+        
+    private:
+        T ewma_;
+        float alpha_;
+        unsigned cnt_;
+    };
+  
 }
+
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "StatisticAccumulator.cci"
 #include "StatisticAccumulator.ct"

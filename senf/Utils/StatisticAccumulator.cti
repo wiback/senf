@@ -103,6 +103,68 @@ prefix_ senf::StatisticAccumulator<T>::operator bool()
     return cnt_ > 0;
 }
 
+//
+// EWMA
+//
+
+template <class T>
+prefix_ void senf::StatisticsEWMA<T>::accumulate(T const & value)
+{
+    ewma_ = (ewma_ * (1.0f - alpha_)) + (value * alpha_); 
+    cnt_++;
+}
+
+template <class T>
+prefix_ void senf::StatisticsEWMA<T>::accumulateWithLoss(T const & value, unsigned numLost)
+{
+    // we substitute the lost data with a avg of the last ewma and the new data
+    T avg ((ewma_ + value) * 0.5f);
+
+    // account for lost data with avg
+    for (unsigned n = 0; n < numLost; n++) {
+        accumulate(avg);
+    }
+
+    // feed in new value
+    accumulate(value);
+}
+
+template <class T>
+prefix_ senf::StatisticsEWMA<T>::operator bool()
+    const
+{
+    return cnt_ > 0;
+}
+
+template <class T>
+prefix_ bool senf::StatisticsEWMA<T>::operator<(senf::StatisticsEWMA<T> const & other)
+    const
+{
+    return ewma_ < other.ewma_;
+}
+
+template <class T>
+prefix_ unsigned senf::StatisticsEWMA<T>::count()
+    const
+{
+    return cnt_;
+}
+
+template <class T>
+prefix_ T const & senf::StatisticsEWMA<T>::ewma()
+    const
+{
+    return ewma_;
+}
+
+template <class T>
+prefix_ float const & senf::StatisticsEWMA<T>::alpha()
+    const
+{
+    return alpha_;
+}
+
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

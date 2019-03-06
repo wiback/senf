@@ -49,5 +49,12 @@ std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & 
     return os;
 };
 
+prefix_ void senf::StatisticsData::clear()
+{
+    min = max = NAN;
+    avg = stddev = NAN;
+    cnt = 0;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

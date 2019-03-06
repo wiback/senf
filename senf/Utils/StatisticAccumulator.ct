@@ -132,5 +132,25 @@ prefix_ senf::StatisticAccumulator<T> senf::StatisticAccumulator<T>::operator+=(
     return *this;
 }
 
+//
+// EWMA
+//
+
+template <class T>
+prefix_ senf::StatisticsEWMA<T>::StatisticsEWMA(float alpha, T const & value)
+    : ewma_(value),
+      alpha_(alpha),
+      cnt_(0)
+{
+}
+
+template <class T>
+prefix_ void senf::StatisticsEWMA<T>::clear(T const & value)
+{
+    ewma_ = value;
+    cnt_ = 0;
+}
+
+
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
