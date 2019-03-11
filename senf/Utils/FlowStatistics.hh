@@ -19,12 +19,12 @@ namespace senf {
         class Distance
         {
         public:
-            Distance(std::int32_t const & maxValue, std::int32_t const & threshold) :
+            Distance(std::int32_t maxValue, std::int32_t threshold) :
                 maxValue_(maxValue), threshold_(maxValue / 8)
             {
             }
 
-            std::int32_t distance(std::uint32_t const & current, std::uint32_t const & last)
+            std::int32_t distance(std::uint32_t current, std::uint32_t last)
             {
                 std::int32_t dist (current - last);
                 
@@ -50,7 +50,7 @@ namespace senf {
             {
             }
 
-            std::int32_t difference(std::uint32_t const & current, std::uint32_t const & last)
+            std::int32_t difference(std::uint32_t current, std::uint32_t last)
             {
                 return std::int32_t(((current - last) & mask_) ^ limit_) - limit_;
             }
@@ -71,14 +71,14 @@ namespace senf {
         virtual void clear();
         virtual void reset();
 
-        bool update(std::uint32_t const & seqNo, std::uint32_t const & payloadSize);
+        bool update(std::uint32_t seqNo, std::uint32_t payloadSize);
 
         void dump(std::ostream & os, ClockService::clock_type const & period = ClockService::clock_type(0)) const;
 
         std::int32_t maxLate() const;
 
     protected:
-        void countGood(std::uint32_t const & payloadSize);
+        void countGood(std::uint32_t payloadSize);
 
     public:
         std::uint32_t good;
@@ -93,8 +93,8 @@ namespace senf {
         std::uint64_t goodBytesTotal;
 
     private:
-        std::uint32_t last_;
         std::int32_t const maxLate_;
+        std::uint32_t last_;
         bool firstUpdateAfterReset_;
     };
 
@@ -108,7 +108,7 @@ namespace senf {
         virtual void clear();
         virtual void reset();
 
-        void update(std::uint32_t const & txTStamp, std::uint32_t const & rxTStamp, bool updateDelay);
+        void update(std::uint32_t txTStamp, std::uint32_t rxTStamp, bool updateDelay);
 
     public:
         StatisticAccumulator<std::int32_t> delay;
