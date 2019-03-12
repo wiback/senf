@@ -132,6 +132,19 @@ prefix_ senf::StatisticAccumulator<T> senf::StatisticAccumulator<T>::operator+=(
     return *this;
 }
 
+template <class T>
+prefix_ senf::StatisticAccumulator<T> senf::StatisticAccumulator<T>::operator*=(const float & scale)
+{
+    if (cnt_ > 0) {
+        this->sum_ *= scale;
+        this->sum_squared_ *= scale * scale;
+        this->min_ *= scale;
+        this->max_ *= scale;
+    }
+
+    return *this;
+}
+
 //
 // EWMA
 //

@@ -127,6 +127,7 @@ namespace senf {
                                         /**< This method indicates if valid data is present */
 
         StatisticAccumulator<T> operator +=(StatisticAccumulator<T> const & other);
+        StatisticAccumulator<T> operator*=(const float & scale);
         
     private:
         T sum_;
