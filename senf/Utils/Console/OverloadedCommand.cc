@@ -38,6 +38,60 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// senf::console::CommandOverload
+
+prefix_ senf::console::CommandOverload::~CommandOverload()
+{}
+
+prefix_ void senf::console::CommandOverload::operator()(boost::any & rv, std::ostream & os,
+                                                        ParseCommandInfo const & command)
+{
+    execute(rv, os, command);
+}
+
+prefix_ void senf::console::CommandOverload::execute(boost::any & rv, std::ostream & os,
+                                                     ParseCommandInfo const & command)
+{
+    v_execute(rv, os, command);
+}
+
+prefix_ unsigned senf::console::CommandOverload::numArguments()
+    const
+{
+    return v_numArguments();
+}
+
+prefix_ void senf::console::CommandOverload::argumentDoc(unsigned index, ArgumentDoc & doc)
+    const
+{
+    return v_argumentDoc(index,doc);
+}
+
+prefix_ std::string senf::console::CommandOverload::doc()
+    const
+{
+    return v_doc();
+}
+
+prefix_ senf::console::OverloadedCommandNode & senf::console::CommandOverload::node()
+    const
+{
+    SENF_ASSERT( node_, "Overload not added to any node yet" );
+    return *node_;
+}
+
+prefix_ unsigned senf::console::CommandOverload::overloadIndex()
+    const
+{
+    return node().overloadIndex(*this);
+}
+
+prefix_ senf::console::CommandOverload::CommandOverload()
+    : node_(0)
+{}
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::console::OverloadedCommandNode
 
 prefix_ senf::console::OverloadedCommandNode &
@@ -180,10 +234,8 @@ prefix_ std::string senf::console::OverloadedCommandNode::v_shorthelp()
         return shortdoc_;
     if (!doc_.empty())
         return doc_.substr(0,doc_.find('\n'));
-    Overloads::const_iterator i (overloads_.begin());
-    Overloads::const_iterator const i_end (overloads_.end());
-    for (; i != i_end; ++i) {
-        std::string overloadDoc ((*i)->doc());
+    for (auto const & i : overloads_) {
+        std::string overloadDoc (i->doc());
         if (! overloadDoc.empty())
             return overloadDoc.substr(0,overloadDoc.find('\n'));
     }
@@ -195,12 +247,10 @@ prefix_ void senf::console::OverloadedCommandNode::v_execute(boost::any & rv,
                                                              ParseCommandInfo const & command)
     const
 {
-    Overloads::const_iterator i (overloads_.begin());
-    Overloads::const_iterator const i_end (overloads_.end());
     SyntaxErrorException err;
-    for (; i != i_end; ++i) {
+    for (auto const & i : overloads_) {
         try {
-            (**i)(rv, os, command);
+            (*i)(rv, os, command);
             return;
         }
         catch (SyntaxErrorException & ex) {

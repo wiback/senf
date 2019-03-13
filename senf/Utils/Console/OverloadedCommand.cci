@@ -31,6 +31,7 @@
 //#include "OverloadedCommand.ih"
 
 // Custom includes
+#include <iostream>
 
 #define prefix_ inline
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,59 +84,6 @@ senf::console::OverloadedCommandNode::overloads()
 }
 
 prefix_ senf::console::OverloadedCommandNode::OverloadedCommandNode()
-{}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::console::CommandOverload
-
-prefix_ senf::console::CommandOverload::~CommandOverload()
-{}
-
-prefix_ void senf::console::CommandOverload::execute(boost::any & rv, std::ostream & os,
-                                                     ParseCommandInfo const & command)
-{
-    v_execute(rv, os, command);
-}
-
-prefix_ void senf::console::CommandOverload::operator()(boost::any & rv, std::ostream & os,
-                                                        ParseCommandInfo const & command)
-{
-    execute(rv, os, command);
-}
-
-prefix_ unsigned senf::console::CommandOverload::numArguments()
-    const
-{
-    return v_numArguments();
-}
-
-prefix_ void senf::console::CommandOverload::argumentDoc(unsigned index, ArgumentDoc & doc)
-    const
-{
-    return v_argumentDoc(index,doc);
-}
-
-prefix_ std::string senf::console::CommandOverload::doc()
-    const
-{
-    return v_doc();
-}
-
-prefix_ senf::console::OverloadedCommandNode & senf::console::CommandOverload::node()
-    const
-{
-    SENF_ASSERT( node_, "Overload not added to any node yet" );
-    return *node_;
-}
-
-prefix_ unsigned senf::console::CommandOverload::overloadIndex()
-    const
-{
-    return node().overloadIndex(*this);
-}
-
-prefix_ senf::console::CommandOverload::CommandOverload()
-    : node_(0)
 {}
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
