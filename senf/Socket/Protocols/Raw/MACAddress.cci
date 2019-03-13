@@ -161,7 +161,8 @@ prefix_ void senf::MACAddress::hash(boost::uint64_t * hash, boost::uint16_t othe
 prefix_ boost::uint32_t const & senf::MACAddress::hash32()
     const
 {
-    return *( (std::uint32_t const *) &(reinterpret_cast<std::uint8_t const *> (&(*this))[2]));
+    return *(reinterpret_cast<std::uint32_t const *> (&(*this)[2]));
+    // return *( (std::uint32_t const *) &(reinterpret_cast<std::uint8_t const *> (&(*this))[2]));
 }
 
 prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
