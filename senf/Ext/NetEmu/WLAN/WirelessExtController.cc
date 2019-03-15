@@ -92,7 +92,8 @@ prefix_ senf::MACAddress senf::emu::WirelessExtController::cellId()
 prefix_ void senf::emu::WirelessExtController::doIoctl(int ctl, struct iwreq * data)
     const
 {
-    strncpy(data->ifr_name, ifname_.c_str(), IFNAMSIZ);
+    strncpy(data->ifr_name, ifname_.c_str(), IFNAMSIZ-1);
+    data->ifr_name[IFNAMSIZ-1] = 0;
     if (ioctl(sockfd_->fd, ctl, data) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("ioctl()");
 }
