@@ -406,9 +406,6 @@ prefix_ void senf::QueueWritePolicy::flush(FileHandle & handle)
 
 prefix_ bool senf::QueueWritePolicy::send(FileHandle & handle)
 {
-    if (SENF_UNLIKELY(!handle))
-        return false;
-    
     detail::QueueInfo & qi (* qinfo(handle));
     unsigned char * last_tail (qi.tx.tail);
     while (SENF_LIKELY(!qi.tx.idle || qi.tx.tail != qi.tx.head)) {  // we assume bursts >> likely

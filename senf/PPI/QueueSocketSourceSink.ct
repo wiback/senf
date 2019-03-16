@@ -122,6 +122,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::setRE
 template <class Packet, class Connector>
 prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read()
 {
+    // this should not be required, but since we are bursting below, it's not that 'expensive'
     if (SENF_UNLIKELY(!handle_))
         return;
 
@@ -335,9 +336,8 @@ template <class Connector>
 prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(senf::Packet const & packet, QueueReadPolicy::Buffer & buf)
 {
     SENF_ASSERT( packet.data().size(), "cannot send empty packet" );
-    unsigned sz (std::min(packet.data().size(), buf.frameSize()));
-    buf.resize(sz);
-    ::memcpy(buf.begin(), packet.data().begin(), sz);
+    buf.resize(std::min(packet.data().size(), buf.frameSize()));
+    std::copy(packet.data().begin(), packet.data().end(), buf.begin());
     eventHook_.enable();
 #ifdef SENF_DEBUG
     ++ burst_;
