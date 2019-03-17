@@ -158,6 +158,15 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr cons
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createBeforeNoZero(PacketInterpreterBase::ptr const & packet)
+{
+    ptr pi (createBefore(packet, senf::noinit, initHeadSize(), initSize() - initHeadSize()));
+    pi->init();
+    return pi;
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
 senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr const & packet)
 {
     ptr pi (createBefore(packet, senf::noinit, initHeadSize(), initSize() - initHeadSize()));

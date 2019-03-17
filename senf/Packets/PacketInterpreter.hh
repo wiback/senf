@@ -312,6 +312,7 @@ namespace senf {
         // Create packet as new packet (header) before a given packet
 
         static ptr createBefore(PacketInterpreterBase::ptr const & spacket);
+        static ptr createBeforeNoZero(PacketInterpreterBase::ptr const & spacket);
         static ptr createBefore(PacketInterpreterBase::ptr const & packet, senf::NoInit_t,
                                 size_type space=0, size_type tailSpace=0);
 

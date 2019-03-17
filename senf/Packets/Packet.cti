@@ -340,6 +340,13 @@ senf::ConcretePacket<PacketType>::createBefore(Packet const & packet)
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
+senf::ConcretePacket<PacketType>::createBeforeNoZero(Packet const & packet)
+{
+    return ConcretePacket(interpreter::createBefore(packet.ptr()));
+}
+
+template <class PacketType>
+prefix_ senf::ConcretePacket<PacketType>
 senf::ConcretePacket<PacketType>::createBefore(Packet const & packet, senf::NoInit_t,
                                                size_type space, size_type tailSpace)
 {

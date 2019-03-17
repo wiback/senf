@@ -764,6 +764,15 @@ namespace senf {
                                                  headers before \a packet and replace them with the
                                                  new header.
                                              \param[in] packet Packet to prepend new packet to. */
+        static ConcretePacket createBeforeNoZero(Packet const & packet);
+                                        ///< Create default initialized packet before \a packet
+                                        /**< The packet will not be initialized .It will be prepended as previous
+                                             header/interpreter before \a packet in that packets
+                                             interpreter chain.
+                                             \warning This constructor will destroy any existing
+                                                 headers before \a packet and replace them with the
+                                                 new header.
+                                             \param[in] packet Packet to prepend new packet to. */
         static ConcretePacket createBefore(Packet const & packet, senf::NoInit_t, size_type space=0,
                                            size_type tailSpace=0);
                                         ///< Create uninitialized empty packet before \a packet
