@@ -435,12 +435,6 @@ prefix_ unsigned senf::emu::HardwareEthernetInterface::rcvBuf()
     return rcvBufSize_ = HardwareEthernetInterfaceNet::rcvBuf();
 }
 
-prefix_ senf::emu::VLanId const & senf::emu::HardwareEthernetInterface::pvid()
-    const
-{
-    return pvid_;
-}
-
 prefix_ bool senf::emu::HardwareEthernetInterface::pvid(VLanId const & p, bool accessMode)
 {
     if (!accessMode and p.stag())

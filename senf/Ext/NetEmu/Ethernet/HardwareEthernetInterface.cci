@@ -64,6 +64,12 @@ prefix_ void senf::emu::HardwareEthernetInterface::setREDFilterCallbackTx(senf::
     sink.setREDFilterCallback(cb);
 }
 
+prefix_ senf::emu::VLanId const & senf::emu::HardwareEthernetInterface::pvid()
+    const
+{
+    return pvid_;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
