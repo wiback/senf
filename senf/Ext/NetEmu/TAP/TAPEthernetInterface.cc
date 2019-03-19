@@ -220,12 +220,6 @@ prefix_ void senf::emu::TAPEthernetInterface::v_flushRxQueues()
     TAPEthernetInterfaceNet::source.flush();
 }
 
-prefix_ senf::emu::VLanId const & senf::emu::TAPEthernetInterface::pvid()
-    const
-{
-    return pvid_;
-}
-
 prefix_ bool senf::emu::TAPEthernetInterface::pvid(VLanId const & p, bool accessMode)
 {
     if (!accessMode and p.stag())

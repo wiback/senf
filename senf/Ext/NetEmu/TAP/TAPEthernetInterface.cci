@@ -55,6 +55,12 @@ prefix_ senf::emu::EthernetController & senf::emu::TAPEthernetInterface::ethCont
     return ctrl_;
 }
 
+prefix_ senf::emu::VLanId const & senf::emu::TAPEthernetInterface::pvid()
+    const
+{
+    return pvid_;
+}
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 
