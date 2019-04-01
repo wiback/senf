@@ -163,7 +163,7 @@ prefix_ senf::emu::HardwareWLANInterface::HardwareWLANInterface(std::pair<std::s
       netctl_(interfaces.first), wnlc_(interfaces.first), dev_(interfaces.first), monitorDev_ (interfaces.second), spectralScanner_(wnlc_.phyName()),
       wifiStatistics_(monitorDevice()), promisc_(false), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
       modId_( WLANModulationParameterRegistry::instance().parameterIdUnknown()), bw_(0), txPower_(0),
-      rcvBufSize_ (4096), sndBufSize_ (96*1024), qlen_ (512)
+      rcvBufSize_ (1024), sndBufSize_ (96*1024), qlen_ (512)
 {
     init();
 }

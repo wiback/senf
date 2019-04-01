@@ -436,14 +436,17 @@ prefix_ bool senf::QueueWritePolicy::send(FileHandle & handle)
                 tryAgain = true;
                 break;
             case EMSGSIZE:
+                // Note: As of 1-Apr-2019 we use the PACKET_LOSS option and should not see this error anymore...
                 // the trigerring frame(s) will be marked by the kernel as WRONG_FORMAT
-                // we just clear this flag, thus marking the frame(s) as available, effectively dropping such frames !!!
-                for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) { 
+                for (unsigned char * buf = qi.tx.begin; buf < qi.tx.end; buf += qi.frameSize) {
                     struct ::tpacket2_hdr & pk (* reinterpret_cast<struct ::tpacket2_hdr*>(buf));
                     if (pk.tp_status & TP_STATUS_WRONG_FORMAT) {
-                        pk.tp_status = TP_STATUS_AVAILABLE;
+                        pk.tp_status = TP_STATUS_SEND_REQUEST;
+                        //  This does not seem to work properly...
+                        pk.tp_len = 64;  // set the length of this frame 64 bytes - effectively dropping it without having to rearrange the mmap queue.
                         qi.txStats.wrongFormat++;
                         qi.txStats.dropped++;
+                        break;
                     }
                 }
                 continue;

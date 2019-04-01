@@ -84,6 +84,12 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
     struct ::tpacket_req req;
     ::memset(&req, 0, sizeof(req));
 
+    if (txqlen > 0) {
+        v = 1;
+        if (setsockopt(fd(), SOL_PACKET, PACKET_LOSS, (char *)&v, sizeof(v)) != 0)
+            SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_LOSS");
+    }
+
     if (rxqlen > 0) {
         qi_.reserveSize = 0;
         if (reserve > 0
@@ -107,8 +113,8 @@ prefix_ void senf::MMapSocketProtocol::init_mmap(unsigned frameSize, unsigned rx
         if (setsockopt(fd(), SOL_PACKET, PACKET_TX_RING,
                        reinterpret_cast<char *>(&req), sizeof(req)) != 0 )
             SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TX_RING");
-        v = 1;
 #ifdef SENF_ENABLE_TPACKET_OFFSET
+        v = 1;
         if (setsockopt(fd(), SOL_PACKET, PACKET_TX_HAS_OFF, (char *)&v, sizeof(v)) != 0)
             SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(SOL_PACKET, PACKET_TX_HAS_OFF");
 #endif
