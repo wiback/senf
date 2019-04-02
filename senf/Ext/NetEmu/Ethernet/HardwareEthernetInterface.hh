@@ -83,7 +83,7 @@ namespace emu {
         void     qlen(unsigned qlen);
 
         std::pair<unsigned,unsigned> rxDropped();
-        std::pair<unsigned,unsigned> txDropped();
+        std::tuple<unsigned,unsigned,unsigned> txDropped();
 
         void dumpMmapStats(std::ostream & os);
         bool isDead() const;

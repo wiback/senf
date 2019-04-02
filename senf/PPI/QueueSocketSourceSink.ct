@@ -345,9 +345,16 @@ prefix_ void senf::ppi::module::PassiveQueueSocketSink<Connector>::writePacket(s
 }
 
 template <class Connector>
-prefix_ std::pair<unsigned,unsigned> senf::ppi::module::PassiveQueueSocketSink<Connector>::dropped()
+prefix_ std::tuple<unsigned,unsigned,unsigned> senf::ppi::module::PassiveQueueSocketSink<Connector>::dropped()
 {
-    std::pair<unsigned,unsigned> tmp (std::make_pair(red_,dropped_));
+    unsigned wrongFormat (0);
+    if (handle_) {
+        try {
+            auto & h (reinterpret_cast<ConnectedMMapPacketSocketHandle &>(handle_));
+            wrongFormat = h.protocol().txWrongFormat();
+        } catch (...) {};
+    }
+    std::tuple<unsigned,unsigned,unsigned> tmp (std::make_tuple(red_,dropped_,wrongFormat));
     red_ = dropped_ = 0;
     return tmp;
 }

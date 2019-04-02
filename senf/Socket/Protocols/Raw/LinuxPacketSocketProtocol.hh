@@ -67,6 +67,11 @@ namespace senf {
                                         /**< query the number of packets dropped by the kernel since
                                              the last call to this method. */
 
+        unsigned txWrongFormat() const;
+                                         ///< packets dropped by kernel due to wrong format (too large) since last call
+                                        /**< query the number of packets dropped by the kernel since
+                                             the last call to this method. */
+
         bool eof() const;
 
     protected:

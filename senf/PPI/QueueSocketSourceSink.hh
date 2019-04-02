@@ -140,7 +140,7 @@ namespace module {
         Handle handle() const;
         void handle(Handle const & handle);
 
-        std::pair<unsigned,unsigned> dropped();
+        std::tuple<unsigned,unsigned,unsigned> dropped();
         
         void send();
         void flush();

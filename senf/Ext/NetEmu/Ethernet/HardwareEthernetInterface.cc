@@ -481,7 +481,7 @@ prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareEthernetInterface::rxDro
     return source.dropped();
 }
 
-prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareEthernetInterface::txDropped()
+prefix_ std::tuple<unsigned,unsigned,unsigned> senf::emu::HardwareEthernetInterface::txDropped()
 {
     return sink.dropped();
 }

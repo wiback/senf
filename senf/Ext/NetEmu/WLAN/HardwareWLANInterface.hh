@@ -112,7 +112,7 @@ namespace emu {
         void     qlen(unsigned qlen);
 
         std::pair<unsigned,unsigned> rxDropped();
-        std::pair<unsigned,unsigned> txDropped();
+        std::tuple<unsigned,unsigned,unsigned> txDropped();
 
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);

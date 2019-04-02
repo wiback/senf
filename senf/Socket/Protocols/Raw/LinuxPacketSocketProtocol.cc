@@ -102,6 +102,21 @@ prefix_ unsigned senf::LinuxPacketSocketProtocol::rxQueueDropped()
     return stats.tp_drops;
 }
 
+prefix_ unsigned senf::LinuxPacketSocketProtocol::txWrongFormat()
+    const
+{
+// this is defined by our WiBACK-kernel patches
+#ifndef PACKET_STATISTICS_TX
+#  define PACKET_STATISTICS_TX 31
+#endif
+    unsigned wrongFormat (0);
+    ::socklen_t len = sizeof(wrongFormat);
+    if (::getsockopt(fd(), SOL_PACKET, PACKET_STATISTICS_TX,
+                     reinterpret_cast<char *>(&wrongFormat), &len) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("::getsocketopt(SOL_PACKET, PACKET_STATISTICS_TX) failed");
+    return wrongFormat;
+}
+
 prefix_ bool senf::LinuxPacketSocketProtocol::eof()
     const
 {

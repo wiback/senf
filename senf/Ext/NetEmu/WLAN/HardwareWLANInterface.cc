@@ -1183,7 +1183,7 @@ prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareWLANInterface::rxDropped
     return source.dropped();
 }
 
-prefix_ std::pair<unsigned,unsigned> senf::emu::HardwareWLANInterface::txDropped()
+prefix_ std::tuple<unsigned,unsigned,unsigned> senf::emu::HardwareWLANInterface::txDropped()
 {
     return sink.dropped();
 }
