@@ -595,7 +595,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         if (airTime_ and modulationId) {
             emu::annotations::Quality const & q (rtPacket.annotation<emu::annotations::Quality>());
             // airtime in us
-            q.airTime += (q.flags.frameLength * 8) / (modulationRegistry_.findModulationById(modulationId).rate / 1000);
+            q.airTime = (q.flags.frameLength * 8) / (modulationRegistry_.findModulationById(modulationId).rate / 1000);
         }
         
         // Catch frames with bad FCS...
@@ -606,7 +606,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         
         unsigned radiotapLength (senf::bytes(rtParser));
         senf::WLANPacket_DataFrameParser wlan (rtPacket.data().begin() + radiotapLength, &rtPacket.data());
-        if (SENF_UNLIKELY(wlan.type() != 2 and wlan.subtype() != 8)) {
+        if (SENF_UNLIKELY(wlan.type() != 2 or wlan.subtype() != 8)) {
             // promisc_ check is handle inside pushSubstitute()
             handle_NonDataFrame(rtPacket);
             return;
