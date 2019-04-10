@@ -157,6 +157,7 @@ namespace emu {
         TSFTHistogram tsftHistogram_;
         MonitorDataFilterStatistics stats_;
         bool dropUnknownMCS_;
+        std::uint32_t ampduRefNo_;
 
         void resetTimer();
         void reorderQueueTick();

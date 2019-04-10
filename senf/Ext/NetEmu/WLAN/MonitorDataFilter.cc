@@ -132,7 +132,8 @@ prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const &
       airTime_(false),
       frequency_(0),
       modulationRegistry_(WLANModulationParameterRegistry::instance()),
-      dropUnknownMCS_ (true)
+      dropUnknownMCS_ (true),
+      ampduRefNo_(0)
 {
     route(input, output).autoThrottling(false);
     input.onRequest( &MonitorDataFilter::request);
@@ -596,6 +597,15 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             emu::annotations::Quality const & q (rtPacket.annotation<emu::annotations::Quality>());
             // airtime in us
             q.airTime = (q.flags.frameLength * 8 * 1000) / modulationRegistry_.findModulationById(modulationId).rate;
+            if (SENF_UNLIKELY(!q.flags.frameAggregated)) {
+                q.airTime += 20;  // preamble (minimum)
+            } else {
+                if (SENF_UNLIKELY(ampduRefNo_ != rtParser.ampduStatus().referenceNumber())) {
+                    // new AMPDU
+                    ampduRefNo_ = rtParser.ampduStatus().referenceNumber();
+                    q.airTime += 20;  // preamble (minimum). Note: We add this to the first packet in the AMPDU.
+                }
+            }
         }
         
         // Catch frames with bad FCS...
