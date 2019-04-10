@@ -595,7 +595,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         if (airTime_ and modulationId) {
             emu::annotations::Quality const & q (rtPacket.annotation<emu::annotations::Quality>());
             // airtime in us
-            q.airTime = (q.flags.frameLength * 8) / (modulationRegistry_.findModulationById(modulationId).rate / 1000);
+            q.airTime = (q.flags.frameLength * 8 * 1000) / modulationRegistry_.findModulationById(modulationId).rate;
         }
         
         // Catch frames with bad FCS...
