@@ -129,6 +129,7 @@ prefix_ senf::emu::MonitorDataFilter::MonitorDataFilter(senf::MACAddress const &
       id_(id),
       promisc_(false),
       annotate_(false),
+      airTime_(false),
       frequency_(0),
       modulationRegistry_(WLANModulationParameterRegistry::instance()),
       dropUnknownMCS_ (true)
@@ -149,6 +150,11 @@ prefix_ void senf::emu::MonitorDataFilter::dropUnknownMCS(bool q)
 prefix_ void senf::emu::MonitorDataFilter::promisc(bool p)
 {
     promisc_ = p;
+}
+
+prefix_ void senf::emu::MonitorDataFilter::airTime(bool a)
+{
+    airTime_ = a;
 }
 
 prefix_ void senf::emu::MonitorDataFilter::annotate(bool a)
@@ -556,16 +562,17 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         }
 
         // determine MCS (rate)
+        std::uint32_t modulationId;
         if (SENF_LIKELY(rtParser.mcsPresent())) {
             stats_.ht++;
-            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS_HT(
+            modulationId = rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS_HT(
                 rtParser.mcs().mcsIndex(),
                 rtParser.bandwidth(),
                 rtParser.mcs().guardInterval() );
         }
         else if (rtParser.vhtPresent()) {
             stats_.vht++;
-            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS_VHT(
+            modulationId = rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByMCS_VHT(
                 rtParser.vht().mcs_user0(),
                 rtParser.vht().nss_user0(),
                 rtParser.bandwidth(),
@@ -573,10 +580,11 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         }
         else if (rtParser.ratePresent()) {
             stats_.legacy++;
-            rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByLegacyRate( rtParser.rate() * 500);
+            modulationId = rtPacket.annotation<annotations::WirelessModulation>().id = modulationRegistry_.parameterIdByLegacyRate( rtParser.rate() * 500);
         }
         else {
             stats_.unknownMCS++;
+            modulationId = 0;
             if (dropUnknownMCS_) {
                 SENF_LOG( (WlanLogArea) (senf::log::VERBOSE)
                           ( "(" << id_ << ") dropping packet with unknown datarate "));
@@ -584,6 +592,12 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             }
         }
 
+        if (airTime_ and modulationId) {
+            emu::annotations::Quality const & q (rtPacket.annotation<emu::annotations::Quality>());
+            // airtime in us
+            q.airTime += (q.flags.frameLength * 8) / (modulationRegistry_.findModulationById(modulationId).rate / 1000);
+        }
+        
         // Catch frames with bad FCS...
         if (SENF_UNLIKELY(rtParser.flags().badFCS())) {
             handle_badFCS(rtPacket);
@@ -592,7 +606,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         
         unsigned radiotapLength (senf::bytes(rtParser));
         senf::WLANPacket_DataFrameParser wlan (rtPacket.data().begin() + radiotapLength, &rtPacket.data());
-        if (SENF_UNLIKELY(wlan.type() != 2 || wlan.subtype() != 8)) {
+        if (SENF_UNLIKELY(wlan.type() != 2 and wlan.subtype() != 8)) {
             // promisc_ check is handle inside pushSubstitute()
             handle_NonDataFrame(rtPacket);
             return;

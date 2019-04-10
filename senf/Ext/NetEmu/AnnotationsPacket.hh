@@ -52,7 +52,8 @@ namespace senf {
         SENF_PARSER_FIELD   ( timestamp,    senf::Int64Parser  );
         SENF_PARSER_FIELD   ( modulationId, senf::UInt32Parser );
         SENF_PARSER_FIELD   ( snr,          senf::UInt16Parser );
-        SENF_PARSER_FIELD   ( rssi,         senf::Int16Parser );
+        SENF_PARSER_FIELD   ( rssi,         senf::Int16Parser  );
+        SENF_PARSER_FIELD   ( airTime,      senf::UInt16Parser );
         SENF_PARSER_FIELD   ( type,         senf::UInt8Parser  );
 
         SENF_PARSER_BITFIELD( corrupt,       1, bool           );

@@ -141,6 +141,7 @@ int main(int argc, char const * argv[])
         // monitor mode specific confif
         filter.promisc(configuration.promisc);
         filter.annotate(true);
+        filter.airTime(true);
         if (configuration.analyzeTx) {
             senf::emu::MonitorDataFilter::filterMonitorRxFrames(socket);
         }

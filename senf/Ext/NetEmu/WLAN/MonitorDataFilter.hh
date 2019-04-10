@@ -109,6 +109,7 @@ namespace emu {
         void promisc(bool p);
         void annotate(bool a);
         bool annotate() const;
+        void airTime(bool a);
         void frequency(unsigned f);
         void id(senf::MACAddress const & _id);
         TSFTHistogram & tsftHistogram();
@@ -150,6 +151,7 @@ namespace emu {
         senf::MACAddress id_;
         bool promisc_;
         bool annotate_;
+        bool airTime_;
         unsigned frequency_;
         WLANModulationParameterRegistry const & modulationRegistry_;
         TSFTHistogram tsftHistogram_;

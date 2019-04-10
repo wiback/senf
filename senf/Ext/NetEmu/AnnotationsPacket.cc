@@ -60,6 +60,7 @@ prefix_ void senf::AnnotationsPacketType::dump(packet p, std::ostream & os)
     os << senf::fieldName("modulationId") << format::dumpint(p->modulationId().value()) << std::endl;
     os << senf::fieldName("snr")          << format::dumpint(p->snr().value())          << std::endl;
     os << senf::fieldName("rssi")         << format::dumpint(p->rssi().value())         << std::endl;
+    os << senf::fieldName("airTime")      << format::dumpint(p->airTime().value())      << std::endl;
     os << senf::fieldName("type")         << format::dumpint(p->type().value())         << std::endl;
 
     os << senf::fieldName("flags.corrupt")       << format::dumpint(p->corrupt().value())       << std::endl;
@@ -139,6 +140,7 @@ prefix_ senf::EthernetPacket senf::prependAnnotationsPacket(Packet const & pkt, 
     ap->modulationId()  << pkt.annotation<emu::annotations::WirelessModulation>().id;
     ap->snr()           << pkt.annotation<emu::annotations::Quality>().snr;
     ap->rssi()          << pkt.annotation<emu::annotations::Quality>().rssi;
+    ap->airTime()       << pkt.annotation<emu::annotations::Quality>().airTime;
     ap->corrupt()       << pkt.annotation<emu::annotations::Quality>().flags.frameCorrupt;
     ap->retransmitted() << pkt.annotation<emu::annotations::Quality>().flags.frameRetransmitted;
     ap->duplicated()    << pkt.annotation<emu::annotations::Quality>().flags.frameDuplicate;

@@ -57,14 +57,9 @@ prefix_ bool PacketStatistics::analyze(senf::AnnotationsPacket const & ap, std::
     if (!ap)
         return true;
     
-    retries += ap->retransmitted();
+    retries    += ap->retransmitted();
     aggregated += ap->aggregated();
-    
-    if (ap->modulationId() != 0) {
-        unsigned rateInBps (senf::emu::WLANModulationParameterRegistry::instance().findModulationById(ap->modulationId()).rate);
-        rate.accumulate(rateInBps);
-        airtime += senf::ClockService::microseconds( (ap->length() * 8 * 1000) / rateInBps);  // need to add preamble
-    }
+    airtime    += senf::ClockService::microseconds(ap->airTime());
 
     if (ap->rssi() != 0) {
         rssi.accumulate(ap->rssi());

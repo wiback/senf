@@ -84,10 +84,11 @@ namespace annotations {
         mutable short snr;
         mutable short rssi;
         mutable short noise;
+        mutable unsigned short airTime;
         mutable FrameRxFlags flags;
 
         Quality();
-        bool operator<(Quality const & other) const;
+//        bool operator<(Quality const & other) const;
         void setLoss(unsigned loss);
     };
 

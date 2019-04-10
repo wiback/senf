@@ -1206,6 +1206,11 @@ prefix_ void senf::emu::HardwareWLANInterface::frequencyHint(unsigned bandwidth)
     monitorDataFilter.frequency(freq);
 }
 
+prefix_ void senf::emu::HardwareWLANInterface::airTime(bool a)
+{
+    monitorDataFilter.airTime(a);
+}
+
 prefix_ void senf::emu::HardwareWLANInterface::spectralScanCallback(AthSpectralScan::AthSpectralScanCallback const & cb)
 {
     spectralScanner_.callback(cb);

@@ -125,6 +125,7 @@ namespace emu {
         void dumpFilterStats(std::ostream & os);
         bool isDead() const;
 
+        void airTime(bool a);
         WifiStatisticsMap const & statisticsMap(std::uint32_t tag, senf::ClockService::clock_type const & maxAge);
         void dumpWifiStatistics(std::ostream & os);
 
