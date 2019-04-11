@@ -174,6 +174,7 @@ namespace emu {
         bool handle_ManagementFrame(RadiotapPacket const & rtPacket, WLANPacket_MgtFrame const & mgt);
         bool handle_CtrlFrame(RadiotapPacket const & rtPacket, WLANPacket_CtrlFrame const & ctrl);
         void handle_NonDataFrame(RadiotapPacket const & rtPacket);
+        void handle_NonQoSData(RadiotapPacket const & rtPacket);
 
         void request();
         void requestPlain();

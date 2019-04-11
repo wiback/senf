@@ -491,6 +491,24 @@ prefix_ bool senf::emu::MonitorDataFilter::handle_CtrlFrame(RadiotapPacket const
     return true;
 }
 
+prefix_ void senf::emu::MonitorDataFilter::handle_NonQoSData(RadiotapPacket const & rtPacket)
+{
+    WLANPacket_DataFrame const & data (rtPacket.next<WLANPacket_DataFrame>(senf::nothrow));
+    if (!data) {
+        pushSubstituteEthernet( rtPacket);
+        return;
+    }
+
+    if (data.size() < WLANPacket_DataFrameParser::init_bytes) {
+        SENF_LOG( (WlanLogArea) (senf::log::VERBOSE) ("(" << id_ << ") dropping truncated non-QoS data frame") );
+        stats_.truncated++;
+        return;
+    }
+
+    stats_.data++;
+    outExtUI(data);
+}
+
 
 prefix_ void senf::emu::MonitorDataFilter::handle_NonDataFrame(RadiotapPacket const & rtPacket)
 {
@@ -616,12 +634,18 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         
         unsigned radiotapLength (senf::bytes(rtParser));
         senf::WLANPacket_DataFrameParser wlan (rtPacket.data().begin() + radiotapLength, &rtPacket.data());
-        if (SENF_UNLIKELY(wlan.type() != 2 or wlan.subtype() != 8)) {
+        if (SENF_UNLIKELY(wlan.type() != 2)) {
             // promisc_ check is handle inside pushSubstitute()
             handle_NonDataFrame(rtPacket);
             return;
         }
 
+        if (SENF_UNLIKELY(wlan.subtype() != 8)) {
+            // promisc_ check is handle inside handle_NonQoSData()
+            handle_NonQoSData(rtPacket);
+            return;
+        }
+        
         senf::MACAddress src (wlan.sourceAddress());
         senf::MACAddress dst (wlan.destinationAddress());
 
