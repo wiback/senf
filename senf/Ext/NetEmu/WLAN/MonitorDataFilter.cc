@@ -614,14 +614,16 @@ prefix_ void senf::emu::MonitorDataFilter::request()
         if (airTime_ and modulationId) {
             emu::annotations::Quality const & q (rtPacket.annotation<emu::annotations::Quality>());
             // airtime in us
-            q.airTime = (q.flags.frameLength * 8 * 1000) / modulationRegistry_.findModulationById(modulationId).rate;
+            auto const & modInfo (modulationRegistry_.findModulationById(modulationId));
+            q.airTime = (q.flags.frameLength * 8 * 1000) / modInfo.rate;
             if (SENF_UNLIKELY(!q.flags.frameAggregated)) {
-                q.airTime += 20;  // preamble (minimum)
+                q.airTime += modInfo.type == senf::emu::WLANModulationParameter::Legacy ? 20 : 24;  // preamble (minimum)
             } else {
                 if (SENF_UNLIKELY(ampduRefNo_ != rtParser.ampduStatus().referenceNumber())) {
                     // new AMPDU
                     ampduRefNo_ = rtParser.ampduStatus().referenceNumber();
-                    q.airTime += 20;  // preamble (minimum). Note: We add this to the first packet in the AMPDU.
+                    // preamble (minimum). Note: We add this to the first packet in the AMPDU.
+                    q.airTime += modInfo.type == senf::emu::WLANModulationParameter::Legacy ? 20 : 24;
                 }
             }
         }
