@@ -127,6 +127,13 @@ prefix_ void FrameAnalyzer::request()
         return;
     }
 
+    // nonQoSData WLAN frames
+    senf::WLANPacket_DataFrame const & data (ap.next<senf::WLANPacket_DataFrame>(senf::nothrow));
+    if (data) {
+        flowStats(PacketStatistics::OTHER, 0)->analyze(ap, data.size());
+        return;
+    }
+
     senf::EthernetPacket const & eth (ap.next<senf::EthernetPacket>(senf::nothrow));
     if (eth) {
         if (handleDataFrame(eth, ap))
