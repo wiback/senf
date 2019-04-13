@@ -35,6 +35,13 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+prefix_ void senf::StatisticsData::clear()
+{
+    min = max = NAN;
+    avg = stddev = NAN;
+    cnt = 0;
+}
+
 std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & _data)
 {
     if (_data.cnt > 0) {
@@ -49,11 +56,24 @@ std::ostream & senf::operator<<(std::ostream & os, senf::StatisticsData const & 
     return os;
 };
 
-prefix_ void senf::StatisticsData::clear()
+prefix_ boost::property_tree::ptree senf::StatisticsData::asPTree()
+    const
 {
-    min = max = NAN;
-    avg = stddev = NAN;
-    cnt = 0;
+    boost::property_tree::ptree localelement;
+    if (cnt > 0) {
+        localelement.put("avg", avg);
+        localelement.put("dev", stddev);
+        localelement.put("min", min);
+        localelement.put("max", max);
+        localelement.put("cnt", cnt);
+    } else {
+        localelement.put("avg", "NaN");
+        localelement.put("dev", "NaN");
+        localelement.put("min", "NaN");
+        localelement.put("max", "NaN");
+        localelement.put("cnt", 0u);
+    }
+    return localelement;
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

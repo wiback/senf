@@ -36,6 +36,7 @@
 #include <math.h>
 #include <iosfwd>
 #include <boost/operators.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
@@ -51,6 +52,8 @@ namespace senf {
 
          explicit operator bool() const;
          bool operator<(StatisticsData const & other) const;
+
+         boost::property_tree::ptree asPTree() const;
 
          float min;
          float avg;
