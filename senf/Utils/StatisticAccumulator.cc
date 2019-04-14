@@ -62,13 +62,13 @@ prefix_ boost::property_tree::ptree senf::StatisticsData::asPTree()
     boost::property_tree::ptree localelement;
     if (cnt > 0) {
         localelement.put("avg", avg);
-        localelement.put("dev", stddev);
+        localelement.put("stddev", stddev);
         localelement.put("min", min);
         localelement.put("max", max);
         localelement.put("cnt", cnt);
     } else {
         localelement.put("avg", "NaN");
-        localelement.put("dev", "NaN");
+        localelement.put("stddev", "NaN");
         localelement.put("min", "NaN");
         localelement.put("max", "NaN");
         localelement.put("cnt", 0u);
