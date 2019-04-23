@@ -58,8 +58,8 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
         spectralPath_ = "/sys/kernel/debug/ieee80211/" + phyName + "/ath10k";
 
     if (is_ath9k()) {
-        spectralPeriod(0x08);
-        spectralFFTPeriod(0x08);
+        spectralPeriod(2);
+        spectralFFTPeriod(32);
         spectralShortRepeat(true);
     } else {
         // for 20Mhz:  64 bins
@@ -67,7 +67,7 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
         // for 80Mhz: 256 bins (might not work)
         spectralBins(64);
     }
-    spectralCount(8);
+    spectralCount(128);
 }
 
 prefix_ senf::emu::AthSpectralScan::~AthSpectralScan()
