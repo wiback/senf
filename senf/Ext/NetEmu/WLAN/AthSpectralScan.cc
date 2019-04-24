@@ -58,7 +58,7 @@ prefix_ senf::emu::AthSpectralScan::AthSpectralScan(std::string phyName)
         spectralPath_ = "/sys/kernel/debug/ieee80211/" + phyName + "/ath10k";
 
     if (is_ath9k()) {
-        spectralPeriod(2);
+        spectralPeriod(4);
         spectralFFTPeriod(32);
         spectralShortRepeat(true);
     } else {
