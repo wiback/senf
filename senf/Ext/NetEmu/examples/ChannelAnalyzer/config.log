@@ -1,0 +1,319 @@
+file /home/mathias/src/WiBACK-dist/.build/senf/site_scons/site_tools/CustomTests.py,line 105:
+	Configure(confdir = .sconf_temp)
+scons: Configure: Checking for g++ version at least 4.7 ... 
+scons: Configure: (cached) [4.9.2] yes
+
+scons: Configure: Checking boost version at least 1_49... 
+scons: Configure: ".sconf_temp/conftest_0.cc" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_0.cc <-
+  |  |#include <boost/version.hpp>
+  |  |#include <iostream>
+  |  |int main(int, char **)
+  |  |{ std::cout << BOOST_LIB_VERSION << std::endl; }
+  |
+scons: Configure: ".sconf_temp/conftest_0.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_0.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf -INone .sconf_temp/conftest_0.cc
+  |
+scons: Configure: ".sconf_temp/conftest_0" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_0 -rdynamic .sconf_temp/conftest_0.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt
+  |
+scons: Configure: ".sconf_temp/conftest_0.out" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_0 > .sconf_temp/conftest_0.out
+  |
+scons: Configure: (cached) [1_55] yes
+
+scons: Configure: Checking for C++ library boost_unit_test_framework... 
+scons: Configure: ".sconf_temp/conftest_1.cpp" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_1.cpp <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_1.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_1.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_1.cpp
+  |
+scons: Configure: ".sconf_temp/conftest_1" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_1 -rdynamic .sconf_temp/conftest_1.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_unit_test_framework
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C++ library boost_regex... 
+scons: Configure: ".sconf_temp/conftest_2.cpp" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_2.cpp <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_2.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_2.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_2.cpp
+  |
+scons: Configure: ".sconf_temp/conftest_2" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_2 -rdynamic .sconf_temp/conftest_2.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C++ library boost_filesystem... 
+scons: Configure: ".sconf_temp/conftest_3.cpp" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_3.cpp <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_3.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_3.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_3.cpp
+  |
+scons: Configure: ".sconf_temp/conftest_3" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_3 -rdynamic .sconf_temp/conftest_3.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_filesystem
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C++ library boost_signals... 
+scons: Configure: ".sconf_temp/conftest_4.cpp" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_4.cpp <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_4.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_4.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_4.cpp
+  |
+scons: Configure: ".sconf_temp/conftest_4" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_4 -rdynamic .sconf_temp/conftest_4.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_filesystem -lboost_signals
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C++ library boost_date_time... 
+scons: Configure: ".sconf_temp/conftest_5.cpp" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_5.cpp <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_5.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_5.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_5.cpp
+  |
+scons: Configure: ".sconf_temp/conftest_5" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_5 -rdynamic .sconf_temp/conftest_5.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_signals -lboost_filesystem -lboost_date_time
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C++ library boost_system... 
+scons: Configure: ".sconf_temp/conftest_6.cpp" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_6.cpp <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_6.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_6.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_6.cpp
+  |
+scons: Configure: ".sconf_temp/conftest_6" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_6 -rdynamic .sconf_temp/conftest_6.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_signals -lboost_filesystem -lboost_date_time -lboost_system
+  |
+scons: Configure: (cached) yes
+
+
+file /home/mathias/src/WiBACK-dist/.build/senf/site_scons/site_tools/CustomTests.py,line 105:
+	Configure(confdir = .sconf_temp)
+scons: Configure: Checking for C library nl... 
+scons: Configure: ".sconf_temp/conftest_7.c" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_7.c <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_7.o" is up to date.
+scons: Configure: The original builder output was:
+  |gcc -o .sconf_temp/conftest_7.o -c -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_7.c
+  |
+scons: Configure: Building ".sconf_temp/conftest_7" failed in a previous run and all its sources are up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_7 -rdynamic .sconf_temp/conftest_7.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_signals -lboost_filesystem -lboost_system -lboost_date_time -lnl
+  |
+scons: Configure: (cached) no
+
+scons: Configure: Checking for C library nl-3... 
+scons: Configure: ".sconf_temp/conftest_8.c" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_8.c <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_8.o" is up to date.
+scons: Configure: The original builder output was:
+  |gcc -o .sconf_temp/conftest_8.o -c -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_8.c
+  |
+scons: Configure: ".sconf_temp/conftest_8" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_8 -rdynamic .sconf_temp/conftest_8.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_signals -lboost_filesystem -lboost_system -lboost_date_time -lnl-3
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C library nl-genl-3... 
+scons: Configure: ".sconf_temp/conftest_9.c" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_9.c <-
+  |  |
+  |  |
+  |  |
+  |  |int
+  |  |main() {
+  |  |  
+  |  |return 0;
+  |  |}
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_9.o" is up to date.
+scons: Configure: The original builder output was:
+  |gcc -o .sconf_temp/conftest_9.o -c -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_9.c
+  |
+scons: Configure: ".sconf_temp/conftest_9" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_9 -rdynamic .sconf_temp/conftest_9.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_signals -lboost_filesystem -lboost_system -lboost_date_time -lnl-genl-3
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C header file netlink/netlink.h... 
+scons: Configure: ".sconf_temp/conftest_10.c" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_10.c <-
+  |  |
+  |  |#include <netlink/netlink.h>
+  |  |
+  |  |
+  |
+scons: Configure: Building ".sconf_temp/conftest_10.o" failed in a previous run and all its sources are up to date.
+scons: Configure: The original builder output was:
+  |gcc -o .sconf_temp/conftest_10.o -c -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf .sconf_temp/conftest_10.c
+  |
+scons: Configure: (cached) no
+
+scons: Configure: trying /usr/include/libnl3 ...
+
+scons: Configure: Checking for C header file netlink/netlink.h... 
+scons: Configure: ".sconf_temp/conftest_11.c" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_11.c <-
+  |  |
+  |  |#include <netlink/netlink.h>
+  |  |
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_11.o" is up to date.
+scons: Configure: The original builder output was:
+  |gcc -o .sconf_temp/conftest_11.o -c -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf -I/usr/include/libnl3 .sconf_temp/conftest_11.c
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking for C header file netlink/version.h... 
+scons: Configure: ".sconf_temp/conftest_12.c" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_12.c <-
+  |  |
+  |  |#include <netlink/version.h>
+  |  |
+  |  |
+  |
+scons: Configure: ".sconf_temp/conftest_12.o" is up to date.
+scons: Configure: The original builder output was:
+  |gcc -o .sconf_temp/conftest_12.o -c -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf -I/usr/include/libnl3 .sconf_temp/conftest_12.c
+  |
+scons: Configure: (cached) yes
+
+scons: Configure: Checking libnl version at least 2.0... 
+scons: Configure: ".sconf_temp/conftest_13.cc" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_13.cc <-
+  |  |
+  |  |                #include <netlink/version.h>
+  |  |                #include <iostream>
+  |  |                int main(int, char **) {
+  |  |                std::cout << LIBNL_VERSION << std::endl; }
+  |
+scons: Configure: ".sconf_temp/conftest_13.o" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_13.o -c -Wno-long-long -fno-strict-aliasing -Wno-deprecated -std=c++11 -DSENF_PPI_NOTRACE -DNDEBUG -DBOOST_NO_MT -DBOOST_DISABLE_ASSERTS -DBOOST_DISABLE_THREADS -DSENF_PACKET_NO_HEAP_INTERPRETERS -DSENF_PACKET_PREALLOC_INTERPRETERS=16 -DSENF_PACKET_NO_COMPLEX_ANNOTATIONS -I/home/mathias/src/WiBACK-dist/.build/senf -I/home/mathias/src/WiBACK-dist/.build/senf -I/usr/include/libnl3 .sconf_temp/conftest_13.cc
+  |
+scons: Configure: ".sconf_temp/conftest_13" is up to date.
+scons: Configure: The original builder output was:
+  |g++ -o .sconf_temp/conftest_13 -rdynamic .sconf_temp/conftest_13.o -L/home/mathias/src/WiBACK-dist/.build/senf -lsenf -lrt -lboost_regex -lboost_signals -lboost_filesystem -lboost_system -lboost_date_time
+  |
+scons: Configure: ".sconf_temp/conftest_13.out" is up to date.
+scons: Configure: The original builder output was:
+  |.sconf_temp/conftest_13 > .sconf_temp/conftest_13.out
+  |
+scons: Configure: (cached) [3.2.24] ok
+
+
