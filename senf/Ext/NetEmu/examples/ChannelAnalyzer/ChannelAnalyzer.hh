@@ -28,20 +28,20 @@
 /** \file
     \brief 80211Analyzer public header */
 
-#ifndef HH_SENF_Ext_NetEmu_examples_80211Analyzer_80211Analyzer_
-#define HH_SENF_Ext_NetEmu_examples_80211Analyzer_80211Analyzer_ 1
+#ifndef HH_SENF_Ext_NetEmu_examples_ChannelAnalyzer_ChannelAnalyzer_
+#define HH_SENF_Ext_NetEmu_examples_ChannelAnalyzer_ChannelAnalyzer_ 1
 
 // Custom includes
 
-//#include "80211Analyzer.mpp"
+//#include "ChannelAnalyzer.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 void exitCode(int code);
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "80211Analyzer.cci"
-//#include "80211Analyzer.ct"
-//#include "80211Analyzer.cti"
+//#include "ChannelAnalyzer.cci"
+//#include "ChannelAnalyzer.ct"
+//#include "ChannelAnalyzer.cti"
 #endif
 
 

@@ -553,6 +553,7 @@ prefix_ void senf::emu::MonitorDataFilter::request()
     try {
         RadiotapPacket rtPacket (input());
         RadiotapPacket::Parser rtParser (rtPacket.parser());
+        unsigned sifsTime (0);
 
         stats_.received++;
 
@@ -561,6 +562,8 @@ prefix_ void senf::emu::MonitorDataFilter::request()
                 stats_.freqMismatch++;
                 return;
             }
+            // SIFS is either 10us or 16us;
+            sifsTime = rtParser.channelOptions().flag2ghz() ? 10 : 16;
         }
 
         // Set Annotations: incoming interface
@@ -616,13 +619,13 @@ prefix_ void senf::emu::MonitorDataFilter::request()
             auto const & modInfo (modulationRegistry_.findModulationById(modulationId));
             q.airTime = (q.flags.frameLength * 8 * 1000) / modInfo.rate;
             if (SENF_UNLIKELY(!q.flags.frameAggregated)) {
-                q.airTime += modInfo.type == senf::emu::WLANModulationParameter::Legacy ? 20 : 24;  // preamble (minimum)
+                q.airTime += modInfo.type == sifsTime + (senf::emu::WLANModulationParameter::Legacy ? 20 : 24);  // preamble (minimum)
             } else {
                 if (SENF_UNLIKELY(ampduRefNo_ != rtParser.ampduStatus().referenceNumber())) {
                     // new AMPDU
                     ampduRefNo_ = rtParser.ampduStatus().referenceNumber();
                     // preamble (minimum). Note: We add this to the first packet in the AMPDU.
-                    q.airTime += modInfo.type == senf::emu::WLANModulationParameter::Legacy ? 20 : 24;
+                    q.airTime += modInfo.type == sifsTime + (senf::emu::WLANModulationParameter::Legacy ? 20 : 24);
                 }
             }
         }
