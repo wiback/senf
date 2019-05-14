@@ -514,6 +514,8 @@ prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
 { 
     std::string vlanDevice (device() + "." + senf::str(pvid_));
 
+    netctl_.up();
+    
     if (!promisc() and pvid_) {
         // if there exists a VLAN interface, remove it first
         try {
@@ -524,8 +526,6 @@ prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
         netctl_.addVLAN(pvid_.id());
         NetdeviceController(vlanDevice).up();
     }
-
-    netctl_.up();
 
     ConnectedMMapPacketSocketHandle socket_ (((promisc() or !pvid_) ? device() : vlanDevice),
                                              qlen_, SENF_EMU_MAXMTU);
@@ -605,7 +605,7 @@ prefix_ bool senf::emu::HardwareWLANInterface::v_enabled()
 prefix_ void senf::emu::HardwareWLANInterface::v_id(MACAddress const & id)
 {
     DisableInterfaceGuard guard (*this);
-    netctl_.hardwareAddress( id);
+    netctl_.hardwareAddress(id);
     monitorDataFilter.id(id);
     annotatorRx_.id(id);
 }
@@ -624,16 +624,18 @@ prefix_ bool senf::emu::HardwareWLANInterface::v_promisc()
 
 prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
 {
+    if ( netctl_.promisc() == p)
+        return;
 
     bool dataSocketOpen (HardwareWLANInterfaceNet::socket.valid());
-    if (dataSocketOpen) {
+    if (dataSocketOpen and pvid_) {
         closeDataSocket();
     }
 
     netctl_.promisc(p);
     monitorDataFilter.promisc(p);
 
-    if (dataSocketOpen) {
+    if (dataSocketOpen and pvid_) {
         openDataSocket();
     }
 
