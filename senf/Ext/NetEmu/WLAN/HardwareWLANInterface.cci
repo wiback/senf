@@ -75,6 +75,12 @@ prefix_ int senf::emu::HardwareWLANInterface::frequencyOffset()
     return frequencyOffset_;
 }
 
+prefix_ senf::emu::VLanId const & senf::emu::HardwareWLANInterface::pvid()
+    const
+{
+    return pvid_;
+}
+
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_

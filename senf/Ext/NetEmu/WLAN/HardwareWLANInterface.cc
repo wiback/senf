@@ -59,12 +59,15 @@ prefix_ senf::emu::detail::HardwareWLANInterfaceNet::HardwareWLANInterfaceNet()
     : socket (senf::noinit),
       source (socket),
       sink (socket),
+      annotatorRx_(true, true), annotatorTx_(false, true),
       monSocket (senf::noinit),
       monSource(monSocket),
-      netOutput (monitorDataFilter.output), netInput (sink.input)
+      netOutput (monitorDataFilter.output), netInput (annotatorTx_.input)
 {
+    ppi::connect(source, annotatorRx_.input);
+    ppi::connect(annotatorRx_.output, monitorDataFilter.input_plain);
     ppi::connect(monSource, monitorDataFilter);
-    ppi::connect(source, monitorDataFilter.input_plain);
+    ppi::connect(annotatorTx_.output, sink.input);
 }
 
 prefix_ void senf::emu::detail::HardwareWLANInterfaceNet::assignMonitorSocket(ConnectedMMapReadPacketSocketHandle & monSocket_)
@@ -135,6 +138,7 @@ prefix_ senf::emu::TSFTHistogram & senf::emu::detail::HardwareWLANInterfaceNet::
     return monitorDataFilter.tsftHistogram();
 }
 
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::emu::HardwareWLANInterface
 
@@ -161,9 +165,9 @@ namespace senf { namespace emu {
 prefix_ senf::emu::HardwareWLANInterface::HardwareWLANInterface(std::pair<std::string,std::string> interfaces)
     : WLANInterface(detail::HardwareWLANInterfaceNet::netOutput, detail::HardwareWLANInterfaceNet::netInput),
       netctl_(interfaces.first), wnlc_(interfaces.first), dev_(interfaces.first), monitorDev_ (interfaces.second), spectralScanner_(wnlc_.phyName()),
-      wifiStatistics_(monitorDevice()), promisc_(false), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
+      wifiStatistics_(monitorDevice()), frequencyOffset_(0), restrictedBand_(-1), htMode_(HTMode::Disabled),
       modId_( WLANModulationParameterRegistry::instance().parameterIdUnknown()), bw_(0), txPower_(0),
-      rcvBufSize_ (1024), sndBufSize_ (96*1024), qlen_ (512)
+      rcvBufSize_ (1024), sndBufSize_ (96*1024), qlen_ (512), pvid_(VLanId::None), accessMode_(false)
 {
     init();
 }
@@ -296,7 +300,7 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
 
     if (enabled())
         init_sockets();
-
+    
     if (!spectralScanner_.detected()) {
         SENF_LOG( (WlanLogArea) (senf::log::MESSAGE) ("ath spectral scanner not detected for " << wnlc_.phyName() << ". DebugFS mounted at /sys/kernel/debug ?") );
     } else {
@@ -462,7 +466,8 @@ prefix_ std::string const & senf::emu::HardwareWLANInterface::monitorDevice()
 
 prefix_ void senf::emu::HardwareWLANInterface::init_sockets()
 {
-    monitorDataFilter.id(self().id());
+    monitorDataFilter.id(id());
+    annotatorRx_.id(id());
 
     NetdeviceController ctrl (monitorDevice());
     ctrl.promisc(true);
@@ -477,7 +482,7 @@ prefix_ void senf::emu::HardwareWLANInterface::openMonitorSocket()
     ConnectedMMapReadPacketSocketHandle monSocket_ (monitorDevice(), qlen_, SENF_EMU_MAXMTU);
     monSocket_.protocol().rcvbuf( rcvBufSize_);
     MonitorDataFilter::filterMonitorTxFrames(monSocket_);
-    monitorDataFilter.promisc(true);
+    monitorDataFilter.promisc(netctl_.promisc());
     monitorDataFilter.flushQueues();
     assignMonitorSocket(monSocket_);
 
@@ -499,11 +504,43 @@ prefix_ void senf::emu::HardwareWLANInterface::closeMonitorSocket()
 
 prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
 { 
-    netctl_.up();
-    ConnectedMMapPacketSocketHandle socket_ (device(), qlen_, SENF_EMU_MAXMTU);
-    socket_.protocol().sndbuf( sndBufSize_);
+    std::string vlanDevice (device() + "." + senf::str(pvid_));
+
+    if (!promisc() and pvid_) {
+        // if there exists a VLAN interface, remove it first
+        try {
+            netctl_.delVLAN(pvid_.id());
+        }
+        catch (...) {
+        }
+        netctl_.addVLAN(pvid_.id());
+        NetdeviceController(vlanDevice).up();
+    }
+
+    ConnectedMMapPacketSocketHandle socket_ (((promisc() or !pvid_) ? device() : vlanDevice),
+                                             qlen_, SENF_EMU_MAXMTU);
+
     socket_.protocol().rcvbuf( rcvBufSize_);
+    socket_.protocol().sndbuf( sndBufSize_);
+    // socket_.protocol().sndLowat(SENF_EMU_MAXMTU);
     HardwareWLANInterfaceNet::assignDataSocket(socket_);   
+    netctl_.up();
+
+    if (promisc() and pvid_) {
+        if (accessMode_) {
+            annotatorRx_.insertTag(pvid_);
+            annotatorTx_.removeTag(pvid_);
+        } else {
+            annotatorRx_.removeTag(pvid_);
+            annotatorTx_.insertTag(pvid_);
+        }
+    } else {
+        annotatorRx_.clearTag();
+        annotatorTx_.clearTag();
+    }
+
+    // switch to promisc rx method, which works around possibily misconfigured VLAN offloading 
+    annotatorRx_.promisc(promisc());
 }
 
 prefix_ bool senf::emu::HardwareWLANInterface::cellJoined()
@@ -514,6 +551,14 @@ prefix_ bool senf::emu::HardwareWLANInterface::cellJoined()
 
 prefix_ void senf::emu::HardwareWLANInterface::closeDataSocket()
 {
+    try {
+        if (!promisc() and pvid_) {
+            netctl_.delVLAN(pvid_.id());
+        }
+    }
+    catch (...) {
+    }
+
     source.handle(ConnectedMMapPacketSocketHandle(senf::noinit));
     sink.handle(ConnectedMMapPacketSocketHandle(senf::noinit));
     
@@ -553,6 +598,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_id(MACAddress const & id)
     DisableInterfaceGuard guard (*this);
     netctl_.hardwareAddress( id);
     monitorDataFilter.id(id);
+    annotatorRx_.id(id);
 }
 
 prefix_ senf::MACAddress senf::emu::HardwareWLANInterface::v_id()
@@ -564,22 +610,22 @@ prefix_ senf::MACAddress senf::emu::HardwareWLANInterface::v_id()
 prefix_ bool senf::emu::HardwareWLANInterface::v_promisc()
     const
 {
-    return promisc_;
+    return netctl_.promisc();
 }
 
 prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
 {
-    if (promisc_ == p)
-        return;
 
-    promisc_ = p;
+    bool dataSocketOpen (HardwareWLANInterfaceNet::socket.valid());
+    if (dataSocketOpen) {
+        closeDataSocket();
+    }
 
-    if (p) {
-        openMonitorSocket();
-        dataSource(false);
-    } else {
-        closeMonitorSocket();
-        dataSource(true);
+    netctl_.promisc(p);
+    monitorDataFilter.promisc(p);
+
+    if (dataSocketOpen) {
+        openDataSocket();
     }
 
     frequencyHint(0);
@@ -587,7 +633,18 @@ prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
 
 prefix_ void senf::emu::HardwareWLANInterface::v_annotationMode(bool a)
 {
+    if (monitorDataFilter.annotate() == a)
+        return;
+    
     monitorDataFilter.annotate(a);
+
+    if (a) {
+        openMonitorSocket();
+        dataSource(false);
+    } else {
+        closeMonitorSocket();
+        dataSource(true);
+    }
 }
 
 prefix_ bool senf::emu::HardwareWLANInterface::v_annotationMode()
@@ -626,6 +683,36 @@ prefix_ void senf::emu::HardwareWLANInterface::v_flushRxQueues()
 prefix_ void senf::emu::HardwareWLANInterface::v_flushTxQueues()
 {
     HardwareWLANInterfaceNet::sink.flush();
+}
+
+prefix_ bool senf::emu::HardwareWLANInterface::pvid(VLanId const & p, bool accessMode)
+{
+    if (!accessMode and p.stag())
+        return false;
+
+    bool dataSocketOpen (HardwareWLANInterfaceNet::socket.valid());
+    if (dataSocketOpen) {
+        closeDataSocket();
+    }
+
+    pvid_ = p;
+    accessMode_ = accessMode;
+
+    if (dataSocketOpen) {
+        openDataSocket();
+    }
+    
+    return true;
+}
+
+prefix_ std::uint32_t senf::emu::HardwareWLANInterface::vlanMismatchRx()
+{
+    return HardwareWLANInterfaceNet::annotatorRx_.vlanMismatch();
+}
+
+prefix_ std::uint32_t senf::emu::HardwareWLANInterface::vlanMismatchTx()
+{
+    return HardwareWLANInterfaceNet::annotatorTx_.vlanMismatch();
 }
 
 prefix_ senf::emu::ModulationParameter::id_t senf::emu::HardwareWLANInterface::v_modulationId()

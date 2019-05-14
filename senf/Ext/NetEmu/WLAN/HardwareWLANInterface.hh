@@ -117,6 +117,11 @@ namespace emu {
         unsigned maxBurst() const;
         void maxBurst(unsigned maxBurst);
 
+        VLanId const & pvid() const;
+        bool pvid(VLanId const & p, bool accessMode); 
+        std::uint32_t vlanMismatchRx();
+        std::uint32_t vlanMismatchTx();
+        
         std::pair<senf::emu::WirelessNLController::DFSState::Enum,std::uint32_t> dfsState(unsigned freq, unsigned bw);
         void startCAC(unsigned int freq, unsigned int bandwidth);
         void cacAborted();
@@ -204,7 +209,6 @@ namespace emu {
         std::string monitorDev_;
         AthSpectralScan spectralScanner_;
         WifiStatistics wifiStatistics_;
-        bool promisc_; // cache
         int frequencyOffset_;
         int restrictedBand_;
         HTMode::Enum htMode_;
@@ -214,6 +218,8 @@ namespace emu {
         unsigned rcvBufSize_;
         unsigned sndBufSize_;
         unsigned qlen_;
+        VLanId  pvid_;
+        bool accessMode_;
 
         friend struct detail::HardwareWLANInterfaceNet;
         friend class WLANMonitorDataFilter;

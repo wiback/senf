@@ -36,6 +36,7 @@
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 #include <senf/Packets/80211Bundle/RadiotapPacket.hh>
 #include <senf/PPI/QueueSocketSourceSink.hh>
+#include "../Ethernet/EthernetAnnotator.hh"
 #include "MonitorDataFilter.hh"
 #include "TSFTHistogram.hh"
 
@@ -54,6 +55,8 @@ namespace detail {
         ConnectedMMapPacketSocketHandle socket;
         ppi::module::ActiveQueueSocketSource<EthernetPacket> source;
         ppi::module::PassiveQueueSocketSink<> sink;
+        EthernetAnnotator annotatorRx_;
+        EthernetAnnotator annotatorTx_;
 
         ConnectedMMapReadPacketSocketHandle monSocket;
         ppi::module::ActiveQueueSocketSource<RadiotapPacket> monSource;
