@@ -627,6 +627,9 @@ prefix_ void senf::emu::HardwareWLANInterface::v_promisc(bool p)
     if ( netctl_.promisc() == p)
         return;
 
+    // NOTE: If a PVID is configured, we need to close/open the socket
+    // Hence, we would loose any join mesh/ibss states.
+    
     bool dataSocketOpen (HardwareWLANInterfaceNet::socket.valid());
     if (dataSocketOpen and pvid_) {
         closeDataSocket();
@@ -700,6 +703,11 @@ prefix_ bool senf::emu::HardwareWLANInterface::pvid(VLanId const & p, bool acces
 {
     if (!accessMode and p.stag())
         return false;
+
+    if (pvid_ == p and accessMode_ == accessMode)
+        return true;
+
+    // NOTE: Here we loose any join mesh/ibss states.
 
     bool dataSocketOpen (HardwareWLANInterfaceNet::socket.valid());
     if (dataSocketOpen) {
