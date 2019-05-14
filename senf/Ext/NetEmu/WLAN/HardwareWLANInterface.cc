@@ -281,6 +281,14 @@ prefix_ void senf::emu::HardwareWLANInterface::init()
                  SENF_MEMBINDFNP(unsigned, HardwareWLANInterface, maxBurst, () const))
              .doc("set max. number to frames to be read in a burst."));
     consoleDir()
+        .add("pvid", fty::Command(
+                 SENF_MEMBINDFNP(bool, HardwareWLANInterface, pvid, (VLanId const &, bool)))
+             .doc( "enables filtering for a specific PVID (VLAN ID must be 0...4095)"));
+    consoleDir()
+        .add("pvid", fty::Command(
+                 SENF_MEMBINDFNP(VLanId const &, HardwareWLANInterface, pvid, () const))
+             .doc( "report the currently configured PVID (-1 means none)"));
+    consoleDir()
         .add("spectralScanStats", fty::Command(&HardwareWLANInterface::spectralScanStats, this)
              .doc("current spectralScanner stats."));
     consoleDir()
@@ -517,6 +525,8 @@ prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
         NetdeviceController(vlanDevice).up();
     }
 
+    netctl_.up();
+
     ConnectedMMapPacketSocketHandle socket_ (((promisc() or !pvid_) ? device() : vlanDevice),
                                              qlen_, SENF_EMU_MAXMTU);
 
@@ -524,7 +534,6 @@ prefix_ void senf::emu::HardwareWLANInterface::openDataSocket()
     socket_.protocol().sndbuf( sndBufSize_);
     // socket_.protocol().sndLowat(SENF_EMU_MAXMTU);
     HardwareWLANInterfaceNet::assignDataSocket(socket_);   
-    netctl_.up();
 
     if (promisc() and pvid_) {
         if (accessMode_) {
