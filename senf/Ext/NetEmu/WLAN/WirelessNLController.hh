@@ -433,6 +433,7 @@ namespace emu {
         static int channelType(ChannelMode::Enum channelMode);
         static frequency_type centerFreq(frequency_type freq, ChannelMode::Enum channelMode);
         
+        std::multiset<ScanResults> const & getScan();
         std::set<Survey> const & survey();
         frequency_type frequency();
         FrequencyRange frequencies();
@@ -487,7 +488,6 @@ namespace emu {
         void do_mesh_join(MeshJoinParameters const & parameters);
 
         int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
-        std::multiset<ScanResults> const & getScan();
         int getScan_cb(nl_msg * msg);
 
         void getWiphy();
