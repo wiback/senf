@@ -87,6 +87,46 @@ namespace senf {
     typedef ConcretePacket<WLANBeaconPacketType> WLANBeaconPacket;
     SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( WLANBeaconPacket );
 
+
+    
+    struct InformationElementsPacketParser : public PacketParserBase
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_TLV_LIST( ieList, packetSize(), WLANGenericInfoElementParser );
+        SENF_PARSER_FINALIZE( InformationElementsPacketParser );
+    };
+
+    /** \brief WLAN Information Element packet
+
+        \par Packet type (typedef):
+            \ref InformationElementPacket
+
+        \par Fields:
+
+        \ingroup protocolbundle_80211
+     */
+    struct InformationElementsPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<InformationElementsPacketType>
+    {
+        typedef PacketTypeMixin<InformationElementsPacketType> mixin;
+        typedef ConcretePacket<InformationElementsPacketType> packet;
+        typedef WLANBeaconPacketParser parser;
+
+        using mixin::init;
+        using mixin::initSize;
+        using PacketTypeBase::nextPacketRange;
+
+        static void dump(packet p, std::ostream & os);
+    };
+
+    /** \brief WLAN Information Element packet typedef
+        \ingroup protocolbundle_80211
+     */
+    typedef ConcretePacket<InformationElementsPacketType> InformationElementsPacket;
+    SENF_PACKET_PREVENT_TEMPLATE_INSTANTIATION( InformationElementsPacket );
+
+    
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

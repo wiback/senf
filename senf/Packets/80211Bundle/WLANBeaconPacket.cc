@@ -56,6 +56,20 @@ prefix_ void senf::WLANBeaconPacketType::dump(packet p, std::ostream & os)
         i->dump( os);
 }
 
+
+SENF_PACKET_INSTANTIATE_TEMPLATE( senf::InformationElementsPacket );
+
+prefix_ void senf::InformationElementsPacketType::dump(packet p, std::ostream & os)
+{
+    boost::io::ios_all_saver ias(os);
+    os << "Information Elements:\n";
+    typedef parser::ieList_t::container_type ieListContainer_t;
+    ieListContainer_t ieListContainer (p->ieList());
+    for (ieListContainer_t::const_iterator i = ieListContainer.begin(); i != ieListContainer.end(); ++i)
+        i->dump( os);
+}
+
+
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 #undef prefix_
 

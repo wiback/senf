@@ -78,6 +78,7 @@ prefix_ void senf::WLANVendorSpecificInfoElementParser::dump(std::ostream & os)
     os << "  WLAN Vendor Specific Information Element\n"
        << "    type:   " << unsigned(type()) << "\n"
        << "    length: " << unsigned(length()) << "\n"
+       << "    oui: "    << std::hex << oui() << "\n"
        << "    value:  ToDo!\n";
 }
 
