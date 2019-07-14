@@ -136,7 +136,7 @@ prefix_ void senf::ppi::module::ActiveQueueSocketSource<Packet,Connector>::read(
             
         PacketInfo ifo;
         {
-            Packet pk (Packet::create(
+            Packet const & pk (Packet::create(
                            buf->frameBegin(),
                            buf->size(),
                            buf->frameSize(),

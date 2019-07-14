@@ -71,7 +71,7 @@ prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::handle(Handle
 template <class Writer>
 prefix_ void senf::ppi::module::PassiveQueueingSocketSink<Writer>::write()
 {
-    PacketType p ( input());
+    PacketType const & p ( input());
     if (qAlgo_->size() > 0) {
         qAlgo_->enqueue( p);
         return;

@@ -53,7 +53,7 @@ namespace ppi {
 
     struct QueueBufferAnnotation
     {
-        QueueReadPolicy::Buffer const * value;
+        mutable QueueReadPolicy::Buffer const * value;
         QueueReadPolicy::Buffer const * operator->() const;
     };
 
