@@ -37,11 +37,18 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef SENF_DEBUG
 std::int32_t senf::Packet::pktCount_ = 0;
+#endif
 
 prefix_ std::int32_t const & senf::Packet::pktCount()
 {
+#ifdef SENF_DEBUG
     return pktCount_;    
+#else
+    static std::int32_t noCount (-1);
+    return noCount;
+#endif
 }
 
 prefix_ senf::PacketInterpreterBase::ptr senf::Packet::getNext(PacketInterpreterBase::optional_range const & range)

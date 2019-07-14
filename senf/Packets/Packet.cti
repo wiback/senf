@@ -46,7 +46,9 @@ template <class PacketType>
 prefix_ senf::Packet::Packet(ConcretePacket<PacketType> const & packet)
     : packet_(packet.ptr())
 {
+#ifdef SENF_DEBUG
     pktCount_++;
+#endif
 }
 
 // interpreter chain access
@@ -130,7 +132,7 @@ prefix_ OtherPacket senf::Packet::next(NoThrow_t)
     const
 {
     Packet p (next(nothrow));
-    return p && p.is<OtherPacket>() ?
+    return SENF_LIKELY(p && p.is<OtherPacket>()) ?
             OtherPacket(p.ptr()->as<typename OtherPacket::type>()) : OtherPacket();
 }
 

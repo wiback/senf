@@ -43,7 +43,9 @@
 prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr const & packet)
     : packet_(packet)
 {
-    pktCount_++;
+#ifdef SENF_DEBUG
+    pktCount_++;    
+#endif
 }
 
 prefix_ senf::PacketInterpreterBase::ptr const & senf::Packet::ptr()
@@ -58,7 +60,9 @@ prefix_ senf::PacketInterpreterBase::ptr const & senf::Packet::ptr()
 prefix_ senf::Packet::Packet(Packet const & other)
     : packet_(other.packet_)
 {
+#ifdef SENF_DEBUG
     pktCount_++;
+#endif
 }
 
 prefix_ senf::Packet & senf::Packet::operator=(Packet const & other)
@@ -72,17 +76,23 @@ prefix_ senf::Packet::Packet(Packet && other)
     noexcept
     : packet_(std::move(other.packet_))
 {
-    pktCount_++;
+#ifdef SENF_DEBUG
+    pktCount_--;    
+#endif
 }
 
 prefix_ senf::Packet::Packet()
 {
+#ifdef SENF_DEBUG
     pktCount_++;    
+#endif
 }
 
 prefix_ senf::Packet::~Packet()
 {
+#ifdef SENF_DEBUG
     pktCount_--;    
+#endif
 }
 
 
@@ -102,7 +112,7 @@ prefix_ senf::Packet senf::Packet::next(NoThrow_t)
     PacketInterpreterBase::ptr p (ptr()->next());
     if (SENF_LIKELY(p)) return Packet(p);
     PacketInterpreterBase::optional_range r (ptr()->nextPacketRange());
-    return (r && ! r->empty()) ? Packet(getNext(r)) : Packet();
+    return SENF_LIKELY(r && ! r->empty()) ? Packet(getNext(r)) : Packet();
 }
 
 prefix_ senf::Packet senf::Packet::next()

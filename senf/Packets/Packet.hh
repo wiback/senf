@@ -545,8 +545,9 @@ namespace senf {
     private:
         PacketInterpreterBase::ptr packet_;
 
+#ifdef SENF_DEBUG
         static std::int32_t pktCount_;
-
+#endif
         template <class PacketType>
         friend class ConcretePacket;
         friend class PacketParserBase;
