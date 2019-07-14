@@ -517,13 +517,13 @@ prefix_ void senf::ppi::connector::GenericPassiveInput::v_connected()
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_enqueueEvent()
 {
     emit();
-    if (throttlingDisc_)
+    if (SENF_UNLIKELY(throttlingDisc_))
         throttlingDisc_->update(*this, ThrottlingDiscipline::ENQUEUE);
 }
 
 prefix_ void senf::ppi::connector::GenericPassiveInput::v_dequeueEvent()
 {
-    if (throttlingDisc_)
+    if (SENF_UNLIKELY(throttlingDisc_))
         throttlingDisc_->update(*this, ThrottlingDiscipline::DEQUEUE);
 }
 
