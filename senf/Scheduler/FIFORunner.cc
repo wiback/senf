@@ -52,9 +52,41 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//
+// Our default watchdog hanging output handler (write to stdout)
+//
+static void watchdogDefaultOutput(std::string const & taskName, std::string const & checkPointName, std::string const & backTrace,
+                                        unsigned periodInMs, unsigned numPeriods)
+{
+    senf::IGNORE( write(1, "*** Scheduler task hanging (pid ", 32) );
+    static char pid[7];
+    ::snprintf(pid, 7, "%6d", ::getpid());
+    pid[6] = 0;
+    senf::IGNORE( write(1, pid, 6) );
+    senf::IGNORE( write(1, "): ", 3) );
+    senf::IGNORE( write(1, taskName.c_str(), taskName.size()) );
+    if (!checkPointName.empty()) {
+        senf::IGNORE( write(1, "  Last Checkpoint: ", 19));
+        senf::IGNORE( write(1, checkPointName.c_str(), checkPointName.size()) );
+    }
+    senf::IGNORE( write(1, "\n", 1) );
+
+    if (!backTrace.empty()) {
+        senf::IGNORE( write(1, "Task was initialized at\n", 24) );
+        senf::IGNORE( write(1, backTrace.c_str(), backTrace.size()) );
+        senf::IGNORE( write(1, "\n", 1) );
+    }
+}
+
+
+//
+// FIFO Runner 
+//
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000),
       watchdogAbort_ (false), watchdogCheckpoint_(nullptr), runningTask_(nullptr),
+      watchdogCallback_(::watchdogDefaultOutput),
       watchdogCount_(0), hangCount_ (0), yield_ (false)
 {
     struct sigevent ev;
@@ -235,7 +267,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
     // to be to costly here
 
     try {
-        while (next_ != end) {
+        while (SENF_LIKELY(next_ != end)) {
             runningTask_ = &(*next_);
             if (runningTask_->runnable_) {
                 runningTask_->runnable_ = false;
@@ -293,46 +325,16 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdog(int, siginfo_t * si, 
 
 prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
 {
-    // We don't care if the write commands below fail, we just give our best to inform the user
-    senf::IGNORE( write(1, "*** Scheduler task hanging (pid ", 32) );
-    static char pid[7];
-    ::snprintf(pid, 7, "%6d", ::getpid());
-    pid[6] = 0;
-    senf::IGNORE( write(1, pid, 6) );
-    senf::IGNORE( write(1, "): ", 3) );
-    if (runningTask_)
-        senf::IGNORE( write(1, runningTask_->name().c_str(), runningTask_->name().size()) );
-    else
-        senf::IGNORE( write(1, runningName_.c_str(), runningName_.size()) );
-    if (watchdogCheckpoint_) {
-        senf::IGNORE( write(1, "  Last Checkpoint: ", 19));
-        senf::IGNORE( write(1, watchdogCheckpoint_, strlen(watchdogCheckpoint_)));
-    }
-/*    senf::IGNORE( write(1, " at\n ", 3) );
+    std::string taskName (runningTask_ ? runningTask_->name() : runningName_);
+    std::string checkpointName (watchdogCheckpoint_ ? std::string(watchdogCheckpoint_) : std::string("")); 
 #ifdef SENF_BACKTRACE
-    static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                                'a', 'b', 'c', 'd', 'e', 'f' };
-    static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
-    int nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
-    for (int i=0; i < nEntries; ++i) {
-        senf::IGNORE( write(1, " 0x", 3) );
-        for (unsigned j (sizeof(void*)); j > 0; --j) {
-            uintptr_t v ( reinterpret_cast<uintptr_t>(entries[i]) >> (8*(j-1)) );
-            senf::IGNORE( write(1, &(hex[ (v >> 4) & 0x0f ]), 1) );
-            senf::IGNORE( write(1, &(hex[ (v     ) & 0x0f ]), 1) );
-        }
-    }
-#endif*/
-    senf::IGNORE( write(1, "\n", 1) );
-
-#ifdef SENF_BACKTRACE
-    senf::IGNORE( write(1, "Task was initialized at\n", 24) );
-    if (runningTask_)
-        senf::IGNORE( write(1, runningTask_->backtrace_.c_str(), runningTask_->backtrace_.size()) );
-    else
-        senf::IGNORE( write(1, runningBacktrace_.c_str(), runningBacktrace_.size()) );
-    senf::IGNORE( write(1, "\n", 1) );
+    std::string backTrace (runningTask_ ? runningTask_->backtrace_ : runningBacktrace_);
+#else
+    std::string backTrace ("");
 #endif
+
+    watchdogCallback_(taskName, checkpointName, backTrace, watchdogMs_, watchdogCount_ -1);
+    
     if (watchdogAbort_)
         assert(false);
 }

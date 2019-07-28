@@ -64,6 +64,11 @@ prefix_ senf::ClockService::clock_type_coarse senf::scheduler::nowCoarseDiff(Clo
     return ClockService::coarseDiff(nowCoarse(), older);
 }
 
+prefix_ void senf::scheduler::watchdogCallback(detail::FIFORunner::WatchdogCallback const & cb)
+{
+    scheduler::detail::FIFORunner::instance().watchdogCallback(cb);
+}
+
 prefix_ void senf::scheduler::watchdogTimeout(unsigned ms)
 {
     scheduler::detail::FIFORunner::instance().taskTimeout(ms);

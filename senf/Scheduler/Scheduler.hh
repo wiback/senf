@@ -291,6 +291,13 @@ namespace scheduler {
      */
     ClockService::clock_type_coarse nowCoarseDiff(ClockService::clock_type_coarse const & older);
 
+    
+    /** \brief Set watchdog hanging callback
+
+        Specifies the callback to be called when a hanging task is detected.
+     */
+    void watchdogCallback(detail::FIFORunner::WatchdogCallback const & cb);
+
     /** \brief Set watchdog timeout to \a ms milliseconds.
 
         Setting the watchdog timeout to 0 will disable the watchdog.

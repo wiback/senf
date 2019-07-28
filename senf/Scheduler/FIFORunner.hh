@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <signal.h>
+#include <boost/function.hpp>
 #include <boost/intrusive/list.hpp>
 #include <boost/intrusive/list_hook.hpp>
 #include <senf/Utils/singleton.hh>
@@ -53,6 +54,8 @@ namespace detail {
     {
     public:
         class TaskInfo;
+
+        typedef boost::function<void(std::string const &, std::string const &, std::string const &, unsigned, unsigned)> WatchdogCallback;
 
     private:
         struct TaskListTag;
@@ -106,6 +109,7 @@ namespace detail {
         void abortOnTimeout(bool flag);
         bool abortOnTimeout() const;
 
+        void watchdogCallback(WatchdogCallback const & cb);
         void startWatchdog();
         void stopWatchdog();
 
@@ -156,6 +160,7 @@ namespace detail {
         std::string runningName_;
         std::string runningBacktrace_;
 
+        WatchdogCallback watchdogCallback_;
         unsigned watchdogCount_;
         unsigned hangCount_;
         bool yield_;
