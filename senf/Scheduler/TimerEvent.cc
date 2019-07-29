@@ -69,7 +69,7 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::prepareRun()
 {
     TimerSet::iterator i (timers_.begin());
     TimerSet::iterator const i_end (timers_.end());
-    ClockService::clock_type now (FdManager::instance().eventTime());
+    ClockService::clock_type const & now (FdManager::instance().eventTime());
     for (; i != i_end && i->timeout_ <= now ; ++i)
         i->setRunnable();
 }

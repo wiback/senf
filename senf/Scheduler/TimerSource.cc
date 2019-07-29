@@ -93,7 +93,7 @@ senf::scheduler::detail::POSIXTimerSource::timeout(ClockService::clock_type cons
 {
     if (! timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
-        if (timeout_ <= ClockService::clock_type(0))
+        if (SENF_UNLIKELY(timeout_ <= ClockService::clock_type(0)))
             timeout_ = ClockService::clock_type(1);
         timeoutEnabled_ = true;
         reschedule();
@@ -148,13 +148,12 @@ prefix_ void senf::scheduler::detail::POSIXTimerSource::signal(int events)
 prefix_ void senf::scheduler::detail::POSIXTimerSource::reschedule()
 {
     struct itimerspec timer;
-    memset(&timer, 0, sizeof(timer));
+    memset(&timer.it_interval, 0, sizeof(timer.it_interval));
     if (timeoutEnabled_) {
         timer.it_value.tv_sec = ClockService::in_seconds(timeout_);
-        timer.it_value.tv_nsec = ClockService::in_nanoseconds(
-            timeout_ - ClockService::seconds(timer.it_value.tv_sec));
+        timer.it_value.tv_nsec = ClockService::in_nanoseconds(timeout_) % 1000000000LL;
     }
-    if (timer_settime(timerId_, TIMER_ABSTIME, &timer, 0)<0)
+    if (SENF_UNLIKELY(timer_settime(timerId_, TIMER_ABSTIME, &timer, 0)<0))
         SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
 }
 
@@ -203,7 +202,7 @@ senf::scheduler::detail::TimerFDTimerSource::timeout(ClockService::clock_type co
 {
     if (!timeoutEnabled_ || timeout_ != timeout) {
         timeout_ = timeout;
-        if (timeout_ <= ClockService::clock_type(0))
+        if (SENF_UNLIKELY(timeout_ <= ClockService::clock_type(0)))
             timeout_ = ClockService::clock_type(1);
         timeoutEnabled_ = true;
         reschedule();
@@ -264,13 +263,12 @@ prefix_ void senf::scheduler::detail::TimerFDTimerSource::signal(int events)
 prefix_ void senf::scheduler::detail::TimerFDTimerSource::reschedule()
 {
     struct itimerspec timer;
-    memset(&timer, 0, sizeof(timer));
+    memset(&timer.it_interval, 0, sizeof(timer.it_interval));
     if (timeoutEnabled_) {
-        timer.it_value.tv_sec = ClockService::in_seconds(timeout_);
-        timer.it_value.tv_nsec = ClockService::in_nanoseconds(
-            timeout_ - ClockService::seconds(timer.it_value.tv_sec));
+        timer.it_value.tv_sec  = ClockService::in_seconds(timeout_);
+        timer.it_value.tv_nsec = ClockService::in_nanoseconds(timeout_) % 1000000000LL;
     }
-    if (timerfd_settime(timerfd_, TFD_TIMER_ABSTIME, &timer, 0)<0)
+    if (SENF_UNLIKELY(timerfd_settime(timerfd_, TFD_TIMER_ABSTIME, &timer, 0)<0))
         SENF_THROW_SYSTEM_EXCEPTION("timerfd_settime()");
 }
 #endif
