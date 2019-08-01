@@ -820,114 +820,121 @@ prefix_ void senf::emu::HardwareWLANInterface::v_modulationId(ModulationParamete
 
 prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<ModulationParameter::id_t> const & ids)
 {
-    std::set<WLANModulationParameter::Type> types;
-    try {
-        for (auto const & id : ids)
-            types.emplace(WLANModulationParameterRegistry::instance().findModulationById(id).type);
-    }
-    catch(std::exception & e) {
-        throw InvalidArgumentException("Unknown WLANModulationParameter") << e.what();
-    }
-    if (types.size() != 1) {
-        throw InvalidArgumentException("WLANModulationParameter mismatch");
-    }
-    
     BitrateParameters bratePara;
-    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() <= 3000000)) { 
-        if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
-            switch (*types.begin()) {
-            case WLANModulationParameter::Automatic:
-            case WLANModulationParameter::VHT:
-                bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
-                // fall through
-            case WLANModulationParameter::HT:
-                bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
-                // fall through
-            case WLANModulationParameter::Legacy:
-                if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::VHT)
-                    bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
-            case WLANModulationParameter::Unknown:
-                break;
-            }
-            if (*types.begin() == WLANModulationParameter::Legacy) {
-                for (auto const & id : ids) {
-                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    bratePara.legacy_24->insert(modPara.rate);
+    std::set<WLANModulationParameter::Type> types;
+
+    if (!ids.empty()) {
+        try {
+            for (auto const & id : ids)
+                types.emplace(WLANModulationParameterRegistry::instance().findModulationById(id).type);
+        }
+        catch(std::exception & e) {
+            throw InvalidArgumentException("Unknown WLANModulationParameter") << e.what();
+        }
+        if (types.size() != 1) {
+            throw InvalidArgumentException("WLANModulationParameter mismatch");
+        }
+    
+        if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() <= 3000000)) { 
+            if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_2GHZ)) {
+                switch (*types.begin()) {
+                case WLANModulationParameter::Automatic:
+                case WLANModulationParameter::VHT:
+                    bratePara.vht_mcs_table_24.reset(BitrateParameters::VHT_MCSBitmapTable());
+                    // fall through
+                case WLANModulationParameter::HT:
+                    bratePara.mcs_24.reset(BitrateParameters::MCSIndexSet());
+                    // fall through
+                case WLANModulationParameter::Legacy:
+                    if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::VHT)
+                        bratePara.legacy_24.reset(BitrateParameters::LegacyBitrateSet());
+                case WLANModulationParameter::Unknown:
+                    break;
                 }
-            }
-            if (*types.begin() == WLANModulationParameter::HT) {
-                for (auto const & id : ids) {
-                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    bratePara.mcs_24->insert(modPara.index);
+                if (*types.begin() == WLANModulationParameter::Legacy) {
+                    for (auto const & id : ids) {
+                        WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                        bratePara.legacy_24->insert(modPara.rate);
+                    }
                 }
-            }
-            if (*types.begin() == WLANModulationParameter::VHT) {
-                // ath10k requires bits 0...7 to be set. Also there can not be gaps.
-                std::map<unsigned,unsigned> maxMCS;
-                for (auto const & id : ids) {
-                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    maxMCS[modPara.streams-1] = std::max(7u, std::max(maxMCS[modPara.streams-1], modPara.index));
+                if (*types.begin() == WLANModulationParameter::HT) {
+                    for (auto const & id : ids) {
+                        WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                        bratePara.mcs_24->insert(modPara.index);
+                    }
                 }
-                for (unsigned nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
-                    for (unsigned n = 0; n <= maxMCS[nss]; n++)
-                        bratePara.vht_mcs_table_24->at(nss).set(n);
+                if (*types.begin() == WLANModulationParameter::VHT) {
+                    // ath10k requires bits 0...7 to be set. Also there can not be gaps.
+                    std::map<unsigned,unsigned> maxMCS;
+                    for (auto const & id : ids) {
+                        WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                        maxMCS[modPara.streams-1] = std::max(7u, std::max(maxMCS[modPara.streams-1], modPara.index));
+                    }
+                    for (unsigned nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
+                        for (unsigned n = 0; n <= maxMCS[nss]; n++)
+                            bratePara.vht_mcs_table_24->at(nss).set(n);
+                    }
                 }
             }
         }
-    }
-    if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() >= 4900000)) {
-        if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_5GHZ)) {
-            switch (*types.begin()) {
-            case WLANModulationParameter::Automatic:
-            case WLANModulationParameter::VHT:
-                bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
-                // fall through
-            case WLANModulationParameter::HT:
-                bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
-                // fall through
-            case WLANModulationParameter::Legacy:
-                if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::VHT)
-                    bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());
-            case WLANModulationParameter::Unknown:
-                break;
-            }
-            if (*types.begin() == WLANModulationParameter::Legacy) {
-                for (auto const & id : ids) {
-                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    bratePara.legacy_5->insert(modPara.rate);
+        if ((wnlc_.supportedBands().size() == 1) or (wnlc_.frequency() >= 4900000)) {
+            if (senf::contains(wnlc_.supportedBands(), WirelessNLController::BAND_5GHZ)) {
+                switch (*types.begin()) {
+                case WLANModulationParameter::Automatic:
+                case WLANModulationParameter::VHT:
+                    bratePara.vht_mcs_table_5.reset(BitrateParameters::VHT_MCSBitmapTable());
+                    // fall through
+                case WLANModulationParameter::HT:
+                    bratePara.mcs_5.reset(BitrateParameters::MCSIndexSet());
+                    // fall through
+                case WLANModulationParameter::Legacy:
+                    if (*types.begin() != WLANModulationParameter::HT and *types.begin() != WLANModulationParameter::VHT)
+                        bratePara.legacy_5.reset(BitrateParameters::LegacyBitrateSet());
+                case WLANModulationParameter::Unknown:
+                    break;
                 }
-            }
-            if (*types.begin() == WLANModulationParameter::HT) {
-                for (auto const & id : ids) {
-                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    bratePara.mcs_5->insert(modPara.index);
+                if (*types.begin() == WLANModulationParameter::Legacy) {
+                    for (auto const & id : ids) {
+                        WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                        bratePara.legacy_5->insert(modPara.rate);
+                    }
                 }
-            }
-            if (*types.begin() == WLANModulationParameter::VHT) {
-                // ath10k requires bits 0...7 to be set. Also there can not be gaps.
-                std::map<unsigned,unsigned> maxMCS;
-                for (auto const & id : ids) {
-                    WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
-                    maxMCS[modPara.streams-1] = std::max(8u, std::max(maxMCS[modPara.streams-1], modPara.index+1));
+                if (*types.begin() == WLANModulationParameter::HT) {
+                    for (auto const & id : ids) {
+                        WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                        bratePara.mcs_5->insert(modPara.index);
+                    }
                 }
-                for (unsigned nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
-                    if (maxMCS[nss] > 0) {
-                        for (unsigned n = 1; n <= maxMCS[nss]; n++)
-                            bratePara.vht_mcs_table_5->at(nss).set(n-1);
+                if (*types.begin() == WLANModulationParameter::VHT) {
+                    // ath10k requires bits 0...7 to be set. Also there can not be gaps.
+                    std::map<unsigned,unsigned> maxMCS;
+                    for (auto const & id : ids) {
+                        WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
+                        maxMCS[modPara.streams-1] = std::max(8u, std::max(maxMCS[modPara.streams-1], modPara.index+1));
+                    }
+                    for (unsigned nss = 0; nss < NL80211_VHT_NSS_MAX; nss++) {
+                        if (maxMCS[nss] > 0) {
+                            for (unsigned n = 1; n <= maxMCS[nss]; n++)
+                                bratePara.vht_mcs_table_5->at(nss).set(n-1);
+                        }
                     }
                 }
             }
         }
     }
-    
+
     wnlc_.set_bitrates(bratePara);
 
     // report the upper bound (our target rate, the other(s) are considered as fallbacks)
-    std::map<unsigned, ModulationParameter::id_t> rates;
-    for (auto const & i : ids) {
-        rates.insert(std::make_pair(WLANModulationParameterRegistry::instance().findModulationById(i).rate, i));
+    if (!ids.empty()) {
+        std::map<unsigned, ModulationParameter::id_t> rates;
+        for (auto const & i : ids) {
+            rates.insert(std::make_pair(WLANModulationParameterRegistry::instance().findModulationById(i).rate, i));
+        }
+        modId_ = rates.rbegin()->second;
+    } else {
+        modId_ = WLANModulationParameterRegistry::instance().parameterIdAuto();
     }
-    modId_ = rates.rbegin()->second;
 
 #undef insertParameterIfTypeMatch
 }
