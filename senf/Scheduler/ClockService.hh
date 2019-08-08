@@ -90,9 +90,7 @@ namespace senf {
         typedef senf::RestrictedInt<config::time_type, ClockTypeTag> clock_type;
 #else
         typedef config::time_type clock_type;
-#endif
-        typedef config::time_type_coarse clock_type_coarse;
-        
+#endif        
         /** \brief Supplementary integer type
 
             This type is used to represent varies supplementary values (e.g. number of microseconds)
@@ -116,7 +114,6 @@ namespace senf {
         //-////////////////////////////////////////////////////////////////////////
 
         static constexpr clock_type        maxTime = std::numeric_limits<clock_type>::max();
-        static constexpr clock_type_coarse maxTimeCoarse = std::numeric_limits<clock_type_coarse>::max();
         
         static clock_type now();  ///< Return current clock value
 
@@ -155,13 +152,6 @@ namespace senf {
                                         ///< Convert legacy timeval to clock value
                                         /**< This member converts an absolute time value
                                              represented as a timeval value into a clock value */
-
-        
-        static clock_type_coarse coarseDiff(clock_type_coarse const & newer, clock_type_coarse const & older); ///< Compute newer - older
-        static SENF_CLOCKSERVICE_CONSTEXPR std::int32_t coarseToMs(clock_type_coarse const &); ///< Convert \a from coarse to ms
-        static SENF_CLOCKSERVICE_CONSTEXPR clock_type_coarse msToCoarse(std::int32_t const &); ///< Convert \a from ms ro clock_type_coarse
-        static SENF_CLOCKSERVICE_CONSTEXPR clock_type fromCoarse(clock_type_coarse const &); ///< Convert \a from coarse to clock_type
-        static SENF_CLOCKSERVICE_CONSTEXPR clock_type_coarse toCoarse(clock_type const &); ///< Convert \a v from clock_type to coarse
 
         static SENF_CLOCKSERVICE_CONSTEXPR clock_type nanoseconds(int64_type const & v); ///< Convert \a v nanoseconds to clock_type
         static SENF_CLOCKSERVICE_CONSTEXPR clock_type microseconds(int64_type const & v); ///< Convert \a v microseconds to clock_type
@@ -234,6 +224,54 @@ namespace senf {
                                    ClockService::clock_type & out);
 
     void formatClockServiceInterval(ClockService::clock_type interval, std::ostream & os);
+    
+    class CyclicTimestamp final
+    {
+    public:
+        CyclicTimestamp()
+            : tstamp_ (0) {
+        }
+        CyclicTimestamp(CyclicTimestamp const & other)
+            : tstamp_(other.tstamp_) {
+        }
+        CyclicTimestamp(senf::ClockService::clock_type const & now) {
+            update(now);
+        }
+        CyclicTimestamp(std::uint32_t const & secs, std::uint32_t const & nsecs) {
+            update(secs, nsecs);
+        }
+        
+        void update(ClockService::clock_type const & clockType) {
+            tstamp_ = std::uint32_t(std::uint64_t(senf::ClockService::in_milliseconds(clockType)) % 0x100000000ull);
+        }
+        
+        void update(std::uint32_t const & secs, std::uint32_t const & nsecs) {
+            tstamp_ = (secs * 1000) + (nsecs / 1000000);
+        }
+        
+        std::uint32_t const & value() const {
+            return tstamp_;
+        }
+        
+        CyclicTimestamp distance(CyclicTimestamp const & other) const {
+            return CyclicTimestamp(other.tstamp_ - tstamp_);
+        }
+
+        std::uint32_t distanceAsMilliseconds(CyclicTimestamp const & other) const {
+            return other.tstamp_ - tstamp_;
+        }
+
+        senf::ClockService::clock_type distanceAsClockType(CyclicTimestamp const & other) const {
+            return senf::ClockService::milliseconds(distanceAsMilliseconds(other));
+        }
+        
+    private:
+        CyclicTimestamp(std::uint32_t const & value)
+            :tstamp_(value) {
+        }
+
+        std::uint32_t tstamp_;
+    };
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////

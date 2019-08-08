@@ -278,19 +278,12 @@ namespace scheduler {
      */
     ClockService::clock_type nowDiff(ClockService::clock_type const & older);
 
-    /** \brief Returns (approximate) current time (coarse, 1ms precision)
+    /** \brief Returns the FIFOrunners current event timestamp (1ms precision)
 
-        This call will return the current time as far as it is already known to the scheduler.
+        This call will return the current timestamp of the FIFORunner as far as it is already known to the scheduler.
         Note: The scheduler must be running() for this time to be accurate.
      */
-    ClockService::clock_type_coarse const & nowCoarse();
-
-    /** \brief Returns (approximate) coarse time difference between 'older' and now()
-
-        Note: The scheduler must be running() for this time to be accurate.
-     */
-    ClockService::clock_type_coarse nowCoarseDiff(ClockService::clock_type_coarse const & older);
-
+    CyclicTimestamp const & eventTimestamp();
     
     /** \brief Set watchdog hanging callback
 

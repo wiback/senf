@@ -54,14 +54,9 @@ prefix_ senf::ClockService::clock_type senf::scheduler::nowDiff(ClockService::cl
     return now() - older;
 }
 
-prefix_ senf::ClockService::clock_type_coarse const & senf::scheduler::nowCoarse()
+prefix_ senf::CyclicTimestamp const & senf::scheduler::eventTimestamp()
 {
-    return scheduler::detail::FdManager::instance().eventTimeCoarse();
-}
-
-prefix_ senf::ClockService::clock_type_coarse senf::scheduler::nowCoarseDiff(ClockService::clock_type_coarse const & older)
-{
-    return ClockService::coarseDiff(nowCoarse(), older);
+    return scheduler::detail::FdManager::instance().eventTimestamp();
 }
 
 prefix_ void senf::scheduler::watchdogCallback(detail::FIFORunner::WatchdogCallback const & cb)

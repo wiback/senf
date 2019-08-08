@@ -16,31 +16,6 @@
 namespace senf {
 
     namespace Detail {
-        class Distance
-        {
-        public:
-            Distance(std::int32_t maxValue, std::int32_t threshold) :
-                maxValue_(maxValue), threshold_(maxValue / 8)
-            {
-            }
-
-            std::int32_t distance(std::uint32_t current, std::uint32_t last)
-            {
-                std::int32_t dist (current - last);
-                
-                if (SENF_UNLIKELY(dist + threshold_ < 0))
-                    return dist + maxValue_;
-                if (SENF_UNLIKELY(dist - (maxValue_ - threshold_) > 0))
-                    return dist - maxValue_;
-
-                return dist;
-            }
-            
-        private:
-            std::int32_t const maxValue_;
-            std::int32_t const threshold_;
-        };
-
         class DifferenceSigned
         {
         public:

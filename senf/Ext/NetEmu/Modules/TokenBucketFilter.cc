@@ -40,8 +40,8 @@
 
 prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigned _rate, ppi::QueueingAlgorithm::ptr qAlgorithm)
     : queueAlgo_(qAlgorithm.release()),
-      now_(scheduler::nowCoarse()),
-      lastToken_(scheduler::nowCoarse()),
+      now_(scheduler::eventTimestamp()),
+      lastToken_(now_),
       timer_( "TokenBucketFilter::timer", membind(&TokenBucketFilter::onTimeout, this)),
       bucketLimit_( _burst), bucketLowThresh_(0), bucketSize_( _burst),
       rate_( _rate), bucketEmpty_(0)
@@ -77,14 +77,6 @@ prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigne
     dir.add( "rateLimit", fty::Command(
             SENF_MEMBINDFNP( unsigned, TokenBucketFilter, rate, () const))
         .doc( "get the rate limit in bits per second"));
-    dir.add( "deviation", fty::Command( &TokenBucketFilter::timerDeviation, this)
-        .doc( "statistic to timer duration and deviation"));
-}
-
-prefix_ senf::ClockService::clock_type_coarse const &  senf::emu::TokenBucketFilter::lastToken()
-    const
-{
-    return lastToken_;
 }
 
 prefix_ unsigned senf::emu::TokenBucketFilter::burst()
@@ -114,11 +106,6 @@ prefix_ unsigned senf::emu::TokenBucketFilter::rate()
 {
     return rate_;
 }
-prefix_ void senf::emu::TokenBucketFilter::timerDeviation(std::ostream & out)
-{
-    out << "Timer deviation " << timerDeviation_.data() << " nano secs." << std::endl;
-    timerDeviation_.clear();
-}
 
 prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 {
@@ -135,8 +122,6 @@ prefix_ void senf::emu::TokenBucketFilter::rate(unsigned bits_per_second)
 
 prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 {
-    // ClockService::int64_type delta (senf::ClockService::in_nanoseconds(ClockService::now() - timer_.timeout()));
-    // timerDeviation_.accumulate(delta);
     fillBucket();
     unsigned pktSize;
     while ((pktSize = queueAlgo_->peek(bucketSize_)) > 0) {
@@ -152,18 +137,17 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 
 prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 {
-    ClockService::clock_type now (scheduler::now());
     Packet::size_type packetSize (queueAlgo_->peek());
     ClockService::clock_type defer (ClockService::nanoseconds((packetSize - bucketSize_) * 8000000000ul / rate_));
-    timer_.timeout( now + defer);
+    timer_.timeout( scheduler::now() + defer);
 }
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket()
 {
-    unsigned diff (ClockService::coarseToMs(ClockService::coarseDiff(now_, lastToken_)));
+    std::uint32_t distance (lastToken_.distanceAsMilliseconds(now_));
     
     lastToken_ = now_;
-    bucketSize_ += (diff * rate_) / 8000ul;
+    bucketSize_ += (distance * rate_) / 8000ul;
 }
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucketLimit()
@@ -186,7 +170,6 @@ prefix_ void senf::emu::TokenBucketFilter::onRequestQueueing()
     }
 }
 
-
 prefix_ void senf::emu::TokenBucketFilter::onRequest()
 {
     Packet const & packet (input());
@@ -194,14 +177,14 @@ prefix_ void senf::emu::TokenBucketFilter::onRequest()
 
     fillBucketLimit();
     
-    if (packetSize <= bucketSize_) {
+    if (SENF_LIKELY(packetSize <= bucketSize_)) {
         if (bucketSize_ < bucketLowThresh_ &&  bucketSize_ <= (std::uint32_t(rand()) % bucketLowThresh_)) {
             // drop packet early...indicating an empty(ing) bucket
             bucketEmpty_++;
             return;
         }
         bucketSize_ -= packetSize;
-        output.write( packet);
+        output.write(packet);
         return;
     }
     

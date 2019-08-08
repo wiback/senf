@@ -35,6 +35,7 @@
 #include "Poller.hh"
 #include "ClockService.hh"
 #include <senf/Utils/singleton.hh>
+#include <senf/Utils/FlowStatistics.hh>
 
 //#include "FdManager.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +76,7 @@ namespace detail {
                                         /**< This call waits until at least one event is posted but
                                              no longer than the current timeout(). */
         ClockService::clock_type const & eventTime() const; ///< Time of last event
-        ClockService::clock_type_coarse const & eventTimeCoarse() const; ///< Time of last event in eventTime() / 1000000 (1ms precision)
+        CyclicTimestamp const & eventTimestamp() const; ///< Cyclic Timestamp of last event (1ms precision)
         
     protected:
 
@@ -83,8 +84,8 @@ namespace detail {
         FdManager();
 
         Poller<Event> poller_;
-        senf::ClockService::clock_type eventTime_;
-        senf::ClockService::clock_type_coarse eventTimeCoarse_;
+        ClockService::clock_type eventTime_;
+        CyclicTimestamp eventTimestamp_;
 
         friend void senf::scheduler::restart();
         friend class singleton<FdManager>;

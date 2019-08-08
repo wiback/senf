@@ -67,19 +67,18 @@ namespace emu {
         ppi::QueueingAlgorithm & qAlgorithm() const;
         void qAlgorithm(ppi::QueueingAlgorithm::ptr qAlgorithm);
 
-        ClockService::clock_type_coarse const & lastToken() const;
-
+        CyclicTimestamp const & lastToken() const;
+        
     private:
         boost::scoped_ptr<ppi::QueueingAlgorithm> queueAlgo_;
-        ClockService::clock_type_coarse const & now_;
-        ClockService::clock_type_coarse lastToken_;
+        CyclicTimestamp const & now_;
+        CyclicTimestamp lastToken_;
         scheduler::TimerEvent timer_;
         unsigned bucketLimit_;
         unsigned bucketLowThresh_;
         unsigned bucketSize_;
         unsigned rate_;
         unsigned bucketEmpty_;
-        senf::StatisticAccumulator<ClockService::int64_type> timerDeviation_;
 
         void onTimeout();
         void onRequest();
@@ -89,12 +88,11 @@ namespace emu {
         void fillBucketLimit();
         void setTimeout();
         bool queuePacket(Packet const & packet, Packet::size_type packetSize);
-        void timerDeviation(std::ostream & out);
     };
 
 }}
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "TokenBucketFilter.cci"
+#include "TokenBucketFilter.cci"
 //#include "TokenBucketFilter.ct"
 //#include "TokenBucketFilter.cti"
 #endif

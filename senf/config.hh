@@ -41,7 +41,6 @@ namespace senf {
 namespace config {
 
     typedef std::int64_t time_type;
-    typedef std::int32_t time_type_coarse;
 
 }}
 

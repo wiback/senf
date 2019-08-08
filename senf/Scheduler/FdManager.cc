@@ -41,7 +41,7 @@ prefix_ void senf::scheduler::detail::FdManager::processOnce()
 {
     Poller<Event>::range events (poller_.wait());
     eventTime_ = ClockService::now();
-    eventTimeCoarse_ = ClockService::toCoarse(eventTime_);
+    eventTimestamp_.update(eventTime_);
     for (Poller<Event>::iterator i (events.begin()); i != events.end(); ++i)
         i->second->signal(i->first);
 }
