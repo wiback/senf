@@ -41,12 +41,13 @@
 prefix_ senf::emu::TokenBucketFilter::TokenBucketFilter(unsigned _burst, unsigned _rate, ppi::QueueingAlgorithm::ptr qAlgorithm)
     : queueAlgo_(qAlgorithm.release()),
       now_(scheduler::eventTimestamp()),
+      schedulerNow_(scheduler::now()),
       lastToken_(now_),
       timer_( "TokenBucketFilter::timer", membind(&TokenBucketFilter::onTimeout, this)),
       bucketLimit_( _burst), bucketLowThresh_(0), bucketSize_( _burst),
       rate_( _rate), bucketEmpty_(0)
 {
-    route( input, output).autoThrottling( false);
+    route( input, output).autoThrottling(false);
     if (rate_ == 0)
         input.onRequest( &TokenBucketFilter::byPass);
     else
@@ -124,7 +125,7 @@ prefix_ void senf::emu::TokenBucketFilter::onTimeout()
 {
     fillBucket();
     unsigned pktSize;
-    while ((pktSize = queueAlgo_->peek(bucketSize_)) > 0) {
+    while (SENF_LIKELY((pktSize = queueAlgo_->peek(bucketSize_)) > 0)) {
         bucketSize_ -= pktSize;
         output(queueAlgo_->front());
         queueAlgo_->pop();
@@ -139,7 +140,7 @@ prefix_ void senf::emu::TokenBucketFilter::setTimeout()
 {
     Packet::size_type packetSize (queueAlgo_->peek());
     ClockService::clock_type defer (ClockService::nanoseconds((packetSize - bucketSize_) * 8000000000ul / rate_));
-    timer_.timeout( scheduler::now() + defer);
+    timer_.timeout(schedulerNow_ + defer);
 }
 
 prefix_ void senf::emu::TokenBucketFilter::fillBucket()

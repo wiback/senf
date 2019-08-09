@@ -72,6 +72,7 @@ namespace emu {
     private:
         boost::scoped_ptr<ppi::QueueingAlgorithm> queueAlgo_;
         CyclicTimestamp const & now_;
+        ClockService::clock_type const & schedulerNow_;
         CyclicTimestamp lastToken_;
         scheduler::TimerEvent timer_;
         unsigned bucketLimit_;
