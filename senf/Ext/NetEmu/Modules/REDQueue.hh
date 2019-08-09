@@ -33,7 +33,7 @@
 
 // Custom includes
 #include <queue>
-#include <senf/PPI/QueueingSocketSink.hh>
+#include <senf/PPI/QueueingAlgorithm.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -81,7 +81,7 @@ namespace emu {
 
 }}
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "REDQueue.cci"
+#include "REDQueue.cci"
 //#include "REDQueue.ct"
 //#include "REDQueue.cti"
 #endif

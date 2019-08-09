@@ -32,6 +32,7 @@
 
 // Custom includes
 #include <senf/Scheduler/ClockService.hh>
+#include <senf/Utils/Console/Console.hh>
 #include <senf/Utils/Console/Variables.hh>
 #include <senf/Utils/Console/STLSupport.hh>
 
@@ -64,30 +65,6 @@ prefix_ senf::emu::REDQueue::REDQueue(boost::uint32_t _limit, boost::uint8_t low
         .doc( "Get the total number of dropped packets."));
 }
 
-prefix_ bool senf::emu::REDQueue::v_enqueue(senf::Packet const & packet, bool force)
-{
-    if (!force and (queueSize_ > lowThresh_)) {
-        if ( (boost::uint32_t(rand()) % (queueLimit_ - lowThresh_ + 1)) <= (queueSize_ - lowThresh_) ) {
-            packetsDroppedTotal_++;
-            return false;  // no additional packet added to queue
-        }
-    }
-
-    packet.data().releaseExternalMemory();
-    queue_.emplace(packet);
-    queueSize_ += packet.size();
-    return true;
-}
-
-prefix_ void senf::emu::REDQueue::v_pop()
-{
-    if (SENF_LIKELY(frontPktSize_ > 0)) {
-        queueSize_ -= frontPktSize_;
-        queue_.pop();
-        frontPktSize_ = 0;
-    }
-}
-
 
 prefix_ void senf::emu::REDQueue::v_clear()
 {
@@ -97,20 +74,6 @@ prefix_ void senf::emu::REDQueue::v_clear()
     while (!queue_.empty())
         queue_.pop();
     frontPktSize_ = 0;
-}
-
-prefix_ unsigned senf::emu::REDQueue::v_peek(unsigned maxSize)
-    const
-{
-    if (!queue_.empty() and (queue_.front().size() <= maxSize))
-        return frontPktSize_ = queue_.front().size();
-    return 0;
-}
-
-prefix_ senf::Packet const & senf::emu::REDQueue::v_front()
-    const
-{
-    return queue_.front();
 }
 
 
@@ -143,26 +106,9 @@ prefix_ boost::uint32_t senf::emu::REDQueue::dropped()
     return packetsDroppedTotal_ - packetsDroppedLast_;
 }
 
-prefix_ void senf::emu::REDQueue::incrDropped()
-{
-    packetsDroppedTotal_++;
-}
-
 prefix_ void senf::emu::REDQueue::resetDropped()
 {
     packetsDroppedLast_ = packetsDroppedTotal_;
-}
-
-prefix_ unsigned senf::emu::REDQueue::v_size()
-    const
-{
-    return queueSize_;
-}
-
-prefix_ bool senf::emu::REDQueue::v_empty()
-    const
-{
-    return queue_.empty();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
