@@ -962,7 +962,7 @@ prefix_ senf::emu::WirelessNLController::IfaceType::Enum senf::emu::WirelessNLCo
 
 prefix_ void senf::emu::WirelessNLController::type(IfaceType::Enum type)
 {
-    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_SET_INTERFACE, CIB_IF));
+    nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_SET_INTERFACE, CIB_IF, NLM_F_ACK));
 
     switch (type) {
     case IfaceType::Enum::AdHoc:
