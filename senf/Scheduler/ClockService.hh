@@ -113,7 +113,7 @@ namespace senf {
 
         //-////////////////////////////////////////////////////////////////////////
 
-        static constexpr clock_type        maxTime = std::numeric_limits<clock_type>::max();
+        static constexpr clock_type        maxTime = std::numeric_limits<config::time_type>::max();
         
         static clock_type now();  ///< Return current clock value
 
@@ -229,13 +229,10 @@ namespace senf {
     {
     public:
         CyclicTimestamp()
-            : tstamp_ (0) {
+            : tstamp_(0) {
         }
         CyclicTimestamp(CyclicTimestamp const & other)
             : tstamp_(other.tstamp_) {
-        }
-        CyclicTimestamp(senf::ClockService::clock_type const & now) {
-            update(now);
         }
         CyclicTimestamp(std::uint32_t const & secs, std::uint32_t const & nsecs) {
             update(secs, nsecs);
@@ -266,7 +263,7 @@ namespace senf {
         }
         
     private:
-        CyclicTimestamp(std::uint32_t const & value)
+        CyclicTimestamp(std::uint32_t && value)
             :tstamp_(value) {
         }
 
