@@ -47,7 +47,8 @@ namespace emu {
         static bool hasSTag(senf::EthernetPacket const & eth);
         static bool hasCTag(senf::EthernetPacket const & eth);
         static bool hasTag(senf::EthernetPacket const & eth);
-        static std::uint16_t payloadTypeLength(senf::EthernetPacket const & eth);
+        static std::uint16_t payloadTypeLength(senf::EthernetPacket const & eth, std::uint32_t & offset);
+        template <class PKT> static PKT payloadFromOffset(senf::EthernetPacket const & eth, std::uint32_t offset);
         template <class PKT> static PKT payload(senf::EthernetPacket const & eth);
 
     private:

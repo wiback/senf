@@ -30,7 +30,7 @@
 
 // Custom includes
 #include <algorithm>
-#include <boost/lambda/lambda.hpp>
+#include <functional>
 #include <boost/functional/hash.hpp>
 #include "EUI64.hh"
 
@@ -93,7 +93,7 @@ prefix_ bool senf::MACAddress::broadcast()
     */
 }
 
-prefix_ bool senf::MACAddress::boolean_test()
+prefix_ senf::MACAddress::operator bool()
     const
 {
     // this is faster than the lambda stuff below
@@ -165,11 +165,12 @@ prefix_ boost::uint32_t const & senf::MACAddress::hash32()
     // return *( (std::uint32_t const *) &(reinterpret_cast<std::uint8_t const *> (&(*this))[2]));
 }
 
-prefix_ bool senf::operator==(MACAddress const & mac, EUI64 const & eui64)
+prefix_ bool senf::MACAddress::operator==(EUI64 const & eui64)
+    const
 {
     return eui64.isMACCompatible()
-        && std::equal(eui64.begin(), eui64.begin()+3, mac.begin())
-        && std::equal(eui64.begin()+5, eui64.end(), mac.begin()+3);
+        && std::equal(eui64.begin(), eui64.begin()+3, begin())
+        && std::equal(eui64.begin()+5, eui64.end(), begin()+3);
 }
 
 prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
@@ -177,9 +178,16 @@ prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
     return mac == eui64;
 }
 
-prefix_ bool senf::operator<(MACAddress const & me, MACAddress const & other)
+prefix_ bool senf::MACAddress::operator<(MACAddress const & other)
+    const
 {
-    return me.uint64() < other.uint64();
+    return uint64() < other.uint64();
+}
+
+prefix_ bool senf::MACAddress::operator==(MACAddress const & other)
+    const
+{
+    return uint64() == other.uint64();
 }
 
 # if __SIZEOF_SIZE_T__ == 8

@@ -33,10 +33,11 @@
 
 // Custom includes
 #include <iosfwd>
+#include <boost/operators.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
-#include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Tags.hh>
+#include <senf/Utils/safe_bool.hh>  // not used any longer, but required to make std::unordered_map happy ?!?
 
 //#include "MACAddress.mpp"
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +85,8 @@ namespace senf {
      */
     struct MACAddress
         : public boost::array<boost::uint8_t,6>,
-          public comparable_safe_bool<MACAddress>
+          public boost::equality_comparable<MACAddress>,
+          public boost::less_than_comparable<MACAddress>
     {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address
@@ -118,10 +120,14 @@ namespace senf {
                                                  compatible EUI-64. */
 
 
-        bool local() const;             ///< \c true, if address is locally administered
-        bool multicast() const;         ///< \c true, if address is a group/multicast address
-        bool broadcast() const;         ///< \c true, if address is the broadcast address
-        bool boolean_test() const;      ///< \c true, if address is not the zero address
+        explicit operator bool() const;  ///< \c true, if address is not the zero address
+        bool operator<(MACAddress const & other) const;
+        bool operator==(MACAddress const & other) const;
+        bool operator==(EUI64 const & eui64) const;
+
+        bool local() const;              ///< \c true, if address is locally administered
+        bool multicast() const;          ///< \c true, if address is a group/multicast address
+        bool broadcast() const;          ///< \c true, if address is the broadcast address
 
         void local(bool flag);
         void multicast(bool flag);
@@ -133,7 +139,6 @@ namespace senf {
         boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
 
         boost::uint32_t const & hash32() const;
-
         void hash(boost::uint64_t * hash, boost::uint16_t otherKey = 0) const; ///< computes a fast uint64 hash mixing in another 16 value
     };
 
@@ -149,9 +154,7 @@ namespace senf {
      */
     std::istream & operator>>(std::istream & is, MACAddress & mac);
 
-    bool operator==(MACAddress const & mac, EUI64 const & eui64);
     bool operator==(EUI64 const & eui64, MACAddress const & mac);
-    bool operator<(MACAddress const & me, MACAddress const & other);
 
 # if __SIZEOF_SIZE_T__ == 8
     std::size_t hash_value(MACAddress const & mac) noexcept;

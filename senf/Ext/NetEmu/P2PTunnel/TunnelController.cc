@@ -177,7 +177,8 @@ prefix_ senf::EthernetPacket senf::emu::detail::TunnelControllerBase::readPacket
         }
 
         // fragmented frame ?
-        if (SENF_LIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
+        std::uint32_t offset;
+        if (SENF_LIKELY(VLanId::payloadTypeLength(eth, offset) != senf::EthOUIExtensionPacketType::etherType)) {
             return eth;
         }    
         auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
