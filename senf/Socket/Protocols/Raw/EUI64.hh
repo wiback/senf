@@ -35,7 +35,6 @@
 #include <iosfwd>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
-#include <senf/Utils/safe_bool.hh>
 #include <senf/Utils/Tags.hh>
 
 //#include "EUI64.mpp"
@@ -79,8 +78,7 @@ namespace senf {
         \ingroup addr_group
      */
     struct EUI64
-        : public boost::array<boost::uint8_t,8>,
-          public senf::comparable_safe_bool<EUI64>
+        : public boost::array<boost::uint8_t,8>
     {
         //-////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -117,7 +115,7 @@ namespace senf {
         bool group() const;             ///< \c true if the \e group bit is set, \c false otherwise
                                         /**< The \e group bit is the least significant bit of the
                                              first octet (bit 7 in standard RFC bit numbering). */
-        bool boolean_test() const;      ///< \c true, if EUI64 is != 0, \c false otherwise
+        explicit operator bool() const;      ///< \c true, if EUI64 is != 0, \c false otherwise
         boost::uint64_t uint64() const; ///< Return EUI64 as integer number
     };
 
