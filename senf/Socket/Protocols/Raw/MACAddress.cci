@@ -127,14 +127,17 @@ prefix_ std::uint64_t senf::MACAddress::eui64()
 prefix_ std::uint64_t senf::MACAddress::uint64()
     const
 {
-    return be64toh((std::uint64_t( *reinterpret_cast<std::uint32_t const *>(&(*this)[0]))<<16) | (std::uint64_t( *reinterpret_cast<std::uint16_t const *>(&(*this)[4]))<<48));
+    std::uint64_t t;
+    std::copy(begin(), end(), (std::uint8_t*)&t);
+    *(((std::uint16_t*)&t)+3) = 0;
+    return be64toh(t);
 }
 
-prefix_ void senf::MACAddress::hash(std::uint64_t * hash, std::uint16_t otherKey)
+prefix_ void senf::MACAddress::hash(std::uint64_t * hash, std::uint16_t const & otherKey)
     const
 { 
     std::copy(begin(), end(), (std::uint8_t*)hash);
-    std::copy(&otherKey, &otherKey+1, ((std::uint16_t*)hash) + 3);
+    *(((std::uint16_t*)hash) + 3) = otherKey;
 }
 
 prefix_ std::uint32_t const & senf::MACAddress::hash32()

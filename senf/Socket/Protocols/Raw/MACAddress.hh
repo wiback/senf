@@ -139,7 +139,7 @@ namespace senf {
         std::uint64_t uint64() const; ///< Return MAC address as uint64 value
 
         std::uint32_t const & hash32() const;
-        void hash(std::uint64_t * hash, std::uint16_t otherKey = 0) const; ///< computes a fast uint64 hash mixing in another 16bit value
+        void hash(std::uint64_t * hash, std::uint16_t const & otherKey = 0) const; ///< computes a fast uint64 hash mixing in another 16bit value
     };
 
     /** \brief Output MAC instance as it's string representation

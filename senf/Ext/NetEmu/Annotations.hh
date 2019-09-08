@@ -67,7 +67,6 @@ namespace annotations {
 
     std::size_t hash_value(Interface const & mac) noexcept;
 
-
     struct FrameRxFlags{
         unsigned frameCorrupt:1;
         unsigned frameRetransmitted:1;
