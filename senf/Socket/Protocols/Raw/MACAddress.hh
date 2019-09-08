@@ -34,7 +34,7 @@
 // Custom includes
 #include <iosfwd>
 #include <cstdint>
-#include <array>
+#include <boost/array.hpp>
 #include <functional>
 #include <boost/operators.hpp>
 #include <senf/Utils/Tags.hh>
@@ -85,7 +85,7 @@ namespace senf {
         \ingroup addr_group
      */
     struct MACAddress
-        : public std::array<std::uint8_t,6>,
+        : public boost::array<std::uint8_t,6>,
           public boost::equality_comparable<MACAddress>,
           public boost::less_than_comparable<MACAddress>
     {
@@ -93,7 +93,7 @@ namespace senf {
         static MACAddress const None;   ///< The empty (0) address
 
         // make sure we are compatible with older code expecting boost::array 
-        static constexpr unsigned static_size = 6;
+//        static constexpr unsigned static_size = 6;
         
         MACAddress();                   ///< Construct zero-initialized address
         MACAddress(senf::NoInit_t);     ///< Construct uninitialized (!) address

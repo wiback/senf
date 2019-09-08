@@ -133,8 +133,7 @@ prefix_ void senf::emu::EthernetReassemblerModule::onRequest()
 {
     senf::EthernetPacket const & eth (input());
 
-    std::uint32_t offset;
-    if (SENF_LIKELY(VLanId::payloadTypeLength(eth, offset) != senf::EthOUIExtensionPacketType::etherType)) {
+    if (SENF_LIKELY(VLanId::payloadTypeLength(eth) != senf::EthOUIExtensionPacketType::etherType)) {
         output(eth);
         return;
     }

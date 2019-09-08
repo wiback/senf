@@ -35,9 +35,9 @@ prefix_ bool senf::emu::VLanId::hasTag(senf::EthernetPacket const & eth)
     return hasCTag(eth) or hasSTag(eth);
 }
 
-prefix_ std::uint16_t senf::emu::VLanId::payloadTypeLength(senf::EthernetPacket const & eth, std::uint32_t & offset)
+prefix_ std::uint16_t senf::emu::VLanId::payloadTypeLength(senf::EthernetPacket const & eth)
 {
-    offset = 12;  // first typeLength
+    std::uint32_t offset (12);  // first typeLength
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     while (((offset+2) <= eth.size()) and ((*reinterpret_cast<std::uint16_t*>(&eth.data()[offset]) == 0x0081u) or (*reinterpret_cast<std::uint16_t*>(&eth.data()[offset]) == 0xa888u)))
         offset += 4;
@@ -53,15 +53,6 @@ prefix_ std::uint16_t senf::emu::VLanId::payloadTypeLength(senf::EthernetPacket 
 }
 
 template <class PKT>
-prefix_ PKT senf::emu::VLanId::payloadFromOffset(senf::EthernetPacket const & eth, std::uint32_t offset)
-{
-    // no further type checking, etc. here. We assume that the offset from above is valid
-    auto * payload (&eth.data()[offset+2]);
-    return PKT::create(payload, eth.size() - (offset+2));
-}
-
-
-template <class PKT>
 prefix_ PKT senf::emu::VLanId::payload(senf::EthernetPacket const & eth)
 {
     senf::Packet pkt (eth);
@@ -73,6 +64,16 @@ prefix_ PKT senf::emu::VLanId::payload(senf::EthernetPacket const & eth)
         return pkt.as<PKT> ();
 
     return PKT ();
+}
+
+prefix_ senf::Packet senf::emu::VLanId::payloadPkt(senf::EthernetPacket const & eth)
+{
+    senf::Packet pkt (eth);
+    do {  // Skip EthernetPacket as we look for payload
+        pkt = pkt.next(senf::nothrow);
+    } while (pkt and (pkt.is<senf::EthVLanCPacket>() or pkt.is<senf::EthVLanSPacket>()));
+
+    return pkt;
 }
 
 
