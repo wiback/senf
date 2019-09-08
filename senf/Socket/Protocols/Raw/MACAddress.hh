@@ -34,7 +34,7 @@
 // Custom includes
 #include <iosfwd>
 #include <cstdint>
-#include <boost/array.hpp>
+#include <array>
 #include <functional>
 #include <senf/Utils/Tags.hh>
 #include <senf/autoconf.hh>
@@ -84,13 +84,13 @@ namespace senf {
         \ingroup addr_group
      */
     struct MACAddress
-        : public boost::array<std::uint8_t,6>
+        : public std::array<std::uint8_t,6>
     {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address
 
         // make sure we are compatible with older code expecting boost::array 
-        // static constexpr unsigned static_size = 6;
+        static constexpr unsigned static_size = 6;
         
         MACAddress();                   ///< Construct zero-initialized address
         MACAddress(senf::NoInit_t);     ///< Construct uninitialized (!) address

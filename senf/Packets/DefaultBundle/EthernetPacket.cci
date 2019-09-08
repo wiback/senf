@@ -60,11 +60,11 @@ prefix_ bool senf::MACAddressParser::null()
     return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0;
 }
 
-prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash, boost::uint16_t otherKey)
+prefix_ void senf::MACAddressParser::hash(boost::uint64_t * hash, boost::uint16_t const & otherKey)
     const
 {
-    std::copy(&(*this)[0], &(*this)[6]+1, (std::uint8_t*)hash);
-    std::copy(&otherKey,   &otherKey+1,  ((std::uint16_t*)hash) + 3);
+    std::copy(&(*this)[0], &(*this)[6], (std::uint8_t*)hash);
+    *(((std::uint16_t*)hash) + 3) = otherKey;
 }
 
 
