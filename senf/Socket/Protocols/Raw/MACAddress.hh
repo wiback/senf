@@ -85,9 +85,9 @@ namespace senf {
         \ingroup addr_group
      */
     struct MACAddress
-        : public boost::array<std::uint8_t,6>
-//          public boost::equality_comparable<MACAddress>,
-//          public boost::less_than_comparable<MACAddress>
+        : public boost::array<std::uint8_t,6>,
+          public boost::equality_comparable<MACAddress>,
+          public boost::less_than_comparable<MACAddress>
     {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address

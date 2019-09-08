@@ -41,7 +41,7 @@
 
 prefix_ senf::MACAddress::MACAddress()
 {
-    fill(0u);
+    std::fill(begin(), end(), 0u);
 }
 
 prefix_ senf::MACAddress::MACAddress(senf::NoInit_t)
