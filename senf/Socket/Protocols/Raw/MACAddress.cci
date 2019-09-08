@@ -87,8 +87,7 @@ prefix_ bool senf::MACAddress::broadcast()
     return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) ^ *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0xffff0000;
 }
 
-//prefix_ senf::MACAddress::operator bool()
-prefix_ bool senf::MACAddress::boolean_test()
+prefix_ senf::MACAddress::operator bool()
     const
 {
     return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) != 0;
@@ -134,8 +133,8 @@ prefix_ std::uint64_t senf::MACAddress::uint64()
 prefix_ void senf::MACAddress::hash(std::uint64_t * hash, std::uint16_t otherKey)
     const
 { 
-    std::copy(&(*this)[0], &(*this)[5]+1, (std::uint8_t*)hash);
-    std::copy(&otherKey,   &otherKey+1,  ((std::uint16_t*)hash) + 3);
+    std::copy(begin(), end(), (std::uint8_t*)hash);
+    std::copy(&otherKey, &otherKey+1, ((std::uint16_t*)hash) + 3);
 }
 
 prefix_ std::uint32_t const & senf::MACAddress::hash32()
