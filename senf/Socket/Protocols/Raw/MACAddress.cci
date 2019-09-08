@@ -47,14 +47,14 @@ prefix_ senf::MACAddress::MACAddress()
 prefix_ senf::MACAddress::MACAddress(senf::NoInit_t)
 {}
 
-prefix_ senf::MACAddress::MACAddress(std::uint64_t const & v)
+prefix_ senf::MACAddress::MACAddress(boost::uint64_t const & v)
 {
-    (*this)[0] = std::uint8_t( v >> 40 );
-    (*this)[1] = std::uint8_t( v >> 32 );
-    (*this)[2] = std::uint8_t( v >> 24 );
-    (*this)[3] = std::uint8_t( v >> 16 );
-    (*this)[4] = std::uint8_t( v >>  8 );
-    (*this)[5] = std::uint8_t( v       );
+    (*this)[0] = boost::uint8_t( v >> 40 );
+    (*this)[1] = boost::uint8_t( v >> 32 );
+    (*this)[2] = boost::uint8_t( v >> 24 );
+    (*this)[3] = boost::uint8_t( v >> 16 );
+    (*this)[4] = boost::uint8_t( v >>  8 );
+    (*this)[5] = boost::uint8_t( v       );
 }
 
 prefix_ void senf::MACAddress::local(bool flag)
@@ -84,63 +84,63 @@ prefix_ bool senf::MACAddress::multicast()
 prefix_ bool senf::MACAddress::broadcast()
     const
 {
-    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) ^ *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0xffff0000;
+    return (*reinterpret_cast<boost::uint32_t const *>(&(*this)[0]) ^ *reinterpret_cast<boost::uint16_t const *>(&(*this)[4])) == 0xffff0000;
 }
 
 prefix_ senf::MACAddress::operator bool()
     const
 {
-    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) != 0;
+    return (*reinterpret_cast<boost::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<boost::uint16_t const *>(&(*this)[4])) != 0;
 }
 
-prefix_ std::uint32_t senf::MACAddress::oui()
+prefix_ boost::uint32_t senf::MACAddress::oui()
     const
 {
     return
-        (std::uint32_t((*this)[0]) << 16) |
-        (std::uint32_t((*this)[1]) <<  8) |
+        (boost::uint32_t((*this)[0]) << 16) |
+        (boost::uint32_t((*this)[1]) <<  8) |
         (*this)[2];
 }
 
-prefix_ std::uint32_t senf::MACAddress::nic()
+prefix_ boost::uint32_t senf::MACAddress::nic()
     const
 {
     return
-        (std::uint32_t((*this)[3]) << 16) |
-        (std::uint32_t((*this)[4]) <<  8) |
+        (boost::uint32_t((*this)[3]) << 16) |
+        (boost::uint32_t((*this)[4]) <<  8) |
         (*this)[5];
 }
 
-prefix_ std::uint64_t senf::MACAddress::eui64()
+prefix_ boost::uint64_t senf::MACAddress::eui64()
     const
 {
     return
-        (std::uint64_t( (*this)[0] ) << 56) |
-        (std::uint64_t( (*this)[1] ) << 48) |
-        (std::uint64_t( (*this)[2] ) << 40) |
-        (std::uint64_t( 0xfffe     ) << 24) |
-        (std::uint64_t( (*this)[3] ) << 16) |
-        (std::uint64_t( (*this)[4] ) <<  8) |
-        (std::uint64_t( (*this)[5] )      );
+        (boost::uint64_t( (*this)[0] ) << 56) |
+        (boost::uint64_t( (*this)[1] ) << 48) |
+        (boost::uint64_t( (*this)[2] ) << 40) |
+        (boost::uint64_t( 0xfffe     ) << 24) |
+        (boost::uint64_t( (*this)[3] ) << 16) |
+        (boost::uint64_t( (*this)[4] ) <<  8) |
+        (boost::uint64_t( (*this)[5] )      );
 }
 
-prefix_ std::uint64_t senf::MACAddress::uint64()
+prefix_ boost::uint64_t senf::MACAddress::uint64()
     const
 {
-    return be64toh((std::uint64_t( *reinterpret_cast<std::uint32_t const *>(&(*this)[0]))<<16) | (std::uint64_t( *reinterpret_cast<std::uint16_t const *>(&(*this)[4]))<<48));
+    return be64toh((boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&(*this)[0]))<<16) | (boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&(*this)[4]))<<48));
 }
 
-prefix_ void senf::MACAddress::hash(std::uint64_t * hash, std::uint16_t otherKey)
+prefix_ void senf::MACAddress::hash(boost::uint64_t * hash, boost::uint16_t otherKey)
     const
 { 
-    std::copy(&(*this)[0], &(*this)[5]+1, (std::uint8_t*)hash);
-    std::copy(&otherKey,   &otherKey+1,  ((std::uint16_t*)hash) + 3);
+    std::copy(&(*this)[0], &(*this)[5]+1, (boost::uint8_t*)hash);
+    std::copy(&otherKey,   &otherKey+1,  ((boost::uint16_t*)hash) + 3);
 }
 
-prefix_ std::uint32_t const & senf::MACAddress::hash32()
+prefix_ boost::uint32_t const & senf::MACAddress::hash32()
     const
 {
-    return *(reinterpret_cast<std::uint32_t const *> (&(*this)[2]));
+    return *(reinterpret_cast<boost::uint32_t const *> (&(*this)[2]));
 }
 
 prefix_ bool senf::MACAddress::operator==(EUI64 const & eui64)
@@ -171,9 +171,9 @@ prefix_ bool senf::MACAddress::operator==(MACAddress const & other)
 # if __SIZEOF_SIZE_T__ == 8
 prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) noexcept
 {
-    return boost::hash<std::uint64_t>().operator()(
-        (std::uint64_t( *reinterpret_cast<std::uint32_t const *>(&mac[0])) << 16) |
-        std::uint64_t( *reinterpret_cast<std::uint16_t const *>(&mac[4])) );
+    return boost::hash<boost::uint64_t>().operator()(
+        (boost::uint64_t( *reinterpret_cast<boost::uint32_t const *>(&mac[0])) << 16) |
+        boost::uint64_t( *reinterpret_cast<boost::uint16_t const *>(&mac[4])) );
 }
 #elif __SIZEOF_SIZE_T__ == 4
 prefix_ std::size_t const & senf::hash_value(senf::MACAddress const & mac) noexcept
