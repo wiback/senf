@@ -37,6 +37,7 @@
 #include <array>
 #include <functional>
 #include <senf/Utils/Tags.hh>
+#include <senf/Utils/safe_bool.hh>
 #include <senf/autoconf.hh>
 
 //#include "MACAddress.mpp"
@@ -84,7 +85,8 @@ namespace senf {
         \ingroup addr_group
      */
     struct MACAddress
-        : public std::array<std::uint8_t,6>
+        : public std::array<std::uint8_t,6>,
+          public senf::comparable_safe_bool<MACAddress>
     {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address
@@ -121,7 +123,8 @@ namespace senf {
                                                  compatible EUI-64. */
 
 
-        explicit operator bool() const;  ///< \c true, if address is not the zero address
+        bool boolean_test() const;
+//        explicit operator bool() const;  ///< \c true, if address is not the zero address
         bool operator<(MACAddress const & other) const;
         bool operator==(EUI64 const & eui64) const;
 

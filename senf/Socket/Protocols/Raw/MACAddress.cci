@@ -87,7 +87,8 @@ prefix_ bool senf::MACAddress::broadcast()
     return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) ^ *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0xffff0000;
 }
 
-prefix_ senf::MACAddress::operator bool()
+//prefix_ senf::MACAddress::operator bool()
+prefix_ bool senf::MACAddress::boolean_test()
     const
 {
     return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) != 0;
