@@ -138,7 +138,7 @@ prefix_ void senf::emu::EthernetReassemblerModule::onRequest()
         return;
     }
     
-    auto extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
+    auto const & extOUI (VLanId::payload<EthOUIExtensionPacket>(eth));
     if (extOUI.next<EthernetFragmentPacket>(senf::nothrow)) {
         if (processFrame(eth, extOUI.next<EthernetFragmentPacket>())) {
             output(reassembledPacket());
