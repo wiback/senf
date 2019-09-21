@@ -168,7 +168,7 @@ prefix_ bool senf::MACAddress::operator<(MACAddress const & other)
 # if __SIZEOF_SIZE_T__ == 8
 prefix_ std::size_t senf::hash_value(senf::MACAddress const & mac) noexcept
 {
-    return boost::hash<std::uint64_t>().operator()(uint64());
+    return boost::hash<std::uint64_t>().operator()(mac.uint64());
 }
 #elif __SIZEOF_SIZE_T__ == 4
 prefix_ std::size_t const & senf::hash_value(senf::MACAddress const & mac) noexcept
