@@ -31,7 +31,6 @@
 #include "SysInfo.hh"
 
 // Custom includes
-#include <boost/foreach.hpp>
 #include "ScopedDirectory.hh"
 #include "ParsedCommand.hh"
 #include "Sysdir.hh"
@@ -64,7 +63,7 @@ prefix_ void senf::console::SysInfo::setEntry(std::string const & name, std::str
 prefix_ void senf::console::SysInfo::dump(std::ostream & os)
     const
 {
-    BOOST_FOREACH( Entries::value_type const & entry, entries_) {
+    for(auto const & entry: entries_) {
         os << entry.second << std::endl;
     }
 }

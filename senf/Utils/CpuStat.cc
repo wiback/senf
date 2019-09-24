@@ -32,7 +32,6 @@
 
 // Custom includes
 #include <fstream>
-#include <boost/foreach.hpp>
 #include "Console/ScopedDirectory.hh"
 #include "Console/Sysdir.hh"
 #include "Console/ParsedCommand.hh"

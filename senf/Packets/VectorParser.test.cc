@@ -32,7 +32,6 @@
 
 // Custom includes
 #include <boost/assign.hpp>
-#include <boost/foreach.hpp>
 
 // Unit test includes
 #include <senf/Utils/auto_unit_test.hh>
@@ -340,7 +339,7 @@ SENF_AUTO_TEST_CASE(vectorMacro_inherit)
     BOOST_CHECK_EQUAL( parser.vec2()[0], 0x0B0Cu );
     BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
     boost::uint8_t c = 0x05;
-    BOOST_FOREACH( boost::uint8_t v, parser.vec1() ) {
+    for(auto const & v: parser.vec1()) {
         BOOST_CHECK_EQUAL( v, c++ );
     }
 }
