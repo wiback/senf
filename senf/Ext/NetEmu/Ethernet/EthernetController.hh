@@ -55,6 +55,8 @@ namespace emu {
         static std::string duplexAsString(Duplex_mode mode);
         bool hasLink() const;
         bool nWayReset();
+        bool ringSize(std::uint32_t rx, std::uint32_t tx);
+        std::pair<std::uint32_t,std::uint32_t> ringSize();
     };
 
 }}

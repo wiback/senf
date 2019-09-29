@@ -122,6 +122,30 @@ prefix_ bool senf::emu::EthernetController::nWayReset()
     return edata.data;
 }
 
+prefix_ bool senf::emu::EthernetController::ringSize(std::uint32_t rx, std::uint32_t tx)
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    struct ethtool_ringparam edata;
+    edata.cmd = ETHTOOL_SRINGPARAM;
+    edata.rx_pending = rx;
+    edata.tx_pending = tx;
+    ifr.ifr_data = reinterpret_cast<caddr_t>(&edata);
+    doIoctl(ifr, "setRingParam failed.");
+    return true;
+}
+
+prefix_ std::pair<std::uint32_t,std::uint32_t> senf::emu::EthernetController::ringSize()
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    struct ethtool_ringparam edata;
+    edata.cmd = ETHTOOL_GRINGPARAM;
+    ifr.ifr_data = reinterpret_cast<caddr_t>(&edata);
+    doIoctl(ifr, "getRingParam failed.");
+    return std::make_pair(edata.rx_pending,edata.tx_pending);
+}
+
 
 #undef doIoctl
 
