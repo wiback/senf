@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <cstdint>
+#include <boost/operators.hpp>
 #include <senf/Utils/Console/Console.hh>
 
 extern "C" {
