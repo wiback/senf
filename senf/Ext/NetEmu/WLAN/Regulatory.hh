@@ -44,6 +44,8 @@ namespace senf {
 namespace emu {
 
     class RegulatoryRule
+        : public boost::equality_comparable<RegulatoryRule>,
+          public boost::less_than_comparable<RegulatoryRule>
     {
     public:
         enum Flags : std::uint32_t {
@@ -128,6 +130,8 @@ namespace emu {
 
 
     struct RegulatoryDomain
+        : public boost::equality_comparable<RegulatoryDomain>,
+          public boost::less_than_comparable<RegulatoryDomain>
     {
         enum struct DFSRegion : std::uint8_t {
             Unset = NL80211_DFS_UNSET,
@@ -140,9 +144,9 @@ namespace emu {
         DFSRegion dfsRegion;
         std::set<RegulatoryRule> rules;
 
-        RegulatoryDomain() { 
-            dfsRegion = DFSRegion::Unset; 
-        };
+        RegulatoryDomain()
+            : dfsRegion(DFSRegion::Unset)
+            {};
 
         explicit operator bool() const;
 
