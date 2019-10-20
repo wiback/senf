@@ -1129,7 +1129,7 @@ senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
         throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
     }
 
-    return WirelessNLController::IbssJoinParameters::ptr( new WirelessNLController::IbssJoinParameters(
+    return WirelessNLController::IbssJoinParameters::ptrI(new WirelessNLController::IbssJoinParameters(
             membind(&HardwareWLANInterface::do_ibss_join, this),
             ssid, freq-frequencyOffset_, channelMode, success) );
 }
@@ -1161,7 +1161,7 @@ senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
         throw InvalidArgumentException("invalid bandwidth: ") << bandwidth;
     }
     
-    return WirelessNLController::MeshJoinParameters::ptr( new WirelessNLController::MeshJoinParameters(
+    return WirelessNLController::MeshJoinParameters::ptrM(new WirelessNLController::MeshJoinParameters(
             membind(&HardwareWLANInterface::do_mesh_join, this),
             meshId, freq-frequencyOffset_, channelMode, success) );
 }
