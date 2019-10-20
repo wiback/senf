@@ -327,7 +327,6 @@ namespace emu {
             
             template <typename ForwardReadableRange>
             JoinParameters::ptr informationElements(ForwardReadableRange const & ies);
-            JoinParameters::ptr bssid(senf::MACAddress const & mac);
             JoinParameters::ptr ampduFactor(unsigned factor);
             JoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
             JoinParameters::ptr handleDFS(bool flag);
@@ -335,6 +334,7 @@ namespace emu {
 
         class IbssJoinParameters : public JoinParameters
         {
+            typedef boost::shared_ptr<IbssJoinParameters> ptrI;
             IbssJoinParameters(Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
             std::string ssid_;
@@ -344,11 +344,12 @@ namespace emu {
             friend class HardwareWLANInterface;
 
         public:
-            JoinParameters::ptr bssid(senf::MACAddress const & mac);
+            IbssJoinParameters::ptrI bssid(senf::MACAddress const & mac);
         };
 
         class MeshJoinParameters : public JoinParameters
         {
+            typedef boost::shared_ptr<MeshJoinParameters> ptrM;
             MeshJoinParameters(Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
             std::string meshId_;
@@ -361,9 +362,9 @@ namespace emu {
 
         public:
 
-            JoinParameters::ptr vendorMetric(bool enable);
-            JoinParameters::ptr vendorPathSelection(bool enable);
-            JoinParameters::ptr vendorSynchronization(bool enable);
+            MeshJoinParameters::ptrM vendorMetric(bool enable);
+            MeshJoinParameters::ptrM vendorPathSelection(bool enable);
+            MeshJoinParameters::ptrM vendorSynchronization(bool enable);
         };
 
     public:

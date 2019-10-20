@@ -1690,10 +1690,10 @@ prefix_ senf::emu::WirelessNLController::IbssJoinParameters::IbssJoinParameters(
       ssid_(ssid)
 {}
 
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::bssid(senf::MACAddress const & mac)
+prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptrI senf::emu::WirelessNLController::IbssJoinParameters::bssid(senf::MACAddress const & mac)
 {
     bssid_ = mac;
-    return shared_from_this();
+    return IbssJoinParameters::ptrI(this);
 }
 
 
@@ -1706,22 +1706,22 @@ prefix_ senf::emu::WirelessNLController::MeshJoinParameters::MeshJoinParameters(
       meshId_(meshId)
 {}
 
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorMetric(bool enable)
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptrM senf::emu::WirelessNLController::MeshJoinParameters::vendorMetric(bool enable)
 {
     vendorMetric_ = enable ? 1 : 0;
-    return shared_from_this();
+    return MeshJoinParameters::ptrM(this);
 }
 
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorPathSelection(bool enable)
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptrM senf::emu::WirelessNLController::MeshJoinParameters::vendorPathSelection(bool enable)
 {
     vendorPathSelection_ = enable ? 1 : 0;
-    return shared_from_this();
+    return MeshJoinParameters::ptrM(this);
 }
 
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorSynchronization(bool enable)
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptrM senf::emu::WirelessNLController::MeshJoinParameters::vendorSynchronization(bool enable)
 {
     vendorSynchronization_ = enable ? 1 : 0;
-    return shared_from_this();
+    return MeshJoinParameters::ptrM(this);
 }
 
 

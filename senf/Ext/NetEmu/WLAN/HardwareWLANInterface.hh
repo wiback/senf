@@ -80,8 +80,8 @@ namespace emu {
         MonitorDataFilterStatistics filterStats();
         void monitorDropUnknownMCS(bool q);
 
-        WirelessNLController::JoinParameters::ptr joinAdhoc(std::string const & ssid, unsigned int freq, unsigned int bandwidth, bool & success);
-        WirelessNLController::JoinParameters::ptr joinMesh(std::string const & meshId, unsigned int freq, unsigned int bandwidth, bool & success);
+        WirelessNLController::IbssJoinParameters::ptrI joinAdhoc(std::string const & ssid, unsigned int freq, unsigned int bandwidth, bool & success);
+        WirelessNLController::MeshJoinParameters::ptrM joinMesh(std::string const & meshId, unsigned int freq, unsigned int bandwidth, bool & success);
         void leaveCell();
         bool cellJoined() const;
         void setCellJoined(unsigned bandwidth);  // bw==0 => cell left (close data socket)
