@@ -343,6 +343,8 @@ namespace emu {
 
             MeshJoinParameters(Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
+            void initHTCapabilities();
+
             Callback callback_;
             bool handleDFS_;
             std::string meshId_;
@@ -350,6 +352,8 @@ namespace emu {
             ChannelMode::Enum channelMode_;
             bool & success_;
             std::vector<unsigned char> ies_;
+            boost::optional<ieee80211_ht_cap> htCapabilities_;
+            boost::optional<ieee80211_ht_cap> htCapabilitiesMask_;
             boost::optional<boost::uint32_t> beaconInterval_;
             boost::optional<boost::uint8_t> vendorMetric_;
             boost::optional<boost::uint8_t> vendorPathSelection_;
@@ -363,6 +367,7 @@ namespace emu {
 
             template <typename ForwardReadableRange>
             MeshJoinParameters::ptr informationElements(ForwardReadableRange const & ies);
+            MeshJoinParameters::ptr ampduFactor(unsigned factor);
             MeshJoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
             MeshJoinParameters::ptr vendorMetric(bool enable);
             MeshJoinParameters::ptr vendorPathSelection(bool enable);

@@ -1284,6 +1284,15 @@ prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters co
     if (parameters.handleDFS_)
         NLA_PUT_FLAG(msg, NL80211_ATTR_HANDLE_DFS);
 
+    if (parameters.htCapabilities_) {
+        NLA_PUT( msg, NL80211_ATTR_HT_CAPABILITY,
+                 sizeof(parameters.htCapabilities_.get()),
+                 parameters.htCapabilities_.get_ptr());
+        NLA_PUT( msg, NL80211_ATTR_HT_CAPABILITY_MASK,
+                 sizeof(parameters.htCapabilitiesMask_.get()),
+                 parameters.htCapabilitiesMask_.get_ptr());
+    }
+
     {
         nl_nested_attr_ptr msgAttr (msg, NL80211_ATTR_MESH_SETUP);
         if (! boost::empty(parameters.ies_))
@@ -1692,6 +1701,26 @@ prefix_ senf::emu::WirelessNLController::MeshJoinParameters::~MeshJoinParameters
     } catch (...) {
         success_ = false;
     }
+}
+
+prefix_ void senf::emu::WirelessNLController::MeshJoinParameters::initHTCapabilities()
+{
+    if (htCapabilities_)
+        return;
+    htCapabilities_ = ieee80211_ht_cap();
+    htCapabilitiesMask_ = ieee80211_ht_cap();
+    memset(htCapabilities_.get_ptr(), 0, sizeof(htCapabilities_.get()));
+    memset(htCapabilitiesMask_.get_ptr(), 0, sizeof(htCapabilitiesMask_.get()));
+}
+
+prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::ampduFactor(unsigned factor)
+{
+    if (factor > 3)
+        throw InvalidArgumentException("invalid ampdu-factor: ") << factor;
+    initHTCapabilities();
+    htCapabilities_->ampdu_params_info |= factor & 0x3;
+    htCapabilitiesMask_->ampdu_params_info |= 0x3; /* 2 bits for factor */
+    return shared_from_this();
 }
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::beaconInterval(boost::optional<boost::uint32_t> interval)
