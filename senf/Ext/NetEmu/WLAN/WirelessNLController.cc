@@ -1266,12 +1266,13 @@ prefix_ void senf::emu::WirelessNLController::mesh_leave()
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::mesh_join(
         std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
 {
-    return MeshJoinParameters::ptr( new MeshJoinParameters(
+    return JoinParameters::ptr(new MeshJoinParameters(
         membind(&WirelessNLController::do_mesh_join, this), meshId, freq, channelMode, success) );
 }
 
-prefix_ void senf::emu::WirelessNLController::do_mesh_join(MeshJoinParameters const & parameters)
+prefix_ void senf::emu::WirelessNLController::do_mesh_join(JoinParameters const & jp)
 {
+    MeshJoinParameters const & parameters (static_cast<MeshJoinParameters const &>(jp));
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_JOIN_MESH, CIB_IF, NLM_F_ACK));
 
     NLA_PUT( msg, NL80211_ATTR_MESH_ID, parameters.meshId_.length(), parameters.meshId_.c_str());
@@ -1317,12 +1318,13 @@ prefix_ void senf::emu::WirelessNLController::ibss_leave()
 prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::ibss_join(
         std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
 {
-    return IbssJoinParameters::ptr( new IbssJoinParameters(
+    return JoinParameters::ptr( new IbssJoinParameters(
         membind(&WirelessNLController::do_ibss_join, this), ssid, freq, channelMode, success) );
 }
 
-prefix_ void senf::emu::WirelessNLController::do_ibss_join(IbssJoinParameters const & parameters)
+prefix_ void senf::emu::WirelessNLController::do_ibss_join(JoinParameters const & jp)
 {
+    IbssJoinParameters const & parameters (static_cast<IbssJoinParameters const &>(jp));
     nl_msg_ptr msg (nlMsgHeader( NL80211_CMD_JOIN_IBSS, CIB_IF, NLM_F_ACK));
 
     NLA_PUT( msg, NL80211_ATTR_SSID, parameters.ssid_.length(), parameters.ssid_.c_str());
@@ -1630,14 +1632,14 @@ prefix_ void senf::emu::WirelessNLController::leave_multicastGroup(NetlinkMultic
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// WirelessNLController::IbssJoinParameters
+// WirelessNLController::JoinParameters
 
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::IbssJoinParameters(
-    Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
-    : callback_(cb), handleDFS_(false), ssid_(ssid), freq_(freq), channelMode_(channelMode), success_(success)
+prefix_ senf::emu::WirelessNLController::JoinParameters::JoinParameters(
+    Callback cb, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
+    : callback_(cb), handleDFS_(false), freq_(freq), channelMode_(channelMode), success_(success)
 {}
 
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::~IbssJoinParameters()
+prefix_ senf::emu::WirelessNLController::JoinParameters::~JoinParameters()
 {
     try {
         callback_(*this);
@@ -1647,25 +1649,19 @@ prefix_ senf::emu::WirelessNLController::IbssJoinParameters::~IbssJoinParameters
     }
 }
 
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::handleDFS(bool flag)
+prefix_ senf::emu::WirelessNLController::JoinParameters::ptr senf::emu::WirelessNLController::JoinParameters::handleDFS(bool flag)
 {
     handleDFS_ = flag;
     return shared_from_this();
 }
 
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::bssid(senf::MACAddress const & mac)
-{
-    bssid_ = mac;
-    return shared_from_this();
-}
-
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::beaconInterval(boost::optional<boost::uint32_t> interval)
+prefix_ senf::emu::WirelessNLController::JoinParameters::ptr senf::emu::WirelessNLController::JoinParameters::beaconInterval(boost::optional<boost::uint32_t> interval)
 {
     beaconInterval_ = interval;
     return shared_from_this();
 }
 
-prefix_ void senf::emu::WirelessNLController::IbssJoinParameters::initHTCapabilities()
+prefix_ void senf::emu::WirelessNLController::JoinParameters::initHTCapabilities()
 {
     if (htCapabilities_)
         return;
@@ -1675,7 +1671,7 @@ prefix_ void senf::emu::WirelessNLController::IbssJoinParameters::initHTCapabili
     memset(htCapabilitiesMask_.get_ptr(), 0, sizeof(htCapabilitiesMask_.get()));
 }
 
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::ampduFactor(unsigned factor)
+prefix_ senf::emu::WirelessNLController::JoinParameters::ptr senf::emu::WirelessNLController::JoinParameters::ampduFactor(unsigned factor)
 {
     if (factor > 3)
         throw InvalidArgumentException("invalid ampdu-factor: ") << factor;
@@ -1686,54 +1682,29 @@ prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::Wire
 }
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
+// WirelessNLController::IbssJoinParameters
+
+prefix_ senf::emu::WirelessNLController::IbssJoinParameters::IbssJoinParameters(
+    Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
+    : JoinParameters(cb, freq, channelMode, success),
+      ssid_(ssid)
+{}
+
+prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::bssid(senf::MACAddress const & mac)
+{
+    bssid_ = mac;
+    return shared_from_this();
+}
+
+
+//-/////////////////////////////////////////////////////////////////////////////////////////////////
 // WirelessNLController::MeshJoinParameters
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::MeshJoinParameters(
     Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success)
-    : callback_(cb), handleDFS_(false), meshId_(meshId), freq_(freq), channelMode_(channelMode), success_(success)
+    : JoinParameters(cb, freq, channelMode, success),
+      meshId_(meshId)
 {}
-
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::~MeshJoinParameters()
-{
-    try {
-        callback_(*this);
-        success_ = true;
-    } catch (...) {
-        success_ = false;
-    }
-}
-
-prefix_ void senf::emu::WirelessNLController::MeshJoinParameters::initHTCapabilities()
-{
-    if (htCapabilities_)
-        return;
-    htCapabilities_ = ieee80211_ht_cap();
-    htCapabilitiesMask_ = ieee80211_ht_cap();
-    memset(htCapabilities_.get_ptr(), 0, sizeof(htCapabilities_.get()));
-    memset(htCapabilitiesMask_.get_ptr(), 0, sizeof(htCapabilitiesMask_.get()));
-}
-
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::ampduFactor(unsigned factor)
-{
-    if (factor > 3)
-        throw InvalidArgumentException("invalid ampdu-factor: ") << factor;
-    initHTCapabilities();
-    htCapabilities_->ampdu_params_info |= factor & 0x3;
-    htCapabilitiesMask_->ampdu_params_info |= 0x3; /* 2 bits for factor */
-    return shared_from_this();
-}
-
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::beaconInterval(boost::optional<boost::uint32_t> interval)
-{
-    beaconInterval_ = interval;
-    return shared_from_this();
-}
-
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::handleDFS(bool flag)
-{
-    handleDFS_ = flag;
-    return shared_from_this();
-}
 
 prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::vendorMetric(bool enable)
 {

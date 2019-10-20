@@ -299,23 +299,21 @@ namespace emu {
                 Frequencies::const_iterator> Frequencies_iterator;
         typedef std::vector<bitrate_type> BitrateList;
 
-        class IbssJoinParameters : boost::noncopyable,
-            public boost::enable_shared_from_this<IbssJoinParameters>
+        class JoinParameters : boost::noncopyable,
+            public boost::enable_shared_from_this<JoinParameters>
         {
-            typedef boost::function<void (IbssJoinParameters const &)> Callback;
-            typedef boost::shared_ptr<IbssJoinParameters> ptr;
+            typedef boost::function<void (JoinParameters const &)> Callback;
+            typedef boost::shared_ptr<JoinParameters> ptr;
 
-            IbssJoinParameters(Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
+            JoinParameters(Callback cb, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
             void initHTCapabilities();
 
             Callback callback_;
             bool handleDFS_;
-            std::string ssid_;
             frequency_type freq_;
             ChannelMode::Enum channelMode_;
             bool & success_;
-            senf::MACAddress bssid_;
             std::vector<unsigned char> ies_;
             boost::optional<ieee80211_ht_cap> htCapabilities_;
             boost::optional<ieee80211_ht_cap> htCapabilitiesMask_;
@@ -325,36 +323,35 @@ namespace emu {
             friend class HardwareWLANInterface;
 
         public:
-            ~IbssJoinParameters();
-
+            ~JoinParameters();
+            
             template <typename ForwardReadableRange>
-            IbssJoinParameters::ptr informationElements(ForwardReadableRange const & ies);
-            IbssJoinParameters::ptr bssid(senf::MACAddress const & mac);
-            IbssJoinParameters::ptr ampduFactor(unsigned factor);
-            IbssJoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
-            IbssJoinParameters::ptr handleDFS(bool flag);
+            JoinParameters::ptr informationElements(ForwardReadableRange const & ies);
+            JoinParameters::ptr bssid(senf::MACAddress const & mac);
+            JoinParameters::ptr ampduFactor(unsigned factor);
+            JoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
+            JoinParameters::ptr handleDFS(bool flag);
         };
 
-        class MeshJoinParameters : boost::noncopyable,
-            public boost::enable_shared_from_this<MeshJoinParameters>
+        class IbssJoinParameters : public JoinParameters
         {
-            typedef boost::function<void (MeshJoinParameters const &)> Callback;
-            typedef boost::shared_ptr<MeshJoinParameters> ptr;
+            IbssJoinParameters(Callback cb, std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
+            std::string ssid_;
+            senf::MACAddress bssid_;
+
+            friend class WirelessNLController;
+            friend class HardwareWLANInterface;
+
+        public:
+            JoinParameters::ptr bssid(senf::MACAddress const & mac);
+        };
+
+        class MeshJoinParameters : public JoinParameters
+        {
             MeshJoinParameters(Callback cb, std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
 
-            void initHTCapabilities();
-
-            Callback callback_;
-            bool handleDFS_;
             std::string meshId_;
-            frequency_type freq_;
-            ChannelMode::Enum channelMode_;
-            bool & success_;
-            std::vector<unsigned char> ies_;
-            boost::optional<ieee80211_ht_cap> htCapabilities_;
-            boost::optional<ieee80211_ht_cap> htCapabilitiesMask_;
-            boost::optional<boost::uint32_t> beaconInterval_;
             boost::optional<boost::uint8_t> vendorMetric_;
             boost::optional<boost::uint8_t> vendorPathSelection_;
             boost::optional<boost::uint8_t> vendorSynchronization_;
@@ -363,16 +360,10 @@ namespace emu {
             friend class HardwareWLANInterface;
 
         public:
-            ~MeshJoinParameters();
 
-            template <typename ForwardReadableRange>
-            MeshJoinParameters::ptr informationElements(ForwardReadableRange const & ies);
-            MeshJoinParameters::ptr ampduFactor(unsigned factor);
-            MeshJoinParameters::ptr beaconInterval(boost::optional<boost::uint32_t> interval);
-            MeshJoinParameters::ptr vendorMetric(bool enable);
-            MeshJoinParameters::ptr vendorPathSelection(bool enable);
-            MeshJoinParameters::ptr vendorSynchronization(bool enable);
-            MeshJoinParameters::ptr handleDFS(bool flag);
+            JoinParameters::ptr vendorMetric(bool enable);
+            JoinParameters::ptr vendorPathSelection(bool enable);
+            JoinParameters::ptr vendorSynchronization(bool enable);
         };
 
     public:
@@ -382,10 +373,10 @@ namespace emu {
         WirelessNLController(bool disableSeqNoCheck = true);
         WirelessNLController(std::string const & interface);
 
-        IbssJoinParameters::ptr ibss_join(std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
+        JoinParameters::ptr ibss_join(std::string const & ssid, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
         void ibss_leave();
 
-        MeshJoinParameters::ptr mesh_join(std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
+        JoinParameters::ptr mesh_join(std::string const & meshId, frequency_type freq, ChannelMode::Enum channelMode, bool & success);
         void mesh_leave();
 
         void set_frequency(frequency_type freq, ChannelMode::Enum = ChannelMode::NoHT20);
@@ -489,8 +480,8 @@ namespace emu {
         void send_and_wait4response(nl_msg_ptr const & msg, CallbackMemPtr cb = nullptr);
         void send(nl_msg_ptr const & msg);
 
-        void do_ibss_join(IbssJoinParameters const & parameters);
-        void do_mesh_join(MeshJoinParameters const & parameters);
+        void do_ibss_join(JoinParameters const & parameters);
+        void do_mesh_join(JoinParameters const & parameters);
 
         int processScanResponse(std::uint8_t cmd, nlattr ** msgAttr);
         int getScan_cb(nl_msg * msg);

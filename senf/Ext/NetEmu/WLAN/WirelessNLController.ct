@@ -36,20 +36,10 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::emu::WirelessNLController::IbssJoinParameters
+// senf::emu::WirelessNLController::JoinParameters
 
 template <typename ForwardReadableRange>
-prefix_ prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr senf::emu::WirelessNLController::IbssJoinParameters::informationElements(ForwardReadableRange const & ies)
-{
-    std::copy( boost::begin(ies), boost::end(ies), back_inserter(ies_));
-    return shared_from_this();
-}
-
-//-/////////////////////////////////////////////////////////////////////////////////////////////////
-// senf::emu::WirelessNLController::MeshJoinParameters
-
-template <typename ForwardReadableRange>
-prefix_ prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr senf::emu::WirelessNLController::MeshJoinParameters::informationElements(ForwardReadableRange const & ies)
+prefix_ prefix_ senf::emu::WirelessNLController::JoinParameters::ptr senf::emu::WirelessNLController::JoinParameters::informationElements(ForwardReadableRange const & ies)
 {
     std::copy( boost::begin(ies), boost::end(ies), back_inserter(ies_));
     return shared_from_this();

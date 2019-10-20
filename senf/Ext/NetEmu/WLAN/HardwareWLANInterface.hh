@@ -80,8 +80,8 @@ namespace emu {
         MonitorDataFilterStatistics filterStats();
         void monitorDropUnknownMCS(bool q);
 
-        WirelessNLController::IbssJoinParameters::ptr joinAdhoc(std::string const & ssid, unsigned int freq, unsigned int bandwidth, bool & success);
-        WirelessNLController::MeshJoinParameters::ptr joinMesh(std::string const & meshId, unsigned int freq, unsigned int bandwidth, bool & success);
+        WirelessNLController::JoinParameters::ptr joinAdhoc(std::string const & ssid, unsigned int freq, unsigned int bandwidth, bool & success);
+        WirelessNLController::JoinParameters::ptr joinMesh(std::string const & meshId, unsigned int freq, unsigned int bandwidth, bool & success);
         void leaveCell();
         bool cellJoined() const;
         void setCellJoined(unsigned bandwidth);  // bw==0 => cell left (close data socket)
@@ -190,8 +190,8 @@ namespace emu {
         virtual void v_flushTxQueues() override;
         virtual void v_coverageRange(unsigned distance) override;
 
-        void do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters);
-        void do_mesh_join(WirelessNLController::MeshJoinParameters const & parameters);
+        void do_ibss_join(WirelessNLController::JoinParameters const & parameters);
+        void do_mesh_join(WirelessNLController::JoinParameters const & parameters);
 
         // modulation
         virtual ModulationParameter::id_t v_modulationId() const override;

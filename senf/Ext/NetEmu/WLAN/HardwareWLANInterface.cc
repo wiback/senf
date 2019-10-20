@@ -1102,7 +1102,7 @@ prefix_ void senf::emu::HardwareWLANInterface::v_coverageRange(unsigned distance
     wnlc_.coverageClass( WirelessNLController::distanceToCoverageClass(distance));
 }
 
-prefix_ senf::emu::WirelessNLController::IbssJoinParameters::ptr
+prefix_ senf::emu::WirelessNLController::JoinParameters::ptr
 senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
                                             unsigned int freq, unsigned int bandwidth, bool & success)
 {
@@ -1134,7 +1134,7 @@ senf::emu::HardwareWLANInterface::joinAdhoc(std::string const & ssid,
             ssid, freq-frequencyOffset_, channelMode, success) );
 }
 
-prefix_ senf::emu::WirelessNLController::MeshJoinParameters::ptr
+prefix_ senf::emu::WirelessNLController::JoinParameters::ptr
 senf::emu::HardwareWLANInterface::joinMesh(std::string const & meshId,
                                            unsigned int freq, unsigned int bandwidth, bool & success)
 {
@@ -1180,7 +1180,7 @@ prefix_ void senf::emu::HardwareWLANInterface::setCellJoined(unsigned bandwidth)
     }
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController::MeshJoinParameters const & parameters)
+prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController::JoinParameters const & parameters)
 {
     openDataSocket();
     
@@ -1205,7 +1205,7 @@ prefix_ void senf::emu::HardwareWLANInterface::do_mesh_join(WirelessNLController
     frequencyHint(bw_);
 }
 
-prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController::IbssJoinParameters const & parameters)
+prefix_ void senf::emu::HardwareWLANInterface::do_ibss_join(WirelessNLController::JoinParameters const & parameters)
 {
     openDataSocket();
     
