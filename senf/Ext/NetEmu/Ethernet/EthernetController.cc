@@ -148,6 +148,31 @@ prefix_ std::pair<std::uint32_t,std::uint32_t> senf::emu::EthernetController::ri
     return std::make_pair(edata.rx_pending,edata.tx_pending);
 }
 
+prefix_ bool senf::emu::EthernetController::setEEE(bool on)
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    struct ethtool_eee edata;
+    memset(&edata, 0, sizeof(edata));
+    edata.cmd = ETHTOOL_SEEE;
+    edata.eee_enabled = on;
+    ifr.ifr_data = reinterpret_cast<caddr_t>(&edata);
+    doIoctl(ifr, "setEEE failed.");
+    return true;
+}
+
+prefix_ bool senf::emu::EthernetController::getEEE()
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    struct ethtool_eee edata;
+    memset(&edata, 0, sizeof(edata));
+    edata.cmd = ETHTOOL_GEEE;
+    ifr.ifr_data = reinterpret_cast<caddr_t>(&edata);
+    doIoctl(ifr, "getEEE failed.");
+    return edata.eee_enabled;
+}
+
 
 #undef doIoctl
 

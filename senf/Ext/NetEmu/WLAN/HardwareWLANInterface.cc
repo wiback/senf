@@ -855,6 +855,8 @@ prefix_ void senf::emu::HardwareWLANInterface::modulationSet(std::set<Modulation
                     for (auto const & id : ids) {
                         WLANModulationParameter const & modPara (WLANModulationParameterRegistry::instance().findModulationById(id));
                         bratePara.legacy_24->insert(modPara.rate);
+                        // ath5k (at least the XR7) requires 1M to be set ?!?
+                        bratePara.legacy_24->insert(1000);
                     }
                 }
                 if (*types.begin() == WLANModulationParameter::HT) {
