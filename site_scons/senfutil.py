@@ -376,7 +376,7 @@ def CleanGlob(env, targets, patterns):
             if target in BUILD_TARGETS:
                 patterns = map(str,SCons.Util.flatten(env.subst_list(patterns)))
                 files = [ os.path.join(path,f)
-                          for path, subdirs, files in os.walk('.')
+                          for path, subdirs, files in os.walk('.', followlinks=True)
                           for pattern in patterns
                           for f in fnmatch.filter(files,pattern) ]
                 return env.Clean(target, files)
@@ -406,7 +406,7 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
             if not env.GetOption('no_progress'):
                 print "(SENF documentation not found)"
         else:
-            for dir, dirs, files in os.walk(senfdocdir):
+            for dir, dirs, files in os.walk(senfdocdir, followlinks=True):
                 tagfiles.extend([ os.path.join(dir,f) for f in files if f.endswith('.tag') ])
                 if dir.endswith('/doc') :
                     try: dirs.remove('html')
