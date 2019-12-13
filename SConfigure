@@ -110,7 +110,7 @@ if env['cxx11']:
             if checkCompiler(env, conf, 'g++'+gccVersion, 'gcc'+gccVersion, '4.7', False):
                 break
         else:
-            if not checkCompiler(env, conf, "clang++", 'clang' '3.3', False):
+            if not checkCompiler(env, conf, "clang++", 'clang', '3.3', False):
                 env.Fail('No supported compiler found.\nYou can use CXX=... set the c++ compiler to use.')
 
 if conf.CheckCXXVersion(min='4.7', fail=False):

@@ -26,7 +26,6 @@ env.Alias('bundles', cobject)
 env.Install('${OBJINSTALLDIR}', cobject)
 
 ### checkIncludeGuards.py
-checkIncludeGuards = env.PhonyTarget('checkIncludeGuards', [],
-    [ './tools/checkIncludeGuards.py' ])
+checkIncludeGuards = env.PhonyTarget('checkIncludeGuards', [], [ '/usr/bin/python ./tools/checkIncludeGuards.py' ])
 env.Alias('all_tests', checkIncludeGuards)
 env.Default(checkIncludeGuards)
