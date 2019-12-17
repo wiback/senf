@@ -54,7 +54,7 @@ prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
 {
     std::string::size_type portIx = addr.find(':');
     try {
-        port( boost::lexical_cast< ::u_int16_t>(portIx == std::string::npos ? addr : std::string(addr,portIx+1)) );
+        port( boost::lexical_cast< ::uint16_t>(portIx == std::string::npos ? addr : std::string(addr,portIx+1)) );
     }
     catch (boost::bad_lexical_cast const &) {
         throw AddressSyntaxException(addr) << ": invalid port number";

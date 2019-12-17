@@ -32,6 +32,7 @@
 
 // Custom includes
 #include <string.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <math.h>

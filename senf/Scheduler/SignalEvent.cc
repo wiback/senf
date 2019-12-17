@@ -83,7 +83,7 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::add(SignalEvent & event)
     act.sa_mask = sigSet_;
     act.sa_flags = SA_SIGINFO | SA_RESTART;
     for (SignalSet::iterator i (handlers_.begin()); i != handlers_.end(); ++i) {
-        if (i->signal_ == SIGCLD)
+        if (i->signal_ == SIGCHLD)
             act.sa_flags |= SA_NOCLDSTOP;
         else
             act.sa_flags &= ~SA_NOCLDSTOP;

@@ -35,6 +35,7 @@
 #define HH_SENF_Socket_ReadWritePolicy_ 1
 
 // Custom includes
+#include <sys/socket.h>
 #include "SocketPolicy.hh"
 #include "ClientSocketHandle.hh"
 #include "CommunicationPolicy.hh"

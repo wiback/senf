@@ -59,7 +59,6 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
     if (s.empty())
         throw AddressSyntaxException() << ": empty string";
 
-    int herr (0);
 
     // If available, we use the reentrant GNU variant. This has the additional advantage, that we
     // can explicitly ask for IPv4 addresses
@@ -69,6 +68,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
     struct hostent entbuf;
     char buffer[4096];
     struct hostent * ent (0);
+    int herr (0);
     ::gethostbyname2_r(s.c_str(), AF_INET6, &entbuf, buffer, sizeof(buffer), &ent, &herr);
 
 #   else // ! __GLIBC__
@@ -78,7 +78,6 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
     boost::mutex::scoped_lock lock(mutex);
 #   endif
     struct hostent * ent (::gethostbyname(s.c_str()));
-    herr = h_errno;
 
 #   endif // __GLIBC__
 

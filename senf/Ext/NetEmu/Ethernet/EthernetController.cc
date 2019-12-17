@@ -31,6 +31,7 @@
 
 // Custom includes
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include <net/if.h>
 #include <linux/ethtool.h>
 #include <linux/sockios.h>

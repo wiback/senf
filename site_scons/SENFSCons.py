@@ -1,5 +1,5 @@
 import os.path, glob, yaptu
-import SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS
+import SCons.Environment, SCons.Script.SConscript, SCons.Node.FS
 import SCons.Defaults, SCons.Action
 from SCons.Script import *
 

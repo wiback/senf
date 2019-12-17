@@ -30,6 +30,7 @@
 
 // Custom includes
 //#include <algorithm>
+#include <endian.h>
 #include <boost/functional/hash.hpp>
 #include "EUI64.hh"
 

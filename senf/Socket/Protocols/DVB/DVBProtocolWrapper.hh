@@ -55,8 +55,8 @@ namespace senf {
         DVBSectionProtocolWrapper(senf::DVBDemuxSectionHandle sh);
         ~DVBSectionProtocolWrapper() { }
 
-        void setSectionFilter(unsigned short int pid, u_int8_t filter,
-                unsigned int flags, u_int8_t mask, u_int8_t mode, unsigned int timeout);
+        void setSectionFilter(unsigned short int pid, uint8_t filter,
+                unsigned int flags, uint8_t mask, uint8_t mode, unsigned int timeout);
 
         void setBufferSize(unsigned long size);
                                 ///< Set the size of the circular buffer used for filtered data.

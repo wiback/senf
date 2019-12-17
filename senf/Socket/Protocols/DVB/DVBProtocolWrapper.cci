@@ -33,8 +33,8 @@
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 prefix_ void senf::DVBSectionProtocolWrapper::setSectionFilter(
-        unsigned short int pid, u_int8_t filter, unsigned int flags, u_int8_t mask,
-        u_int8_t mode, unsigned int timeout)
+        unsigned short int pid, uint8_t filter, unsigned int flags, uint8_t mask,
+        uint8_t mode, unsigned int timeout)
 {
     protocol.setSectionFilter(pid, timeout, flags, filter, mask, mode);
 }
