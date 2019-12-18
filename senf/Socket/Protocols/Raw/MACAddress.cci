@@ -180,10 +180,8 @@ prefix_ bool senf::MACAddress::operator<(MACAddress const & other)
         return false;
     if ((*this)[4] >= other[4])
         return false;
-    if ((*this)[5] >= other[5])
-        return false;
-
-    return true;
+    
+    return (*this)[5] < other[5];
 }
 
 # if __SIZEOF_SIZE_T__ == 8
