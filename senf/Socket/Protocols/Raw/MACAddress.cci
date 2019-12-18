@@ -85,13 +85,13 @@ prefix_ bool senf::MACAddress::multicast()
 prefix_ bool senf::MACAddress::broadcast()
     const
 {
-    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) ^ *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) == 0xffff0000;
+    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) == 0xffffffff) and (*reinterpret_cast<std::uint16_t const *>(&(*this)[4]) == 0xffff);
 }
 
 prefix_ senf::MACAddress::operator bool()
     const
 {
-    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) | *reinterpret_cast<std::uint16_t const *>(&(*this)[4])) != 0;
+    return (*reinterpret_cast<std::uint32_t const *>(&(*this)[0]) || *reinterpret_cast<std::uint16_t const *>(&(*this)[4]));
 }
 
 prefix_ std::uint32_t senf::MACAddress::oui()
@@ -129,10 +129,16 @@ prefix_ std::uint64_t senf::MACAddress::uint64()
     const
 {
     std::uint64_t t;
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    std::reverse_copy(begin(), end(), (std::uint8_t*)&t+2);
+    *(((std::uint16_t*)&t)) = 0;
+#else
     std::copy(begin(), end(), (std::uint8_t*)&t);
     *(((std::uint16_t*)&t)+3) = 0;
-    return be64toh(t);
+#endif
+    return t;
 }
+
 
 prefix_ void senf::MACAddress::hash(std::uint64_t * hash, std::uint16_t const & otherKey)
     const
@@ -163,7 +169,7 @@ prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
 prefix_ bool senf::MACAddress::operator<(MACAddress const & other)
     const
 {
-    return uint64() < other.uint64();
+    return std::memcmp(begin(), other.begin(), 6) < 0;
 }
 
 # if __SIZEOF_SIZE_T__ == 8
