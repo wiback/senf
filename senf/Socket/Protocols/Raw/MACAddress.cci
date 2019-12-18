@@ -130,11 +130,11 @@ prefix_ std::uint64_t senf::MACAddress::uint64()
 {
     std::uint64_t t;
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    std::reverse_copy(begin(), end(), (std::uint8_t*)&t+2);
-    *(((std::uint16_t*)&t)) = 0;
-#else
-    std::copy(begin(), end(), (std::uint8_t*)&t);
+    std::reverse_copy(begin(), end(), (std::uint8_t*)&t);
     *(((std::uint16_t*)&t)+3) = 0;
+#else
+    std::copy(begin(), end(), ((std::uint8_t*)&t) + 2);
+    *(((std::uint16_t*)&t)) = 0;
 #endif
     return t;
 }
@@ -169,19 +169,7 @@ prefix_ bool senf::operator==(EUI64 const & eui64, MACAddress const & mac)
 prefix_ bool senf::MACAddress::operator<(MACAddress const & other)
     const
 {
-    // slightly faster than memcmp() or a for-loop.
-    if ((*this)[0] >= other[0])
-        return false;
-    if ((*this)[1] >= other[1])
-        return false;
-    if ((*this)[2] >= other[2])
-        return false;
-    if ((*this)[3] >= other[3])
-        return false;
-    if ((*this)[4] >= other[4])
-        return false;
-    
-    return (*this)[5] < other[5];
+    return memcmp(&((*this)[0]), &other[0], 6) < 0;
 }
 
 # if __SIZEOF_SIZE_T__ == 8
