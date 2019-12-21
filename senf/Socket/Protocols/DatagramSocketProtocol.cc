@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <linux/sockios.h>
 #include <senf/Scheduler/Scheduler.hh>
 
 //#include "DatagramSocketProtocol.mpp"

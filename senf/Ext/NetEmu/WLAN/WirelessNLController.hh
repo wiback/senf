@@ -248,9 +248,9 @@ namespace emu {
         typedef unsigned frequency_type;
 
         struct Survey {
-            Survey (bool inuse) {
-                memset(this, 0, sizeof(*this));
-                inUse = inuse;
+            Survey (bool inuse) :
+                frequency(0), noise(0), channelTime(0), channelTimeBusy(0), channelTimeExtBusy(0),
+                channelTimeRx(0), channelTimeTx(0), inUse(inuse) {
             };
 
             frequency_type frequency;
@@ -269,9 +269,11 @@ namespace emu {
         };
 
         struct ScanResults {
-            ScanResults(senf::MACAddress const & bssid) {
-                memset(this, 0, sizeof(*this));
-                bssId = bssid;
+            ScanResults(senf::MACAddress const & bssid) :
+                frequency(0), tsf (0), bssId(bssid), beaconInterval(0), capability(0), signal(0),
+                signalUnspec(0), status(0), seenMsAgo(0), informationElementsLength(0), beaconInformationElementsLength(0) {
+                memset(informationElements, 0, sizeof(informationElements));
+                memset(beaconInformationElements, 0, sizeof(beaconInformationElements));
             };
             
             frequency_type   frequency;

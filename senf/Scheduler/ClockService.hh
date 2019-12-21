@@ -231,9 +231,6 @@ namespace senf {
         CyclicTimestamp()
             : tstamp_(0) {
         }
-        CyclicTimestamp(CyclicTimestamp const & other)
-            : tstamp_(other.tstamp_) {
-        }
         CyclicTimestamp(std::uint32_t const & secs, std::uint32_t const & nsecs) {
             update(secs, nsecs);
         }

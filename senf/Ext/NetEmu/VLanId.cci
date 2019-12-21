@@ -76,12 +76,6 @@ prefix_ senf::Packet senf::emu::VLanId::payloadPkt(senf::EthernetPacket const & 
     return pkt;
 }
 
-
-prefix_ senf::emu::VLanId::VLanId(VLanId const & other)
-    : id_(other.id_), type_(other.type_)
-{
-}
-
 // Fast path assumption is, we have a tag
 prefix_ senf::emu::VLanId::VLanId(senf::EthernetPacket const & eth)
 {

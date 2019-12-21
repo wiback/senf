@@ -29,9 +29,8 @@ namespace emu {
 
         enum Type {NoTag = 0, CTag, STag};
 
-        VLanId(VLanId const & other = VLanId::None);
+        VLanId(std::uint16_t id = 0, Type type = NoTag);
         VLanId(senf::EthernetPacket const & eth);
-        VLanId(std::uint16_t id, Type type);
 
         explicit operator bool() const;
         bool operator<(VLanId const & other) const;
