@@ -108,7 +108,7 @@ int main(int argc, char const * argv[])
     // LLC - EthExtOUI - Data
     senf::LlcSnapPacket llc (senf::LlcSnapPacket::createAfter(wlanData));
     senf::EthOUIExtensionPacket ouiExt (senf::EthOUIExtensionPacket::createAfter(llc));
-    ouiExt->oui() << 0x001113u; // FhG FOKUS
+    ouiExt->oui() << senf::EthOUIExtensionPacketType::OUI_Fraunhofer_FIT;
     radiotap.finalizeAll();
     senf::DataPacket::createAfter(ouiExt, configuration.txFrameLength - wlanData.size());
     radiotap->init_dbmTxAttenuation() = configuration.txPower;

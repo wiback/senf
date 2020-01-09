@@ -36,10 +36,8 @@
 #define prefix_
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define Fraunhofer_Fokus_OUI 0x001113
-
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherOUIExtTypes,
-        senf::EtherOUIExtTypes::type(Fraunhofer_Fokus_OUI, 0x42), senf::emu::TunnelCtrlPacket);
+        senf::EtherOUIExtTypes::type(senf::EthOUIExtensionPacketType::OUI_Fraunhofer_FIT, 0x42), senf::emu::TunnelCtrlPacket);
 
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::emu::TunnelCtrlPacket);
 

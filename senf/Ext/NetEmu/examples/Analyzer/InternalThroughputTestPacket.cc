@@ -15,7 +15,7 @@
 
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherOUIExtTypes,
     // Fraunhofer FIT OUI
-    senf::EtherOUIExtTypes::type(0x3c11b2, emu::InternalThroughputTestPacketType::extType), emu::InternalThroughputTestPacket);
+    senf::EtherOUIExtTypes::type(senf::EthOUIExtensionPacketType::OUI_Fraunhofer_FIT, emu::InternalThroughputTestPacketType::extType), emu::InternalThroughputTestPacket);
 
 prefix_ void emu::InternalThroughputTestPacketType::dump(packet p, std::ostream & os)
 {

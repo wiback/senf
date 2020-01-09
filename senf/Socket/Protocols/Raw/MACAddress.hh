@@ -135,6 +135,9 @@ namespace senf {
         std::uint32_t oui() const;    ///< Return first 3 bytes of the address
         std::uint32_t nic() const;    ///< Return last 3 bytes of the address
 
+        void oui(std::uint32_t oui);  ///< Sets first 3 bytes of the address
+        void nic(std::uint32_t oui);  ///< Sets last 3 bytes of the address
+        
         std::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
         std::uint64_t uint64() const; ///< Return MAC address as uint64 value
 

@@ -103,6 +103,13 @@ prefix_ std::uint32_t senf::MACAddress::oui()
         (*this)[2];
 }
 
+prefix_ void senf::MACAddress::oui(std::uint32_t v)
+{
+    (*this)[0] = (v >> 16) & 0xff;
+    (*this)[1] = (v >>  8) & 0xff;
+    (*this)[2] = (v >>  0) & 0xff;
+}
+
 prefix_ std::uint32_t senf::MACAddress::nic()
     const
 {
@@ -110,6 +117,13 @@ prefix_ std::uint32_t senf::MACAddress::nic()
         (std::uint32_t((*this)[3]) << 16) |
         (std::uint32_t((*this)[4]) <<  8) |
         (*this)[5];
+}
+
+prefix_ void senf::MACAddress::nic(std::uint32_t v)
+{
+    (*this)[3] = (v >> 16) & 0xff;
+    (*this)[4] = (v >>  8) & 0xff;
+    (*this)[5] = (v >>  0) & 0xff;
 }
 
 prefix_ std::uint64_t senf::MACAddress::eui64()

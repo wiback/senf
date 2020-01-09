@@ -35,10 +35,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // wiback::EthernetFragmentPacket
 
-#define Fraunhofer_Fokus_OUI 0x001113
-
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherOUIExtTypes,
-    senf::EtherOUIExtTypes::type(Fraunhofer_Fokus_OUI, 0x43), senf::emu::EthernetFragmentPacket);
+    senf::EtherOUIExtTypes::type(senf::EthOUIExtensionPacketType::OUI_Fraunhofer_FIT, 0x43), senf::emu::EthernetFragmentPacket);
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::emu::EthernetFragmentPacket );
 
 prefix_ void senf::emu::EthernetFragmentPacketType::dump(packet p, std::ostream & os)

@@ -46,8 +46,7 @@
 SENF_PACKET_INSTANTIATE_TEMPLATE( senf::AnnotationsPacket );
 
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherOUIExtTypes,
-        // Fraunhofer FIT OUI
-        senf::EtherOUIExtTypes::type(0x3c11b2, senf::AnnotationsPacketType::extType), senf::AnnotationsPacket);
+        senf::EtherOUIExtTypes::type(senf:: EthOUIExtensionPacketType::OUI_Fraunhofer_FIT, senf::AnnotationsPacketType::extType), senf::AnnotationsPacket);
 
 //-/////////////////////////////////////////////////////////////////////////////////////////////////
 // senf::AnnotationsPacketType

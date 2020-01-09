@@ -273,6 +273,9 @@ namespace senf {
         static void finalize(packet p);
 
         static const EtherTypes::key_t etherType = 0x88b7;
+
+        static const std::uint32_t OUI_Fraunhofer_FOKUS = 0x001113;
+        static const std::uint32_t OUI_Fraunhofer_FIT   = 0x3c11b2;
     };
 
     typedef ConcretePacket<EthOUIExtensionPacketType> EthOUIExtensionPacket;

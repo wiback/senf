@@ -63,6 +63,7 @@ namespace senf {
         }
     };
 
+    
     /** \brief IP protocol number registry
 
         This registers packets with their IP protocol number.
