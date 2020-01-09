@@ -1,6 +1,6 @@
 Source: libsenf
 Priority: extra
-Maintainer: Stefan Bund <senf-dev@lists.berlios.de>
+Maintainer: WiBACK Team <senf@wiback.org>
 Build-Depends: debhelper (>= 5), scons (>= 0.97), g++, binutils-dev,
 	libboost-dev | libboost1.35-dev, 
 	libboost-test-dev | libboost-test1.35-dev,
