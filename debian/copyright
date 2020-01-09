@@ -1,28 +1,9 @@
-This is libsenf, written and maintained by Stefan Bund <senf-dev@lists.berlios.de>
-on Tue, 28 Aug 2007 10:02:23 +0200.
+This is libsenf, written and maintained by Fraunhofer
 
 The original source can always be found at:
-  http://senf.berlios.de
+  http://senf.wiback.org
 
 Copyright Holder:
-  Fraunhofer Institute for Open Communication Systems (FOKUS)
-  Competence Center NETwork research (NET), St. Augustin, GERMANY 
+   2009-2015 Fraunhofer Institute for Open Communication Systems (FOKUS), St. Augustin, GERMANY
+   2016-2019 Fraunhofer Institute for Applied Information Technology (FIT), St. Augustin, GERMANY
 
-License:
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this package; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-
-On Debian systems, the complete text of the GNU General
-Public License can be found in `/usr/share/common-licenses/GPL'.
