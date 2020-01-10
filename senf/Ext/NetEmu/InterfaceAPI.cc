@@ -165,8 +165,8 @@ namespace {
 
     senf::console::SysInfo::Proxy addSysInfo ("NetEmu",
             "SENF NetEmu: The PPI Network Emulator\n"
-            "  (c) 2008-2015 Fraunhofer Institute for Open Communication Systems (FOKUS)\n"
-            "  Contact: http://www.fokus.fraunhofer.de/en/net\n"
+            "  (c) 2020 Fraunhofer Institute for Applied Information Technology (FIT)\n"
+            "  Contact: http://wiback.org\n"
             "  Version: " SENF_NETEMU_LIB_VERSION "\n", 1);
 
     boost::uint16_t initIndex()
