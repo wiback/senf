@@ -1,49 +1,16 @@
-//						FastDelegate.h
-//	Efficient delegates in C++ that generate only two lines of asm code!
-//  Documentation is found at http://www.codeproject.com/cpp/FastDelegate.asp
 //
-//						- Don Clugston, Mar 2004.
-//		Major contributions were made by Jody Hagins.
-// History:
-// 24-Apr-04 1.0  * Submitted to CodeProject.
-// 28-Apr-04 1.1  * Prevent most unsafe uses of evil static function hack.
-//                                * Improved syntax for horrible_cast (thanks Paul Bludov).
-//                                * Tested on Metrowerks MWCC and Intel ICL (IA32)
-//                                * Compiled, but not run, on Comeau C++ and Intel Itanium ICL.
-//	27-Jun-04 1.2 * Now works on Borland C++ Builder 5.5
-//                                * Now works on /clr "managed C++" code on VC7, VC7.1
-//                                * Comeau C++ now compiles without warnings.
-//                                * Prevent the virtual inheritance case from being used on
-//                                        VC6 and earlier, which generate incorrect code.
-//                                * Improved warning and error messages. Non-standard hacks
-//                                       now have compile-time checks to make them safer.
-//                                * implicit_cast used instead of static_cast in many cases.
-//                                * If calling a const member function, a const class pointer can be used.
-//                                * MakeDelegate() global helper function added to simplify pass-by-value.
-//                                * Added fastdelegate.clear()
-// 16-Jul-04 1.2.1* Workaround for gcc bug (const member function pointers in templates)
-// 30-Oct-04 1.3  * Support for (non-void) return values.
-//                                * No more workarounds in client code!
-//                                       MSVC and Intel now use a clever hack invented by John Dlugosz:
-//                                   - The FASTDELEGATEDECLARE workaround is no longer necessary.
-//                                       - No more warning messages for VC6
-//                                * Less use of macros. Error messages should be more comprehensible.
-//                                * Added include guards
-//                                * Added FastDelegate::empty() to test if invocation is safe (Thanks Neville Franks).
-//                                * Now tested on VS 2005 Express Beta, PGI C++
-// 24-Dec-04 1.4  * Added DelegateMemento, to allow collections of disparate delegates.
-//                * <,>,<=,>= comparison operators to allow storage in ordered containers.
-//                                * Substantial reduction of code size, especially the 'Closure' class.
-//                                * Standardised all the compiler-specific workarounds.
-//                * MFP conversion now works for CodePlay (but not yet supported in the full code).
-//                * Now compiles without warnings on _any_ supported compiler, including BCC 5.5.1
-//                                * New syntax: FastDelegate< int (char *, double) >.
-// 14-Feb-05 1.4.1* Now treats =0 as equivalent to .clear(), ==0 as equivalent to .empty(). (Thanks elfric).
-//                                * Now tested on Intel ICL for AMD64, VS2005 Beta for AMD64 and Itanium.
-// 30-Mar-05 1.5  * Safebool idiom: "if (dg)" is now equivalent to "if (!dg.empty())"
-//                                * Fully supported by CodePlay VectorC
-//                * Bugfix for Metrowerks: empty() was buggy because a valid MFP can be 0 on MWCC!
-//                * More optimal assignment,== and != operators for static function pointers.
+// Copyright (c) 2020 Fraunhofer Institute for Applied Information Technology (FIT)
+//                    Network Research Group (NET)
+//                    Schloss Birlinghoven, 53754 Sankt Augustin, GERMANY
+//                    Contact: http://wiback.org
+//
+// This file is part of the SENF code tree.
+// It is licensed under the 3-clause BSD License (aka New BSD License).
+// See LICENSE.txt in the top level directory for details or visit
+// https://opensource.org/licenses/BSD-3-Clause
+//
+
+
 
 #ifndef FASTDELEGATE_H
 #define FASTDELEGATE_H

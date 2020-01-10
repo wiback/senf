@@ -1,10 +1,15 @@
-// $Id: emushark.cc 901 2014-09-01 11:24:35Z tho $
 //
-// Copyright (C) 2009
-// Fraunhofer Institute for Open Communication Systems (FOKUS)
-// Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+// Copyright (c) 2020 Fraunhofer Institute for Applied Information Technology (FIT)
+//                    Network Research Group (NET)
+//                    Schloss Birlinghoven, 53754 Sankt Augustin, GERMANY
+//                    Contact: http://wiback.org
 //
+// This file is part of the SENF code tree.
+// It is licensed under the 3-clause BSD License (aka New BSD License).
+// See LICENSE.txt in the top level directory for details or visit
+// https://opensource.org/licenses/BSD-3-Clause
+//
+
 
 /** \file
     \brief emushark non-inline non-template implementation */

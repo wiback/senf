@@ -1,18 +1,16 @@
-//						FastDelegateBind.h 
-//  Helper file for FastDelegates. Provides bind() function, enabling
-//  FastDelegates to be rapidly compared to programs using boost::function and boost::bind.
 //
-//  Documentation is found at http://www.codeproject.com/cpp/FastDelegate.asp
+// Copyright (c) 2020 Fraunhofer Institute for Applied Information Technology (FIT)
+//                    Network Research Group (NET)
+//                    Schloss Birlinghoven, 53754 Sankt Augustin, GERMANY
+//                    Contact: http://wiback.org
 //
-//		Original author: Jody Hagins.
-//		 Minor changes by Don Clugston.
+// This file is part of the SENF code tree.
+// It is licensed under the 3-clause BSD License (aka New BSD License).
+// See LICENSE.txt in the top level directory for details or visit
+// https://opensource.org/licenses/BSD-3-Clause
 //
-// Warning: The arguments to 'bind' are ignored! No actual binding is performed.
-// The behaviour is equivalent to boost::bind only when the basic placeholder 
-// arguments _1, _2, _3, etc are used in order.
-//
-// HISTORY:
-//	1.4 Dec 2004. Initial release as part of FastDelegate 1.4.
+
+
 
 
 #ifndef FASTDELEGATEBIND_H
