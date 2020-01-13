@@ -90,7 +90,7 @@
     character. Examples for words are thus
     <pre>
     12.34
-    jens@fokus.fraunhofer.de
+    dev@wiback.org
     eth0
     1>2
     </pre>
