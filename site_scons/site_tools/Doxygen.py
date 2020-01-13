@@ -1,54 +1,15 @@
-# The Doxygen builder is based on the Doxygen builder from:
 #
-# Astxx, the Asterisk C++ API and Utility Library.
-# Copyright (C) 2005, 2006  Matthew A. Nicholson
-# Copyright (C) 2006  Tim Blechmann
+# Copyright (c) 2020 Fraunhofer Institute for Applied Information Technology (FIT)
+#                    Network Research Group (NET)
+#                    Schloss Birlinghoven, 53754 Sankt Augustin, GERMANY
+#                    Contact: http://wiback.org
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License version 2.1 as published by the Free Software Foundation.
+# This file is part of the SENF code tree.
+# It is licensed under the 3-clause BSD License (aka New BSD License).
+# See LICENSE.txt in the top level directory for details or visit
+# https://opensource.org/licenses/BSD-3-Clause
 #
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# The Modifications are Copyright (C) 2006,2007,2008,2009
-# Fraunhofer Institute for Open Communication Systems (FOKUS) 
-# Competence Center NETwork research (NET), St. Augustin, GERMANY 
-#     Stefan Bund <senf@g0dil.de>
-
-# I (senf@g0dil.de) have been fighting 4 problems in this
-# implementation:
-# - A Directory target will *not* call any source scanners
-# - A Directory target will interpret the directory contents as
-#   sources not targets. This means, that if a command creates that
-#   directory plus contents, the target will never be up-to-date
-#   (since the directory contents will change with every call of
-#   scons)
-# - Theres a bug in SCons which will produce an error message for
-#   directory targets if dir.sources is not set explicitly
-# - the first argument to env.Clean() must be the command line target,
-#   with which scons was invoked. This does not help to add aditional
-#   files or directories to be cleaned if you don't know that target
-#   (it's not possible to say 'if you clean this file, also clean that
-#   one' which is, what I had expected env.Clean to do).
-#
-# Together, these problems have produced several difficulties. I have
-# solved them by
-# - Adding an (empty) stamp file as a (file) target. This target will
-#   cause source scanners to be invoked
-# - Adding the documentation directory as a target (so it will be
-#   cleaned up which env.Clean doesn't help me to do), but *only* if
-#   scons is called with the -c option
-# - Setting dir.sources to the known source-list to silence the error
-#   message whenever a directory is added as a target
-#
-# You will find all this in the DoxyEmitter
 
 import os, sys, traceback, string
 import os.path
