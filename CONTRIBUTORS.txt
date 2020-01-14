@@ -1,0 +1,17 @@
+CONTRIBUTORS
+------------
+
+Special thanks to the following authors for their contribution to the
+SENF code tree:
+
+Philipp Batroff
+Stefan Bund
+Thorsten Horstmann
+Joachim Kaeber
+Mathias Kretschmer
+Jens Moedeker
+Christian Niephaus
+David Wagner
+
+Development of the SENF library started in 2006 at Fraunhofer FOKUS.
+Since 2016 the SENF library is maintained by Fraunhofer FIT.
