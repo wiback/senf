@@ -293,7 +293,7 @@
                 PROJECTEMAIL = "coder@example.com",
                 COPYRIGHT    = "The Master Coders",
                 DOCLINKS     = [ ('Homeage', 'http://www.example.com') ],
-                REVISION     = 'r'+os.popen('svnversion').read().strip().lower() )
+                REVISION     = os.popen('git rev-parse --short HEAD') )
 
     senfutil.Doxygen(env)
     \endcode
@@ -406,16 +406,14 @@
     \section senf_checkout Getting the code
 
     To access the code, check out the code from the BerliOS repository. Change to your development
-    directory and use the following subversion command
+    directory and use the following command
 
     <pre>
-    $ svn checkout https://senf.fokus.fraunhofer.de/svn/senf/trunk senf
+    $ git clone https://gitlab.fit.fraunhofer.de/wiback/senf 
     </pre>
 
     This will create a new directory \c senf within the current directory. For further documentation
-    on the use of Subversion, see the \c svn man-page or the subversion homepage at
-    http://subversion.tigris.org. A very good introduction and reference to subversion is available
-    at http://svnbook.red-bean.com.
+    on the use of Git, see the \c git man-page or the git homepage at https://git-scm.com/
 
     Additionally ensure, you have installed all necessary \ref senf_dependencies.
 

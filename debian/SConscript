@@ -20,7 +20,7 @@ def updateRevision(target, source, env):
     rev = env['ENV']['REVISION'][1:]
     if ':' in rev:
         print
-        print "Working copy not clean. Run 'svn update'"
+        print "Working copy not clean. Run 'git update'"
         print
         return 1
     if 'm' in rev and not ARGUMENTS.get('force_deb'):
@@ -32,11 +32,9 @@ def updateRevision(target, source, env):
         rev = rev[:-1]
     if 'm' in rev:
         rev = rev[:-1]
-    url = ''
-    for line in os.popen("svn info"):
-        elts=line.split(':',1)
-        if elts[0] == 'URL':
-            url = elts[1].strip()
+
+    url = os.popen("git config --get remote.origin.url").strip()
+
     version = None
     if '/tags/' in url:
         version = url.rsplit('/',1)[-1].split('_',1)[0]

@@ -85,9 +85,9 @@ div.tabs li.$projectname a { background-color: #EDE497; }
   <div id="title">
     <div id="title2">
       <div id="search">
-        <form action="@TOPDIR@/doclib/search.php" method="get">
+        <!--form action="@TOPDIR@/doclib/search.php" method="get">
           Search: <input type="text" name="query" size="20" accesskey="s"/>
-        </form>
+        </form-->
       </div>
       <h1>SENF Extensible Network Framework</h1>
     </div>

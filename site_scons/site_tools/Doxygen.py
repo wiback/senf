@@ -177,7 +177,7 @@ def DoxyfileParse(env,node):
    try:
       parser.parse()
    except ValueError, v:
-      print "WARNING: Error while parsing doxygen configuration '%s': %s" % (str(file),str(v))
+      print "WARNING: Error while parsing doxygen configuration '%s': %s" % (str(node),str(v))
       return {}
    data = parser.items()
    for k,v in data.items():
