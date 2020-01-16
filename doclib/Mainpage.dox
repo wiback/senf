@@ -405,8 +405,8 @@
 
     \section senf_checkout Getting the code
 
-    To access the code, check out the code from the BerliOS repository. Change to your development
-    directory and use the following command
+    To access the code, check out the code from Fraunhofer FIT gitlab repository. Change to your
+    development directory and use the following command
 
     <pre>
     $ git clone https://gitlab.fit.fraunhofer.de/wiback/senf 
