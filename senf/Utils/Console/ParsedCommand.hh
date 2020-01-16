@@ -19,8 +19,6 @@
 
 // Custom includes
 
-#define BOOST_PARAMETER_MAX_ARITY 7
-
 #include <vector>
 #include <boost/type_traits/function_traits.hpp>
 #include <boost/type_traits/is_member_function_pointer.hpp>
